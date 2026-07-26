@@ -314,6 +314,10 @@ async function scan(target,resultEl,p){
 }
 
 /* ═══ 7. FUTURE NATAL ONLY (no dragon wheel) ═══════════════════ */
+/* ═══ 7. FUTURE NATAL WHEEL + COUNTRY RISING SIGNS ═════════════ */
+const FL_LATS=[60,52,45,40,35,28,20,10,0,-15,-30];
+let _flCur=null;
+
 async function showFuture(key){
   try{
     const[y,m,d]=key.split('-').map(Number);
@@ -323,15 +327,87 @@ async function showFuture(key){
         lat:_flPerson.lat,lon:_flPerson.lon,tz_name:_flPerson.tz_name});
       fut._timeUnknown=false;
     }
-    const name=document.getElementById('fl-name').value||'';
-    const cross=calcCrossAspects(_flNatal.planets,fut.planets);
-    showDoubleChart(_flNatal,fut,'ნატალი',''+y,
-      '🐉 '+name+' — მომავალი ნატალი '+d+'.'+m+'.'+y,cross);
-    const wrap=document.getElementById('future-life-wrap');
-    const ca=document.getElementById('chart-area');
-    if(wrap&&ca)ca.appendChild(wrap);
-    if(_flMap)setTimeout(()=>_flMap.invalidateSize(),60);
+    _flCur={key,y,m,d,fut};
+    drawFutureWheel(fut,y,m,d,null);
+    await buildRisingTable(y,m,d);
   }catch(e){showError(e.message);}
+}
+
+function drawFutureWheel(chart,y,m,d,place){
+  const name=document.getElementById('fl-name').value||'';
+  const loc=place?' · '+place.country+' '+Math.abs(place.lat)+'°'+(place.lat>=0?'N':'S'):'';
+  showSingleChart(chart,'🐉 '+name+' — მომავალი ნატალი '+d+'.'+m+'.'+y+loc,false);
+  // comparison toggle
+  const ml=document.getElementById('mode-label');
+  const old=document.getElementById('fl-cmp-btn');if(old)old.remove();
+  if(ml){
+    const b=document.createElement('button');
+    b.id='fl-cmp-btn';b.textContent='⇄ ნატალთან შედარება';
+    b.style.cssText='display:block;margin:8px auto;background:linear-gradient(90deg,#8a6a20,#c9a84c);border:none;color:#0a0810;padding:7px 18px;border-radius:8px;cursor:pointer;font-family:Cinzel,serif;font-size:11px;letter-spacing:2px';
+    ml.after(b);
+    b.onclick=()=>{
+      const cross=calcCrossAspects(_flNatal.planets,chart.planets);
+      showDoubleChart(_flNatal,chart,'ნატალი',''+y,'🐉 ნატალი × მომავალი '+d+'.'+m+'.'+y,cross);
+      const w=document.getElementById('fl-rising-wrap'),ca=document.getElementById('chart-area');
+      if(w&&ca)ca.appendChild(w);
+      const w2=document.getElementById('future-life-wrap');if(w2&&ca)ca.appendChild(w2);
+    };
+  }
+  const ca=document.getElementById('chart-area');
+  const rw=document.getElementById('fl-rising-wrap');if(rw&&ca)ca.appendChild(rw);
+  const w2=document.getElementById('future-life-wrap');if(w2&&ca)ca.appendChild(w2);
+  if(_flMap)setTimeout(()=>_flMap.invalidateSize(),60);
+}
+
+async function buildRisingTable(y,m,d){
+  const ca=document.getElementById('chart-area');
+  let wrap=document.getElementById('fl-rising-wrap');
+  if(!wrap){
+    wrap=document.createElement('div');wrap.id='fl-rising-wrap';
+    wrap.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(8,6,20,.8);border:1px solid rgba(180,140,40,.4);border-radius:12px;';
+  }
+  ca.appendChild(wrap);
+  const lon=_flPerson.lon;
+  wrap.innerHTML='<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(240,208,128,.8);margin-bottom:8px">🌍 მომავალი ქვეყნები — ასცენდენტი</div><div style="color:#a78bfa;font-size:12px">⏳ გამოთვლა IC მერიდიანზე...</div>';
+  const rows=[];
+  for(const lat of FL_LATS){
+    let country=null;
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=3&format=json&accept-language=ka`);
+      const j=await r.json();country=j.address?.country||null;
+    }catch(e){}
+    if(!country)continue;
+    try{
+      const ch=await fetchChart({year:y,month:m,day:d,hour:12,minute:0,second:0,
+        lat,lon,tz_name:_flPerson.tz_name});
+      if(ch.asc==null)continue;
+      ch._timeUnknown=false;
+      rows.push({country,lat,asc:ch.asc,mc:ch.mc,chart:ch});
+    }catch(e){}
+    wrap.querySelector('div:last-child').textContent='⏳ '+(rows.length)+' ქვეყანა...';
+    await new Promise(s=>setTimeout(s,320));
+  }
+  if(!rows.length){wrap.innerHTML+='<div style="color:#9ba8b8;font-size:11px">ოკეანე — ქვეყნები ვერ მოიძებნა</div>';return;}
+  window._flRows=rows;
+  const mcSi=Math.floor(rows[0].mc/30)%12;
+  wrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(240,208,128,.8);margin-bottom:6px">🌍 მომავალი ქვეყნები — ასცენდენტი</div>
+    <div style="font-size:11px;color:#9ba8b8;margin-bottom:8px">IC მერიდიანი <b style="color:#f0c96b">${Math.abs(lon).toFixed(2)}° ${lon>=0?'აღმ':'დას'}</b>
+      · MC ერთნაირია ყველგან: <b style="color:#e8c06e">${fmtL(rows[0].mc)}</b> · განედი ცვლის მხოლოდ ასცენდენტს</div>
+    <table style="width:100%"><thead><tr><th>ქვეყანა</th><th>განედი</th><th>ასცენდენტი</th><th></th></tr></thead><tbody>
+    ${rows.map((r,i)=>{const si=Math.floor(r.asc/30)%12;
+      return `<tr>
+        <td style="color:#e9d5ff;font-size:11px">${r.country}</td>
+        <td style="color:#9ba8b8;font-size:10px">${Math.abs(r.lat)}°${r.lat>=0?'N':'S'}</td>
+        <td><span class="${signClass(si)}" style="font-size:14px;font-family:serif">${ZSYM[si]}</span>
+          <span style="font-size:11px;color:${ZCOL[si]}">${fmtL(r.asc)}</span></td>
+        <td><button data-i="${i}" class="fl-loc-btn" style="background:none;border:1px solid rgba(240,201,107,.5);color:#f0c96b;border-radius:6px;padding:1px 9px;font-size:10px;cursor:pointer;font-family:inherit">📜 რუქა</button></td>
+      </tr>`;}).join('')}
+    </tbody></table>
+    <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">ერთი და იგივე მომენტი, სხვადასხვა განედი — თითო ქვეყანა თავისი ამომავალი ნიშნით</div>`;
+  wrap.querySelectorAll('.fl-loc-btn').forEach(b=>{
+    b.onclick=()=>{const r=window._flRows[+b.dataset.i];
+      drawFutureWheel(r.chart,y,m,d,r);};
+  });
 }
 
 /* ═══ INIT ═════════════════════════════════════════════════════ */
