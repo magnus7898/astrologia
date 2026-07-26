@@ -317,6 +317,7 @@ async function scan(target,resultEl,p){
 /* ═══ 7. FUTURE NATAL — Sun-IC line through current birthplace ═ */
 const FL_LATS=[60,52,45,40,35,28,20,10,0,-15,-30];
 const SID=15.0410686;                       // GST degrees per UT hour
+let _flCur=null;                            // current epoch context
 const normLon=l=>{const r=norm(l);return r>180?r-360:r;};
 
 /* solve UT hour where the Sun's IC line falls on lon0 */
