@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13-თვიანი კალენდარი</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#04030a;--gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8a6a20;
+  --purple:#a78bfa;--txt:#e0d8ff;--dim:rgba(155,168,184,0.6);
+  --brd:rgba(45,31,110,0.8);--sol:#f0a04b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;
+  overflow-x:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.55) 0,transparent 100%),
+  radial-gradient(1px 1px at 23% 35%,rgba(255,255,255,.35) 0,transparent 100%),
+  radial-gradient(1px 1px at 41% 8%,rgba(255,255,255,.45) 0,transparent 100%),
+  radial-gradient(1px 1px at 60% 25%,rgba(255,255,255,.3) 0,transparent 100%),
+  radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.5) 0,transparent 100%),
+  radial-gradient(1px 1px at 50% 75%,rgba(255,255,255,.4) 0,transparent 100%),
+  radial-gradient(1.5px 1.5px at 34% 51%,rgba(240,160,75,.25) 0,transparent 100%);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(200,140,40,.07) 0,transparent 70%),
+  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(100,40,200,.06) 0,transparent 70%);}
+
+.hero{position:relative;z-index:1;text-align:center;padding:40px 24px 20px;width:100%}
+.hero-sigil{width:52px;height:52px;margin:0 auto 14px;display:block;opacity:.75}
+.hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:10px;font-family:'Cinzel',serif}
+.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4vw,36px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,#e8d5a0 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:8px}
+.hero-divider{display:flex;align-items:center;gap:14px;margin:16px auto 0;max-width:300px}
+.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
+.hero-gem{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.5}
+
+.tab-bar{position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;
+  margin:18px auto 0;padding:0 16px;max-width:700px;width:100%}
+.tab-btn{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(201,168,76,.6);background:rgba(8,6,20,.6);border:1px solid rgba(138,106,32,.35);
+  border-radius:20px;padding:8px 18px;cursor:pointer;transition:all .25s;white-space:nowrap}
+.tab-btn:hover{color:var(--gold-l);border-color:rgba(201,168,76,.6);background:rgba(30,22,8,.8)}
+.tab-btn.active{color:#0a0810;background:linear-gradient(135deg,#c9a84c,#8a6a20);
+  border-color:rgba(240,208,128,.5);box-shadow:0 2px 12px rgba(201,168,76,.25)}
+
+.panel{position:relative;z-index:1;width:100%;max-width:1000px;padding:0 16px;margin-top:20px}
+.section{display:none}.section.active{display:block}
+.card{background:rgba(8,6,20,.78);border:1px solid rgba(138,106,32,.35);border-radius:14px;
+  padding:18px;margin-bottom:14px;backdrop-filter:blur(10px)}
+.card-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold);opacity:.75;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(201,168,76,.15)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:110px}
+label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
+input,select{background:rgba(10,8,30,.7);border:1px solid rgba(138,106,32,.4);border-radius:8px;
+  color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.13)}
+.btn{background:linear-gradient(135deg,#8a6a20,#c9a84c);color:#0a0810;border:none;border-radius:9px;
+  padding:11px 22px;font-size:12px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;
+  font-weight:600;transition:all .25s;white-space:nowrap}
+.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+.btn-ghost{background:none;border:1px solid rgba(201,168,76,.45);color:var(--gold)}
+
+.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.month{background:rgba(8,6,20,.7);border:1px solid rgba(138,106,32,.28);border-radius:12px;overflow:hidden}
+.month.sol{border-color:rgba(240,160,75,.55);box-shadow:0 0 18px rgba(240,160,75,.12)}
+.month-head{padding:8px 12px;background:rgba(201,168,76,.07);border-bottom:1px solid rgba(138,106,32,.25);
+  display:flex;justify-content:space-between;align-items:baseline}
+.month.sol .month-head{background:rgba(240,160,75,.12)}
+.month-name{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold-l)}
+.month.sol .month-name{color:var(--sol)}
+.month-num{font-size:9px;color:var(--dim);font-family:'Cinzel',serif}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:8px}
+.dow{font-size:8px;text-align:center;color:rgba(155,168,184,.45);font-family:'Cinzel',serif;padding-bottom:3px}
+.day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;
+  color:#c8d8f0;border-radius:5px;transition:background .15s}
+.day:hover{background:rgba(201,168,76,.12)}
+.day.empty{visibility:hidden}
+.day.extra{background:rgba(240,160,75,.22);color:var(--sol);font-weight:600;border:1px solid rgba(240,160,75,.4)}
+.day.today{background:linear-gradient(135deg,#8a6a20,#c9a84c);color:#0a0810;font-weight:700}
+.day.bday{outline:2px solid #f492b7;color:#f492b7;font-weight:700}
+
+.result{background:rgba(30,22,8,.5);border-left:3px solid var(--gold);border-radius:8px;
+  padding:14px 16px;margin-top:12px;font-size:13px;line-height:2}
+.big{font-family:'Cinzel',serif;font-size:26px;color:var(--gold-l);letter-spacing:2px}
+.k{color:var(--dim);font-size:11px;letter-spacing:1px}
+.v{color:#e9d5ff;font-weight:600}
+.note{font-size:10px;color:rgba(155,168,184,.5);line-height:1.7;margin-top:10px;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+th{color:rgba(155,168,184,.5);padding:6px 10px;text-align:left;font-weight:400;font-size:9px;
+  text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(138,106,32,.25)}
+td{padding:6px 10px;border-bottom:1px solid rgba(15,13,40,.8)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(40,30,10,.4)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <svg class="hero-sigil" viewBox="0 0 56 56" fill="none">
+    <circle cx="28" cy="28" r="26" stroke="rgba(201,168,76,.3)" stroke-width=".6"/>
+    <circle cx="28" cy="28" r="19" stroke="rgba(201,168,76,.18)" stroke-width=".5"/>
+    <g stroke="rgba(201,168,76,.5)" stroke-width=".7">
+      <line x1="28" y1="2" x2="28" y2="8"/><line x1="28" y1="48" x2="28" y2="54"/>
+      <line x1="2" y1="28" x2="8" y2="28"/><line x1="48" y1="28" x2="54" y2="28"/>
+    </g>
+    <circle cx="28" cy="28" r="3" fill="rgba(240,160,75,.85)"/>
+  </svg>
+  <div class="hero-eyebrow">დროის მეცნიერება</div>
+  <h1 class="hero-title">13-თვიანი კალენდარი</h1>
+  <p class="hero-sub">Thirteen Months · Sol · 28-day cycle</p>
+  <div class="hero-divider"><div class="hero-line"></div><div class="hero-gem"></div><div class="hero-line"></div></div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="setTab('year')">📅 წელი</button>
+  <button class="tab-btn" onclick="setTab('bday')">🎂 დაბადების დღე</button>
+  <button class="tab-btn" onclick="setTab('conv')">🔄 კონვერტორი</button>
+</div>
+
+<div class="panel">
+
+  <!-- SETTINGS -->
+  <div class="card">
+    <div class="card-title">⚙ პარამეტრები</div>
+    <div class="row">
+      <div class="field"><label>წელი</label><input type="number" id="s-year" value="2026"></div>
+      <div class="field"><label>ნაკიანი დღე ემატება</label>
+        <select id="s-leap">
+          <option value="12" selected>დეკემბერს</option>
+          <option value="1">თებერვალს</option>
+          <option value="6">სოლს</option>
+        </select></div>
+      <div class="field"><label>კვირის რეჟიმი</label>
+        <select id="s-mode">
+          <option value="perp" selected>მუდმივი (თვე იწყება კვირას)</option>
+          <option value="real">რეალური (გრიგორიანულ დღეებზე)</option>
+        </select></div>
+      <button class="btn" onclick="renderYear()">✦ განახლება ✦</button>
+    </div>
+    <div class="note" id="year-info"></div>
+  </div>
+
+  <!-- YEAR VIEW -->
+  <div id="tab-year" class="section active">
+    <div class="card">
+      <div class="card-title">📅 13 თვე</div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="note">🟠 ნარინჯისფერი = დამატებითი დღე (სოლი 29 · ნაკიანი დღე) ·
+        🟡 ოქროსფერი = დღევანდელი დღე</div>
+    </div>
+  </div>
+
+  <!-- BIRTHDAY -->
+  <div id="tab-bday" class="section">
+    <div class="card">
+      <div class="card-title">🎂 შენი დაბადების დღე 13-თვიან კალენდარში</div>
+      <div class="row">
+        <div class="field"><label>დღე</label><input type="number" id="b-day" value="1" min="1" max="31"></div>
+        <div class="field"><label>თვე</label><input type="number" id="b-month" value="1" min="1" max="12"></div>
+        <div class="field"><label>წელი</label><input type="number" id="b-year" value="1990"></div>
+        <button class="btn" onclick="calcBirthday()">🎂 გამოთვლა</button>
+      </div>
+      <div id="b-result"></div>
+    </div>
+  </div>
+
+  <!-- CONVERTER -->
+  <div id="tab-conv" class="section">
+    <div class="card">
+      <div class="card-title">🔄 გრიგორიანული → 13-თვიანი</div>
+      <div class="row">
+        <div class="field"><label>დღე</label><input type="number" id="g-day" value="1" min="1" max="31"></div>
+        <div class="field"><label>თვე</label><input type="number" id="g-month" value="1" min="1" max="12"></div>
+        <div class="field"><label>წელი</label><input type="number" id="g-year" value="2026"></div>
+        <button class="btn" onclick="convG()">→ გარდაქმნა</button>
+      </div>
+      <div id="g-result"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔄 13-თვიანი → გრიგორიანული</div>
+      <div class="row">
+        <div class="field"><label>თვე</label>
+          <select id="t-month"></select></div>
+        <div class="field"><label>დღე</label><input type="number" id="t-day" value="1" min="1" max="30"></div>
+        <div class="field"><label>წელი</label><input type="number" id="t-year" value="2026"></div>
+        <button class="btn" onclick="convT()">→ გარდაქმნა</button>
+      </div>
+      <div id="t-result"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ═══ 13-MONTH CALENDAR ENGINE ═══════════════════════════════
+   13 months. Sol (სოლი) inserted after June with 29 days,
+   all other months 28 → 12×28 + 29 = 365.
+   Leap year: +1 day to a configurable month → 366.
+   ═══════════════════════════════════════════════════════════ */
+const M13=[
+ {ka:'იანვარი',en:'January'},   {ka:'თებერვალი',en:'February'},
+ {ka:'მარტი',en:'March'},       {ka:'აპრილი',en:'April'},
+ {ka:'მაისი',en:'May'},         {ka:'ივნისი',en:'June'},
+ {ka:'სოლი',en:'Sol'},          {ka:'ივლისი',en:'July'},
+ {ka:'აგვისტო',en:'August'},    {ka:'სექტემბერი',en:'September'},
+ {ka:'ოქტომბერი',en:'October'}, {ka:'ნოემბერი',en:'November'},
+ {ka:'დეკემბერი',en:'December'}
+];
+const SOL=6;                       // index of Sol
+const DOW=['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
+const DOW_FULL=['კვირა','ორშაბათი','სამშაბათი','ოთხშაბათი','ხუთშაბათი','პარასკევი','შაბათი'];
+const GMON=['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი',
+            'ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+
+function lengths(y,leapMonth){
+  const L=Array(13).fill(28);
+  L[SOL]=29;
+  if(isLeap(y))L[leapMonth]+=1;
+  return L;
+}
+function doy(y,m,d){
+  return Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/86400000)+1;
+}
+function fromDoy(y,n){
+  const t=new Date(Date.UTC(y,0,1)+(n-1)*86400000);
+  return{y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate(),dow:t.getUTCDay()};
+}
+/* Gregorian → 13-month */
+function toCal13(y,m,d,leapMonth){
+  const n=doy(y,m,d),L=lengths(y,leapMonth);
+  let rest=n;
+  for(let i=0;i<13;i++){
+    if(rest<=L[i])return{year:y,mi:i,day:rest,doy:n,
+      dow:new Date(Date.UTC(y,m-1,d)).getUTCDay(),
+      extra:(i===SOL&&rest===29)||(isLeap(y)&&i===leapMonth&&rest===L[i])};
+    rest-=L[i];
+  }
+  return null;
+}
+/* 13-month → Gregorian */
+function from13(y,mi,day,leapMonth){
+  const L=lengths(y,leapMonth);
+  if(day<1||day>L[mi])return null;
+  let n=day;
+  for(let i=0;i<mi;i++)n+=L[i];
+  return fromDoy(y,n);
+}
+const getLeap=()=>+document.getElementById('s-leap').value;
+const getMode=()=>document.getElementById('s-mode').value;
+
+/* ═══ UI ═══ */
+function setTab(t){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>
+    b.classList.toggle('active',['year','bday','conv'][i]===t));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+let _bdayMark=null;   // {mi,day} highlighted in the year grid
+
+function renderYear(){
+  const y=+document.getElementById('s-year').value;
+  const lm=getLeap(),mode=getMode();
+  const L=lengths(y,lm);
+  const total=L.reduce((a,b)=>a+b,0);
+  const today=new Date();
+  const isNow=today.getUTCFullYear()===y;
+  const tCal=isNow?toCal13(today.getUTCFullYear(),today.getUTCMonth()+1,today.getUTCDate(),lm):null;
+
+  document.getElementById('year-info').innerHTML=
+    `${y} — ${isLeap(y)?'<b style="color:#f0a04b">ნაკიანი წელი</b>':'ჩვეულებრივი წელი'} ·
+     სულ <b style="color:#f0d080">${total}</b> დღე ·
+     სოლი <b style="color:#f0a04b">29</b> დღე ·
+     ${isLeap(y)?'დამატებითი დღე: <b style="color:#f0a04b">'+M13[lm].ka+' '+L[lm]+'</b>':'დამატებითი დღე არ არის'}`;
+
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML=M13.map((mo,i)=>{
+    // weekday offset of day 1
+    let off=0;
+    if(mode==='real'){
+      const g=from13(y,i,1,lm);
+      off=g?new Date(Date.UTC(g.y,g.m-1,g.d)).getUTCDay():0;
+    }
+    let cells='';
+    for(let k=0;k<off;k++)cells+='<div class="day empty"></div>';
+    for(let d=1;d<=L[i];d++){
+      const extra=(i===SOL&&d===29)||(isLeap(y)&&i===lm&&d===L[i]&&L[i]>28&&!(i===SOL&&d===29));
+      const isToday=tCal&&tCal.mi===i&&tCal.day===d;
+      const isB=_bdayMark&&_bdayMark.mi===i&&_bdayMark.day===d;
+      cells+=`<div class="day${extra?' extra':''}${isToday?' today':''}${isB?' bday':''}"
+        title="${M13[i].ka} ${d}">${d}</div>`;
+    }
+    return `<div class="month${i===SOL?' sol':''}">
+      <div class="month-head">
+        <span class="month-name">${mo.ka}</span>
+        <span class="month-num">${i+1} · ${L[i]} დღე</span>
+      </div>
+      <div class="days">${DOW.map(x=>'<div class="dow">'+x+'</div>').join('')}</div>
+      <div class="days">${cells}</div>
+    </div>`;
+  }).join('');
+}
+
+function calcBirthday(){
+  const d=+document.getElementById('b-day').value,
+        m=+document.getElementById('b-month').value,
+        y=+document.getElementById('b-year').value;
+  const lm=getLeap();
+  const c=toCal13(y,m,d,lm);
+  const box=document.getElementById('b-result');
+  if(!c){box.innerHTML='<div class="result">⚠ არასწორი თარიღი</div>';return;}
+  _bdayMark={mi:c.mi,day:c.day};
+
+  // this year's equivalent + days to next
+  const now=new Date();
+  const ny=now.getUTCFullYear();
+  let g=from13(ny,c.mi,c.day,lm);
+  if(!g)g=from13(ny,c.mi,c.day-1,lm);           // day 29 in a non-leap month
+  let nextY=ny,gNext=g;
+  const todayUTC=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+  if(g&&Date.UTC(g.y,g.m-1,g.d)<todayUTC){
+    nextY=ny+1;
+    gNext=from13(nextY,c.mi,c.day,lm)||from13(nextY,c.mi,c.day-1,lm);
+  }
+  const daysTo=gNext?Math.round((Date.UTC(gNext.y,gNext.m-1,gNext.d)-todayUTC)/86400000):null;
+  const ageMs=todayUTC-Date.UTC(y,m-1,d);
+  const ageY=Math.floor(ageMs/86400000/365.2425);
+  const cyclesOf28=Math.floor(ageMs/86400000/28);
+
+  box.innerHTML=`<div class="result">
+    <div class="big">${M13[c.mi].ka} ${c.day}</div>
+    <div class="k" style="margin-bottom:8px">${M13[c.mi].en} ${c.day} · ${c.mi+1}-ე თვე
+      ${c.extra?'<b style="color:#f0a04b"> · დამატებითი დღე!</b>':''}</div>
+    <div><span class="k">გრიგორიანული:</span> <span class="v">${d} ${GMON[m-1]} ${y}</span></div>
+    <div><span class="k">კვირის დღე:</span> <span class="v">${DOW_FULL[c.dow]}</span></div>
+    <div><span class="k">წლის დღე:</span> <span class="v">${c.doy}</span> / ${lengths(y,lm).reduce((a,b)=>a+b,0)}</div>
+    <div><span class="k">კვირა თვეში:</span> <span class="v">${Math.ceil(c.day/7)}</span></div>
+    <div><span class="k">ასაკი:</span> <span class="v">${ageY} წელი</span>
+      <span class="k">· ${cyclesOf28.toLocaleString('ka-GE')} სრული 28-დღიანი ციკლი</span></div>
+    ${gNext?`<div><span class="k">შემდეგი დაბადების დღე:</span>
+      <span class="v">${M13[c.mi].ka} ${c.day}, ${nextY}</span>
+      <span class="k">= ${gNext.d} ${GMON[gNext.m-1]} ${gNext.y} · ${DOW_FULL[gNext.dow]}
+      · ${daysTo} დღეში</span></div>`:''}
+  </div>
+  ${c.mi===SOL?'<div class="note">🟠 შენ სოლის თვეში ხარ დაბადებული — თვე, რომელიც გრიგორიანულ კალენდარში არ არსებობს.</div>':''}
+  ${c.day===29?'<div class="note">⚠ 29-ე დღე მხოლოდ სოლში (და ნაკიან წელს არჩეულ თვეში) არსებობს — სხვა წლებში დაბადების დღე 28-ზე გადადის.</div>':''}`;
+
+  document.getElementById('s-year').value=nextY;
+  renderYear();
+  setTab('year');
+  setTimeout(()=>setTab('bday'),0);
+}
+
+function convG(){
+  const d=+document.getElementById('g-day').value,
+        m=+document.getElementById('g-month').value,
+        y=+document.getElementById('g-year').value;
+  const c=toCal13(y,m,d,getLeap());
+  document.getElementById('g-result').innerHTML=c?`<div class="result">
+    <div class="big">${M13[c.mi].ka} ${c.day}, ${y}</div>
+    <div><span class="k">თვე №</span> <span class="v">${c.mi+1}</span>
+      <span class="k">· წლის დღე</span> <span class="v">${c.doy}</span>
+      <span class="k">· ${DOW_FULL[c.dow]}</span></div>
+  </div>`:'<div class="result">⚠ არასწორი თარიღი</div>';
+}
+function convT(){
+  const mi=+document.getElementById('t-month').value,
+        d=+document.getElementById('t-day').value,
+        y=+document.getElementById('t-year').value;
+  const g=from13(y,mi,d,getLeap());
+  document.getElementById('t-result').innerHTML=g?`<div class="result">
+    <div class="big">${g.d} ${GMON[g.m-1]} ${g.y}</div>
+    <div><span class="k">${DOW_FULL[g.dow]}</span></div>
+  </div>`:`<div class="result">⚠ ${M13[mi].ka}-ს ${y} წელს ${d}-ე დღე არ აქვს</div>`;
+}
+
+/* init */
+(function(){
+  const now=new Date();
+  document.getElementById('s-year').value=now.getUTCFullYear();
+  document.getElementById('g-year').value=now.getUTCFullYear();
+  document.getElementById('t-year').value=now.getUTCFullYear();
+  document.getElementById('g-day').value=now.getUTCDate();
+  document.getElementById('g-month').value=now.getUTCMonth()+1;
+  document.getElementById('t-month').innerHTML=M13.map((m,i)=>
+    `<option value="${i}">${i+1}. ${m.ka}</option>`).join('');
+  renderYear();
+})();
+</script>
+</body>
+</html>
