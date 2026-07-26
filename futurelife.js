@@ -313,31 +313,62 @@ async function scan(target,resultEl,p){
   resultEl.querySelectorAll('.fl-chart-btn').forEach(b=>{b.onclick=()=>showFuture(b.dataset.k);});
 }
 
-/* ═══ 7. FUTURE NATAL ONLY (no dragon wheel) ═══════════════════ */
-/* ═══ 7. FUTURE NATAL WHEEL + COUNTRY RISING SIGNS ═════════════ */
+
+/* ═══ 7. FUTURE NATAL — Sun-IC line through current birthplace ═ */
 const FL_LATS=[60,52,45,40,35,28,20,10,0,-15,-30];
-let _flCur=null;
+const SID=15.0410686;                       // GST degrees per UT hour
+const normLon=l=>{const r=norm(l);return r>180?r-360:r;};
+
+/* solve UT hour where the Sun's IC line falls on lon0 */
+async function solveSunIC(y,m,d,lon0){
+  const at=async(h,mi)=>{
+    const r=await fetch(`${BACKEND}/chart`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({year:y,month:m,day:d,hour:h,minute:mi||0,second:0,lat:0,lon:0,tz_name:'UTC'})});
+    const j=await r.json();
+    if(j.mc==null||!j.planets?.['მზე'])return null;
+    return{gst:norm(ecl2eq(j.mc).ra),sunRA:norm(ecl2eq(j.planets['მზე'].degree).ra)};
+  };
+  let s=await at(0,0);if(!s)return null;
+  let hours=norm(norm(s.sunRA+180-lon0)-s.gst)/SID;
+  for(let i=0;i<2;i++){
+    const H=Math.floor(hours),M=Math.round((hours-H)*60);
+    const s2=await at(H%24,M>=60?59:M);
+    if(!s2)break;
+    const icNow=normLon(s2.sunRA-s2.gst+180);
+    const err=sdiff(lon0,icNow);            // degrees of longitude to correct
+    if(Math.abs(err)<0.05)break;
+    hours=norm(hours*SID+err)/SID;
+  }
+  const H=Math.floor(hours),M=Math.round((hours-H)*60);
+  const hh=(M>=60?H+1:H)%24, mm=M>=60?0:M;
+  const chk=await at(hh,mm);
+  const orb=chk?Math.abs(sdiff(lon0,normLon(chk.sunRA-chk.gst+180))):null;
+  return{hour:hh,minute:mm,orb};
+}
 
 async function showFuture(key){
   try{
     const[y,m,d]=key.split('-').map(Number);
-    let fut=window._flCharts&&window._flCharts[key];
-    if(!fut){
-      fut=await fetchChart({year:y,month:m,day:d,hour:12,minute:0,second:0,
-        lat:_flPerson.lat,lon:_flPerson.lon,tz_name:_flPerson.tz_name});
-      fut._timeUnknown=false;
-    }
-    _flCur={key,y,m,d,fut};
-    drawFutureWheel(fut,y,m,d,null);
-    await buildRisingTable(y,m,d);
+    const ca=document.getElementById('chart-area');
+    document.getElementById('mode-label').textContent='🕐 დაბადების დროის ამოხსნა (☉-IC ხაზი)...';
+    const t=await solveSunIC(y,m,d,_flPerson.lon);
+    const hh=t?t.hour:12,mm=t?t.minute:0;
+    const fut=await fetchChart({year:y,month:m,day:d,hour:hh,minute:mm,second:0,
+      lat:_flPerson.lat,lon:_flPerson.lon,tz_name:'UTC'});
+    fut._timeUnknown=false;
+    _flCur={y,m,d,hh,mm,fut,icOrb:t?t.orb:null};
+    drawFutureWheel(fut,null);
+    await buildRisingTable();
   }catch(e){showError(e.message);}
 }
 
-function drawFutureWheel(chart,y,m,d,place){
+function drawFutureWheel(chart,place){
+  const{y,m,d,hh,mm,icOrb}=_flCur;
   const name=document.getElementById('fl-name').value||'';
+  const pad=n=>String(n).padStart(2,'0');
   const loc=place?' · '+place.country+' '+Math.abs(place.lat)+'°'+(place.lat>=0?'N':'S'):'';
-  showSingleChart(chart,'🐉 '+name+' — მომავალი ნატალი '+d+'.'+m+'.'+y+loc,false);
-  // comparison toggle
+  const orb=icOrb!=null?' · ☉IC±'+icOrb.toFixed(2)+'°':'';
+  showSingleChart(chart,'🐉 '+name+' — მომავალი ნატალი '+d+'.'+m+'.'+y+' '+pad(hh)+':'+pad(mm)+' UT'+loc+orb,false);
   const ml=document.getElementById('mode-label');
   const old=document.getElementById('fl-cmp-btn');if(old)old.remove();
   if(ml){
@@ -348,18 +379,17 @@ function drawFutureWheel(chart,y,m,d,place){
     b.onclick=()=>{
       const cross=calcCrossAspects(_flNatal.planets,chart.planets);
       showDoubleChart(_flNatal,chart,'ნატალი',''+y,'🐉 ნატალი × მომავალი '+d+'.'+m+'.'+y,cross);
-      const w=document.getElementById('fl-rising-wrap'),ca=document.getElementById('chart-area');
-      if(w&&ca)ca.appendChild(w);
-      const w2=document.getElementById('future-life-wrap');if(w2&&ca)ca.appendChild(w2);
+      const ca=document.getElementById('chart-area');
+      ['fl-rising-wrap','future-life-wrap'].forEach(id=>{const w=document.getElementById(id);if(w&&ca)ca.appendChild(w);});
     };
   }
   const ca=document.getElementById('chart-area');
-  const rw=document.getElementById('fl-rising-wrap');if(rw&&ca)ca.appendChild(rw);
-  const w2=document.getElementById('future-life-wrap');if(w2&&ca)ca.appendChild(w2);
+  ['fl-rising-wrap','future-life-wrap'].forEach(id=>{const w=document.getElementById(id);if(w&&ca)ca.appendChild(w);});
   if(_flMap)setTimeout(()=>_flMap.invalidateSize(),60);
 }
 
-async function buildRisingTable(y,m,d){
+async function buildRisingTable(){
+  const{y,m,d,hh,mm}=_flCur;
   const ca=document.getElementById('chart-area');
   let wrap=document.getElementById('fl-rising-wrap');
   if(!wrap){
@@ -368,7 +398,7 @@ async function buildRisingTable(y,m,d){
   }
   ca.appendChild(wrap);
   const lon=_flPerson.lon;
-  wrap.innerHTML='<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(240,208,128,.8);margin-bottom:8px">🌍 მომავალი ქვეყნები — ასცენდენტი</div><div style="color:#a78bfa;font-size:12px">⏳ გამოთვლა IC მერიდიანზე...</div>';
+  wrap.innerHTML='<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(240,208,128,.8);margin-bottom:8px">🌍 მომავალი ქვეყნები — ასცენდენტი</div><div style="color:#a78bfa;font-size:12px">⏳ ☉-IC მერიდიანზე...</div>';
   const rows=[];
   for(const lat of FL_LATS){
     let country=null;
@@ -378,21 +408,20 @@ async function buildRisingTable(y,m,d){
     }catch(e){}
     if(!country)continue;
     try{
-      const ch=await fetchChart({year:y,month:m,day:d,hour:12,minute:0,second:0,
-        lat,lon,tz_name:_flPerson.tz_name});
+      const ch=await fetchChart({year:y,month:m,day:d,hour:hh,minute:mm,second:0,lat,lon,tz_name:'UTC'});
       if(ch.asc==null)continue;
       ch._timeUnknown=false;
       rows.push({country,lat,asc:ch.asc,mc:ch.mc,chart:ch});
     }catch(e){}
-    wrap.querySelector('div:last-child').textContent='⏳ '+(rows.length)+' ქვეყანა...';
+    const ld=wrap.querySelector('div:last-child');if(ld)ld.textContent='⏳ '+rows.length+' ქვეყანა...';
     await new Promise(s=>setTimeout(s,320));
   }
   if(!rows.length){wrap.innerHTML+='<div style="color:#9ba8b8;font-size:11px">ოკეანე — ქვეყნები ვერ მოიძებნა</div>';return;}
   window._flRows=rows;
-  const mcSi=Math.floor(rows[0].mc/30)%12;
   wrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(240,208,128,.8);margin-bottom:6px">🌍 მომავალი ქვეყნები — ასცენდენტი</div>
-    <div style="font-size:11px;color:#9ba8b8;margin-bottom:8px">IC მერიდიანი <b style="color:#f0c96b">${Math.abs(lon).toFixed(2)}° ${lon>=0?'აღმ':'დას'}</b>
-      · MC ერთნაირია ყველგან: <b style="color:#e8c06e">${fmtL(rows[0].mc)}</b> · განედი ცვლის მხოლოდ ასცენდენტს</div>
+    <div style="font-size:11px;color:#9ba8b8;margin-bottom:8px">მომავალი ☉-IC ხაზი გადის ამჟამინდელ დაბადების ადგილზე
+      <b style="color:#f0c96b">${Math.abs(lon).toFixed(2)}° ${lon>=0?'აღმ':'დას'}</b> — ეს განსაზღვრავს დროს ·
+      MC ყველგან: <b style="color:#e8c06e">${fmtL(rows[0].mc)}</b> · განედი ცვლის მხოლოდ ასცენდენტს</div>
     <table style="width:100%"><thead><tr><th>ქვეყანა</th><th>განედი</th><th>ასცენდენტი</th><th></th></tr></thead><tbody>
     ${rows.map((r,i)=>{const si=Math.floor(r.asc/30)%12;
       return `<tr>
@@ -403,10 +432,9 @@ async function buildRisingTable(y,m,d){
         <td><button data-i="${i}" class="fl-loc-btn" style="background:none;border:1px solid rgba(240,201,107,.5);color:#f0c96b;border-radius:6px;padding:1px 9px;font-size:10px;cursor:pointer;font-family:inherit">📜 რუქა</button></td>
       </tr>`;}).join('')}
     </tbody></table>
-    <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">ერთი და იგივე მომენტი, სხვადასხვა განედი — თითო ქვეყანა თავისი ამომავალი ნიშნით</div>`;
+    <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">ერთი მომენტი, სხვადასხვა განედი — თითო ქვეყანა თავისი ამომავალი ნიშნით</div>`;
   wrap.querySelectorAll('.fl-loc-btn').forEach(b=>{
-    b.onclick=()=>{const r=window._flRows[+b.dataset.i];
-      drawFutureWheel(r.chart,y,m,d,r);};
+    b.onclick=()=>{const r=window._flRows[+b.dataset.i];drawFutureWheel(r.chart,r);};
   });
 }
 
