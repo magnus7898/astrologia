@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>მარსული ასტროლოგია</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="constellations.js"></script>
 <style>
 :root{--void:#0a0503;--rust:#c2542a;--rust-l:#f08050;--dust:#e8b07a;--gold:#e0a850;
-  --txt:#f0ddc8;--dim:rgba(200,160,130,0.55);--earth:#5b9ec4}
+  --txt:#f0ddc8;--dim:rgba(200,160,130,0.55);--earth:#5b9ec4;--cet:#5a8a9a}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
   min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;position:relative}
@@ -56,12 +57,14 @@ td{padding:5px 10px;border-bottom:1px solid rgba(30,14,6,.9);font-size:12px}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(60,26,10,.4)}
 .deg{font-family:'Cinzel',serif;font-size:11px;color:#e8ceb0;white-space:nowrap}
+.lat{font-size:9px;color:rgba(200,160,130,.45)}
 .badge{display:inline-block;background:rgba(60,24,10,.7);border:1px solid rgba(194,84,42,.4);
   border-radius:4px;padding:1px 6px;font-size:10px;color:var(--dust);font-family:'Cinzel',serif}
 .retro{color:#f87171;font-size:9px}
 .note{font-size:10px;color:rgba(200,160,130,.45);line-height:1.7;margin-top:10px}
 .hl{background:rgba(91,158,196,.12);border-left:3px solid var(--earth);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;line-height:1.9}
 .oph{background:rgba(176,120,64,.12);border-left:3px solid #b07840;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;line-height:1.8}
+.cet{background:rgba(90,138,154,.14);border-left:3px solid var(--cet);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;line-height:1.8}
 .err{background:rgba(200,40,40,.15);border:1px solid rgba(220,60,60,.4);border-radius:8px;
   color:#f87171;font-size:12px;padding:10px 14px;margin-top:10px}
 </style>
@@ -72,7 +75,7 @@ tr:hover td{background:rgba(60,26,10,.4)}
   <div class="globe"></div>
   <div class="hero-eyebrow">არეოცენტრული ზოდიაქო</div>
   <h1 class="hero-title">მარსული ასტროლოგია</h1>
-  <p class="hero-sub">Areocentric · Olympus Mons · Tropical &amp; True Sidereal</p>
+  <p class="hero-sub">Areocentric &middot; Olympus Mons &middot; IAU 14 constellations</p>
 </div>
 
 <div class="panel">
@@ -96,9 +99,9 @@ tr:hover td{background:rgba(60,26,10,.4)}
           <option value="-42.4,70.5">🕳 ჰელასის აუზი</option>
           <option value="25.02,147.21">🌋 ელისიუმ მონსი</option>
         </select></div>
-      <div class="field" style="min-width:170px"><label>ზოდიაქო</label>
+      <div class="field" style="min-width:180px"><label>ზოდიაქო</label>
         <select id="i-mode">
-          <option value="sid" selected>✦ ნამდვილი სიდერიული (13)</option>
+          <option value="sid" selected>✦ ნამდვილი სიდერიული (IAU)</option>
           <option value="trop">○ ტროპიკული (12)</option>
         </select></div>
       <div class="field"><label>სახელი</label><input id="i-name" placeholder="სახელი"></div>
@@ -111,6 +114,7 @@ tr:hover td{background:rgba(60,26,10,.4)}
   <div id="out" style="display:none">
     <div class="sec" id="lbl"></div>
     <svg id="wheel" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="cetbox"></div>
     <div id="ophbox"></div>
     <div id="earthbox"></div>
     <div class="sec">სხეულები</div>
@@ -140,49 +144,40 @@ tr:hover td{background:rgba(60,26,10,.4)}
 </div>
 
 <script>
-/* ═══ AREOCENTRIC · TROPICAL + TRUE SIDEREAL ══════════════════
-   Positions: JPL Keplerian elements → heliocentric J2000 ecliptic,
-   vector-subtracted to Mars → areocentric J2000 longitudes.
-   TRUE SIDEREAL: J2000 longitudes vs IAU constellation ecliptic
-   boundaries (13 constellations, Ophiuchus included) — no ayanamsa,
-   the actual sky.
-   TROPICAL: J2000 longitudes + general precession to date.
+/* ═══ AREOCENTRIC ASTROLOGY · TROPICAL + TRUE SIDEREAL ════════
+   Positions : JPL Keplerian elements → heliocentric J2000 ecliptic
+               vectors, subtracted from Mars → areocentric lon+lat.
+   Sidereal  : real 2-D IAU constellation lookup (constellations.js,
+               Roman 1987 / B1875) — 14 constellations reachable from
+               Mars, including Ophiuchus and Cetus, because Mars's
+               orbit is inclined 1.85° to the ecliptic.
+   Tropical  : J2000 longitudes + general precession to date.
    ════════════════════════════════════════════════════════════ */
-const $=id=>document.getElementById(id);
+const $=function(id){return document.getElementById(id);};
 const D2R=Math.PI/180,R2D=180/Math.PI,EPS=23.4392911*D2R;
-const norm=x=>((x%360)+360)%360;
-const PREC_CY=1.396971;                 // general precession °/century
+const norm=function(x){return((x%360)+360)%360;};
+const PREC_CY=1.396971;                 /* general precession °/century */
 
 const SIGN_KA=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
 const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎'];
 const ZCOL=['#e05252','#8aab6e','#89b4d4','#5b8ec4','#d4602e','#7a9e6a','#7fb8d8','#4a7ab0','#c84a32','#6b9062','#90c0dc','#6688c0'];
 
-/* IAU constellation boundaries along the ecliptic (J2000 longitude) */
-const CONST=[
- {ka:'ვერძი',      en:'Aries',       sym:'♈︎',s:28.69, e:53.42, c:'#e05252'},
- {ka:'კურო',       en:'Taurus',      sym:'♉︎',s:53.42, e:90.14, c:'#8aab6e'},
- {ka:'ტყუპები',    en:'Gemini',      sym:'♊︎',s:90.14, e:117.97,c:'#89b4d4'},
- {ka:'კირჩხიბი',   en:'Cancer',      sym:'♋︎',s:117.97,e:138.16,c:'#5b8ec4'},
- {ka:'ლომი',       en:'Leo',         sym:'♌︎',s:138.16,e:173.94,c:'#d4602e'},
- {ka:'ქალწული',    en:'Virgo',       sym:'♍︎',s:173.94,e:217.81,c:'#7a9e6a'},
- {ka:'სასწორი',    en:'Libra',       sym:'♎︎',s:217.81,e:241.15,c:'#7fb8d8'},
- {ka:'მორიელი',    en:'Scorpius',    sym:'♏︎',s:241.15,e:247.66,c:'#4a7ab0'},
- {ka:'გველისმჭერი',en:'Ophiuchus',   sym:'⛎', s:247.66,e:266.36,c:'#b07840'},
- {ka:'მშვილდოსანი',en:'Sagittarius', sym:'♐︎',s:266.36,e:299.66,c:'#c84a32'},
- {ka:'თხის რქა',   en:'Capricornus', sym:'♑︎',s:299.66,e:327.53,c:'#6b9062'},
- {ka:'მერწყული',   en:'Aquarius',    sym:'♒︎',s:327.53,e:351.60,c:'#90c0dc'},
- {ka:'თევზები',    en:'Pisces',      sym:'♓︎',s:351.60,e:388.69,c:'#6688c0'}
+/* longitude bands of the 13 ecliptic constellations — wheel drawing only */
+const BAND=[
+ {s:28.69, e:53.42, sym:'♈︎',col:'#e05252',ka:'ვერძი'},
+ {s:53.42, e:90.14, sym:'♉︎',col:'#8aab6e',ka:'კურო'},
+ {s:90.14, e:117.97,sym:'♊︎',col:'#89b4d4',ka:'ტყუპები'},
+ {s:117.97,e:138.16,sym:'♋︎',col:'#5b8ec4',ka:'კირჩხიბი'},
+ {s:138.16,e:173.94,sym:'♌︎',col:'#d4602e',ka:'ლომი'},
+ {s:173.94,e:217.81,sym:'♍︎',col:'#7a9e6a',ka:'ქალწული'},
+ {s:217.81,e:241.15,sym:'♎︎',col:'#7fb8d8',ka:'სასწორი'},
+ {s:241.15,e:247.66,sym:'♏︎',col:'#4a7ab0',ka:'მორიელი'},
+ {s:247.66,e:266.36,sym:'⛎', col:'#b07840',ka:'გველისმჭერი'},
+ {s:266.36,e:299.66,sym:'♐︎',col:'#c84a32',ka:'მშვილდოსანი'},
+ {s:299.66,e:327.53,sym:'♑︎',col:'#6b9062',ka:'თხის რქა'},
+ {s:327.53,e:351.60,sym:'♒︎',col:'#90c0dc',ka:'მერწყული'},
+ {s:351.60,e:388.69,sym:'♓︎',col:'#6688c0',ka:'თევზები'}
 ];
-function constOf(lonJ2000){
-  const L=norm(lonJ2000);
-  for(let i=0;i<CONST.length;i++){
-    const c=CONST[i];
-    let a=c.s,b=c.e,x=L;
-    if(b>360){ if(x<a)x+=360; }
-    if(x>=a&&x<b)return{i:i,c:c,deg:x-a,span:b-a};
-  }
-  return{i:12,c:CONST[12],deg:0,span:CONST[12].e-CONST[12].s};
-}
 
 const KEP={
  'მერკური':[0.38709927,0.20563593,7.00497902,252.25032350,77.45779628,48.33076593,
@@ -214,7 +209,7 @@ const PI_={
 };
 const ORDER=['მზე','დედამიწა','მერკური','ვენერა','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი','ფობოსი','დეიმოსი','AC','MC'];
 
-const jd=dt=>dt.getTime()/86400000+2440587.5;
+const jd=function(dt){return dt.getTime()/86400000+2440587.5;};
 
 function helio(k,T){
   const e0=KEP[k];
@@ -229,32 +224,35 @@ function helio(k,T){
          (cw*sO+sw*cO*ci)*xp+(-sw*sO+cw*cO*ci)*yp,
          (sw*si)*xp+(cw*si)*yp];
 }
-const sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]];
-const lonOf=v=>norm(Math.atan2(v[1],v[0])*R2D);
-const crossV=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
-const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
-const unit=v=>{const n=Math.hypot(v[0],v[1],v[2]);return[v[0]/n,v[1]/n,v[2]/n];};
+const sub=function(a,b){return[a[0]-b[0],a[1]-b[1],a[2]-b[2]];};
+const crossV=function(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];};
+const dot=function(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];};
+const unit=function(v){const n=Math.hypot(v[0],v[1],v[2]);return[v[0]/n,v[1]/n,v[2]/n];};
+const lonOf=function(v){return norm(Math.atan2(v[1],v[0])*R2D);};
 
-function areo(J){
-  const T=(J-2451545.0)/36525;
-  const mars=helio('მარსი',T),out={};
-  out['მზე']=lonOf([-mars[0],-mars[1],-mars[2]]);
-  const list=['მერკური','ვენერა','დედამიწა','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
-  for(let i=0;i<list.length;i++)out[list[i]]=lonOf(sub(helio(list[i],T),mars));
+/* areocentric direction → ecliptic longitude AND latitude */
+function areoFull(J){
+  const T=(J-2451545.0)/36525,mars=helio('მარსი',T),out={};
+  const ll=function(v){const r=Math.hypot(v[0],v[1],v[2]);
+    return{lon:norm(Math.atan2(v[1],v[0])*R2D),lat:Math.asin(v[2]/r)*R2D};};
+  out['მზე']=ll([-mars[0],-mars[1],-mars[2]]);
+  const L=['მერკური','ვენერა','დედამიწა','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
+  for(let i=0;i<L.length;i++)out[L[i]]=ll(sub(helio(L[i],T),mars));
   return out;
 }
 function marsFrame(J){
   const T=(J-2451545.0)/36525,d=J-2451545.0;
   const a0=(317.68143-0.1061*T)*D2R,d0=(52.88650-0.0609*T)*D2R,W=norm(176.630+350.89198226*d)*D2R;
-  const eq2ec=v=>[v[0],v[1]*Math.cos(EPS)+v[2]*Math.sin(EPS),-v[1]*Math.sin(EPS)+v[2]*Math.cos(EPS)];
+  const eq2ec=function(v){return[v[0],v[1]*Math.cos(EPS)+v[2]*Math.sin(EPS),
+                                 -v[1]*Math.sin(EPS)+v[2]*Math.cos(EPS)];};
   const pole=eq2ec([Math.cos(d0)*Math.cos(a0),Math.cos(d0)*Math.sin(a0),Math.sin(d0)]);
-  const bf2eq=v=>{
+  const bf2eq=function(v){
     const z1=a0+Math.PI/2,x1=Math.PI/2-d0;
     let p=[v[0]*Math.cos(W)-v[1]*Math.sin(W),v[0]*Math.sin(W)+v[1]*Math.cos(W),v[2]];
     p=[p[0],p[1]*Math.cos(x1)-p[2]*Math.sin(x1),p[1]*Math.sin(x1)+p[2]*Math.cos(x1)];
     return[p[0]*Math.cos(z1)-p[1]*Math.sin(z1),p[0]*Math.sin(z1)+p[1]*Math.cos(z1),p[2]];
   };
-  return{pole:unit(pole),bf2ec:v=>eq2ec(bf2eq(v))};
+  return{pole:unit(pole),bf2ec:function(v){return eq2ec(bf2eq(v));}};
 }
 function angles(J,lat,lonE){
   const fr=marsFrame(J),pole=fr.pole;
@@ -267,8 +265,10 @@ function angles(J,lat,lonE){
 }
 function moons(J){
   const d=J-2451545.0,fr=marsFrame(J);
-  const mk=(L,inc)=>{const t=norm(L)*D2R,i=inc*D2R;
-    return lonOf(fr.bf2ec([Math.cos(t),Math.sin(t)*Math.cos(i),Math.sin(t)*Math.sin(i)]));};
+  const mk=function(L,inc){const t=norm(L)*D2R,i=inc*D2R;
+    const v=fr.bf2ec([Math.cos(t),Math.sin(t)*Math.cos(i),Math.sin(t)*Math.sin(i)]);
+    const r=Math.hypot(v[0],v[1],v[2]);
+    return{lon:norm(Math.atan2(v[1],v[0])*R2D),lat:Math.asin(v[2]/r)*R2D};};
   return{'ფობოსი':mk(232.41+1128.8445850*d,1.093),'დეიმოსი':mk(28.96+285.1618970*d,1.791)};
 }
 
@@ -279,10 +279,14 @@ const ASP=[{n:'შეერთება',a:[0],o:10,s:'☌',c:'#f9c646'},{n:'ო
 /* ═══ WHEEL ═══ */
 const CX=350,CY=350,R1=268,R2=200,R3=132,R4=100;
 const NS='http://www.w3.org/2000/svg';
-const el=(t,at,p)=>{const e=document.createElementNS(NS,t);for(const k in at)e.setAttribute(k,at[k]);if(p)p.appendChild(e);return e;};
-const txt=(p,s,x,y,at)=>{const e=el('text',Object.assign({'text-anchor':'middle','dominant-baseline':'central',x:x,y:y},at||{}),p);e.textContent=s;return e;};
-const e2s=(ec,asc)=>(-(ec-asc))*D2R+Math.PI;
-const fmt2=d=>{const x=Math.floor(d);return x+'°'+String(Math.floor((d-x)*60)).padStart(2,'0')+"'";};
+const el=function(t,at,p){const e=document.createElementNS(NS,t);
+  for(const k in at)e.setAttribute(k,at[k]); if(p)p.appendChild(e); return e;};
+const txt=function(p,s,x,y,at){
+  const e=el('text',Object.assign({'text-anchor':'middle','dominant-baseline':'central',x:x,y:y},at||{}),p);
+  e.textContent=s; return e;};
+const e2s=function(ec,asc){return(-(ec-asc))*D2R+Math.PI;};
+const fmt2=function(d){const x=Math.floor(d);
+  return x+'°'+String(Math.floor((d-x)*60)).padStart(2,'0')+"'";};
 
 function drawWheel(P,asc,mc,houses,asps,sid){
   const svg=$('wheel');svg.innerHTML='';
@@ -292,10 +296,11 @@ function drawWheel(P,asc,mc,houses,asps,sid){
   el('stop',{offset:'100%','stop-color':'#0a0503'},g);
   el('rect',{width:700,height:700,fill:'url(#bg)'},svg);
 
-  const bands=sid?CONST.map(c=>({s:c.s,e:c.e,sym:c.sym,col:c.c,ka:c.ka}))
-                 :ZSYM.map((s,i)=>({s:i*30,e:(i+1)*30,sym:s,col:ZCOL[i],ka:SIGN_KA[i]}));
+  const bands=sid?BAND:ZSYM.map(function(s,i){
+    return{s:i*30,e:(i+1)*30,sym:s,col:ZCOL[i],ka:SIGN_KA[i]};});
   bands.forEach(function(b){
-    const p=(d,r)=>{const a=e2s(d,asc);return(CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
+    const p=function(d,r){const a=e2s(d,asc);
+      return(CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
     const span=b.e-b.s,la=span>180?1:0;
     el('path',{d:'M'+p(b.s,R1)+' A'+R1+','+R1+' 0 '+la+',0 '+p(b.e,R1)+
                  ' L'+p(b.e,R2)+' A'+R2+','+R2+' 0 '+la+',1 '+p(b.s,R2)+' Z',
@@ -306,7 +311,8 @@ function drawWheel(P,asc,mc,houses,asps,sid){
   });
   for(let d=0;d<360;d++){
     const a=e2s(d,asc),L=d%30===0?16:d%10===0?10:4;
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*(R1-L),y2:CY+Math.sin(a)*(R1-L),
+    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
+      x2:CX+Math.cos(a)*(R1-L),y2:CY+Math.sin(a)*(R1-L),
       stroke:d%30===0?'rgba(255,210,180,.9)':d%10===0?'rgba(240,128,80,.6)':'rgba(140,60,30,.5)',
       'stroke-width':d%30===0?1.6:d%10===0?1:.5},svg);
   }
@@ -324,7 +330,8 @@ function drawWheel(P,asc,mc,houses,asps,sid){
   el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(10,5,3,.95)',stroke:'rgba(120,50,25,.6)','stroke-width':1},svg);
   asps.forEach(function(a){
     const a1=e2s(P[a.p1].lon,asc),a2=e2s(P[a.p2].lon,asc);
-    el('line',{x1:CX+Math.cos(a1)*R4,y1:CY+Math.sin(a1)*R4,x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
+    el('line',{x1:CX+Math.cos(a1)*R4,y1:CY+Math.sin(a1)*R4,
+      x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
       stroke:a.color,'stroke-width':1,opacity:.5},svg);
   });
   const names=Object.keys(P),disp={};
@@ -353,8 +360,8 @@ function drawWheel(P,asc,mc,houses,asps,sid){
   });
   [['AC',asc],['MC',mc]].forEach(function(pair){
     const a=e2s(pair[1],asc);
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*(R1+22),y2:CY+Math.sin(a)*(R1+22),
-      stroke:'#f0a850','stroke-width':2.2},svg);
+    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
+      x2:CX+Math.cos(a)*(R1+22),y2:CY+Math.sin(a)*(R1+22),stroke:'#f0a850','stroke-width':2.2},svg);
     txt(svg,pair[0],CX+Math.cos(a)*(R1+40),CY+Math.sin(a)*(R1+40),
       {fill:'#f0a850','font-size':11,'font-weight':'bold','font-family':'Cinzel,serif'});
   });
@@ -364,63 +371,77 @@ function drawWheel(P,asc,mc,houses,asps,sid){
 function gen(){
   $('err').innerHTML='';
   try{
+    if(typeof iauFromEcliptic!=='function'){
+      $('err').innerHTML='<div class="err">⚠ constellations.js არ ჩაიტვირთა — შეამოწმეთ ფაილი რეპოზიტორიის ძირში</div>';
+      return;
+    }
     const y=+$('i-year').value,m=+$('i-month').value,d=+$('i-day').value,
           h=+$('i-hour').value,mi=+$('i-min').value;
     const dt=new Date(Date.UTC(y,m-1,d,h,mi,0));
     if(isNaN(dt.getTime())){$('err').innerHTML='<div class="err">⚠ არასწორი თარიღი</div>';return;}
     const J=jd(dt),T=(J-2451545.0)/36525;
     const sid=$('i-mode').value==='sid';
-    const shift=sid?0:PREC_CY*T;          // tropical = J2000 + precession to date
+    const shift=sid?0:PREC_CY*T;
     const parts=$('i-place').value.split(','),lat=+parts[0],lonE=+parts[1];
 
-    const A=areo(J),A2=areo(J+1),Mo=moons(J),Mo2=moons(J+0.02);
+    const F=areoFull(J),F2=areoFull(J+1),Mo=moons(J),Mo2=moons(J+0.02);
     const ang=angles(J,lat,lonE);
     const asc=norm(ang.asc+shift),mc=norm(ang.mc+shift);
 
     const P={};
-    for(const k in A){
-      let dl=A2[k]-A[k];if(dl>180)dl-=360;if(dl<-180)dl+=360;
-      P[k]={lon:norm(A[k]+shift),raw:A[k],retro:dl<0};
+    for(const k in F){
+      let dl=F2[k].lon-F[k].lon; if(dl>180)dl-=360; if(dl<-180)dl+=360;
+      P[k]={lon:norm(F[k].lon+shift),raw:F[k].lon,lat:F[k].lat,retro:dl<0};
     }
     for(const k in Mo){
-      let dl=Mo2[k]-Mo[k];if(dl>180)dl-=360;if(dl<-180)dl+=360;
-      P[k]={lon:norm(Mo[k]+shift),raw:Mo[k],retro:dl<0,approx:true};
+      let dl=Mo2[k].lon-Mo[k].lon; if(dl>180)dl-=360; if(dl<-180)dl+=360;
+      P[k]={lon:norm(Mo[k].lon+shift),raw:Mo[k].lon,lat:Mo[k].lat,retro:dl<0,approx:true};
     }
     const houses=[];for(let i=0;i<12;i++)houses.push(norm(asc+i*30));
-    const hOf=L=>Math.floor(norm(L-asc)/30)+1;
+    const hOf=function(L){return Math.floor(norm(L-asc)/30)+1;};
 
     const asps=[],ks=Object.keys(P);
     for(let i=0;i<ks.length;i++)for(let j=i+1;j<ks.length;j++){
       const raw=norm(P[ks[j]].lon-P[ks[i]].lon);
       let best=null,bo=999;
       for(let x=0;x<ASP.length;x++)for(let t=0;t<ASP[x].a.length;t++){
-        let df=Math.abs(raw-ASP[x].a[t]);if(df>180)df=360-df;
+        let df=Math.abs(raw-ASP[x].a[t]); if(df>180)df=360-df;
         if(df<=ASP[x].o&&df<bo){bo=df;best=ASP[x];}
       }
-      if(best)asps.push({p1:ks[i],p2:ks[j],type:best.n,sym:best.s,color:best.c,orb:Math.round(bo*100)/100});
+      if(best)asps.push({p1:ks[i],p2:ks[j],type:best.n,sym:best.s,color:best.c,
+                         orb:Math.round(bo*100)/100});
     }
-    asps.sort((a,b)=>a.orb-b.orb);
+    asps.sort(function(a,b){return a.orb-b.orb;});
 
     drawWheel(P,asc,mc,houses,asps,sid);
     $('out').style.display='block';
     const nm=$('i-name').value?$('i-name').value+' — ':'';
     const pl=$('i-place').options[$('i-place').selectedIndex].text;
-    $('lbl').textContent=nm+'მარსული რუქა · '+pl+' · '+(sid?'ნამდვილი სიდერიული':'ტროპიკული');
+    $('lbl').textContent=nm+'მარსული რუქა · '+pl+' · '+(sid?'ნამდვილი სიდერიული (IAU)':'ტროპიკული');
     $('ptitle').textContent=sid?'🪐 არეოცენტრული — IAU თანავარსკვლავედები':'🪐 არეოცენტრული — ტროპიკული';
 
-    /* body table */
+    /* sign / constellation of a body */
     const sigOf=function(v){
-      if(sid){const r=constOf(v.raw!=null?v.raw:v.lon);
-        return{sym:r.c.sym,ka:r.c.ka,col:r.c.c,deg:r.deg};}
+      if(sid){
+        const r=iauFromEcliptic(v.raw!=null?v.raw:v.lon, v.lat||0);
+        return{sym:r.sym,ka:r.ka,col:r.col,abbr:r.abbr,
+               deg:norm(v.raw!=null?v.raw:v.lon)%30,
+               lat:(v.lat!=null?v.lat:null)};
+      }
       const si=Math.floor(norm(v.lon)/30)%12;
-      return{sym:ZSYM[si],ka:SIGN_KA[si],col:ZCOL[si],deg:norm(v.lon)%30};
+      return{sym:ZSYM[si],ka:SIGN_KA[si],col:ZCOL[si],abbr:'',
+             deg:norm(v.lon)%30,lat:(v.lat!=null?v.lat:null)};
     };
-    $('ptb').innerHTML=ORDER.filter(n=>P[n]||n==='AC'||n==='MC').map(function(n){
-      const v=n==='AC'?{lon:asc,raw:ang.asc}:n==='MC'?{lon:mc,raw:ang.mc}:P[n];
+
+    const inWhat={};
+    $('ptb').innerHTML=ORDER.filter(function(n){return P[n]||n==='AC'||n==='MC';}).map(function(n){
+      const v=n==='AC'?{lon:asc,raw:ang.asc,lat:0}:n==='MC'?{lon:mc,raw:ang.mc,lat:0}:P[n];
       const s=sigOf(v),inf=PI_[n];
+      if(s.abbr)inWhat[n]=s.abbr;
       return '<tr><td><span style="color:'+inf.color+';font-family:serif;font-size:16px">'+inf.sym+'</span></td>'+
         '<td style="color:'+inf.color+';font-size:11px">'+n+(v.approx?' <span style="opacity:.5">≈</span>':'')+'</td>'+
-        '<td class="deg">'+fmt2(s.deg)+'</td>'+
+        '<td class="deg">'+fmt2(s.deg)+
+          (s.lat!=null&&sid?' <span class="lat">β'+(s.lat>=0?'+':'')+s.lat.toFixed(1)+'°</span>':'')+'</td>'+
         '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
         '<span style="font-size:10px;color:'+s.col+'">'+s.ka+'</span></td>'+
         '<td><span class="badge">H'+hOf(v.lon)+'</span></td>'+
@@ -430,7 +451,7 @@ function gen(){
     const ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
     const ANG={0:'AC',3:'IC',6:'DC',9:'MC'};
     $('htb').innerHTML=houses.map(function(hh,i){
-      const s=sigOf({lon:hh,raw:norm(hh-shift)}),a=ANG[i];
+      const s=sigOf({lon:hh,raw:norm(hh-shift),lat:0}),a=ANG[i];
       return '<tr><td style="color:'+(a?'#f0a850':'rgba(200,160,130,.7)')+';font-family:Cinzel,serif;font-size:11px">'+
         ROM[i]+(a?' <span style="font-size:9px;opacity:.7">'+a+'</span>':'')+'</td>'+
         '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
@@ -450,17 +471,30 @@ function gen(){
         '<td style="color:rgba(200,160,130,.65);font-size:10px">'+a.orb+'°</td></tr>';
     }).join('');
 
-    /* Ophiuchus notice */
+    /* Cetus + Ophiuchus notices */
     if(sid){
-      const inOph=ORDER.filter(n=>P[n]).filter(function(n){return constOf(P[n].raw).c.en==='Ophiuchus';});
-      $('ophbox').innerHTML='<div class="oph">⛎ <b style="color:#b07840">გველისმჭერი</b> — მე-13 თანავარსკვლავედი, '+
-        'ეკლიპტიკაზე '+(CONST[8].e-CONST[8].s).toFixed(1)+'° იკავებს (მორიელზე მეტს, რომელიც მხოლოდ '+
-        (CONST[7].e-CONST[7].s).toFixed(1)+'°-ია). '+
-        (inOph.length?'<b style="color:#f0c090">ამ რუქაში: '+inOph.join(' · ')+'</b>':
-        '<span style="color:rgba(200,160,130,.6)">ამ რუქაში ცარიელია.</span>')+'</div>';
-    }else $('ophbox').innerHTML='';
+      const cetL=[],ophL=[],oddL=[];
+      const zod=['Ari','Tau','Gem','Cnc','Leo','Vir','Lib','Sco','Sgr','Cap','Aqr','Psc'];
+      for(const n in inWhat){
+        if(inWhat[n]==='Cet')cetL.push(n);
+        else if(inWhat[n]==='Oph')ophL.push(n);
+        else if(zod.indexOf(inWhat[n])<0)oddL.push(n+' ('+IAU_KA[inWhat[n]]+')');
+      }
+      $('cetbox').innerHTML=cetL.length?
+        '<div class="cet">🐋 <b style="color:#5a8a9a">ვეშაპი (Cetus)</b> — მე-14 თანავარსკვლავედი, '+
+        'რომელსაც <b>მხოლოდ მარსიდან</b> კვეთს მზის გზა: მარსის ორბიტა ეკლიპტიკიდან 1.85°-ითაა დახრილი, '+
+        'ამიტომ მარსული მზე ეკლიპტიკური განედის ±1.85°-ს აღწევს და 6.2 სოლის განმავლობაში ვეშაპში შედის. '+
+        '<b style="color:#8ecad8">ამ რუქაში: '+cetL.join(' · ')+'</b></div>':'';
+      $('ophbox').innerHTML=
+        '<div class="oph">⛎ <b style="color:#b07840">გველისმჭერი (Ophiuchus)</b> — ეკლიპტიკაზე 18.7° '+
+        '(მორიელი მხოლოდ 6.5°-ია) · მარსული მზე აქ 35.2 სოლს ატარებს. '+
+        (ophL.length?'<b style="color:#f0c090">ამ რუქაში: '+ophL.join(' · ')+'</b>':
+         '<span style="color:rgba(200,160,130,.6)">ამ რუქაში ცარიელია.</span>')+
+        (oddL.length?'<br><span style="color:rgba(200,160,130,.7);font-size:11px">სხვა არაზოდიაქალური: '+oddL.join(' · ')+'</span>':'')+
+        '</div>';
+    }else{$('cetbox').innerHTML='';$('ophbox').innerHTML='';}
 
-    /* Earth panel */
+    /* Earth as inner planet */
     const eLon=P['დედამიწა'].lon,sLon=P['მზე'].lon;
     const el2=norm(eLon-sLon),elong=el2>180?360-el2:el2;
     const side=el2<180?'საღამოს':'დილის';
@@ -468,11 +502,14 @@ function gen(){
     $('earthbox').innerHTML='<div class="hl">'+
       '<b style="color:#5b9ec4">⊕ დედამიწა — '+es.ka+' '+fmt2(es.deg)+'</b> · სახლი '+hOf(eLon)+
       (P['დედამიწა'].retro?' · <span class="retro">℞ რეტროგრადი</span>':'')+'<br>'+
-      '<span style="color:rgba(200,160,130,.7);font-size:11px">მარსიდან დედამიწა შიდა პლანეტაა — მზისგან მაქსიმუმ 47° შორდება. '+
-      'ელონგაცია <b style="color:#5b9ec4">'+elong.toFixed(1)+'°</b> — '+side+' ვარსკვლავი.</span></div>';
+      '<span style="color:rgba(200,160,130,.7);font-size:11px">მარსიდან დედამიწა შიდა პლანეტაა — '+
+      'მზისგან მაქსიმუმ 47° შორდება. ელონგაცია <b style="color:#5b9ec4">'+elong.toFixed(1)+'°</b> — '+
+      side+' ვარსკვლავი. მთელი დედამიწის ისტორია ამ ერთ წერტილშია.</span></div>';
 
+    /* Mars time */
     const MSD=(J+69.184/86400-2451549.5)/1.0274912517+44796.0-0.0009626;
     const T2=(MSD%1)*24,hh2=Math.floor(T2),mm2=Math.floor((T2-hh2)*60);
+    const sunC=sid?iauFromEcliptic(P['მზე'].raw,P['მზე'].lat):null;
     $('mtime').innerHTML=
       '<span style="color:rgba(200,160,130,.55);font-size:11px">MTC:</span> '+
       '<b style="color:#f08050">'+String(hh2).padStart(2,'0')+':'+String(mm2).padStart(2,'0')+'</b>'+
@@ -480,48 +517,17 @@ function gen(){
       '<b style="color:#e8b07a">'+Math.floor(MSD).toLocaleString('ka-GE')+'</b>'+
       ' &nbsp;·&nbsp; <span style="color:rgba(200,160,130,.55);font-size:11px">ეკვატორის დახრა:</span> '+
       '<b style="color:#e0a850">'+ang.tilt.toFixed(2)+'°</b>'+
-      ' &nbsp;·&nbsp; <span style="color:rgba(200,160,130,.55);font-size:11px">ზოდიაქო:</span> '+
-      '<b style="color:#e0a850">'+(sid?'IAU 13 თანავარსკვლავედი':'ტროპიკული 12')+'</b><br>'+
+      (sunC?' &nbsp;·&nbsp; <span style="color:rgba(200,160,130,.55);font-size:11px">მზე:</span> '+
+        '<b style="color:'+sunC.col+'">'+sunC.ka+'</b>':'')+'<br>'+
       '<span style="color:rgba(200,160,130,.55);font-size:11px">ადგილი:</span> '+pl+
-      ' <span style="color:rgba(200,160,130,.5);font-size:10px">('+lat+'°, '+lonE+'°E)</span>';
+      ' <span style="color:rgba(200,160,130,.5);font-size:10px">('+lat+'°, '+lonE+'°E)</span>'+
+      ' &nbsp;·&nbsp; <span style="color:rgba(200,160,130,.5);font-size:10px">IAU საზღვრები: Roman 1987 · B1875</span>';
 
     $('out').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
     $('err').innerHTML='<div class="err">⚠ '+e.message+'</div>';
     console.error(e);
   }
-}
-
-  /* areocentric direction → ecliptic lon AND lat (degrees) */
-function areoFull(J){
-  const T=(J-2451545.0)/36525;
-  const mars=helio('მარსი',T),out={};
-  const ll=v=>{const r=Math.hypot(v[0],v[1],v[2]);
-    return{lon:norm(Math.atan2(v[1],v[0])*R2D),lat:Math.asin(v[2]/r)*R2D,d:r};};
-  out['მზე']=ll([-mars[0],-mars[1],-mars[2]]);
-  const list=['მერკური','ვენერა','დედამიწა','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
-  for(let i=0;i<list.length;i++)out[list[i]]=ll(sub(helio(list[i],T),mars));
-  return out;
-}
-/* ecliptic (J2000) → equatorial (J2000) */
-function ecl2eqFull(lon,lat){
-  const l=lon*D2R,b=lat*D2R;
-  const x=Math.cos(b)*Math.cos(l),
-        y=Math.cos(b)*Math.sin(l)*Math.cos(EPS)-Math.sin(b)*Math.sin(EPS),
-        z=Math.cos(b)*Math.sin(l)*Math.sin(EPS)+Math.sin(b)*Math.cos(EPS);
-  return{ra:norm(Math.atan2(y,x)*R2D),dec:Math.asin(z)*R2D};
-}
-/* J2000 → B1875, the frame IAU boundaries are defined in */
-function toB1875(ra,dec){
-  const t=(2405889.25868-2451545.0)/36525;     // B1875.0 in Julian centuries
-  const z=(2306.2181*t+1.09468*t*t)/3600*D2R,
-        th=(2004.3109*t-0.42665*t*t)/3600*D2R,
-        ze=(2306.2181*t+0.30188*t*t)/3600*D2R;
-  const a=ra*D2R,d=dec*D2R;
-  const A=Math.cos(d)*Math.sin(a+ze),
-        B=Math.cos(th)*Math.cos(d)*Math.cos(a+ze)-Math.sin(th)*Math.sin(d),
-        C=Math.sin(th)*Math.cos(d)*Math.cos(a+ze)+Math.cos(th)*Math.sin(d);
-  return{ra:norm(Math.atan2(A,B)*R2D+z*R2D),dec:Math.asin(C)*R2D};
 }
 function setNow(){
   const n=new Date();
