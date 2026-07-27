@@ -107,6 +107,24 @@ tr:hover td{background:rgba(60,26,10,.4)}
         </select></div>
       <div class="field"><label>სახელი</label><input id="i-name" placeholder="სახელი"></div>
     </div>
+    <div style="border-top:1px solid rgba(194,84,42,.18);margin:14px 0 10px;padding-top:12px">
+      <div class="card-title" style="margin-bottom:10px">🌍 დედამიწის დაბადების ადგილი → მარსზე</div>
+      <div class="row">
+        <div class="field" style="min-width:150px"><label>ქალაქი</label>
+          <input id="i-city" placeholder="თბილისი, London..." autocomplete="off">
+          <div id="i-cityhint" style="font-size:11px;color:var(--rust-l);min-height:14px;margin-top:2px"></div></div>
+        <div class="field"><label>განედი</label><input type="number" id="i-elat" step="0.0001" value="41.7151"></div>
+        <div class="field"><label>გრძედი</label><input type="number" id="i-elon" step="0.0001" value="44.8271"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div class="field" style="min-width:220px"><label>რომელი ადგილი მარსზე</label>
+          <select id="i-src">
+            <option value="derived" selected>🌍→🔴 დედამიწის ადგილის შესაბამისი წერტილი</option>
+            <option value="preset">📍 ზემოთ არჩეული ლანდშაფტი</option>
+          </select></div>
+      </div>
+      <div id="i-derived" style="font-size:11px;color:var(--dust);margin-top:8px;line-height:1.7"></div>
+    </div>
     <button class="btn" id="btn-gen">✦ მარსული რუქის გენერაცია ✦</button>
     <button class="btn ghost" id="btn-now">🕐 ახლა</button>
     <div id="err"></div>
@@ -309,6 +327,68 @@ function marsAyanamsa(fr){
   return norm(marsLon(fr,SPICA_LON,SPICA_LAT)-180);
 }
 
+/* ═══ EARTH PLACE → MARS PLACE ═══
+   The zenith direction above the birth city at the birth instant is a
+   line into the sky. The Martian point that has that same direction
+   overhead at that same instant is the corresponding place on Mars.
+   Earth zenith -> ICRS -> Mars body-fixed -> areographic lat/lon. */
+function gmst(J){                       /* Greenwich mean sidereal time, deg */
+  const T=(J-2451545.0)/36525;
+  return norm(280.46061837+360.98564736629*(J-2451545.0)
+              +0.000387933*T*T-T*T*T/38710000.0);
+}
+function precessToJ2000(ra,dec,J){      /* equator of date -> J2000 */
+  const T=(J-2451545.0)/36525;
+  const ze=(2306.2181*T+0.30188*T*T+0.017998*T*T*T)/3600*D2R;
+  const z =(2306.2181*T+1.09468*T*T+0.018203*T*T*T)/3600*D2R;
+  const th=(2004.3109*T-0.42665*T*T-0.041833*T*T*T)/3600*D2R;
+  const a=ra*D2R,d=dec*D2R;
+  const A=Math.cos(d)*Math.sin(a-z);
+  const B=Math.cos(th)*Math.cos(d)*Math.cos(a-z)+Math.sin(th)*Math.sin(d);
+  const C=-Math.sin(th)*Math.cos(d)*Math.cos(a-z)+Math.cos(th)*Math.sin(d);
+  return{ra:norm(Math.atan2(A,B)*R2D-ze*R2D),dec:Math.asin(C)*R2D};
+}
+function marsBodyAxes(J){               /* body-frame axes in equatorial J2000 */
+  const T=(J-2451545.0)/36525,d=J-2451545.0;
+  const a0=(317.68143-0.1061*T)*D2R,d0=(52.88650-0.0609*T)*D2R;
+  const W=norm(176.630+350.89198226*d)*D2R;
+  const bf2eq=function(v){
+    const z1=a0+Math.PI/2,x1=Math.PI/2-d0;
+    let p=[v[0]*Math.cos(W)-v[1]*Math.sin(W),v[0]*Math.sin(W)+v[1]*Math.cos(W),v[2]];
+    p=[p[0],p[1]*Math.cos(x1)-p[2]*Math.sin(x1),p[1]*Math.sin(x1)+p[2]*Math.cos(x1)];
+    return[p[0]*Math.cos(z1)-p[1]*Math.sin(z1),p[0]*Math.sin(z1)+p[1]*Math.cos(z1),p[2]];
+  };
+  return{x:bf2eq([1,0,0]),y:bf2eq([0,1,0]),z:bf2eq([0,0,1])};
+}
+function earthPlaceToMars(J,elat,elon){
+  const lst=norm(gmst(J)+elon);         /* zenith RA = local sidereal time */
+  const p=precessToJ2000(lst,elat,J);   /* zenith dec = geographic latitude */
+  const a=p.ra*D2R,dd=p.dec*D2R;
+  const dir=[Math.cos(dd)*Math.cos(a),Math.cos(dd)*Math.sin(a),Math.sin(dd)];
+  const ax=marsBodyAxes(J);
+  const bx=dot(dir,ax.x),by=dot(dir,ax.y),bz=dot(dir,ax.z);
+  return{lat:Math.asin(bz)*R2D,lon:norm(Math.atan2(by,bx)*R2D),
+         zenithRA:p.ra,zenithDec:p.dec};
+}
+const MARS_SITES=[
+ {ka:'ოლიმპუს მონსი',lat:18.65,lon:226.2},{ka:'ვალის მარინერისი',lat:-13.9,lon:301.4},
+ {ka:'გეილის კრატერი',lat:-4.59,lon:137.44},{ka:'ჯეზერო',lat:18.44,lon:77.45},
+ {ka:'Airy-0',lat:0,lon:0},{ka:'ჰელასის აუზი',lat:-42.4,lon:70.5},
+ {ka:'ელისიუმ მონსი',lat:25.02,lon:147.21},{ka:'ჩრდილოეთ პოლუსი',lat:90,lon:0},
+ {ka:'სამხრეთ პოლუსი',lat:-90,lon:0},{ka:'თარსისი',lat:0,lon:250},
+ {ka:'უტოპია პლანიტია',lat:46.7,lon:117.5},{ka:'არგირე',lat:-49.7,lon:316.0}];
+function nearestSite(lat,lon){
+  let best=null,bd=1e9;
+  for(let i=0;i<MARS_SITES.length;i++){
+    const s2=MARS_SITES[i];
+    const d=Math.acos(Math.max(-1,Math.min(1,
+      Math.sin(lat*D2R)*Math.sin(s2.lat*D2R)+
+      Math.cos(lat*D2R)*Math.cos(s2.lat*D2R)*Math.cos((lon-s2.lon)*D2R))))*R2D;
+    if(d<bd){bd=d;best=s2;}
+  }
+  return{site:best,dist:bd,km:bd*D2R*3389.5};
+}
+
 const ASP=[{n:'შეერთება',a:[0],o:10,s:'☌',c:'#f9c646'},{n:'ოპოზიცია',a:[180],o:10,s:'☍',c:'#f08050'},
  {n:'ტრინი',a:[120,240],o:8,s:'△',c:'#a078f0'},{n:'კვადრატი',a:[90,270],o:8,s:'□',c:'#e84040'},
  {n:'სექსტილი',a:[60,300],o:6,s:'⚹',c:'#30c890'}];
@@ -345,13 +425,6 @@ function drawWheel(P,asc,mc,houses,asps,useIAU){
     txt(svg,b.sym,CX+Math.cos(a)*(R1+R2)/2,CY+Math.sin(a)*(R1+R2)/2,
       {fill:b.col,'font-size':span<12?14:19,'font-family':'serif'});
   });
-  for(let d=0;d<360;d++){
-    const a=e2s(d,asc),L=d%10===0?9:4;
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
-      x2:CX+Math.cos(a)*(R1-L),y2:CY+Math.sin(a)*(R1-L),
-      stroke:d%10===0?'rgba(220,140,100,.5)':'rgba(140,60,30,.4)',
-      'stroke-width':d%10===0?.9:.45},svg);
-  }
   /* house cusps: only the four angles, drawn subtly */
   [0,3,6,9].forEach(function(i){
     const a=e2s(houses[i],asc);
@@ -418,7 +491,28 @@ function gen(){
     const iau=(mode==='iau');
     const fr=marsEclFrame(T);
     const aya=marsAyanamsa(fr);
-    const parts=$('i-place').value.split(','),lat=+parts[0],lonE=+parts[1];
+    let lat,lonE,placeLabel;
+    if($('i-src').value==='derived'){
+      const el_=+$('i-elat').value,eo=+$('i-elon').value;
+      const mp=earthPlaceToMars(J,el_,eo);
+      lat=mp.lat;lonE=mp.lon;
+      const nr=nearestSite(lat,lonE);
+      placeLabel='🌍→🔴 '+Math.abs(el_).toFixed(2)+'°'+(el_>=0?'N':'S')+' '+
+                 Math.abs(eo).toFixed(2)+'°'+(eo>=0?'E':'W');
+      $('i-derived').innerHTML=
+        '🔴 <b style="color:#f0a070">'+Math.abs(lat).toFixed(2)+'°'+(lat>=0?'N':'S')+' '+
+        lonE.toFixed(2)+'°E</b> — არეოგრაფიული კოორდინატები<br>'+
+        '<span style="color:rgba(200,160,130,.7)">უახლოესი ორიენტირი: <b>'+nr.site.ka+'</b> '+
+        '('+nr.dist.toFixed(1)+'° ≈ '+Math.round(nr.km)+' კმ)</span><br>'+
+        '<span style="color:rgba(200,160,130,.5);font-size:10px">ზენიტის მიმართულება: RA '+
+        mp.zenithRA.toFixed(2)+'° · Dec '+mp.zenithDec.toFixed(2)+'° — '+
+        'იგივე ვარსკვლავი იდგა თავზე დედამიწაზეც და ამ წერტილშიც</span>';
+    }else{
+      const parts=$('i-place').value.split(',');
+      lat=+parts[0];lonE=+parts[1];
+      placeLabel=$('i-place').options[$('i-place').selectedIndex].text;
+      $('i-derived').innerHTML='';
+    }
 
     const F=areoFull(J),F2=areoFull(J+1),Mo=moons(J),Mo2=moons(J+0.02);
     const ang=angles(J,lat,lonE);
@@ -464,7 +558,7 @@ function gen(){
     drawWheel(P,asc,mc,houses,asps,iau);
     $('out').style.display='block';
     const nm=$('i-name').value?$('i-name').value+' — ':'';
-    const pl=$('i-place').options[$('i-place').selectedIndex].text;
+    const pl=placeLabel;
     const MODEKA={iau:'IAU თანავარსკვლავედები (14)',mtrop:'მარსული ტროპიკული (12)',msid:'მარსული სიდერიული (12)'};
     $('lbl').textContent=nm+'მარსული რუქა · '+pl+' · '+MODEKA[mode];
     $('ptitle').textContent='🪐 არეოცენტრული — '+MODEKA[mode];
@@ -592,6 +686,31 @@ function setNow(){
   $('i-hour').value=n.getUTCHours();
   $('i-min').value=n.getUTCMinutes();
 }
+/* city lookup via the MAGNUS backend (same endpoint as astro.html) */
+const BACKEND='https://astrology-production-b165.up.railway.app';
+let cityTimer=null;
+$('i-city').addEventListener('input',function(){
+  clearTimeout(cityTimer);
+  const q=$('i-city').value;
+  if(q.length<2){$('i-cityhint').textContent='';return;}
+  cityTimer=setTimeout(function(){
+    $('i-cityhint').textContent='⏳ ძიება...';
+    fetch(BACKEND+'/geocode',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({city:q})})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.error){$('i-cityhint').textContent='❌ '+d.error;return;}
+        $('i-elat').value=(+d.lat).toFixed(4);
+        $('i-elon').value=(+d.lon).toFixed(4);
+        $('i-cityhint').textContent='📍 '+(d.display||q);
+        if($('out').style.display!=='none')gen();
+      })
+      .catch(function(e){$('i-cityhint').textContent='❌ ხელით შეიყვანეთ განედი/გრძედი';});
+  },600);
+});
+['i-elat','i-elon','i-src'].forEach(function(id){
+  $(id).addEventListener('change',function(){if($('out').style.display!=='none')gen();});
+});
 $('btn-gen').addEventListener('click',gen);
 $('btn-now').addEventListener('click',function(){setNow();gen();});
 $('i-mode').addEventListener('change',function(){if($('out').style.display!=='none')gen();});
