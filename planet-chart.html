@@ -130,7 +130,7 @@ tr:hover td{background:rgba(30,40,70,.45)}
     <div class="grid2">
       <div class="card" style="padding:0;overflow:hidden">
         <div class="card-title" id="ptitle" style="padding:9px 14px;margin:0;border-bottom:1px solid rgba(124,154,208,.18)">🪐 პლანეტოცენტრული</div>
-        <table><thead><tr><th></th><th>სხეული</th><th>გრადუსი</th><th>ნიშანი</th><th>სახ.</th><th>℞</th></tr></thead>
+        <table><thead><tr><th></th><th>სხეული</th><th>გრადუსი ნიშანში</th><th>ნიშანი</th><th>სახ.</th><th>℞</th></tr></thead>
         <tbody id="ptb"></tbody></table>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
@@ -230,6 +230,34 @@ const EN2KA={mercury:'მერკური',venus:'ვენერა',earth:'�
 /* constellation sectors along each planet's own ecliptic
    (measured from that planet's J2000 ascending node) */
 const SECT={"mercury":[[-15.98,5.3,"Ari"],[5.3,5.7,"Tau"],[5.7,6.57,"Ari"],[6.57,42.07,"Tau"],[42.07,50.67,"Aur"],[50.67,68.54,"Gem"],[68.54,87.52,"Cnc"],[87.52,122.79,"Leo"],[122.79,168.93,"Vir"],[168.93,191.1,"Lib"],[191.1,199.87,"Sco"],[199.87,203.08,"Oph"],[203.08,206.7,"Sco"],[206.7,218.3,"Oph"],[218.3,250.13,"Sgr"],[250.13,276.61,"Cap"],[276.61,308.09,"Aqr"],[308.09,308.28,"Cet"],[308.28,316.57,"Psc"],[316.57,327.16,"Cet"],[327.16,344.02,"Psc"]],"venus":[[-23.67,13.49,"Tau"],[13.49,40.93,"Gem"],[40.93,60.47,"Cnc"],[60.47,95.71,"Leo"],[95.71,140.32,"Vir"],[140.32,165.77,"Lib"],[165.77,170.85,"Sco"],[170.85,189.6,"Oph"],[189.6,222.57,"Sgr"],[222.57,249.7,"Cap"],[249.7,280.88,"Aqr"],[280.88,289.1,"Psc"],[289.1,297.13,"Cet"],[297.13,316.33,"Psc"],[316.33,316.81,"Cet"],[316.81,336.33,"Ari"]],"earth":[[-8.35,28.69,"Psc"],[28.69,53.41,"Ari"],[53.41,90.13,"Tau"],[90.13,117.98,"Gem"],[117.98,138.03,"Cnc"],[138.03,173.85,"Leo"],[173.85,217.81,"Vir"],[217.81,241.05,"Lib"],[241.05,247.64,"Sco"],[247.64,266.24,"Oph"],[266.24,299.66,"Sgr"],[299.66,327.49,"Cap"],[327.49,351.65,"Aqr"]],"mars":[[-20.49,3.89,"Ari"],[3.89,40.6,"Tau"],[40.6,68.1,"Gem"],[68.1,87.9,"Cnc"],[87.9,123.62,"Leo"],[123.62,168.11,"Vir"],[168.11,190.07,"Lib"],[190.07,198.2,"Sco"],[198.2,216.75,"Oph"],[216.75,249.76,"Sgr"],[249.76,277.27,"Cap"],[277.27,305.58,"Aqr"],[305.58,317.07,"Psc"],[317.07,319.97,"Cet"],[319.97,339.51,"Psc"]],"jupiter":[[-10.34,17.44,"Gem"],[17.44,37.32,"Cnc"],[37.32,72.85,"Leo"],[72.85,116.93,"Vir"],[116.93,141.99,"Lib"],[141.99,147.04,"Sco"],[147.04,165.75,"Oph"],[165.75,199.11,"Sgr"],[199.11,226.69,"Cap"],[226.69,254.11,"Aqr"],[254.11,266.16,"Psc"],[266.16,269.34,"Cet"],[269.34,290.11,"Psc"],[290.11,312.67,"Ari"],[312.67,349.66,"Tau"]],"saturn":[[-23.56,4.29,"Gem"],[4.29,24.07,"Cnc"],[24.07,59.29,"Leo"],[59.29,103.29,"Vir"],[103.29,128.55,"Lib"],[128.55,133.64,"Sco"],[133.64,152.51,"Oph"],[152.51,185.95,"Sgr"],[185.95,213.37,"Cap"],[213.37,243.17,"Aqr"],[243.17,252.52,"Psc"],[252.52,258.82,"Cet"],[258.82,279.35,"Psc"],[279.35,280.21,"Cet"],[280.21,299.14,"Ari"],[299.14,333.89,"Tau"],[333.89,336.44,"Ori"]],"uranus":[[-20.68,16.12,"Tau"],[16.12,43.87,"Gem"],[43.87,63.8,"Cnc"],[63.8,99.51,"Leo"],[99.51,143.63,"Vir"],[143.63,167.78,"Lib"],[167.78,173.61,"Sco"],[173.61,192.24,"Oph"],[192.24,225.54,"Sgr"],[225.54,253.21,"Cap"],[253.21,279.42,"Aqr"],[279.42,292.87,"Psc"],[292.87,294.4,"Cet"],[294.4,314.8,"Psc"],[314.8,339.32,"Ari"]],"neptune":[[-13.73,6.19,"Cnc"],[6.19,41.58,"Leo"],[41.58,85.41,"Vir"],[85.41,110.5,"Lib"],[110.5,115.57,"Sco"],[115.57,134.39,"Oph"],[134.39,167.95,"Sgr"],[167.95,195.55,"Cap"],[195.55,222.68,"Aqr"],[222.68,234.8,"Psc"],[234.8,238.52,"Cet"],[238.52,260.19,"Psc"],[260.19,281.16,"Ari"],[281.16,315.77,"Tau"],[315.77,318.32,"Ori"],[318.32,346.27,"Gem"]],"pluto":[[-16.16,7.58,"Gem"],[7.58,26.38,"Cnc"],[26.38,63.51,"Leo"],[63.51,75.0,"Com"],[75.0,88.8,"Vir"],[88.8,91.55,"Boo"],[91.55,111.62,"Vir"],[111.62,114.59,"Lib"],[114.59,119.65,"Ser"],[119.65,128.19,"Lib"],[128.19,131.69,"Oph"],[131.69,133.83,"Sco"],[133.83,148.01,"Oph"],[148.01,154.43,"Ser"],[154.43,154.64,"Oph"],[154.64,189.21,"Sgr"],[189.21,214.89,"Cap"],[214.89,243.02,"Aqr"],[243.02,297.86,"Cet"],[297.86,319.39,"Tau"],[319.39,332.83,"Ori"],[332.83,337.15,"Tau"],[337.15,343.84,"Ori"]]};
+
+/* which sector of this planet's zodiac holds a given longitude,
+   and how many degrees into it we are */
+function sectorAt(obs,lon){
+  const S=SECT[obs];
+  for(let i=0;i<S.length;i++){
+    let a=S[i][0],b=S[i][1],x=norm(lon);
+    if(a<0){ if(x>=norm(a)||x<b) return{abbr:S[i][2],s:a,e:b,w:b-a,
+      deg:(x>=norm(a)?x-360-a:x-a)}; }
+    else if(x>=a&&x<b) return{abbr:S[i][2],s:a,e:b,w:b-a,deg:x-a};
+  }
+  return null;
+}
+/* degrees into the constellation, preferring the sector that matches
+   the true 2-D lookup (a body off the plane can sit in a different one) */
+function degInConst(obs,lon,abbr){
+  const S=SECT[obs],x=norm(lon);
+  for(let pass=0;pass<2;pass++){
+    for(let i=0;i<S.length;i++){
+      if(pass===0&&S[i][2]!==abbr)continue;
+      let a=S[i][0],b=S[i][1];
+      if(a<0){ if(x>=norm(a))return{deg:x-360-a,w:b-a};
+               if(x<b)return{deg:x-a,w:b-a}; }
+      else if(x>=a&&x<b)return{deg:x-a,w:b-a};
+    }
+  }
+  return{deg:x%30,w:30};
+}
 
 const jd=function(dt){return dt.getTime()/86400000+2440587.5;};
 const sub=function(a,b){return[a[0]-b[0],a[1]-b[1],a[2]-b[2]];};
@@ -374,6 +402,15 @@ function drawWheel(P,asc,mc,houses,asps,bands){
         {fill:b.col,'font-size':span<11?12:18,'font-family':'serif'});
     }
   });
+  /* 10° ticks inside each sector, so degrees are readable */
+  bands.forEach(function(b){
+    for(let d=Math.ceil(b.s/10)*10;d<b.e;d+=10){
+      const a=e2s(d,asc),major=((d-b.s)%30<0.01);
+      el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,
+        x2:CX+Math.cos(a)*(R2+(major?9:5)),y2:CY+Math.sin(a)*(R2+(major?9:5)),
+        stroke:b.col,'stroke-width':major?1:.6,opacity:major?.7:.4},svg);
+    }
+  });
   [0,3,6,9].forEach(function(i){
     const a=e2s(houses[i],asc);
     el('line',{x1:CX+Math.cos(a)*R4,y1:CY+Math.sin(a)*R4,
@@ -502,10 +539,13 @@ function gen(){
     const sigOf=function(v){
       if(iau){
         const r=iauFromEcliptic(v.rawEcl!=null?v.rawEcl:v.raw,v.lat||0);
-        return{sym:r.sym,ka:r.ka,col:r.col,abbr:r.abbr,deg:norm(v.lon)%30,lat:v.lat};
+        const d=degInConst(obs,v.lon,r.abbr);
+        return{sym:r.sym,ka:r.ka,col:r.col,abbr:r.abbr,
+               deg:d.deg,width:d.w,lat:v.lat};
       }
       const si=Math.floor(norm(v.lon)/30)%12;
-      return{sym:ZSYM[si],ka:SIGN_KA[si],col:ZCOL[si],abbr:'',deg:norm(v.lon)%30,lat:v.lat};
+      return{sym:ZSYM[si],ka:SIGN_KA[si],col:ZCOL[si],abbr:'',
+             deg:norm(v.lon)%30,width:30,lat:v.lat};
     };
     const inWhat={};
     $('ptb').innerHTML=ORDER.filter(function(n){return P[n]||n==='AC'||n==='MC';}).map(function(n){
@@ -515,8 +555,10 @@ function gen(){
       if(s.abbr)inWhat[n]=s.abbr;
       return '<tr><td><span style="color:'+inf.color+';font-family:serif;font-size:16px">'+inf.sym+'</span></td>'+
         '<td style="color:'+inf.color+';font-size:11px">'+n+'</td>'+
-        '<td class="deg">'+fmt2(s.deg)+(iau&&s.lat!=null?
-          ' <span class="lat">β'+(s.lat>=0?'+':'')+s.lat.toFixed(1)+'°</span>':'')+'</td>'+
+        '<td class="deg">'+fmt2(s.deg)+
+          (iau?' <span class="lat">/'+s.width.toFixed(1)+'°</span>':'')+
+          (iau&&s.lat!=null?' <span class="lat">β'+(s.lat>=0?'+':'')+
+            s.lat.toFixed(1)+'°</span>':'')+'</td>'+
         '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
         '<span style="font-size:10px;color:'+s.col+'">'+s.ka+'</span></td>'+
         '<td><span class="badge">H'+hOf(v.lon)+'</span></td>'+
@@ -526,12 +568,22 @@ function gen(){
     const ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
     const ANG={0:'AC',3:'IC',6:'DC',9:'MC'};
     $('htb').innerHTML=houses.map(function(hh,i){
-      const si=Math.floor(norm(hh)/30)%12,a=ANG[i];
+      const a=ANG[i];
+      let sym,ka,col,dg;
+      if(iau){
+        const sc=sectorAt(obs,hh);
+        if(sc){sym=(IAU_SYM&&IAU_SYM[sc.abbr])||'✦';ka=(IAU_KA&&IAU_KA[sc.abbr])||sc.abbr;
+               col=(IAU_COL&&IAU_COL[sc.abbr])||'#8898b8';dg=sc.deg;}
+        else{sym='✦';ka='—';col='#8898b8';dg=0;}
+      }else{
+        const si=Math.floor(norm(hh)/30)%12;
+        sym=ZSYM[si];ka=SIGN_KA[si];col=ZCOL[si];dg=norm(hh)%30;
+      }
       return '<tr><td style="color:'+(a?'#a8c4ea':'rgba(190,205,230,.7)')+';font-family:Cinzel,serif;font-size:11px">'+
         ROM[i]+(a?' <span style="font-size:9px;opacity:.7">'+a+'</span>':'')+'</td>'+
-        '<td><span style="color:'+ZCOL[si]+';font-family:serif;font-size:13px">'+ZSYM[si]+'</span> '+
-        '<span style="font-size:10px;color:'+ZCOL[si]+'">'+SIGN_KA[si]+'</span></td>'+
-        '<td class="deg">'+fmt2(norm(hh)%30)+'</td></tr>';
+        '<td><span style="color:'+col+';font-family:serif;font-size:13px">'+sym+'</span> '+
+        '<span style="font-size:10px;color:'+col+'">'+ka+'</span></td>'+
+        '<td class="deg">'+fmt2(dg)+'</td></tr>';
     }).join('');
 
     $('atitle').textContent='⚡ ასპექტები — სულ '+asps.length;
