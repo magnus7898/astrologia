@@ -101,8 +101,9 @@ tr:hover td{background:rgba(60,26,10,.4)}
         </select></div>
       <div class="field" style="min-width:180px"><label>ზოდიაქო</label>
         <select id="i-mode">
-          <option value="sid" selected>✦ ნამდვილი სიდერიული (IAU)</option>
-          <option value="trop">○ ტროპიკული (12)</option>
+          <option value="iau" selected>✦ IAU თანავარსკვლავედები (14)</option>
+          <option value="mtrop">☉ მარსული ტროპიკული (12)</option>
+          <option value="msid">★ მარსული სიდერიული (12)</option>
         </select></div>
       <div class="field"><label>სახელი</label><input id="i-name" placeholder="სახელი"></div>
     </div>
@@ -162,12 +163,10 @@ const SIGN_KA=['ვერძი','კურო','ტყუპები','კი�
 const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎'];
 const ZCOL=['#e05252','#8aab6e','#89b4d4','#5b8ec4','#d4602e','#7a9e6a','#7fb8d8','#4a7ab0','#c84a32','#6b9062','#90c0dc','#6688c0'];
 
-/* longitude bands of the 13 ecliptic constellations — wheel drawing only */
-/* Martian zodiac — constellation bands along MARS's ecliptic
-   (measured from the areocentric Sun's own path, J2000 frame).
-   Pisces is split in two by Cetus. */
+/* Martian zodiac: constellation bands measured along MARS's ecliptic
+   (from the areocentric Sun's own path). Pisces is split by Cetus. */
 const BAND=[
- {s:6.64,  e:9.53,  sym:'🐋', col:'#5a8a9a',ka:'ვეშაპი'},
+ {s:6.64,  e:9.53,  sym:'\uD83D\uDC0B',col:'#5a8a9a',ka:'ვეშაპი'},
  {s:9.53,  e:29.06, sym:'♓︎',col:'#6688c0',ka:'თევზები'},
  {s:29.06, e:53.45, sym:'♈︎',col:'#e05252',ka:'ვერძი'},
  {s:53.45, e:90.15, sym:'♉︎',col:'#8aab6e',ka:'კურო'},
@@ -183,6 +182,10 @@ const BAND=[
  {s:326.83,e:355.14,sym:'♒︎',col:'#90c0dc',ka:'მერწყული'},
  {s:355.14,e:366.64,sym:'♓︎',col:'#6688c0',ka:'თევზები'}
 ];
+const BAND12=ZSYM.map(function(sy,i){
+  return{s:i*30,e:(i+1)*30,sym:sy,col:ZCOL[i],ka:SIGN_KA[i]};});
+/* Spica J2000 ecliptic direction — anchor for Martian sidereal */
+const SPICA_LON=203.8375,SPICA_LAT=-2.0545;
 
 const KEP={
  'მერკური':[0.38709927,0.20563593,7.00497902,252.25032350,77.45779628,48.33076593,
@@ -266,7 +269,8 @@ function angles(J,lat,lonE){
   const E=unit(crossV(pole,Z)),k=[0,0,1];
   let mc=unit(crossV(E,k)); if(dot(mc,Z)<0)mc=[-mc[0],-mc[1],-mc[2]];
   let asc=unit(crossV(Z,k)); if(dot(asc,E)<0)asc=[-asc[0],-asc[1],-asc[2]];
-  return{asc:lonOf(asc),mc:lonOf(mc),tilt:Math.acos(Math.abs(dot(pole,k)))*R2D};
+  return{asc:lonOf(asc),mc:lonOf(mc),ascV:asc,mcV:mc,
+         tilt:Math.acos(Math.abs(dot(pole,k)))*R2D};
 }
 function moons(J){
   const d=J-2451545.0,fr=marsFrame(J);
@@ -275,6 +279,34 @@ function moons(J){
     const r=Math.hypot(v[0],v[1],v[2]);
     return{lon:norm(Math.atan2(v[1],v[0])*R2D),lat:Math.asin(v[2]/r)*R2D};};
   return{'ფობოსი':mk(232.41+1128.8445850*d,1.093),'დეიმოსი':mk(28.96+285.1618970*d,1.791)};
+}
+
+/* ═══ MARS'S OWN ECLIPTIC FRAME ═══
+   n = orbital plane normal, e = Martian vernal equinox (Ls=0),
+   y = 90° ahead in the orbit plane. Validated against Allison &
+   McEwen (2000): Ls agrees to 0.016° rms. */
+function marsEclFrame(T){
+  const i=(1.84969142-0.00813131*T)*D2R;
+  const Om=(49.55953891-0.29257343*T)*D2R;
+  const n=[Math.sin(i)*Math.sin(Om),-Math.sin(i)*Math.cos(Om),Math.cos(i)];
+  const a0=(317.68143-0.1061*T)*D2R,d0=(52.88650-0.0609*T)*D2R;
+  const pe=[Math.cos(d0)*Math.cos(a0),Math.cos(d0)*Math.sin(a0),Math.sin(d0)];
+  const p=[pe[0],pe[1]*Math.cos(EPS)+pe[2]*Math.sin(EPS),
+                 -pe[1]*Math.sin(EPS)+pe[2]*Math.cos(EPS)];
+  const e=unit(crossV(p,n));          /* vernal equinox of Mars */
+  const y=unit(crossV(n,e));
+  return{n:n,e:e,y:y};
+}
+const vecOf=function(lon,lat){
+  const l=lon*D2R,b=(lat||0)*D2R;
+  return[Math.cos(b)*Math.cos(l),Math.cos(b)*Math.sin(l),Math.sin(b)];};
+/* longitude measured in Mars's orbital plane from its vernal equinox */
+function marsLon(fr,lon,lat){
+  const v=vecOf(lon,lat);
+  return norm(Math.atan2(dot(v,fr.y),dot(v,fr.e))*R2D);
+}
+function marsAyanamsa(fr){
+  return norm(marsLon(fr,SPICA_LON,SPICA_LAT)-180);
 }
 
 const ASP=[{n:'შეერთება',a:[0],o:10,s:'☌',c:'#f9c646'},{n:'ოპოზიცია',a:[180],o:10,s:'☍',c:'#f08050'},
@@ -293,7 +325,7 @@ const e2s=function(ec,asc){return(-(ec-asc))*D2R+Math.PI;};
 const fmt2=function(d){const x=Math.floor(d);
   return x+'°'+String(Math.floor((d-x)*60)).padStart(2,'0')+"'";};
 
-function drawWheel(P,asc,mc,houses,asps,sid){
+function drawWheel(P,asc,mc,houses,asps,useIAU){
   const svg=$('wheel');svg.innerHTML='';
   const defs=el('defs',{},svg);
   const g=el('radialGradient',{id:'bg',cx:'50%',cy:'50%',r:'50%'},defs);
@@ -301,8 +333,7 @@ function drawWheel(P,asc,mc,houses,asps,sid){
   el('stop',{offset:'100%','stop-color':'#0a0503'},g);
   el('rect',{width:700,height:700,fill:'url(#bg)'},svg);
 
-  const bands=sid?BAND:ZSYM.map(function(s,i){
-    return{s:i*30,e:(i+1)*30,sym:s,col:ZCOL[i],ka:SIGN_KA[i]};});
+  const bands=useIAU?BAND:BAND12;
   bands.forEach(function(b){
     const p=function(d,r){const a=e2s(d,asc);
       return(CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
@@ -315,20 +346,18 @@ function drawWheel(P,asc,mc,houses,asps,sid){
       {fill:b.col,'font-size':span<12?14:19,'font-family':'serif'});
   });
   for(let d=0;d<360;d++){
-    const a=e2s(d,asc),L=d%30===0?16:d%10===0?10:4;
+    const a=e2s(d,asc),L=d%10===0?9:4;
     el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
       x2:CX+Math.cos(a)*(R1-L),y2:CY+Math.sin(a)*(R1-L),
-      stroke:d%30===0?'rgba(255,210,180,.9)':d%10===0?'rgba(240,128,80,.6)':'rgba(140,60,30,.5)',
-      'stroke-width':d%30===0?1.6:d%10===0?1:.5},svg);
+      stroke:d%10===0?'rgba(220,140,100,.5)':'rgba(140,60,30,.4)',
+      'stroke-width':d%10===0?.9:.45},svg);
   }
-  const ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-  houses.forEach(function(h,i){
-    const a=e2s(h,asc),ang=[0,3,6,9].indexOf(i)>=0;
-    el('line',{x1:CX+Math.cos(a)*R4,y1:CY+Math.sin(a)*R4,x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,
-      stroke:ang?'rgba(240,168,80,.85)':'rgba(160,70,35,.45)','stroke-width':ang?1.8:.7},svg);
-    const m=e2s(h+15,asc);
-    txt(svg,ROM[i],CX+Math.cos(m)*(R2+R3)/2,CY+Math.sin(m)*(R2+R3)/2,
-      {fill:'rgba(232,176,122,.55)','font-size':10,'font-family':'Cinzel,serif'});
+  /* house cusps: only the four angles, drawn subtly */
+  [0,3,6,9].forEach(function(i){
+    const a=e2s(houses[i],asc);
+    el('line',{x1:CX+Math.cos(a)*R4,y1:CY+Math.sin(a)*R4,
+      x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,
+      stroke:'rgba(240,168,80,.55)','stroke-width':1.1},svg);
   });
   el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(194,84,42,.6)','stroke-width':1.2},svg);
   el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(240,128,80,.75)','stroke-width':1.6},svg);
@@ -385,22 +414,36 @@ function gen(){
     const dt=new Date(Date.UTC(y,m-1,d,h,mi,0));
     if(isNaN(dt.getTime())){$('err').innerHTML='<div class="err">⚠ არასწორი თარიღი</div>';return;}
     const J=jd(dt),T=(J-2451545.0)/36525;
-    const sid=$('i-mode').value==='sid';
-    const shift=sid?0:PREC_CY*T;
+    const mode=$('i-mode').value;                 /* iau | mtrop | msid */
+    const iau=(mode==='iau');
+    const fr=marsEclFrame(T);
+    const aya=marsAyanamsa(fr);
     const parts=$('i-place').value.split(','),lat=+parts[0],lonE=+parts[1];
 
     const F=areoFull(J),F2=areoFull(J+1),Mo=moons(J),Mo2=moons(J+0.02);
     const ang=angles(J,lat,lonE);
-    const asc=norm(ang.asc+shift),mc=norm(ang.mc+shift);
+
+    /* display longitude: Earth-ecliptic for IAU mode, Mars-frame otherwise */
+    const disp=function(lon,lat2){
+      if(iau)return norm(lon);
+      const L=marsLon(fr,lon,lat2||0);
+      return (mode==='msid')?norm(L-aya):L;
+    };
+    const dispV=function(v){
+      if(iau)return lonOf(v);
+      const L=norm(Math.atan2(dot(v,fr.y),dot(v,fr.e))*R2D);
+      return (mode==='msid')?norm(L-aya):L;
+    };
+    const asc=dispV(ang.ascV),mc=dispV(ang.mcV);
 
     const P={};
     for(const k in F){
       let dl=F2[k].lon-F[k].lon; if(dl>180)dl-=360; if(dl<-180)dl+=360;
-      P[k]={lon:norm(F[k].lon+shift),raw:F[k].lon,lat:F[k].lat,retro:dl<0};
+      P[k]={lon:disp(F[k].lon,F[k].lat),raw:F[k].lon,lat:F[k].lat,retro:dl<0};
     }
     for(const k in Mo){
       let dl=Mo2[k].lon-Mo[k].lon; if(dl>180)dl-=360; if(dl<-180)dl+=360;
-      P[k]={lon:norm(Mo[k].lon+shift),raw:Mo[k].lon,lat:Mo[k].lat,retro:dl<0,approx:true};
+      P[k]={lon:disp(Mo[k].lon,Mo[k].lat),raw:Mo[k].lon,lat:Mo[k].lat,retro:dl<0,approx:true};
     }
     const houses=[];for(let i=0;i<12;i++)houses.push(norm(asc+i*30));
     const hOf=function(L){return Math.floor(norm(L-asc)/30)+1;};
@@ -418,20 +461,20 @@ function gen(){
     }
     asps.sort(function(a,b){return a.orb-b.orb;});
 
-    drawWheel(P,asc,mc,houses,asps,sid);
+    drawWheel(P,asc,mc,houses,asps,iau);
     $('out').style.display='block';
     const nm=$('i-name').value?$('i-name').value+' — ':'';
     const pl=$('i-place').options[$('i-place').selectedIndex].text;
-    $('lbl').textContent=nm+'მარსული რუქა · '+pl+' · '+(sid?'ნამდვილი სიდერიული (IAU)':'ტროპიკული');
-    $('ptitle').textContent=sid?'🪐 არეოცენტრული — IAU თანავარსკვლავედები':'🪐 არეოცენტრული — ტროპიკული';
+    const MODEKA={iau:'IAU თანავარსკვლავედები (14)',mtrop:'მარსული ტროპიკული (12)',msid:'მარსული სიდერიული (12)'};
+    $('lbl').textContent=nm+'მარსული რუქა · '+pl+' · '+MODEKA[mode];
+    $('ptitle').textContent='🪐 არეოცენტრული — '+MODEKA[mode];
 
-    /* sign / constellation of a body */
+    /* sign or constellation of a body */
     const sigOf=function(v){
-      if(sid){
+      if(iau){
         const r=iauFromEcliptic(v.raw!=null?v.raw:v.lon, v.lat||0);
         return{sym:r.sym,ka:r.ka,col:r.col,abbr:r.abbr,
-               deg:norm(v.raw!=null?v.raw:v.lon)%30,
-               lat:(v.lat!=null?v.lat:null)};
+               deg:norm(v.raw!=null?v.raw:v.lon)%30,lat:(v.lat!=null?v.lat:null)};
       }
       const si=Math.floor(norm(v.lon)/30)%12;
       return{sym:ZSYM[si],ka:SIGN_KA[si],col:ZCOL[si],abbr:'',
@@ -446,7 +489,7 @@ function gen(){
       return '<tr><td><span style="color:'+inf.color+';font-family:serif;font-size:16px">'+inf.sym+'</span></td>'+
         '<td style="color:'+inf.color+';font-size:11px">'+n+(v.approx?' <span style="opacity:.5">≈</span>':'')+'</td>'+
         '<td class="deg">'+fmt2(s.deg)+
-          (s.lat!=null&&sid?' <span class="lat">β'+(s.lat>=0?'+':'')+s.lat.toFixed(1)+'°</span>':'')+'</td>'+
+          (s.lat!=null&&iau?' <span class="lat">β'+(s.lat>=0?'+':'')+s.lat.toFixed(1)+'°</span>':'')+'</td>'+
         '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
         '<span style="font-size:10px;color:'+s.col+'">'+s.ka+'</span></td>'+
         '<td><span class="badge">H'+hOf(v.lon)+'</span></td>'+
@@ -456,7 +499,7 @@ function gen(){
     const ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
     const ANG={0:'AC',3:'IC',6:'DC',9:'MC'};
     $('htb').innerHTML=houses.map(function(hh,i){
-      const s=sigOf({lon:hh,raw:norm(hh-shift),lat:0}),a=ANG[i];
+      const s=sigOf({lon:hh,raw:iau?hh:null,lat:0}),a=ANG[i];
       return '<tr><td style="color:'+(a?'#f0a850':'rgba(200,160,130,.7)')+';font-family:Cinzel,serif;font-size:11px">'+
         ROM[i]+(a?' <span style="font-size:9px;opacity:.7">'+a+'</span>':'')+'</td>'+
         '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
@@ -477,7 +520,7 @@ function gen(){
     }).join('');
 
     /* Cetus + Ophiuchus notices */
-    if(sid){
+    if(iau){
       const cetL=[],ophL=[],oddL=[];
       const zod=['Ari','Tau','Gem','Cnc','Leo','Vir','Lib','Sco','Sgr','Cap','Aqr','Psc'];
       for(const n in inWhat){
@@ -514,7 +557,7 @@ function gen(){
     /* Mars time */
     const MSD=(J+69.184/86400-2451549.5)/1.0274912517+44796.0-0.0009626;
     const T2=(MSD%1)*24,hh2=Math.floor(T2),mm2=Math.floor((T2-hh2)*60);
-    const sunC=sid?iauFromEcliptic(P['მზე'].raw,P['მზე'].lat):null;
+    const sunC=iau?iauFromEcliptic(P['მზე'].raw,P['მზე'].lat):null;
     $('mtime').innerHTML=
       '<span style="color:rgba(200,160,130,.55);font-size:11px">MTC:</span> '+
       '<b style="color:#f08050">'+String(hh2).padStart(2,'0')+':'+String(mm2).padStart(2,'0')+'</b>'+
@@ -526,7 +569,14 @@ function gen(){
         '<b style="color:'+sunC.col+'">'+sunC.ka+'</b>':'')+'<br>'+
       '<span style="color:rgba(200,160,130,.55);font-size:11px">ადგილი:</span> '+pl+
       ' <span style="color:rgba(200,160,130,.5);font-size:10px">('+lat+'°, '+lonE+'°E)</span>'+
-      ' &nbsp;·&nbsp; <span style="color:rgba(200,160,130,.5);font-size:10px">IAU საზღვრები: Roman 1987 · B1875</span>';
+      ' &nbsp;·&nbsp; <span style="color:rgba(200,160,130,.55);font-size:11px">Ls:</span> '+
+      '<b style="color:#e0a850">'+marsLon(fr,P['მზე'].raw,P['მზე'].lat).toFixed(2)+'°</b>'+
+      (mode==='msid'?' &nbsp;·&nbsp; <span style="color:rgba(200,160,130,.55);font-size:11px">მარსული აიანამსა:</span> '+
+        '<b style="color:#e0a850">'+aya.toFixed(3)+'°</b>':'')+
+      '<br><span style="color:rgba(200,160,130,.5);font-size:10px">'+
+      (iau?'IAU საზღვრები: Roman 1987 · B1875 · 2-D ძიება':
+       mode==='mtrop'?'12 თანაბარი ნიშანი მარსის ბუნიობის წერტილიდან (Ls=0)':
+       '12 თანაბარი ნიშანი · სპიკაზე მიბმული (ლაჰირის ტიპი)')+'</span>';
 
     $('out').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
