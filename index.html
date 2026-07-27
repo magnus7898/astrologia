@@ -65,10 +65,11 @@
   .dline { flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); }
   .dgem { width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.5; }
 
-  .grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;width:100%;max-width:800px; }
+  /* six per row */
+  .grid { display:grid;grid-template-columns:repeat(6,1fr);gap:12px;width:100%;max-width:1240px; }
 
   .card {
-    position:relative;height:196px;border-radius:3px;overflow:hidden;
+    position:relative;height:150px;border-radius:3px;overflow:hidden;
     transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s ease;
     text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;
     border:1px solid rgba(201,168,76,0.12);
@@ -87,14 +88,14 @@
   .card::after { content:'';position:absolute;bottom:0;left:25%;right:25%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity 0.3s,left 0.3s,right 0.3s; }
   .card:hover::after { opacity:0.4;left:12%;right:12%; }
 
-  .cn { position:absolute;width:13px;height:13px;border-color:rgba(201,168,76,0.18);border-style:solid;transition:all 0.3s; }
+  .cn { position:absolute;width:11px;height:11px;border-color:rgba(201,168,76,0.18);border-style:solid;transition:all 0.3s; }
   .card:hover .cn { border-color:rgba(201,168,76,0.5); }
-  .tl { top:10px;left:10px;border-width:1px 0 0 1px; }
-  .tr { top:10px;right:10px;border-width:1px 1px 0 0; }
-  .bl { bottom:10px;left:10px;border-width:0 0 1px 1px; }
-  .br { bottom:10px;right:10px;border-width:0 1px 1px 0; }
+  .tl { top:9px;left:9px;border-width:1px 0 0 1px; }
+  .tr { top:9px;right:9px;border-width:1px 1px 0 0; }
+  .bl { bottom:9px;left:9px;border-width:0 0 1px 1px; }
+  .br { bottom:9px;right:9px;border-width:0 1px 1px 0; }
 
-  .sym { font-size:30px;margin-bottom:16px;opacity:0.5;transition:opacity 0.3s,transform 0.3s; }
+  .sym { font-size:24px;margin-bottom:11px;opacity:0.5;transition:opacity 0.3s,transform 0.3s;line-height:1; }
   .card:hover .sym { opacity:0.95;transform:scale(1.12); }
   .c-matrix .sym  { color:#9060e0; }
   .c-pyth .sym    { color:#e0a030; }
@@ -103,25 +104,31 @@
   .c-freq .sym    { color:#30b0f0; }
   .c-feng .sym    { color:#2fae7d; }
   .c-stone .sym   { color:#b070e0; }
+  .c-mars .sym    { color:#f08050; }
   .c-stone .card-glow { background:radial-gradient(ellipse at 50% 110%,rgba(176,112,224,0.15),transparent 65%); }
   .c-feng .card-glow { background:radial-gradient(ellipse at 50% 110%,rgba(47,174,125,0.15),transparent 65%); }
+  .c-mars .card-glow { background:radial-gradient(ellipse at 50% 110%,rgba(194,84,42,0.16),transparent 65%); }
 
-  .card-title { font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold-pale);text-align:center;padding:0 14px;transition:color 0.3s;line-height:1.6; }
+  .card-title { font-size:9.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-pale);text-align:center;padding:0 8px;transition:color 0.3s;line-height:1.5; }
   .card:hover .card-title { color:#fff; }
-  .card-sub { font-family:'IM Fell English',serif;font-style:italic;font-size:11px;color:var(--silver);opacity:0;margin-top:7px;transition:opacity 0.3s; }
+  .card-sub { font-family:'IM Fell English',serif;font-style:italic;font-size:9px;color:var(--silver);opacity:0;margin-top:5px;transition:opacity 0.3s;text-align:center;padding:0 6px;line-height:1.4; }
   .card:hover .card-sub { opacity:0.45; }
 
   footer { margin-top:72px;text-align:center; }
   footer span { font-size:9px;letter-spacing:6px;text-transform:uppercase;color:rgba(201,168,76,0.2); }
 
-  @media (max-width:600px) {
+  @media (max-width:1180px) { .grid { grid-template-columns:repeat(5,1fr); } }
+  @media (max-width:980px)  { .grid { grid-template-columns:repeat(4,1fr); } }
+  @media (max-width:760px)  {
     .page { padding:36px 14px 72px; }
     h1 { font-size:24px; }
-    .grid { grid-template-columns:1fr 1fr;gap:10px; }
-    .card { height:155px; }
-    .card-title { font-size:10px;letter-spacing:2px; }
+    .grid { grid-template-columns:repeat(3,1fr);gap:10px; }
+    .card { height:135px; }
+    .sym { font-size:22px;margin-bottom:9px; }
+    .card-title { font-size:9px;letter-spacing:1px; }
   }
-  @media (max-width:360px) { .grid { grid-template-columns:1fr; } }
+  @media (max-width:520px) { .grid { grid-template-columns:1fr 1fr; } }
+  @media (max-width:340px) { .grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -167,7 +174,7 @@
       <div class="card-glow"></div>
       <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
       <div class="sym">&#9934;</div>
-      <div class="card-title">ნამდვილი სიდერიული ასტროლოგია</div>
+      <div class="card-title">ნამდვილი სიდერიული</div>
       <div class="card-sub">True Sidereal Astrology</div>
     </a>
     <a class="card c-matrix" href="matrix.html">
@@ -241,29 +248,33 @@
       <div class="card-sub">Gems &amp; Crystals</div>
     </a>
     <a class="card c-stone" href="calendar13.html">
-    <div class="card-glow"></div>
-    <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
-    <div class="sym">&#128197;</div>
-    <div class="card-title">13 თვიანი კალენდარი</div>
-    <div class="card-sub">Thirteen Month Calendar</div>
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">&#128197;</div>
+      <div class="card-title">13 თვიანი<br>კალენდარი</div>
+      <div class="card-sub">Thirteen Month Calendar</div>
     </a>
-    
     <a class="card c-mars" href="mars.html">
-    <div class="card-glow"></div>
-    <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
-    <div class="sym">&#9794;</div>
-    <div class="card-title">მარსის კალენდარი</div>
-    <div class="card-sub">Darian Calendar</div>
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">&#9794;</div>
+      <div class="card-title">მარსის<br>კალენდარი</div>
+      <div class="card-sub">Darian Calendar</div>
     </a>
-    
+    <a class="card c-mars" href="mars-chart.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">&#9791;</div>
+      <div class="card-title">მარსის<br>ასტროლოგია</div>
+      <div class="card-sub">Areocentric Chart</div>
+    </a>
     <a class="card c-mars" href="planet-chart.html">
-    <div class="card-glow"></div>
-    <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
-    <div class="sym">&#9791;</div>
-    <div class="card-title">პლანეტარული ასტროლოგია</div>
-    <div class="card-sub">Planetary Astrology</div>
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">&#9800;</div>
+      <div class="card-title">პლანეტარული<br>ასტროლოგია</div>
+      <div class="card-sub">Planetocentric Charts</div>
     </a>
-
   </div>
 
   <footer><span>&#10022; &nbsp; omnia ex uno &nbsp; &#10022;</span></footer>
