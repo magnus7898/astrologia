@@ -123,7 +123,7 @@ tr:hover td{background:rgba(30,40,70,.45)}
 
   <div id="out" style="display:none">
     <div class="sec" id="lbl"></div>
-    <svg id="wheel" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg id="wheel" viewBox="-20 -20 740 740" xmlns="http://www.w3.org/2000/svg"></svg>
     <div id="oddbox"></div>
     <div id="innerbox"></div>
     <div class="sec">სხეულები</div>
@@ -384,61 +384,68 @@ const fmt2=function(d){const x=Math.floor(d);
 
 function drawWheel(P,asc,mc,houses,asps,bands){
   const svg=$('wheel');svg.innerHTML='';
+  /* radii: sign band, then a wide outer DEGREE WALL, then the planets */
+  const RSo=262,RSi=198;          /* sign band  */
+  const RWi=268,RWo=302;          /* degree wall */
+  const RPl=322;                  /* planet glyph ring */
   const defs=el('defs',{},svg);
   const g=el('radialGradient',{id:'bg',cx:'50%',cy:'50%',r:'50%'},defs);
   el('stop',{offset:'0%','stop-color':'#141830'},g);
   el('stop',{offset:'100%','stop-color':'#05040c'},g);
   el('rect',{width:700,height:700,fill:'url(#bg)'},svg);
+
+  /* ── sign / constellation band ── */
   bands.forEach(function(b){
     const p=function(d,r){const a=e2s(d,asc);
       return(CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
     const span=b.e-b.s,la=span>180?1:0;
-    el('path',{d:'M'+p(b.s,R1)+' A'+R1+','+R1+' 0 '+la+',0 '+p(b.e,R1)+
-                 ' L'+p(b.e,R2)+' A'+R2+','+R2+' 0 '+la+',1 '+p(b.s,R2)+' Z',
+    el('path',{d:'M'+p(b.s,RSo)+' A'+RSo+','+RSo+' 0 '+la+',0 '+p(b.e,RSo)+
+                 ' L'+p(b.e,RSi)+' A'+RSi+','+RSi+' 0 '+la+',1 '+p(b.s,RSi)+' Z',
       fill:'rgba(14,18,38,.85)',stroke:b.col,'stroke-width':.8,opacity:.9},svg);
     if(span>2.2){
       const a=e2s(b.s+span/2,asc);
-      txt(svg,b.sym,CX+Math.cos(a)*(R1+R2)/2,CY+Math.sin(a)*(R1+R2)/2,
-        {fill:b.col,'font-size':span<11?12:18,'font-family':'serif'});
+      txt(svg,b.sym,CX+Math.cos(a)*(RSo+RSi)/2,CY+Math.sin(a)*(RSo+RSi)/2,
+        {fill:b.col,'font-size':span<11?13:20,'font-family':'serif'});
     }
   });
-  /* full 360° degree ring, drawn inside the sign band */
-  const RD=R2-2, RN=R2-26;
-  el('circle',{cx:CX,cy:CY,r:RD,fill:'none',
-    stroke:'rgba(124,154,208,.28)','stroke-width':.8},svg);
+
+  /* ── the degree wall: 360 ticks + numbers every 10° ── */
+  el('circle',{cx:CX,cy:CY,r:RWi,fill:'none',stroke:'rgba(124,154,208,.35)','stroke-width':1},svg);
+  el('circle',{cx:CX,cy:CY,r:RWo,fill:'none',stroke:'rgba(168,196,234,.45)','stroke-width':1.2},svg);
   for(let d=0;d<360;d++){
     const a=e2s(d,asc);
     const is30=(d%30===0),is10=(d%10===0),is5=(d%5===0);
-    const L=is30?14:is10?10:is5?6:3;
-    el('line',{x1:CX+Math.cos(a)*RD,y1:CY+Math.sin(a)*RD,
-      x2:CX+Math.cos(a)*(RD-L),y2:CY+Math.sin(a)*(RD-L),
-      stroke:is30?'rgba(200,220,250,.85)':is10?'rgba(168,196,234,.6)':
-             is5?'rgba(124,154,208,.45)':'rgba(100,124,170,.3)',
-      'stroke-width':is30?1.4:is10?1:is5?.7:.45},svg);
+    const L=is30?RWo-RWi:is10?15:is5?9:5;      /* 30° ticks span the whole wall */
+    el('line',{x1:CX+Math.cos(a)*RWi,y1:CY+Math.sin(a)*RWi,
+      x2:CX+Math.cos(a)*(RWi+L),y2:CY+Math.sin(a)*(RWi+L),
+      stroke:is30?'rgba(210,228,255,.8)':is10?'rgba(168,196,234,.65)':
+             is5?'rgba(124,154,208,.5)':'rgba(100,124,170,.34)',
+      'stroke-width':is30?1.5:is10?1.1:is5?.8:.5},svg);
   }
-  /* degree numbers every 10°, upright to the reader */
   for(let d=0;d<360;d+=10){
-    const a=e2s(d,asc);
-    const nx=CX+Math.cos(a)*RN,ny=CY+Math.sin(a)*RN;
-    txt(svg,String(d),nx,ny,{fill:d%30===0?'rgba(200,220,250,.7)':'rgba(150,175,215,.45)',
-      'font-size':d%30===0?8.5:7,'font-family':'Cinzel,serif',
+    const a=e2s(d,asc),r=RWi+24;
+    const nx=CX+Math.cos(a)*r,ny=CY+Math.sin(a)*r;
+    txt(svg,String(d),nx,ny,{fill:d%30===0?'rgba(215,232,255,.9)':'rgba(160,185,225,.62)',
+      'font-size':d%30===0?12:10,'font-family':'Cinzel,serif',
+      'font-weight':d%30===0?'600':'400',
       transform:'rotate('+((a*180/Math.PI)+90)+','+nx+','+ny+')'});
   }
-  /* sector boundaries carried across the degree ring */
+  /* sign boundaries carried across the wall in each sign's colour */
   bands.forEach(function(b){
     const a=e2s(b.s,asc);
-    el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,
-      x2:CX+Math.cos(a)*(RD-16),y2:CY+Math.sin(a)*(RD-16),
-      stroke:b.col,'stroke-width':.9,opacity:.5},svg);
+    el('line',{x1:CX+Math.cos(a)*RSo,y1:CY+Math.sin(a)*RSo,
+      x2:CX+Math.cos(a)*RWo,y2:CY+Math.sin(a)*RWo,
+      stroke:b.col,'stroke-width':1.1,opacity:.55},svg);
   });
+
+  /* ── angles + inner disc ── */
   [0,3,6,9].forEach(function(i){
     const a=e2s(houses[i],asc);
     el('line',{x1:CX+Math.cos(a)*R4,y1:CY+Math.sin(a)*R4,
-      x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,
+      x2:CX+Math.cos(a)*RSi,y2:CY+Math.sin(a)*RSi,
       stroke:'rgba(168,196,234,.5)','stroke-width':1.1},svg);
   });
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(124,154,208,.5)','stroke-width':1.2},svg);
-  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(168,196,234,.6)','stroke-width':1.6},svg);
+  el('circle',{cx:CX,cy:CY,r:RSi,fill:'none',stroke:'rgba(124,154,208,.5)','stroke-width':1.2},svg);
   el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(6,8,18,.95)',stroke:'rgba(60,80,130,.6)','stroke-width':1},svg);
   asps.forEach(function(a){
     const a1=e2s(P[a.p1].lon,asc),a2=e2s(P[a.p2].lon,asc);
@@ -446,9 +453,11 @@ function drawWheel(P,asc,mc,houses,asps,bands){
       x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
       stroke:a.color,'stroke-width':1,opacity:.45},svg);
   });
+
+  /* ── planets outside the wall ── */
   const names=Object.keys(P),disp={};
   names.forEach(function(n){disp[n]=e2s(P[n].lon,asc);});
-  const GAP=22/(R1+28);
+  const GAP=21/RPl;
   for(let it=0;it<300;it++){
     let mv=false;
     for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
@@ -464,18 +473,27 @@ function drawWheel(P,asc,mc,houses,asps,bands){
   }
   names.forEach(function(n){
     const info=PI_[n]||{sym:'?',color:'#fff'},tA=e2s(P[n].lon,asc);
-    el('line',{x1:CX+Math.cos(tA)*(R1+1),y1:CY+Math.sin(tA)*(R1+1),
-      x2:CX+Math.cos(tA)*(R1+9),y2:CY+Math.sin(tA)*(R1+9),stroke:info.color,'stroke-width':1.4},svg);
-    const gx=CX+Math.cos(disp[n])*(R1+28),gy=CY+Math.sin(disp[n])*(R1+28);
+    /* pointer from the exact degree on the wall out to the glyph */
+    el('line',{x1:CX+Math.cos(tA)*(RWo+1),y1:CY+Math.sin(tA)*(RWo+1),
+      x2:CX+Math.cos(tA)*(RWo+9),y2:CY+Math.sin(tA)*(RWo+9),
+      stroke:info.color,'stroke-width':1.5},svg);
+    el('circle',{cx:CX+Math.cos(tA)*(RWo+1),cy:CY+Math.sin(tA)*(RWo+1),r:1.7,fill:info.color},svg);
+    const gx=CX+Math.cos(disp[n])*RPl,gy=CY+Math.sin(disp[n])*RPl;
+    let df=disp[n]-tA;
+    while(df>Math.PI)df-=2*Math.PI;
+    while(df<-Math.PI)df+=2*Math.PI;
+    if(Math.abs(df)>0.012)
+      el('line',{x1:CX+Math.cos(tA)*(RWo+9),y1:CY+Math.sin(tA)*(RWo+9),x2:gx,y2:gy,
+        stroke:info.color,'stroke-width':.5,opacity:.4,'stroke-dasharray':'2 2'},svg);
     txt(svg,info.sym,gx,gy,{fill:info.color,'font-size':17,'font-family':'serif'});
     if(P[n].retro)txt(svg,'℞',gx+10,gy-8,{fill:'#f87171','font-size':7,'font-family':'serif'});
   });
   [['AC',asc],['MC',mc]].forEach(function(pair){
     const a=e2s(pair[1],asc);
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
-      x2:CX+Math.cos(a)*(R1+22),y2:CY+Math.sin(a)*(R1+22),stroke:'#a8c4ea','stroke-width':2.2},svg);
-    txt(svg,pair[0],CX+Math.cos(a)*(R1+40),CY+Math.sin(a)*(R1+40),
-      {fill:'#a8c4ea','font-size':11,'font-weight':'bold','font-family':'Cinzel,serif'});
+    el('line',{x1:CX+Math.cos(a)*RWo,y1:CY+Math.sin(a)*RWo,
+      x2:CX+Math.cos(a)*(RWo+14),y2:CY+Math.sin(a)*(RWo+14),stroke:'#a8c4ea','stroke-width':2.4},svg);
+    txt(svg,pair[0],CX+Math.cos(a)*(RWo+30),CY+Math.sin(a)*(RWo+30),
+      {fill:'#a8c4ea','font-size':12,'font-weight':'bold','font-family':'Cinzel,serif'});
   });
 }
 
