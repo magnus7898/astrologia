@@ -402,14 +402,34 @@ function drawWheel(P,asc,mc,houses,asps,bands){
         {fill:b.col,'font-size':span<11?12:18,'font-family':'serif'});
     }
   });
-  /* 10° ticks inside each sector, so degrees are readable */
+  /* full 360° degree ring, drawn inside the sign band */
+  const RD=R2-2, RN=R2-26;
+  el('circle',{cx:CX,cy:CY,r:RD,fill:'none',
+    stroke:'rgba(124,154,208,.28)','stroke-width':.8},svg);
+  for(let d=0;d<360;d++){
+    const a=e2s(d,asc);
+    const is30=(d%30===0),is10=(d%10===0),is5=(d%5===0);
+    const L=is30?14:is10?10:is5?6:3;
+    el('line',{x1:CX+Math.cos(a)*RD,y1:CY+Math.sin(a)*RD,
+      x2:CX+Math.cos(a)*(RD-L),y2:CY+Math.sin(a)*(RD-L),
+      stroke:is30?'rgba(200,220,250,.85)':is10?'rgba(168,196,234,.6)':
+             is5?'rgba(124,154,208,.45)':'rgba(100,124,170,.3)',
+      'stroke-width':is30?1.4:is10?1:is5?.7:.45},svg);
+  }
+  /* degree numbers every 10°, upright to the reader */
+  for(let d=0;d<360;d+=10){
+    const a=e2s(d,asc);
+    const nx=CX+Math.cos(a)*RN,ny=CY+Math.sin(a)*RN;
+    txt(svg,String(d),nx,ny,{fill:d%30===0?'rgba(200,220,250,.7)':'rgba(150,175,215,.45)',
+      'font-size':d%30===0?8.5:7,'font-family':'Cinzel,serif',
+      transform:'rotate('+((a*180/Math.PI)+90)+','+nx+','+ny+')'});
+  }
+  /* sector boundaries carried across the degree ring */
   bands.forEach(function(b){
-    for(let d=Math.ceil(b.s/10)*10;d<b.e;d+=10){
-      const a=e2s(d,asc),major=((d-b.s)%30<0.01);
-      el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,
-        x2:CX+Math.cos(a)*(R2+(major?9:5)),y2:CY+Math.sin(a)*(R2+(major?9:5)),
-        stroke:b.col,'stroke-width':major?1:.6,opacity:major?.7:.4},svg);
-    }
+    const a=e2s(b.s,asc);
+    el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,
+      x2:CX+Math.cos(a)*(RD-16),y2:CY+Math.sin(a)*(RD-16),
+      stroke:b.col,'stroke-width':.9,opacity:.5},svg);
   });
   [0,3,6,9].forEach(function(i){
     const a=e2s(houses[i],asc);
@@ -424,7 +444,7 @@ function drawWheel(P,asc,mc,houses,asps,bands){
     const a1=e2s(P[a.p1].lon,asc),a2=e2s(P[a.p2].lon,asc);
     el('line',{x1:CX+Math.cos(a1)*R4,y1:CY+Math.sin(a1)*R4,
       x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
-      stroke:a.color,'stroke-width':1,opacity:.5},svg);
+      stroke:a.color,'stroke-width':1,opacity:.45},svg);
   });
   const names=Object.keys(P),disp={};
   names.forEach(function(n){disp[n]=e2s(P[n].lon,asc);});
