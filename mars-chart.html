@@ -491,6 +491,38 @@ function gen(){
     console.error(e);
   }
 }
+
+  /* areocentric direction → ecliptic lon AND lat (degrees) */
+function areoFull(J){
+  const T=(J-2451545.0)/36525;
+  const mars=helio('მარსი',T),out={};
+  const ll=v=>{const r=Math.hypot(v[0],v[1],v[2]);
+    return{lon:norm(Math.atan2(v[1],v[0])*R2D),lat:Math.asin(v[2]/r)*R2D,d:r};};
+  out['მზე']=ll([-mars[0],-mars[1],-mars[2]]);
+  const list=['მერკური','ვენერა','დედამიწა','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
+  for(let i=0;i<list.length;i++)out[list[i]]=ll(sub(helio(list[i],T),mars));
+  return out;
+}
+/* ecliptic (J2000) → equatorial (J2000) */
+function ecl2eqFull(lon,lat){
+  const l=lon*D2R,b=lat*D2R;
+  const x=Math.cos(b)*Math.cos(l),
+        y=Math.cos(b)*Math.sin(l)*Math.cos(EPS)-Math.sin(b)*Math.sin(EPS),
+        z=Math.cos(b)*Math.sin(l)*Math.sin(EPS)+Math.sin(b)*Math.cos(EPS);
+  return{ra:norm(Math.atan2(y,x)*R2D),dec:Math.asin(z)*R2D};
+}
+/* J2000 → B1875, the frame IAU boundaries are defined in */
+function toB1875(ra,dec){
+  const t=(2405889.25868-2451545.0)/36525;     // B1875.0 in Julian centuries
+  const z=(2306.2181*t+1.09468*t*t)/3600*D2R,
+        th=(2004.3109*t-0.42665*t*t)/3600*D2R,
+        ze=(2306.2181*t+0.30188*t*t)/3600*D2R;
+  const a=ra*D2R,d=dec*D2R;
+  const A=Math.cos(d)*Math.sin(a+ze),
+        B=Math.cos(th)*Math.cos(d)*Math.cos(a+ze)-Math.sin(th)*Math.sin(d),
+        C=Math.sin(th)*Math.cos(d)*Math.cos(a+ze)+Math.cos(th)*Math.sin(d);
+  return{ra:norm(Math.atan2(A,B)*R2D+z*R2D),dec:Math.asin(C)*R2D};
+}
 function setNow(){
   const n=new Date();
   $('i-day').value=n.getUTCDate();
