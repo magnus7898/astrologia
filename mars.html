@@ -3,551 +3,361 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>პლანეტების კალენდარი</title>
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/cinzel@5.0.0/index.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/cinzel-decorative@5.0.0/index.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/im-fell-english@5.0.0/index.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-georgian@5.0.0/index.css" rel="stylesheet">
+<title>პლანეტარული კალენდრები</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --primary:#c2542a;--primary-rgb:194,84,42;--secondary:#f08050;--dark:#0a0503;
-  --accent:#e0a850;--text:#f0ddc8;--dim:rgba(200,160,130,0.55);--glow:rgba(194,84,42,0.25);
-  --bg:#0a0503;--globe-grad:radial-gradient(circle at 34% 30%,#f0a070 0%,#c2542a 45%,#6a2410 78%,#2a0e05 100%);
-}
+:root{--void:#05040c;--acc:#7c9ad0;--acc-l:#a8c4ea;--dust:#c8d4e8;
+  --txt:#e6ecf8;--dim:rgba(190,205,230,0.55)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;
-  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;
-  overflow-x:hidden;position:relative;transition:background 0.8s}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:url('https://image.qwenlm.ai/public_source/781ce922-0f09-4e70-960f-f6b46912451f/1ab21e0fa-b72b-4100-8358-c0f4a7ffd17c.png') center/cover;
-  opacity:0.35}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 700px 420px at 25% 15%,var(--glow) 0,transparent 70%),
-  radial-gradient(ellipse 520px 520px at 82% 72%,rgba(var(--primary-rgb),0.15) 0,transparent 70%);
-  transition:all 0.8s}
-
-.hero{position:relative;z-index:1;text-align:center;padding:38px 24px 18px;width:100%}
-.mars-globe{width:64px;height:64px;margin:0 auto 14px;border-radius:50%;
-  background:var(--globe-grad);
-  box-shadow:0 0 30px var(--glow),inset -6px -6px 14px rgba(0,0,0,.6);
-  position:relative;animation:spin 24s linear infinite;transition:all 0.8s}
-.mars-globe::after{content:'';position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(ellipse 22px 8px at 30% 22%,rgba(255,255,255,.35) 0,transparent 70%),
-             radial-gradient(ellipse 18px 7px at 68% 82%,rgba(255,255,255,.22) 0,transparent 70%)}
-.mars-globe.saturn::after{content:'';position:absolute;width:140%;height:30%;
-  border:3px solid rgba(var(--primary-rgb),0.3);border-radius:50%;
-  top:35%;left:-20%;transform:rotateX(75deg);pointer-events:none}
-@keyframes spin{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(8deg)}}
-.hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--secondary);opacity:.6;margin-bottom:10px;font-family:'Cinzel',serif}
-.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4vw,36px);letter-spacing:3px;
-  background:linear-gradient(160deg,#ffd9b0 0%,var(--secondary) 35%,#8a3818 62%,#f0c090 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;transition:all 0.8s}
-.hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:8px}
-
-.planet-bar{position:relative;z-index:1;display:flex;gap:6px;padding:10px 16px;overflow-x:auto;
-  scrollbar-width:none;max-width:100%;margin-bottom:10px}
-.planet-bar::-webkit-scrollbar{display:none}
-.planet-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;
-  border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(20,10,5,0.6);
-  cursor:pointer;transition:all 0.3s;min-width:72px;flex-shrink:0}
-.planet-btn:hover{border-color:var(--primary);background:rgba(30,15,8,0.8)}
-.planet-btn.active{border-color:var(--primary);background:rgba(40,20,10,0.9);box-shadow:0 0 15px var(--glow)}
-.mini-globe{width:28px;height:28px;border-radius:50%;transition:all 0.3s}
-.planet-btn span:last-child{font-size:8px;letter-spacing:1px;text-transform:uppercase;
-  color:var(--dim);font-family:'Cinzel',serif}
-
-.tab-bar{position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:18px auto 0;padding:0 16px;max-width:700px;width:100%}
-.tab-btn{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;
-  color:rgba(var(--primary-rgb),0.65);background:rgba(20,8,4,.6);border:1px solid rgba(var(--primary-rgb),0.3);
-  border-radius:20px;padding:8px 18px;cursor:pointer;transition:all .25s;white-space:nowrap}
-.tab-btn:hover{color:var(--secondary);border-color:rgba(var(--primary-rgb),0.6);background:rgba(50,20,10,.8)}
-.tab-btn.active{color:#160804;background:linear-gradient(135deg,var(--secondary),var(--primary));
-  border-color:rgba(var(--primary-rgb),0.5);box-shadow:0 2px 14px var(--glow)}
-
-.panel{position:relative;z-index:1;width:100%;max-width:1020px;padding:0 16px;margin-top:20px}
-.section{display:none}.section.active{display:block}
-.card{background:rgba(20,8,4,.75);border:1px solid rgba(var(--primary-rgb),0.28);border-radius:14px;
-  padding:18px;margin-bottom:14px;backdrop-filter:blur(10px);transition:border-color 0.8s}
+body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;position:relative}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(1px 1px at 12% 18%,rgba(255,255,255,.5) 0,transparent 100%),
+  radial-gradient(1px 1px at 31% 42%,rgba(255,255,255,.3) 0,transparent 100%),
+  radial-gradient(1px 1px at 58% 11%,rgba(255,255,255,.4) 0,transparent 100%),
+  radial-gradient(1px 1px at 79% 33%,rgba(255,255,255,.45) 0,transparent 100%),
+  radial-gradient(1px 1px at 44% 77%,rgba(255,255,255,.3) 0,transparent 100%)}
+.hero{position:relative;z-index:1;text-align:center;padding:34px 24px 14px;width:100%}
+.orb{width:56px;height:56px;margin:0 auto 12px;border-radius:50%;transition:background .4s;
+  box-shadow:0 0 26px rgba(124,154,208,.3),inset -5px -5px 12px rgba(0,0,0,.55)}
+.hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--acc-l);opacity:.6;margin-bottom:9px;font-family:'Cinzel',serif}
+.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(19px,4vw,34px);letter-spacing:3px;
+  background:linear-gradient(160deg,#dce8ff 0%,var(--acc-l) 35%,#4a6a9a 62%,#c8dcf8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:7px}
+.panel{position:relative;z-index:1;width:100%;max-width:1000px;padding:0 16px;margin-top:16px}
+.card{background:rgba(10,12,26,.78);border:1px solid rgba(124,154,208,.22);border-radius:14px;padding:18px;margin-bottom:14px}
 .card-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--secondary);opacity:.8;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(var(--primary-rgb),0.18)}
+  color:var(--acc-l);opacity:.85;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(124,154,208,.15)}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
-.field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:110px}
-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--secondary);opacity:.7;font-family:'Cinzel',serif}
-input,select{background:rgba(14,6,3,.7);border:1px solid rgba(var(--primary-rgb),0.35);border-radius:8px;
-  color:var(--text);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%}
-input:focus,select:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 3px rgba(var(--primary-rgb),0.15)}
-.btn{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#160804;border:none;border-radius:9px;
-  padding:11px 22px;font-size:12px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;font-weight:600;transition:all 0.3s}
-.btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
-
-.clock{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.tile{background:rgba(40,16,8,.5);border:1px solid rgba(var(--primary-rgb),0.25);border-radius:12px;padding:14px;text-align:center;transition:border-color 0.8s}
-.tile-k{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-family:'Cinzel',serif}
-.tile-v{font-family:'Cinzel',serif;font-size:26px;color:var(--secondary);margin-top:6px;letter-spacing:1px}
-.tile-s{font-size:10px;color:var(--dim);margin-top:3px}
-
-.cal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:10px}
-.month{background:rgba(20,8,4,.7);border:1px solid rgba(var(--primary-rgb),0.22);border-radius:11px;overflow:hidden;transition:border-color 0.8s}
-.month.short{border-color:rgba(var(--accent-rgb,224,168,80),0.4)}
-.month-head{padding:7px 11px;background:rgba(var(--primary-rgb),0.09);border-bottom:1px solid rgba(var(--primary-rgb),0.2);
+.field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:96px}
+label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--acc-l);opacity:.7;font-family:'Cinzel',serif}
+input,select{background:rgba(8,10,22,.8);border:1px solid rgba(124,154,208,.3);border-radius:8px;
+  color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--acc-l);box-shadow:0 0 0 3px rgba(124,154,208,.15)}
+.btn{background:linear-gradient(135deg,#3a5a8a,#7c9ad0);color:#0a0c18;border:none;border-radius:9px;
+  padding:11px 22px;font-size:12px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;font-weight:600;width:100%;margin-top:10px}
+.btn:hover{filter:brightness(1.15)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.tile{background:rgba(30,40,70,.35);border:1px solid rgba(124,154,208,.2);border-radius:11px;padding:12px;text-align:center}
+.tile-k{font-size:8.5px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-family:'Cinzel',serif}
+.tile-v{font-family:'Cinzel',serif;font-size:20px;color:var(--acc-l);margin-top:5px}
+.tile-s{font-size:9.5px;color:var(--dim);margin-top:2px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.month{background:rgba(10,12,26,.7);border:1px solid rgba(124,154,208,.18);border-radius:11px;overflow:hidden}
+.month.now{border-color:rgba(168,196,234,.65);box-shadow:0 0 16px rgba(124,154,208,.18)}
+.month-head{padding:7px 11px;background:rgba(124,154,208,.07);border-bottom:1px solid rgba(124,154,208,.15);
   display:flex;justify-content:space-between;align-items:baseline}
-.month-name{font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:1.5px;color:var(--dust,#e8b07a)}
+.month-name{font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:1.5px;color:var(--dust)}
 .month-num{font-size:8.5px;color:var(--dim);font-family:'Cinzel',serif}
 .days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:7px}
-.dow{font-size:7.5px;text-align:center;color:rgba(200,160,130,.4);font-family:'Cinzel',serif;padding-bottom:2px}
-.day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:#e8ceb0;border-radius:4px}
-.day:hover{background:rgba(var(--primary-rgb),0.15)}
-.day.today{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#160804;font-weight:700}
+.dow{font-size:7.5px;text-align:center;color:rgba(190,205,230,.4);font-family:'Cinzel',serif;padding-bottom:2px}
+.day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:10px;color:#cfe0f5;border-radius:4px}
+.day:hover{background:rgba(124,154,208,.15)}
+.day.today{background:linear-gradient(135deg,#3a5a8a,#a8c4ea);color:#0a0c18;font-weight:700}
 .day.bday{outline:2px solid #f0c060;color:#f0c060;font-weight:700}
-.day.leapsol{background:rgba(224,168,80,.2);color:var(--accent);border:1px solid rgba(224,168,80,.4)}
-
-.overview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
-.month-card{background:rgba(20,8,4,.7);border:1px solid rgba(var(--primary-rgb),0.22);border-radius:11px;padding:12px;transition:all 0.3s}
-.month-card.current{border-color:var(--primary);box-shadow:0 0 10px var(--glow)}
-.month-card-name{font-family:'Cinzel',serif;font-size:11px;color:var(--secondary);margin-bottom:6px}
-.month-card-info{font-size:10px;color:var(--dim);margin-bottom:8px}
-.progress-bar{height:4px;background:rgba(var(--primary-rgb),0.15);border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:2px;transition:width 0.5s}
-
-.result{background:rgba(60,24,10,.4);border-left:3px solid var(--primary);border-radius:8px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:2}
-.big{font-family:'Cinzel',serif;font-size:26px;color:var(--secondary);letter-spacing:2px}
+.bar{height:18px;border-radius:4px;margin:6px 0 2px;position:relative;overflow:hidden;background:rgba(30,40,70,.4)}
+.barfill{position:absolute;inset:0;width:0;background:linear-gradient(90deg,#3a5a8a,#a8c4ea)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{color:rgba(190,205,230,.5);padding:6px 10px;text-align:left;font-weight:400;font-size:9px;
+  text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(124,154,208,.18)}
+td{padding:5px 10px;border-bottom:1px solid rgba(16,18,34,.9)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(30,40,70,.4)}
+tr.now td{background:rgba(124,154,208,.12)}
+.result{background:rgba(124,154,208,.10);border-left:3px solid var(--acc);border-radius:8px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:2}
+.big{font-family:'Cinzel',serif;font-size:24px;color:var(--acc-l);letter-spacing:2px}
 .k{color:var(--dim);font-size:11px;letter-spacing:1px}
-.v{color:var(--dust,#e8b07a);font-weight:600}
-.note{font-size:10px;color:rgba(200,160,130,.45);line-height:1.7;margin-top:10px}
-.season{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;margin-left:6px}
-.year-nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.year-nav input{width:100px}
+.v{color:var(--dust);font-weight:600}
+.warn{background:rgba(224,168,80,.12);border-left:3px solid #e0a850;border-radius:8px;padding:12px 15px;margin-top:12px;font-size:12px;line-height:1.85}
+.note{font-size:10px;color:rgba(190,205,230,.45);line-height:1.7;margin-top:10px}
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <div class="mars-globe" id="globe"></div>
-  <div class="hero-eyebrow">მზის სისტემის დრო</div>
-  <h1 class="hero-title" id="hero-title">პლანეტების კალენდარი</h1>
-  <p class="hero-sub" id="hero-sub">აირჩიეთ პლანეტა დროის სანახავად</p>
-</div>
-
-<div class="planet-bar" id="planet-bar"></div>
-
-<div class="tab-bar">
-  <button class="tab-btn active" onclick="setTab('now')">🕐 ახლა პლანეტაზე</button>
-  <button class="tab-btn" onclick="setTab('year')">📅 პლანეტური წელი</button>
-  <button class="tab-btn" onclick="setTab('bday')">🎂 პლანეტური ასაკი</button>
+  <div class="orb" id="orb"></div>
+  <div class="hero-eyebrow">დრო სხვა სამყაროებში</div>
+  <h1 class="hero-title">პლანეტარული კალენდრები</h1>
+  <p class="hero-sub" id="hsub">Solar days, seasons and years on every planet</p>
 </div>
 
 <div class="panel">
-  <div id="tab-now" class="section active">
-    <div class="card">
-      <div class="card-title">🕐 კოორდინირებული პლანეტური დრო</div>
-      <div class="clock">
-        <div class="tile"><div class="tile-k" id="lbl-time">პლანეტური დრო</div><div class="tile-v" id="c-time">--:--:--</div><div class="tile-s" id="lbl-time-sub">ადგილობრივი დრო</div></div>
-        <div class="tile"><div class="tile-k">Sol (PSD)</div><div class="tile-v" id="c-psd">—</div><div class="tile-s">პლანეტური დღეები ეპოქიდან</div></div>
-        <div class="tile"><div class="tile-k">Ls</div><div class="tile-v" id="c-ls">—</div><div class="tile-s">მზის გრძედი</div></div>
-        <div class="tile"><div class="tile-k">პლანეტური წელი</div><div class="tile-v" id="c-py">—</div><div class="tile-s" id="lbl-year-sub">წელი 0 = 2000</div></div>
-      </div>
-      <div class="result" style="margin-top:14px">
-        <div class="big" id="c-date">—</div>
-        <div><span class="k">კვირის დღე:</span> <span class="v" id="c-dow">—</span></div>
-        <div><span class="k">სეზონი (ჩრდ. ნახევარსფერო):</span> <span id="c-season"></span></div>
-        <div><span class="k">დედამიწაზე:</span> <span class="v" id="c-earth">—</span></div>
-      </div>
-      <div class="note" id="c-note">1 პლანეტური დღე განსხვავებულია თითოეული პლანეტისთვის</div>
+  <div class="card">
+    <div class="row">
+      <div class="field" style="min-width:150px"><label>პლანეტა</label>
+        <select id="p">
+          <option value="mercury">☿ მერკური</option>
+          <option value="venus">♀ ვენერა</option>
+          <option value="earth">⊕ დედამიწა</option>
+          <option value="mars" selected>♂ მარსი</option>
+          <option value="jupiter">♃ იუპიტერი</option>
+          <option value="saturn">♄ სატურნი</option>
+          <option value="uranus">♅ ურანი</option>
+          <option value="neptune">♆ ნეპტუნი</option>
+          <option value="pluto">⯓ პლუტონი</option>
+        </select></div>
+      <div class="field"><label>დღე</label><input type="number" id="b-d" value="1" min="1" max="31"></div>
+      <div class="field"><label>თვე</label><input type="number" id="b-m" value="1" min="1" max="12"></div>
+      <div class="field"><label>წელი</label><input type="number" id="b-y" value="1990"></div>
+      <div class="field"><label>საათი</label><input type="number" id="b-h" value="12" min="0" max="23"></div>
     </div>
+    <button class="btn" id="go">✦ კალენდრის გამოთვლა ✦</button>
   </div>
 
-  <div id="tab-year" class="section">
+  <div id="out" style="display:none">
     <div class="card">
-      <div class="card-title">⚙ წელი</div>
-      <div class="row year-nav">
-        <div class="field"><label>წელი</label><input type="number" id="y-year" value="0"></div>
-        <button class="btn" onclick="renderYear()">✦ ჩვენება ✦</button>
-        <button class="btn" onclick="thisYear()" style="background:none;border:1px solid rgba(var(--primary-rgb),0.45);color:var(--secondary)">↻ მიმდინარე</button>
-      </div>
-      <div class="note" id="y-info"></div>
+      <div class="card-title" id="t-now">🕐 ახლა</div>
+      <div class="tiles" id="tiles"></div>
+      <div id="cur"></div>
+      <div id="degen"></div>
     </div>
     <div class="card">
-      <div class="card-title" id="cal-title"> კალენდარი</div>
-      <div id="cal-container"></div>
-      <div class="note" id="y-note"></div>
+      <div class="card-title">🎂 შენი ასაკი და დაბადების დღე</div>
+      <div id="bday"></div>
     </div>
-  </div>
-
-  <div id="tab-bday" class="section">
     <div class="card">
-      <div class="card-title">🎂 შენი ასაკი და დაბადების დღე პლანეტაზე</div>
-      <div class="row">
-        <div class="field"><label>დღე</label><input type="number" id="b-day" value="1" min="1" max="31"></div>
-        <div class="field"><label>თვე</label><input type="number" id="b-month" value="1" min="1" max="12"></div>
-        <div class="field"><label>წელი</label><input type="number" id="b-year" value="1990"></div>
-        <div class="field"><label>საათი</label><input type="number" id="b-hour" value="12" min="0" max="23"></div>
-        <button class="btn" onclick="calcAge()">🚀 გამოთვლა</button>
-      </div>
-      <div id="b-result"></div>
+      <div class="card-title" id="t-cal">📅 კალენდარი</div>
+      <div id="cal"></div>
+      <div class="note" id="calnote"></div>
     </div>
   </div>
 </div>
 
 <script>
-/* ═══ PLANET DATA ═══════════════════════════════════════════ */
-const EPOCH=Date.UTC(2000,0,1,0,0,0);
-const DOW_KA=['კვირა','ორშაბათი','სამშაბათი','ოთხშაბათი','ხუთშაბათი','პარასკევი','შაბათი'];
-const DOW_EN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-const PLANETS={
-  mercury:{
-    name:'მერკური',nameEn:'Mercury',symbol:'☿',
-    dayLen:1407.5,calSolLen:29.323,yearLen:87.969,axialTilt:0.034,
-    months:6,totalDays:72,leapDays:73,
-    isLeap:y=>y%2===0,
-    monthNames:['სიჩქარე','შეტყობინება','ვაჭრობა','მოგზაურობა','საზღვარი','ბინდი'],
-    monthNamesEn:['Velocitas','Nuntius','Commercium','Iter','Limes','Crepusculum'],
-    theme:{primary:'#a0a0a0',secondary:'#c8c8c8',dark:'#0d0d0d',accent:'#808080',text:'#e0e0e0',dim:'rgba(200,200,200,0.55)',glow:'rgba(160,160,160,0.25)',bg:'#0d0d0d',globeGrad:'radial-gradient(circle at 34% 30%,#d0d0d0 0%,#a0a0a0 45%,#606060 78%,#303030 100%)'}
-  },
-  venus:{
-    name:'ვენერა',nameEn:'Venus',symbol:'♀',
-    dayLen:5832.6,calSolLen:23.968,yearLen:224.701,axialTilt:177.36,
-    months:10,totalDays:225,leapDays:226,
-    isLeap:y=>y%2===0,
-    monthNames:['სილამაზე','სიყვარული','დილა','საღამო','ხელოვნება','ჰარმონია','მადი','სინათლე','ვნება','ერთგულება'],
-    monthNamesEn:['Pulchritudo','Amor','Aurora','Vesper','Ars','Harmonia','Gratia','Lux','Passio','Fidelitas'],
-    theme:{primary:'#d4a050',secondary:'#f0c878',dark:'#0d0804',accent:'#e0b060',text:'#f0e0c0',dim:'rgba(220,180,130,0.55)',glow:'rgba(212,160,80,0.25)',bg:'#0d0804',globeGrad:'radial-gradient(circle at 34% 30%,#f0e0a0 0%,#d4a050 45%,#a07030 78%,#503010 100%)'}
-  },
-  earth:{
-    name:'დედამიწა',nameEn:'Earth',symbol:'🜨',
-    dayLen:24,calSolLen:24,yearLen:365.2425,axialTilt:23.44,
-    months:12,totalDays:365,leapDays:366,
-    isLeap:y=>{const ay=y+2000;return(ay%4===0&&ay%100!==0)||ay%400===0;},
-    fixedMonthLengths:[31,28,31,30,31,30,31,31,30,31,30,31],leapMonth:1,
-    monthNames:['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'],
-    monthNamesEn:['January','February','March','April','May','June','July','August','September','October','November','December'],
-    theme:{primary:'#4090d0',secondary:'#60b0f0',dark:'#04080d',accent:'#50a0e0',text:'#d0e8f8',dim:'rgba(130,180,220,0.55)',glow:'rgba(64,144,208,0.25)',bg:'#04080d',globeGrad:'radial-gradient(circle at 34% 30%,#80c0f0 0%,#4090d0 30%,#2060a0 60%,#103060 100%)'}
-  },
-  mars:{
-    name:'მარსი',nameEn:'Mars',symbol:'♂',
-    dayLen:24.6597,calSolLen:24.6597,yearLen:686.9713,axialTilt:25.19,
-    months:24,totalDays:668,leapDays:669,
-    isLeap:y=>(y%2!==0)||(y%10===0&&(y%100!==0||y%500===0)),
-    monthNames:['მშვილდოსანი','დანუსი','თხის რქა','მაკარა','მერწყული','კუმბჰა','თევზები','მინა','ვერძი','მეშა','კურო','რიშაბჰა','ტყუპები','მითუნა','კირჩხიბი','კარკა','ლომი','სიმჰა','ქალწული','კანია','სასწორი','ტულა','მორიელი','ვრიშიკა'],
-    monthNamesEn:['Sagittarius','Dhanus','Capricornus','Makara','Aquarius','Kumbha','Pisces','Mina','Aries','Mesha','Taurus','Rishabha','Gemini','Mithuna','Cancer','Karka','Leo','Simha','Virgo','Kanya','Libra','Tula','Scorpius','Vrishika'],
-    theme:{primary:'#c2542a',secondary:'#f08050',dark:'#0a0503',accent:'#e0a850',text:'#f0ddc8',dim:'rgba(200,160,130,0.55)',glow:'rgba(194,84,42,0.25)',bg:'#0a0503',globeGrad:'radial-gradient(circle at 34% 30%,#f0a070 0%,#c2542a 45%,#6a2410 78%,#2a0e05 100%)'}
-  },
-  jupiter:{
-    name:'იუპიტერი',nameEn:'Jupiter',symbol:'♃',
-    dayLen:9.925,calSolLen:9.925,yearLen:4332.59,axialTilt:3.13,
-    months:12,totalDays:10476,leapDays:10482,
-    isLeap:y=>y%3===0,
-    monthNames:['ჭექა-ქუხი','ქარიშხალი','ღრუბელი','ელვა','ქარბუქი','ცისარტყელა','ოლიმპო','ზევსი','გრიგალი','ამპედი','იო','ევროპა'],
-    monthNamesEn:['Tonitrus','Tempestas','Nubes','Fulmen','Nix','Iris','Olympus','Zeus','Procella','Ampedi','Io','Europa'],
-    theme:{primary:'#c08040',secondary:'#e0a060',dark:'#0a0604',accent:'#d09050',text:'#f0dcc0',dim:'rgba(200,160,120,0.55)',glow:'rgba(192,128,64,0.25)',bg:'#0a0604',globeGrad:'radial-gradient(circle at 34% 30%,#f0c080 0%,#c08040 30%,#906020 60%,#403010 100%)'}
-  },
-  saturn:{
-    name:'სატურნი',nameEn:'Saturn',symbol:'♄',
-    dayLen:10.656,calSolLen:10.656,yearLen:10759.22,axialTilt:26.73,
-    months:12,totalDays:24232,leapDays:24240,
-    isLeap:y=>y%5===0,
-    monthNames:['დრო','მოსავალი','ბეჭედი','ტიტანი','კრონოსი','ხერხი','წონასწორობა','ორბიტა','მთვარე','ჰიპერიონი','იაპეტუსი','ენცელადუსი'],
-    monthNamesEn:['Tempus','Messis','Anulus','Titan','Cronus','Opus','Libra','Orbita','Luna','Hyperion','Iapetus','Enceladus'],
-    theme:{primary:'#c0a050',secondary:'#e0c878',dark:'#0a0804',accent:'#d0b060',text:'#f0e0c0',dim:'rgba(200,180,130,0.55)',glow:'rgba(192,160,80,0.25)',bg:'#0a0804',globeGrad:'radial-gradient(circle at 34% 30%,#f0d890 0%,#c0a050 45%,#907030 78%,#403010 100%)'}
-  },
-  uranus:{
-    name:'ურანი',nameEn:'Uranus',symbol:'',
-    dayLen:17.24,calSolLen:17.24,yearLen:30688.5,axialTilt:97.77,
-    months:12,totalDays:42720,leapDays:42726,
-    isLeap:y=>y%6===0,
-    monthNames:['ციური','ქარი','ყინული','ცისფერი','აური','ობერონი','ტიტანია','მირანდა','არიელი','უმბრიელი','კორდელია','პუკი'],
-    monthNamesEn:['Caelestis','Ventus','Glacies','Azureus','Aurora','Oberon','Titania','Miranda','Ariel','Umbriel','Cordelia','Puck'],
-    theme:{primary:'#50b0c0',secondary:'#70d0e0',dark:'#040a0d',accent:'#60c0d0',text:'#d0f0f8',dim:'rgba(130,200,210,0.55)',glow:'rgba(80,176,192,0.25)',bg:'#040a0d',globeGrad:'radial-gradient(circle at 34% 30%,#a0e8f0 0%,#50b0c0 45%,#308090 78%,#104050 100%)'}
-  },
-  neptune:{
-    name:'ნეპტუნი',nameEn:'Neptune',symbol:'♆',
-    dayLen:16.11,calSolLen:16.11,yearLen:60182,axialTilt:28.32,
-    months:12,totalDays:89660,leapDays:89666,
-    isLeap:y=>y%8===0,
-    monthNames:['ოკეანე','სიღრმე','ტალღა','ლურჯი','პოსეიდონი','ტრიტონი','ნერეიდა','პროტეუსი','გალატეა','დესპინა','ლარისა','ქარიშხალა'],
-    monthNamesEn:['Oceanus','Profundum','Unda','Caeruleus','Poseidon','Triton','Nereis','Proteus','Galatea','Despina','Larissa','Tempestas'],
-    theme:{primary:'#4060c0',secondary:'#6080e0',dark:'#04040d',accent:'#5070d0',text:'#d0d8f8',dim:'rgba(130,140,220,0.55)',glow:'rgba(64,96,192,0.25)',bg:'#04040d',globeGrad:'radial-gradient(circle at 34% 30%,#8090f0 0%,#4060c0 45%,#2040a0 78%,#081050 100%)'}
-  }
+/* ═══ PLANETARY CALENDARS ═════════════════════════════════════
+   Day   = SOLAR day (sunrise to sunrise), not the sidereal spin.
+   Year  = one orbit.
+   Month = a 30° arc of solar longitude Ls — i.e. the planet's own
+           tropical signs. Month lengths therefore vary with orbital
+           eccentricity (Kepler's second law), which is why Pluto's
+           longest month is nearly 3× its shortest.
+   Constants computed from JPL Keplerian elements + IAU rotation.
+   ════════════════════════════════════════════════════════════ */
+const $=function(id){return document.getElementById(id);};
+const D2R=Math.PI/180,R2D=180/Math.PI,EPS=23.4392911*D2R;
+const norm=function(x){return((x%360)+360)%360;};
+const C={"mercury":{"Porb":87.9693,"Prot":58.646146,"Psol":175.93797,"sols":0.5,"tilt":0.034,"e":0.20563593,"Ls_peri":49.06,"months":[0.03,0.03,0.03,0.03,0.04,0.05,0.06,0.06,0.06,0.05,0.04,0.03],"retro":false},"venus":{"Porb":224.7023,"Prot":243.018484,"Psol":116.75089,"sols":1.925,"tilt":2.638,"e":0.00677672,"Ls_peri":253.75,"months":[0.16,0.16,0.16,0.16,0.16,0.16,0.16,0.16,0.16,0.16,0.16,0.16],"retro":true},"earth":{"Porb":365.2578,"Prot":0.99727,"Psol":1.0,"sols":365.258,"tilt":23.439,"e":0.01671123,"Ls_peri":282.94,"months":[30.46,30.97,31.33,31.46,31.3,30.9,30.39,29.9,29.56,29.45,29.59,29.96],"retro":false},"mars":{"Porb":686.9916,"Prot":1.025957,"Psol":1.02749,"sols":668.611,"tilt":25.192,"e":0.0933941,"Ls_peri":251.01,"months":[61.17,65.4,66.71,64.5,59.76,54.32,49.74,46.89,46.11,47.46,50.82,55.74],"retro":false},"jupiter":{"Porb":4334.7532,"Prot":0.413538,"Psol":0.41358,"sols":10481.108,"tilt":3.12,"e":0.04838624,"Ls_peri":57.51,"months":[812.13,794.43,796.08,816.78,852.73,896.07,935.22,957.73,955.58,929.56,888.82,845.98],"retro":false},"saturn":{"Porb":10757.0535,"Prot":0.444009,"Psol":0.44403,"sols":24226.093,"tilt":26.73,"e":0.05386179,"Ls_peri":279.02,"months":[2032.94,2142.27,2220.92,2241.16,2195.34,2100.49,1988.34,1890.2,1827.99,1812.96,1847.53,1925.97],"retro":false},"uranus":{"Porb":30703.0764,"Prot":0.718333,"Psol":0.71832,"sols":42743.102,"tilt":82.23,"e":0.04725744,"Ls_peri":183.41,"months":[3898.73,3812.01,3657.65,3484.8,3339.93,3255.08,3246.09,3314.53,3447.95,3618.11,3781.2,3887.03],"retro":true},"neptune":{"Porb":60227.6973,"Prot":0.67125,"Psol":0.67126,"sols":89723.689,"tilt":27.848,"e":0.00859048,"Ls_peri":359.05,"months":[7355.53,7388.65,7445.44,7511.19,7568.27,7600.87,7599.76,7565.25,7507.11,7441.41,7385.73,7354.47],"retro":false},"pluto":{"Porb":90614.6533,"Prot":6.387223,"Psol":6.38767,"sols":14185.862,"tilt":119.608,"e":0.2488273,"Ls_peri":5.52,"months":[695.65,759.57,913.19,1171.92,1514.61,1815.03,1872.94,1640.74,1291.99,995.79,804.69,709.75],"retro":false}};
+const KEP={
+ 'mercury':[0.38709927,0.20563593,7.00497902,252.25032350,77.45779628,48.33076593,
+            0.00000037,0.00001906,-0.00594749,149472.67411175,0.16047689,-0.12534081],
+ 'venus':[0.72333566,0.00677672,3.39467605,181.97909950,131.60246718,76.67984255,
+          0.00000390,-0.00004107,-0.00078890,58517.81538729,0.00268329,-0.27769418],
+ 'earth':[1.00000261,0.01671123,-0.00001531,100.46457166,102.93768193,0.0,
+          0.00000562,-0.00004392,-0.01294668,35999.37244981,0.32327364,0.0],
+ 'mars':[1.52371034,0.09339410,1.84969142,-4.55343205,-23.94362959,49.55953891,
+         0.00001847,0.00007882,-0.00813131,19140.30268499,0.44441088,-0.29257343],
+ 'jupiter':[5.20288700,0.04838624,1.30439695,34.39644051,14.72847983,100.47390909,
+            -0.00011607,-0.00013253,-0.00183714,3034.74612775,0.21252668,0.20469106],
+ 'saturn':[9.53667594,0.05386179,2.48599187,49.95424423,92.59887831,113.66242448,
+           -0.00125060,-0.00050991,0.00193609,1222.49362201,-0.41897216,-0.28867794],
+ 'uranus':[19.18916464,0.04725744,0.77263783,313.23810451,170.95427630,74.01692503,
+           -0.00196176,-0.00004397,-0.00242939,428.48202785,0.40805281,0.04240589],
+ 'neptune':[30.06992276,0.00859048,1.77004347,-55.12002969,44.96476227,131.78422574,
+            0.00026291,0.00005105,0.00035372,218.45945325,-0.32241464,-0.00508664],
+ 'pluto':[39.48211675,0.24882730,17.14001206,238.92903833,224.06891629,110.30393684,
+          -0.00031596,0.00005170,0.00004818,145.20780515,-0.04062942,-0.01183482]
 };
+const ROT={'mercury':[281.0103,-0.0328,61.4155,-0.0049],'venus':[272.76,0,67.16,0],
+ 'earth':[0,-0.641,90,-0.557],'mars':[317.68143,-0.1061,52.88650,-0.0609],
+ 'jupiter':[268.056595,-0.006499,64.495303,0.002413],'saturn':[40.589,-0.036,83.537,-0.004],
+ 'uranus':[257.311,0,-15.175,0],'neptune':[299.36,0,43.46,0],'pluto':[132.993,0,-6.163,0]};
+const PL={
+ mercury:{ka:'მერკური',sym:'☿',g1:'#c8d8e0',c:'#8fa8b4',g2:'#4a5a62'},
+ venus:{ka:'ვენერა',sym:'♀',g1:'#f8e8b0',c:'#e8c878',g2:'#7a6028'},
+ earth:{ka:'დედამიწა',sym:'⊕',g1:'#a0d0f0',c:'#5b9ec4',g2:'#173248'},
+ mars:{ka:'მარსი',sym:'♂',g1:'#f0a070',c:'#e07050',g2:'#5a1e0c'},
+ jupiter:{ka:'იუპიტერი',sym:'♃',g1:'#f0d0a0',c:'#e0a060',g2:'#7a4c18'},
+ saturn:{ka:'სატურნი',sym:'♄',g1:'#f0e8c0',c:'#e0d090',g2:'#7a6838'},
+ uranus:{ka:'ურანი',sym:'♅',g1:'#b0e8f0',c:'#80d0e0',g2:'#28585e'},
+ neptune:{ka:'ნეპტუნი',sym:'♆',g1:'#90b0f8',c:'#6090f0',g2:'#1a2860'},
+ pluto:{ka:'პლუტონი',sym:'⯓',g1:'#e0c0d0',c:'#c090b0',g2:'#503848'}};
+/* months = the planet's own tropical signs */
+const MON=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული',
+           'სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const MSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎'];
+const SEASON=[['გაზაფხული','#6ac48a'],['ზაფხული','#f0c060'],
+              ['შემოდგომა','#f08050'],['ზამთარი','#7ab0e0']];
+const DOW=['I','II','III','IV','V','VI','VII'];
 
-/* ═══ CALENDAR ENGINE ═══════════════════════════════════════ */
-function getSolDate(pid,date){
-  const p=PLANETS[pid];
-  const calSolDays=p.calSolLen/24;
-  const daysSinceEpoch=(date.getTime()-EPOCH)/86400000;
-  return daysSinceEpoch/calSolDays;
+const jd=function(dt){return dt.getTime()/86400000+2440587.5;};
+const sub=function(a,b){return[a[0]-b[0],a[1]-b[1],a[2]-b[2]];};
+const crossV=function(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];};
+const dot=function(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];};
+const unit=function(v){const n=Math.hypot(v[0],v[1],v[2]);return[v[0]/n,v[1]/n,v[2]/n];};
+function helio(k,T){
+  const e0=KEP[k];
+  const a=e0[0]+e0[6]*T,e=e0[1]+e0[7]*T,I=(e0[2]+e0[8]*T)*D2R,
+        L=e0[3]+e0[9]*T,vp=e0[4]+e0[10]*T,Om=(e0[5]+e0[11]*T)*D2R;
+  let M=norm(L-vp)*D2R; if(M>Math.PI)M-=2*Math.PI;
+  let E=M; for(let i=0;i<10;i++)E=E-(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));
+  const xp=a*(Math.cos(E)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E);
+  const w=(vp*D2R)-Om,cw=Math.cos(w),sw=Math.sin(w),
+        cO=Math.cos(Om),sO=Math.sin(Om),ci=Math.cos(I),si=Math.sin(I);
+  return[(cw*cO-sw*sO*ci)*xp+(-sw*cO-cw*sO*ci)*yp,
+         (cw*sO+sw*cO*ci)*xp+(-sw*sO+cw*cO*ci)*yp,
+         (sw*si)*xp+(cw*si)*yp];
 }
-
-function getClock(pid,date){
-  const p=PLANETS[pid];
-  const hoursSinceEpoch=(date.getTime()-EPOCH)/3600000;
-  const dayFraction=((hoursSinceEpoch%p.dayLen)+p.dayLen)%p.dayLen/p.dayLen;
-  const h=Math.floor(dayFraction*24);
-  const m=Math.floor((dayFraction*24-h)*60);
-  const s=Math.floor(((dayFraction*24-h)*60-m)*60);
-  return{h,m,s};
+/* solar longitude Ls of the observer planet at time J */
+function Ls(p,J){
+  const T=(J-2451545.0)/36525,e0=KEP[p];
+  const i=(e0[2]+e0[8]*T)*D2R,Om=(e0[5]+e0[11]*T)*D2R;
+  const n=[Math.sin(i)*Math.sin(Om),-Math.sin(i)*Math.cos(Om),Math.cos(i)];
+  const r=ROT[p],a0=(r[0]+r[1]*T)*D2R,d0=(r[2]+r[3]*T)*D2R;
+  const pe=[Math.cos(d0)*Math.cos(a0),Math.cos(d0)*Math.sin(a0),Math.sin(d0)];
+  const pol=[pe[0],pe[1]*Math.cos(EPS)+pe[2]*Math.sin(EPS),
+                   -pe[1]*Math.sin(EPS)+pe[2]*Math.cos(EPS)];
+  const eq=unit(crossV(pol,n)),ey=unit(crossV(n,eq));
+  const o=helio(p,T),s=[-o[0],-o[1],-o[2]];
+  return norm(Math.atan2(dot(s,ey),dot(s,eq))*R2D);
 }
-
-function getMonthLens(pid,year){
-  const p=PLANETS[pid];
-  if(p.fixedMonthLengths){
-    const lens=[...p.fixedMonthLengths];
-    if(p.isLeap(year))lens[p.leapMonth]++;
-    return lens;
-  }
-  const total=p.isLeap(year)?p.leapDays:p.totalDays;
-  const base=Math.floor(total/p.months);
-  const extra=total%p.months;
-  const lens=Array(p.months).fill(base);
-  for(let i=0;i<extra;i++)lens[i]++;
-  return lens;
+/* time (days after Ls=0) for a given Ls, via Kepler */
+function tOfLs(p,L){
+  const c=C[p],e=c.e,nu=(L-c.Ls_peri)*D2R;
+  const E=2*Math.atan2(Math.sqrt(1-e)*Math.sin(nu/2),Math.sqrt(1+e)*Math.cos(nu/2));
+  const M=E-e*Math.sin(E);
+  return norm(M*R2D)/360*c.Porb;
 }
+function yearPos(p,J){                    /* days into the planet's year */
+  const c=C[p],L=Ls(p,J);
+  let t=tOfLs(p,L)-tOfLs(p,0);
+  t=((t%c.Porb)+c.Porb)%c.Porb;
+  return{Ls:L,tDays:t,tSols:t/c.Psol};
+}
+function monthOf(p,tSols){                /* month index + sol within it */
+  const m=C[p].months;let acc=0;
+  for(let i=0;i<12;i++){ if(tSols<acc+m[i])return{mi:i,sol:tSols-acc,len:m[i]}; acc+=m[i]; }
+  return{mi:11,sol:m[11],len:m[11]};
+}
+const fmtN=function(x,d){return (+x).toLocaleString('ka-GE',
+  {minimumFractionDigits:d||0,maximumFractionDigits:d||0});};
 
-function getCalDate(pid,date){
-  const p=PLANETS[pid];
-  const sol=getSolDate(pid,date);
-  let totalSols=Math.floor(sol);
-  let year=0;
-  if(totalSols>=0){
-    while(true){
-      const yLen=p.isLeap(year)?p.leapDays:p.totalDays;
-      if(totalSols<yLen)break;
-      totalSols-=yLen;year++;
-    }
+function run(){
+  const p=$('p').value,c=C[p],pd=PL[p];
+  const now=new Date(),Jn=jd(now);
+  const bd=new Date(Date.UTC(+$('b-y').value,+$('b-m').value-1,+$('b-d').value,+$('b-h').value));
+  const Jb=jd(bd);
+  $('out').style.display='block';
+  $('orb').style.background='radial-gradient(circle at 34% 30%,'+pd.g1+' 0%,'+pd.c+' 45%,'+pd.g2+' 80%,#06050e 100%)';
+  $('hsub').textContent=pd.sym+' '+pd.ka+' · '+fmtN(c.sols,2)+' sols per year';
+
+  /* ── constants ── */
+  const sd=Math.abs(c.Psol),rot=c.Prot;
+  $('tiles').innerHTML=
+   tile('სოლი (მზის დღე)',sd<2?fmtN(sd*24,2)+' სთ':fmtN(sd,2),sd<2?'':'დედამიწის დღე')+
+   tile('ბრუნვა (ვარსკვლ.)',rot<2?fmtN(rot*24,2)+' სთ':fmtN(rot,2),c.retro?'რეტროგრადი':'')+
+   tile('წელი',fmtN(c.Porb,1),'დედამიწის დღე')+
+   tile('სოლი წელიწადში',fmtN(c.sols,c.sols<10?3:0),'')+
+   tile('ღერძის დახრა',fmtN(c.tilt,2)+'°','სეზონები')+
+   tile('ექსცენტრისიტეტი',c.e.toFixed(4),c.e>0.1?'ძლიერ ცვალებადი თვეები':'');
+
+  /* ── current planetary date ── */
+  const yp=yearPos(p,Jn),mo=monthOf(p,yp.tSols);
+  const seas=SEASON[Math.floor(yp.Ls/90)];
+  const yearNo=Math.floor((Jn-2451545.0)/c.Porb);
+  if(c.sols>=10){
+    $('cur').innerHTML='<div class="result">'+
+      '<div class="big">'+MSYM[mo.mi]+' '+MON[mo.mi]+' '+fmtN(Math.floor(mo.sol)+1)+
+      ', წელი '+yearNo+'</div>'+
+      '<div><span class="k">Ls (მზის გრძედი):</span> <span class="v">'+yp.Ls.toFixed(2)+'°</span>'+
+      ' <span class="k">·</span> <span style="color:'+seas[1]+'">'+seas[0]+'</span>'+
+      ' <span class="k">(ჩრდ. ნახევარსფერო)</span></div>'+
+      '<div><span class="k">წლის სოლი:</span> <span class="v">'+fmtN(yp.tSols,1)+'</span>'+
+      ' / '+fmtN(c.sols,1)+'</div>'+
+      '<div><span class="k">დედამიწაზე:</span> <span class="v">'+
+      now.toLocaleString('ka-GE',{dateStyle:'long',timeStyle:'short'})+'</span></div></div>';
+    $('degen').innerHTML='';
   }else{
-    while(totalSols<0){year--;totalSols+=p.isLeap(year)?p.leapDays:p.totalDays;}
+    $('cur').innerHTML='';
+    const yearsPerSol=c.Psol/c.Porb;
+    $('degen').innerHTML='<div class="warn">⚠ <b>'+pd.ka+'ზე კალენდარი შეუძლებელია ჩვეულებრივი აზრით.</b><br>'+
+      'ერთი მზის დღე = <b>'+fmtN(c.Psol,2)+' დედამიწის დღე</b>, ხოლო წელი მხოლოდ <b>'+
+      fmtN(c.Porb,2)+' დღეა</b> — ანუ ერთ დღეში <b>'+yearsPerSol.toFixed(2)+' წელი</b> გადის.<br>'+
+      (p==='mercury'?
+        'მერკური მზეს 2 შემობრუნებაზე ზუსტად 3-ჯერ ბრუნავს ღერძის გარშემო (3:2 რეზონანსი), '+
+        'ამიტომ <b>ერთი მზის დღე ზუსტად ორი მერკურიული წელია</b>. მზე ცაზე ზოგან უკან ბრუნდება.':
+        'ვენერა უკუღმა ბრუნავს, ამიტომ მზე დასავლეთით ამოდის. '+
+        'წელიწადში მხოლოდ <b>'+c.sols.toFixed(2)+' მზის დღეა</b> — თვე დღეზე მოკლე იქნებოდა.')+
+      '<br><span style="color:rgba(190,205,230,.6)">ქვემოთ თვეები მაინც ნაჩვენებია — როგორც სეზონური '+
+      'რკალები (30° Ls), არა როგორც დღეების ჯგუფები.</span></div>';
   }
-  const monthLens=getMonthLens(pid,year);
-  let month=0;
-  while(month<monthLens.length&&totalSols>=monthLens[month]){totalSols-=monthLens[month];month++;}
-  const dow=((Math.floor(sol)%7)+7)%7;
-  return{year,month,day:totalSols+1,dow,totalSol:Math.floor(sol)};
-}
 
-function getSolarLon(pid,date){
-  const p=PLANETS[pid];
-  const sol=getSolDate(pid,date);
-  const yearSols=p.totalDays;
-  const dayOfYear=((sol%yearSols)+yearSols)%yearSols;
-  return(dayOfYear/yearSols)*360;
-}
+  /* ── birthday / age ── */
+  const ageDays=(Jn-Jb),ageY=ageDays/c.Porb,ageSols=ageDays/c.Psol;
+  const bp=yearPos(p,Jb),bm=monthOf(p,bp.tSols);
+  const nextN=Math.ceil(ageY),nextJ=Jb+nextN*c.Porb;
+  const nextDate=new Date((nextJ-2440587.5)*86400000);
+  const toNext=Math.round(nextJ-Jn);
+  $('bday').innerHTML='<div class="result">'+
+    '<div class="big">'+ageY.toFixed(ageY<10?3:2)+' '+pd.ka+'ული წელი</div>'+
+    '<div class="k" style="margin-bottom:6px">დედამიწაზე '+(ageDays/365.2425).toFixed(2)+' წელი</div>'+
+    '<div><span class="k">დაბადება '+pd.ka+'ის კალენდრით:</span> <span class="v">'+
+      MSYM[bm.mi]+' '+MON[bm.mi]+' '+fmtN(Math.floor(bm.sol)+1)+'</span>'+
+      ' <span class="k">· Ls '+bp.Ls.toFixed(1)+'°</span></div>'+
+    '<div><span class="k">ნაცხოვრები სოლები:</span> <span class="v">'+fmtN(ageSols,ageSols<100?2:0)+'</span></div>'+
+    '<div><span class="k">მე-'+nextN+' დაბადების დღე:</span> <span class="v">'+
+      nextDate.toLocaleDateString('ka-GE',{dateStyle:'long'})+'</span>'+
+      ' <span class="k">· '+(toNext>0?fmtN(toNext)+' დღეში':'გავიდა')+'</span></div>'+
+    (c.Porb>3650?'<div class="note">⚠ '+pd.ka+'ის წელი '+(c.Porb/365.25).toFixed(1)+
+      ' დედამიწის წელია — ადამიანი ვერ იზეიმებდა პირველ დაბადების დღესაც.</div>':'')+
+    '</div>';
 
-function getSeason(ls){
-  if(ls<90)return['გაზაფხული','#6ac48a'];
-  if(ls<180)return['ზაფხული','#f0c060'];
-  if(ls<270)return['შემოდგომა','#f08050'];
-  return['ზამთარი','#7ab0e0'];
-}
-
-function displayYear(pid,year){
-  if(pid==='earth')return year+2000;
-  return year;
-}
-
-/* ═══ UI ════════════════════════════════════════════════════ */
-let curPlanet='mars';
-let curTab='now';
-let bdayMark=null;
-
-function initPlanetBar(){
-  const bar=document.getElementById('planet-bar');
-  Object.keys(PLANETS).forEach(pid=>{
-    const p=PLANETS[pid];
-    const btn=document.createElement('button');
-    btn.className='planet-btn'+(pid===curPlanet?' active':'');
-    btn.dataset.planet=pid;
-    btn.onclick=()=>selectPlanet(pid);
-    btn.innerHTML=`<div class="mini-globe" style="background:${p.theme.globeGrad};box-shadow:0 0 8px ${p.theme.glow}"></div><span>${p.name}</span>`;
-    bar.appendChild(btn);
-  });
-}
-
-function selectPlanet(pid){
-  curPlanet=pid;
-  const p=PLANETS[pid];
-  document.documentElement.style.setProperty('--primary',p.theme.primary);
-  document.documentElement.style.setProperty('--primary-rgb',p.theme.primary.replace('#','').match(/.{2}/g).map(x=>parseInt(x,16)).join(','));
-  document.documentElement.style.setProperty('--secondary',p.theme.secondary);
-  document.documentElement.style.setProperty('--dark',p.theme.dark);
-  document.documentElement.style.setProperty('--accent',p.theme.accent);
-  document.documentElement.style.setProperty('--text',p.theme.text);
-  document.documentElement.style.setProperty('--dim',p.theme.dim);
-  document.documentElement.style.setProperty('--glow',p.theme.glow);
-  document.documentElement.style.setProperty('--bg',p.theme.bg);
-  document.documentElement.style.setProperty('--globe-grad',p.theme.globeGrad);
-  
-  document.querySelectorAll('.planet-btn').forEach(b=>b.classList.toggle('active',b.dataset.planet===pid));
-  document.getElementById('globe').className='mars-globe '+pid;
-  document.getElementById('hero-title').textContent=p.name+'ის კალენდარი';
-  document.getElementById('hero-sub').textContent=`${p.nameEn} · ${p.dayLen.toFixed(2)}h დღე · ${p.yearLen} დედამიწის დღე წელიწადში`;
-  
-  const rgb=p.theme.primary.replace('#','').match(/.{2}/g).map(x=>parseInt(x,16)).join(',');
-  document.documentElement.style.setProperty('--primary-rgb',rgb);
-  
-  if(curTab==='year')renderYear();
-  tick();
-}
-
-function setTab(tab){
-  curTab=tab;
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['now','year','bday'][i]===tab));
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  if(tab==='year')renderYear();
-}
-
-function tick(){
-  const now=new Date();
-  const p=PLANETS[curPlanet];
-  const clock=getClock(curPlanet,now);
-  const pad=n=>String(n).padStart(2,'0');
-  document.getElementById('c-time').textContent=pad(clock.h)+':'+pad(clock.m)+':'+pad(clock.s);
-  document.getElementById('lbl-time').textContent=p.name+'ური დრო';
-  document.getElementById('lbl-time-sub').textContent=`1 დღე = ${p.dayLen.toFixed(2)} დედამიწის საათი`;
-  
-  const sol=getSolDate(curPlanet,now);
-  document.getElementById('c-psd').textContent=Math.floor(sol).toLocaleString('ka-GE');
-  
-  const ls=getSolarLon(curPlanet,now);
-  document.getElementById('c-ls').textContent=ls.toFixed(1)+'°';
-  
-  const cal=getCalDate(curPlanet,now);
-  document.getElementById('c-py').textContent=displayYear(curPlanet,cal.year);
-  document.getElementById('lbl-year-sub').textContent=curPlanet==='earth'?'გრიგორიანული წელი':'წელი 0 = 2000';
-  
-  document.getElementById('c-date').textContent=
-    `${p.monthNames[cal.month]} ${cal.day}, ${displayYear(curPlanet,cal.year)} (${p.monthNamesEn[cal.month]})`;
-  document.getElementById('c-dow').textContent=DOW_KA[cal.dow]+' · '+DOW_EN[cal.dow];
-  
-  const[sn,sc]=getSeason(ls);
-  document.getElementById('c-season').innerHTML=
-    `<span class="season" style="background:${sc}22;color:${sc};border:1px solid ${sc}55">${sn}</span>`;
-  document.getElementById('c-earth').textContent=
-    now.toLocaleString('ka-GE',{dateStyle:'long',timeStyle:'medium'});
-  document.getElementById('c-note').textContent=
-    `1 ${p.name}ური დღე = ${p.dayLen.toFixed(2)} დედამიწის საათი · ${p.name}ური წელი = ${p.yearLen} დედამიწის დღე · ${p.months} თვე`;
-}
-
-function thisYear(){
-  const cal=getCalDate(curPlanet,new Date());
-  document.getElementById('y-year').value=cal.year;
-  renderYear();
-}
-
-function renderYear(){
-  const pid=curPlanet;
-  const p=PLANETS[pid];
-  const year=+document.getElementById('y-year').value;
-  const monthLens=getMonthLens(pid,year);
-  const totalDays=monthLens.reduce((a,b)=>a+b,0);
-  const cur=getCalDate(pid,new Date());
-  
-  document.getElementById('y-info').innerHTML=
-    `${p.name}ური წელი <b style="color:var(--secondary)">${displayYear(pid,year)}</b> · 
-     ${p.isLeap(year)?'<b style="color:var(--accent)">ნაკიანი</b>':'ჩვეულებრივი'} ·
-     სულ <b style="color:var(--text)">${totalDays}</b> სოლი ·
-     ≈ ${(totalDays*p.calSolLen/24).toFixed(0)} დედამიწის დღე`;
-  
-  const maxDays=Math.max(...monthLens);
-  document.getElementById('cal-title').textContent=
-    maxDays>60?`📅 ${p.months} თვე · ${totalDays} სოლი`:`📅 ${p.months} თვე · ${totalDays} სოლი`;
-  
-  if(maxDays>60){
-    renderYearOverview(pid,year,monthLens,cur);
+  /* ── the calendar itself ── */
+  const M=c.months,total=M.reduce(function(a,b){return a+b;},0);
+  let acc=0,html='';
+  const small=(Math.max.apply(null,M)<=120);
+  if(small&&c.sols>=10){
+    html='<div class="mgrid">'+M.map(function(len,i){
+      const isNow=(mo.mi===i);
+      const n=Math.round(len);
+      let cells='';
+      for(let d=1;d<=n;d++){
+        const today=isNow&&Math.floor(mo.sol)+1===d;
+        const bday=(bm.mi===i&&Math.floor(bm.sol)+1===d);
+        cells+='<div class="day'+(today?' today':'')+(bday?' bday':'')+'">'+d+'</div>';
+      }
+      return '<div class="month'+(isNow?' now':'')+'">'+
+        '<div class="month-head"><span class="month-name">'+MSYM[i]+' '+MON[i]+'</span>'+
+        '<span class="month-num">'+(i+1)+' · '+len.toFixed(1)+' sol</span></div>'+
+        '<div class="days">'+DOW.map(function(x){return '<div class="dow">'+x+'</div>';}).join('')+'</div>'+
+        '<div class="days">'+cells+'</div></div>';
+    }).join('')+'</div>';
   }else{
-    renderYearGrid(pid,year,monthLens,cur);
-  }
-  
-  document.getElementById('y-note').textContent=
-    maxDays>60?
-    `თითოეული თვე ${Math.floor(totalDays/p.months)}-დან ${Math.ceil(totalDays/p.months)} სოლს შეიცავს · ნაკიანი წელი ${p.leapDays} სოლია`:
-    `თვეები ${p.name}ური ზოდიაქოს სახელებს ატარებენ · ყოველი მე-6 თვე 27 სოლია (მარსისთვის)`;
-}
-
-function renderYearGrid(pid,year,monthLens,cur){
-  const p=PLANETS[pid];
-  const container=document.getElementById('cal-container');
-  container.innerHTML='<div class="cal-grid">'+monthLens.map((len,i)=>{
-    let cells='';
-    for(let s=1;s<=len;s++){
-      const isToday=cur.year===year&&cur.month===i&&cur.day===s;
-      const isB=bdayMark&&bdayMark.month===i&&bdayMark.day===s;
-      const leapSol=p.fixedMonthLengths&&i===p.leapMonth&&s===monthLens[i]&&p.isLeap(year);
-      cells+=`<div class="day${isToday?' today':''}${isB?' bday':''}${leapSol?' leapsol':''}"
-        title="${p.monthNames[i]} ${s}">${s}</div>`;
+    html='<table><thead><tr><th>#</th><th>თვე</th><th>Ls</th><th>სოლი</th>'+
+      '<th>დედამიწის დღე</th><th>წლის წილი</th></tr></thead><tbody>';
+    for(let i=0;i<12;i++){
+      const isNow=(c.sols>=10&&mo.mi===i);
+      const pct=M[i]/total*100;
+      html+='<tr'+(isNow?' class="now"':'')+'><td class="k">'+(i+1)+'</td>'+
+        '<td><span style="font-family:serif;font-size:14px">'+MSYM[i]+'</span> '+MON[i]+
+          (isNow?' <b style="color:#a8c4ea">← ახლა</b>':'')+'</td>'+
+        '<td class="k">'+(i*30)+'–'+((i+1)*30)+'°</td>'+
+        '<td class="v">'+fmtN(M[i],M[i]<10?2:0)+'</td>'+
+        '<td class="k">'+fmtN(M[i]*c.Psol,0)+'</td>'+
+        '<td><div class="bar"><div class="barfill" style="width:'+(pct*8).toFixed(1)+'%"></div></div>'+
+          '<span class="k">'+pct.toFixed(1)+'%</span></td></tr>';
+      acc+=M[i];
     }
-    return `<div class="month${len<28?' short':''}">
-      <div class="month-head"><span class="month-name">${p.monthNames[i]}</span>
-        <span class="month-num">${i+1} · ${len}</span></div>
-      <div class="days">${DOW_KA.map(x=>'<div class="dow">'+x.slice(0,2)+'</div>').join('')}</div>
-      <div class="days">${cells}</div></div>`;
-  }).join('')+'</div>';
+    html+='</tbody></table>';
+  }
+  $('cal').innerHTML=html;
+  $('t-cal').textContent='📅 '+pd.ka+'ის კალენდარი — 12 თვე · '+fmtN(total,total<10?2:0)+' სოლი';
+  $('t-now').textContent='🕐 ახლა '+pd.ka+'ზე';
+  const spread=Math.max.apply(null,M)/Math.min.apply(null,M);
+  $('calnote').innerHTML='თვე = მზის გრძედის 30° რკალი (პლანეტის საკუთარი ტროპიკული ნიშანი). '+
+    'კეპლერის მეორე კანონის გამო თვეები არათანაბარია: ყველაზე გრძელი თვე ყველაზე მოკლეზე <b>'+
+    spread.toFixed(2)+'-ჯერ</b> გრძელია'+(c.e>0.15?' — ეს ძალიან დიდი სხვაობაა მაღალი ექსცენტრისიტეტის გამო':'')+
+    '. სოლი = მზის დღე (მზიდან მზემდე), არა ვარსკვლავური ბრუნვა.';
+  $('out').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
-function renderYearOverview(pid,year,monthLens,cur){
-  const p=PLANETS[pid];
-  const container=document.getElementById('cal-container');
-  container.innerHTML='<div class="overview-grid">'+monthLens.map((len,i)=>{
-    const isCurrent=cur.year===year&&cur.month===i;
-    const progress=isCurrent?(cur.day/len*100):0;
-    return `<div class="month-card${isCurrent?' current':''}">
-      <div class="month-card-name">${p.monthNames[i]} <span style="opacity:0.5;font-size:9px">${p.monthNamesEn[i]}</span></div>
-      <div class="month-card-info">${len} სოლი · ${isCurrent?`დღე ${cur.day}/${len}`:`${(len*p.calSolLen/24).toFixed(0)} დედამიწის დღე`}</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-    </div>`;
-  }).join('')+'</div>';
+function tile(k,v,s){
+  return '<div class="tile"><div class="tile-k">'+k+'</div><div class="tile-v">'+v+'</div>'+
+    '<div class="tile-s">'+(s||'&nbsp;')+'</div></div>';
 }
-
-function calcAge(){
-  const d=+document.getElementById('b-day').value,
-        m=+document.getElementById('b-month').value,
-        y=+document.getElementById('b-year').value,
-        h=+document.getElementById('b-hour').value;
-  const birth=new Date(Date.UTC(y,m-1,d,h,0,0));
-  if(isNaN(birth)){document.getElementById('b-result').innerHTML='<div class="result">⚠ არასწორი თარიღი</div>';return;}
-  const now=new Date();
-  const p=PLANETS[curPlanet];
-  const bSol=getSolDate(curPlanet,birth),nSol=getSolDate(curPlanet,now);
-  const solsLived=nSol-bSol;
-  const planetAge=solsLived/(p.totalDays);
-  const bCal=getCalDate(curPlanet,birth);
-  bdayMark={month:bCal.month,day:bCal.day};
-  const bLs=getSolarLon(curPlanet,birth);
-  const[bsn,bsc]=getSeason(bLs);
-  const nextN=Math.ceil(planetAge);
-  const nextMs=birth.getTime()+nextN*p.yearLen*86400000;
-  const nextDate=new Date(nextMs);
-  const daysTo=Math.round((nextMs-now.getTime())/86400000);
-
-  document.getElementById('b-result').innerHTML=`<div class="result">
-    <div class="big">${planetAge.toFixed(2)} ${p.name}ური წელი</div>
-    <div class="k" style="margin-bottom:8px">დედამიწაზე ${(solsLived*p.calSolLen/24/365.2425).toFixed(2)} წელი</div>
-    <div><span class="k">დაბადება ${p.name}ურად:</span>
-      <span class="v">${p.monthNames[bCal.month]} ${bCal.day}, ${displayYear(curPlanet,bCal.year)}</span>
-      <span class="k">(${p.monthNamesEn[bCal.month]} ${bCal.day}) · ${DOW_KA[bCal.dow]}</span></div>
-    <div><span class="k">Ls ${bLs.toFixed(1)}°</span>
-      <span class="season" style="background:${bsc}22;color:${bsc};border:1px solid ${bsc}55">${bsn}</span></div>
-    <div><span class="k">ნაცხოვრები სოლები:</span> <span class="v">${Math.floor(solsLived).toLocaleString('ka-GE')}</span></div>
-    <div><span class="k">მე-${nextN} ${p.name}ური დაბადების დღე:</span>
-      <span class="v">${nextDate.toLocaleDateString('ka-GE',{dateStyle:'long'})}</span>
-      <span class="k">· ${daysTo>0?daysTo+' დღეში':'გავიდა'}</span></div>
-  </div>
-  <div class="note">${p.name}ზე ყოველი დაბადების დღე ${p.yearLen.toFixed(0)} დედამიწის დღეში ერთხელ დგება — 
-    თუ 40 წლის ხარ, ${p.name}ზე ${Math.floor(planetAge)}-ის ხარ. 
-    ${p.name}ური წელი ${(p.yearLen/365.2425).toFixed(2)}-ჯერ ${p.yearLen>365?'გრძელი':'მოკლე'}ა დედამიწისაზე.</div>`;
-  thisYear();
-}
-
-/* init */
-initPlanetBar();
-selectPlanet('mars');
-tick();setInterval(tick,1000);
-(function(){
-  const now=new Date();
-  document.getElementById('b-day').value=now.getUTCDate();
-  document.getElementById('b-month').value=now.getUTCMonth()+1;
-  thisYear();
-})();
+$('go').addEventListener('click',run);
+$('p').addEventListener('change',function(){if($('out').style.display!=='none')run();});
+(function(){const n=new Date();
+  $('b-d').value=n.getUTCDate();$('b-m').value=n.getUTCMonth()+1;})();
 </script>
 </body>
 </html>
