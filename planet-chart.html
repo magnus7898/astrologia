@@ -123,7 +123,7 @@ tr:hover td{background:rgba(30,40,70,.45)}
 
   <div id="out" style="display:none">
     <div class="sec" id="lbl"></div>
-    <svg id="wheel" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg id="wheel" viewBox="-10 -10 720 720" xmlns="http://www.w3.org/2000/svg"></svg>
     <div id="oddbox"></div>
     <div id="innerbox"></div>
     <div class="sec">სხეულები</div>
@@ -384,51 +384,70 @@ const fmt2=function(d){const x=Math.floor(d);
 
 function drawWheel(P,asc,mc,houses,asps,bands){
   const svg=$('wheel');svg.innerHTML='';
+  const RO=272;                 /* the big outer circle              */
+  const RSi=196;                /* inner edge of the sign band       */
+  const RPl=302;                /* planet glyph ring, outside        */
   const defs=el('defs',{},svg);
   const g=el('radialGradient',{id:'bg',cx:'50%',cy:'50%',r:'50%'},defs);
   el('stop',{offset:'0%','stop-color':'#141830'},g);
   el('stop',{offset:'100%','stop-color':'#05040c'},g);
   el('rect',{width:700,height:700,fill:'url(#bg)'},svg);
+
+  /* ── sign / constellation band, filling the big circle ── */
   bands.forEach(function(b){
     const p=function(d,r){const a=e2s(d,asc);
       return(CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
     const span=b.e-b.s,la=span>180?1:0;
-    el('path',{d:'M'+p(b.s,R1)+' A'+R1+','+R1+' 0 '+la+',0 '+p(b.e,R1)+
-                 ' L'+p(b.e,R2)+' A'+R2+','+R2+' 0 '+la+',1 '+p(b.s,R2)+' Z',
+    el('path',{d:'M'+p(b.s,RO)+' A'+RO+','+RO+' 0 '+la+',0 '+p(b.e,RO)+
+                 ' L'+p(b.e,RSi)+' A'+RSi+','+RSi+' 0 '+la+',1 '+p(b.s,RSi)+' Z',
       fill:'rgba(14,18,38,.85)',stroke:b.col,'stroke-width':.8,opacity:.9},svg);
     if(span>2.2){
       const a=e2s(b.s+span/2,asc);
-      txt(svg,b.sym,CX+Math.cos(a)*(R1+R2)/2,CY+Math.sin(a)*(R1+R2)/2,
-        {fill:b.col,'font-size':span<11?12:18,'font-family':'serif'});
+      txt(svg,b.sym,CX+Math.cos(a)*(RSi+24),CY+Math.sin(a)*(RSi+24),
+        {fill:b.col,'font-size':span<11?13:19,'font-family':'serif'});
     }
   });
-  /* 10° ticks inside each sector, so degrees are readable */
-  bands.forEach(function(b){
-    for(let d=Math.ceil(b.s/10)*10;d<b.e;d+=10){
-      const a=e2s(d,asc),major=((d-b.s)%30<0.01);
-      el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,
-        x2:CX+Math.cos(a)*(R2+(major?9:5)),y2:CY+Math.sin(a)*(R2+(major?9:5)),
-        stroke:b.col,'stroke-width':major?1:.6,opacity:major?.7:.4},svg);
-    }
-  });
+
+  /* ── the degree scale: little lines INSIDE the big circle ── */
+  for(let d=0;d<360;d++){
+    const a=e2s(d,asc),co=Math.cos(a),si=Math.sin(a);
+    const is30=(d%30===0),is10=(d%10===0),is5=(d%5===0);
+    const L=is30?20:is10?13:is5?8:5;
+    el('line',{x1:CX+co*RO,y1:CY+si*RO,x2:CX+co*(RO-L),y2:CY+si*(RO-L),
+      stroke:is30?'rgba(215,232,255,.9)':is10?'rgba(168,196,234,.7)':
+             is5?'rgba(124,154,208,.5)':'rgba(100,124,170,.34)',
+      'stroke-width':is30?1.6:is10?1.1:is5?.8:.5},svg);
+  }
+  /* degree numbers, tucked just inside the ticks */
+  for(let d=0;d<360;d+=10){
+    const a=e2s(d,asc),r=RO-32;
+    const nx=CX+Math.cos(a)*r,ny=CY+Math.sin(a)*r;
+    txt(svg,String(d),nx,ny,{fill:d%30===0?'rgba(215,232,255,.85)':'rgba(155,180,220,.55)',
+      'font-size':d%30===0?9.5:8,'font-family':'Cinzel,serif',
+      transform:'rotate('+((a*180/Math.PI)+90)+','+nx+','+ny+')'},svg);
+  }
+
+  /* ── circles, angles, aspect web ── */
+  el('circle',{cx:CX,cy:CY,r:RO,fill:'none',stroke:'rgba(190,214,248,.7)','stroke-width':1.7},svg);
+  el('circle',{cx:CX,cy:CY,r:RSi,fill:'none',stroke:'rgba(124,154,208,.5)','stroke-width':1.2},svg);
   [0,3,6,9].forEach(function(i){
     const a=e2s(houses[i],asc);
     el('line',{x1:CX+Math.cos(a)*R4,y1:CY+Math.sin(a)*R4,
-      x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,
+      x2:CX+Math.cos(a)*RSi,y2:CY+Math.sin(a)*RSi,
       stroke:'rgba(168,196,234,.5)','stroke-width':1.1},svg);
   });
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(124,154,208,.5)','stroke-width':1.2},svg);
-  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(168,196,234,.6)','stroke-width':1.6},svg);
   el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(6,8,18,.95)',stroke:'rgba(60,80,130,.6)','stroke-width':1},svg);
   asps.forEach(function(a){
     const a1=e2s(P[a.p1].lon,asc),a2=e2s(P[a.p2].lon,asc);
     el('line',{x1:CX+Math.cos(a1)*R4,y1:CY+Math.sin(a1)*R4,
       x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
-      stroke:a.color,'stroke-width':1,opacity:.5},svg);
+      stroke:a.color,'stroke-width':1,opacity:.45},svg);
   });
+
+  /* ── planets outside the big circle ── */
   const names=Object.keys(P),disp={};
   names.forEach(function(n){disp[n]=e2s(P[n].lon,asc);});
-  const GAP=22/(R1+28);
+  const GAP=21/RPl;
   for(let it=0;it<300;it++){
     let mv=false;
     for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
@@ -444,18 +463,26 @@ function drawWheel(P,asc,mc,houses,asps,bands){
   }
   names.forEach(function(n){
     const info=PI_[n]||{sym:'?',color:'#fff'},tA=e2s(P[n].lon,asc);
-    el('line',{x1:CX+Math.cos(tA)*(R1+1),y1:CY+Math.sin(tA)*(R1+1),
-      x2:CX+Math.cos(tA)*(R1+9),y2:CY+Math.sin(tA)*(R1+9),stroke:info.color,'stroke-width':1.4},svg);
-    const gx=CX+Math.cos(disp[n])*(R1+28),gy=CY+Math.sin(disp[n])*(R1+28);
+    el('line',{x1:CX+Math.cos(tA)*(RO+1),y1:CY+Math.sin(tA)*(RO+1),
+      x2:CX+Math.cos(tA)*(RO+9),y2:CY+Math.sin(tA)*(RO+9),
+      stroke:info.color,'stroke-width':1.5},svg);
+    el('circle',{cx:CX+Math.cos(tA)*(RO+1),cy:CY+Math.sin(tA)*(RO+1),r:1.7,fill:info.color},svg);
+    const gx=CX+Math.cos(disp[n])*RPl,gy=CY+Math.sin(disp[n])*RPl;
+    let df=disp[n]-tA;
+    while(df>Math.PI)df-=2*Math.PI;
+    while(df<-Math.PI)df+=2*Math.PI;
+    if(Math.abs(df)>0.012)
+      el('line',{x1:CX+Math.cos(tA)*(RO+9),y1:CY+Math.sin(tA)*(RO+9),x2:gx,y2:gy,
+        stroke:info.color,'stroke-width':.5,opacity:.4,'stroke-dasharray':'2 2'},svg);
     txt(svg,info.sym,gx,gy,{fill:info.color,'font-size':17,'font-family':'serif'});
     if(P[n].retro)txt(svg,'℞',gx+10,gy-8,{fill:'#f87171','font-size':7,'font-family':'serif'});
   });
   [['AC',asc],['MC',mc]].forEach(function(pair){
     const a=e2s(pair[1],asc);
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
-      x2:CX+Math.cos(a)*(R1+22),y2:CY+Math.sin(a)*(R1+22),stroke:'#a8c4ea','stroke-width':2.2},svg);
-    txt(svg,pair[0],CX+Math.cos(a)*(R1+40),CY+Math.sin(a)*(R1+40),
-      {fill:'#a8c4ea','font-size':11,'font-weight':'bold','font-family':'Cinzel,serif'});
+    el('line',{x1:CX+Math.cos(a)*RO,y1:CY+Math.sin(a)*RO,
+      x2:CX+Math.cos(a)*(RO+16),y2:CY+Math.sin(a)*(RO+16),stroke:'#a8c4ea','stroke-width':2.4},svg);
+    txt(svg,pair[0],CX+Math.cos(a)*(RO+34),CY+Math.sin(a)*(RO+34),
+      {fill:'#a8c4ea','font-size':12,'font-weight':'bold','font-family':'Cinzel,serif'});
   });
 }
 
