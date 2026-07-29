@@ -76,6 +76,23 @@ input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 
 .cellx.wend{background:rgba(124,154,208,.09)}
 .cd{font-size:15px;color:var(--gold-l);font-family:'Cinzel',serif;line-height:1}
 .cg{font-size:8.5px;color:var(--dim);line-height:1}
+.yr{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:10px}
+.ym{background:rgba(8,7,18,.55);border:1px solid rgba(201,168,76,.15);border-radius:10px;padding:9px 10px 10px}
+.ym.cur{border-color:rgba(201,168,76,.5);box-shadow:0 0 14px rgba(201,168,76,.13)}
+.ym-h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;color:var(--gold-l);
+  margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline}
+.ym-h span{font-size:8px;color:var(--dim)}
+.ym-g{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.ym-g .h{font-size:6.5px;text-align:center;color:rgba(190,180,160,.4);font-family:'Cinzel',serif;padding-bottom:2px}
+.ym-g .c{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:var(--txt);border-radius:3px}
+.ym-g .c.e{visibility:hidden}
+.ym-g .c.t{background:linear-gradient(135deg,#8a6a20,#c9a84c);color:#0a0810;font-weight:700}
+.ym-g .c.w{color:var(--acc-l)}
+.vtog{display:flex;gap:0;border:1px solid rgba(201,168,76,.3);border-radius:8px;overflow:hidden}
+.vtog button{background:rgba(8,7,18,.8);border:none;color:var(--dim);padding:7px 14px;
+  cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px}
+.vtog button.on{background:linear-gradient(135deg,#8a6a20,#c9a84c);color:#0a0810;font-weight:600}
 .warn{background:rgba(201,168,76,.09);border-left:3px solid var(--gold);border-radius:8px;
   padding:11px 14px;margin-top:12px;font-size:11.5px;line-height:1.8;color:var(--dim)}
 </style>
@@ -133,6 +150,9 @@ input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 
           <option value="fr">ფრანგული რესპუბლიკური</option>
           <option value="ch">ჩინური</option>
         </select>
+        <div class="vtog">
+          <button id="vM" class="on">თვე</button><button id="vY">წელი</button>
+        </div>
         <div class="nav">
           <button id="pm">‹</button><button id="tm">დღეს</button><button id="nm">›</button>
         </div>
@@ -559,7 +579,7 @@ const SYS={
  fr:{n:'ფრანგული რესპუბლიკური',f:jd2fr,m:M_FR},
  ch:{n:'ჩინური',f:function(j){const c=chineseFromJD(j);return[c.y,c.m,c.d,c.leap];},m:M_CH}
 };
-let mvJ=null,mvSys='greg';
+let mvJ=null,mvSys='greg',mvView='m';
 function monthBounds(sys,j){
   const F=SYS[sys].f;
   let start=j-(F(j)[2]-1);
@@ -570,7 +590,57 @@ function monthBounds(sys,j){
     end++; if(end-start>400)break;}
   return{start:start,len:end-start+1,ref:a};
 }
+function yearBounds(sys,j){
+  /* year = the run of months sharing one year number — works even when
+     the year does not start at month 1 (Hebrew starts at Tishrei = 7) */
+  const F=SYS[sys].f;
+  let b=monthBounds(sys,j);
+  const y=F(b.start)[0];
+  let guard=0;
+  while(F(b.start-1)[0]===y&&guard++<24)b=monthBounds(sys,b.start-1);
+  const months=[];let cur=b;guard=0;
+  while(F(cur.start)[0]===y&&guard++<24){
+    months.push(cur);
+    cur=monthBounds(sys,cur.start+cur.len);
+  }
+  return{y:y,months:months};
+}
+function renderYear(){
+  const sys=mvSys,F=SYS[sys].f,names=SYS[sys].m;
+  const yb=yearBounds(sys,mvJ);
+  const n=new Date();
+  const today=g2jd(n.getUTCFullYear(),n.getUTCMonth()+1,n.getUTCDate());
+  let total=0;yb.months.forEach(function(m){total+=m.len;});
+  const g1=jd2g(yb.months[0].start),lastM=yb.months[yb.months.length-1];
+  const g2=jd2g(lastM.start+lastM.len-1);
+  $('mv-title').textContent=SYS[sys].n+' — წელი '+yb.y;
+  $('mv-sub').innerHTML=yb.months.length+' თვე · '+total+' დღე · '+
+    g1[2]+'.'+g1[1]+'.'+g1[0]+' — '+g2[2]+'.'+g2[1]+'.'+g2[0];
+  const hd=['ორ','სა','ოთ','ხუ','პა','შა','კვ'];
+  let h='<div class="yr">';
+  yb.months.forEach(function(b,i){
+    const a=F(b.start),leap=a[3];
+    const isCur=(today>=b.start&&today<b.start+b.len);
+    h+='<div class="ym'+(isCur?' cur':'')+'"><div class="ym-h">'+
+      (leap?'+':'')+(names[a[1]-1]||('თვე '+a[1]))+'<span>'+b.len+'</span></div><div class="ym-g">';
+    h+=hd.map(function(x){return '<div class="h">'+x+'</div>';}).join('');
+    const lead=b.start%7;
+    for(let k=0;k<lead;k++)h+='<div class="c e"></div>';
+    for(let k=0;k<b.len;k++){
+      const j=b.start+k,wd=j%7;
+      h+='<div class="c'+(j===today?' t':'')+((wd===5||wd===6)?' w':'')+'">'+F(j)[2]+'</div>';
+    }
+    h+='</div></div>';
+  });
+  h+='</div>';
+  $('mv-grid').innerHTML=h;
+  $('mv-grid').style.display='block';
+  $('mv-note').innerHTML='მთელი '+SYS[sys].n+' წელი · მიმდინარე თვე მონიშნულია · '+
+    'თვეების რაოდენობა და სიგრძე დინამიურად გამოითვლება';
+}
+function renderView(){ if(mvView==='y')renderYear(); else renderMonth(); }
 function renderMonth(){
+  $('mv-grid').style.display='grid';
   const sys=mvSys,F=SYS[sys].f,names=SYS[sys].m;
   const b=monthBounds(sys,mvJ),today=g2jd(new Date().getUTCFullYear(),
         new Date().getUTCMonth()+1,new Date().getUTCDate());
@@ -601,10 +671,17 @@ function run(){
   render(j);
   setMV(j);
 }
-function setMV(j){mvJ=j;renderMonth();}
-$('sys').onchange=function(){mvSys=$('sys').value;renderMonth();};
-$('pm').onclick=function(){const b=monthBounds(mvSys,mvJ);setMV(b.start-1);};
-$('nm').onclick=function(){const b=monthBounds(mvSys,mvJ);setMV(b.start+b.len);};
+function setMV(j){mvJ=j;renderView();}
+$('sys').onchange=function(){mvSys=$('sys').value;renderView();};
+$('vM').onclick=function(){mvView='m';$('vM').className='on';$('vY').className='';renderView();};
+$('vY').onclick=function(){mvView='y';$('vY').className='on';$('vM').className='';renderView();};
+$('pm').onclick=function(){
+  if(mvView==='y'){const yb=yearBounds(mvSys,mvJ);setMV(yb.months[0].start-1);}
+  else{const b=monthBounds(mvSys,mvJ);setMV(b.start-1);}};
+$('nm').onclick=function(){
+  if(mvView==='y'){const yb=yearBounds(mvSys,mvJ),L=yb.months[yb.months.length-1];
+    setMV(L.start+L.len);}
+  else{const b=monthBounds(mvSys,mvJ);setMV(b.start+b.len);}};
 $('tm').onclick=function(){const n=new Date();
   setMV(g2jd(n.getUTCFullYear(),n.getUTCMonth()+1,n.getUTCDate()));};
 $('go').onclick=run;
