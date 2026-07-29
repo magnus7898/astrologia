@@ -54,6 +54,28 @@ input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 
 .era{display:inline-block;font-size:8.5px;padding:1px 7px;border-radius:9px;margin-left:5px;
   background:rgba(124,154,208,.16);color:var(--acc-l);letter-spacing:1px}
 .note{font-size:10px;color:rgba(190,180,160,.45);line-height:1.75;margin-top:12px}
+.mv{margin-top:6px}
+.mv-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.mv-title{font-family:'Cinzel',serif;font-size:16px;color:var(--gold-l);letter-spacing:2px}
+.mv-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.nav{display:flex;gap:6px}
+.nav button{background:rgba(8,7,18,.8);border:1px solid rgba(201,168,76,.3);color:var(--gold-l);
+  border-radius:8px;padding:7px 13px;cursor:pointer;font-family:'Cinzel',serif;font-size:12px}
+.nav button:hover{border-color:var(--gold);background:rgba(30,24,10,.8)}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wk .hd{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--dim);text-align:center;padding:4px 0 6px}
+.cellx{aspect-ratio:1/0.92;border:1px solid rgba(201,168,76,.13);border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  background:rgba(8,7,18,.5);transition:all .18s}
+.cellx:hover{border-color:rgba(201,168,76,.45);background:rgba(30,24,10,.5)}
+.cellx.empty{border:none;background:none}
+.cellx.today{background:linear-gradient(135deg,#8a6a20,#c9a84c);border-color:var(--gold-l)}
+.cellx.today .cd{color:#0a0810;font-weight:700}
+.cellx.today .cg{color:rgba(10,8,16,.7)}
+.cellx.wend{background:rgba(124,154,208,.09)}
+.cd{font-size:15px;color:var(--gold-l);font-family:'Cinzel',serif;line-height:1}
+.cg{font-size:8.5px;color:var(--dim);line-height:1}
 .warn{background:rgba(201,168,76,.09);border-left:3px solid var(--gold);border-radius:8px;
   padding:11px 14px;margin-top:12px;font-size:11.5px;line-height:1.8;color:var(--dim)}
 </style>
@@ -90,6 +112,34 @@ input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 
         <input type="number" id="jdn" placeholder="2461251"></div>
       <button class="btn ghost" id="fromjd">← JDN-დან</button>
     </div>
+  </div>
+  <div class="card mv">
+    <div class="mv-head">
+      <div>
+        <div class="mv-title" id="mv-title">—</div>
+        <div class="mv-sub" id="mv-sub"></div>
+      </div>
+      <div class="row" style="flex:0 0 auto;align-items:center">
+        <select id="sys" style="min-width:190px">
+          <option value="greg">გრიგორიანული</option>
+          <option value="jul">იულიუსის (ძველი სტილი)</option>
+          <option value="isl">ისლამური · ჰიჯრა</option>
+          <option value="heb">ებრაული</option>
+          <option value="per">სპარსული · მზის ჰიჯრა</option>
+          <option value="ind">ინდური · საკა</option>
+          <option value="cop">კოპტური</option>
+          <option value="eth">ეთიოპიური</option>
+          <option value="arm">სომხური</option>
+          <option value="fr">ფრანგული რესპუბლიკური</option>
+          <option value="ch">ჩინური</option>
+        </select>
+        <div class="nav">
+          <button id="pm">‹</button><button id="tm">დღეს</button><button id="nm">›</button>
+        </div>
+      </div>
+    </div>
+    <div class="wk" id="mv-grid"></div>
+    <div class="note" id="mv-note"></div>
   </div>
   <div id="out"></div>
 </div>
@@ -495,17 +545,73 @@ function render(j){
      'ქორონიკონი ქართული ისტორიოგრაფიის 532-წლიანი ციკლია.</div>';
   $('out').innerHTML=h;
 }
+/* ── month grid: works from each system's from_jd alone ── */
+const SYS={
+ greg:{n:'გრიგორიანული',f:jd2g,m:M_GREG},
+ jul:{n:'იულიუსის',f:jd2jl,m:M_GREG},
+ isl:{n:'ისლამური',f:jd2isl,m:M_ISL},
+ heb:{n:'ებრაული',f:jd2heb,m:M_HEB},
+ per:{n:'სპარსული',f:jd2per,m:M_PER},
+ ind:{n:'ინდური საკა',f:jd2ind,m:M_IND},
+ cop:{n:'კოპტური',f:jd2cop,m:M_COP},
+ eth:{n:'ეთიოპიური',f:jd2eth,m:M_ETH},
+ arm:{n:'სომხური',f:jd2arm,m:M_ARM},
+ fr:{n:'ფრანგული რესპუბლიკური',f:jd2fr,m:M_FR},
+ ch:{n:'ჩინური',f:function(j){const c=chineseFromJD(j);return[c.y,c.m,c.d,c.leap];},m:M_CH}
+};
+let mvJ=null,mvSys='greg';
+function monthBounds(sys,j){
+  const F=SYS[sys].f;
+  let start=j-(F(j)[2]-1);
+  const a=F(start);
+  let end=start;
+  while(true){const b=F(end+1);
+    if(b[1]!==a[1]||b[0]!==a[0]||(b[3]||false)!==(a[3]||false))break;
+    end++; if(end-start>400)break;}
+  return{start:start,len:end-start+1,ref:a};
+}
+function renderMonth(){
+  const sys=mvSys,F=SYS[sys].f,names=SYS[sys].m;
+  const b=monthBounds(sys,mvJ),today=g2jd(new Date().getUTCFullYear(),
+        new Date().getUTCMonth()+1,new Date().getUTCDate());
+  const mi=b.ref[1]-1,leap=b.ref[3];
+  $('mv-title').textContent=(leap?'დამატებითი ':'')+
+    (names[mi]||('თვე '+b.ref[1]))+' — '+b.ref[0];
+  const g1=jd2g(b.start),g2=jd2g(b.start+b.len-1);
+  $('mv-sub').innerHTML=SYS[sys].n+' · '+b.len+' დღე · '+
+    g1[2]+' '+M_GREG[g1[1]-1]+' '+g1[0]+' — '+g2[2]+' '+M_GREG[g2[1]-1]+' '+g2[0];
+  let h=['ორშ','სამ','ოთხ','ხუთ','პარ','შაბ','კვი'].map(function(x){
+    return '<div class="hd">'+x+'</div>';}).join('');
+  const lead=b.start%7;                       /* JDN%7: 0 = Monday */
+  for(let i=0;i<lead;i++)h+='<div class="cellx empty"></div>';
+  for(let k=0;k<b.len;k++){
+    const j=b.start+k,d=F(j)[2],g=jd2g(j),wd=j%7;
+    h+='<div class="cellx'+(j===today?' today':'')+((wd===5||wd===6)?' wend':'')+'">'+
+       '<div class="cd">'+d+'</div>'+
+       '<div class="cg">'+g[2]+'.'+g[1]+'</div></div>';
+  }
+  $('mv-grid').innerHTML=h;
+  $('mv-note').innerHTML='დიდი ციფრი = '+SYS[sys].n+' რიცხვი · პატარა = გრიგორიანული (რიცხვი.თვე) · '+
+    'თვის სიგრძე გამოთვლილია დინამიურად, არა ცხრილიდან';
+}
 function run(){
   const y=+$('y').value,m=+$('m').value,d=+$('d').value;
   const j=g2jd(y,m,d);
   $('jdn').value=j;
   render(j);
+  setMV(j);
 }
+function setMV(j){mvJ=j;renderMonth();}
+$('sys').onchange=function(){mvSys=$('sys').value;renderMonth();};
+$('pm').onclick=function(){const b=monthBounds(mvSys,mvJ);setMV(b.start-1);};
+$('nm').onclick=function(){const b=monthBounds(mvSys,mvJ);setMV(b.start+b.len);};
+$('tm').onclick=function(){const n=new Date();
+  setMV(g2jd(n.getUTCFullYear(),n.getUTCMonth()+1,n.getUTCDate()));};
 $('go').onclick=run;
 $('now').onclick=function(){const n=new Date();
   $('y').value=n.getUTCFullYear();$('m').value=n.getUTCMonth()+1;$('d').value=n.getUTCDate();run();};
 $('fromjd').onclick=function(){const j=+$('jdn').value;if(!j)return;
-  const g=jd2g(j);$('y').value=g[0];$('m').value=g[1];$('d').value=g[2];render(j);};
+  const g=jd2g(j);$('y').value=g[0];$('m').value=g[1];$('d').value=g[2];render(j);setMV(j);};
 (function(){const n=new Date();
   $('y').value=n.getUTCFullYear();$('m').value=n.getUTCMonth()+1;$('d').value=n.getUTCDate();run();})();
 </script>
