@@ -47,15 +47,14 @@
     /* ── diagram (left) + right column (chakra + age) ── */
     .diagram-chakra-row{display:flex;gap:20px;align-items:center;justify-content:center;width:100%;flex-wrap:wrap;}
     .diagram-chakra-row .diagram-wrapper{flex:1 1 auto;display:flex;align-items:flex-start;justify-content:center;min-width:340px;background:none;border:none;padding:0;}
-    .diagram-chakra-row .diagram-wrapper svg{width:100%;height:auto;max-width:600px;display:block;}
-    .mx-right-col{flex:0 0 auto;width:540px;max-width:48%;min-width:300px;display:flex;flex-direction:column-reverse;gap:14px;}
+    .diagram-chakra-row .diagram-wrapper svg{width:100%;height:auto;max-width:900px;display:block;}
+    .mx-right-col{flex:0 0 auto;width:400px;max-width:36%;min-width:280px;display:flex;flex-direction:column-reverse;gap:14px;}
     .mx-right-col #chakra-panel{margin-top:0;width:100%;}
     .mx-right-col #age-row-panel{width:100%;max-width:100%;margin:0;}
-    @media(max-width:860px){
+    @media(max-width:1200px){
       .diagram-chakra-row{flex-direction:column;align-items:center;}
       .diagram-chakra-row .diagram-wrapper,.mx-right-col{max-width:100%;width:100%;}
     }
-
     #extra-panels{display:none;width:100%;max-width:920px;}
     .ep-box{flex:1;min-width:140px;background:rgba(18,10,45,0.9);border:1px solid rgba(140,110,255,0.35);border-radius:13px;padding:13px 16px;display:flex;flex-direction:column;gap:9px;}
     .ep-title{font-size:12px;font-weight:700;letter-spacing:1px;color:rgba(180,160,255,0.95);text-align:center;}
@@ -474,15 +473,18 @@ function draw(v){
   // ── GLOW the age point for the person's CURRENT age interval + auto-reveal ──
   // Each point owns [its own age .. the next point's age); ages over 80 recycle.
   if(!isCompat && v.age!=null && v.age>=0){
-    let a=v.age%80; if(a<0)a+=80;
+let a=v.age%80; if(a<0)a+=80;
     const loOf=ap=>parseFloat(String(ap.ageLabel).split('-')[0].replace(',','.'));
+    const hiOf=ap=>{const p=String(ap.ageLabel).split('-');
+      return parseFloat((p[1]!==undefined?p[1]:p[0]).replace(',','.'));};
     const pts=agePoints.slice().sort((p,q)=>loOf(p)-loOf(q));
     let best=null;
-    for(let i=0;i<pts.length;i++){
-      const start=loOf(pts[i]), end=(i+1<pts.length)?loOf(pts[i+1]):80;
-      if(a>=start && a<end){best=pts[i];break;}
-    }
-    if(!best) best=pts[pts.length-1];
+    /* a point owns only its own labelled range */
+    for(const p of pts){ if(a>=loOf(p)&&a<=hiOf(p)){best=p;break;} }
+    /* the scale has gaps (19→20, 14→15 …) — there the person belongs
+       to the point they are moving toward, not the one they left */
+    if(!best) for(const p of pts){ if(loOf(p)>a){best=p;break;} }
+    if(!best) best=pts[0];
     if(best){
       const halo=document.createElementNS('http://www.w3.org/2000/svg','circle');
       halo.setAttribute('cx',best.px);halo.setAttribute('cy',best.py);halo.setAttribute('r',16);
