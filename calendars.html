@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>მსოფლიოს კალენდრები</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#05040c;--gold:#c9a84c;--gold-l:#f0d080;--acc:#7c9ad0;--acc-l:#a8c4ea;
+  --txt:#e8e2d4;--dim:rgba(190,180,160,0.55)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;position:relative}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(1px 1px at 12% 18%,rgba(255,255,255,.45) 0,transparent 100%),
+  radial-gradient(1px 1px at 31% 42%,rgba(255,255,255,.3) 0,transparent 100%),
+  radial-gradient(1px 1px at 58% 11%,rgba(255,255,255,.4) 0,transparent 100%),
+  radial-gradient(1px 1px at 79% 33%,rgba(255,255,255,.4) 0,transparent 100%),
+  radial-gradient(1px 1px at 44% 77%,rgba(255,255,255,.3) 0,transparent 100%)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(ellipse 700px 420px at 25% 15%,rgba(201,168,76,.07) 0,transparent 70%),
+  radial-gradient(ellipse 520px 520px at 82% 72%,rgba(124,154,208,.07) 0,transparent 70%)}
+.hero{position:relative;z-index:1;text-align:center;padding:38px 24px 14px;width:100%}
+.sigil{width:52px;height:52px;margin:0 auto 14px;display:block;opacity:.75}
+.hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);opacity:.55;margin-bottom:10px;font-family:'Cinzel',serif}
+.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4vw,36px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,#e8d5a0 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:8px}
+.panel{position:relative;z-index:1;width:100%;max-width:1060px;padding:0 16px;margin-top:18px}
+.card{background:rgba(10,9,20,.75);border:1px solid rgba(201,168,76,.22);border-radius:14px;padding:18px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:100px}
+label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
+input,select{background:rgba(8,7,18,.8);border:1px solid rgba(201,168,76,.3);border-radius:8px;
+  color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.13)}
+.btn{background:linear-gradient(135deg,#8a6a20,#c9a84c);color:#0a0810;border:none;border-radius:9px;
+  padding:11px 20px;font-size:12px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;font-weight:600}
+.btn:hover{filter:brightness(1.15)}
+.btn.ghost{background:none;border:1px solid rgba(201,168,76,.4);color:var(--gold-l)}
+.sec{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;
+  text-align:center;margin:24px 0 12px;display:flex;align-items:center;gap:12px}
+.sec::before,.sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.cal{background:rgba(10,9,20,.7);border:1px solid rgba(201,168,76,.18);border-radius:12px;padding:14px 16px;transition:border-color .25s}
+.cal:hover{border-color:rgba(201,168,76,.45)}
+.cal-name{font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);opacity:.75;margin-bottom:7px;display:flex;justify-content:space-between;align-items:baseline}
+.cal-name span{font-size:8px;opacity:.6;letter-spacing:1px}
+.cal-date{font-size:17px;color:var(--gold-l);font-weight:600;line-height:1.4}
+.cal-alt{font-size:11px;color:var(--dim);margin-top:4px;line-height:1.6}
+.cal.big .cal-date{font-size:15px}
+.era{display:inline-block;font-size:8.5px;padding:1px 7px;border-radius:9px;margin-left:5px;
+  background:rgba(124,154,208,.16);color:var(--acc-l);letter-spacing:1px}
+.note{font-size:10px;color:rgba(190,180,160,.45);line-height:1.75;margin-top:12px}
+.warn{background:rgba(201,168,76,.09);border-left:3px solid var(--gold);border-radius:8px;
+  padding:11px 14px;margin-top:12px;font-size:11.5px;line-height:1.8;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <svg class="sigil" viewBox="0 0 56 56" fill="none">
+    <circle cx="28" cy="28" r="26.5" stroke="rgba(201,168,76,.25)" stroke-width=".5"/>
+    <circle cx="28" cy="28" r="17" stroke="rgba(201,168,76,.18)" stroke-width=".5"/>
+    <circle cx="28" cy="28" r="8" stroke="rgba(201,168,76,.3)" stroke-width=".5"/>
+    <line x1="28" y1="1.5" x2="28" y2="9" stroke="rgba(201,168,76,.5)" stroke-width=".7"/>
+    <line x1="28" y1="47" x2="28" y2="54.5" stroke="rgba(201,168,76,.5)" stroke-width=".7"/>
+    <line x1="1.5" y1="28" x2="9" y2="28" stroke="rgba(201,168,76,.5)" stroke-width=".7"/>
+    <line x1="47" y1="28" x2="54.5" y2="28" stroke="rgba(201,168,76,.5)" stroke-width=".7"/>
+    <circle cx="28" cy="28" r="2.5" fill="rgba(201,168,76,.7)"/>
+  </svg>
+  <div class="hero-eyebrow">დროის ყველა ანგარიში</div>
+  <h1 class="hero-title">მსოფლიოს კალენდრები</h1>
+  <p class="hero-sub">One day &middot; seventeen ways of counting it</p>
+</div>
+
+<div class="panel">
+  <div class="card">
+    <div class="row">
+      <div class="field"><label>დღე</label><input type="number" id="d" value="1" min="1" max="31"></div>
+      <div class="field"><label>თვე</label><input type="number" id="m" value="1" min="1" max="12"></div>
+      <div class="field"><label>წელი</label><input type="number" id="y" value="2026"></div>
+      <button class="btn" id="go">✦ გარდაქმნა ✦</button>
+      <button class="btn ghost" id="now">🕐 დღეს</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="field" style="max-width:220px"><label>ან იულიუსის დღე (JDN)</label>
+        <input type="number" id="jdn" placeholder="2461251"></div>
+      <button class="btn ghost" id="fromjd">← JDN-დან</button>
+    </div>
+  </div>
+  <div id="out"></div>
+</div>
+
+<script>
+/* ═══ CALENDAR CONVERTERS — all JDN-based ═══ */
+const fl=Math.floor;
+function g2jd(y,m,d){const a=fl((14-m)/12),yy=y+4800-a,mm=m+12*a-3;
+  return d+fl((153*mm+2)/5)+365*yy+fl(yy/4)-fl(yy/100)+fl(yy/400)-32045;}
+function jd2g(j){let a=j+32044,b=fl((4*a+3)/146097),c=a-fl(146097*b/4);
+  let dd=fl((4*c+3)/1461),e=c-fl(1461*dd/4),mm=fl((5*e+2)/153);
+  return[100*b+dd-4800+fl(mm/10),mm+3-12*fl(mm/10),e-fl((153*mm+2)/5)+1];}
+function jl2jd(y,m,d){const a=fl((14-m)/12),yy=y+4800-a,mm=m+12*a-3;
+  return d+fl((153*mm+2)/5)+365*yy+fl(yy/4)-32083;}
+function jd2jl(j){let c=j+32082,dd=fl((4*c+3)/1461),e=c-fl(1461*dd/4),mm=fl((5*e+2)/153);
+  return[dd-4800+fl(mm/10),mm+3-12*fl(mm/10),e-fl((153*mm+2)/5)+1];}
+/* Islamic — tabular civil, epoch 1948440 (JDN of 16 July 622 Julian) */
+const ISL=1948438;
+function isl2jd(y,m,d){return d+Math.ceil(29.5*(m-1))+(y-1)*354+fl((3+11*y)/30)+ISL;}
+function jd2isl(j){let y=fl((30*(j-ISL)+10646)/10631);
+  if(j<isl2jd(y,1,1))y--;
+  let m=Math.min(12,Math.max(1,Math.ceil((j-(29+isl2jd(y,1,1)))/29.5)+1));
+  while(m>1&&j<isl2jd(y,m,1))m--;
+  while(m<12&&j>=isl2jd(y,m+1,1))m++;
+  return[y,m,j-isl2jd(y,m,1)+1];}
+/* Hebrew */
+function hDelay1(y){const months=fl((235*y-234)/19),parts=12084+13753*months;
+  let day=months*29+fl(parts/25920);
+  if(((3*(day+1))%7)<3)day++;return day;}
+function hDelay2(y){const l=hDelay1(y-1),p=hDelay1(y),n=hDelay1(y+1);
+  return((n-p)===356)?2:(((p-l)===382)?1:0);}
+const HEB=347996;
+function hY2jd(y){return HEB+hDelay1(y)+hDelay2(y);}
+function hYearDays(y){return hY2jd(y+1)-hY2jd(y);}
+function hLeap(y){return((y*7+1)%19)<7;}
+function hMonths(y){return hLeap(y)?13:12;}
+function hMonthDays(y,m){
+  if(m===2||m===4||m===6||m===10||m===13)return 29;
+  if(m===12&&!hLeap(y))return 29;
+  if(m===8&&hYearDays(y)%10!==5)return 29;
+  if(m===9&&hYearDays(y)%10===3)return 29;
+  return 30;}
+function heb2jd(y,m,d){let j=hY2jd(y)+d;
+  if(m<7){for(let mm=7;mm<=hMonths(y);mm++)j+=hMonthDays(y,mm);
+          for(let mm=1;mm<m;mm++)j+=hMonthDays(y,mm);}
+  else{for(let mm=7;mm<m;mm++)j+=hMonthDays(y,mm);}
+  return j;}
+function jd2heb(j){let y=fl((j-HEB)/366);
+  while(j>=heb2jd(y+1,7,1))y++;
+  let m=(j<heb2jd(y,1,1))?7:1;
+  while(j>heb2jd(y,m,hMonthDays(y,m)))m++;
+  return[y,m,j-heb2jd(y,m,1)+1];}
+/* Persian — Solar Hijri, astronomical: year begins on the day of the
+   March equinox at the Tehran meridian (Meeus ch.27 + ΔT) */
+const EQ_T=[[485,324.96,1934.136],[203,337.23,32964.467],[199,342.08,20.186],
+[182,27.85,445267.112],[156,73.14,45036.886],[136,171.52,22518.443],
+[77,222.54,65928.934],[74,296.72,3034.906],[70,243.58,9037.513],
+[58,119.81,33718.147],[52,297.17,150.678],[50,21.02,2281.226],
+[45,247.54,29929.562],[44,325.15,31555.956],[29,60.93,4443.417],
+[18,155.12,67555.328],[17,288.79,4562.452],[16,198.04,62894.029],
+[14,199.76,31436.921],[12,95.39,14577.848],[12,287.11,31931.756],
+[12,320.81,34777.259],[9,227.73,1222.114],[8,15.45,16859.074]];
+function deltaT(y){                                  /* seconds, Espenak–Meeus */
+  let t,u;
+  if(y>=2005&&y<2050){t=y-2000;return 62.92+0.32217*t+0.005589*t*t;}
+  if(y>=1986&&y<2005){t=y-2000;return 63.86+0.3345*t-0.060374*t*t+0.0017275*t*t*t
+    +0.000651814*t*t*t*t+0.00002373599*t*t*t*t*t;}
+  if(y>=1900&&y<1986){t=(y-1900)/100;return -2.79+1.494119*t-0.0598939*t*t
+    +0.0061966*t*t*t-0.000197*t*t*t*t;}
+  if(y>=1800&&y<1900){t=(y-1860)/100*100;
+    return 7.62+0.5737*(y-1860)-0.251754*Math.pow((y-1860),2)/100
+      +0.01680668*Math.pow((y-1860),3)/10000-0.0004473624*Math.pow((y-1860),4)/1000000
+      +Math.pow((y-1860),5)/233174000;}
+  if(y>=2050&&y<2150)return -20+32*Math.pow((y-1820)/100,2)-0.5628*(2150-y);
+  u=(y-1820)/100;return -20+32*u*u;
+}
+function marchEquinoxJD(gy){                          /* JD (UT) of the equinox */
+  const Y=(gy-2000)/1000;
+  let jde0=2451623.80984+365242.37404*Y+0.05169*Y*Y-0.00411*Y*Y*Y-0.00057*Y*Y*Y*Y;
+  const T=(jde0-2451545.0)/36525,W=(35999.373*T-2.47)*Math.PI/180;
+  const dl=1+0.0334*Math.cos(W)+0.0007*Math.cos(2*W);
+  let S=0;
+  for(let i=0;i<EQ_T.length;i++)
+    S+=EQ_T[i][0]*Math.cos((EQ_T[i][1]+EQ_T[i][2]*T)*Math.PI/180);
+  const jde=jde0+(0.00001*S)/dl;
+  return jde-deltaT(gy)/86400;                        /* TT → UT */
+}
+function persianNewYear(gy){                          /* JDN of 1 Farvardin */
+  return Math.floor(marchEquinoxJD(gy)+52.5/360)+1;
+}
+function per2jd(y,m,d){
+  const gy=y+621,ny=persianNewYear(gy);
+  let off=(m<=6)?(m-1)*31:186+(m-7)*30;
+  return ny+off+d-1;
+}
+function jd2per(j){
+  let gy=jd2g(j)[0],ny=persianNewYear(gy);
+  if(j<ny){gy--;ny=persianNewYear(gy);}
+  let y=gy-621,dy=j-ny;
+  let m,d;
+  if(dy<186){m=Math.floor(dy/31)+1;d=dy%31+1;}
+  else{m=Math.floor((dy-186)/30)+7;d=(dy-186)%30+1;}
+  return[y,m,d];
+}
+function pLeap(y){return per2jd(y+1,1,1)-per2jd(y,1,1)>365;}
+/* Indian civil (Saka) */
+function ind2jd(y,m,d){const gy=y+78,leap=((gy%4===0&&gy%100!==0)||gy%400===0);
+  const start=g2jd(gy,3,leap?21:22)-1;
+  if(m===1)return start+d-1;
+  let j=start+(leap?31:30);
+  for(let i=2;i<m;i++)j+=(i<=6?31:30);
+  return j+d-1;}
+function jd2ind(j){const[gy]=jd2g(j);
+  let y=gy-78,leap=((gy%4===0&&gy%100!==0)||gy%400===0);
+  let start=g2jd(gy,3,leap?21:22)-1;
+  if(j<start){y--;const py=gy-1;const pl=((py%4===0&&py%100!==0)||py%400===0);
+    start=g2jd(py,3,pl?21:22)-1;leap=pl;}
+  let yday=j-start,m,d;
+  const first=leap?31:30;
+  if(yday<first){m=1;d=yday+1;}
+  else{yday-=first;m=2;
+    while(yday>=(m<=6?31:30)){yday-=(m<=6?31:30);m++;}
+    d=yday+1;}
+  return[y,m,d];}
+/* Coptic & Ethiopian */
+const COP=1825030,ETH=1825030-276*365-69;
+function cop2jd(y,m,d){return COP+365*(y-1)+fl(y/4)+30*(m-1)+d-1;}
+function jd2cop(j){const t=j-COP,y=fl((4*t+1463)/1461);
+  const s=cop2jd(y,1,1),dy=j-s;return[y,fl(dy/30)+1,dy%30+1];}
+function eth2jd(y,m,d){return ETH+365*(y-1)+fl(y/4)+30*(m-1)+d-1;}
+function jd2eth(j){const t=j-ETH,y=fl((4*t+1463)/1461);
+  const s=eth2jd(y,1,1),dy=j-s;return[y,fl(dy/30)+1,dy%30+1];}
+/* Mayan */
+const MAYA=584283;
+function jd2maya(j){let d=j-MAYA;
+  const baktun=fl(d/144000);d%=144000;
+  const katun=fl(d/7200);d%=7200;
+  const tun=fl(d/360);d%=360;
+  const uinal=fl(d/20),kin=d%20;
+  return[baktun,katun,tun,uinal,kin];}
+const TZ_N=['Imix','Ikʼ','Akʼbʼal','Kʼan','Chikchan','Kimi','Manikʼ','Lamat','Muluk','Ok',
+  'Chuwen','Ebʼ','Bʼen','Ix','Men','Kibʼ','Kabʼan','Etzʼnabʼ','Kawak','Ajaw'];
+const HAAB=['Pop','Woʼ','Sip','Sotzʼ','Sek','Xul','Yaxkʼin','Mol','Chʼen','Yax','Sakʼ','Keh',
+  'Mak','Kʼankʼin','Muwan','Pax','Kayabʼ','Kumkʼu','Wayebʼ'];
+function jd2tzolkin(j){const d=j-MAYA;
+  return[((d+4-1)%13)+1,TZ_N[((d+20-1)%20+20)%20]];}
+function jd2haab(j){const d=(j-MAYA+348)%365;
+  return[d%20,HAAB[fl(d/20)]];}
+/* Armenian */
+const ARM=1922868;
+function jd2arm(j){const d=j-ARM,y=fl(d/365)+1,r=d%365;
+  return[y,fl(r/30)+1,r%30+1];}
+function arm2jd(y,m,d){return ARM+365*(y-1)+30*(m-1)+d-1;}
+/* ISO week date */
+function jd2iso(j){const[y]=jd2g(j);
+  const dow=((j+1)%7)+1;                       /* 1=Mon..7=Sun */
+  let year=y;
+  const thu=j+4-dow;
+  const[ty]=jd2g(thu);year=ty;
+  const jan4=g2jd(year,1,4);
+  const week=fl((thu-(jan4+4-((((jan4+1)%7)+1))))/7)+1;
+  return[year,week,dow];}
+
+/* ═══ CHINESE LUNISOLAR — Meeus new moons + solar terms, Beijing UTC+8 ═══ */
+const PI=Math.PI,R=PI/180;
+function newMoonK(k){                       /* Meeus 49: JDE of new moon */
+  const T=k/1236.85,T2=T*T,T3=T2*T,T4=T3*T;
+  let jde=2451550.09766+29.530588861*k+0.00015437*T2-0.000000150*T3+0.00000000073*T4;
+  const E=1-0.002516*T-0.0000074*T2;
+  const M=(2.5534+29.10535670*k-0.0000014*T2-0.00000011*T3)*R;
+  const M2=(201.5643+385.81693528*k+0.0107582*T2+0.00001238*T3-0.000000058*T4)*R;
+  const F=(160.7108+390.67050284*k-0.0016118*T2-0.00000227*T3+0.000000011*T4)*R;
+  const O=(124.7746-1.56375588*k+0.0020672*T2+0.00000215*T3)*R;
+  const A1=(299.77+0.107408*k-0.009173*T2)*R,A2=(251.88+0.016321*k)*R,
+        A3=(251.83+26.651886*k)*R,A4=(349.42+36.412478*k)*R,
+        A5=(84.66+18.206239*k)*R,A6=(141.74+53.303771*k)*R,
+        A7=(207.14+2.453732*k)*R,A8=(154.84+7.306860*k)*R,
+        A9=(34.52+27.261239*k)*R,A10=(207.19+0.121824*k)*R,
+        A11=(291.34+1.844379*k)*R,A12=(161.72+24.198154*k)*R,
+        A13=(239.56+25.513099*k)*R,A14=(331.55+3.592518*k)*R;
+  jde+=-0.40720*Math.sin(M2)+0.17241*E*Math.sin(M)+0.01608*Math.sin(2*M2)
+      +0.01039*Math.sin(2*F)+0.00739*E*Math.sin(M2-M)-0.00514*E*Math.sin(M2+M)
+      +0.00208*E*E*Math.sin(2*M)-0.00111*Math.sin(M2-2*F)-0.00057*Math.sin(M2+2*F)
+      +0.00056*E*Math.sin(2*M2+M)-0.00042*Math.sin(3*M2)+0.00042*E*Math.sin(M+2*F)
+      +0.00038*E*Math.sin(M-2*F)-0.00024*E*Math.sin(2*M2-M)-0.00017*Math.sin(O)
+      -0.00007*Math.sin(M2+2*M)+0.00004*Math.sin(2*M2-2*F)+0.00004*Math.sin(3*M)
+      +0.00003*Math.sin(M2+M-2*F)+0.00003*Math.sin(2*M2+2*F)-0.00003*Math.sin(M2+M+2*F)
+      +0.00003*Math.sin(M2-M+2*F)-0.00002*Math.sin(M2-M-2*F)-0.00002*Math.sin(3*M2+M)
+      +0.00002*Math.sin(4*M2);
+  jde+=0.000325*Math.sin(A1)+0.000165*Math.sin(A2)+0.000164*Math.sin(A3)
+      +0.000126*Math.sin(A4)+0.000110*Math.sin(A5)+0.000062*Math.sin(A6)
+      +0.000060*Math.sin(A7)+0.000056*Math.sin(A8)+0.000047*Math.sin(A9)
+      +0.000042*Math.sin(A10)+0.000040*Math.sin(A11)+0.000037*Math.sin(A12)
+      +0.000035*Math.sin(A13)+0.000023*Math.sin(A14);
+  return jde;
+}
+function deltaTsec(y){
+  let u;
+  if(y>=2005&&y<2050){const t=y-2000;return 62.92+0.32217*t+0.005589*t*t;}
+  if(y>=1986&&y<2005){const t=y-2000;return 63.86+0.3345*t-0.060374*t*t+0.0017275*t*t*t
+    +0.000651814*t*t*t*t+0.00002373599*t*t*t*t*t;}
+  if(y>=1900&&y<1986){const t=(y-1900)/100;return -2.79+1.494119*t-0.0598939*t*t
+    +0.0061966*t*t*t-0.000197*t*t*t*t;}
+  if(y>=1800&&y<1900){const t=y-1860;
+    return 7.62+0.5737*t-0.251754*t*t/100+0.01680668*t*t*t/1e4
+      -0.0004473624*t*t*t*t/1e6+t*t*t*t*t/233174000;}
+  if(y>=1700&&y<1800){const t=y-1700;
+    return 8.83+0.1603*t-0.0059285*t*t+0.00013336*t*t*t-t*t*t*t/1174000;}
+  if(y>=1600&&y<1700){const t=y-1600;return 120-0.9808*t-0.01532*t*t+t*t*t/7129;}
+  if(y>=2050&&y<2150)return -20+32*Math.pow((y-1820)/100,2)-0.5628*(2150-y);
+  u=(y-1820)/100;return -20+32*u*u;
+}
+const jd2gy=function(j){/*local*/                    /* gregorian year of a JD */
+  const a=fl(j+0.5)+32044,b=fl((4*a+3)/146097),c=a-fl(146097*b/4);
+  const d=fl((4*c+3)/1461),e=c-fl(1461*d/4),m=fl((5*e+2)/153);
+  return 100*b+d-4800+fl(m/10);};
+function sunLon(jde){                       /* apparent solar longitude, deg */
+  const T=(jde-2451545.0)/36525;
+  const L0=280.46646+36000.76983*T+0.0003032*T*T;
+  const M=(357.52911+35999.05029*T-0.0001537*T*T)*R;
+  const C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M)
+    +(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
+  const O=(125.04-1934.136*T)*R;
+  return((L0+C-0.00569-0.00478*Math.sin(O))%360+360)%360;
+}
+const BJ=8/24;                              /* Beijing offset */
+function nmDay(k){                          /* JDN of new moon, Beijing local */
+  const jde=newMoonK(k);
+  const ut=jde-deltaTsec(jd2gy(jde))/86400;
+  return fl(ut+0.5+BJ);
+}
+/* solar longitude at Beijing midnight starting the given JDN */
+function lonAtDay(J){
+  const utStart=J-0.5-BJ;
+  return sunLon(utStart+deltaTsec(jd2gy(J))/86400);
+}
+/* does the lunar month [s,e) contain a major solar term (zhongqi)? */
+function hasZhongqi(s,e){
+  const a=Math.floor(lonAtDay(s)/30),b=Math.floor(lonAtDay(e)/30);
+  return a!==b;
+}
+function winterSolsticeDay(gy){             /* JDN of Dec solstice of year gy */
+  let lo=2451545+(gy-2000)*365.2422+350,hi=lo+40;
+  const f=function(j){let d=sunLon(j)-270;while(d>180)d-=360;while(d<-180)d+=360;return d;};
+  let a=lo,b=hi;
+  for(let i=0;i<80;i++){const mid=(a+b)/2;if(f(a)*f(mid)<=0)b=mid;else a=mid;}
+  const ut=(a+b)/2-deltaTsec(gy)/86400;
+  return fl(ut+0.5+BJ);
+}
+function chineseFromJD(J){
+  const gy=jd2gy(J);
+  /* month 11 of the sui containing J */
+  let ws=winterSolsticeDay(gy);
+  let sy=gy;
+  if(J<ws){ws=winterSolsticeDay(gy-1);sy=gy-1;}
+  const ws2=winterSolsticeDay(sy+1);
+  /* new moon on or before each solstice */
+  const kOf=function(j){return Math.round((j-2451550.09766)/29.530588861);};
+  const nmOnBefore=function(j){let k=kOf(j);
+    while(nmDay(k)>j)k--; while(nmDay(k+1)<=j)k++; return k;};
+  const k11=nmOnBefore(ws),k11n=nmOnBefore(ws2);
+  const nMonths=k11n-k11;                   /* 12 or 13 */
+  const kCur=nmOnBefore(J);
+  let idx=kCur-k11;                         /* months after month 11 */
+  let leap=false,leapIdx=-1;
+  if(nMonths===13){                         /* find first month without a zhongqi */
+    for(let i=1;i<=12;i++){
+      if(!hasZhongqi(nmDay(k11+i),nmDay(k11+i+1))){leapIdx=i;break;}
+    }
+  }
+  let mnum,isLeap=false;
+  if(leapIdx>=0&&idx>=leapIdx){
+    if(idx===leapIdx){mnum=((11+idx-1-1)%12)+1;isLeap=true;}
+    else mnum=((11+idx-1-1)%12)+1;
+  }else mnum=((11+idx-1)%12)+1;
+  const day=J-nmDay(kCur)+1;
+  /* lunar year: the year containing month 1 */
+  let ly=sy+1;
+  if(mnum>=11&&idx<2)ly=sy;
+  return{y:ly,m:mnum,d:day,leap:isLeap};
+}
+/* ── French Republican (Romme arithmetic) ── */
+const FR_EPOCH=2375840;                    /* 22 Sep 1792 */
+function frLeap(y){return(y===3||y===7||y===11)||(y>=15&&y%4===0&&y%100!==12);}
+function fr2jd(y,m,d){let j=FR_EPOCH;
+  for(let k=1;k<y;k++)j+=frLeap(k)?366:365;
+  return j+(m-1)*30+d-1;}
+function jd2fr(j){let y=1,rem=j-FR_EPOCH;
+  while(rem>=(frLeap(y)?366:365)){rem-=frLeap(y)?366:365;y++;}
+  return[y,fl(rem/30)+1,rem%30+1];}
+/* ── Byzantine (Creation era, Julian, year starts 1 Sept) ── */
+function jd2byz(j){const[y,m,d]=jd2jl(j);
+  return[(m>=9)?y+5509:y+5508,m,d];}
+/* ── Chinese sexagenary ── */
+const STEM=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const BRANCH=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const ANIMAL=['თაგვი','ხარი','ვეფხვი','კურდღელი','დრაკონი','გველი',
+              'ცხენი','თხა','მაიმუნი','მამალი','ძაღლი','ღორი'];
+const ELEM=['ხე','ხე','ცეცხლი','ცეცხლი','მიწა','მიწა','ლითონი','ლითონი','წყალი','წყალი'];
+function dayGZ(j){return[(j+9)%10,(j+1)%12];}
+function yearGZ(ly){return[((ly+6)%10+10)%10,((ly+8)%12+12)%12];}
+/* ── Georgian Kronikoni (532-year paschal cycle) ── */
+function kronikoni(gy){const k=(gy+5604)%532;return k===0?532:k;}
+/* ── ISO week ── */
+function jd2isoW(j){
+  const dow=(j%7)+1;                       /* JDN 0 = Monday */
+  const thu=j+(4-dow);
+  const y=jd2g(thu)[0];
+  const jan4=g2jd(y,1,4);
+  const d4=(jan4%7)+1;
+  const week=Math.floor((thu-(jan4-d4+4))/7)+1;
+  return[y,week,dow];}
+
+/* ── names ── */
+const WD=['ორშაბათი','სამშაბათი','ოთხშაბათი','ხუთშაბათი','პარასკევი','შაბათი','კვირა'];
+const M_GREG=['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+const M_ISL=['მუჰარრამი','საფარი','რაბი I','რაბი II','ჯუმადა I','ჯუმადა II','რაჯაბი','შაბანი','რამადანი','შავალი','ზუ-ლ-ყაადა','ზუ-ლ-ჰიჯა'];
+const M_HEB=['ნისანი','იარი','სივანი','თამუზი','ავი','ელული','თიშრეი','ხეშვანი','ქისლევი','ტევეტი','შვატი','ადარი','ადარი II'];
+const M_PER=['ფარვარდინი','ორდიბეჰეშთი','ხორდადი','ტირი','მორდადი','შაჰრივარი','მეჰრი','აბანი','აზარი','დეი','ბაჰმანი','ესფანდი'];
+const M_IND=['ჩაიტრა','ვაიშახა','ჯიაისტა','აშადჰა','შრავანა','ბჰადრა','აშვინა','კარტიკა','აგრაჰაიანა','პაუშა','მაგჰა','ფალგუნა'];
+const M_COP=['თუტ','ბაბა','ჰათორ','კიაჰკ','ტუბა','ამშირ','ბარამჰატ','ბარამუდა','ბაშანს','ბაუნა','აბიბ','მისრა','ნასი'];
+const M_ETH=['მესქერემ','ტიქიმტ','ჰიდარ','ტაჰსას','ტირ','იაკატიტ','მაგაბიტ','მიაზია','გინბოტ','სენე','ჰამლე','ნეჰასე','ფაგუმენ'];
+const M_ARM=['ნავასარდი','ჰორი','საჰმი','ტრე','ქალოც','არაც','მეჰეკან','არეგ','აჰეკან','მარერი','მარგაც','ჰროტიც','აველიაც'];
+const M_FR=['ვანდემიერი','ბრიუმერი','ფრიმერი','ნივოზი','პლუვიოზი','ვანტოზი','ჟერმინალი','ფლორეალი','პრერიალი','მესიდორი','თერმიდორი','ფრუქტიდორი','სანკიულოტიდი'];
+const M_CH=['პირველი','მეორე','მესამე','მეოთხე','მეხუთე','მეექვსე','მეშვიდე','მერვე','მეცხრე','მეათე','მეთერთმეტე','მეთორმეტე'];
+const $=function(i){return document.getElementById(i);};
+const pad=function(n){return String(n).padStart(2,'0');};
+
+function cal(name,en,date,alt,big){
+  return '<div class="cal'+(big?' big':'')+'"><div class="cal-name">'+name+
+    '<span>'+en+'</span></div><div class="cal-date">'+date+'</div>'+
+    (alt?'<div class="cal-alt">'+alt+'</div>':'')+'</div>';
+}
+function render(j){
+  const g=jd2g(j),jl=jd2jl(j),isl=jd2isl(j),heb=jd2heb(j),per=jd2per(j),ind=jd2ind(j),
+        cop=jd2cop(j),eth=jd2eth(j),arm=jd2arm(j),frr=jd2fr(j),byz=jd2byz(j),
+        iso=jd2isoW(j),mc=jd2maya(j),tz=jd2tzolkin(j),hb=jd2haab(j),ch=chineseFromJD(j);
+  const wd=WD[j%7];
+  const yg=yearGZ(ch.y),dg=dayGZ(j);
+  const hebLeap=hLeap(heb[0]);
+  const hebName=(heb[1]===12&&hebLeap)?'ადარი I':M_HEB[heb[1]-1];
+  const unix=(j-2440588)*86400;
+  const rd=j-1721425;
+  let h='';
+  h+='<div class="sec">მზის კალენდრები</div><div class="grid">';
+  h+=cal('გრიგორიანული','Gregorian',g[2]+' '+M_GREG[g[1]-1]+' '+g[0],
+     wd+' · წლის '+(j-g2jd(g[0],1,1)+1)+'-ე დღე');
+  h+=cal('იულიუსის','Julian',jl[2]+' '+M_GREG[jl[1]-1]+' '+jl[0],
+     'ძველი სტილი · სხვაობა '+(j-jl2jd(g[0],g[1],g[2]))+' დღე'+
+     '<br><b style="color:#a8c4ea">ქართული საეკლესიო კალენდარი</b>');
+  h+=cal('სპარსული','Solar Hijri',per[2]+' '+M_PER[per[1]-1]+' '+per[0],
+     'ირანი/ავღანეთი · წელი იწყება ნოვრუზით (გაზაფხულის ბუნიობა თეირანში)');
+  h+=cal('ინდური','Indian Saka',ind[2]+' '+M_IND[ind[1]-1]+' '+ind[0],
+     'ინდოეთის ეროვნული კალენდარი');
+  h+=cal('კოპტური','Coptic',cop[2]+' '+M_COP[cop[1]-1]+' '+cop[0],
+     'ეგვიპტე · ერა მოწამეთა (284 წ.)');
+  h+=cal('ეთიოპიური','Ethiopian',eth[2]+' '+M_ETH[eth[1]-1]+' '+eth[0],
+     '13 თვე · ეთიოპია დღემდე იყენებს');
+  h+=cal('სომხური','Armenian',arm[2]+' '+M_ARM[arm[1]-1]+' '+arm[0],
+     'ძველი 365-დღიანი · ეპოქა 552 წ.');
+  h+=cal('ბიზანტიური','Byzantine',byz[2]+' '+M_GREG[byz[1]-1]+' '+byz[0],
+     'შესაქმიდან · წელი იწყება 1 სექტემბერს');
+  h+=cal('ფრანგული რესპუბლიკური','French Republican',
+     frr[2]+' '+M_FR[frr[1]-1]+' — წელი '+frr[0],
+     '1793–1805 · 12 თვე × 30 დღე + 5 დამატებითი');
+  h+='</div>';
+  h+='<div class="sec">მთვარის და მზე-მთვარის კალენდრები</div><div class="grid">';
+  h+=cal('ისლამური','Hijri',isl[2]+' '+M_ISL[isl[1]-1]+' '+isl[0]+' <span class="era">ჰიჯრა</span>',
+     'ტაბულარული (სამოქალაქო) · რეალური დაკვირვება ±1–2 დღე');
+  h+=cal('ებრაული','Hebrew',heb[2]+' '+hebName+' '+heb[0],
+     (hebLeap?'ნაკიანი წელი (13 თვე)':'ჩვეულებრივი წელი')+' · შესაქმიდან');
+  h+=cal('ჩინური','Chinese',
+     (ch.leap?'დამატებითი ':'')+M_CH[ch.m-1]+' თვე, '+ch.d+' — '+ch.y,
+     STEM[yg[0]]+BRANCH[yg[1]]+' წელი: <b style="color:#f0d080">'+ELEM[yg[0]]+' '+ANIMAL[yg[1]]+
+     '</b><br>დღე: '+STEM[dg[0]]+BRANCH[dg[1]]);
+  h+='</div>';
+  h+='<div class="sec">ქართული ანგარიში</div><div class="grid">';
+  h+=cal('ქორონიკონი','Georgian Kronikoni',kronikoni(g[0])+'-ე წელი',
+     '532-წლიანი პასქალური ციკლი · ციკლი '+(Math.floor((g[0]+5604)/532)+1));
+  h+='</div>';
+  h+='<div class="sec">დღეთა თვლა</div><div class="grid">';
+  h+=cal('იულიუსის დღე','Julian Day Number',String(j),
+     'უწყვეტი დღეების თვლა ძვ.წ. 4713 წლიდან',1);
+  h+=cal('მოდიფიცირებული JD','Modified Julian Day',String(j-2400001),
+     'ასტრონომიული სტანდარტი (1858 წ.)',1);
+  h+=cal('Unix დრო','Unix Epoch',unix.toLocaleString('ka-GE'),
+     'წამები 1970-01-01-დან',1);
+  h+=cal('Rata Die','Rata Die',rd.toLocaleString('ka-GE'),'დღეები 0001-01-01-დან',1);
+  h+=cal('ISO კვირა','ISO 8601 Week',iso[0]+'-W'+pad(iso[1])+'-'+iso[2],
+     'კვირა '+iso[1]+' · '+WD[iso[2]-1],1);
+  h+='</div>';
+  h+='<div class="sec">მესოამერიკული</div><div class="grid">';
+  h+=cal('მაიას გრძელი თვლა','Maya Long Count',mc.join('.'),
+     'ბაქტუნი.კატუნი.ტუნი.უინალი.კინი',1);
+  h+=cal('ცოლკინი','Tzolkʼin',tz[0]+' '+tz[1],'260-დღიანი რიტუალური ციკლი',1);
+  h+=cal('ჰააბი','Haabʼ',hb[0]+' '+hb[1],'365-დღიანი მზის ციკლი',1);
+  h+='</div>';
+  h+='<div class="warn">⚠ <b>სიზუსტის შენიშვნები.</b> ისლამური კალენდარი აქ <b>ტაბულარულია</b> '+
+     '(არითმეტიკული) — რეალურ დაკვირვებით ჰიჯრასთან შესაძლოა 1–2 დღის სხვაობა იყოს. '+
+     'სპარსული და ჩინური კალენდრები <b>ასტრონომიულია</b> — გაზაფხულის ბუნიობა თეირანის '+
+     'მერიდიანზე და ახალმთვარეები პეკინის დროით. ფრანგული რესპუბლიკური კალენდარი '+
+     'რეალურად მხოლოდ 1793–1805 წლებში მოქმედებდა (რომის არითმეტიკული წესი). '+
+     'ქორონიკონი ქართული ისტორიოგრაფიის 532-წლიანი ციკლია.</div>';
+  $('out').innerHTML=h;
+}
+function run(){
+  const y=+$('y').value,m=+$('m').value,d=+$('d').value;
+  const j=g2jd(y,m,d);
+  $('jdn').value=j;
+  render(j);
+}
+$('go').onclick=run;
+$('now').onclick=function(){const n=new Date();
+  $('y').value=n.getUTCFullYear();$('m').value=n.getUTCMonth()+1;$('d').value=n.getUTCDate();run();};
+$('fromjd').onclick=function(){const j=+$('jdn').value;if(!j)return;
+  const g=jd2g(j);$('y').value=g[0];$('m').value=g[1];$('d').value=g[2];render(j);};
+(function(){const n=new Date();
+  $('y').value=n.getUTCFullYear();$('m').value=n.getUTCMonth()+1;$('d').value=n.getUTCDate();run();})();
+</script>
+</body>
+</html>
