@@ -474,15 +474,17 @@ function draw(v){
   // Each point owns [its own age .. the next point's age); ages over 80 recycle.
   if(!isCompat && v.age!=null && v.age>=0){
 let a=v.age%80; if(a<0)a+=80;
-    const loOf=ap=>parseFloat(String(ap.ageLabel).split('-')[0].replace(',','.'));
+    /* a label like "16-17,5" spans that range;
+       a single-value label ("5", "15", or a decade anchor) spans ±1 year,
+       which is exactly what makes the scale continuous                */
+    const numOf=s=>parseFloat(String(s).replace(',','.'));
+    const loOf=ap=>{const p=String(ap.ageLabel).split('-');
+      return p.length>1?numOf(p[0]):numOf(p[0])-1;};
     const hiOf=ap=>{const p=String(ap.ageLabel).split('-');
-      return parseFloat((p[1]!==undefined?p[1]:p[0]).replace(',','.'));};
+      return p.length>1?numOf(p[1]):numOf(p[0])+1;};
     const pts=agePoints.slice().sort((p,q)=>loOf(p)-loOf(q));
     let best=null;
-    /* a point owns only its own labelled range */
-    for(const p of pts){ if(a>=loOf(p)&&a<=hiOf(p)){best=p;break;} }
-    /* the scale has gaps (19→20, 14→15 …) — there the person belongs
-       to the point they are moving toward, not the one they left */
+    for(const p of pts){ if(a>=loOf(p)&&a<hiOf(p)){best=p;break;} }
     if(!best) for(const p of pts){ if(loOf(p)>a){best=p;break;} }
     if(!best) best=pts[0];
     if(best){
