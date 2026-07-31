@@ -23,8 +23,6 @@
       radial-gradient(ellipse at bottom, rgba(167,139,250,.05), transparent 50%);
   }
   .wrap{max-width:1280px; margin:0 auto; padding:28px 20px 60px}
-
-  /* Back link matching your site */
   .back{
     display:inline-flex; align-items:center; gap:8px;
     color:var(--mut); text-decoration:none; font-size:.85rem;
@@ -32,8 +30,6 @@
   }
   .back:hover{color:var(--freq)}
   .back svg{width:16px; height:16px}
-
-  /* Header */
   header{
     display:flex; align-items:center; gap:20px;
     padding:24px 28px; margin-bottom:28px;
@@ -59,12 +55,9 @@
     background-clip:text;
   }
   .header-sub{color:var(--mut); font-size:.85rem; margin-top:2px}
-
-  /* Inputs panel */
   .panel{
     background:var(--panel); border:1px solid var(--line);
     border-radius:16px; padding:22px; margin-bottom:22px;
-    position:relative;
   }
   .panel-title{
     font-size:.75rem; text-transform:uppercase; letter-spacing:1.5px;
@@ -85,7 +78,6 @@
     outline:none; transition:border-color .2s;
   }
   .field input:focus, .field select:focus{border-color:var(--freq)}
-
   .btn{
     grid-column:1/-1; padding:12px 20px;
     background:linear-gradient(135deg, var(--freq2), var(--purple));
@@ -94,8 +86,6 @@
     cursor:pointer; transition:transform .2s, box-shadow .2s;
   }
   .btn:hover{transform:translateY(-1px); box-shadow:0 8px 24px rgba(56,189,248,.25)}
-
-  /* Stats */
   .stats{
     display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
     gap:12px; margin-bottom:22px;
@@ -113,8 +103,6 @@
   .stat:nth-child(3) .stat-num{color:var(--cyan)}
   .stat:nth-child(4) .stat-num{color:var(--pink)}
   .stat-lbl{font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--mut); margin-top:4px}
-
-  /* Tabs */
   .tabs{
     display:flex; gap:4px; flex-wrap:wrap;
     background:var(--panel); border:1px solid var(--line);
@@ -127,8 +115,6 @@
   }
   .tab:hover{color:var(--txt); background:rgba(255,255,255,.04)}
   .tab.active{background:rgba(125,211,252,.12); color:var(--freq)}
-
-  /* Search + filters */
   .controls{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px}
   .search{
     flex:1; min-width:200px; padding:10px 14px;
@@ -142,8 +128,6 @@
     font-size:.78rem; transition:all .2s;
   }
   .fbtn:hover,.fbtn.active{background:rgba(125,211,252,.1); color:var(--freq); border-color:var(--freq)}
-
-  /* Table */
   .tbl-wrap{
     overflow-x:auto; border-radius:14px;
     border:1px solid var(--line); background:var(--panel);
@@ -160,7 +144,6 @@
   td{padding:9px 10px; border-bottom:1px solid var(--line)}
   tr:hover td{background:rgba(125,211,252,.02)}
   tr.has-conj td{background:rgba(240,208,96,.03)}
-
   .aid{font-family:'JetBrains Mono',monospace; color:var(--mut); font-size:.75rem}
   .aname{font-weight:600; color:var(--txt)}
   .zbadge{
@@ -184,15 +167,12 @@
   .c-healing{background:rgba(74,222,128,.15); color:var(--green)}
   .c-mythic{background:rgba(34,211,238,.15); color:var(--cyan)}
   .c-destiny{background:rgba(251,146,60,.15); color:var(--orange)}
-
   .pbadge{
     display:inline-flex; align-items:center; gap:3px;
     padding:2px 7px; border-radius:5px; font-size:.75rem;
     background:rgba(167,139,250,.12); color:var(--purple);
   }
   .orb{color:var(--orange); font-size:.72rem; font-weight:600}
-
-  /* Conjunction cards */
   .conj-card{
     background:var(--panel); border:1px solid var(--line);
     border-radius:12px; padding:16px 18px; margin-bottom:10px;
@@ -204,13 +184,10 @@
   .conj-ast{color:var(--gold); font-weight:600}
   .conj-pl{color:var(--purple); font-weight:600}
   .conj-desc{color:var(--mut); font-size:.82rem; line-height:1.5}
-
   .empty{text-align:center; padding:50px 20px; color:var(--mut)}
   .empty-icon{font-size:2.5rem; margin-bottom:10px}
-
   .tab-content{display:none}
   .tab-content.active{display:block}
-
   @media(max-width:640px){
     h1{font-size:1.2rem}
     .inputs{grid-template-columns:1fr 1fr}
