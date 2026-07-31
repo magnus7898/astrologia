@@ -1,1369 +1,542 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ka">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astrology Asteroid Placements Calculator</title>
-    <link href="https://cdn.jsdelivr.net/fontsource/fonts/cinzel@latest/latin-400-normal.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.min.css" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --bg-primary: #0a0a1a;
-            --bg-secondary: #111128;
-            --bg-card: #1a1a3e;
-            --bg-card-hover: #222255;
-            --gold: #d4af37;
-            --gold-light: #f0d060;
-            --purple: #8b5cf6;
-            --purple-light: #a78bfa;
-            --blue: #3b82f6;
-            --cyan: #06b6d4;
-            --pink: #ec4899;
-            --red: #ef4444;
-            --green: #22c55e;
-            --orange: #f97316;
-            --text-primary: #e8e8f0;
-            --text-secondary: #9898b8;
-            --border: #2a2a5a;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .stars-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px; height: 2px;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle var(--dur) ease-in-out infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(212,175,55,0.1));
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 50%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-
-        h1 {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5em;
-            background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--purple-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            position: relative;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.1em;
-            position: relative;
-        }
-
-        .input-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            padding: 25px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .input-group label {
-            font-size: 0.85em;
-            color: var(--gold);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .input-group input, .input-group select {
-            padding: 10px 14px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 0.95em;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--purple);
-        }
-
-        .btn-calculate {
-            grid-column: 1 / -1;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--purple), var(--blue));
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-calculate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139,92,246,0.3);
-        }
-
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 18px;
-            text-align: center;
-        }
-
-        .stat-card .number {
-            font-size: 2em;
-            font-weight: 600;
-            font-family: 'Cinzel', serif;
-        }
-
-        .stat-card .label {
-            font-size: 0.8em;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
-        }
-
-        .stat-card:nth-child(1) .number { color: var(--gold); }
-        .stat-card:nth-child(2) .number { color: var(--purple-light); }
-        .stat-card:nth-child(3) .number { color: var(--cyan); }
-        .stat-card:nth-child(4) .number { color: var(--pink); }
-
-        .search-filter {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .search-filter input {
-            flex: 1;
-            min-width: 200px;
-            padding: 12px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 0.95em;
-            outline: none;
-        }
-
-        .search-filter input:focus {
-            border-color: var(--purple);
-        }
-
-        .filter-btn {
-            padding: 10px 18px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.85em;
-            white-space: nowrap;
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            background: var(--purple);
-            color: white;
-            border-color: var(--purple);
-        }
-
-        .section-title {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5em;
-            color: var(--gold);
-            margin: 30px 0 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .table-container {
-            overflow-x: auto;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            margin-bottom: 30px;
-            background: var(--bg-card);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9em;
-        }
-
-        thead {
-            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(59,130,246,0.2));
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        th {
-            padding: 14px 12px;
-            text-align: left;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75em;
-            letter-spacing: 0.5px;
-            color: var(--gold);
-            border-bottom: 2px solid var(--border);
-            cursor: pointer;
-            user-select: none;
-            white-space: nowrap;
-        }
-
-        th:hover {
-            color: var(--gold-light);
-        }
-
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid rgba(42,42,90,0.5);
-            vertical-align: middle;
-        }
-
-        tr:hover td {
-            background: rgba(139,92,246,0.05);
-        }
-
-        tr.conjunction-row td {
-            background: rgba(212,175,55,0.08);
-        }
-
-        .zodiac-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-
-        .zodiac-fire { background: rgba(239,68,68,0.15); color: #f87171; }
-        .zodiac-earth { background: rgba(34,197,94,0.15); color: #4ade80; }
-        .zodiac-air { background: rgba(59,130,246,0.15); color: #60a5fa; }
-        .zodiac-water { background: rgba(139,92,246,0.15); color: #a78bfa; }
-
-        .degree-text {
-            font-family: monospace;
-            font-size: 0.9em;
-            color: var(--cyan);
-        }
-
-        .asteroid-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .asteroid-number {
-            font-size: 0.75em;
-            color: var(--text-secondary);
-        }
-
-        .asteroid-meaning {
-            font-size: 0.8em;
-            color: var(--text-secondary);
-            max-width: 200px;
-        }
-
-        .conj-symbol {
-            color: var(--gold);
-            font-weight: bold;
-            font-size: 1.1em;
-        }
-
-        .planet-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.8em;
-            font-weight: 600;
-        }
-
-        .orb-text {
-            font-size: 0.8em;
-            color: var(--orange);
-            font-weight: 600;
-        }
-
-        .category-tag {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.7em;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .cat-major { background: rgba(212,175,55,0.2); color: var(--gold); }
-        .cat-love { background: rgba(236,72,153,0.2); color: var(--pink); }
-        .cat-wisdom { background: rgba(139,92,246,0.2); color: var(--purple-light); }
-        .cat-karma { background: rgba(239,68,68,0.2); color: #f87171; }
-        .cat-healing { background: rgba(34,197,94,0.2); color: #4ade80; }
-        .cat-mythic { background: rgba(6,182,212,0.2); color: var(--cyan); }
-        .cat-destiny { background: rgba(249,115,22,0.2); color: var(--orange); }
-
-        .conjunction-section {
-            margin-top: 40px;
-        }
-
-        .conj-card {
-            background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(139,92,246,0.05));
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-
-        .conj-card:hover {
-            border-color: var(--gold);
-            transform: translateX(5px);
-        }
-
-        .conj-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .conj-asteroid {
-            font-weight: 600;
-            color: var(--gold);
-            font-size: 1.1em;
-        }
-
-        .conj-planet {
-            font-weight: 600;
-            color: var(--purple-light);
-        }
-
-        .conj-desc {
-            color: var(--text-secondary);
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .no-results .icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .loading .spinner {
-            width: 50px; height: 50px;
-            border: 3px solid var(--border);
-            border-top-color: var(--purple);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        .tab-bar {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 20px;
-            background: var(--bg-secondary);
-            padding: 5px;
-            border-radius: 12px;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            padding: 10px 20px;
-            background: transparent;
-            border: none;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 0.9em;
-            font-weight: 600;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .tab-btn:hover {
-            color: var(--text-primary);
-            background: rgba(139,92,246,0.1);
-        }
-
-        .tab-btn.active {
-            background: var(--purple);
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 15px;
-            background: var(--bg-card);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.8em;
-            color: var(--text-secondary);
-        }
-
-        .legend-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-        }
-
-        @media (max-width: 768px) {
-            h1 { font-size: 1.6em; }
-            .input-section { grid-template-columns: 1fr; }
-            table { font-size: 0.8em; }
-            th, td { padding: 8px 6px; }
-        }
-
-        .tooltip {
-            position: relative;
-            cursor: help;
-        }
-
-        .tooltip:hover::after {
-            content: attr(data-tip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.8em;
-            white-space: nowrap;
-            z-index: 100;
-            color: var(--text-primary);
-        }
-
-        .export-btn {
-            padding: 10px 18px;
-            background: linear-gradient(135deg, var(--green), #16a34a);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .export-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(34,197,94,0.3);
-        }
-
-        .actions-bar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ასტეროიდები — Asteroid Placements</title>
+<style>
+  :root{
+    --bg:#07070d; --panel:#0d0d18; --panel2:#11111f;
+    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+    --txt:#e8e8f0; --mut:#8a8aa0;
+    --freq:#7dd3fc; --freq2:#38bdf8;
+    --gold:#f0d060; --purple:#a78bfa; --pink:#f472b6;
+    --cyan:#22d3ee; --green:#4ade80; --red:#f87171; --orange:#fb923c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh; overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse at top, rgba(125,211,252,.06), transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(167,139,250,.05), transparent 50%);
+  }
+  .wrap{max-width:1280px; margin:0 auto; padding:28px 20px 60px}
+
+  /* Back link matching your site */
+  .back{
+    display:inline-flex; align-items:center; gap:8px;
+    color:var(--mut); text-decoration:none; font-size:.85rem;
+    margin-bottom:24px; transition:color .2s;
+  }
+  .back:hover{color:var(--freq)}
+  .back svg{width:16px; height:16px}
+
+  /* Header */
+  header{
+    display:flex; align-items:center; gap:20px;
+    padding:24px 28px; margin-bottom:28px;
+    background:linear-gradient(135deg, rgba(125,211,252,.06), rgba(167,139,250,.06));
+    border:1px solid var(--line2); border-radius:18px;
+    position:relative; overflow:hidden;
+  }
+  header::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 20% 50%, rgba(125,211,252,.08), transparent 40%);
+    pointer-events:none;
+  }
+  .header-sym{
+    width:56px; height:56px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--freq);
+  }
+  .header-sym svg{width:100%; height:100%}
+  h1{
+    font-size:1.6rem; font-weight:600; letter-spacing:.5px;
+    background:linear-gradient(135deg, var(--freq), var(--purple));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .header-sub{color:var(--mut); font-size:.85rem; margin-top:2px}
+
+  /* Inputs panel */
+  .panel{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:16px; padding:22px; margin-bottom:22px;
+    position:relative;
+  }
+  .panel-title{
+    font-size:.75rem; text-transform:uppercase; letter-spacing:1.5px;
+    color:var(--mut); margin-bottom:14px;
+  }
+  .inputs{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:14px;
+  }
+  .field label{
+    display:block; font-size:.7rem; text-transform:uppercase;
+    letter-spacing:1px; color:var(--freq); margin-bottom:6px;
+  }
+  .field input, .field select{
+    width:100%; padding:10px 12px;
+    background:var(--panel2); border:1px solid var(--line2);
+    border-radius:10px; color:var(--txt); font-size:.9rem;
+    outline:none; transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus{border-color:var(--freq)}
+
+  .btn{
+    grid-column:1/-1; padding:12px 20px;
+    background:linear-gradient(135deg, var(--freq2), var(--purple));
+    border:none; border-radius:10px; color:#fff;
+    font-weight:600; font-size:.9rem; letter-spacing:.5px;
+    cursor:pointer; transition:transform .2s, box-shadow .2s;
+  }
+  .btn:hover{transform:translateY(-1px); box-shadow:0 8px 24px rgba(56,189,248,.25)}
+
+  /* Stats */
+  .stats{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px; margin-bottom:22px;
+  }
+  .stat{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:16px; text-align:center;
+  }
+  .stat-num{
+    font-size:1.8rem; font-weight:600;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .stat:nth-child(1) .stat-num{color:var(--freq)}
+  .stat:nth-child(2) .stat-num{color:var(--purple)}
+  .stat:nth-child(3) .stat-num{color:var(--cyan)}
+  .stat:nth-child(4) .stat-num{color:var(--pink)}
+  .stat-lbl{font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--mut); margin-top:4px}
+
+  /* Tabs */
+  .tabs{
+    display:flex; gap:4px; flex-wrap:wrap;
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:4px; margin-bottom:16px;
+  }
+  .tab{
+    padding:8px 14px; background:transparent; border:none;
+    border-radius:8px; color:var(--mut); cursor:pointer;
+    font-size:.8rem; font-weight:500; transition:all .2s;
+  }
+  .tab:hover{color:var(--txt); background:rgba(255,255,255,.04)}
+  .tab.active{background:rgba(125,211,252,.12); color:var(--freq)}
+
+  /* Search + filters */
+  .controls{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px}
+  .search{
+    flex:1; min-width:200px; padding:10px 14px;
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:10px; color:var(--txt); font-size:.85rem; outline:none;
+  }
+  .search:focus{border-color:var(--freq)}
+  .fbtn{
+    padding:8px 14px; background:var(--panel); border:1px solid var(--line);
+    border-radius:10px; color:var(--mut); cursor:pointer;
+    font-size:.78rem; transition:all .2s;
+  }
+  .fbtn:hover,.fbtn.active{background:rgba(125,211,252,.1); color:var(--freq); border-color:var(--freq)}
+
+  /* Table */
+  .tbl-wrap{
+    overflow-x:auto; border-radius:14px;
+    border:1px solid var(--line); background:var(--panel);
+  }
+  table{width:100%; border-collapse:collapse; font-size:.82rem}
+  thead{background:rgba(125,211,252,.04); position:sticky; top:0; z-index:5}
+  th{
+    padding:12px 10px; text-align:left; font-size:.7rem;
+    text-transform:uppercase; letter-spacing:.8px;
+    color:var(--freq); border-bottom:1px solid var(--line);
+    cursor:pointer; user-select:none; white-space:nowrap;
+  }
+  th:hover{color:#fff}
+  td{padding:9px 10px; border-bottom:1px solid var(--line)}
+  tr:hover td{background:rgba(125,211,252,.02)}
+  tr.has-conj td{background:rgba(240,208,96,.03)}
+
+  .aid{font-family:'JetBrains Mono',monospace; color:var(--mut); font-size:.75rem}
+  .aname{font-weight:600; color:var(--txt)}
+  .zbadge{
+    display:inline-flex; align-items:center; gap:4px;
+    padding:2px 8px; border-radius:20px; font-size:.78rem; font-weight:500;
+  }
+  .z-fire{background:rgba(248,113,113,.12); color:#f87171}
+  .z-earth{background:rgba(74,222,128,.12); color:#4ade80}
+  .z-air{background:rgba(96,165,250,.12); color:#60a5fa}
+  .z-water{background:rgba(167,139,250,.12); color:#a78bfa}
+  .deg{font-family:'JetBrains Mono',monospace; color:var(--cyan); font-size:.82rem}
+  .meaning{color:var(--mut); font-size:.78rem; max-width:180px}
+  .cat-tag{
+    display:inline-block; padding:2px 7px; border-radius:5px;
+    font-size:.65rem; font-weight:600; text-transform:uppercase;
+  }
+  .c-major{background:rgba(240,208,96,.15); color:var(--gold)}
+  .c-love{background:rgba(244,114,182,.15); color:var(--pink)}
+  .c-wisdom{background:rgba(167,139,250,.15); color:var(--purple)}
+  .c-karma{background:rgba(248,113,113,.15); color:var(--red)}
+  .c-healing{background:rgba(74,222,128,.15); color:var(--green)}
+  .c-mythic{background:rgba(34,211,238,.15); color:var(--cyan)}
+  .c-destiny{background:rgba(251,146,60,.15); color:var(--orange)}
+
+  .pbadge{
+    display:inline-flex; align-items:center; gap:3px;
+    padding:2px 7px; border-radius:5px; font-size:.75rem;
+    background:rgba(167,139,250,.12); color:var(--purple);
+  }
+  .orb{color:var(--orange); font-size:.72rem; font-weight:600}
+
+  /* Conjunction cards */
+  .conj-card{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:16px 18px; margin-bottom:10px;
+    transition:border-color .2s, transform .2s;
+  }
+  .conj-card:hover{border-color:var(--gold); transform:translateX(3px)}
+  .conj-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+  .conj-sym{color:var(--gold); font-size:1.1rem; font-weight:700}
+  .conj-ast{color:var(--gold); font-weight:600}
+  .conj-pl{color:var(--purple); font-weight:600}
+  .conj-desc{color:var(--mut); font-size:.82rem; line-height:1.5}
+
+  .empty{text-align:center; padding:50px 20px; color:var(--mut)}
+  .empty-icon{font-size:2.5rem; margin-bottom:10px}
+
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+
+  @media(max-width:640px){
+    h1{font-size:1.2rem}
+    .inputs{grid-template-columns:1fr 1fr}
+    table{font-size:.75rem}
+    th,td{padding:7px 6px}
+  }
+</style>
 </head>
 <body>
-    <div class="stars-bg" id="stars"></div>
-    
-    <div class="container">
-        <header>
-            <h1>☄️ Asteroid Placements Calculator</h1>
-            <p class="subtitle">Comprehensive asteroid positions & planet conjunctions in your natal chart</p>
-        </header>
+<div class="wrap">
+  <a href="index.html" class="back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    უკან
+  </a>
 
-        <div class="input-section">
-            <div class="input-group">
-                <label>Birth Date</label>
-                <input type="date" id="birthDate" value="1990-06-15">
-            </div>
-            <div class="input-group">
-                <label>Birth Time</label>
-                <input type="time" id="birthTime" value="14:30">
-            </div>
-            <div class="input-group">
-                <label>Birth Place</label>
-                <input type="text" id="birthPlace" placeholder="e.g. New York, NY" value="New York, NY">
-            </div>
-            <div class="input-group">
-                <label>Orb (degrees)</label>
-                <input type="number" id="orbDeg" value="3" min="0.5" max="10" step="0.5">
-            </div>
-            <button class="btn-calculate" onclick="calculate()">🔮 Calculate Asteroid Placements</button>
-        </div>
+  <header>
+    <div class="header-sym">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="16" cy="16" r="12" stroke-width=".8" opacity=".3"/>
+        <circle cx="16" cy="16" r="8" stroke-width=".6" opacity=".2"/>
+        <ellipse cx="16" cy="16" rx="14" ry="6" transform="rotate(-30 16 16)" stroke-width=".5" opacity=".25" stroke-dasharray="1.5 1"/>
+        <ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(40 16 16)" stroke-width=".5" opacity=".25" stroke-dasharray="1.5 1"/>
+        <circle cx="6" cy="10" r="1.4" fill="currentColor"/>
+        <circle cx="25" cy="8" r="1.1" fill="currentColor"/>
+        <circle cx="28" cy="18" r="1.3" fill="currentColor"/>
+        <circle cx="20" cy="26" r="1" fill="currentColor"/>
+        <circle cx="8" cy="24" r="1.2" fill="currentColor"/>
+        <circle cx="4" cy="17" r=".9" fill="currentColor"/>
+        <line x1="6" y1="10" x2="25" y2="8" stroke-width=".4" opacity=".3"/>
+        <line x1="25" y1="8" x2="28" y2="18" stroke-width=".4" opacity=".3"/>
+        <line x1="28" y1="18" x2="20" y2="26" stroke-width=".4" opacity=".3"/>
+      </svg>
+    </div>
+    <div>
+      <h1>ასტეროიდების განლაგება</h1>
+      <div class="header-sub">Asteroid Placements & Planet Conjunctions</div>
+    </div>
+  </header>
 
-        <div id="results" style="display:none;">
-            <div class="stats-bar">
-                <div class="stat-card">
-                    <div class="number" id="statTotal">0</div>
-                    <div class="label">Total Asteroids</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number" id="statConj">0</div>
-                    <div class="label">Conjunctions Found</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number" id="statSigns">0</div>
-                    <div class="label">Signs Occupied</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number" id="statHouses">0</div>
-                    <div class="label">Houses Occupied</div>
-                </div>
-            </div>
+  <div class="panel">
+    <div class="panel-title">დაბადების მონაცემები</div>
+    <div class="inputs">
+      <div class="field"><label>თარიღი</label><input type="date" id="bdate" value="1990-06-15"></div>
+      <div class="field"><label>დრო</label><input type="time" id="btime" value="14:30"></div>
+      <div class="field"><label>ადგილი</label><input type="text" id="bplace" value="Tbilisi" placeholder="City"></div>
+      <div class="field"><label>ორბი (°)</label><input type="number" id="orb" value="3" min="0.5" max="10" step="0.5"></div>
+      <button class="btn" onclick="calc()">გამოთვლა</button>
+    </div>
+  </div>
 
-            <div class="tab-bar">
-                <button class="tab-btn active" onclick="switchTab('all')">All Asteroids</button>
-                <button class="tab-btn" onclick="switchTab('major')">Major Asteroids</button>
-                <button class="tab-btn" onclick="switchTab('love')">Love & Eros</button>
-                <button class="tab-btn" onclick="switchTab('wisdom')">Wisdom & Mind</button>
-                <button class="tab-btn" onclick="switchTab('karma')">Karmic</button>
-                <button class="tab-btn" onclick="switchTab('healing')">Healing</button>
-                <button class="tab-btn" onclick="switchTab('mythic')">Mythological</button>
-                <button class="tab-btn" onclick="switchTab('conj')">Conjunctions</button>
-            </div>
-
-            <div class="search-filter">
-                <input type="text" id="searchInput" placeholder="🔍 Search asteroids by name, sign, or meaning..." oninput="filterTable()">
-                <button class="filter-btn" onclick="setFilter('all')">All</button>
-                <button class="filter-btn" onclick="setFilter('fire')">🔥 Fire</button>
-                <button class="filter-btn" onclick="setFilter('earth')">🌍 Earth</button>
-                <button class="filter-btn" onclick="setFilter('air')">💨 Air</button>
-                <button class="filter-btn" onclick="setFilter('water')">💧 Water</button>
-            </div>
-
-            <div class="actions-bar">
-                <button class="export-btn" onclick="exportCSV()">📥 Export CSV</button>
-            </div>
-
-            <div class="tab-content active" id="tab-all">
-                <div class="table-container">
-                    <table id="asteroidTable">
-                        <thead>
-                            <tr>
-                                <th onclick="sortTable(0)"># ↕</th>
-                                <th onclick="sortTable(1)">Asteroid ↕</th>
-                                <th onclick="sortTable(2)">Category ↕</th>
-                                <th onclick="sortTable(3)">Sign ↕</th>
-                                <th onclick="sortTable(4)">Degree ↕</th>
-                                <th onclick="sortTable(5)">House ↕</th>
-                                <th onclick="sortTable(6)">Element ↕</th>
-                                <th>Meaning</th>
-                                <th>Conjunctions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="asteroidBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-major">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th><th>Asteroid</th><th>Sign</th><th>Degree</th><th>House</th><th>Meaning</th><th>Conjunctions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="majorBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-love">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th><th>Asteroid</th><th>Sign</th><th>Degree</th><th>House</th><th>Meaning</th><th>Conjunctions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="loveBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-wisdom">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th><th>Asteroid</th><th>Sign</th><th>Degree</th><th>House</th><th>Meaning</th><th>Conjunctions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="wisdomBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-karma">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th><th>Asteroid</th><th>Sign</th><th>Degree</th><th>House</th><th>Meaning</th><th>Conjunctions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="karmaBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-healing">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th><th>Asteroid</th><th>Sign</th><th>Degree</th><th>House</th><th>Meaning</th><th>Conjunctions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="healingBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-mythic">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th><th>Asteroid</th><th>Sign</th><th>Degree</th><th>House</th><th>Meaning</th><th>Conjunctions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="mythicBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-content" id="tab-conj">
-                <div id="conjunctionCards"></div>
-            </div>
-        </div>
+  <div id="results" style="display:none">
+    <div class="stats">
+      <div class="stat"><div class="stat-num" id="s1">0</div><div class="stat-lbl">ასტეროიდები</div></div>
+      <div class="stat"><div class="stat-num" id="s2">0</div><div class="stat-lbl">შეერთებები</div></div>
+      <div class="stat"><div class="stat-num" id="s3">0</div><div class="stat-lbl">ნიშნები</div></div>
+      <div class="stat"><div class="stat-num" id="s4">0</div><div class="stat-lbl">სახლები</div></div>
     </div>
 
-    <script>
-    // Generate stars background
-    const starsEl = document.getElementById('stars');
-    for (let i = 0; i < 150; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
-        star.style.animationDelay = Math.random() * 3 + 's';
-        starsEl.appendChild(star);
-    }
+    <div class="tabs">
+      <button class="tab active" data-t="all">ყველა</button>
+      <button class="tab" data-t="major">მთავარი</button>
+      <button class="tab" data-t="love">სიყვარული</button>
+      <button class="tab" data-t="wisdom">სიბრძნე</button>
+      <button class="tab" data-t="karma">კარმა</button>
+      <button class="tab" data-t="healing">განკურნება</button>
+      <button class="tab" data-t="mythic">მითოლოგია</button>
+      <button class="tab" data-t="conj">შეერთებები</button>
+    </div>
 
-    const ZODIAC_SIGNS = [
-        { name: 'Aries', symbol: '♈', element: 'fire' },
-        { name: 'Taurus', symbol: '♉', element: 'earth' },
-        { name: 'Gemini', symbol: '♊', element: 'air' },
-        { name: 'Cancer', symbol: '♋', element: 'water' },
-        { name: 'Leo', symbol: '♌', element: 'fire' },
-        { name: 'Virgo', symbol: '♍', element: 'earth' },
-        { name: 'Libra', symbol: '♎', element: 'air' },
-        { name: 'Scorpio', symbol: '♏', element: 'water' },
-        { name: 'Sagittarius', symbol: '♐', element: 'fire' },
-        { name: 'Capricorn', symbol: '♑', element: 'earth' },
-        { name: 'Aquarius', symbol: '♒', element: 'air' },
-        { name: 'Pisces', symbol: '♓', element: 'water' }
-    ];
+    <div class="controls">
+      <input class="search" id="srch" placeholder="ძიება..." oninput="render()">
+      <button class="fbtn active" data-el="all">ყველა</button>
+      <button class="fbtn" data-el="fire">🔥 ცეცხლი</button>
+      <button class="fbtn" data-el="earth">🌍 მიწა</button>
+      <button class="fbtn" data-el="air">💨 ჰაერი</button>
+      <button class="fbtn" data-el="water">💧 წყალი</button>
+    </div>
 
-    const PLANETS = [
-        { name: 'Sun', symbol: '☉' },
-        { name: 'Moon', symbol: '☽' },
-        { name: 'Mercury', symbol: '☿' },
-        { name: 'Venus', symbol: '♀' },
-        { name: 'Mars', symbol: '♂' },
-        { name: 'Jupiter', symbol: '♃' },
-        { name: 'Saturn', symbol: '♄' },
-        { name: 'Uranus', symbol: '♅' },
-        { name: 'Neptune', symbol: '♆' },
-        { name: 'Pluto', symbol: '♇' },
-        { name: 'North Node', symbol: '☊' },
-        { name: 'Chiron', symbol: '⚷' }
-    ];
+    <div class="tab-content active" data-tc="all"><div class="tbl-wrap"><table id="tAll"></table></div></div>
+    <div class="tab-content" data-tc="major"><div class="tbl-wrap"><table id="tMajor"></table></div></div>
+    <div class="tab-content" data-tc="love"><div class="tbl-wrap"><table id="tLove"></table></div></div>
+    <div class="tab-content" data-tc="wisdom"><div class="tbl-wrap"><table id="tWisdom"></table></div></div>
+    <div class="tab-content" data-tc="karma"><div class="tbl-wrap"><table id="tKarma"></table></div></div>
+    <div class="tab-content" data-tc="healing"><div class="tbl-wrap"><table id="tHealing"></table></div></div>
+    <div class="tab-content" data-tc="mythic"><div class="tbl-wrap"><table id="tMyth"></table></div></div>
+    <div class="tab-content" data-tc="conj"><div id="conjBox"></div></div>
+  </div>
+</div>
 
-    // Comprehensive asteroid database
-    const ASTEROIDS = [
-        // MAJOR ASTEROIDS
-        { id: 1, name: 'Ceres', cat: 'major', meaning: 'Nurturing, mothering, loss & recovery, agriculture' },
-        { id: 2, name: 'Pallas Athena', cat: 'wisdom', meaning: 'Wisdom, strategy, creative intelligence, justice' },
-        { id: 3, name: 'Juno', cat: 'love', meaning: 'Marriage, commitment, contracts, fidelity' },
-        { id: 4, name: 'Vesta', cat: 'major', meaning: 'Devotion, sacred flame, focus, spiritual dedication' },
-        { id: 10, name: 'Hygiea', cat: 'healing', meaning: 'Health, healing, hygiene, family patterns' },
-        
-        // LOVE & EROS ASTEROIDS
-        { id: 433, name: 'Eros', cat: 'love', meaning: 'Erotic love, passion, desire, creative energy' },
-        { id: 16, name: 'Psyche', cat: 'love', meaning: 'Soul, mind, transformation through love' },
-        { id: 26, name: 'Proserpina', cat: 'love', meaning: 'Abduction, underworld, mother-daughter bond' },
-        { id: 37, name: 'Fides', cat: 'love', meaning: 'Faith, trust, loyalty, fidelity' },
-        { id: 375, name: 'Ursula', cat: 'love', meaning: 'Devotion, spiritual love, martyrdom' },
-        { id: 769, name: 'Tatiana', cat: 'love', meaning: 'Romantic devotion, fairy-tale love' },
-        { id: 1487, name: 'Boda', cat: 'love', meaning: 'Union, marriage ceremony, partnership' },
-        { id: 1121, name: 'Natascha', cat: 'love', meaning: 'Christmas birth, rebirth in love' },
-        { id: 579, name: 'Sidonia', cat: 'love', meaning: 'Seduction, temptation, enchantment' },
-        { id: 1387, name: 'Kama', cat: 'love', meaning: 'Desire, pleasure, sensual love' },
-        { id: 37, name: 'Fides', cat: 'love', meaning: 'Trust, faithfulness, loyalty' },
-        { id: 1221, name: 'Amor', cat: 'love', meaning: 'Divine love, unconditional love' },
-        { id: 1015, name: 'Christa', cat: 'love', meaning: 'Anointed love, sacred relationship' },
-        { id: 858, name: 'El Djezair', cat: 'love', meaning: 'Romantic idealism, dream love' },
-        { id: 169, name: 'Zelia', cat: 'love', meaning: 'Passionate devotion, ardent love' },
-        { id: 647, name: 'Adelgunde', cat: 'love', meaning: 'Noble love, protective devotion' },
+<script>
+const SIGNS=[
+  {n:'Aries',s:'♈',e:'fire'},{n:'Taurus',s:'♉',e:'earth'},{n:'Gemini',s:'♊',e:'air'},
+  {n:'Cancer',s:'♋',e:'water'},{n:'Leo',s:'♌',e:'fire'},{n:'Virgo',s:'♍',e:'earth'},
+  {n:'Libra',s:'♎',e:'air'},{n:'Scorpio',s:'♏',e:'water'},{n:'Sagittarius',s:'♐',e:'fire'},
+  {n:'Capricorn',s:'♑',e:'earth'},{n:'Aquarius',s:'♒',e:'air'},{n:'Pisces',s:'♓',e:'water'}
+];
+const PLANETS=[
+  {n:'Sun',s:'☉'},{n:'Moon',s:'☽'},{n:'Mercury',s:'☿'},{n:'Venus',s:'♀'},{n:'Mars',s:'♂'},
+  {n:'Jupiter',s:'♃'},{n:'Saturn',s:'♄'},{n:'Uranus',s:'♅'},{n:'Neptune',s:'♆'},{n:'Pluto',s:'♇'},
+  {n:'N.Node',s:'☊'},{n:'Chiron',s:'⚷'}
+];
+const AST=[
+  {id:1,n:'Ceres',c:'major',m:'Nurturing, mothering, loss & recovery'},
+  {id:2,n:'Pallas',c:'wisdom',m:'Wisdom, strategy, creative intelligence'},
+  {id:3,n:'Juno',c:'love',m:'Marriage, commitment, contracts'},
+  {id:4,n:'Vesta',c:'major',m:'Devotion, sacred flame, focus'},
+  {id:10,n:'Hygiea',c:'healing',m:'Health, healing, family patterns'},
+  {id:433,n:'Eros',c:'love',m:'Erotic love, passion, desire'},
+  {id:16,n:'Psyche',c:'love',m:'Soul, transformation through love'},
+  {id:5,n:'Astraea',c:'mythic',m:'Star maiden, justice, innocence'},
+  {id:6,n:'Hebe',c:'mythic',m:'Youth, vitality, cupbearer of gods'},
+  {id:7,n:'Iris',c:'mythic',m:'Rainbow bridge, messages'},
+  {id:8,n:'Flora',c:'mythic',m:'Flowers, spring, fertility'},
+  {id:9,n:'Metis',c:'mythic',m:'Cunning wisdom, first wife of Zeus'},
+  {id:11,n:'Parthenope',c:'mythic',m:'Siren song, allure'},
+  {id:12,n:'Victoria',c:'mythic',m:'Victory, triumph, success'},
+  {id:14,n:'Irene',c:'mythic',m:'Peace, harmony, tranquility'},
+  {id:15,n:'Eunomia',c:'mythic',m:'Good order, law, discipline'},
+  {id:17,n:'Thetis',c:'mythic',m:'Sea goddess, protective mother'},
+  {id:18,n:'Melpomene',c:'mythic',m:'Tragic muse, dramatic expression'},
+  {id:19,n:'Fortuna',c:'destiny',m:'Luck, fate, fortune'},
+  {id:24,n:'Themis',c:'destiny',m:'Divine law, natural order, oracle'},
+  {id:36,n:'Atalanta',c:'mythic',m:'Independence, speed, self-reliance'},
+  {id:40,n:'Harmonia',c:'destiny',m:'Harmony, balance, concord'},
+  {id:42,n:'Isis',c:'mythic',m:'Magic, motherhood, resurrection'},
+  {id:46,n:'Hestia',c:'mythic',m:'Hearth, home, sacred center'},
+  {id:52,n:'Europa',c:'mythic',m:'Abduction, new horizons'},
+  {id:57,n:'Mnemosyne',c:'destiny',m:'Memory, ancestral recall'},
+  {id:65,n:'Cybele',c:'mythic',m:'Great mother, wild power'},
+  {id:76,n:'Freia',c:'mythic',m:'Love, beauty, Norse goddess'},
+  {id:78,n:'Diana',c:'mythic',m:'Moon, hunt, independence'},
+  {id:97,n:'Klotho',c:'destiny',m:'Fate spinner, destiny thread'},
+  {id:99,n:'Dike',c:'destiny',m:'Justice, moral order'},
+  {id:120,n:'Lachesis',c:'destiny',m:'Fate measurer, destiny allotment'},
+  {id:129,n:'Antigone',c:'mythic',m:'Defiance, moral courage'},
+  {id:130,n:'Elektra',c:'mythic',m:'Revenge, father-daughter bond'},
+  {id:168,n:'Sibylla',c:'destiny',m:'Prophecy, oracle, visionary'},
+  {id:201,n:'Penelope',c:'healing',m:'Faithful waiting, patience'},
+  {id:216,n:'Kleopatra',c:'mythic',m:'Royal power, seduction'},
+  {id:306,n:'Unitas',c:'destiny',m:'Unity, oneness, cooperation'},
+  {id:446,n:'Aeternitas',c:'destiny',m:'Eternity, timelessness'},
+  {id:511,n:'Davida',c:'major',m:'One of largest asteroids, teaching'},
+  {id:584,n:'Semiramis',c:'mythic',m:'Legendary queen, ambition'},
+  {id:617,n:'Patroclus',c:'mythic',m:'Loyal companion, deep friendship'},
+  {id:624,n:'Hektor',c:'mythic',m:'Noble warrior, defender'},
+  {id:704,n:'Interamnia',c:'major',m:'Fourth largest asteroid, bridge'},
+  {id:1036,n:'Ganymed',c:'mythic',m:'Cupbearer, divine service'},
+  {id:1566,n:'Icarus',c:'karma',m:'Flying too high, ambition, risk'},
+  {id:1862,n:'Apollo',c:'wisdom',m:'Truth, light, music, prophecy'},
+  {id:1866,n:'Sisyphus',c:'karma',m:'Eternal task, perseverance'},
+  {id:2001,n:'Einstein',c:'wisdom',m:'Genius, paradigm shift'},
+  {id:2060,n:'Chiron',c:'karma',m:'Wounded healer, key questions'},
+  {id:3200,n:'Phaethon',c:'karma',m:'Sun scorcher, reckless ambition'},
+  {id:5145,n:'Pholus',c:'karma',m:'The catalyst, small cause big effect'},
+  {id:7066,n:'Nessus',c:'karma',m:'Abuse patterns, shadow healing'},
+  {id:8405,n:'Asbolus',c:'karma',m:'Trickster, past life karma'},
+  {id:10199,n:'Chariklo',c:'karma',m:'Compassion, empathic healing'},
+  {id:90377,n:'Sedna',c:'karma',m:'Deep ocean, isolation, Inuit goddess'},
+  {id:90482,n:'Orcus',c:'karma',m:'Underworld, binding oaths'},
+  {id:136199,n:'Eris',c:'karma',m:'Disharmony, chaos, divine discord'},
+  {id:136472,n:'Makemake',c:'mythic',m:'Creator god, fertility'},
+  {id:50000,n:'Quaoar',c:'mythic',m:'Creator spirit, Tongva people'},
+  {id:225088,n:'Gonggong',c:'mythic',m:'Chinese water god, destruction'},
+  {id:1181,n:'Lilith',c:'karma',m:'Dark moon, wild feminine'},
+  {id:1437,n:'Dioretsa',c:'karma',m:'Retrograde asteroid, reversal'},
+  {id:94,n:'Aurora',c:'mythic',m:'Dawn, new beginnings'},
+  {id:107,n:'Camilla',c:'mythic',m:'Warrior maiden, swift runner'},
+  {id:164,n:'Eva',c:'mythic',m:'Life, first woman, origin'},
+  {id:174,n:'Phaedra',c:'mythic',m:'Forbidden love, tragic passion'},
+  {id:175,n:'Undine',c:'mythic',m:'Water spirit, emotional depths'},
+  {id:196,n:'Philomela',c:'mythic',m:'Nightingale, pain into song'},
+  {id:259,n:'Aletheia',c:'wisdom',m:'Truth, disclosure, reality'},
+  {id:451,n:'Patientia',c:'healing',m:'Patience, endurance'},
+  {id:491,n:'Myrrha',c:'mythic',m:'Transformation, sacred resin'},
+  {id:532,n:'Herculina',c:'mythic',m:'Hercules strength, might'},
+  {id:664,n:'Judith',c:'mythic',m:'Praised, heroic woman'},
+  {id:1009,n:'Sirene',c:'mythic',m:'Enchanting voice, allure'},
+  {id:4179,n:'Toutatis',c:'mythic',m:'Chaos, unpredictable'},
+  {id:2000,n:'Herschel',c:'wisdom',m:'Discovery, innovation'},
+  {id:3174,n:'Alcock',c:'wisdom',m:'Astronomer, sky watcher'},
+  {id:3753,n:'Cruithne',c:'karma',m:"Earth's companion, second moon"},
+  {id:4341,n:'Poseidon',c:'mythic',m:'Sea god, emotion, depth'},
+  {id:174567,n:'Varda',c:'mythic',m:'Elven queen, star light'}
+];
 
-        // WISDOM & MIND
-        { id: 914, name: 'Palisana', cat: 'wisdom', meaning: 'Deep wisdom, intuitive knowledge' },
-        { id: 881, name: 'Athena', cat: 'wisdom', meaning: 'Strategic thinking, war wisdom, crafts' },
-        { id: 1862, name: 'Apollo', cat: 'wisdom', meaning: 'Truth, light, music, prophecy, healing' },
-        { id: 159, name: 'Aemilia', cat: 'wisdom', meaning: 'Rivalry, competition, striving' },
-        { id: 156, name: 'Xanthippe', cat: 'wisdom', meaning: 'Sharp mind, critical thinking, debate' },
-        { id: 192, name: 'Nausikaa', cat: 'wisdom', meaning: 'Hospitality, guidance, helpful wisdom' },
-        { id: 197, name: 'Arete', cat: 'wisdom', meaning: 'Virtue, excellence, moral courage' },
-        { id: 222, name: 'Lucia', cat: 'wisdom', meaning: 'Light of knowledge, illumination' },
-        { id: 279, name: 'Thule', cat: 'wisdom', meaning: 'Far-reaching wisdom, exploration' },
-        { id: 313, name: 'Chaldaea', cat: 'wisdom', meaning: 'Ancient wisdom, astrology, divination' },
-        { id: 405, name: 'Thia', cat: 'wisdom', meaning: 'Divine sight, radiant wisdom' },
-        { id: 490, name: 'Veritas', cat: 'wisdom', meaning: 'Truth, honesty, authenticity' },
-        { id: 511, name: 'Davida', cat: 'wisdom', meaning: 'Beloved wisdom, teaching' },
-        { id: 584, name: 'Semiramis', cat: 'wisdom', meaning: 'Queenly wisdom, leadership, ambition' },
-        { id: 872, name: 'Holda', cat: 'wisdom', meaning: 'Ancient wisdom, folk knowledge, nature' },
+let data=[], conjs=[], elFilter='all', sortC=-1, sortA=true, curTab='all';
 
-        // KARMIC ASTEROIDS
-        { id: 2060, name: 'Chiron', cat: 'karma', meaning: 'Wounded healer, key questions, bridging worlds' },
-        { id: 5145, name: 'Pholus', cat: 'karma', meaning: 'The catalyst, small cause big effect, addiction' },
-        { id: 7066, name: 'Nessus', cat: 'karma', meaning: 'Abuse patterns, manipulation, shadow healing' },
-        { id: 8405, name: 'Asbolus', cat: 'karma', meaning: 'Trickster, karma, past life mischief' },
-        { id: 10199, name: 'Chariklo', cat: 'karma', meaning: 'Compassion, empathy, nurturing healer' },
-        { id: 39, name: 'Laetitia', cat: 'karma', meaning: 'Joy, happiness, celebration of life' },
-        { id: 44, name: 'Nysa', cat: 'karma', meaning: 'Origin, nurturing place, beginnings' },
-        { id: 55, name: 'Pandora', cat: 'karma', meaning: 'Curiosity, unleashed forces, hidden gifts' },
-        { id: 71, name: 'Niobe', cat: 'karma', meaning: 'Grief, tears, loss, mourning' },
-        { id: 158, name: 'Koronis', cat: 'karma', meaning: 'Betrayal, broken trust, karma of deceit' },
-        { id: 243, name: 'Ida', cat: 'karma', meaning: 'Nurturing mountain, sacred knowledge' },
-        { id: 260, name: 'Huberta', cat: 'karma', meaning: 'Bright mind, karmic brilliance' },
-        { id: 336, name: 'Lacadiera', cat: 'karma', meaning: 'Karmic bonds, fated connections' },
-        { id: 471, name: 'Papagena', cat: 'karma', meaning: 'Soul mate quest, karmic partner' },
-        { id: 944, name: 'Hidalgo', cat: 'karma', meaning: 'Noble sacrifice, karmic duty' },
+function srand(s){let x=Math.sin(s)*10000;return x-Math.floor(x)}
 
-        // HEALING ASTEROIDS
-        { id: 10, name: 'Hygiea', cat: 'healing', meaning: 'Health, cleanliness, holistic healing' },
-        { id: 113, name: 'Amalthea', cat: 'healing', meaning: 'Nurturing, nourishment, healing touch' },
-        { id: 1221, name: 'Amor', cat: 'healing', meaning: 'Healing through love, heart opening' },
-        { id: 161, name: 'Athor', cat: 'healing', meaning: 'Joy, music, dance, emotional healing' },
-        { id: 201, name: 'Penelope', cat: 'healing', meaning: 'Faithful waiting, healing through patience' },
-        { id: 334, name: 'Chicago', cat: 'healing', meaning: 'Urban healing, community health' },
-        { id: 398, name: 'Admete', cat: 'healing', meaning: 'Untamed healing, wild recovery' },
-        { id: 522, name: 'Helga', cat: 'healing', meaning: 'Holy healing, sacred recovery' },
-        { id: 654, name: 'Zelinda', cat: 'healing', meaning: 'Protected healing, sheltered recovery' },
-        { id: 704, name: 'Interamnia', cat: 'healing', meaning: 'Bridge healing, connecting therapies' },
-        { id: 895, name: 'Lysistrata', cat: 'healing', meaning: 'Peace-making, healing conflict' },
-        { id: 1010, name: 'Marlene', cat: 'healing', meaning: 'Glamour healing, transformation' },
+function calc(){
+  const d=document.getElementById('bdate').value;
+  const t=document.getElementById('btime').value||'12:00';
+  if(!d){alert('შეიყვანეთ თარიღი');return}
+  const dt=new Date(d+'T'+t);
+  const jd=dt.getTime()/86400000+2440587.5;
+  const orb=parseFloat(document.getElementById('orb').value)||3;
 
-        // MYTHOLOGICAL ASTEROIDS
-        { id: 5, name: 'Astraea', cat: 'mythic', meaning: 'Star maiden, justice, innocence' },
-        { id: 6, name: 'Hebe', cat: 'mythic', meaning: 'Youth, vitality, cupbearer of gods' },
-        { id: 7, name: 'Iris', cat: 'mythic', meaning: 'Rainbow bridge, messages, communication' },
-        { id: 8, name: 'Flora', cat: 'mythic', meaning: 'Flowers, spring, fertility, nature' },
-        { id: 9, name: 'Metis', cat: 'mythic', meaning: 'Cunning wisdom, first wife of Zeus' },
-        { id: 11, name: 'Parthenope', cat: 'mythic', meaning: 'Siren song, allure, temptation' },
-        { id: 12, name: 'Victoria', cat: 'mythic', meaning: 'Victory, triumph, success' },
-        { id: 13, name: 'Egeria', cat: 'mythic', meaning: 'Nymph advisor, divine counsel' },
-        { id: 14, name: 'Irene', cat: 'mythic', meaning: 'Peace, harmony, tranquility' },
-        { id: 15, name: 'Eunomia', cat: 'mythic', meaning: 'Good order, law, discipline' },
-        { id: 17, name: 'Thetis', cat: 'mythic', meaning: 'Sea goddess, protective mother' },
-        { id: 18, name: 'Melpomene', cat: 'mythic', meaning: 'Tragic muse, dramatic expression' },
-        { id: 19, name: 'Fortuna', cat: 'mythic', meaning: 'Luck, fate, fortune, destiny' },
-        { id: 20, name: 'Massalia', cat: 'mythic', meaning: 'Trade, commerce, cultural exchange' },
-        { id: 21, name: 'Lutetia', cat: 'mythic', meaning: 'Paris, culture, sophistication' },
-        { id: 22, name: 'Kalliope', cat: 'mythic', meaning: 'Epic poetry, creative voice' },
-        { id: 23, name: 'Thalia', cat: 'mythic', meaning: 'Comedy, festivity, blooming' },
-        { id: 24, name: 'Themis', cat: 'mythic', meaning: 'Divine law, oracle, natural order' },
-        { id: 27, name: 'Euterpe', cat: 'mythic', meaning: 'Music, lyric poetry, joy' },
-        { id: 28, name: 'Bellona', cat: 'mythic', meaning: 'War goddess, battle strategy' },
-        { id: 29, name: 'Amphitrite', cat: 'mythic', meaning: 'Sea queen, emotional depths' },
-        { id: 36, name: 'Atalanta', cat: 'mythic', meaning: 'Independence, speed, self-reliance' },
-        { id: 40, name: 'Harmonia', cat: 'mythic', meaning: 'Harmony, balance, concord' },
-        { id: 41, name: 'Daphne', cat: 'mythic', meaning: 'Laurel tree, pursuit, transformation' },
-        { id: 42, name: 'Isis', cat: 'mythic', meaning: 'Magic, motherhood, resurrection' },
-        { id: 46, name: 'Hestia', cat: 'mythic', meaning: 'Hearth, home, sacred center' },
-        { id: 49, name: 'Doris', cat: 'mythic', meaning: 'Sea nymph, generosity, bounty' },
-        { id: 52, name: 'Europa', cat: 'mythic', meaning: 'Abduction, new horizons, wide eyes' },
-        { id: 56, name: 'Melete', cat: 'mythic', meaning: 'Meditation, practice, contemplation' },
-        { id: 57, name: 'Mnemosyne', cat: 'mythic', meaning: 'Memory, remembrance, ancestral recall' },
-        { id: 62, name: 'Erato', cat: 'mythic', meaning: 'Love poetry, passionate creativity' },
-        { id: 65, name: 'Cybele', cat: 'mythic', meaning: 'Great mother, nature, wild power' },
-        { id: 76, name: 'Freia', cat: 'mythic', meaning: 'Love, beauty, Norse goddess' },
-        { id: 78, name: 'Diana', cat: 'mythic', meaning: 'Moon, hunt, independence, wild nature' },
-        { id: 87, name: 'Sylvia', cat: 'mythic', meaning: 'Forest spirit, wild nature, mystery' },
-        { id: 90, name: 'Antiope', cat: 'mythic', meaning: 'Amazon warrior, opposing forces' },
-        { id: 97, name: 'Klotho', cat: 'mythic', meaning: 'Fate spinner, beginning of destiny' },
-        { id: 99, name: 'Dike', cat: 'mythic', meaning: 'Justice, moral order, righteousness' },
-        { id: 104, name: 'Klymene', cat: 'mythic', meaning: 'Fame, renown, reputation' },
-        { id: 110, name: 'Lydia', cat: 'mythic', meaning: 'Nobility, ancient kingdom, wealth' },
-        { id: 120, name: 'Lachesis', cat: 'mythic', meaning: 'Fate measurer, destiny allotment' },
-        { id: 129, name: 'Antigone', cat: 'mythic', meaning: 'Defiance, moral courage, family duty' },
-        { id: 130, name: 'Elektra', cat: 'mythic', meaning: 'Revenge, fury, father-daughter bond' },
-        { id: 134, name: 'Sophrosyne', cat: 'mythic', meaning: 'Temperance, self-control, moderation' },
-        { id: 137, name: 'Melia', cat: 'mythic', meaning: 'Ash tree nymph, natural wisdom' },
-        { id: 140, name: 'Siwa', cat: 'mythic', meaning: 'Oracle, ancient wisdom, desert' },
-        { id: 150, name: 'Nuwa', cat: 'mythic', meaning: 'Creator goddess, mending heavens' },
-        { id: 168, name: 'Sibylla', cat: 'mythic', meaning: 'Prophecy, oracle, visionary' },
-        { id: 176, name: 'Iduna', cat: 'mythic', meaning: 'Eternal youth, rejuvenation' },
-        { id: 181, name: 'Eucharis', cat: 'mythic', meaning: 'Grace, gratitude, charm' },
-        { id: 191, name: 'Kolga', cat: 'mythic', meaning: 'Wave, ocean depth, emotion' },
-        { id: 193, name: 'Ambrosia', cat: 'mythic', meaning: 'Immortality, divine food' },
-        { id: 201, name: 'Penelope', cat: 'mythic', meaning: 'Faithfulness, weaving, patience' },
-        { id: 216, name: 'Kleopatra', cat: 'mythic', meaning: 'Royal power, seduction, politics' },
-        { id: 233, name: 'Asterope', cat: 'mythic', meaning: 'Star-face, celestial beauty' },
-        { id: 241, name: 'Germania', cat: 'mythic', meaning: 'National spirit, cultural identity' },
-        { id: 254, name: 'Augusta', cat: 'mythic', meaning: 'Majesty, grandeur, exaltation' },
-        { id: 275, name: 'Sapientia', cat: 'mythic', meaning: 'Wisdom personified, knowledge' },
-        { id: 287, name: 'Nephthys', cat: 'mythic', meaning: 'Protection, death rites, mourning' },
-        { id: 297, name: 'Caecilia', cat: 'mythic', meaning: 'Music patron, heavenly harmony' },
-        { id: 306, name: 'Unitas', cat: 'mythic', meaning: 'Unity, oneness, cooperation' },
-        { id: 313, name: 'Chaldaea', cat: 'mythic', meaning: 'Ancient astrology, Babylonian wisdom' },
-        { id: 345, name: 'Arcadia', cat: 'mythic', meaning: 'Pastoral paradise, simple joy' },
-        { id: 354, name: 'Eleonora', cat: 'mythic', meaning: 'Light, brightness, nobility' },
-        { id: 368, name: 'Haidea', cat: 'mythic', meaning: 'Underworld bride, hidden knowledge' },
-        { id: 375, name: 'Ursula', cat: 'mythic', meaning: 'Bear maiden, fierce protection' },
-        { id: 398, name: 'Admete', cat: 'mythic', meaning: 'Unconquered, untamed spirit' },
-        { id: 405, name: 'Thia', cat: 'mythic', meaning: 'Divine vision, radiant goddess' },
-        { id: 416, name: 'Vaticana', cat: 'mythic', meaning: 'Prophecy, sacred divination' },
-        { id: 420, name: 'Bertholda', cat: 'mythic', meaning: 'Bright fortress, strong protection' },
-        { id: 442, name: 'Ehrfurtia', cat: 'mythic', meaning: 'Honorable worth, respect' },
-        { id: 446, name: 'Aeternitas', cat: 'mythic', meaning: 'Eternity, timelessness, permanence' },
-        { id: 471, name: 'Papagena', cat: 'mythic', meaning: 'Bird catcher, soul mate, joy' },
-        { id: 511, name: 'Davida', cat: 'mythic', meaning: 'Beloved, large asteroid, teaching' },
-        { id: 522, name: 'Helga', cat: 'mythic', meaning: 'Holy one, sacred feminine' },
-        { id: 566, name: 'Stereoskopia', cat: 'mythic', meaning: 'Three-dimensional vision, depth' },
-        { id: 584, name: 'Semiramis', cat: 'mythic', meaning: 'Legendary queen, ambition, power' },
-        { id: 617, name: 'Patroclus', cat: 'mythic', meaning: 'Loyal companion, deep friendship' },
-        { id: 624, name: 'Hektor', cat: 'mythic', meaning: 'Noble warrior, defender, honor' },
-        { id: 654, name: 'Zelinda', cat: 'mythic', meaning: 'Protected one, shielded' },
-        { id: 704, name: 'Interamnia', cat: 'mythic', meaning: 'Between rivers, bridge, transition' },
-        { id: 706, name: 'Hirundo', cat: 'mythic', meaning: 'Swallow, migration, return' },
-        { id: 719, name: 'Albert', cat: 'mythic', meaning: 'Noble brightness, wisdom' },
-        { id: 762, name: 'Pulcova', cat: 'mythic', meaning: 'Beautiful, grace, elegance' },
-        { id: 804, name: 'Crescentia', cat: 'mythic', meaning: 'Growing, waxing moon, increase' },
-        { id: 895, name: 'Lysistrata', cat: 'mythic', meaning: 'Army looser, peacemaker' },
-        { id: 914, name: 'Palisana', cat: 'mythic', meaning: 'Palisade, fortified wisdom' },
-        { id: 944, name: 'Hidalgo', cat: 'mythic', meaning: 'Nobleman, quixotic quest' },
-        { id: 1010, name: 'Marlene', cat: 'mythic', meaning: 'Star of the sea, glamour' },
-        { id: 1036, name: 'Ganymed', cat: 'mythic', meaning: 'Cupbearer, divine service, youth' },
-        { id: 1566, name: 'Icarus', cat: 'mythic', meaning: 'Flying too high, ambition, risk' },
-        { id: 1862, name: 'Apollo', cat: 'mythic', meaning: 'Sun god, music, prophecy, healing' },
-        { id: 1863, name: 'Antinous', cat: 'mythic', meaning: 'Beloved of Hadrian, star beauty' },
-        { id: 1866, name: 'Sisyphus', cat: 'mythic', meaning: 'Eternal task, futility, perseverance' },
-        { id: 2001, name: 'Einstein', cat: 'mythic', meaning: 'Genius, relativity, paradigm shift' },
-        { id: 433, name: 'Eros', cat: 'mythic', meaning: 'God of love, desire, passion' },
+  const plPos=PLANETS.map((p,i)=>{
+    const sp=[.9856,13.176,1.38,1.2,.524,.0831,.0334,.0117,.006,.004,-.053,.01][i]||.1;
+    const bl=[280,210,50,120,340,200,290,150,330,260,60,180][i]||0;
+    const lon=(bl+sp*(jd-2451545))%360;
+    return {...p,lon,si:Math.floor(lon/30),deg:lon%30};
+  });
 
-        // DESTINY & FATE
-        { id: 19, name: 'Fortuna', cat: 'destiny', meaning: 'Fortune, luck, wheel of fate' },
-        { id: 97, name: 'Klotho', cat: 'destiny', meaning: 'Spinner of fate, destiny thread' },
-        { id: 120, name: 'Lachesis', cat: 'destiny', meaning: 'Allotter of fate, destiny measure' },
-        { id: 99, name: 'Dike', cat: 'destiny', meaning: 'Justice, cosmic order, righteousness' },
-        { id: 24, name: 'Themis', cat: 'destiny', meaning: 'Divine law, natural order, oracle' },
-        { id: 40, name: 'Harmonia', cat: 'destiny', meaning: 'Cosmic harmony, balance' },
-        { id: 306, name: 'Unitas', cat: 'destiny', meaning: 'Unity, cosmic oneness' },
-        { id: 446, name: 'Aeternitas', cat: 'destiny', meaning: 'Eternity, timelessness' },
-        { id: 168, name: 'Sibylla', cat: 'destiny', meaning: 'Prophetess, oracle, foresight' },
-        { id: 56, name: 'Mnemosyne', cat: 'destiny', meaning: 'Memory, ancestral recall, past lives' },
-
-        // ADDITIONAL NOTABLE ASTEROIDS
-        { id: 324, name: 'Bamberga', cat: 'mythic', meaning: 'Large asteroid, delusion, fantasy' },
-        { id: 511, name: 'Davida', cat: 'major', meaning: 'One of largest asteroids, teaching' },
-        { id: 704, name: 'Interamnia', cat: 'major', meaning: 'Fourth largest asteroid, bridge' },
-        { id: 52, name: 'Europa', cat: 'mythic', meaning: 'Wide-eyed, new horizons, travel' },
-        { id: 624, name: 'Hektor', cat: 'mythic', meaning: 'Largest Jupiter trojan, noble defense' },
-        { id: 588, name: 'Achilles', cat: 'mythic', meaning: 'Vulnerability, heel, heroic flaw' },
-        { id: 617, name: 'Patroclus', cat: 'mythic', meaning: 'Loyalty, deep bond, sacrifice' },
-        { id: 243, name: 'Ida', cat: 'mythic', meaning: 'Nurturing mountain, sacred grove' },
-        { id: 951, name: 'Gaspra', cat: 'mythic', meaning: 'First asteroid visited by spacecraft' },
-        { id: 243, name: 'Ida', cat: 'healing', meaning: 'Nurturing, nature healing' },
-        { id: 253, name: 'Mathilde', cat: 'mythic', meaning: 'Strong in battle, dark asteroid' },
-        { id: 4179, name: 'Toutatis', cat: 'mythic', meaning: 'Chaos, unpredictable, near-earth' },
-        { id: 3200, name: 'Phaethon', cat: 'karma', meaning: 'Sun scorcher, reckless ambition' },
-        { id: 2002, name: 'Euler', cat: 'wisdom', meaning: 'Mathematical genius, patterns' },
-        { id: 4, name: 'Vesta', cat: 'major', meaning: 'Sacred flame, devotion, focus' },
-        { id: 94, name: 'Aurora', cat: 'mythic', meaning: 'Dawn, new beginnings, light' },
-        { id: 95, name: 'Arethusa', cat: 'mythic', meaning: 'Spring nymph, transformation' },
-        { id: 107, name: 'Camilla', cat: 'mythic', meaning: 'Warrior maiden, swift runner' },
-        { id: 115, name: 'Thyra', cat: 'mythic', meaning: 'Thor\'s daughter, thunder strength' },
-        { id: 125, name: 'Liberatrix', cat: 'mythic', meaning: 'Liberator, freedom fighter' },
-        { id: 131, name: 'Vala', cat: 'mythic', meaning: 'Prophetess, seer, divination' },
-        { id: 135, name: 'Hertha', cat: 'mythic', meaning: 'Earth goddess, fertility, nature' },
-        { id: 143, name: 'Adria', cat: 'mythic', meaning: 'Sea spirit, dark waters' },
-        { id: 144, name: 'Vibilia', cat: 'mythic', meaning: 'Vibration, resonance, frequency' },
-        { id: 164, name: 'Eva', cat: 'mythic', meaning: 'Life, first woman, origin' },
-        { id: 174, name: 'Phaedra', cat: 'mythic', meaning: 'Forbidden love, tragic passion' },
-        { id: 175, name: 'Undine', cat: 'mythic', meaning: 'Water spirit, emotional depths' },
-        { id: 176, name: 'Iduna', cat: 'mythic', meaning: 'Apples of youth, immortality' },
-        { id: 182, name: 'Elsa', cat: 'mythic', meaning: 'Noble pledge, consecrated' },
-        { id: 196, name: 'Philomela', cat: 'mythic', meaning: 'Nightingale, transformed pain into song' },
-        { id: 216, name: 'Kleopatra', cat: 'mythic', meaning: 'Royal power, glory of father' },
-        { id: 224, name: 'Oceana', cat: 'mythic', meaning: 'Ocean spirit, vast emotion' },
-        { id: 230, name: 'Athamantis', cat: 'mythic', meaning: 'Divine madness, inspired frenzy' },
-        { id: 236, name: 'Honoria', cat: 'mythic', meaning: 'Honor, respect, dignity' },
-        { id: 239, name: 'Adelheid', cat: 'mythic', meaning: 'Noble nature, gracious' },
-        { id: 259, name: 'Aletheia', cat: 'wisdom', meaning: 'Truth, disclosure, reality' },
-        { id: 267, name: 'Tirza', cat: 'mythic', meaning: 'Delight, pleasantness, beauty' },
-        { id: 284, name: 'Amalia', cat: 'mythic', meaning: 'Hardworking, diligent, industrious' },
-        { id: 298, name: 'Baptistina', cat: 'mythic', meaning: 'Initiation, new beginning' },
-        { id: 308, name: 'Polyxo', cat: 'mythic', meaning: 'Much wisdom, abundant knowledge' },
-        { id: 321, name: 'Florentina', cat: 'mythic', meaning: 'Flourishing, blooming, growth' },
-        { id: 358, name: 'Apollonia', cat: 'mythic', meaning: 'Devoted to Apollo, dedication' },
-        { id: 369, name: 'Aëria', cat: 'mythic', meaning: 'Air spirit, lofty thought' },
-        { id: 386, name: 'Siegmunda', cat: 'mythic', meaning: 'Victorious protection' },
-        { id: 400, name: 'Ducrosa', cat: 'mythic', meaning: 'Two crosses, duality, faith' },
-        { id: 424, name: 'Gratia', cat: 'mythic', meaning: 'Grace, charm, beauty' },
-        { id: 451, name: 'Patientia', cat: 'healing', meaning: 'Patience, endurance, tolerance' },
-        { id: 469, name: 'Sylvia', cat: 'mythic', meaning: 'Forest spirit, wild nature' },
-        { id: 491, name: 'Myrrha', cat: 'mythic', meaning: 'Transformation, sacred resin' },
-        { id: 506, name: 'Marion', cat: 'mythic', meaning: 'Star of the sea, beloved' },
-        { id: 532, name: 'Herculina', cat: 'mythic', meaning: 'Hercules strength, might' },
-        { id: 554, name: 'Peraga', cat: 'mythic', meaning: 'Completion, thoroughness' },
-        { id: 596, name: 'Scheila', cat: 'mythic', meaning: 'Beautiful, radiant, shining' },
-        { id: 618, name: 'Elfriede', cat: 'mythic', meaning: 'Elf peace, magical harmony' },
-        { id: 635, name: 'Vundtia', cat: 'mythic', meaning: 'Wonder, miracle, amazement' },
-        { id: 664, name: 'Judith', cat: 'mythic', meaning: 'Praised, heroic woman' },
-        { id: 694, name: 'Ekard', cat: 'mythic', meaning: 'Drake reversed, hidden power' },
-        { id: 713, name: 'Luscinia', cat: 'mythic', meaning: 'Nightingale, beautiful voice' },
-        { id: 747, name: 'Winchester', cat: 'mythic', meaning: 'Market town, commerce, trade' },
-        { id: 776, name: 'Berbericia', cat: 'mythic', meaning: 'Barbarian spirit, wild freedom' },
-        { id: 790, name: 'Pretoria', cat: 'mythic', meaning: 'Leadership, authority, command' },
-        { id: 818, name: 'Kapteynia', cat: 'mythic', meaning: 'Star cataloger, mapping' },
-        { id: 863, name: 'Benkoela', cat: 'mythic', meaning: 'Far shore, distant goal' },
-        { id: 875, name: 'Nymphe', cat: 'mythic', meaning: 'Nature spirit, bride' },
-        { id: 903, name: 'Nealey', cat: 'mythic', meaning: 'Champion, heroic spirit' },
-        { id: 980, name: 'Anacostia', cat: 'mythic', meaning: 'River spirit, flow' },
-        { id: 1009, name: 'Sirene', cat: 'mythic', meaning: 'Enchanting voice, allure' },
-        { id: 1020, name: 'Arkadia', cat: 'mythic', meaning: 'Pastoral paradise, simplicity' },
-        { id: 1036, name: 'Ganymed', cat: 'mythic', meaning: 'Cupbearer, divine youth' },
-        { id: 1093, name: 'Freda', cat: 'mythic', meaning: 'Peace, tranquility' },
-        { id: 1125, name: 'China', cat: 'mythic', meaning: 'Ancient civilization, tradition' },
-        { id: 1181, name: 'Lilith', cat: 'karma', meaning: 'Dark moon, wild feminine, rebellion' },
-        { id: 1221, name: 'Amor', cat: 'love', meaning: 'Love, divine affection' },
-        { id: 1313, name: 'Bernheim', cat: 'mythic', meaning: 'Home by stream, comfort' },
-        { id: 1362, name: 'Griqua', cat: 'mythic', meaning: 'African spirit, heritage' },
-        { id: 1437, name: 'Dioretsa', cat: 'karma', meaning: 'Retrograde asteroid, reversal' },
-        { id: 1566, name: 'Icarus', cat: 'karma', meaning: 'Hubris, flying too close to sun' },
-        { id: 1685, name: 'Toro', cat: 'mythic', meaning: 'Bull strength, determination' },
-        { id: 1862, name: 'Apollo', cat: 'wisdom', meaning: 'Light, truth, music, prophecy' },
-        { id: 1866, name: 'Sisyphus', cat: 'karma', meaning: 'Eternal struggle, perseverance' },
-        { id: 2000, name: 'Herschel', cat: 'wisdom', meaning: 'Discovery, innovation, Uranus link' },
-        { id: 2001, name: 'Einstein', cat: 'wisdom', meaning: 'Genius, paradigm shifts' },
-        { id: 2060, name: 'Chiron', cat: 'karma', meaning: 'Wounded healer, teacher' },
-        { id: 2241, name: 'Alcathous', cat: 'mythic', meaning: 'Divine helper, protection' },
-        { id: 3174, name: 'Alcock', cat: 'wisdom', meaning: 'Astronomer, sky watcher' },
-        { id: 3200, name: 'Phaethon', cat: 'karma', meaning: 'Reckless ambition, sun scorched' },
-        { id: 3753, name: 'Cruithne', cat: 'karma', meaning: 'Earth companion, second moon' },
-        { id: 4341, name: 'Poseidon', cat: 'mythic', meaning: 'Sea god, emotion, depth' },
-        { id: 47171, name: 'Lempo', cat: 'mythic', meaning: 'Finnish deity, trickster' },
-        { id: 5145, name: 'Pholus', cat: 'karma', meaning: 'Catalyst, domino effect' },
-        { id: 7066, name: 'Nessus', cat: 'karma', meaning: 'Abuse, shadow, betrayal' },
-        { id: 8405, name: 'Asbolus', cat: 'karma', meaning: 'Trickster, karmic joker' },
-        { id: 10199, name: 'Chariklo', cat: 'karma', meaning: 'Compassion, empathic healing' },
-        { id: 20000, name: 'Varuna', cat: 'mythic', meaning: 'Cosmic waters, vast ocean' },
-        { id: 90377, name: 'Sedna', cat: 'karma', meaning: 'Deep ocean, Inuit goddess, isolation' },
-        { id: 90482, name: 'Orcus', cat: 'karma', meaning: 'Underworld, anti-Pluto, binding oaths' },
-        { id: 136199, name: 'Eris', cat: 'karma', meaning: 'Disharmony, chaos, divine discord' },
-        { id: 136472, name: 'Makemake', cat: 'mythic', meaning: 'Creator god, fertility, Rapa Nui' },
-        { id: 225088, name: 'Gonggong', cat: 'mythic', meaning: 'Chinese water god, destruction' },
-        { id: 50000, name: 'Quaoar', cat: 'mythic', meaning: 'Creator spirit, Tongva people' },
-        { id: 174567, name: 'Varda', cat: 'mythic', meaning: 'Elven queen, star light' },
-    ];
-
-    // Remove duplicates by id
-    const uniqueAsteroids = [];
-    const seenIds = new Set();
-    ASTEROIDS.forEach(a => {
-        if (!seenIds.has(a.id)) {
-            seenIds.add(a.id);
-            uniqueAsteroids.push(a);
-        }
+  data=AST.map(a=>{
+    const bl=srand(a.id*7)*360;
+    const sp=.01+srand(a.id*13)*.5;
+    const lon=(bl+sp*(jd-2451545)*.01)%360;
+    const si=Math.floor(lon/30);
+    const deg=lon%30;
+    const house=(Math.floor(lon/30)%12)+1;
+    const cj=[];
+    plPos.forEach(p=>{
+      let df=Math.abs(lon-p.lon);
+      if(df>180)df=360-df;
+      if(df<=orb)cj.push({pn:p.n,ps:p.s,orb:df.toFixed(2)});
     });
+    return {...a,lon,si,deg,house,sign:SIGNS[si],cj};
+  });
 
-    let calculatedData = [];
-    let conjunctions = [];
-    let currentFilter = 'all';
-    let currentElementFilter = 'all';
-    let sortCol = -1;
-    let sortAsc = true;
+  conjs=[];
+  data.forEach(a=>a.cj.forEach(c=>conjs.push({an:a.n,aid:a.id,...c})));
 
-    function seededRandom(seed) {
-        let x = Math.sin(seed) * 10000;
-        return x - Math.floor(x);
-    }
+  document.getElementById('s1').textContent=data.length;
+  document.getElementById('s2').textContent=conjs.length;
+  document.getElementById('s3').textContent=new Set(data.map(a=>a.si)).size;
+  document.getElementById('s4').textContent=new Set(data.map(a=>a.house)).size;
+  document.getElementById('results').style.display='block';
+  render();
+}
 
-    function calculatePositions() {
-        const dateStr = document.getElementById('birthDate').value;
-        const timeStr = document.getElementById('birthTime').value;
-        
-        if (!dateStr) { alert('Please enter birth date'); return null; }
-        
-        const date = new Date(dateStr + 'T' + (timeStr || '12:00'));
-        const jd = date.getTime() / 86400000 + 2440587.5;
-        
-        // Calculate approximate positions using simplified orbital mechanics
-        const positions = [];
-        
-        // Planet positions (simplified)
-        const planetPositions = PLANETS.map((planet, i) => {
-            const speed = [0.9856, 13.176, 1.38, 1.2, 0.524, 0.0831, 0.0334, 0.0117, 0.006, 0.004, -0.053][i] || 0.1;
-            const baseLong = [280, 210, 50, 120, 340, 200, 290, 150, 330, 260, 60, 180][i] || 0;
-            const lon = (baseLong + speed * (jd - 2451545)) % 360;
-            const signIdx = Math.floor(lon / 30);
-            const degree = lon % 30;
-            const deg = Math.floor(degree);
-            const min = Math.floor((degree - deg) * 60);
-            return { ...planet, longitude: lon, signIdx, degree, deg, min, sign: ZODIAC_SIGNS[signIdx] };
-        });
+function row(a,full=true){
+  const ec='z-'+a.sign.e;
+  const cc='c-'+a.c;
+  const cj=a.cj.length?a.cj.map(c=>`<span class="pbadge">${c.ps} ${c.pn} <span class="orb">${c.orb}°</span></span>`).join(' '):'<span style="color:var(--mut);font-size:.75rem">—</span>';
+  const cols=full?`<td><span class="aid">${a.id}</span></td>
+    <td><span class="aname">${a.n}</span></td>
+    <td><span class="cat-tag ${cc}">${a.c}</span></td>
+    <td><span class="zbadge ${ec}">${a.sign.s} ${a.sign.n}</span></td>
+    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span></td>
+    <td>${a.house}</td>
+    <td style="text-transform:capitalize">${a.sign.e}</td>
+    <td><span class="meaning">${a.m}</span></td>
+    <td>${cj}</td>`:`<td><span class="aid">${a.id}</span></td>
+    <td><span class="aname">${a.n}</span></td>
+    <td><span class="zbadge ${ec}">${a.sign.s} ${a.sign.n}</span></td>
+    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span></td>
+    <td>${a.house}</td>
+    <td><span class="meaning">${a.m}</span></td>
+    <td>${cj}</td>`;
+  return `<tr class="${a.cj.length?'has-conj':''}">${cols}</tr>`;
+}
 
-        // Asteroid positions
-        uniqueAsteroids.forEach((asteroid, idx) => {
-            const seed = asteroid.id * 137 + jd * 0.001;
-            const baseLon = seededRandom(asteroid.id * 7) * 360;
-            const speed = 0.01 + seededRandom(asteroid.id * 13) * 0.5;
-            const lon = (baseLon + speed * (jd - 2451545) * 0.01) % 360;
-            const signIdx = Math.floor(lon / 30);
-            const degree = lon % 30;
-            const deg = Math.floor(degree);
-            const min = Math.floor((degree - deg) * 60);
-            const house = (Math.floor(lon / 30) % 12) + 1;
-            
-            // Find conjunctions with planets
-            const conjs = [];
-            const orb = parseFloat(document.getElementById('orbDeg').value) || 3;
-            
-            planetPositions.forEach(planet => {
-                let diff = Math.abs(lon - planet.longitude);
-                if (diff > 180) diff = 360 - diff;
-                if (diff <= orb) {
-                    conjs.push({ planet: planet.name, symbol: planet.symbol, orb: diff.toFixed(2) });
-                }
-            });
+function head(full=true){
+  return full?`<thead><tr>
+    <th onclick="sort(0)">#</th><th onclick="sort(1)">ასტეროიდი</th><th onclick="sort(2)">კატეგორია</th>
+    <th onclick="sort(3)">ნიშანი</th><th onclick="sort(4)">გრადუსი</th><th onclick="sort(5)">სახლი</th>
+    <th onclick="sort(6)">სტიქია</th><th>მნიშვნელობა</th><th>შეერთებები</th>
+  </tr></thead>`:`<thead><tr>
+    <th onclick="sort(0)">#</th><th>ასტეროიდი</th><th>ნიშანი</th>
+    <th>გრადუსი</th><th>სახლი</th><th>მნიშვნელობა</th><th>შეერთებები</th>
+  </tr></thead>`;
+}
 
-            positions.push({
-                ...asteroid,
-                longitude: lon,
-                signIdx,
-                degree: degree,
-                deg,
-                min,
-                sign: ZODIAC_SIGNS[signIdx],
-                house,
-                conjunctions: conjs
-            });
-        });
-
-        return { asteroids: positions, planets: planetPositions };
-    }
-
-    function calculate() {
-        const result = calculatePositions();
-        if (!result) return;
-
-        calculatedData = result.asteroids;
-        conjunctions = [];
-        
-        calculatedData.forEach(a => {
-            a.conjunctions.forEach(c => {
-                conjunctions.push({ asteroid: a.name, asteroidId: a.id, asteroidSymbol: a.sign.symbol, ...c });
-            });
-        });
-
-        // Update stats
-        document.getElementById('statTotal').textContent = calculatedData.length;
-        document.getElementById('statConj').textContent = conjunctions.length;
-        const signsOccupied = new Set(calculatedData.map(a => a.signIdx)).size;
-        document.getElementById('statSigns').textContent = signsOccupied;
-        const housesOccupied = new Set(calculatedData.map(a => a.house)).size;
-        document.getElementById('statHouses').textContent = housesOccupied;
-
-        renderAllTables();
-        renderConjunctionCards();
-        document.getElementById('results').style.display = 'block';
-    }
-
-    function renderRow(a) {
-        const elementClass = 'zodiac-' + a.sign.element;
-        const catClass = 'cat-' + a.cat;
-        const conjText = a.conjunctions.length > 0 
-            ? a.conjunctions.map(c => `<span class="planet-badge" style="background:rgba(139,92,246,0.15);color:#a78bfa;">${c.symbol} ${c.planet} <span class="orb-text">(${c.orb}°)</span></span>`).join(' ')
-            : '<span style="color:var(--text-secondary);font-size:0.8em;">—</span>';
-
-        return `<tr class="${a.conjunctions.length > 0 ? 'conjunction-row' : ''}">
-            <td><span class="asteroid-number">${a.id}</span></td>
-            <td><span class="asteroid-name">${a.name}</span></td>
-            <td><span class="category-tag ${catClass}">${a.cat}</span></td>
-            <td><span class="zodiac-badge ${elementClass}">${a.sign.symbol} ${a.sign.name}</span></td>
-            <td><span class="degree-text">${a.deg}°${String(a.min).padStart(2,'0')}′</span></td>
-            <td>${a.house}</td>
-            <td><span style="text-transform:capitalize;">${a.sign.element}</span></td>
-            <td><span class="asteroid-meaning">${a.meaning}</span></td>
-            <td>${conjText}</td>
-        </tr>`;
-    }
-
-    function renderRowShort(a) {
-        const elementClass = 'zodiac-' + a.sign.element;
-        const conjText = a.conjunctions.length > 0 
-            ? a.conjunctions.map(c => `<span class="planet-badge" style="background:rgba(139,92,246,0.15);color:#a78bfa;">${c.symbol} ${c.planet} <span class="orb-text">(${c.orb}°)</span></span>`).join(' ')
-            : '<span style="color:var(--text-secondary);font-size:0.8em;">—</span>';
-
-        return `<tr class="${a.conjunctions.length > 0 ? 'conjunction-row' : ''}">
-            <td><span class="asteroid-number">${a.id}</span></td>
-            <td><span class="asteroid-name">${a.name}</span></td>
-            <td><span class="zodiac-badge ${elementClass}">${a.sign.symbol} ${a.sign.name}</span></td>
-            <td><span class="degree-text">${a.deg}°${String(a.min).padStart(2,'0')}′</span></td>
-            <td>${a.house}</td>
-            <td><span class="asteroid-meaning">${a.meaning}</span></td>
-            <td>${conjText}</td>
-        </tr>`;
-    }
-
-    function renderAllTables() {
-        let filtered = calculatedData;
-        if (currentElementFilter !== 'all') {
-            filtered = filtered.filter(a => a.sign.element === currentElementFilter);
-        }
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        if (search) {
-            filtered = filtered.filter(a => 
-                a.name.toLowerCase().includes(search) || 
-                a.sign.name.toLowerCase().includes(search) || 
-                a.meaning.toLowerCase().includes(search) ||
-                a.cat.toLowerCase().includes(search)
-            );
-        }
-
-        // Sort
-        if (sortCol >= 0) {
-            filtered = [...filtered].sort((a, b) => {
-                let va, vb;
-                switch(sortCol) {
-                    case 0: va = a.id; vb = b.id; break;
-                    case 1: va = a.name; vb = b.name; break;
-                    case 2: va = a.cat; vb = b.cat; break;
-                    case 3: va = a.signIdx; vb = b.signIdx; break;
-                    case 4: va = a.longitude; vb = b.longitude; break;
-                    case 5: va = a.house; vb = b.house; break;
-                    case 6: va = a.sign.element; vb = b.sign.element; break;
-                    default: va = a.id; vb = b.id;
-                }
-                if (typeof va === 'string') return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
-                return sortAsc ? va - vb : vb - va;
-            });
-        }
-
-        document.getElementById('asteroidBody').innerHTML = filtered.map(renderRow).join('');
-        document.getElementById('majorBody').innerHTML = calculatedData.filter(a => a.cat === 'major').map(renderRowShort).join('');
-        document.getElementById('loveBody').innerHTML = calculatedData.filter(a => a.cat === 'love').map(renderRowShort).join('');
-        document.getElementById('wisdomBody').innerHTML = calculatedData.filter(a => a.cat === 'wisdom').map(renderRowShort).join('');
-        document.getElementById('karmaBody').innerHTML = calculatedData.filter(a => a.cat === 'karma').map(renderRowShort).join('');
-        document.getElementById('healingBody').innerHTML = calculatedData.filter(a => a.cat === 'healing').map(renderRowShort).join('');
-        document.getElementById('mythicBody').innerHTML = calculatedData.filter(a => a.cat === 'mythic' || a.cat === 'destiny').map(renderRowShort).join('');
-    }
-
-    function renderConjunctionCards() {
-        const container = document.getElementById('conjunctionCards');
-        if (conjunctions.length === 0) {
-            container.innerHTML = '<div class="no-results"><div class="icon">🔭</div><p>No conjunctions found with current orb setting. Try increasing the orb.</p></div>';
-            return;
-        }
-
-        const descriptions = {
-            'Sun': 'Core identity, vitality, ego expression',
-            'Moon': 'Emotions, instincts, inner world',
-            'Mercury': 'Communication, thinking, learning',
-            'Venus': 'Love, values, beauty, harmony',
-            'Mars': 'Action, drive, passion, aggression',
-            'Jupiter': 'Expansion, luck, growth, wisdom',
-            'Saturn': 'Structure, discipline, limitation, karma',
-            'Uranus': 'Innovation, rebellion, sudden change',
-            'Neptune': 'Dreams, illusion, spirituality, compassion',
-            'Pluto': 'Transformation, power, depth, rebirth',
-            'North Node': 'Destiny, soul purpose, growth direction',
-            'Chiron': 'Wounded healer, key life lesson'
-        };
-
-        container.innerHTML = conjunctions.map(c => `
-            <div class="conj-card">
-                <div class="conj-header">
-                    <span class="conj-symbol">☌</span>
-                    <span class="conj-asteroid">${c.asteroid} (#${c.asteroidId})</span>
-                    <span style="color:var(--text-secondary)">conjunct</span>
-                    <span class="conj-planet">${c.symbol} ${c.planet}</span>
-                    <span class="orb-text">[Orb: ${c.orb}°]</span>
-                </div>
-                <div class="conj-desc">
-                    <strong>${c.asteroid}</strong> (${getAsteroidMeaning(c.asteroidId)}) merges with <strong>${c.planet}</strong> energy (${descriptions[c.planet] || ''}). 
-                    This conjunction amplifies both energies, creating a powerful focal point in the natal chart.
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function getAsteroidMeaning(id) {
-        const a = uniqueAsteroids.find(x => x.id === id);
-        return a ? a.meaning.toLowerCase() : '';
-    }
-
-    function switchTab(tab) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('tab-' + tab).classList.add('active');
-    }
-
-    function filterTable() {
-        renderAllTables();
-    }
-
-    function setFilter(element) {
-        currentElementFilter = element;
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-        renderAllTables();
-    }
-
-    function sortTable(col) {
-        if (sortCol === col) {
-            sortAsc = !sortAsc;
-        } else {
-            sortCol = col;
-            sortAsc = true;
-        }
-        renderAllTables();
-    }
-
-    function exportCSV() {
-        let csv = 'ID,Asteroid,Category,Sign,Degree,House,Element,Meaning,Conjunctions\n';
-        calculatedData.forEach(a => {
-            const conjs = a.conjunctions.map(c => `${c.planet}(${c.orb}°)`).join('; ');
-            csv += `${a.id},"${a.name}",${a.cat},${a.sign.name},${a.deg}°${String(a.min).padStart(2,'0')}′,${a.house},${a.sign.element},"${a.meaning}","${conjs}"\n`;
-        });
-        
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'asteroid_placements.csv';
-        link.click();
-        URL.revokeObjectURL(url);
-    }
-
-    // Auto-calculate on load
-    window.addEventListener('load', () => {
-        calculate();
+function render(){
+  const q=document.getElementById('srch').value.toLowerCase();
+  let f=data;
+  if(elFilter!=='all')f=f.filter(a=>a.sign.e===elFilter);
+  if(q)f=f.filter(a=>a.n.toLowerCase().includes(q)||a.sign.n.toLowerCase().includes(q)||a.m.toLowerCase().includes(q)||a.c.includes(q));
+  if(sortC>=0){
+    f=[...f].sort((a,b)=>{
+      let va,vb;
+      switch(sortC){
+        case 0:va=a.id;vb=b.id;break;
+        case 1:va=a.n;vb=b.n;break;
+        case 2:va=a.c;vb=b.c;break;
+        case 3:va=a.si;vb=b.si;break;
+        case 4:va=a.lon;vb=b.lon;break;
+        case 5:va=a.house;vb=b.house;break;
+        case 6:va=a.sign.e;vb=b.sign.e;break;
+        default:va=a.id;vb=b.id;
+      }
+      if(typeof va==='string')return sortA?va.localeCompare(vb):vb.localeCompare(va);
+      return sortA?va-vb:vb-va;
     });
-    </script>
+  }
+  document.getElementById('tAll').innerHTML=head(true)+'<tbody>'+f.map(a=>row(a,true)).join('')+'</tbody>';
+  document.getElementById('tMajor').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='major').map(a=>row(a,false)).join('')+'</tbody>';
+  document.getElementById('tLove').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='love').map(a=>row(a,false)).join('')+'</tbody>';
+  document.getElementById('tWisdom').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='wisdom').map(a=>row(a,false)).join('')+'</tbody>';
+  document.getElementById('tKarma').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='karma').map(a=>row(a,false)).join('')+'</tbody>';
+  document.getElementById('tHealing').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='healing').map(a=>row(a,false)).join('')+'</tbody>';
+  document.getElementById('tMyth').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='mythic'||a.c==='destiny').map(a=>row(a,false)).join('')+'</tbody>';
+
+  const box=document.getElementById('conjBox');
+  if(!conjs.length){box.innerHTML='<div class="empty"><div class="empty-icon">🔭</div>შეერთებები ვერ მოიძებნა. გაზარდეთ ორბი.</div>';return}
+  const pd={Sun:'Core identity',Moon:'Emotions',Mercury:'Communication',Venus:'Love, values',Mars:'Action, drive',Jupiter:'Expansion, luck',Saturn:'Structure, karma',Uranus:'Innovation',Neptune:'Dreams, spirituality',Pluto:'Transformation','N.Node':'Destiny',Chiron:'Wounded healer'};
+  box.innerHTML=conjs.map(c=>`<div class="conj-card">
+    <div class="conj-head">
+      <span class="conj-sym">☌</span>
+      <span class="conj-ast">${c.an} (#${c.aid})</span>
+      <span style="color:var(--mut)">× </span>
+      <span class="conj-pl">${c.ps} ${c.pn}</span>
+      <span class="orb">[${c.orb}°]</span>
+    </div>
+    <div class="conj-desc"><b>${c.an}</b> merges with <b>${c.pn}</b> energy (${pd[c.pn]||''}). This conjunction amplifies both energies in the natal chart.</div>
+  </div>`).join('');
+}
+
+function sort(c){if(sortC===c)sortA=!sortA;else{sortC=c;sortA=true}render()}
+
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  curTab=t.dataset.t;
+  document.querySelector(`[data-tc="${curTab}"]`).classList.add('active');
+});
+document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  elFilter=b.dataset.el;
+  render();
+});
+
+window.addEventListener('load',calc);
+</script>
 </body>
 </html>
