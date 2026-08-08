@@ -125,12 +125,13 @@ tr:hover td{background:rgba(30,40,70,.45)}
     <div class="sec" id="lbl"></div>
     <svg id="wheel" viewBox="-10 -10 720 720" xmlns="http://www.w3.org/2000/svg"></svg>
     <div id="oddbox"></div>
+    <div id="moonbox"></div>
     <div id="innerbox"></div>
     <div class="sec">სხეულები</div>
     <div class="grid2">
       <div class="card" style="padding:0;overflow:hidden">
         <div class="card-title" id="ptitle" style="padding:9px 14px;margin:0;border-bottom:1px solid rgba(124,154,208,.18)">🪐 პლანეტოცენტრული</div>
-        <table><thead><tr><th></th><th>სხეული</th><th>გრადუსი ნიშანში</th><th>ნიშანი</th><th>სახ.</th><th>℞</th></tr></thead>
+        <table><thead><tr><th></th><th>სხეული</th><th>გრადუსი ნიშანში</th><th>ნიშანი</th><th>სახ.</th><th>℞ / დაშ.</th></tr></thead>
         <tbody id="ptb"></tbody></table>
       </div>
       <div class="card" style="padding:0;overflow:hidden">
@@ -156,6 +157,8 @@ tr:hover td{background:rgba(30,40,70,.45)}
 /* ═══ PLANETOCENTRIC ASTROLOGY ════════════════════════════════
    Positions : JPL Keplerian elements → heliocentric J2000 ecliptic,
                subtracted from the observer planet.
+   Moons     : /api/moons (PyEphem satellite theories) — the observer
+               planet's own major moons, seen from that planet.
    IAU mode  : real 2-D constellation lookup (constellations.js).
    Tropical  : 12 equal signs from the OBSERVER PLANET's own vernal
                equinox (its orbit ∩ its equator, IAU pole).
@@ -226,6 +229,31 @@ const PI_={
 const ORDER=['მზე','მერკური','ვენერა','დედამიწა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი','AC','MC'];
 const EN2KA={mercury:'მერკური',venus:'ვენერა',earth:'დედამიწა',mars:'მარსი',jupiter:'იუპიტერი',
              saturn:'სატურნი',uranus:'ურანი',neptune:'ნეპტუნი',pluto:'პლუტონი'};
+
+/* ── major moons of the observer planet (positions from /api/moons) ── */
+const MOON_I={
+ phobos:{sym:'Ph',color:'#d09070'},   deimos:{sym:'De',color:'#c08060'},
+ io:{sym:'Io',color:'#f0d060'},       europa:{sym:'Eu',color:'#e8e0d0'},
+ ganymede:{sym:'Ga',color:'#c0b090'}, callisto:{sym:'Ca',color:'#907868'},
+ mimas:{sym:'Mi',color:'#d8d8e0'},    enceladus:{sym:'En',color:'#f0f4f8'},
+ tethys:{sym:'Te',color:'#d0d8e0'},   dione:{sym:'Di',color:'#c8ccd4'},
+ rhea:{sym:'Rh',color:'#d4d0c8'},     titan:{sym:'Ti',color:'#e8a850'},
+ hyperion:{sym:'Hy',color:'#b09878'}, iapetus:{sym:'Ia',color:'#a09088'},
+ miranda:{sym:'Mr',color:'#b8c8d0'},  ariel:{sym:'Ar',color:'#c8d4dc'},
+ umbriel:{sym:'Um',color:'#8898a0'},  titania:{sym:'Tt',color:'#c0ccd8'},
+ oberon:{sym:'Ob',color:'#a8b4c0'}
+};
+const MOON_CACHE={};
+function getMoons(o,y,m,d,h,mi){
+  const k=o+'|'+y+'-'+m+'-'+d+'-'+h+'-'+mi;
+  if(MOON_CACHE[k])return Promise.resolve(MOON_CACHE[k]);
+  return fetch(BACKEND+'/api/moons',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({planet:o,year:y,month:m,day:d,hour:h,minute:mi})})
+    .then(function(r){return r.json();})
+    .then(function(j){MOON_CACHE[k]=j;return j;})
+    .catch(function(){return{moons:[],unavailable:[]};});
+}
 
 /* constellation sectors along each planet's own ecliptic
    (measured from that planet's J2000 ascending node) */
@@ -382,7 +410,7 @@ const e2s=function(ec,asc){return(-(ec-asc))*D2R+Math.PI;};
 const fmt2=function(d){const x=Math.floor(d);
   return x+'°'+String(Math.floor((d-x)*60)).padStart(2,'0')+"'";};
 
-function drawWheel(P,asc,mc,houses,asps,bands){
+function drawWheel(P,asc,mc,houses,asps,bands,MO){
   const svg=$('wheel');svg.innerHTML='';
   const RO=272;                 /* the big outer circle              */
   const RSi=196;                /* inner edge of the sign band       */
@@ -444,6 +472,37 @@ function drawWheel(P,asc,mc,houses,asps,bands){
       stroke:a.color,'stroke-width':1,opacity:.45},svg);
   });
 
+  /* ── moons of the observer planet, on their own inner ring ── */
+  if(MO&&MO.length){
+    const RM=162,mAng={};
+    MO.forEach(function(m){mAng[m.key]=e2s(m.lon,asc);});
+    const MGAP=17/RM;
+    for(let it=0;it<200;it++){
+      let mv=false;
+      for(let i=0;i<MO.length;i++)for(let j=i+1;j<MO.length;j++){
+        let d=mAng[MO[j].key]-mAng[MO[i].key];
+        while(d>Math.PI)d-=2*Math.PI;
+        while(d<-Math.PI)d+=2*Math.PI;
+        if(Math.abs(d)<MGAP&&Math.abs(d)>1e-4){
+          const p=(MGAP-Math.abs(d))/2,s=d>0?1:-1;
+          mAng[MO[i].key]-=p*s;mAng[MO[j].key]+=p*s;mv=true;
+        }
+      }
+      if(!mv)break;
+    }
+    el('circle',{cx:CX,cy:CY,r:RM,fill:'none',stroke:'rgba(124,154,208,.22)',
+      'stroke-width':.7,'stroke-dasharray':'3 4'},svg);
+    MO.forEach(function(m){
+      const info=MOON_I[m.key]||{sym:'?',color:'#cfd8e8'},tA=e2s(m.lon,asc);
+      el('line',{x1:CX+Math.cos(tA)*(RM+3),y1:CY+Math.sin(tA)*(RM+3),
+        x2:CX+Math.cos(tA)*(RM+9),y2:CY+Math.sin(tA)*(RM+9),
+        stroke:info.color,'stroke-width':1,opacity:.8},svg);
+      const gx=CX+Math.cos(mAng[m.key])*RM,gy=CY+Math.sin(mAng[m.key])*RM;
+      txt(svg,info.sym,gx,gy,{fill:info.color,'font-size':9.5,
+        'font-family':'Cinzel,serif','font-weight':'600'});
+    });
+  }
+
   /* ── planets outside the big circle ── */
   const names=Object.keys(P),disp={};
   names.forEach(function(n){disp[n]=e2s(P[n].lon,asc);});
@@ -487,7 +546,7 @@ function drawWheel(P,asc,mc,houses,asps,bands){
 }
 
 /* ═══ GENERATE ═══ */
-function gen(){
+async function gen(){
   $('err').innerHTML='';
   try{
     if(typeof iauFromEcliptic!=='function'){
@@ -524,6 +583,19 @@ function gen(){
       let dl=F2[k].lon-F[k].lon; if(dl>180)dl-=360; if(dl<-180)dl+=360;
       P[k]={lon:disp(F[k].lon,F[k].lat),raw:F[k].lon,lat:F[k].lat,d:F[k].d,retro:dl<0};
     }
+
+    /* moons of the observer planet, put into the same display frame */
+    let MO=[],moonNA=[];
+    try{
+      const md=await getMoons(obs,y,m,d,h,mi);
+      moonNA=md.unavailable||[];
+      MO=(md.moons||[]).map(function(mo){
+        return{key:mo.key,name_ka:mo.name_ka,lon:disp(mo.lon,mo.lat),
+               raw:mo.lon,lat:mo.lat,radii:mo.radii,
+               period:mo.period_days,behind:mo.behind};
+      });
+    }catch(e){MO=[];moonNA=[];}
+
     const houses=[];for(let i=0;i<12;i++)houses.push(norm(asc+i*30));
     const hOf=function(L){return Math.floor(norm(L-asc)/30)+1;};
 
@@ -552,7 +624,7 @@ function gen(){
       bands=ZSYM.map(function(sy,i){
         return{s:i*30,e:(i+1)*30,sym:sy,col:ZCOL[i],ka:SIGN_KA[i]};});
     }
-    drawWheel(P,asc,mc,houses,asps,bands);
+    drawWheel(P,asc,mc,houses,asps,bands,MO);
 
     $('out').style.display='block';
     $('orb').style.background='radial-gradient(circle at 34% 30%,'+pd.g1+' 0%,'+pd.col+' 45%,'+pd.g2+' 80%,#0a0810 100%)';
@@ -591,6 +663,44 @@ function gen(){
         '<td><span class="badge">H'+hOf(v.lon)+'</span></td>'+
         '<td>'+(v.retro?'<span class="retro">℞</span>':'')+'</td></tr>';
     }).join('');
+
+    /* moon rows, appended under the planets in the same table */
+    if(MO.length){
+      $('ptb').innerHTML+=MO.map(function(mo){
+        const s=sigOf({lon:mo.lon,raw:mo.raw,lat:mo.lat}),
+              info=MOON_I[mo.key]||{sym:'?',color:'#cfd8e8'};
+        return '<tr style="background:rgba(124,154,208,.05)">'+
+          '<td><span style="color:'+info.color+';font-family:Cinzel,serif;font-size:11px">'+info.sym+'</span></td>'+
+          '<td style="color:'+info.color+';font-size:11px">'+mo.name_ka+
+            ' <span class="lat">მთვარე</span></td>'+
+          '<td class="deg">'+fmt2(s.deg)+
+            (iau?' <span class="lat">/'+s.width.toFixed(1)+'°</span>':'')+'</td>'+
+          '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
+          '<span style="font-size:10px;color:'+s.col+'">'+s.ka+'</span></td>'+
+          '<td><span class="badge">H'+hOf(mo.lon)+'</span></td>'+
+          '<td><span class="lat">'+mo.radii.toFixed(1)+'R</span></td></tr>';
+      }).join('');
+    }
+
+    /* dedicated moon panel */
+    if(MO.length||moonNA.length){
+      const rows=MO.map(function(mo){
+        const info=MOON_I[mo.key]||{sym:'?',color:'#cfd8e8'};
+        const per=mo.period?(mo.period<1?(mo.period*24).toFixed(1)+' სთ':mo.period.toFixed(2)+' დღე'):'—';
+        return '<span style="display:inline-block;margin:0 14px 6px 0">'+
+          '<b style="color:'+info.color+'">'+info.sym+' '+mo.name_ka+'</b> '+
+          '<span style="color:rgba(190,205,230,.55);font-size:11px">'+
+          mo.radii.toFixed(1)+' რადიუსი · '+per+' · '+(mo.behind?'პლანეტის უკან':'პლანეტის წინ')+
+          '</span></span>';
+      }).join('');
+      const na=moonNA.length?'<div style="margin-top:6px;color:rgba(190,205,230,.45);font-size:10px">'+
+        moonNA.map(function(u){return u.name_ka;}).join(', ')+
+        ' — ამ ბიბლიოთეკას მისთვის ანალიტიკური თეორია არ გააჩნია, ამიტომ არ ჩანს</div>':'';
+      $('moonbox').innerHTML='<div class="card"><div class="card-title">🌙 '+pd.ka+'ის მთვარეები</div>'+
+        '<div style="font-size:12px;line-height:2">'+(rows||'<span style="color:rgba(190,205,230,.5)">—</span>')+'</div>'+
+        na+'<div class="note">მთვარეები ნაჩვენებია ისე, როგორც ისინი ჩანან '+pd.ka+'იდან — '+
+        'რუქის შიდა წყვეტილ წრეზე. მანძილი პლანეტის რადიუსებშია.</div></div>';
+    }else $('moonbox').innerHTML='';
 
     const ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
     const ANG={0:'AC',3:'IC',6:'DC',9:'MC'};
@@ -673,7 +783,8 @@ function gen(){
       (iau?'IAU საზღვრები Roman 1987 · B1875 · 2-D ძიება':
        mode==='ptrop'?'12 თანაბარი ნიშანი '+pd.ka+'ის ბუნიობის წერტილიდან':
        '12 თანაბარი ნიშანი · სპიკაზე მიბმული')+
-      ' · ეფემერიდი: JPL Keplerian (1800–2100, ~1′)</span>';
+      ' · ეფემერიდი: JPL Keplerian (1800–2100, ~1′)'+
+      (MO.length?' · მთვარეები: PyEphem სატელიტური თეორიები':'')+'</span>';
 
     $('out').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
