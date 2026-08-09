@@ -464,76 +464,53 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO){
       stroke:a.color,'stroke-width':1,opacity:.45},svg);
   });
 
-  /* ── planets outside the big circle ── */
-  const names=Object.keys(P),disp={};
-  names.forEach(function(n){disp[n]=e2s(P[n].lon,asc);});
-  const GAP=21/RPl;
-  for(let it=0;it<300;it++){
+  /* ── planets and the observer planet's moons, one ring outside ── */
+  const items=[];
+  Object.keys(P).forEach(function(n){
+    const info=PI_[n]||{sym:'?',color:'#fff'};
+    items.push({id:'p:'+n,lon:P[n].lon,sym:info.sym,color:info.color,
+                size:17,retro:P[n].retro,moon:false});
+  });
+  if(MO&&MO.length)MO.forEach(function(m){
+    const info=MOON_I[m.key]||{sym:'?',color:'#cfd8e8'};
+    items.push({id:'m:'+m.key,lon:m.lon,sym:info.sym,color:info.color,
+                size:10,retro:false,moon:true});
+  });
+  const disp={};
+  items.forEach(function(it){disp[it.id]=e2s(it.lon,asc);});
+  const GAP=20/RPl;
+  for(let it=0;it<400;it++){
     let mv=false;
-    for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
-      let d=disp[names[j]]-disp[names[i]];
+    for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
+      let d=disp[items[j].id]-disp[items[i].id];
       while(d>Math.PI)d-=2*Math.PI;
       while(d<-Math.PI)d+=2*Math.PI;
       if(Math.abs(d)<GAP&&Math.abs(d)>1e-4){
         const p=(GAP-Math.abs(d))/2,s=d>0?1:-1;
-        disp[names[i]]-=p*s;disp[names[j]]+=p*s;mv=true;
+        disp[items[i].id]-=p*s;disp[items[j].id]+=p*s;mv=true;
       }
     }
     if(!mv)break;
   }
-  names.forEach(function(n){
-    const info=PI_[n]||{sym:'?',color:'#fff'},tA=e2s(P[n].lon,asc);
+  items.forEach(function(it){
+    const tA=e2s(it.lon,asc);
     el('line',{x1:CX+Math.cos(tA)*(RO+1),y1:CY+Math.sin(tA)*(RO+1),
-      x2:CX+Math.cos(tA)*(RO+9),y2:CY+Math.sin(tA)*(RO+9),
-      stroke:info.color,'stroke-width':1.5},svg);
-    el('circle',{cx:CX+Math.cos(tA)*(RO+1),cy:CY+Math.sin(tA)*(RO+1),r:1.7,fill:info.color},svg);
-    const gx=CX+Math.cos(disp[n])*RPl,gy=CY+Math.sin(disp[n])*RPl;
-    let df=disp[n]-tA;
+      x2:CX+Math.cos(tA)*(RO+(it.moon?6:9)),y2:CY+Math.sin(tA)*(RO+(it.moon?6:9)),
+      stroke:it.color,'stroke-width':it.moon?1:1.5,opacity:it.moon?.75:1},svg);
+    el('circle',{cx:CX+Math.cos(tA)*(RO+1),cy:CY+Math.sin(tA)*(RO+1),
+      r:it.moon?1.2:1.7,fill:it.color},svg);
+    const gx=CX+Math.cos(disp[it.id])*RPl,gy=CY+Math.sin(disp[it.id])*RPl;
+    let df=disp[it.id]-tA;
     while(df>Math.PI)df-=2*Math.PI;
     while(df<-Math.PI)df+=2*Math.PI;
     if(Math.abs(df)>0.012)
       el('line',{x1:CX+Math.cos(tA)*(RO+9),y1:CY+Math.sin(tA)*(RO+9),x2:gx,y2:gy,
-        stroke:info.color,'stroke-width':.5,opacity:.4,'stroke-dasharray':'2 2'},svg);
-    txt(svg,info.sym,gx,gy,{fill:info.color,'font-size':17,'font-family':'serif'});
-    if(P[n].retro)txt(svg,'℞',gx+10,gy-8,{fill:'#f87171','font-size':7,'font-family':'serif'});
+        stroke:it.color,'stroke-width':.5,opacity:.4,'stroke-dasharray':'2 2'},svg);
+    txt(svg,it.sym,gx,gy,{fill:it.color,'font-size':it.size,
+      'font-family':it.moon?'Cinzel,serif':'serif',
+      'font-weight':it.moon?'600':'normal'});
+    if(it.retro)txt(svg,'℞',gx+10,gy-8,{fill:'#f87171','font-size':7,'font-family':'serif'});
   });
-  /* ── moons of the observer planet, on an outer ring ── */
-  if(MO&&MO.length){
-    const RM=332,mAng={};
-    MO.forEach(function(m){mAng[m.key]=e2s(m.lon,asc);});
-    const MGAP=17/RM;
-    for(let it=0;it<200;it++){
-      let mv=false;
-      for(let i=0;i<MO.length;i++)for(let j=i+1;j<MO.length;j++){
-        let d=mAng[MO[j].key]-mAng[MO[i].key];
-        while(d>Math.PI)d-=2*Math.PI;
-        while(d<-Math.PI)d+=2*Math.PI;
-        if(Math.abs(d)<MGAP&&Math.abs(d)>1e-4){
-          const p=(MGAP-Math.abs(d))/2,s=d>0?1:-1;
-          mAng[MO[i].key]-=p*s;mAng[MO[j].key]+=p*s;mv=true;
-        }
-      }
-      if(!mv)break;
-    }
-    el('circle',{cx:CX,cy:CY,r:RM,fill:'none',stroke:'rgba(124,154,208,.18)',
-      'stroke-width':.7,'stroke-dasharray':'3 4'},svg);
-    MO.forEach(function(m){
-      const info=MOON_I[m.key]||{sym:'?',color:'#cfd8e8'},tA=e2s(m.lon,asc);
-      /* tick on the outer circle marking the true longitude */
-      el('line',{x1:CX+Math.cos(tA)*(RM-11),y1:CY+Math.sin(tA)*(RM-11),
-        x2:CX+Math.cos(tA)*(RM-4),y2:CY+Math.sin(tA)*(RM-4),
-        stroke:info.color,'stroke-width':1,opacity:.75},svg);
-      const gx=CX+Math.cos(mAng[m.key])*RM,gy=CY+Math.sin(mAng[m.key])*RM;
-      let df=mAng[m.key]-tA;
-      while(df>Math.PI)df-=2*Math.PI;
-      while(df<-Math.PI)df+=2*Math.PI;
-      if(Math.abs(df)>0.012)
-        el('line',{x1:CX+Math.cos(tA)*(RM-4),y1:CY+Math.sin(tA)*(RM-4),x2:gx,y2:gy,
-          stroke:info.color,'stroke-width':.5,opacity:.35,'stroke-dasharray':'2 2'},svg);
-      txt(svg,info.sym,gx,gy,{fill:info.color,'font-size':9.5,
-        'font-family':'Cinzel,serif','font-weight':'600'});
-    });
-  }
 
   [['AC',asc],['MC',mc]].forEach(function(pair){
     const a=e2s(pair[1],asc);
@@ -706,7 +683,7 @@ async function gen(){
       $('moonbox').innerHTML='<div class="card"><div class="card-title">🌙 '+pd.ka+'ის მთვარეები</div>'+
         '<div style="font-size:12px;line-height:2">'+(rows||'<span style="color:rgba(190,205,230,.5)">—</span>')+'</div>'+
         na+'<div class="note">მთვარეები ნაჩვენებია ისე, როგორც ისინი ჩანან '+pd.ka+'იდან — '+
-        'რუქის გარე წყვეტილ წრეზე. მანძილი პლანეტის რადიუსებშია.'+
+        'პლანეტების გვერდით, იმავე გარე რგოლზე. მანძილი პლანეტის რადიუსებშია.'+
         (MO.some(function(x){return x.source==='fit';})?
          '<br>„მოდელი" — მარსისა და ურანის თანამგზავრებისთვის ბიბლიოთეკის თეორია მოქმედებს '+
          'მხოლოდ ~1999-2040 წლებში; სხვა თარიღებზე გამოიყენება მისივე მონაცემებზე მორგებული '+
