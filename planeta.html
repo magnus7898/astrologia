@@ -252,7 +252,8 @@ function getMoons(o,y,m,d,h,mi){
       body:JSON.stringify({planet:o,year:y,month:m,day:d,hour:h,minute:mi})})
     .then(function(r){return r.json();})
     .then(function(j){MOON_CACHE[k]=j;return j;})
-    .catch(function(){return{moons:[],unavailable:[]};});
+    .catch(function(e){return{moons:[],unavailable:[],
+      error:'სერვერთან კავშირი ვერ დამყარდა ('+e.message+')'};});
 }
 
 /* constellation sectors along each planet's own ecliptic
@@ -585,16 +586,17 @@ async function gen(){
     }
 
     /* moons of the observer planet, put into the same display frame */
-    let MO=[],moonNA=[];
+    let MO=[],moonNA=[],moonErr='';
     try{
       const md=await getMoons(obs,y,m,d,h,mi);
       moonNA=md.unavailable||[];
+      moonErr=md.error||'';
       MO=(md.moons||[]).map(function(mo){
         return{key:mo.key,name_ka:mo.name_ka,lon:disp(mo.lon,mo.lat),
                raw:mo.lon,lat:mo.lat,radii:mo.radii,
-               period:mo.period_days,behind:mo.behind};
+               period:mo.period_days,behind:mo.behind,source:mo.source};
       });
-    }catch(e){MO=[];moonNA=[];}
+    }catch(e){MO=[];moonNA=[];moonErr=e.message;}
 
     const houses=[];for(let i=0;i<12;i++)houses.push(norm(asc+i*30));
     const hOf=function(L){return Math.floor(norm(L-asc)/30)+1;};
@@ -678,19 +680,26 @@ async function gen(){
           '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
           '<span style="font-size:10px;color:'+s.col+'">'+s.ka+'</span></td>'+
           '<td><span class="badge">H'+hOf(mo.lon)+'</span></td>'+
-          '<td><span class="lat">'+mo.radii.toFixed(1)+'R</span></td></tr>';
+          '<td><span class="lat">'+mo.radii.toFixed(1)+'R'+
+            (mo.source==='fit'?' ~':'')+'</span></td></tr>';
       }).join('');
     }
 
     /* dedicated moon panel */
-    if(MO.length||moonNA.length){
+    if(moonErr){
+      $('moonbox').innerHTML='<div class="card"><div class="card-title">🌙 მთვარეები</div>'+
+        '<div style="color:#f87171;font-size:12px">⚠ '+moonErr+'</div>'+
+        '<div class="note">შეამოწმეთ, რომ ბექენდზე დაყენებულია moons.py და ephem.</div></div>';
+    }else if(MO.length||moonNA.length){
       const rows=MO.map(function(mo){
         const info=MOON_I[mo.key]||{sym:'?',color:'#cfd8e8'};
         const per=mo.period?(mo.period<1?(mo.period*24).toFixed(1)+' სთ':mo.period.toFixed(2)+' დღე'):'—';
         return '<span style="display:inline-block;margin:0 14px 6px 0">'+
           '<b style="color:'+info.color+'">'+info.sym+' '+mo.name_ka+'</b> '+
           '<span style="color:rgba(190,205,230,.55);font-size:11px">'+
-          mo.radii.toFixed(1)+' რადიუსი · '+per+' · '+(mo.behind?'პლანეტის უკან':'პლანეტის წინ')+
+          mo.radii.toFixed(1)+' რადიუსი · '+per+
+          (mo.behind===null?'':' · '+(mo.behind?'პლანეტის უკან':'პლანეტის წინ'))+
+          (mo.source==='fit'?' · <span style="color:#b8a060">მოდელი</span>':'')+
           '</span></span>';
       }).join('');
       const na=moonNA.length?'<div style="margin-top:6px;color:rgba(190,205,230,.45);font-size:10px">'+
@@ -699,7 +708,12 @@ async function gen(){
       $('moonbox').innerHTML='<div class="card"><div class="card-title">🌙 '+pd.ka+'ის მთვარეები</div>'+
         '<div style="font-size:12px;line-height:2">'+(rows||'<span style="color:rgba(190,205,230,.5)">—</span>')+'</div>'+
         na+'<div class="note">მთვარეები ნაჩვენებია ისე, როგორც ისინი ჩანან '+pd.ka+'იდან — '+
-        'რუქის შიდა წყვეტილ წრეზე. მანძილი პლანეტის რადიუსებშია.</div></div>';
+        'რუქის შიდა წყვეტილ წრეზე. მანძილი პლანეტის რადიუსებშია.'+
+        (MO.some(function(x){return x.source==='fit';})?
+         '<br>„მოდელი" — მარსისა და ურანის თანამგზავრებისთვის ბიბლიოთეკის თეორია მოქმედებს '+
+         'მხოლოდ ~1999-2040 წლებში; სხვა თარიღებზე გამოიყენება მისივე მონაცემებზე მორგებული '+
+         'ორბიტული მოდელი (სიზუსტე ~0.5°, ფობოსისთვის ~5°).':'')+
+        '</div></div>';
     }else $('moonbox').innerHTML='';
 
     const ROM=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
