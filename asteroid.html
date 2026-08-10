@@ -1,557 +1,189 @@
-<!DOCTYPE html>
-<html lang="ka">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ასტეროიდები — Asteroid Placements</title>
-<style>
-  :root{
-    --bg:#07070d; --panel:#0d0d18; --panel2:#11111f;
-    --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
-    --txt:#e8e8f0; --mut:#8a8aa0;
-    --freq:#7dd3fc; --freq2:#38bdf8;
-    --gold:#f0d060; --purple:#a78bfa; --pink:#f472b6;
-    --cyan:#22d3ee; --green:#4ade80; --red:#f87171; --orange:#fb923c;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{
-    background:var(--bg); color:var(--txt);
-    font-family:'Inter',system-ui,sans-serif;
-    min-height:100vh; overflow-x:hidden;
-    background-image:
-      radial-gradient(ellipse at top, rgba(125,211,252,.06), transparent 50%),
-      radial-gradient(ellipse at bottom, rgba(167,139,250,.05), transparent 50%);
-  }
-  .wrap{max-width:1280px; margin:0 auto; padding:28px 20px 60px}
-  .back{
-    display:inline-flex; align-items:center; gap:8px;
-    color:var(--mut); text-decoration:none; font-size:.85rem;
-    margin-bottom:24px; transition:color .2s;
-  }
-  .back:hover{color:var(--freq)}
-  .back svg{width:16px; height:16px}
-  header{
-    display:flex; align-items:center; gap:20px;
-    padding:24px 28px; margin-bottom:28px;
-    background:linear-gradient(135deg, rgba(125,211,252,.06), rgba(167,139,250,.06));
-    border:1px solid var(--line2); border-radius:18px;
-    position:relative; overflow:hidden;
-  }
-  header::before{
-    content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 20% 50%, rgba(125,211,252,.08), transparent 40%);
-    pointer-events:none;
-  }
-  .header-sym{
-    width:56px; height:56px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-    color:var(--freq);
-  }
-  .header-sym svg{width:100%; height:100%}
-  h1{
-    font-size:1.6rem; font-weight:600; letter-spacing:.5px;
-    background:linear-gradient(135deg, var(--freq), var(--purple));
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    background-clip:text;
-  }
-  .header-sub{color:var(--mut); font-size:.85rem; margin-top:2px}
-  .panel{
-    background:var(--panel); border:1px solid var(--line);
-    border-radius:16px; padding:22px; margin-bottom:22px;
-  }
-  .panel-title{
-    font-size:.75rem; text-transform:uppercase; letter-spacing:1.5px;
-    color:var(--mut); margin-bottom:14px;
-  }
-  .inputs{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:14px;
-  }
-  .field label{
-    display:block; font-size:.7rem; text-transform:uppercase;
-    letter-spacing:1px; color:var(--freq); margin-bottom:6px;
-  }
-  .field input, .field select{
-    width:100%; padding:10px 12px;
-    background:var(--panel2); border:1px solid var(--line2);
-    border-radius:10px; color:var(--txt); font-size:.9rem;
-    outline:none; transition:border-color .2s;
-  }
-  .field input:focus, .field select:focus{border-color:var(--freq)}
-  .btn{
-    grid-column:1/-1; padding:12px 20px;
-    background:linear-gradient(135deg, var(--freq2), var(--purple));
-    border:none; border-radius:10px; color:#fff;
-    font-weight:600; font-size:.9rem; letter-spacing:.5px;
-    cursor:pointer; transition:transform .2s, box-shadow .2s;
-  }
-  .btn:hover{transform:translateY(-1px); box-shadow:0 8px 24px rgba(56,189,248,.25)}
-  .stats{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-    gap:12px; margin-bottom:22px;
-  }
-  .stat{
-    background:var(--panel); border:1px solid var(--line);
-    border-radius:12px; padding:16px; text-align:center;
-  }
-  .stat-num{
-    font-size:1.8rem; font-weight:600;
-    font-family:'JetBrains Mono',monospace;
-  }
-  .stat:nth-child(1) .stat-num{color:var(--freq)}
-  .stat:nth-child(2) .stat-num{color:var(--purple)}
-  .stat:nth-child(3) .stat-num{color:var(--cyan)}
-  .stat:nth-child(4) .stat-num{color:var(--pink)}
-  .stat-lbl{font-size:.7rem; text-transform:uppercase; letter-spacing:1px; color:var(--mut); margin-top:4px}
-  .tabs{
-    display:flex; gap:4px; flex-wrap:wrap;
-    background:var(--panel); border:1px solid var(--line);
-    border-radius:12px; padding:4px; margin-bottom:16px;
-  }
-  .tab{
-    padding:8px 14px; background:transparent; border:none;
-    border-radius:8px; color:var(--mut); cursor:pointer;
-    font-size:.8rem; font-weight:500; transition:all .2s;
-  }
-  .tab:hover{color:var(--txt); background:rgba(255,255,255,.04)}
-  .tab.active{background:rgba(125,211,252,.12); color:var(--freq)}
-  .controls{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px}
-  .search{
-    flex:1; min-width:200px; padding:10px 14px;
-    background:var(--panel); border:1px solid var(--line);
-    border-radius:10px; color:var(--txt); font-size:.85rem; outline:none;
-  }
-  .search:focus{border-color:var(--freq)}
-  .fbtn{
-    padding:8px 14px; background:var(--panel); border:1px solid var(--line);
-    border-radius:10px; color:var(--mut); cursor:pointer;
-    font-size:.78rem; transition:all .2s;
-  }
-  .fbtn:hover,.fbtn.active{background:rgba(125,211,252,.1); color:var(--freq); border-color:var(--freq)}
-  .tbl-wrap{
-    overflow-x:auto; border-radius:14px;
-    border:1px solid var(--line); background:var(--panel);
-  }
-  table{width:100%; border-collapse:collapse; font-size:.82rem}
-  thead{background:rgba(125,211,252,.04); position:sticky; top:0; z-index:5}
-  th{
-    padding:12px 10px; text-align:left; font-size:.7rem;
-    text-transform:uppercase; letter-spacing:.8px;
-    color:var(--freq); border-bottom:1px solid var(--line);
-    cursor:pointer; user-select:none; white-space:nowrap;
-  }
-  th:hover{color:#fff}
-  td{padding:9px 10px; border-bottom:1px solid var(--line)}
-  tr:hover td{background:rgba(125,211,252,.02)}
-  tr.has-conj td{background:rgba(240,208,96,.03)}
-  .aid{font-family:'JetBrains Mono',monospace; color:var(--mut); font-size:.75rem}
-  .aname{font-weight:600; color:var(--txt)}
-  .zbadge{
-    display:inline-flex; align-items:center; gap:4px;
-    padding:2px 8px; border-radius:20px; font-size:.78rem; font-weight:500;
-  }
-  .z-fire{background:rgba(248,113,113,.12); color:#f87171}
-  .z-earth{background:rgba(74,222,128,.12); color:#4ade80}
-  .z-air{background:rgba(96,165,250,.12); color:#60a5fa}
-  .z-water{background:rgba(167,139,250,.12); color:#a78bfa}
-  .deg{font-family:'JetBrains Mono',monospace; color:var(--cyan); font-size:.82rem}
-  .meaning{color:var(--mut); font-size:.78rem; max-width:180px}
-  .cat-tag{
-    display:inline-block; padding:2px 7px; border-radius:5px;
-    font-size:.65rem; font-weight:600; text-transform:uppercase;
-  }
-  .c-major{background:rgba(240,208,96,.15); color:var(--gold)}
-  .c-love{background:rgba(244,114,182,.15); color:var(--pink)}
-  .c-wisdom{background:rgba(167,139,250,.15); color:var(--purple)}
-  .c-karma{background:rgba(248,113,113,.15); color:var(--red)}
-  .c-healing{background:rgba(74,222,128,.15); color:var(--green)}
-  .c-mythic{background:rgba(34,211,238,.15); color:var(--cyan)}
-  .c-destiny{background:rgba(251,146,60,.15); color:var(--orange)}
-  .pbadge{
-    display:inline-flex; align-items:center; gap:3px;
-    padding:2px 7px; border-radius:5px; font-size:.75rem;
-    background:rgba(167,139,250,.12); color:var(--purple);
-  }
-  .orb{color:var(--orange); font-size:.72rem; font-weight:600}
-  .conj-card{
-    background:var(--panel); border:1px solid var(--line);
-    border-radius:12px; padding:16px 18px; margin-bottom:10px;
-    transition:border-color .2s, transform .2s;
-  }
-  .conj-card:hover{border-color:var(--gold); transform:translateX(3px)}
-  .conj-head{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px}
-  .conj-sym{color:var(--gold); font-size:1.1rem; font-weight:700}
-  .conj-ast{color:var(--gold); font-weight:600}
-  .conj-pl{color:var(--purple); font-weight:600}
-  .conj-desc{color:var(--mut); font-size:.82rem; line-height:1.5}
-  .empty{text-align:center; padding:50px 20px; color:var(--mut)}
-  .empty-icon{font-size:2.5rem; margin-bottom:10px}
-  .tab-content{display:none}
-  .tab-content.active{display:block}
-  @media(max-width:640px){
-    h1{font-size:1.2rem}
-    .inputs{grid-template-columns:1fr 1fr}
-    table{font-size:.75rem}
-    th,td{padding:7px 6px}
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <a href="index.html" class="back">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    უკან
-  </a>
+# -*- coding: utf-8 -*-
+"""
+asteroids.py — real asteroid positions + conjunctions to the natal chart.
 
-  <header>
-    <div class="header-sym">
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="16" cy="16" r="12" stroke-width=".8" opacity=".3"/>
-        <circle cx="16" cy="16" r="8" stroke-width=".6" opacity=".2"/>
-        <ellipse cx="16" cy="16" rx="14" ry="6" transform="rotate(-30 16 16)" stroke-width=".5" opacity=".25" stroke-dasharray="1.5 1"/>
-        <ellipse cx="16" cy="16" rx="13" ry="5" transform="rotate(40 16 16)" stroke-width=".5" opacity=".25" stroke-dasharray="1.5 1"/>
-        <circle cx="6" cy="10" r="1.4" fill="currentColor"/>
-        <circle cx="25" cy="8" r="1.1" fill="currentColor"/>
-        <circle cx="28" cy="18" r="1.3" fill="currentColor"/>
-        <circle cx="20" cy="26" r="1" fill="currentColor"/>
-        <circle cx="8" cy="24" r="1.2" fill="currentColor"/>
-        <circle cx="4" cy="17" r=".9" fill="currentColor"/>
-        <line x1="6" y1="10" x2="25" y2="8" stroke-width=".4" opacity=".3"/>
-        <line x1="25" y1="8" x2="28" y2="18" stroke-width=".4" opacity=".3"/>
-        <line x1="28" y1="18" x2="20" y2="26" stroke-width=".4" opacity=".3"/>
-      </svg>
-    </div>
-    <div>
-      <h1>ასტეროიდების განლაგება</h1>
-      <div class="header-sub">Asteroid Placements & Planet Conjunctions</div>
-    </div>
-  </header>
+Replaces the old client-side page, whose positions were generated by a
+pseudo-random hash of the asteroid number and were not astronomical.
 
-  <div class="panel">
-    <div class="panel-title">დაბადების მონაცემები</div>
-    <div class="inputs">
-      <div class="field"><label>თარიღი</label><input type="date" id="bdate" value="1990-06-15"></div>
-      <div class="field"><label>დრო</label><input type="time" id="btime" value="14:30"></div>
-    <div class="fld"><label>ქალაქი (სახლებისთვის)</label>
-      <input type="text" id="bcity" placeholder="თბილისი">
-      <div id="cityhint" style="font-size:11px;color:var(--freq);margin-top:3px"></div></div>
-      <div class="field"><label>ადგილი</label><input type="text" id="bplace" value="Tbilisi" placeholder="City"></div>
-      <div class="field"><label>ორბი (°)</label><input type="number" id="orb" value="3" min="0.5" max="10" step="0.5"></div>
-      <button class="btn" id="calcBtn" onclick="calc()">გამოთვლა</button>
-    </div>
-  </div>
+Swiss Ephemeris computes each asteroid from its own data file:
+  * Ceres, Pallas, Juno, Vesta      -> seas_18.se1   (already in ephe/)
+  * Chiron, Pholus                  -> seas_18.se1   (already in ephe/)
+  * every other numbered asteroid   -> se#####s.se1  (must be added)
 
-  <div id="missingBox"></div>
-<div id="results" style="display:none">
-    <div class="stats">
-      <div class="stat"><div class="stat-num" id="s1">0</div><div class="stat-lbl">ასტეროიდები</div></div>
-      <div class="stat"><div class="stat-num" id="s2">0</div><div class="stat-lbl">შეერთებები</div></div>
-      <div class="stat"><div class="stat-num" id="s3">0</div><div class="stat-lbl">ნიშნები</div></div>
-      <div class="stat"><div class="stat-num" id="s4">0</div><div class="stat-lbl">სახლები</div></div>
-    </div>
+Asteroids whose file is missing are reported in `unavailable` with the
+exact filename needed, so nothing is ever invented.
+"""
 
-    <div class="tabs">
-      <button class="tab active" data-t="all">ყველა</button>
-      <button class="tab" data-t="major">მთავარი</button>
-      <button class="tab" data-t="love">სიყვარული</button>
-      <button class="tab" data-t="wisdom">სიბრძნე</button>
-      <button class="tab" data-t="karma">კარმა</button>
-      <button class="tab" data-t="healing">განკურნება</button>
-      <button class="tab" data-t="mythic">მითოლოგია</button>
-      <button class="tab" data-t="conj">შეერთებები</button>
-    </div>
+import math
+import os
+import urllib.request
+import swisseph as swe
 
-    <div class="controls">
-      <input class="search" id="srch" placeholder="ძიება..." oninput="render()">
-      <button class="fbtn active" data-el="all">ყველა</button>
-      <button class="fbtn" data-el="fire">🔥 ცეცხლი</button>
-      <button class="fbtn" data-el="earth">🌍 მიწა</button>
-      <button class="fbtn" data-el="air">💨 ჰაერი</button>
-      <button class="fbtn" data-el="water">💧 წყალი</button>
-    </div>
+# Where the ephemeris lives (set by app.py; falls back to ./ephe)
+EPHE_DIR = os.environ.get('SE_EPHE_PATH') or os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'ephe')
 
-    <div class="tab-content active" data-tc="all"><div class="tbl-wrap"><table id="tAll"></table></div></div>
-    <div class="tab-content" data-tc="major"><div class="tbl-wrap"><table id="tMajor"></table></div></div>
-    <div class="tab-content" data-tc="love"><div class="tbl-wrap"><table id="tLove"></table></div></div>
-    <div class="tab-content" data-tc="wisdom"><div class="tbl-wrap"><table id="tWisdom"></table></div></div>
-    <div class="tab-content" data-tc="karma"><div class="tbl-wrap"><table id="tKarma"></table></div></div>
-    <div class="tab-content" data-tc="healing"><div class="tbl-wrap"><table id="tHealing"></table></div></div>
-    <div class="tab-content" data-tc="mythic"><div class="tbl-wrap"><table id="tMyth"></table></div></div>
-    <div class="tab-content" data-tc="conj"><div id="conjBox"></div></div>
-  </div>
-</div>
+# Astrodienst mirrors, tried in order. The backend downloads an
+# asteroid's file the first time it is requested and caches it in
+# ephe/astN/, so no files have to be committed to the repo.
+FILE_SOURCES = [
+    'https://www.astro.com/ftp/swisseph/ephe/{folder}{file}',
+    'https://www.astro.com/ftp/swisseph/ephe/asteroids/{folder}{file}',
+    'https://raw.githubusercontent.com/aloistr/swisseph/master/ephe/{folder}{file}',
+]
+_TRIED = set()
 
-<script>
-const SIGNS=[
-  {n:'Aries',s:'♈',e:'fire'},{n:'Taurus',s:'♉',e:'earth'},{n:'Gemini',s:'♊',e:'air'},
-  {n:'Cancer',s:'♋',e:'water'},{n:'Leo',s:'♌',e:'fire'},{n:'Virgo',s:'♍',e:'earth'},
-  {n:'Libra',s:'♎',e:'air'},{n:'Scorpio',s:'♏',e:'water'},{n:'Sagittarius',s:'♐',e:'fire'},
-  {n:'Capricorn',s:'♑',e:'earth'},{n:'Aquarius',s:'♒',e:'air'},{n:'Pisces',s:'♓',e:'water'}
-];
-const PLANETS=[
-  {n:'Sun',s:'☉'},{n:'Moon',s:'☽'},{n:'Mercury',s:'☿'},{n:'Venus',s:'♀'},{n:'Mars',s:'♂'},
-  {n:'Jupiter',s:'♃'},{n:'Saturn',s:'♄'},{n:'Uranus',s:'♅'},{n:'Neptune',s:'♆'},{n:'Pluto',s:'♇'},
-  {n:'N.Node',s:'☊'},{n:'Chiron',s:'⚷'}
-];
-const AST=[
-  {id:1,n:'Ceres',c:'major',m:'Nurturing, mothering, loss & recovery'},
-  {id:2,n:'Pallas',c:'wisdom',m:'Wisdom, strategy, creative intelligence'},
-  {id:3,n:'Juno',c:'love',m:'Marriage, commitment, contracts'},
-  {id:4,n:'Vesta',c:'major',m:'Devotion, sacred flame, focus'},
-  {id:10,n:'Hygiea',c:'healing',m:'Health, healing, family patterns'},
-  {id:433,n:'Eros',c:'love',m:'Erotic love, passion, desire'},
-  {id:16,n:'Psyche',c:'love',m:'Soul, transformation through love'},
-  {id:5,n:'Astraea',c:'mythic',m:'Star maiden, justice, innocence'},
-  {id:6,n:'Hebe',c:'mythic',m:'Youth, vitality, cupbearer of gods'},
-  {id:7,n:'Iris',c:'mythic',m:'Rainbow bridge, messages'},
-  {id:8,n:'Flora',c:'mythic',m:'Flowers, spring, fertility'},
-  {id:9,n:'Metis',c:'mythic',m:'Cunning wisdom, first wife of Zeus'},
-  {id:11,n:'Parthenope',c:'mythic',m:'Siren song, allure'},
-  {id:12,n:'Victoria',c:'mythic',m:'Victory, triumph, success'},
-  {id:14,n:'Irene',c:'mythic',m:'Peace, harmony, tranquility'},
-  {id:15,n:'Eunomia',c:'mythic',m:'Good order, law, discipline'},
-  {id:17,n:'Thetis',c:'mythic',m:'Sea goddess, protective mother'},
-  {id:18,n:'Melpomene',c:'mythic',m:'Tragic muse, dramatic expression'},
-  {id:19,n:'Fortuna',c:'destiny',m:'Luck, fate, fortune'},
-  {id:24,n:'Themis',c:'destiny',m:'Divine law, natural order, oracle'},
-  {id:36,n:'Atalanta',c:'mythic',m:'Independence, speed, self-reliance'},
-  {id:40,n:'Harmonia',c:'destiny',m:'Harmony, balance, concord'},
-  {id:42,n:'Isis',c:'mythic',m:'Magic, motherhood, resurrection'},
-  {id:46,n:'Hestia',c:'mythic',m:'Hearth, home, sacred center'},
-  {id:52,n:'Europa',c:'mythic',m:'Abduction, new horizons'},
-  {id:57,n:'Mnemosyne',c:'destiny',m:'Memory, ancestral recall'},
-  {id:65,n:'Cybele',c:'mythic',m:'Great mother, wild power'},
-  {id:76,n:'Freia',c:'mythic',m:'Love, beauty, Norse goddess'},
-  {id:78,n:'Diana',c:'mythic',m:'Moon, hunt, independence'},
-  {id:97,n:'Klotho',c:'destiny',m:'Fate spinner, destiny thread'},
-  {id:99,n:'Dike',c:'destiny',m:'Justice, moral order'},
-  {id:120,n:'Lachesis',c:'destiny',m:'Fate measurer, destiny allotment'},
-  {id:129,n:'Antigone',c:'mythic',m:'Defiance, moral courage'},
-  {id:130,n:'Elektra',c:'mythic',m:'Revenge, father-daughter bond'},
-  {id:168,n:'Sibylla',c:'destiny',m:'Prophecy, oracle, visionary'},
-  {id:201,n:'Penelope',c:'healing',m:'Faithful waiting, patience'},
-  {id:216,n:'Kleopatra',c:'mythic',m:'Royal power, seduction'},
-  {id:306,n:'Unitas',c:'destiny',m:'Unity, oneness, cooperation'},
-  {id:446,n:'Aeternitas',c:'destiny',m:'Eternity, timelessness'},
-  {id:511,n:'Davida',c:'major',m:'One of largest asteroids, teaching'},
-  {id:584,n:'Semiramis',c:'mythic',m:'Legendary queen, ambition'},
-  {id:617,n:'Patroclus',c:'mythic',m:'Loyal companion, deep friendship'},
-  {id:624,n:'Hektor',c:'mythic',m:'Noble warrior, defender'},
-  {id:704,n:'Interamnia',c:'major',m:'Fourth largest asteroid, bridge'},
-  {id:1036,n:'Ganymed',c:'mythic',m:'Cupbearer, divine service'},
-  {id:1566,n:'Icarus',c:'karma',m:'Flying too high, ambition, risk'},
-  {id:1862,n:'Apollo',c:'wisdom',m:'Truth, light, music, prophecy'},
-  {id:1866,n:'Sisyphus',c:'karma',m:'Eternal task, perseverance'},
-  {id:2001,n:'Einstein',c:'wisdom',m:'Genius, paradigm shift'},
-  {id:2060,n:'Chiron',c:'karma',m:'Wounded healer, key questions'},
-  {id:3200,n:'Phaethon',c:'karma',m:'Sun scorcher, reckless ambition'},
-  {id:5145,n:'Pholus',c:'karma',m:'The catalyst, small cause big effect'},
-  {id:7066,n:'Nessus',c:'karma',m:'Abuse patterns, shadow healing'},
-  {id:8405,n:'Asbolus',c:'karma',m:'Trickster, past life karma'},
-  {id:10199,n:'Chariklo',c:'karma',m:'Compassion, empathic healing'},
-  {id:90377,n:'Sedna',c:'karma',m:'Deep ocean, isolation, Inuit goddess'},
-  {id:90482,n:'Orcus',c:'karma',m:'Underworld, binding oaths'},
-  {id:136199,n:'Eris',c:'karma',m:'Disharmony, chaos, divine discord'},
-  {id:136472,n:'Makemake',c:'mythic',m:'Creator god, fertility'},
-  {id:50000,n:'Quaoar',c:'mythic',m:'Creator spirit, Tongva people'},
-  {id:225088,n:'Gonggong',c:'mythic',m:'Chinese water god, destruction'},
-  {id:1181,n:'Lilith',c:'karma',m:'Dark moon, wild feminine'},
-  {id:1437,n:'Dioretsa',c:'karma',m:'Retrograde asteroid, reversal'},
-  {id:94,n:'Aurora',c:'mythic',m:'Dawn, new beginnings'},
-  {id:107,n:'Camilla',c:'mythic',m:'Warrior maiden, swift runner'},
-  {id:164,n:'Eva',c:'mythic',m:'Life, first woman, origin'},
-  {id:174,n:'Phaedra',c:'mythic',m:'Forbidden love, tragic passion'},
-  {id:175,n:'Undine',c:'mythic',m:'Water spirit, emotional depths'},
-  {id:196,n:'Philomela',c:'mythic',m:'Nightingale, pain into song'},
-  {id:259,n:'Aletheia',c:'wisdom',m:'Truth, disclosure, reality'},
-  {id:451,n:'Patientia',c:'healing',m:'Patience, endurance'},
-  {id:491,n:'Myrrha',c:'mythic',m:'Transformation, sacred resin'},
-  {id:532,n:'Herculina',c:'mythic',m:'Hercules strength, might'},
-  {id:664,n:'Judith',c:'mythic',m:'Praised, heroic woman'},
-  {id:1009,n:'Sirene',c:'mythic',m:'Enchanting voice, allure'},
-  {id:4179,n:'Toutatis',c:'mythic',m:'Chaos, unpredictable'},
-  {id:2000,n:'Herschel',c:'wisdom',m:'Discovery, innovation'},
-  {id:3174,n:'Alcock',c:'wisdom',m:'Astronomer, sky watcher'},
-  {id:3753,n:'Cruithne',c:'karma',m:"Earth's companion, second moon"},
-  {id:4341,n:'Poseidon',c:'mythic',m:'Sea god, emotion, depth'},
-  {id:174567,n:'Varda',c:'mythic',m:'Elven queen, star light'}
-];
 
-let data=[], conjs=[], elFilter='all', sortC=-1, sortA=true, curTab='all';
+def ensure_file(num):
+    """Fetch this asteroid's Swiss Ephemeris file if we don't have it.
 
-const BACKEND='https://astrology-production-b165.up.railway.app';
-let unavailable=[],chartInfo=null;
+    Returns True when the file is present afterwards. Failures are
+    remembered so a missing asteroid is only attempted once per process.
+    """
+    fn, folder = _file_for(num)
+    if folder.startswith('ephe/'):
+        folder = folder[5:]
+    dest_dir = os.path.join(EPHE_DIR, folder) if folder else EPHE_DIR
+    dest = os.path.join(dest_dir, fn)
+    if os.path.exists(dest) and os.path.getsize(dest) > 1000:
+        return True
+    if num in _TRIED:
+        return False
+    _TRIED.add(num)
+    try:
+        os.makedirs(dest_dir, exist_ok=True)
+    except Exception:
+        return False
+    for tpl in FILE_SOURCES:
+        url = tpl.format(folder=folder, file=fn)
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'magnus-astro/1.0'})
+            with urllib.request.urlopen(req, timeout=25) as r:
+                data = r.read()
+            if len(data) < 1000:          # not a real ephemeris file
+                continue
+            with open(dest, 'wb') as f:
+                f.write(data)
+            swe.set_ephe_path(EPHE_DIR)   # re-scan so the new file is seen
+            return True
+        except Exception:
+            continue
+    return False
 
-function geocodeCity(){
-  const c=document.getElementById('bcity');
-  if(!c||!c.value.trim())return Promise.resolve(null);
-  return fetch(BACKEND+'/geocode',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({city:c.value.trim()})})
-    .then(r=>r.json()).then(g=>g && g.lat!=null?g:null).catch(()=>null);
-}
+SIGNS_KA = ['ვერძი', 'კურო', 'ტყუპები', 'კირჩხიბი', 'ლომი', 'ქალწული',
+            'სასწორი', 'მორიელი', 'მშვილდოსანი', 'თხის რქა',
+            'მერწყული', 'თევზები']
+ELEMENT_KA = ['ცეცხლი', 'მიწა', 'ჰაერი', 'წყალი']
 
-async function calc(){
-  const d=document.getElementById('bdate').value;
-  const t=document.getElementById('btime').value||'12:00';
-  if(!d){alert('შეიყვანეთ თარიღი');return}
-  const orb=parseFloat(document.getElementById('orb').value)||3;
-  const btn=document.getElementById('calcBtn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ გამოთვლა...';}
-  const [Y,M,D]=d.split('-').map(Number);
-  const [hh,mm]=t.split(':').map(Number);
+# asteroids that live in the main-file set
+SPECIAL = {1: swe.CERES, 2: swe.PALLAS, 3: swe.JUNO, 4: swe.VESTA,
+           2060: swe.CHIRON, 5145: swe.PHOLUS}
 
-  let lat=41.7151,lon=44.8271,tz='Asia/Tbilisi';
-  const g=await geocodeCity();
-  if(g){lat=+g.lat;lon=+g.lon;tz=g.tz_name||tz;
-    const hint=document.getElementById('cityhint');
-    if(hint)hint.textContent='📍 '+(g.display||'');}
+# natal bodies asteroids are checked against
+NATAL = [('მზე', swe.SUN), ('მთვარე', swe.MOON), ('მერკური', swe.MERCURY),
+         ('ვენერა', swe.VENUS), ('მარსი', swe.MARS), ('იუპიტერი', swe.JUPITER),
+         ('სატურნი', swe.SATURN), ('ურანი', swe.URANUS),
+         ('ნეპტუნი', swe.NEPTUNE), ('პლუტონი', swe.PLUTO)]
 
-  try{
-    const res=await fetch(BACKEND+'/api/asteroids',{method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({year:Y,month:M,day:D,hour:hh,minute:mm,second:0,
-        lat:lat,lon:lon,tz_name:tz,orb:orb,ids:AST.map(a=>a.id)})});
-    if(!res.ok)throw new Error('სერვერი: '+res.status);
-    const j=await res.json();
-    const byId={};(j.asteroids||[]).forEach(a=>byId[a.id]=a);
-    unavailable=(j.unavailable||[]);
-    chartInfo=j;
+ASPECTS = [(0.0, 'შეერთება', '☌'), (180.0, 'ოპოზიცია', '☍'),
+           (120.0, 'ტრინი', '△'), (90.0, 'კვადრატი', '□'),
+           (60.0, 'სექსტილი', '⚹')]
 
-    data=AST.filter(a=>byId[a.id]).map(a=>{
-      const p=byId[a.id];
-      return {...a, lon:p.lon, si:p.sign_idx, deg:p.deg_in_sign,
-              sign:SIGNS[p.sign_idx], house:p.house, retro:p.retrograde,
-              cj:(p.contacts||[]).map(c=>({pn:c.planet,ps:c.sym,orb:c.orb}))};
-    });
-    conjs=[];
-    data.forEach(a=>a.cj.forEach(c=>conjs.push({an:a.n,aid:a.id,...c})));
 
-    document.getElementById('s1').textContent=data.length;
-    document.getElementById('s2').textContent=conjs.length;
-    document.getElementById('s3').textContent=new Set(data.map(a=>a.si)).size;
-    document.getElementById('s4').textContent=new Set(data.map(a=>a.house)).size;
-    document.getElementById('results').style.display='block';
-    renderMissing();
-    render();
-  }catch(e){
-    alert('ვერ მოხერხდა გამოთვლა — '+e.message);
-  }finally{
-    if(btn){btn.disabled=false;btn.textContent='✦ გამოთვლა';}
-  }
-}
+def _house(deg, cusps):
+    for i in range(12):
+        a, b = cusps[i], cusps[(i + 1) % 12]
+        if a <= b:
+            if a <= deg < b:
+                return i + 1
+        else:
+            if deg >= a or deg < b:
+                return i + 1
+    return 1
 
-function renderMissing(){
-  const box=document.getElementById('missingBox');
-  if(!box)return;
-  if(!unavailable.length){box.innerHTML='';return;}
-  const names={};AST.forEach(a=>names[a.id]=a.n);
-  box.innerHTML='<div style="background:rgba(251,146,60,.09);border:1px solid rgba(251,146,60,.35);'+
-    'border-radius:10px;padding:12px 14px;margin:14px 0;font-size:12px;line-height:1.8">'+
-    '<b style="color:var(--orange)">⚠ '+unavailable.length+' ასტეროიდი ვერ გამოითვალა</b> — '+
-    'Swiss Ephemeris-ს სჭირდება მათი ფაილები. ჩამოტვირთეთ '+
-    '<a href="https://www.astro.com/ftp/swisseph/ephe/asteroids/" target="_blank" '+
-    'style="color:var(--freq)">astro.com-იდან</a> და ჩადეთ astrology რეპოში:<br>'+
-    '<span style="color:var(--mut);font-size:11px">'+
-    unavailable.slice(0,60).map(u=>(names[u.id]||('#'+u.id))+' → '+u.folder+u.file).join('<br>')+
-    (unavailable.length>60?'<br>...':'')+'</span></div>';
-}
 
-function row(a,full=true){
-  const ec='z-'+a.sign.e;
-  const cc='c-'+a.c;
-  const cj=a.cj.length?a.cj.map(c=>`<span class="pbadge">${c.ps} ${c.pn} <span class="orb">${c.orb}°</span></span>`).join(' '):'<span style="color:var(--mut);font-size:.75rem">—</span>';
-  const cols=full?`<td><span class="aid">${a.id}</span></td>
-    <td><span class="aname">${a.n}</span></td>
-    <td><span class="cat-tag ${cc}">${a.c}</span></td>
-    <td><span class="zbadge ${ec}">${a.sign.s} ${a.sign.n}</span></td>
-    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span></td>
-    <td>${a.house}</td>
-    <td style="text-transform:capitalize">${a.sign.e}</td>
-    <td><span class="meaning">${a.m}</span></td>
-    <td>${cj}</td>`:`<td><span class="aid">${a.id}</span></td>
-    <td><span class="aname">${a.n}</span></td>
-    <td><span class="zbadge ${ec}">${a.sign.s} ${a.sign.n}</span></td>
-    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span></td>
-    <td>${a.house}</td>
-    <td><span class="meaning">${a.m}</span></td>
-    <td>${cj}</td>`;
-  return `<tr class="${a.cj.length?'has-conj':''}">${cols}</tr>`;
-}
+def _sep(a, b):
+    d = abs((a - b) % 360.0)
+    return d if d <= 180.0 else 360.0 - d
 
-function head(full=true){
-  return full?`<thead><tr>
-    <th onclick="sort(0)">#</th><th onclick="sort(1)">ასტეროიდი</th><th onclick="sort(2)">კატეგორია</th>
-    <th onclick="sort(3)">ნიშანი</th><th onclick="sort(4)">გრადუსი</th><th onclick="sort(5)">სახლი</th>
-    <th onclick="sort(6)">სტიქია</th><th>მნიშვნელობა</th><th>შეერთებები</th>
-  </tr></thead>`:`<thead><tr>
-    <th onclick="sort(0)">#</th><th>ასტეროიდი</th><th>ნიშანი</th>
-    <th>გრადუსი</th><th>სახლი</th><th>მნიშვნელობა</th><th>შეერთებები</th>
-  </tr></thead>`;
-}
 
-function render(){
-  const q=document.getElementById('srch').value.toLowerCase();
-  let f=data;
-  if(elFilter!=='all')f=f.filter(a=>a.sign.e===elFilter);
-  if(q)f=f.filter(a=>a.n.toLowerCase().includes(q)||a.sign.n.toLowerCase().includes(q)||a.m.toLowerCase().includes(q)||a.c.includes(q));
-  if(sortC>=0){
-    f=[...f].sort((a,b)=>{
-      let va,vb;
-      switch(sortC){
-        case 0:va=a.id;vb=b.id;break;
-        case 1:va=a.n;vb=b.n;break;
-        case 2:va=a.c;vb=b.c;break;
-        case 3:va=a.si;vb=b.si;break;
-        case 4:va=a.lon;vb=b.lon;break;
-        case 5:va=a.house;vb=b.house;break;
-        case 6:va=a.sign.e;vb=b.sign.e;break;
-        default:va=a.id;vb=b.id;
-      }
-      if(typeof va==='string')return sortA?va.localeCompare(vb):vb.localeCompare(va);
-      return sortA?va-vb:vb-va;
-    });
-  }
-  document.getElementById('tAll').innerHTML=head(true)+'<tbody>'+f.map(a=>row(a,true)).join('')+'</tbody>';
-  document.getElementById('tMajor').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='major').map(a=>row(a,false)).join('')+'</tbody>';
-  document.getElementById('tLove').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='love').map(a=>row(a,false)).join('')+'</tbody>';
-  document.getElementById('tWisdom').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='wisdom').map(a=>row(a,false)).join('')+'</tbody>';
-  document.getElementById('tKarma').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='karma').map(a=>row(a,false)).join('')+'</tbody>';
-  document.getElementById('tHealing').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='healing').map(a=>row(a,false)).join('')+'</tbody>';
-  document.getElementById('tMyth').innerHTML=head(false)+'<tbody>'+data.filter(a=>a.c==='mythic'||a.c==='destiny').map(a=>row(a,false)).join('')+'</tbody>';
+def _file_for(num):
+    """Swiss Ephemeris file name / folder for a numbered asteroid."""
+    if num in SPECIAL:
+        return 'seas_18.se1', 'ephe/'
+    folder = 'ast%d/' % (num // 1000)
+    if num < 100000:
+        return 'se%05ds.se1' % num, 'ephe/' + folder
+    return 's%06ds.se1' % num, 'ephe/' + folder
 
-  const box=document.getElementById('conjBox');
-  if(!conjs.length){box.innerHTML='<div class="empty"><div class="empty-icon">🔭</div>შეერთებები ვერ მოიძებნა. გაზარდეთ ორბი.</div>';return}
-  const pd={Sun:'Core identity',Moon:'Emotions',Mercury:'Communication',Venus:'Love, values',Mars:'Action, drive',Jupiter:'Expansion, luck',Saturn:'Structure, karma',Uranus:'Innovation',Neptune:'Dreams, spirituality',Pluto:'Transformation','N.Node':'Destiny',Chiron:'Wounded healer'};
-  box.innerHTML=conjs.map(c=>`<div class="conj-card">
-    <div class="conj-head">
-      <span class="conj-sym">☌</span>
-      <span class="conj-ast">${c.an} (#${c.aid})</span>
-      <span style="color:var(--mut)">× </span>
-      <span class="conj-pl">${c.ps} ${c.pn}</span>
-      <span class="orb">[${c.orb}°]</span>
-    </div>
-    <div class="conj-desc"><b>${c.an}</b> merges with <b>${c.pn}</b> energy (${pd[c.pn]||''}). This conjunction amplifies both energies in the natal chart.</div>
-  </div>`).join('');
-}
 
-function sort(c){if(sortC===c)sortA=!sortA;else{sortC=c;sortA=true}render()}
+def compute_asteroids(jd, lat, lon, ids, orb=3.0, aspects=False):
+    """Positions of the requested asteroids plus contacts to the chart.
 
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  curTab=t.dataset.t;
-  document.querySelector(`[data-tc="${curTab}"]`).classList.add('active');
-});
-document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');
-  elFilter=b.dataset.el;
-  render();
-});
+    The caller must have set the ephemeris path (app.py does this at
+    import time and in each route).
+    """
+    # natal planets + angles
+    planets = {}
+    for name, pid in NATAL:
+        try:
+            planets[name] = swe.calc_ut(jd, pid)[0][0]
+        except Exception:
+            pass
+    try:
+        cusps, ascmc = swe.houses(jd, lat, lon, b'P')
+        cusps = list(cusps[:12])
+        planets['ASC'] = float(ascmc[0])
+        planets['MC'] = float(ascmc[1])
+    except Exception:
+        cusps = [i * 30.0 for i in range(12)]
 
-window.addEventListener('load',calc);
-</script>
-</body>
-</html>
+    out, missing = [], []
+    for num in ids:
+        pid = SPECIAL.get(num, swe.AST_OFFSET + num)
+        try:
+            xx = swe.calc_ut(jd, pid)[0]
+        except Exception:
+            # not installed yet - try to fetch it once, then retry
+            got = ensure_file(num)
+            if got:
+                try:
+                    xx = swe.calc_ut(jd, pid)[0]
+                except Exception:
+                    got = False
+            if not got:
+                fn, folder = _file_for(num)
+                missing.append({'id': num, 'file': fn, 'folder': folder})
+                continue
+        deg = xx[0] % 360.0
+        si = int(deg // 30)
+        hits = []
+        for pname, plon in planets.items():
+            d = _sep(deg, plon)
+            if d <= orb:
+                hits.append({'planet': pname, 'aspect': 'შეერთება',
+                             'sym': '☌', 'orb': round(d, 2)})
+            elif aspects:
+                for ang, an, asym in ASPECTS[1:]:
+                    if abs(d - ang) <= orb:
+                        hits.append({'planet': pname, 'aspect': an,
+                                     'sym': asym, 'orb': round(abs(d - ang), 2)})
+                        break
+        hits.sort(key=lambda h: h['orb'])
+        out.append({
+            'id': num,
+            'lon': round(deg, 4),
+            'sign_idx': si,
+            'sign_ka': SIGNS_KA[si],
+            'deg_in_sign': round(deg % 30, 4),
+            'element_ka': ELEMENT_KA[si % 4],
+            'house': _house(deg, cusps),
+            'speed': round(xx[3], 6) if len(xx) > 3 else 0.0,
+            'retrograde': bool(len(xx) > 3 and xx[3] < 0),
+            'distance_au': round(xx[2], 6) if len(xx) > 2 else None,
+            'contacts': hits,
+        })
+
+    return {'asteroids': out, 'unavailable': missing,
+            'planets': {k: round(v, 4) for k, v in planets.items()},
+            'houses': [round(c, 4) for c in cusps], 'orb': orb}
