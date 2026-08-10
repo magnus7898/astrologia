@@ -241,7 +241,8 @@ const MOON_I={
  hyperion:{sym:'Hy',color:'#b09878'}, iapetus:{sym:'Ia',color:'#a09088'},
  miranda:{sym:'Mr',color:'#b8c8d0'},  ariel:{sym:'Ar',color:'#c8d4dc'},
  umbriel:{sym:'Um',color:'#8898a0'},  titania:{sym:'Tt',color:'#c0ccd8'},
- oberon:{sym:'Ob',color:'#a8b4c0'}
+ oberon:{sym:'Ob',color:'#a8b4c0'},
+ moon:{sym:'☾',color:'#dfe6f2'}
 };
 const MOON_CACHE={};
 function getMoons(o,y,m,d,h,mi){
@@ -440,12 +441,8 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO){
   /* ── the degree scale: little lines INSIDE the big circle ── */
   for(let d=0;d<360;d++){
     const a=e2s(d,asc),co=Math.cos(a),si=Math.sin(a);
-    const is30=(d%30===0),is10=(d%10===0),is5=(d%5===0);
-    const L=is30?20:is10?13:is5?8:5;
-    el('line',{x1:CX+co*RO,y1:CY+si*RO,x2:CX+co*(RO-L),y2:CY+si*(RO-L),
-      stroke:is30?'rgba(215,232,255,.9)':is10?'rgba(168,196,234,.7)':
-             is5?'rgba(124,154,208,.5)':'rgba(100,124,170,.34)',
-      'stroke-width':is30?1.6:is10?1.1:is5?.8:.5},svg);
+    el('line',{x1:CX+co*RO,y1:CY+si*RO,x2:CX+co*(RO-7),y2:CY+si*(RO-7),
+      stroke:'rgba(150,178,220,.5)','stroke-width':.7},svg);
   }
   /* ── circles, angles, aspect web ── */
   el('circle',{cx:CX,cy:CY,r:RO,fill:'none',stroke:'rgba(190,214,248,.7)','stroke-width':1.7},svg);
@@ -474,7 +471,7 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO){
   if(MO&&MO.length)MO.forEach(function(m){
     const info=MOON_I[m.key]||{sym:'?',color:'#cfd8e8'};
     items.push({id:'m:'+m.key,lon:m.lon,sym:info.sym,color:info.color,
-                size:10,retro:false,moon:true});
+                size:m.key==='moon'?15:10,retro:false,moon:true});
   });
   const disp={};
   items.forEach(function(it){disp[it.id]=e2s(it.lon,asc);});
@@ -571,6 +568,21 @@ async function gen(){
                raw:mo.lon,lat:mo.lat,radii:mo.radii,
                period:mo.period_days,behind:mo.behind,source:mo.source};
       });
+      /* Earth's Moon: Earth's own vector plus the geocentric offset,
+         so it is seen correctly from whichever planet we observe from */
+      if(md.earth_moon&&F['დედამიწა']){
+        const E=F['დედამიწა'],ev=vecOf(E.lon,E.lat),o=md.earth_moon.offset_au;
+        const mv=[ev[0]*E.d+o[0],ev[1]*E.d+o[1],ev[2]*E.d+o[2]];
+        const mr=Math.hypot(mv[0],mv[1],mv[2]);
+        const mlon=norm(Math.atan2(mv[1],mv[0])*R2D),
+              mlat=Math.asin(mv[2]/mr)*R2D;
+        /* separation from Earth as seen from here, in degrees */
+        let sep=Math.acos(Math.max(-1,Math.min(1,
+          (ev[0]*mv[0]+ev[1]*mv[1]+ev[2]*mv[2])/mr)))*R2D;
+        MO.push({key:'moon',name_ka:'მთვარე (დედამიწის)',lon:disp(mlon,mlat),
+                 raw:mlon,lat:mlat,radii:null,sep:sep,
+                 period:27.321661,behind:null,source:'ephem',ofEarth:true});
+      }
     }catch(e){MO=[];moonNA=[];moonErr=e.message;}
 
     const houses=[];for(let i=0;i<12;i++)houses.push(norm(asc+i*30));
@@ -655,7 +667,8 @@ async function gen(){
           '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
           '<span style="font-size:10px;color:'+s.col+'">'+s.ka+'</span></td>'+
           '<td><span class="badge">H'+hOf(mo.lon)+'</span></td>'+
-          '<td><span class="lat">'+mo.radii.toFixed(1)+'R'+
+          '<td><span class="lat">'+
+            (mo.radii!=null?mo.radii.toFixed(1)+'R':(mo.sep!=null?mo.sep.toFixed(2)+'°':'—'))+
             (mo.source==='fit'?' ~':'')+'</span></td></tr>';
       }).join('');
     }
@@ -672,7 +685,8 @@ async function gen(){
         return '<span style="display:inline-block;margin:0 14px 6px 0">'+
           '<b style="color:'+info.color+'">'+info.sym+' '+mo.name_ka+'</b> '+
           '<span style="color:rgba(190,205,230,.55);font-size:11px">'+
-          mo.radii.toFixed(1)+' რადიუსი · '+per+
+          (mo.radii!=null?mo.radii.toFixed(1)+' რადიუსი':
+           (mo.sep!=null?'დედამიწიდან '+mo.sep.toFixed(2)+'°':''))+' · '+per+
           (mo.behind===null?'':' · '+(mo.behind?'პლანეტის უკან':'პლანეტის წინ'))+
           (mo.source==='fit'?' · <span style="color:#b8a060">მოდელი</span>':'')+
           '</span></span>';
