@@ -232,13 +232,17 @@
     <div class="inputs">
       <div class="field"><label>თარიღი</label><input type="date" id="bdate" value="1990-06-15"></div>
       <div class="field"><label>დრო</label><input type="time" id="btime" value="14:30"></div>
+    <div class="fld"><label>ქალაქი (სახლებისთვის)</label>
+      <input type="text" id="bcity" placeholder="თბილისი">
+      <div id="cityhint" style="font-size:11px;color:var(--freq);margin-top:3px"></div></div>
       <div class="field"><label>ადგილი</label><input type="text" id="bplace" value="Tbilisi" placeholder="City"></div>
       <div class="field"><label>ორბი (°)</label><input type="number" id="orb" value="3" min="0.5" max="10" step="0.5"></div>
-      <button class="btn" onclick="calc()">გამოთვლა</button>
+      <button class="btn" id="calcBtn" onclick="calc()">გამოთვლა</button>
     </div>
   </div>
 
-  <div id="results" style="display:none">
+  <div id="missingBox"></div>
+<div id="results" style="display:none">
     <div class="stats">
       <div class="stat"><div class="stat-num" id="s1">0</div><div class="stat-lbl">ასტეროიდები</div></div>
       <div class="stat"><div class="stat-num" id="s2">0</div><div class="stat-lbl">შეერთებები</div></div>
@@ -375,48 +379,82 @@ const AST=[
 
 let data=[], conjs=[], elFilter='all', sortC=-1, sortA=true, curTab='all';
 
-function srand(s){let x=Math.sin(s)*10000;return x-Math.floor(x)}
+const BACKEND='https://astrology-production-b165.up.railway.app';
+let unavailable=[],chartInfo=null;
 
-function calc(){
+function geocodeCity(){
+  const c=document.getElementById('bcity');
+  if(!c||!c.value.trim())return Promise.resolve(null);
+  return fetch(BACKEND+'/geocode',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({city:c.value.trim()})})
+    .then(r=>r.json()).then(g=>g && g.lat!=null?g:null).catch(()=>null);
+}
+
+async function calc(){
   const d=document.getElementById('bdate').value;
   const t=document.getElementById('btime').value||'12:00';
   if(!d){alert('შეიყვანეთ თარიღი');return}
-  const dt=new Date(d+'T'+t);
-  const jd=dt.getTime()/86400000+2440587.5;
   const orb=parseFloat(document.getElementById('orb').value)||3;
+  const btn=document.getElementById('calcBtn');
+  if(btn){btn.disabled=true;btn.textContent='⏳ გამოთვლა...';}
+  const [Y,M,D]=d.split('-').map(Number);
+  const [hh,mm]=t.split(':').map(Number);
 
-  const plPos=PLANETS.map((p,i)=>{
-    const sp=[.9856,13.176,1.38,1.2,.524,.0831,.0334,.0117,.006,.004,-.053,.01][i]||.1;
-    const bl=[280,210,50,120,340,200,290,150,330,260,60,180][i]||0;
-    const lon=(bl+sp*(jd-2451545))%360;
-    return {...p,lon,si:Math.floor(lon/30),deg:lon%30};
-  });
+  let lat=41.7151,lon=44.8271,tz='Asia/Tbilisi';
+  const g=await geocodeCity();
+  if(g){lat=+g.lat;lon=+g.lon;tz=g.tz_name||tz;
+    const hint=document.getElementById('cityhint');
+    if(hint)hint.textContent='📍 '+(g.display||'');}
 
-  data=AST.map(a=>{
-    const bl=srand(a.id*7)*360;
-    const sp=.01+srand(a.id*13)*.5;
-    const lon=(bl+sp*(jd-2451545)*.01)%360;
-    const si=Math.floor(lon/30);
-    const deg=lon%30;
-    const house=(Math.floor(lon/30)%12)+1;
-    const cj=[];
-    plPos.forEach(p=>{
-      let df=Math.abs(lon-p.lon);
-      if(df>180)df=360-df;
-      if(df<=orb)cj.push({pn:p.n,ps:p.s,orb:df.toFixed(2)});
+  try{
+    const res=await fetch(BACKEND+'/api/asteroids',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({year:Y,month:M,day:D,hour:hh,minute:mm,second:0,
+        lat:lat,lon:lon,tz_name:tz,orb:orb,ids:AST.map(a=>a.id)})});
+    if(!res.ok)throw new Error('სერვერი: '+res.status);
+    const j=await res.json();
+    const byId={};(j.asteroids||[]).forEach(a=>byId[a.id]=a);
+    unavailable=(j.unavailable||[]);
+    chartInfo=j;
+
+    data=AST.filter(a=>byId[a.id]).map(a=>{
+      const p=byId[a.id];
+      return {...a, lon:p.lon, si:p.sign_idx, deg:p.deg_in_sign,
+              sign:SIGNS[p.sign_idx], house:p.house, retro:p.retrograde,
+              cj:(p.contacts||[]).map(c=>({pn:c.planet,ps:c.sym,orb:c.orb}))};
     });
-    return {...a,lon,si,deg,house,sign:SIGNS[si],cj};
-  });
+    conjs=[];
+    data.forEach(a=>a.cj.forEach(c=>conjs.push({an:a.n,aid:a.id,...c})));
 
-  conjs=[];
-  data.forEach(a=>a.cj.forEach(c=>conjs.push({an:a.n,aid:a.id,...c})));
+    document.getElementById('s1').textContent=data.length;
+    document.getElementById('s2').textContent=conjs.length;
+    document.getElementById('s3').textContent=new Set(data.map(a=>a.si)).size;
+    document.getElementById('s4').textContent=new Set(data.map(a=>a.house)).size;
+    document.getElementById('results').style.display='block';
+    renderMissing();
+    render();
+  }catch(e){
+    alert('ვერ მოხერხდა გამოთვლა — '+e.message);
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='✦ გამოთვლა';}
+  }
+}
 
-  document.getElementById('s1').textContent=data.length;
-  document.getElementById('s2').textContent=conjs.length;
-  document.getElementById('s3').textContent=new Set(data.map(a=>a.si)).size;
-  document.getElementById('s4').textContent=new Set(data.map(a=>a.house)).size;
-  document.getElementById('results').style.display='block';
-  render();
+function renderMissing(){
+  const box=document.getElementById('missingBox');
+  if(!box)return;
+  if(!unavailable.length){box.innerHTML='';return;}
+  const names={};AST.forEach(a=>names[a.id]=a.n);
+  box.innerHTML='<div style="background:rgba(251,146,60,.09);border:1px solid rgba(251,146,60,.35);'+
+    'border-radius:10px;padding:12px 14px;margin:14px 0;font-size:12px;line-height:1.8">'+
+    '<b style="color:var(--orange)">⚠ '+unavailable.length+' ასტეროიდი ვერ გამოითვალა</b> — '+
+    'Swiss Ephemeris-ს სჭირდება მათი ფაილები. ჩამოტვირთეთ '+
+    '<a href="https://www.astro.com/ftp/swisseph/ephe/asteroids/" target="_blank" '+
+    'style="color:var(--freq)">astro.com-იდან</a> და ჩადეთ astrology რეპოში:<br>'+
+    '<span style="color:var(--mut);font-size:11px">'+
+    unavailable.slice(0,60).map(u=>(names[u.id]||('#'+u.id))+' → '+u.folder+u.file).join('<br>')+
+    (unavailable.length>60?'<br>...':'')+'</span></div>';
 }
 
 function row(a,full=true){
