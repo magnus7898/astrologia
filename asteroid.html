@@ -241,7 +241,8 @@
     </div>
   </div>
 
-  <div id="missingBox"></div>
+  <div id="srcNote"></div>
+<div id="missingBox"></div>
 <div id="results" style="display:none">
     <div class="stats">
       <div class="stat"><div class="stat-num" id="s1">0</div><div class="stat-lbl">ასტეროიდები</div></div>
@@ -397,7 +398,7 @@ async function calc(){
   if(!d){alert('შეიყვანეთ თარიღი');return}
   const orb=parseFloat(document.getElementById('orb').value)||3;
   const btn=document.getElementById('calcBtn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ გამოთვლა...';}
+  if(btn){btn.disabled=true;btn.textContent='⏳ გამოთვლა... (პირველად შეიძლება ~15 წმ)';}
   const [Y,M,D]=d.split('-').map(Number);
   const [hh,mm]=t.split(':').map(Number);
 
@@ -432,6 +433,10 @@ async function calc(){
     document.getElementById('s3').textContent=new Set(data.map(a=>a.si)).size;
     document.getElementById('s4').textContent=new Set(data.map(a=>a.house)).size;
     document.getElementById('results').style.display='block';
+    const nHz=(j.asteroids||[]).filter(a=>a.source==='horizons').length;
+    const srcBox=document.getElementById('srcNote');
+    if(srcBox)srcBox.innerHTML=nHz?('<div style="font-size:11px;color:var(--mut);margin:8px 0">'+
+      'პოზიციები: '+((j.asteroids||[]).length-nHz)+' Swiss Ephemeris · '+nHz+' NASA/JPL Horizons</div>'):'';
     renderMissing();
     render();
   }catch(e){
