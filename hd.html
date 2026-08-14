@@ -411,6 +411,26 @@ const CHANNELS=[
   [42,53,"ჩამოყალიბება"],[47,64,"აბსტრაქცია"],
 ];
 
+// gate -> centre, so the synastry chart can light the centres that the
+// TWO people define together (including electromagnetic channels)
+const CENTER_GATES={"Head":[64,61,63],"Ajna":[47,24,4,17,11,43],
+  "Throat":[62,23,56,16,35,12,45,33,8,31,20],"G":[1,2,7,10,13,15,25,46],
+  "Heart":[21,26,40,51],"Solar Plexus":[6,22,30,36,37,49,55],
+  "Spleen":[18,28,32,44,48,50,57],"Sacral":[3,5,9,14,27,29,34,42,59],
+  "Root":[19,38,39,41,52,53,54,58,60]};
+const GATE_TO_CENTER={};
+for(const c in CENTER_GATES)for(const g of CENTER_GATES[c])GATE_TO_CENTER[g]=c;
+function centersFromGates(gateSet){
+  const out=new Set();
+  for(const[a,b] of CHANNELS){
+    if(gateSet.has(a)&&gateSet.has(b)){
+      if(GATE_TO_CENTER[a])out.add(GATE_TO_CENTER[a]);
+      if(GATE_TO_CENTER[b])out.add(GATE_TO_CENTER[b]);
+    }
+  }
+  return out;
+}
+
 let currentMode='natal';
 let svgNatal=null, svgSyn=null;
 const cityTimers={};
@@ -604,15 +624,20 @@ function renderSynastry(c1,c2){
     if(!p1Gates.has(g))svgSyn.classList.add('active-d-'+g);
   }
 
-  // Centers from P1
-  c1.defined_centers.forEach(c=>svgSyn.classList.add('center-active-'+c.replace(/ /g,'')));
+  // Centres defined by the PAIR together: each person's own channels plus
+  // the electromagnetic ones they complete between them.
+  const bothGates=new Set([...p1Gates,...p2Gates]);
+  const synCenters=centersFromGates(bothGates);
+  c1.defined_centers.forEach(c=>synCenters.add(c));
+  c2.defined_centers.forEach(c=>synCenters.add(c));
+  synCenters.forEach(c=>svgSyn.classList.add('center-active-'+c.replace(/ /g,'')));
 
   // Synastry integration: 256-combination lookup for gates 10, 57, 34, 20
   // state: 0=neither, 1=p1, 2=p2, 3=both
   // detail index = s10*64 + s57*16 + s34*4 + s20 + 1
   {
     const gs=g=>{const h1=p1Gates.has(g),h2=p2Gates.has(g);return h1&&h2?3:h1?1:h2?2:0;};
-    const synDetail=gs(10)*64+gs(57)*16+gs(34)*4+gs(20)+1;
+    const synDetail=gs(10)*64+gs(57)*16+gs(34)*4+gs(20)+1;   // 1..256, same table as natal
     svgSyn.classList.add('detail-on-'+synDetail);
     const dEl=svgSyn.querySelector(`.detail-part[data-detail="${synDetail}"]`);
     if(dEl)dEl.style.setProperty('display','block','important');
