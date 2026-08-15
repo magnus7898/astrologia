@@ -2615,11 +2615,13 @@ function drawWheel(data1,data2,dualAsp){
   const mfc=el('feFlood',{'flood-color':'#4090ff','flood-opacity':'0.5','result':'color'},mf);
   el('feComposite',{in:'color',in2:'blur',operator:'in','result':'colorBlur'},mf);
   const mfmg=el('feMerge',{},mf);el('feMergeNode',{in:'colorBlur'},mfmg);el('feMergeNode',{in:'SourceGraphic'},mfmg);
-  // bg
+  // bg — a circle, not a rect, so the wheel sits on the page itself
+  // instead of on a visible square panel
   const bgG=el('radialGradient',{id:'bgG',cx:'50%',cy:'50%',r:'50%'},defs);
-  el('stop',{offset:'0%','stop-color':'#120e2a'},bgG);
-  el('stop',{offset:'100%','stop-color':'#04030e'},bgG);
-  el('rect',{width:700,height:700,fill:'url(#bgG)'},svg);
+  el('stop',{offset:'0%','stop-color':'rgba(28,20,13,0.55)'},bgG);
+  el('stop',{offset:'70%','stop-color':'rgba(10,7,5,0.35)'},bgG);
+  el('stop',{offset:'100%','stop-color':'rgba(10,7,5,0)'},bgG);
+  el('circle',{cx:CX,cy:CY,r:R1+6,fill:'url(#bgG)'},svg);
 
   // zodiac band
   const EFILL=['#1a0808','#081008','#08101a','#08101a','#1a0808','#081008','#08101a','#081018','#1a0808','#081008','#08101a','#081018'];
