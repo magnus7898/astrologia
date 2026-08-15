@@ -2747,7 +2747,9 @@ function drawWheel(data1,data2,dualAsp){
     const sorted=[...present].sort((a,b)=>trueA[a]-trueA[b]);
     const dispA={};
     for(const n of present)dispA[n]=trueA[n];
-    const MINGAP=isInner?18/Rg:22/Rg;
+    /* glyphs alone need 18/22px of arc; with the "15°42' ♌" labels
+       underneath they need more, so widen the spread when they are on */
+    const MINGAP=(SHOW_DEGREES?(isInner?27:32):(isInner?18:22))/Rg;
     for(let it=0;it<400;it++){
       let moved=false;
       for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
@@ -2806,10 +2808,11 @@ function drawWheel(data1,data2,dualAsp){
           const si=Math.floor(((pd.degree%360)+360)%360/30)%12;
           /* sized so the whole "15° ♌" label fits inside MINGAP, the arc the
              glyph spreader guarantees between two planets (22px / 18px) */
-          const fs=isInner?6:7.5;
+          const fs=isInner?6:7;
           const gp=el('g',{},svg);
-          const degTxt=pd.sign_degree+'°';
-          const wDeg=degTxt.length*fs*0.55, wSym=fs*1.2, gap=fs*0.22;
+          /* full precision: degrees AND minutes, same format as the table */
+          const degTxt=fmtDeg(pd.degree);
+          const wDeg=degTxt.length*fs*0.52, wSym=fs*1.2, gap=fs*0.22;
           const total=wDeg+gap+wSym;
           txt(gp,degTxt,dx-total/2+wDeg/2,dy,
             {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.9});
