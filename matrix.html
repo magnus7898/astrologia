@@ -4,112 +4,249 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ბედისწერის მატრიცა</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+Georgian:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
   <style>
+    /* ═══════════════════════════════════════════════════════════
+       BRASS INSTRUMENT PLATE
+       The matrix is a measuring device — fixed geometry, exact
+       reductions, 22 arcana. So the page is the faceplate of one:
+       petrol ink, engraved hairlines, brass fittings, enamel type.
+       ═══════════════════════════════════════════════════════════ */
+    :root{
+      --ink:#0B1418;          /* petrol black — the plate's ground   */
+      --ink-2:#101E24;        /* recessed panel                     */
+      --ink-3:#16272E;        /* raised element                     */
+      --brass:#B8894A;        /* the fittings                       */
+      --brass-lt:#E3BE84;     /* polished edge                      */
+      --brass-dk:#6B4F26;     /* tarnish                            */
+      --patina:#4E8F82;       /* verdigris — the metal's own age    */
+      --enamel:#EDE6D8;       /* enamel lettering                   */
+      --enamel-2:#B9BFBC;     /* secondary                          */
+      --dim:#6E8087;          /* engraved, unfilled                 */
+      --rule:rgba(184,137,74,.22);
+      --rule-2:rgba(184,137,74,.10);
+    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{min-height:100vh;background:#0a0618;font-family:'Noto Sans Georgian',sans-serif;color:#e0d8ff;display:flex;flex-direction:column;align-items:center;padding:24px 12px 60px;position:relative;overflow-x:hidden;}
-    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 900px 700px at 20% 30%,rgba(100,60,200,0.18) 0%,transparent 70%),radial-gradient(ellipse 700px 700px at 80% 70%,rgba(80,40,180,0.15) 0%,transparent 70%);}
 
-    .page-title{font-family:'Cinzel',serif;font-size:26px;font-weight:700;letter-spacing:4px;text-align:center;margin-bottom:4px;background:linear-gradient(135deg,#ffd700,#ff9fd7,#a78bfa,#60d0ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;z-index:1;}
-    .page-subtitle{font-size:11px;letter-spacing:3px;color:rgba(180,170,255,0.7);text-align:center;margin-bottom:20px;position:relative;z-index:1;text-transform:uppercase;}
+    body{
+      min-height:100vh;background:var(--ink);
+      font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300;
+      color:var(--enamel);display:flex;flex-direction:column;align-items:center;
+      padding:34px 18px 70px;position:relative;overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    /* brushed-metal grain, very faint, plus a cold light from above */
+    body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:
+        repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
+        radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(78,143,130,.10),transparent 70%),
+        radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%);}
 
-    .method-bar{display:flex;gap:8px;margin-bottom:16px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
-    .method-btn{padding:8px 18px;background:rgba(20,12,50,0.9);border:1px solid rgba(140,110,255,0.4);border-radius:8px;color:rgba(180,160,255,0.8);font-size:12px;font-family:'Noto Sans Georgian',sans-serif;cursor:pointer;transition:all 0.2s;}
-    .method-btn:hover{border-color:rgba(167,139,250,0.8);color:white;}
-    .method-btn.active{background:rgba(100,60,200,0.7);border-color:rgba(167,139,250,0.9);color:white;font-weight:600;}
+    /* ── the plate: hairline engraving + four brass screws ── */
+    .plate{position:relative;z-index:1;width:100%;max-width:1240px;
+      border:1px solid var(--rule);background:rgba(16,30,36,.35);
+      padding:30px 26px 34px;}
+    .plate::before{content:'';position:absolute;inset:7px;border:1px solid var(--rule-2);pointer-events:none;}
+    .screw{position:absolute;width:9px;height:9px;border-radius:50%;
+      background:radial-gradient(circle at 35% 32%,var(--brass-lt),var(--brass) 55%,var(--brass-dk));
+      box-shadow:0 0 0 1px rgba(0,0,0,.5);}
+    .screw::after{content:'';position:absolute;inset:3px 1px;border-top:1px solid rgba(0,0,0,.45);
+      transform:rotate(28deg);}
+    .screw.tl{top:14px;left:14px}.screw.tr{top:14px;right:14px}
+    .screw.bl{bottom:14px;left:14px}.screw.br{bottom:14px;right:14px}
 
-    .input-panel{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;justify-content:center;margin-bottom:16px;background:rgba(18,10,45,0.85);border:1px solid rgba(120,100,200,0.3);padding:14px 20px;border-radius:12px;position:relative;z-index:1;backdrop-filter:blur(10px);}
-    .input-group{display:flex;flex-direction:column;align-items:center;gap:3px;}
-    .input-panel label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(180,170,255,0.8);}
-    .input-panel input{padding:6px 8px;background:rgba(255,255,255,0.06);border:1px solid rgba(120,100,200,0.4);border-radius:8px;font-size:15px;text-align:center;color:#e0d8ff;font-family:'Cinzel',serif;outline:none;width:55px;}
-    .input-panel input[name="yyyy"]{width:78px;}
-    .input-panel input:focus{border-color:rgba(167,139,250,0.8);}
-    .calc-btn{padding:9px 22px;background:linear-gradient(135deg,#7c3aed,#4f46e5);border:1px solid rgba(167,139,250,0.4);border-radius:10px;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:white;font-family:'Noto Sans Georgian',sans-serif;transition:all 0.2s;margin-top:14px;}
-    .calc-btn:hover{background:linear-gradient(135deg,#8b5cf6,#6366f1);transform:translateY(-1px);}
+    /* ── nameplate ── */
+    .page-title{font-family:'Marcellus SC',serif;font-size:clamp(17px,2.6vw,25px);
+      font-weight:400;letter-spacing:.34em;text-align:center;color:var(--brass-lt);
+      margin:0 0 6px;position:relative;z-index:1;text-indent:.34em;}
+    .page-subtitle{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.42em;
+      color:var(--dim);text-align:center;text-transform:uppercase;margin-bottom:26px;
+      position:relative;z-index:1;text-indent:.42em;}
+    .page-subtitle::before,.page-subtitle::after{content:'';display:inline-block;
+      width:26px;height:1px;background:var(--rule);vertical-align:middle;margin:0 12px;}
 
-    #m3-inputs{display:none;width:100%;max-width:360px;margin-bottom:14px;background:rgba(18,10,45,0.9);border:1px solid rgba(140,110,255,0.35);border-radius:12px;padding:14px 18px;position:relative;z-index:1;}
-    #m3-inputs .ig{display:flex;flex-direction:column;gap:3px;width:100%;}
-    #m3-inputs label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(180,170,255,0.8);}
-    #m3-inputs input{width:100%;padding:7px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(120,100,200,0.4);border-radius:8px;font-size:13px;color:#e0d8ff;font-family:'Noto Sans Georgian',sans-serif;outline:none;}
-    #m3-inputs input:focus{border-color:rgba(167,139,250,0.8);}
-    #m3-preview{margin-top:8px;font-size:10px;color:rgba(160,140,220,0.7);display:flex;gap:10px;flex-wrap:wrap;}
+    /* ── method selector: engraved tabs, brass underline when live ── */
+    .method-bar{display:flex;gap:0;margin:0 auto 22px;justify-content:center;flex-wrap:wrap;
+      position:relative;z-index:1;border-bottom:1px solid var(--rule);}
+    .method-btn{padding:9px 20px;background:none;border:none;border-bottom:2px solid transparent;
+      color:var(--dim);font-size:11px;letter-spacing:.16em;font-family:'Noto Serif Georgian',serif;
+      cursor:pointer;transition:color .18s,border-color .18s;margin-bottom:-1px;}
+    .method-btn:hover{color:var(--enamel-2);}
+    .method-btn.active{color:var(--brass-lt);border-bottom-color:var(--brass);}
+    .method-btn:focus-visible{outline:1px solid var(--patina);outline-offset:2px;}
 
-    #compat-inputs{display:none;width:100%;max-width:480px;margin-bottom:14px;background:rgba(18,10,45,0.9);border:1px solid rgba(140,110,255,0.35);border-radius:12px;padding:14px 18px;position:relative;z-index:1;}
-    .compat-label{font-size:11px;color:rgba(180,160,255,0.8);letter-spacing:1px;text-align:center;margin-bottom:8px;}
-    .compat-row{display:flex;gap:10px;align-items:flex-end;justify-content:center;flex-wrap:wrap;}
-    .compat-row .input-group label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(180,170,255,0.7);}
-    .compat-row input{padding:6px 8px;background:rgba(255,255,255,0.06);border:1px solid rgba(120,100,200,0.4);border-radius:8px;font-size:15px;text-align:center;color:#e0d8ff;font-family:'Cinzel',serif;outline:none;width:55px;}
-    .compat-row input.yyyy{width:78px;}
-    .compat-row input:focus{border-color:rgba(167,139,250,0.8);}
+    /* ── input rail: underline slots, not boxes ── */
+    .input-panel{display:flex;gap:22px;align-items:flex-end;flex-wrap:wrap;justify-content:center;
+      margin:0 auto 18px;background:none;border:none;padding:0;position:relative;z-index:1;}
+    .input-group{display:flex;flex-direction:column;align-items:center;gap:5px;}
+    .input-panel label{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.24em;
+      text-transform:uppercase;color:var(--dim);}
+    .input-panel input{padding:4px 2px 6px;background:none;border:none;
+      border-bottom:1px solid var(--rule);border-radius:0;
+      font-size:19px;text-align:center;color:var(--enamel);font-family:'Cinzel',serif;
+      outline:none;width:58px;transition:border-color .18s;}
+    .input-panel input[name="yyyy"]{width:86px;}
+    .input-panel input:focus{border-bottom-color:var(--brass);}
 
-    .main-layout{display:flex;flex-direction:column;align-items:center;gap:32px;position:relative;z-index:1;width:100%;max-width:1180px;margin:0 auto;}
+    .calc-btn{padding:9px 30px;background:none;color:var(--brass-lt);
+      border:1px solid var(--brass-dk);border-radius:0;
+      font-family:'Marcellus SC',serif;font-size:11px;letter-spacing:.24em;
+      cursor:pointer;transition:background .2s,color .2s,border-color .2s;margin-top:12px;}
+    .calc-btn:hover{background:var(--brass);color:var(--ink);border-color:var(--brass);}
+    .calc-btn:focus-visible{outline:1px solid var(--patina);outline-offset:2px;}
 
-    /* ── diagram (left) + right column (chakra + age) ── */
-    .diagram-chakra-row{display:flex;gap:20px;align-items:center;justify-content:center;width:100%;flex-wrap:wrap;}
-    .diagram-chakra-row .diagram-wrapper{flex:1 1 auto;display:flex;align-items:flex-start;justify-content:center;min-width:340px;background:none;border:none;padding:0;}
+    /* ── secondary input plates ── */
+    #m3-inputs,#compat-inputs{display:none;width:100%;max-width:430px;margin:0 auto 18px;
+      background:var(--ink-2);border:1px solid var(--rule);border-radius:0;
+      padding:18px 20px;position:relative;z-index:1;}
+    #m3-inputs .ig{display:flex;flex-direction:column;gap:4px;width:100%;}
+    #m3-inputs label,.compat-row .input-group label{font-family:'JetBrains Mono',monospace;
+      font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);}
+    #m3-inputs input{width:100%;padding:7px 0;background:none;border:none;
+      border-bottom:1px solid var(--rule);border-radius:0;font-size:14px;color:var(--enamel);
+      font-family:'Noto Serif Georgian',serif;outline:none;transition:border-color .18s;}
+    #m3-inputs input:focus{border-bottom-color:var(--brass);}
+    #m3-preview{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:9.5px;
+      color:var(--dim);display:flex;gap:14px;flex-wrap:wrap;letter-spacing:.06em;}
+    #m3-preview b{color:var(--patina);font-weight:400;}
+
+    .compat-label{font-family:'Marcellus SC',serif;font-size:10px;color:var(--brass);
+      letter-spacing:.24em;text-align:center;margin-bottom:12px;text-transform:uppercase;}
+    .compat-row{display:flex;gap:18px;align-items:flex-end;justify-content:center;flex-wrap:wrap;}
+    .compat-row input{padding:4px 2px 6px;background:none;border:none;
+      border-bottom:1px solid var(--rule);border-radius:0;font-size:17px;text-align:center;
+      color:var(--enamel);font-family:'Cinzel',serif;outline:none;width:56px;}
+    .compat-row input.yyyy{width:80px;}
+    .compat-row input:focus{border-bottom-color:var(--brass);}
+
+    .main-layout{display:flex;flex-direction:column;align-items:center;gap:34px;
+      position:relative;z-index:1;width:100%;margin:0 auto;}
+
+    /* ── diagram + side column ── */
+    .diagram-chakra-row{display:flex;gap:24px;align-items:center;justify-content:center;
+      width:100%;flex-wrap:wrap;}
+    .diagram-chakra-row .diagram-wrapper{flex:1 1 auto;display:flex;align-items:flex-start;
+      justify-content:center;min-width:330px;background:none;border:none;padding:0;}
     .diagram-chakra-row .diagram-wrapper svg{width:100%;height:auto;max-width:900px;display:block;}
-    .mx-right-col{flex:0 0 auto;width:400px;max-width:36%;min-width:280px;display:flex;flex-direction:column-reverse;gap:14px;}
+    .mx-right-col{flex:0 0 auto;width:400px;max-width:36%;min-width:280px;
+      display:flex;flex-direction:column-reverse;gap:16px;}
     .mx-right-col #chakra-panel{margin-top:0;width:100%;}
     .mx-right-col #age-row-panel{width:100%;max-width:100%;margin:0;}
     @media(max-width:1200px){
       .diagram-chakra-row{flex-direction:column;align-items:center;}
       .diagram-chakra-row .diagram-wrapper,.mx-right-col{max-width:100%;width:100%;}
     }
+
+    /* ── reading panels ── */
     #extra-panels{display:none;width:100%;max-width:920px;}
-    .ep-box{flex:1;min-width:140px;background:rgba(18,10,45,0.9);border:1px solid rgba(140,110,255,0.35);border-radius:13px;padding:13px 16px;display:flex;flex-direction:column;gap:9px;}
-    .ep-title{font-size:12px;font-weight:700;letter-spacing:1px;color:rgba(180,160,255,0.95);text-align:center;}
-    .ep-row{display:flex;gap:11px;align-items:center;justify-content:center;flex-wrap:wrap;}
-    .ep-circ{width:56px;height:56px;border-radius:50%;background:rgba(25,15,55,0.95);border:2px solid rgba(140,110,255,0.7);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;font-family:'Cinzel',serif;flex-shrink:0;position:relative;}
-    .ep-circ.ep-gold{border-color:rgba(255,215,0,0.8);background:rgba(45,30,5,0.95);}
-    .ep-circ.ep-big{width:63px;height:63px;font-size:21px;}
-    .ep-label{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);font-size:8px;color:rgba(160,140,220,0.7);white-space:nowrap;font-family:sans-serif;}
+    .ep-box{flex:1;min-width:140px;background:var(--ink-2);border:1px solid var(--rule);
+      border-radius:0;padding:15px 16px 20px;display:flex;flex-direction:column;gap:11px;
+      position:relative;}
+    .ep-box::before{content:'';position:absolute;top:0;left:0;width:14px;height:1px;background:var(--brass);}
+    .ep-title{font-family:'Marcellus SC',serif;font-size:10px;font-weight:400;letter-spacing:.2em;
+      color:var(--brass);text-align:center;text-transform:uppercase;}
+    .ep-row{display:flex;gap:13px;align-items:center;justify-content:center;flex-wrap:wrap;}
+    .ep-circ{width:54px;height:54px;border-radius:50%;background:var(--ink-3);
+      border:1px solid var(--rule);display:flex;align-items:center;justify-content:center;
+      font-size:19px;font-weight:400;color:var(--enamel);font-family:'Cinzel',serif;
+      flex-shrink:0;position:relative;}
+    .ep-circ.ep-gold{border-color:var(--brass);color:var(--brass-lt);
+      background:radial-gradient(circle at 38% 32%,rgba(184,137,74,.16),transparent 70%),var(--ink-3);}
+    .ep-circ.ep-big{width:62px;height:62px;font-size:21px;}
+    .ep-label{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);
+      font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.1em;
+      color:var(--dim);white-space:nowrap;}
 
-    .table-wrapper{width:100%;border-radius:13px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.4);}
-    .chakra-table{border-collapse:collapse;width:100%;height:100%;font-family:'Noto Sans Georgian',sans-serif;}
-    .chakra-table thead tr{background:linear-gradient(135deg,rgba(240,100,160,0.85),rgba(180,60,120,0.85));}
-    .chakra-table th{padding:12px 14px;text-align:center;font-weight:700;font-size:13px;letter-spacing:1px;color:white;border-right:1px solid rgba(255,255,255,0.15);}
+    /* ── chakra table: keep the chakra colours (they carry meaning),
+          set them into the plate with hairline rules ── */
+    .table-wrapper{width:100%;border:1px solid var(--rule);border-radius:0;overflow:hidden;
+      box-shadow:none;}
+    .chakra-table{border-collapse:collapse;width:100%;height:100%;
+      font-family:'Noto Serif Georgian',serif;}
+    .chakra-table thead tr{background:var(--ink-3);}
+    .chakra-table th{padding:10px 12px;text-align:center;font-family:'Marcellus SC',serif;
+      font-weight:400;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+      color:var(--brass);border-right:1px solid rgba(0,0,0,.35);}
     .chakra-table th:first-child{text-align:left;}
-    .chakra-table td{padding:10px 14px;text-align:center;font-weight:600;font-size:17px;border-bottom:1px solid rgba(0,0,0,0.15);border-right:1px solid rgba(0,0,0,0.1);}
-    .chakra-table td:first-child{text-align:left;font-size:12px;font-weight:700;}
-    .chakra-table tbody tr:hover td{filter:brightness(1.12);}
-    .row-sahasrara td{background:rgba(126,87,194,0.85);color:white;}
-    .row-ajna td{background:rgba(92,155,214,0.85);color:white;}
-    .row-vishudha td{background:rgba(181,212,244,0.85);color:#0c3060;}
-    .row-anahata td{background:rgba(102,187,106,0.85);color:#0d3b0f;}
-    .row-manipura td{background:rgba(255,215,0,0.85);color:#412402;}
-    .row-svadhistana td{background:rgba(239,159,39,0.85);color:#2d1500;}
-    .row-muladhara td{background:rgba(220,70,70,0.85);color:white;}
-    .row-total td{background:rgba(90,90,90,0.75);color:#e8e8e8;font-weight:700;font-size:14px;}
+    .chakra-table td{padding:9px 12px;text-align:center;font-weight:400;font-size:16px;
+      font-family:'Cinzel',serif;
+      border-bottom:1px solid rgba(11,20,24,.55);border-right:1px solid rgba(11,20,24,.35);}
+    .chakra-table td:first-child{text-align:left;font-size:11px;font-weight:400;
+      font-family:'Noto Serif Georgian',serif;letter-spacing:.02em;}
+    .chakra-table tbody tr:hover td{filter:brightness(1.14);}
+    .row-sahasrara td{background:#5B4A86;color:#F0EAF8;}
+    .row-ajna     td{background:#3E6C93;color:#EAF2F8;}
+    .row-vishudha td{background:#8FB6D4;color:#0B1F33;}
+    .row-anahata  td{background:#5E8F63;color:#0C2110;}
+    .row-manipura td{background:#C8A63C;color:#241703;}
+    .row-svadhistana td{background:#C07A2C;color:#241100;}
+    .row-muladhara td{background:#A5453F;color:#F8ECEA;}
+    .row-total    td{background:var(--ink-3);color:var(--brass-lt);font-weight:400;font-size:14px;}
 
-    /* age/energy single-row reveal */
+    /* ── age readout ── */
     .age-wrap{width:100%;}
-    .age-table{border-collapse:collapse;width:100%;font-family:'Noto Sans Georgian',sans-serif;}
+    .age-table{border-collapse:collapse;width:100%;font-family:'Noto Serif Georgian',serif;}
     .age-table td{padding:0;vertical-align:middle;}
-    .age-table .tc-age{padding:12px 10px;text-align:center;font-size:12px;font-weight:600;color:rgba(140,210,255,0.85);white-space:nowrap;}
-    .age-table .tc-num{padding:12px 8px;text-align:center;font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:#FFD700;}
+    .age-table .tc-age{padding:12px 12px;text-align:center;font-family:'JetBrains Mono',monospace;
+      font-size:10.5px;letter-spacing:.06em;color:var(--patina);white-space:nowrap;}
+    .age-table .tc-num{padding:12px 8px;text-align:center;font-family:'Cinzel',serif;
+      font-size:21px;font-weight:400;color:var(--brass-lt);}
     .age-table .tc-arch{padding:12px 8px;text-align:center;}
-    .age-table .tc-desc{padding:12px 16px;text-align:left;font-size:12px;line-height:1.7;color:rgba(205,225,255,0.85);}
-    .age-table tr.anchor{background:rgba(0,55,100,0.5);}
-    .e-badge{display:inline-block;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.4px;color:white;white-space:nowrap;line-height:1.3;text-align:center;}
-    .e-en{display:block;font-size:8px;font-weight:400;opacity:.75;margin-top:1px;letter-spacing:.3px;}
-    #age-row-panel{background:rgba(0,40,80,0.4);border:1px solid rgba(0,150,200,0.3);border-radius:13px;overflow:hidden;}
+    .age-table .tc-desc{padding:12px 16px;text-align:left;font-size:12px;line-height:1.85;
+      color:var(--enamel-2);font-weight:300;}
+    .age-table tr.anchor{background:rgba(78,143,130,.07);}
+    .e-badge{display:inline-block;padding:5px 13px;border-radius:0;font-size:10px;
+      font-family:'Marcellus SC',serif;font-weight:400;letter-spacing:.08em;color:white;
+      white-space:nowrap;line-height:1.35;text-align:center;}
+    .e-en{display:block;font-family:'JetBrains Mono',monospace;font-size:7.5px;font-weight:300;
+      opacity:.7;margin-top:2px;letter-spacing:.1em;}
+    #age-row-panel{background:var(--ink-2);border:1px solid var(--rule);border-radius:0;overflow:hidden;}
 
-    /* interpretation boxes */
-    .mx-box{border:1px solid rgba(140,110,255,0.4);border-radius:11px;overflow:hidden;background:rgba(18,10,40,0.85);}
-    .mx-box-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;font-size:13px;font-weight:600;color:#e8dcff;user-select:none;transition:background .15s;}
-    .mx-box-head:hover{filter:brightness(1.25);}
-    .mx-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:9px;vertical-align:middle;}
-    .mx-key{font-family:'Cinzel',serif;font-size:12px;color:rgba(200,180,255,0.8);white-space:nowrap;display:flex;align-items:center;gap:8px;}
-    .mx-arrow{font-size:10px;opacity:.6;}
-    .mx-box-body{padding:14px 18px;font-size:13px;line-height:1.75;color:rgba(210,195,235,0.85);border-top:1px solid rgba(140,110,255,0.2);}
+    /* ── interpretation boxes ── */
+    .mx-box{border:1px solid var(--rule);border-radius:0;overflow:hidden;background:var(--ink-2);}
+    .mx-box+.mx-box{border-top:none;}
+    .mx-box-head{display:flex;justify-content:space-between;align-items:center;gap:10px;
+      padding:12px 16px;cursor:pointer;font-size:12.5px;font-weight:400;color:var(--enamel);
+      user-select:none;transition:background .15s;}
+    .mx-box-head:hover{background:var(--ink-3);}
+    .mx-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:11px;
+      vertical-align:middle;}
+    .mx-key{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--brass);
+      white-space:nowrap;display:flex;align-items:center;gap:9px;letter-spacing:.06em;}
+    .mx-arrow{font-size:9px;opacity:.55;}
+    .mx-box-body{padding:15px 18px 18px;font-size:12.5px;line-height:1.9;color:var(--enamel-2);
+      font-weight:300;border-top:1px solid var(--rule-2);}
+    #matrix-boxes{gap:0!important;}
 
-    .footer-text{margin-top:36px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(167,139,250,0.4);position:relative;z-index:1;}
+    .footer-text{margin-top:44px;font-family:'JetBrains Mono',monospace;font-size:8.5px;
+      letter-spacing:.4em;text-transform:uppercase;color:var(--brass-dk);
+      position:relative;z-index:1;text-indent:.4em;}
 
-    @media(max-width:900px){body{padding:12px 8px 36px;}.page-title{font-size:18px;}.age-table .tc-desc{font-size:11px;}}
-    @media(max-width:600px){.page-title{font-size:14px;letter-spacing:1px;}.page-subtitle{display:none;}.chakra-table th,.chakra-table td{padding:6px 4px;font-size:10px;}.chakra-table td:first-child{font-size:8px;}.ep-box{min-width:130px;}}
+    @media(max-width:900px){
+      body{padding:16px 10px 40px;}
+      .plate{padding:22px 14px 26px;}
+      .page-title{letter-spacing:.2em;text-indent:.2em;}
+      .age-table .tc-desc{font-size:11px;}
+      .input-panel{gap:14px;}
+    }
+    @media(max-width:600px){
+      .page-subtitle{display:none;}
+      .chakra-table th,.chakra-table td{padding:6px 5px;font-size:11px;}
+      .chakra-table td:first-child{font-size:8.5px;}
+      .ep-box{min-width:130px;}
+      .screw{display:none;}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+    }
   </style>
 </head>
 <body>
+<div class="plate">
+  <span class="screw tl"></span><span class="screw tr"></span>
+  <span class="screw bl"></span><span class="screw br"></span>
 
 <div class="method-bar">
   <button class="method-btn active" id="btn-m1" onclick="setMethod(1)">მეთოდი 1</button>
@@ -231,6 +368,8 @@
   <!-- ▲▲ END INTERPRETATION BOXES ▲▲ -->
 
 </div>
+
+</div><!-- /plate -->
 
 <p class="footer-text">✦ სამყაროს რიცხვები · ენერგიის ნიმუში ✦</p>
 
