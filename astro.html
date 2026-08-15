@@ -2799,10 +2799,22 @@ function drawWheel(data1,data2,dualAsp){
         const pd=data.planets[name];
         if(pd&&pd.sign_degree!=null){
           const ang=wasMoved?dispA[name]:tA;
-          const dR=Rg+(isInner?13:17);
+          const dR=Rg+(isInner?15:24);   /* far enough out that the wider
+                                             degree+sign label clears its neighbours */
           const dx=CX+Math.cos(ang)*dR, dy=CY+Math.sin(ang)*dR;
-          txt(svg,pd.sign_degree+'°',dx,dy,{fill:symColor,'font-size':isInner?7:8.5,
-            'font-family':'Cinzel,serif',opacity:.85});
+          /* degree + its zodiac glyph, side by side and always horizontal */
+          const si=Math.floor(((pd.degree%360)+360)%360/30)%12;
+          /* sized so the whole "15° ♌" label fits inside MINGAP, the arc the
+             glyph spreader guarantees between two planets (22px / 18px) */
+          const fs=isInner?6:7.5;
+          const gp=el('g',{},svg);
+          const degTxt=pd.sign_degree+'°';
+          const wDeg=degTxt.length*fs*0.55, wSym=fs*1.2, gap=fs*0.22;
+          const total=wDeg+gap+wSym;
+          txt(gp,degTxt,dx-total/2+wDeg/2,dy,
+            {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.9});
+          txt(gp,ZSYM[si],dx+total/2-wSym/2,dy,
+            {fill:ZCOL[si],'font-size':fs*1.15,'font-family':'serif',opacity:.95});
         }
       }
       if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
