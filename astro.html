@@ -1843,7 +1843,17 @@ return{compute};})();
 const DOMX_KA={sun:"მზე",moon:"მთვარე",mercury:"მერკური",venus:"ვენერა",mars:"მარსი",jupiter:"იუპიტერი",saturn:"სატურნი",uranus:"ურანი",neptune:"ნეპტუნი",pluto:"პლუტონი",chiron:"ქირონი",node:"ჩრდ. კვანძი",lilith:"ლილიტი",asc:"ASC",mc:"MC"};
 const DOMX_ELKA={fire:"🔥 ცეცხლი",earth:"⛰ მიწა",air:"💨 ჰაერი",water:"💧 წყალი"};
 const DOMX_MOKA={cardinal:"კარდინალური",fixed:"ფიქსირებული",mutable:"მუტაბელური"};
-let SHOW_DEGREES = (typeof window!=='undefined' && window.innerWidth>420);
+/* degrees + sign glyph beside every planet.
+   Set to false to hide them; the spreader tightens again automatically. */
+let SHOW_DEGREES = true;
+/* re-render after a resize or rotation so the label scaling stays right */
+if(typeof window!=='undefined'){
+  let _rt=null;
+  window.addEventListener('resize',()=>{
+    clearTimeout(_rt);
+    _rt=setTimeout(()=>{ if(typeof redrawCurrent==='function')redrawCurrent(); },350);
+  });
+}
 const DOMX_MAP={'მზე':'sun','მთვარე':'moon','მერკური':'mercury','ვენერა':'venus','მარსი':'mars','იუპიტერი':'jupiter','სატურნი':'saturn','ურანი':'uranus','ნეპტუნი':'neptune','პლუტონი':'pluto','ქირონი':'chiron','ლილიტი':'lilith','ჩრდ. კვანძი':'node'};
 function renderDominants(data){
  const card=document.getElementById('dominants-card'),body=document.getElementById('dominants-body');
@@ -2351,7 +2361,13 @@ function renderCinderella(r){
     <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">☌ შეერთება · △ ტრიგონი · ⚻ ინკონიუნქცია · ⚹ სექსტილი · ★ სიძლიერე</div>`;
 }
 
+function redrawCurrent(){
+  const r=window._lastRender;
+  if(!r)return;
+  try{ r.fn.apply(null,r.args); }catch(e){}
+}
 function showSingleChart(data,label,dual){
+  window._lastRender={fn:showSingleChart,args:[data,label,dual]};
   // Compute ALL aspects (main+virtual+asteroid) including AC/MC
   data._allAspects=calcAllNatalAspects(data);
   _d1=data;_d2=null;_crossAsp=[];_swapped=false;_origD1=data;_origD2=null;
@@ -2402,6 +2418,7 @@ function swapPersons(){
 }
 
 function _renderDouble(d1,d2,name1,name2,label,crossAsp){
+  window._lastRender={fn:_renderDouble,args:[d1,d2,name1,name2,label,crossAsp]};
   document.getElementById('mode-label').textContent=label;
   const _dc=document.getElementById('dominants-card');if(_dc)_dc.style.display='none';
   const _cc=document.getElementById('cinderella-card');if(_cc)_cc.style.display='none';
@@ -2749,7 +2766,9 @@ function drawWheel(data1,data2,dualAsp){
     for(const n of present)dispA[n]=trueA[n];
     /* glyphs alone need 18/22px of arc; with the "15°42' ♌" labels
        underneath they need more, so widen the spread when they are on */
-    const MINGAP=(SHOW_DEGREES?(isInner?27:32):(isInner?18:22))/Rg;
+    const _w0=(typeof window!=='undefined'?window.innerWidth:1200);
+    const _b0=Math.min(2.2,Math.max(1,760/Math.max(320,_w0-24)));
+    const MINGAP=(SHOW_DEGREES?(isInner?27:32)*_b0:(isInner?18:22))/Rg;
     for(let it=0;it<400;it++){
       let moved=false;
       for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
@@ -2808,7 +2827,12 @@ function drawWheel(data1,data2,dualAsp){
           const si=Math.floor(((pd.degree%360)+360)%360/30)%12;
           /* sized so the whole "15° ♌" label fits inside MINGAP, the arc the
              glyph spreader guarantees between two planets (22px / 18px) */
-          const fs=isInner?6:7;
+          /* the wheel is scaled to fit the screen, so a fixed viewBox size
+             shrinks on phones. Scale the label up by the same factor to keep
+             it readable (capped so it never dominates on desktop). */
+          const _w=(typeof window!=='undefined'?window.innerWidth:1200);
+          const _boost=Math.min(2.2,Math.max(1,760/Math.max(320,_w-24)));
+          const fs=(isInner?6:7)*_boost;
           const gp=el('g',{},svg);
           /* full precision: degrees AND minutes, same format as the table */
           const degTxt=fmtDeg(pd.degree);
