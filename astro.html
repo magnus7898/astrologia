@@ -746,12 +746,12 @@ const PI={
   'მერკური':{sym:'☿',color:'#a0c8d0'},'ვენერა':{sym:'♀',color:'#e87878'},
   'მარსი':{sym:'♂',color:'#e84040'},'იუპიტერი':{sym:'♃',color:'#e89040'},
   'სატურნი':{sym:'♄',color:'#c8c840'},'ურანი':{sym:'♅',color:'#50c8d8'},
-  'ნეპტუნი':{sym:'♆',color:'#6070d8'},'პლუტონი':{sym:'⯓',color:'#c050a0'},
+  'ნეპტუნი':{sym:'♆',color:'#6070d8'},'პლუტონი':{sym:'♇',color:'#c050a0'},
   'ქირონი':{sym:'⚷',color:'#d08040'},'ლილიტი':{sym:'⚸',color:'#904060'},
   'ჩრდ. კვანძი':{sym:'☊',color:'#60c060'},'სამხ. კვანძი':{sym:'☋',color:'#c06060'},
   'ვერტექსი':{sym:'Vx',color:'#8090d0'},
   'AC':{sym:'AC',color:'#e8c06e'},
-  'MC':{sym:'MC',color:'#e8c06e'},'თეთრი მთვარე':{sym:'⯝',color:'#d0e8f8'},
+  'MC':{sym:'MC',color:'#e8c06e'},'თეთრი მთვარე':{sym:'SEL',color:'#d0e8f8'},
   'ბედის ვარსკვლავი':{sym:'⊕',color:'#f0c060'},'იუნო':{sym:'⚵',color:'#c890d0'},
 };
 const PORDER=['მზე','მთვარე','მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი','ჩრდ. კვანძი','სამხ. კვანძი','ქირონი','იუნო','ლილიტი','თეთრი მთვარე','ბედის ვარსკვლავი','ვერტექსი','AC','MC'];
@@ -1446,7 +1446,7 @@ function drawAcgLines(chartData,birthLon){
     'მარსი':'#cc2222','იუპიტერი':'#cc2222','სატურნი':'#111111','ურანი':'#335566',
     'ნეპტუნი':'#1144cc','პლუტონი':'#882244'};
   const PSYM={'მზე':'☉','მთვარე':'☽','მერკური':'☿','ვენერა':'♀','მარსი':'♂',
-    'იუპიტერი':'♃','სატურნი':'♄','ურანი':'♅','ნეპტუნი':'♆','პლუტონი':'⯓'};
+    'იუპიტერი':'♃','სატურნი':'♄','ურანი':'♅','ნეპტუნი':'♆','პლუტონი':'♇'};
   const PLANETS=['მზე','მთვარე','მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
 
   const legend=document.getElementById('acg-legend-bar');
@@ -1843,6 +1843,7 @@ return{compute};})();
 const DOMX_KA={sun:"მზე",moon:"მთვარე",mercury:"მერკური",venus:"ვენერა",mars:"მარსი",jupiter:"იუპიტერი",saturn:"სატურნი",uranus:"ურანი",neptune:"ნეპტუნი",pluto:"პლუტონი",chiron:"ქირონი",node:"ჩრდ. კვანძი",lilith:"ლილიტი",asc:"ASC",mc:"MC"};
 const DOMX_ELKA={fire:"🔥 ცეცხლი",earth:"⛰ მიწა",air:"💨 ჰაერი",water:"💧 წყალი"};
 const DOMX_MOKA={cardinal:"კარდინალური",fixed:"ფიქსირებული",mutable:"მუტაბელური"};
+let SHOW_DEGREES = (typeof window!=='undefined' && window.innerWidth>420);
 const DOMX_MAP={'მზე':'sun','მთვარე':'moon','მერკური':'mercury','ვენერა':'venus','მარსი':'mars','იუპიტერი':'jupiter','სატურნი':'saturn','ურანი':'uranus','ნეპტუნი':'neptune','პლუტონი':'pluto','ქირონი':'chiron','ლილიტი':'lilith','ჩრდ. კვანძი':'node'};
 function renderDominants(data){
  const card=document.getElementById('dominants-card'),body=document.getElementById('dominants-body');
@@ -2782,8 +2783,30 @@ function drawWheel(data1,data2,dualAsp){
       }else if(name==='მთვარე'&&!isInner){
         const mg=el('g',{filter:'url(#moonF)'},svg);
         txt(mg,'☽',gxy.x,gxy.y,{fill:'#b8d8ff','font-size':20,'font-family':'serif'});
+      }else if(info.sym==='SEL'){
+        /* Selena (White Moon): U+2BDD is missing from most mobile fonts and
+           renders as an empty box, so draw the symbol instead of typing it */
+        const sg=el('g',{},svg),rr=isInner?4.5:6;
+        el('circle',{cx:gxy.x,cy:gxy.y,r:rr,fill:'none',stroke:symColor,'stroke-width':1.4},sg);
+        el('path',{d:'M '+(gxy.x-rr)+' '+gxy.y+' a '+rr+' '+rr+' 0 0 1 '+(rr*2)+' 0',
+          fill:symColor,opacity:.9},sg);
       }else{
         txt(svg,info.sym,gxy.x,gxy.y,{fill:symColor,'font-size':fsz,'font-family':'serif'});
+      }
+      /* degree label, placed radially outside the glyph so it never sits on
+         the wheel, the ticks or a neighbouring planet */
+      if(SHOW_DEGREES){
+        const pd=data.planets[name];
+        if(pd&&pd.sign_degree!=null){
+          const ang=wasMoved?dispA[name]:tA;
+          const dR=Rg+(isInner?13:17);
+          const dx=CX+Math.cos(ang)*dR, dy=CY+Math.sin(ang)*dR;
+          let rot=ang*180/Math.PI;                      // keep text upright
+          if(rot>90||rot<-90)rot+=180;
+          txt(svg,pd.sign_degree+'°',dx,dy,{fill:symColor,'font-size':isInner?7:8.5,
+            'font-family':'Cinzel,serif',opacity:.85,
+            transform:'rotate('+rot+','+dx+','+dy+')'});
+        }
       }
       if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
       // Hover hit area for aspect highlighting
