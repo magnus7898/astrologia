@@ -843,13 +843,18 @@ function progressedDate(natal,target){
 }
 
 // ── CROSS ASPECTS (synastry/transit) ──
+/* classic colour convention:
+     hard aspects (opposition, square)   -> red
+     soft aspects (trine, sextile)       -> blue
+     quincunx                            -> green
+     conjunction stays gold: it is neutral, its nature depends on the planets */
 const ASPECTS_DEF=[
   {name:'შეერთება',angles:[0],orb:12,sym:'☌',color:'#f9c646'},
-  {name:'ოპოზიცია',angles:[180],orb:12,sym:'☍',color:'#e89040'},
-  {name:'ტრინი',angles:[120,240],orb:10,sym:'△',color:'#a078f0'},
-  {name:'კვადრატი',angles:[90,270],orb:10,sym:'□',color:'#e84040'},
-  {name:'სექსტილი',angles:[60,300],orb:8,sym:'⚹',color:'#30c890'},
-  {name:'კვინკონსი',angles:[150,210],orb:6,sym:'⚻',color:'#9ba8b8'},
+  {name:'ოპოზიცია',angles:[180],orb:12,sym:'☍',color:'#e04040'},
+  {name:'ტრინი',angles:[120,240],orb:10,sym:'△',color:'#4a90e2'},
+  {name:'კვადრატი',angles:[90,270],orb:10,sym:'□',color:'#e04040'},
+  {name:'სექსტილი',angles:[60,300],orb:8,sym:'⚹',color:'#4a90e2'},
+  {name:'კვინკონსი',angles:[150,210],orb:6,sym:'⚻',color:'#3fbf7f'},
 ];
 function calcCrossAspects(p1,p2){
   const aspects=[];
