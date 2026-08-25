@@ -384,11 +384,11 @@ header::after{content:"";display:block;width:280px;height:1px;
   </div>
 </section>
 
-<!-- ══ CHIRON RESULTS ══ -->
+<!-- ══ CHIRON RESULTS — identical to natal, with Chiron added ══ -->
 <section id="results-chiron" class="hidden">
   <div class="main-layout">
     <div class="left-col">
-      <div class="sec-head"><span>სხეულის გრაფიკა · ქირონით</span></div>
+      <div class="sec-head"><span>სხეულის გრაფიკა</span></div>
       <div class="chart-area">
         <div class="planet-col design" id="ch-col-design"><h3>დიზაინი</h3></div>
         <div id="bodygraph-chiron"><div class="loading">იტვირთება…</div></div>
@@ -396,12 +396,12 @@ header::after{content:"";display:block;width:280px;height:1px;
       </div>
     </div>
     <div class="right-col">
-      <div class="sec-head"><span>ქირონი</span></div>
-      <div class="summary" id="chiron-cards" style="grid-template-columns:1fr"></div>
+      <div class="sec-head"><span>სულის ბარათი</span></div>
+      <div class="summary" id="ch-summary-cards"></div>
     </div>
     <div class="gifts-col">
-      <div class="sec-head"><span>შენიშვნა</span></div>
-      <div class="gifts-card"><div id="chiron-note"></div></div>
+      <div class="sec-head"><span>სხვა ნიჭები</span></div>
+      <div class="gifts-card"><div id="ch-gifts-list"></div></div>
     </div>
   </div>
   <div class="details-wrap">
@@ -679,8 +679,8 @@ function renderNatal(chart){
 }
 
 // ── CHIRON RENDER ──
-// The official bodygraph is drawn unchanged; Chiron is added as a marked
-// extra activation so the canonical type/authority/channels stay correct.
+// Exactly the natal chart — same cards, gifts, channels, centres — with
+// Chiron's position added to the two planet columns and its gates marked.
 function renderChiron(chart){
   clearSVG(svgChiron);
   Object.entries(chart.gate_sources).forEach(([g,src])=>{
@@ -689,58 +689,67 @@ function renderChiron(chart){
     if(c)svgChiron.classList.add(c+gi);
   });
   chart.defined_centers.forEach(c=>svgChiron.classList.add('center-active-'+c.replace(/ /g,'')));
-
-  const ch=chart.chiron;
-  const cardsEl=document.getElementById('chiron-cards');
-  const noteEl=document.getElementById('chiron-note');
-
-  if(!ch){
-    cardsEl.innerHTML='<div class="card"><div class="k">ქირონი</div>'+
-      '<div class="v xs">ბექენდი ჯერ არ აბრუნებს ქირონს — განაახლეთ hd_calc.py</div></div>';
-    noteEl.innerHTML='';
-  }else{
-    /* light up Chiron's gates too, with a distinct marker */
-    [ch.personality.gate,ch.design.gate].forEach(g=>{
-      svgChiron.classList.add('active-p-'+g);
-    });
-    cardsEl.innerHTML=
-      `<div class="card hi"><div class="k">ქირონი · პიროვნება</div>
-         <div class="v">⚷ ${ch.personality.gate}.${ch.personality.line}</div></div>
-       <div class="card hi"><div class="k">ქირონი · დიზაინი</div>
-         <div class="v">⚷ ${ch.design.gate}.${ch.design.line}</div></div>
-       <div class="card"><div class="k">ცენტრები</div>
-         <div class="v xs">${(ch.centers||[]).map(c=>CENTER_KA[c]||c).join(', ')||'—'}</div></div>
-       <div class="card"><div class="k">ახალი კარიბჭეები</div>
-         <div class="v xs">${(ch.new_gates||[]).join(', ')||'არცერთი — უკვე აქტიურია'}</div></div>`;
-    noteEl.innerHTML='<div class="gift-item" style="line-height:1.6">'+
-      'ქირონი <b>არ არის</b> ოფიციალური Human Design-ის ნაწილი — რას ურუ ჰუს სისტემა '+
-      '13 აქტივაციას იყენებს. აქ ის დამატებით ფენად ჩანს: ტიპი, ავტორიტეტი, პროფილი და '+
-      'არხები უცვლელია და ნატალურ ჩანართს ემთხვევა.</div>'+
-      '<div class="gift-item" style="color:var(--ink-dim);font-size:.78rem">'+
-      'ჭრილობა/მკურნალის არქეტიპი: ეს კარიბჭეები აჩვენებს სად არის ღრმა ტკივილი '+
-      'და სად ხდება ის სხვისთვის დახმარების უნარი.</div>';
+  if(chart.integration?.n){
+    svgChiron.classList.add('detail-on-'+chart.integration.n);
+    const el=svgChiron.querySelector(`.detail-part[data-detail="${chart.integration.n}"]`);
+    if(el)el.style.setProperty('display','block','important');
   }
 
-  /* planet columns: the standard 13 plus Chiron appended */
+  const ch=chart.chiron;
+
+  // gifts — same as natal
+  document.getElementById('ch-gifts-list').innerHTML=
+    (chart.other_gifts||[]).map(g=>`<div class="gift-item">${g}</div>`).join('')
+    ||'<div class="gift-item" style="color:var(--ink-dim)">—</div>';
+
+  // cards — same as natal, plus one for Chiron
+  const cards=[
+    {k:'ტიპი',v:TYPE_KA[chart.type]||chart.type,hi:true},
+    {k:'სტრატეგია',v:STRATEGY_KA[chart.strategy]||chart.strategy,sm:true},
+    {k:'ავტორიტეტი',v:chart.authority||'',sm:true},
+    {k:'პროფილი',v:chart.profile||'',hi:true},
+    {k:"არარეალ.'მე'",v:chart.not_self||'',sm:true},
+    {k:"რეალ.'მე'",v:chart.signature||'',sm:true},
+    {k:'მთავარი ნიჭი',v:chart.sun_gift||'',sm:true},
+    {k:'განსაზღვრება',v:chart.definition||'',sm:true},
+    {k:'ინკარნ.ჯვარი',v:chart.incarnation_cross||'',xs:true},
+    {k:'საკვები',v:chart.digestion||'',sm:true},
+    {k:'გრძნობა',v:chart.sense||'',sm:true},
+    {k:'გარემო',v:chart.environment||'',sm:true},
+    {k:'მოტივაცია',v:chart.motivation||'',sm:true},
+    {k:'პერსპექტივა',v:chart.perspective||'',sm:true},
+  ];
+  if(ch)cards.push({k:'⚷ ქირონი',
+    v:`${ch.personality.gate}.${ch.personality.line} · ${ch.design.gate}.${ch.design.line}`,hi:true});
+  document.getElementById('ch-summary-cards').innerHTML=cards.map(c=>
+    `<div class="card${c.hi?' hi':''}"><div class="k">${c.k}</div>`+
+    `<div class="v${c.xs?' xs':c.sm?' sm':''}">${c.v||'—'}</div></div>`).join('');
+
+  // planet columns — the standard 13 plus Chiron at the end
   fillPlanetColChiron(chart,ch);
 
+  // channels — same as natal
   const TKA={design:'დიზაინი',personality:'პიროვნება',mixed:'შერეული'};
   document.getElementById('ch-channel-count').textContent=chart.defined_channels.length+' არხი';
   document.getElementById('ch-channel-list').innerHTML=chart.defined_channels.map(c=>`
-    <div class="ch-item ${c.type}" style="cursor:pointer" onclick="openHDArticle(${c.gate_a},${c.gate_b},'${c.name}')">
+    <div class="ch-item ${c.type}">
       <span class="pair">${c.gate_a}–${c.gate_b}</span>
       <span class="cname">${c.name}</span>
       <span class="ctag">${TKA[c.type]||c.type}</span>
     </div>`).join('')||'<div style="color:var(--ink-dim);font-style:italic;font-size:.8rem">—</div>';
 
+  // centres + meta — same as natal
   const defC=new Set(chart.defined_centers);
   document.getElementById('ch-centers-list').innerHTML=CENTER_ORDER.map(c=>
     `<div class="center-chip${defC.has(c)?' on':''}">${CENTER_KA[c]||c}</div>`).join('');
   const inp=chart.input;
   document.getElementById('ch-meta').innerHTML=
-    `<div><strong>ტიპი:</strong> ${TYPE_KA[chart.type]||chart.type}</div>`+
     `<div><strong>დაბადება:</strong> ${inp.date} ${inp.time}</div>`+
-    `<div><strong>ადგილი:</strong> ${inp.resolved_place}</div>`;
+    `<div><strong>ადგილი:</strong> ${inp.resolved_place}</div>`+
+    `<div><strong>UTC:</strong> ${inp.utc_time}</div>`+
+    `<div><strong>დიზაინი:</strong> ${chart.design_time_utc}</div>`+
+    (ch?`<div><strong>⚷ ქირონი:</strong> პიროვნება ${ch.personality.gate}.${ch.personality.line} · `+
+        `დიზაინი ${ch.design.gate}.${ch.design.line}</div>`:'');
 
   document.getElementById('results-chiron').classList.remove('hidden');
   document.getElementById('results-natal').classList.add('hidden');
@@ -749,8 +758,8 @@ function renderChiron(chart){
 }
 
 function fillPlanetColChiron(chart,ch){
-  const row=(a,extra)=>`<div class="prow"${extra||''}>
-    <span class="g">${PLANET_GLYPH[a.planet]||a.glyph||''}</span>
+  const row=a=>`<div class="prow">
+    <span class="g">${PLANET_GLYPH[a.planet]||''}</span>
     <span class="nm">${PLANET_KA[a.planet]||a.planet}</span>
     <span class="gl"><span class="gate">${a.gate}</span>.<span class="line">${a.line}</span></span>
   </div>`;
@@ -760,9 +769,9 @@ function fillPlanetColChiron(chart,ch){
     <span class="gl"><span class="gate" style="color:#7ec8a0">${a.gate}</span>.<span class="line">${a.line}</span></span>
   </div>`;
   document.getElementById('ch-col-design').innerHTML='<h3>დიზაინი</h3>'+
-    ordered(chart.design).map(a=>row(a)).join('')+(ch?chRow(ch.design):'');
+    ordered(chart.design).map(row).join('')+(ch?chRow(ch.design):'');
   document.getElementById('ch-col-personality').innerHTML='<h3>პიროვნება</h3>'+
-    ordered(chart.personality).map(a=>row(a)).join('')+(ch?chRow(ch.personality):'');
+    ordered(chart.personality).map(row).join('')+(ch?chRow(ch.personality):'');
 }
 
 // ── SYNASTRY RENDER ──
