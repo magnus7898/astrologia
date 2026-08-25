@@ -810,8 +810,8 @@ function renderSynastry(c1,c2){
   }
 
   // Planet cols
-  fillPlanetCol(c1.design,c1.personality,'syn-p1-design','syn-p1-personality',false);
-  fillPlanetColBox(c2.design,c2.personality,'syn-p2-design','syn-p2-personality');
+  fillPlanetCol(c1.design,c1.personality,'syn-p1-design','syn-p1-personality',false,c1.chiron);
+  fillPlanetColBox(c2.design,c2.personality,'syn-p2-design','syn-p2-personality',c2.chiron);
 
   // Find electromagnetic channels
   const emChannels=[];
@@ -863,6 +863,33 @@ function renderSynastry(c1,c2){
 
   if(!html)html='<div style="color:var(--ink-dim);font-style:italic;font-size:.8rem">—</div>';
 
+  /* ⚷ Chiron contact: same gate, or one person's Chiron on a gate the
+     other has activated — the classic "wound meets healer" signature */
+  if(c1.chiron&&c2.chiron){
+    const g1=new Set([c1.chiron.personality.gate,c1.chiron.design.gate]);
+    const g2=new Set([c2.chiron.personality.gate,c2.chiron.design.gate]);
+    const p1All=new Set(Object.keys(c1.gate_sources).map(Number));
+    const p2All=new Set(Object.keys(c2.gate_sources).map(Number));
+    const hits=[];
+    [...g1].forEach(g=>{ if(g2.has(g))hits.push(['ორივეს ქირონი',g]); });
+    [...g1].forEach(g=>{ if(p2All.has(g))hits.push(['I ქირონი → II კარიბჭე',g]); });
+    [...g2].forEach(g=>{ if(p1All.has(g))hits.push(['II ქირონი → I კარიბჭე',g]); });
+    const seen=new Set();
+    const uniq=hits.filter(([t,g])=>{const k=t+g;if(seen.has(k))return false;seen.add(k);return true;});
+    html=`<div class="ch-divider" style="color:#7ec8a0;opacity:.8">⚷ ქირონი — I: `+
+      `${c1.chiron.personality.gate}.${c1.chiron.personality.line} / `+
+      `${c1.chiron.design.gate}.${c1.chiron.design.line} · II: `+
+      `${c2.chiron.personality.gate}.${c2.chiron.personality.line} / `+
+      `${c2.chiron.design.gate}.${c2.chiron.design.line}</div>`+
+      (uniq.length?uniq.map(([t,g])=>`<div class="ch-item" style="border-left-color:#7ec8a0">
+        <span class="pair" style="color:#7ec8a0">⚷ ${g}</span>
+        <span class="cname">${t}</span>
+        <span class="ctag" style="color:#7ec8a0">ქირონი</span>
+      </div>`).join('')
+      :'<div style="color:var(--ink-dim);font-style:italic;font-size:.78rem;padding:4px 10px">ქირონული შეხება არ არის</div>')
+      +html;
+  }
+
   const total=emChannels.length+c1.defined_channels.length+c2.defined_channels.length;
   document.getElementById('syn-channel-count').textContent=`⚡${emChannels.length} EM · ${total} სულ`;
   document.getElementById('syn-channel-list').innerHTML=html;
@@ -899,18 +926,30 @@ function injectP2RedStyle(){
 // ── PLANET COL HELPERS ──
 function ordered(list){return PLANET_ORDER.map(p=>list.find(x=>x.planet===p)).filter(Boolean);}
 
-function fillPlanetCol(design,personality,dId,pId,isRed){
+function fillPlanetCol(design,personality,dId,pId,isRed,chiron){
   const cls=isRed?'red2':'';
   const row=a=>`<div class="prow ${cls}">
     <span class="g">${PLANET_GLYPH[a.planet]||''}</span>
     <span class="nm">${PLANET_KA[a.planet]||a.planet}</span>
     <span class="gl"><span class="gate">${a.gate}</span>.<span class="line">${a.line}</span></span>
   </div>`;
-  document.getElementById(dId).innerHTML=`<h3>${isRed?'დიზაინი II':'დიზაინი I'}</h3>`+ordered(design).map(row).join('');
-  document.getElementById(pId).innerHTML=`<h3>${isRed?'პიროვნება II':'პიროვნება I'}</h3>`+ordered(personality).map(row).join('');
+  document.getElementById(dId).innerHTML=`<h3>${isRed?'დიზაინი II':'დიზაინი I'}</h3>`+
+    ordered(design).map(row).join('')+(chiron?chironRow(chiron.design,isRed):'');
+  document.getElementById(pId).innerHTML=`<h3>${isRed?'პიროვნება II':'პიროვნება I'}</h3>`+
+    ordered(personality).map(row).join('')+(chiron?chironRow(chiron.personality,isRed):'');
 }
 
-function fillPlanetColBox(design,personality,dId,pId){
+/* one shared Chiron row, tinted for whichever person owns it */
+function chironRow(a,isRed){
+  const col=isRed?'#f0a0a0':'#7ec8a0';
+  return `<div class="prow" style="border-top:1px solid rgba(196,149,80,.25);margin-top:4px;padding-top:5px">
+    <span class="g" style="color:${col}">⚷</span>
+    <span class="nm" style="color:${col}">ქირონი</span>
+    <span class="gl"><span class="gate" style="color:${col}">${a.gate}</span>.<span class="line">${a.line}</span></span>
+  </div>`;
+}
+
+function fillPlanetColBox(design,personality,dId,pId,chiron){
   const row=a=>`<div class="prow red2">
     <span class="g">${PLANET_GLYPH[a.planet]||''}</span>
     <span class="nm">${PLANET_KA[a.planet]||a.planet}</span>
@@ -920,8 +959,8 @@ function fillPlanetColBox(design,personality,dId,pId){
   const pEl=document.getElementById(pId);
   const dH=dEl.querySelector('h3')?.outerHTML||'';
   const pH=pEl.querySelector('h3')?.outerHTML||'';
-  dEl.innerHTML=dH+ordered(design).map(row).join('');
-  pEl.innerHTML=pH+ordered(personality).map(row).join('');
+  dEl.innerHTML=dH+ordered(design).map(row).join('')+(chiron?chironRow(chiron.design,true):'');
+  pEl.innerHTML=pH+ordered(personality).map(row).join('')+(chiron?chironRow(chiron.personality,true):'');
 }
 
 // Preload natal SVG
