@@ -2778,13 +2778,37 @@ function drawWheel(data1,data2,dualAsp){
        underneath they need more, so widen the spread when they are on */
     const _w0=(typeof window!=='undefined'?window.innerWidth:1200);
     const _b0=Math.min(2.2,Math.max(1,760/Math.max(320,_w0-24)));
-    const MINGAP=(SHOW_DEGREES?(isInner?27:32)*_b0:(isInner?18:22))/Rg;
-    for(let it=0;it<400;it++){
+    /* Every point needs its own width. A single fixed gap was sized for
+       one-character glyphs (☉ ♀), so AC / MC / Vx — two characters wide —
+       and the degree label under them ran into their neighbours. Measure
+       each item and separate any two by the sum of their half-widths. */
+    const _fsGlyph=isInner?12:18;
+    const _fsDeg=(isInner?6:7)*_b0;
+    function itemWidth(n){
+      const s=(PI[n]||{}).sym||'?';
+      let w=(s==='SEL')?_fsGlyph*0.8:_fsGlyph*(0.62+Math.max(0,s.length-1)*0.58);
+      if(SHOW_DEGREES){
+        const pd=data.planets[n];
+        if(pd&&pd.degree!=null){
+          const dt=fmtDeg(pd.degree);
+          w=Math.max(w, dt.length*_fsDeg*0.52 + _fsDeg*0.22 + _fsDeg*1.2);
+        }
+      }
+      return w+(isInner?4:6);
+    }
+    const _wid={};
+    for(const n of present)_wid[n]=itemWidth(n);
+    for(let it=0;it<600;it++){
       let moved=false;
       for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
-        const a=sorted[i],b=sorted[j];let d=dispA[b]-dispA[a];
+        const a=sorted[i],b=sorted[j];
+        const need=((_wid[a]+_wid[b])/2)/Rg;
+        let d=dispA[b]-dispA[a];
         while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
-        if(Math.abs(d)<MINGAP&&Math.abs(d)>0.0001){const push=(MINGAP-Math.abs(d))/2,dir=d>0?1:-1;dispA[a]-=push*dir;dispA[b]+=push*dir;moved=true;}
+        if(Math.abs(d)<need&&Math.abs(d)>0.0001){
+          const push=(need-Math.abs(d))/2,dir=d>0?1:-1;
+          dispA[a]-=push*dir;dispA[b]+=push*dir;moved=true;
+        }
       }
       if(!moved)break;
     }
