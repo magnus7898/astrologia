@@ -863,35 +863,56 @@ function progressedDate(natal,target){
      conjunction stays gold: it is neutral, its nature depends on the planets */
 /* Base orbs, tightened from the old 12/12/10/10/8/6 which produced far too
    many aspects. These are the orb for a LUMINARY pair; every other body
-   narrows them through ORB_FACTOR below. */
+   narrows them through the tier table below. */
 const ASPECTS_DEF=[
-  {name:'შეერთება',angles:[0],orb:10,sym:'☌',color:'#f9c646'},
-  {name:'ოპოზიცია',angles:[180],orb:10,sym:'☍',color:'#e04040'},
-  {name:'ტრინი',angles:[120,240],orb:8,sym:'△',color:'#4a90e2'},
-  {name:'კვადრატი',angles:[90,270],orb:8,sym:'□',color:'#e04040'},
-  {name:'სექსტილი',angles:[60,300],orb:5,sym:'⚹',color:'#4a90e2'},
-  {name:'კვინკონსი',angles:[150,210],orb:3,sym:'⚻',color:'#3fbf7f'},
+  {name:'შეერთება',angles:[0],orb:11,sym:'☌',color:'#f9c646'},
+  {name:'ოპოზიცია',angles:[180],orb:11,sym:'☍',color:'#e04040'},
+  {name:'ტრინი',angles:[120,240],orb:9,sym:'△',color:'#4a90e2'},
+  {name:'კვადრატი',angles:[90,270],orb:9,sym:'□',color:'#e04040'},
+  {name:'სექსტილი',angles:[60,300],orb:6,sym:'⚹',color:'#4a90e2'},
+  {name:'კვინკონსი',angles:[150,210],orb:4,sym:'⚻',color:'#3fbf7f'},
 ];
 
-/* ── orb by body ───────────────────────────────────────────────
-   A Sun-Moon square is a different order of event from a Chiron-Lilith
-   square, so they must not share an orb. Each body carries a factor;
-   a pair uses the SMALLER of the two, so the tighter body governs.
-   Luminaries 1.0 · personal .8 · social .7 · outer .6 · points .45   */
-const ORB_FACTOR={
-  'მზე':1.0,'მთვარე':1.0,
-  'მერკური':0.8,'ვენერა':0.8,'მარსი':0.8,
-  'იუპიტერი':0.7,'სატურნი':0.7,
-  'ურანი':0.6,'ნეპტუნი':0.6,'პლუტონი':0.6,
-  'AC':0.8,'MC':0.8,
-  'ჩრდ. კვანძი':0.45,'სამხ. კვანძი':0.45,'ქირონი':0.45,'ლილიტი':0.45,
-  'თეთრი მთვარე':0.45,'ბედის ვარსკვლავი':0.45,'ვერტექსი':0.45,'იუნო':0.45
+/* ── orb by body pair ──────────────────────────────────────────
+   Orb depends on WHICH TWO bodies meet, in four tiers:
+
+     inner   Sun Moon Mercury Venus Mars   (+ AC/MC, they are personal)
+     social  Jupiter Saturn
+     outer   Uranus Neptune Pluto
+     virtual calculated points: nodes, Chiron, Lilith, Selena,
+             Fortune, Vertex, Juno
+
+   inner↔inner is the widest, inner↔outer normal, outer↔outer tight,
+   and anything involving a virtual point tighter still.            */
+const ORB_TIER={
+  'მზე':'inner','მთვარე':'inner','მერკური':'inner','ვენერა':'inner','მარსი':'inner',
+  'AC':'inner','MC':'inner',
+  'იუპიტერი':'social','სატურნი':'social',
+  'ურანი':'outer','ნეპტუნი':'outer','პლუტონი':'outer',
+  'ჩრდ. კვანძი':'virtual','სამხ. კვანძი':'virtual','ქირონი':'virtual',
+  'ლილიტი':'virtual','თეთრი მთვარე':'virtual','ბედის ვარსკვლავი':'virtual',
+  'ვერტექსი':'virtual','იუნო':'virtual'
+};
+/* keys are alphabetically sorted, matching [t1,t2].sort().join('|') */
+const ORB_PAIR={
+  'inner|inner':1.00,
+  'inner|social':0.92,
+  'inner|outer':0.80,
+  'inner|virtual':0.60,
+  'social|social':0.85,
+  'outer|social':0.75,
+  'social|virtual':0.55,
+  'outer|outer':0.65,
+  'outer|virtual':0.50,
+  'virtual|virtual':0.40
 };
 function orbFor(asp,n1,n2){
-  const f1=ORB_FACTOR[n1]!==undefined?ORB_FACTOR[n1]:0.5;
-  const f2=ORB_FACTOR[n2]!==undefined?ORB_FACTOR[n2]:0.5;
-  return asp.orb*Math.min(f1,f2);
+  const t1=ORB_TIER[n1]||'virtual', t2=ORB_TIER[n2]||'virtual';
+  const key=[t1,t2].sort().join('|');
+  const f=ORB_PAIR[key]!==undefined?ORB_PAIR[key]:0.5;
+  return asp.orb*f;
 }
+
 function calcCrossAspects(p1,p2){
   const aspects=[];
   // All planets that have degree data
