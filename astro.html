@@ -822,9 +822,10 @@ function calcComposite(d1,d2){
     const raw=((planets[n2].degree-planets[n1].degree)+360)%360;
     let best=null,bestOrb=999;
     for(const asp of ASPECTS_DEF){
+      const allow=orbFor(asp,n1,n2);
       for(const target of asp.angles){
         let diff=Math.abs(raw-target);if(diff>180)diff=360-diff;
-        if(diff<=asp.orb&&diff<bestOrb){bestOrb=diff;best=asp;}
+        if(diff<=allow&&diff<bestOrb){bestOrb=diff;best=asp;}
       }
     }
     if(best)compAspects.push({p1:n1,p2:n2,type:best.name,sym:best.sym,color:best.color,orb:Math.round(bestOrb*100)/100,angle:best.angles[0]});
@@ -848,14 +849,37 @@ function progressedDate(natal,target){
      soft aspects (trine, sextile)       -> blue
      quincunx                            -> green
      conjunction stays gold: it is neutral, its nature depends on the planets */
+/* Base orbs, tightened from the old 12/12/10/10/8/6 which produced far too
+   many aspects. These are the orb for a LUMINARY pair; every other body
+   narrows them through ORB_FACTOR below. */
 const ASPECTS_DEF=[
-  {name:'შეერთება',angles:[0],orb:12,sym:'☌',color:'#f9c646'},
-  {name:'ოპოზიცია',angles:[180],orb:12,sym:'☍',color:'#e04040'},
-  {name:'ტრინი',angles:[120,240],orb:10,sym:'△',color:'#4a90e2'},
-  {name:'კვადრატი',angles:[90,270],orb:10,sym:'□',color:'#e04040'},
-  {name:'სექსტილი',angles:[60,300],orb:8,sym:'⚹',color:'#4a90e2'},
-  {name:'კვინკონსი',angles:[150,210],orb:6,sym:'⚻',color:'#3fbf7f'},
+  {name:'შეერთება',angles:[0],orb:10,sym:'☌',color:'#f9c646'},
+  {name:'ოპოზიცია',angles:[180],orb:10,sym:'☍',color:'#e04040'},
+  {name:'ტრინი',angles:[120,240],orb:8,sym:'△',color:'#4a90e2'},
+  {name:'კვადრატი',angles:[90,270],orb:8,sym:'□',color:'#e04040'},
+  {name:'სექსტილი',angles:[60,300],orb:5,sym:'⚹',color:'#4a90e2'},
+  {name:'კვინკონსი',angles:[150,210],orb:3,sym:'⚻',color:'#3fbf7f'},
 ];
+
+/* ── orb by body ───────────────────────────────────────────────
+   A Sun-Moon square is a different order of event from a Chiron-Lilith
+   square, so they must not share an orb. Each body carries a factor;
+   a pair uses the SMALLER of the two, so the tighter body governs.
+   Luminaries 1.0 · personal .8 · social .7 · outer .6 · points .45   */
+const ORB_FACTOR={
+  'მზე':1.0,'მთვარე':1.0,
+  'მერკური':0.8,'ვენერა':0.8,'მარსი':0.8,
+  'იუპიტერი':0.7,'სატურნი':0.7,
+  'ურანი':0.6,'ნეპტუნი':0.6,'პლუტონი':0.6,
+  'AC':0.8,'MC':0.8,
+  'ჩრდ. კვანძი':0.45,'სამხ. კვანძი':0.45,'ქირონი':0.45,'ლილიტი':0.45,
+  'თეთრი მთვარე':0.45,'ბედის ვარსკვლავი':0.45,'ვერტექსი':0.45,'იუნო':0.45
+};
+function orbFor(asp,n1,n2){
+  const f1=ORB_FACTOR[n1]!==undefined?ORB_FACTOR[n1]:0.5;
+  const f2=ORB_FACTOR[n2]!==undefined?ORB_FACTOR[n2]:0.5;
+  return asp.orb*Math.min(f1,f2);
+}
 function calcCrossAspects(p1,p2){
   const aspects=[];
   // All planets that have degree data
@@ -867,11 +891,12 @@ function calcCrossAspects(p1,p2){
       const raw=((deg2-deg1)+360)%360;
       let best=null,bestOrb=999;
       for(const asp of ASPECTS_DEF){
+        const allow=orbFor(asp,n1,n2);
         for(const target of asp.angles){
           // shortest arc between raw and target
           let diff=Math.abs(raw-target);
           if(diff>180)diff=360-diff;
-          if(diff<=asp.orb&&diff<bestOrb){bestOrb=diff;best=asp;}
+          if(diff<=allow&&diff<bestOrb){bestOrb=diff;best=asp;}
         }
       }
       if(best)aspects.push({p1:n1,p2:n2,type:best.name,sym:best.sym,color:best.color,orb:Math.round(bestOrb*100)/100,angle:best.angles[0]});
@@ -1012,10 +1037,11 @@ function calcAllNatalAspects(data){
       const raw=((deg2-deg1)+360)%360;
       let best=null,bestOrb=999;
       for(const asp of ASPECTS_DEF){
+        const allow=orbFor(asp,n1,n2);
         for(const target of asp.angles){
           let diff=Math.abs(raw-target);
           if(diff>180)diff=360-diff;
-          if(diff<=asp.orb&&diff<bestOrb){bestOrb=diff;best=asp;}
+          if(diff<=allow&&diff<bestOrb){bestOrb=diff;best=asp;}
         }
       }
       if(best)aspects.push({p1:n1,p2:n2,type:best.name,sym:best.sym,color:best.color,orb:Math.round(bestOrb*100)/100,angle:best.angles[0]});
@@ -1479,6 +1505,18 @@ function drawAcgLines(chartData,birthLon){
   function canPlace(lat,lon){
     return!placedLabels.some(p=>Math.abs(p[0]-lat)<6&&Math.abs(p[1]-lon)<8);
   }
+  /* ACG lines are 1.5-2px wide, so a bare polyline is nearly impossible to
+     hover. Add an invisible wide twin that carries the tooltip. */
+  const ACG_TYPE_KA={M:'MC — კარიერა, საჯარო როლი',I:'IC — სახლი, ფესვები',
+                     A:'AC — იდენტობა, სხეული',D:'DC — ურთიერთობები'};
+  function acgHover(latlngs,planetName,type,col){
+    const hit=L.polyline(latlngs,{color:col,weight:14,opacity:0});
+    hit._acgLine=true;
+    hit.bindTooltip(`${planetName} · ${ACG_TYPE_KA[type]||type}`,{sticky:true});
+    hit.addTo(_acgMap);
+    return hit;
+  }
+
   function placeLabel(lat,lon,sym,type,col){
     if(!canPlace(lat,lon))return;
     placedLabels.push([lat,lon]);
@@ -1504,8 +1542,10 @@ function drawAcgLines(chartData,birthLon){
     [-1080,-720,-360,0,360,720,1080].forEach(offset=>{
       const ml=L.polyline([[-85,mcLon+offset],[85,mcLon+offset]],{color:col,weight:2,opacity:.9});
       ml._acgLine=true;ml.addTo(_acgMap);
+      acgHover([[-85,mcLon+offset],[85,mcLon+offset]],pName,'M',col);
       const il=L.polyline([[-85,icLon+offset],[85,icLon+offset]],{color:col,weight:1.5,opacity:.65});
       il._acgLine=true;il.addTo(_acgMap);
+      acgHover([[-85,icLon+offset],[85,icLon+offset]],pName,'I',col);
     });
     // Labels on MC/IC lines
     placeLabel(35,mcLon,sym,'M',col);
@@ -1535,10 +1575,14 @@ function drawAcgLines(chartData,birthLon){
     // Draw each curve once with looping copies — no splits needed
     [-720,-360,0,360,720].forEach(offset=>{
       if(acPts.length>2){
-        const ac=L.polyline(acPts.map(p=>[p[0],p[1]+offset]),{color:col,weight:2,opacity:.9});
+        const acLL=acPts.map(p=>[p[0],p[1]+offset]);
+        const dcLL=dcPts.map(p=>[p[0],p[1]+offset]);
+        const ac=L.polyline(acLL,{color:col,weight:2,opacity:.9});
         ac._acgLine=true;ac.addTo(_acgMap);
-        const dc=L.polyline(dcPts.map(p=>[p[0],p[1]+offset]),{color:col,weight:2,opacity:.9});
+        acgHover(acLL,pName,'A',col);
+        const dc=L.polyline(dcLL,{color:col,weight:2,opacity:.9});
         dc._acgLine=true;dc.addTo(_acgMap);
+        acgHover(dcLL,pName,'D',col);
       }
     });
     // Label on AC curve (midpoint)
@@ -1977,16 +2021,27 @@ async function renderIncarnations(p){
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
     map.setView([25,0],1);
     // natal Sun-IC line — gold dashed
-    L.polyline([[-85,r.natal_ic_lon],[85,r.natal_ic_lon]],{color:'#f0c96b',weight:3,opacity:.95,dashArray:'8 6'})
-      .addTo(map).bindTooltip('ნატალური მზე-IC',{permanent:false});
-    L.marker([72,r.natal_ic_lon],{icon:L.divIcon({className:'',html:'<div style="color:#f0c96b;font-size:10px;font-weight:700;text-shadow:0 0 4px #000;white-space:nowrap">ნატალი</div>'})}).addTo(map);
+    L.polyline([[-85,r.natal_ic_lon],[85,r.natal_ic_lon]],{color:'#f0c96b',weight:3,opacity:.95,dashArray:'8 6'}).addTo(map);
+    L.polyline([[-85,r.natal_ic_lon],[85,r.natal_ic_lon]],{color:'#f0c96b',weight:14,opacity:0})
+      .addTo(map).bindTooltip('ნატალური მზე-IC · ფესვები',{sticky:true});
+    L.marker([72,r.natal_ic_lon],{interactive:false,icon:L.divIcon({className:'pl-lbl',
+      iconSize:[0,0],iconAnchor:[0,6],
+      html:'<div style="color:#f0c96b;font-size:10px;font-weight:700;text-shadow:0 0 4px #000;white-space:nowrap;pointer-events:none">ნატალი</div>'})}).addTo(map);
     r.incarnations.forEach((inc,i)=>{
       const strong=inc.probable;
       const c=strong?PL_COLORS[(inc.rank-1)%4]:'#5a6472';
       L.polyline([[-85,inc.ic_lon],[85,inc.ic_lon]],
         {color:c,weight:strong?2.8:1.4,opacity:strong?.95:.5,dashArray:strong?null:'3 5'})
-        .addTo(map).bindTooltip(`${inc.date.year} · ქულა ${inc.score}`,{permanent:false});
-      L.marker([62-i*7,inc.ic_lon],{icon:L.divIcon({className:'',html:`<div style="color:${c};font-size:10px;font-weight:700;text-shadow:0 0 4px #000;white-space:nowrap">${inc.date.year}</div>`})}).addTo(map);
+        .addTo(map);
+      /* invisible wide line so the thin one is actually hoverable */
+      L.polyline([[-85,inc.ic_lon],[85,inc.ic_lon]],
+        {color:c,weight:14,opacity:0})
+        .addTo(map).bindTooltip(
+          `${inc.date.year} · ქულა ${inc.score}${inc.probable?' · სავარაუდო':''}`,
+          {sticky:true});
+      L.marker([62-i*7,inc.ic_lon],{interactive:false,icon:L.divIcon({className:'pl-lbl',
+        iconSize:[0,0],iconAnchor:[0,6],
+        html:`<div style="color:${c};font-size:10px;font-weight:700;text-shadow:0 0 4px #000;white-space:nowrap;pointer-events:none">${inc.date.year}</div>`})}).addTo(map);
     });
     window._plMap=map;
     plPlaceTable();
