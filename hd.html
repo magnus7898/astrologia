@@ -253,6 +253,7 @@ header::after{content:"";display:block;width:280px;height:1px;
   <button class="tab-btn active" onclick="setMode('natal')">ნატალური</button>
   <button class="tab-btn" onclick="setMode('synastry')">სინასტრია</button>
   <button class="tab-btn" onclick="setMode('chiron')">ქირონი</button>
+  <button class="tab-btn" onclick="setMode('synchiron')">სინასტრია ⚷</button>
 </div>
 
 <!-- FORMS -->
@@ -343,6 +344,49 @@ header::after{content:"";display:block;width:280px;height:1px;
     <div class="tz-row" id="s2-tz-row"></div>
     <input type="hidden" id="s2-lat"><input type="hidden" id="s2-lon"><input type="hidden" id="s2-tz" value="UTC">
     <button type="button" class="btn-calc" onclick="generate()">✦ სინასტრიის გამოთვლა ✦</button>
+  </div>
+
+  <!-- სინასტრია ქირონით -->
+  <div id="form-synchiron" class="form-section">
+    <div class="person-label">👤 პირველი პირი</div>
+    <div class="form-row">
+      <div class="field"><label>დღე</label><input type="number" id="x1-day" value="1" min="1" max="31"></div>
+      <div class="field"><label>თვე</label><input type="number" id="x1-month" value="1" min="1" max="12"></div>
+      <div class="field"><label>წელი</label><input type="number" id="x1-year" value="1990"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>საათი</label><input type="number" id="x1-hour" value="12" min="0" max="23"></div>
+      <div class="field"><label>წუთი</label><input type="number" id="x1-minute" value="0" min="0" max="59"></div>
+      <div class="field"><label>წამი</label><input type="number" id="x1-second" value="0" min="0" max="59"></div>
+    </div>
+    <div class="field" style="margin-bottom:6px">
+      <label>ქალაქი</label>
+      <input id="x1-city" type="text" placeholder="ქალაქი" oninput="searchCity('x1')">
+      <div class="city-hint" id="x1-city-hint"></div>
+    </div>
+    <div class="tz-row" id="x1-tz-row"></div>
+    <input type="hidden" id="x1-lat"><input type="hidden" id="x1-lon"><input type="hidden" id="x1-tz" value="UTC">
+
+    <div class="person-sep"></div>
+    <div class="person-label red">👤 მეორე პირი</div>
+    <div class="form-row">
+      <div class="field"><label>დღე</label><input type="number" id="x2-day" value="1" min="1" max="31"></div>
+      <div class="field"><label>თვე</label><input type="number" id="x2-month" value="1" min="1" max="12"></div>
+      <div class="field"><label>წელი</label><input type="number" id="x2-year" value="1992"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>საათი</label><input type="number" id="x2-hour" value="12" min="0" max="23"></div>
+      <div class="field"><label>წუთი</label><input type="number" id="x2-minute" value="0" min="0" max="59"></div>
+      <div class="field"><label>წამი</label><input type="number" id="x2-second" value="0" min="0" max="59"></div>
+    </div>
+    <div class="field" style="margin-bottom:6px">
+      <label>ქალაქი</label>
+      <input id="x2-city" type="text" placeholder="ქალაქი" oninput="searchCity('x2')">
+      <div class="city-hint" id="x2-city-hint"></div>
+    </div>
+    <div class="tz-row" id="x2-tz-row"></div>
+    <input type="hidden" id="x2-lat"><input type="hidden" id="x2-lon"><input type="hidden" id="x2-tz" value="UTC">
+    <button type="button" class="btn-calc" onclick="generate()">⚷ სინასტრია ქირონით ⚷</button>
   </div>
 
 </div>
@@ -443,6 +487,30 @@ header::after{content:"";display:block;width:280px;height:1px;
   </div>
 </section>
 
+<!-- ══ SYNASTRY + CHIRON RESULTS ══ -->
+<section id="results-synastry-chiron" class="hidden">
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--violet-lt)"></div>პირველი პირი</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--red-lt)"></div>მეორე პირი</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#ffd700"></div><span style="color:#ffd700">⚡ ელექტრომაგნეტური</span></div>
+  </div>
+
+  <!-- p2-design | p2-personality | [chart: p1-design | svg | p1-personality] -->
+  <div class="sec-head"><span>სხეულის გრაფიკა</span></div>
+  <div class="chart-area" style="grid-template-columns:110px 110px 1fr 110px 110px;margin-bottom:20px">
+    <div class="planet-col" id="kyn-p2-design"><h3 style="color:var(--red-lt)">დიზაინი II</h3></div>
+    <div class="planet-col" id="kyn-p2-personality"><h3 style="color:#f8a0a0">პიროვნება II</h3></div>
+    <div id="bodygraph-synch"><div class="loading">იტვირთება…</div></div>
+    <div class="planet-col design" id="kyn-p1-design"><h3>დიზაინი I</h3></div>
+    <div class="planet-col personality" id="kyn-p1-personality"><h3>პიროვნება I</h3></div>
+  </div>
+
+  <div class="panel" style="margin-bottom:20px">
+    <h2>არხები <small id="kyn-channel-count"></small></h2>
+    <div class="channel-list" id="kyn-channel-list"></div>
+  </div>
+</section>
+
 </div><!-- /page -->
 
 <script>
@@ -490,19 +558,21 @@ function centersFromGates(gateSet){
 }
 
 let currentMode='natal';
-let svgNatal=null, svgSyn=null, svgChiron=null;
+let svgNatal=null, svgSyn=null, svgChiron=null, svgSynCh=null;
 const cityTimers={};
 
 // ── MODE ──
 function setMode(mode){
   currentMode=mode;
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['natal','synastry','chiron'][i]===mode));
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['natal','synastry','chiron','synchiron'][i]===mode));
   document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('form-'+mode).classList.add('active');
   document.getElementById('results-natal').classList.add('hidden');
   document.getElementById('results-synastry').classList.add('hidden');
   const rc=document.getElementById('results-chiron');
   if(rc)rc.classList.add('hidden');
+  const rx=document.getElementById('results-synastry-chiron');
+  if(rx)rx.classList.add('hidden');
   document.getElementById('status').textContent='';
 }
 
@@ -570,6 +640,13 @@ async function generate(){
       const chart=await fetchHD(p);
       renderChiron(chart);
       stat.textContent='';
+    }else if(currentMode==='synchiron'){
+      const p1=getPerson('x1'),p2=getPerson('x2');
+      if(!p1.lat||!p1.lon||!p2.lat||!p2.lon){stat.className='status error';stat.textContent='⚠ შეიყვანეთ ორივე ქალაქი';return;}
+      if(!svgSynCh)await loadSVG('bodygraph-synch','synch');
+      const[k1,k2]=await Promise.all([fetchHD(p1),fetchHD(p2)]);
+      renderSynastryChiron(k1,k2);
+      stat.textContent='';
     }else{
       const p1=getPerson('s1'),p2=getPerson('s2');
       if(!p1.lat||!p1.lon||!p2.lat||!p2.lon){stat.className='status error';stat.textContent='⚠ შეიყვანეთ ორივე ქალაქი';return;}
@@ -582,7 +659,8 @@ async function generate(){
   finally{
     if(btn){btn.disabled=false;
       btn.textContent=currentMode==='natal'?'✦ გრაფიკის გამოთვლა ✦'
-        :currentMode==='chiron'?'⚷ ქირონის რუკა ⚷':'✦ სინასტრიის გამოთვლა ✦';}
+        :currentMode==='chiron'?'⚷ ქირონის რუკა ⚷'
+        :currentMode==='synchiron'?'⚷ სინასტრია ქირონით ⚷':'✦ სინასტრიის გამოთვლა ✦';}
   }
 }
 
@@ -608,6 +686,7 @@ async function loadSVG(containerId,which){
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));
   if(which==='natal')svgNatal=sv;
   else if(which==='chiron')svgChiron=sv;
+  else if(which==='synch')svgSynCh=sv;
   else svgSyn=sv;
 }
 
@@ -775,7 +854,10 @@ function fillPlanetColChiron(chart,ch){
 }
 
 // ── SYNASTRY RENDER ──
-function renderSynastry(c1,c2){
+function renderSynastry(c1,c2){ _renderSyn(c1,c2,'syn',svgSyn,'results-synastry',false); }
+function renderSynastryChiron(c1,c2){ _renderSyn(c1,c2,'kyn',svgSynCh,'results-synastry-chiron',true); }
+
+function _renderSyn(c1,c2,P,svgSyn,SECT,WITH_CHIRON){
   clearSVG(svgSyn);
 
   const p1Gates=new Set(Object.keys(c1.gate_sources).map(Number));
@@ -810,8 +892,8 @@ function renderSynastry(c1,c2){
   }
 
   // Planet cols
-  fillPlanetCol(c1.design,c1.personality,'syn-p1-design','syn-p1-personality',false,c1.chiron);
-  fillPlanetColBox(c2.design,c2.personality,'syn-p2-design','syn-p2-personality',c2.chiron);
+  fillPlanetCol(c1.design,c1.personality,`${P}-p1-design`,`${P}-p1-personality`,false,WITH_CHIRON?c1.chiron:null);
+  fillPlanetColBox(c2.design,c2.personality,`${P}-p2-design`,`${P}-p2-personality`,WITH_CHIRON?c2.chiron:null);
 
   // Find electromagnetic channels
   const emChannels=[];
@@ -865,7 +947,7 @@ function renderSynastry(c1,c2){
 
   /* ⚷ Chiron contact: same gate, or one person's Chiron on a gate the
      other has activated — the classic "wound meets healer" signature */
-  if(c1.chiron&&c2.chiron){
+  if(WITH_CHIRON&&c1.chiron&&c2.chiron){
     const g1=new Set([c1.chiron.personality.gate,c1.chiron.design.gate]);
     const g2=new Set([c2.chiron.personality.gate,c2.chiron.design.gate]);
     const p1All=new Set(Object.keys(c1.gate_sources).map(Number));
@@ -891,12 +973,14 @@ function renderSynastry(c1,c2){
   }
 
   const total=emChannels.length+c1.defined_channels.length+c2.defined_channels.length;
-  document.getElementById('syn-channel-count').textContent=`⚡${emChannels.length} EM · ${total} სულ`;
-  document.getElementById('syn-channel-list').innerHTML=html;
+  document.getElementById(`${P}-channel-count`).textContent=`⚡${emChannels.length} EM · ${total} სულ`;
+  document.getElementById(`${P}-channel-list`).innerHTML=html;
 
-  document.getElementById('results-synastry').classList.remove('hidden');
+  document.getElementById(SECT).classList.remove('hidden');
+  ['results-natal','results-chiron','results-synastry','results-synastry-chiron']
+    .filter(x=>x!==SECT).forEach(x=>{const e=document.getElementById(x);if(e)e.classList.add('hidden');});
   document.getElementById('results-natal').classList.add('hidden');
-  document.getElementById('results-synastry').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById(SECT).scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 // ── INJECT P2 RED CSS ──
