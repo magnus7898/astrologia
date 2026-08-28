@@ -901,6 +901,45 @@ function renderNatal(chart){
   document.getElementById('results-natal').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+/* ── augment a chart so Chiron and Lilith count as real activations ──
+   Their gates join gate_sources on the personality/design side they came
+   from, then channels and centres are recomputed. The result is coloured
+   exactly like an ordinary chart, and a channel completed with the help of
+   Chiron or Lilith lights up like any other.
+   NOTE: this is deliberately NON-CANONICAL — Human Design uses 13
+   activations — which is why it lives only in the ⚷⚸ tabs.            */
+function augmentWithExtras(chart,keys){
+  const c=JSON.parse(JSON.stringify(chart));
+  const gs=c.gate_sources||{};
+  const added=[];
+  keys.forEach(k=>{
+    const b=chart[k];if(!b)return;
+    const m=EXTRA_META[k];
+    [[b.personality.gate,'p'],[b.design.gate,'d']].forEach(([g,side])=>{
+      const key=String(g);
+      if(!gs[key])gs[key]={p:false,d:false};
+      if(!gs[key][side]){gs[key][side]=true;added.push({gate:g,side,body:k,ka:m.ka});}
+    });
+  });
+  c.gate_sources=gs;
+  const all=new Set(Object.keys(gs).map(Number));
+
+  /* recompute channels from the augmented gate set */
+  const chans=[];
+  for(const [a,b,name] of CHANNELS){
+    if(!all.has(a)||!all.has(b))continue;
+    const sa=gs[String(a)],sb=gs[String(b)];
+    const p=(sa.p&&sb.p),d=(sa.d&&sb.d);
+    const type=p&&d?'mixed':(p?'personality':(d?'design':'mixed'));
+    const viaExtra=added.some(x=>x.gate===a||x.gate===b);
+    chans.push({gate_a:a,gate_b:b,name,type,via_extra:viaExtra});
+  }
+  c.defined_channels=chans;
+  c.defined_centers=[...centersFromGates(all)];
+  c._extraAdded=added;
+  return c;
+}
+
 // ── EXTRA-BODY RENDER (Chiron / Lilith) ──
 // Exactly the natal chart — same cards, gifts, channels, centres — with one
 // extra body added to the planet columns. The canonical chart is untouched.
@@ -909,9 +948,13 @@ const EXTRA_META={
   lilith:{glyph:'⚸',ka:'ლილიტი',col:'#c89ae0'}
 };
 function renderChiron(chart){ _renderExtra(chart,['chiron','lilith'],'ch',svgChiron,'results-chiron'); }
-function renderLilith(chart){ _renderExtra(chart,['lilith'],'li',svgLilith,'results-lilith'); }
+function renderLilith(chart){
+  /* full mode: Chiron AND Lilith count as activations */
+  const aug=augmentWithExtras(chart,['chiron','lilith']);
+  _renderExtra(aug,['chiron','lilith'],'li',svgLilith,'results-lilith',true);
+}
 
-function _renderExtra(chart,KEYS,P,svg,SECT){
+function _renderExtra(chart,KEYS,P,svg,SECT,FULL){
   if(!Array.isArray(KEYS))KEYS=[KEYS];
   const M=EXTRA_META[KEYS[0]];
   clearSVG(svg);
@@ -939,13 +982,19 @@ function _renderExtra(chart,KEYS,P,svg,SECT){
   if(KEYS.includes('lilith')&&chart.lilith){
     [chart.lilith.personality.gate,chart.lilith.design.gate].forEach(g=>_liG.add(g));
   }
-  const _extraGates=new Set([..._chG,..._liG]);
-  _extraGates.forEach(g=>{
-    if(_std.has(g))return;                       // already lit by a real planet
-    if(_chG.has(g)&&_liG.has(g))svg.classList.add('extra-both-'+g);
-    else if(_chG.has(g))svg.classList.add('extra-ch-'+g);
-    else svg.classList.add('extra-li-'+g);
-  });
+  if(!FULL){
+    /* marked mode: own colours, canonical chart untouched */
+    const _extraGates=new Set([..._chG,..._liG]);
+    _extraGates.forEach(g=>{
+      if(_std.has(g))return;                     // already lit by a real planet
+      if(_chG.has(g)&&_liG.has(g))svg.classList.add('extra-both-'+g);
+      else if(_chG.has(g))svg.classList.add('extra-ch-'+g);
+      else svg.classList.add('extra-li-'+g);
+    });
+  }
+  /* in FULL mode the gates are already inside gate_sources, so the loop
+     above them has coloured them with the standard personality/design
+     classes — nothing extra to do here. */
 
   // gifts — same as natal
   document.getElementById(`${P}-gifts-list`).innerHTML=
@@ -985,9 +1034,9 @@ function _renderExtra(chart,KEYS,P,svg,SECT){
   const TKA={design:'დიზაინი',personality:'პიროვნება',mixed:'შერეული'};
   document.getElementById(`${P}-channel-count`).textContent=chart.defined_channels.length+' არხი';
   document.getElementById(`${P}-channel-list`).innerHTML=chart.defined_channels.map(c=>`
-    <div class="ch-item ${c.type}">
+    <div class="ch-item ${c.type}"${c.via_extra?' style="border-left-color:#9B6BC4"':''}>
       <span class="pair">${c.gate_a}–${c.gate_b}</span>
-      <span class="cname">${c.name}</span>
+      <span class="cname">${c.name}${c.via_extra?' <span style="color:#9B6BC4;font-size:.7rem">⚷⚸</span>':''}</span>
       <span class="ctag">${TKA[c.type]||c.type}</span>
     </div>`).join('')||'<div style="color:var(--ink-dim);font-style:italic;font-size:.8rem">—</div>';
 
@@ -1033,10 +1082,16 @@ function fillPlanetColExtra(chart,list,P){
 // ── SYNASTRY RENDER ──
 function renderSynastry(c1,c2){ _renderSyn(c1,c2,'syn',svgSyn,'results-synastry',null); }
 function renderSynastryChiron(c1,c2){ _renderSyn(c1,c2,'kyn',svgSynCh,'results-synastry-chiron','chiron'); }
-function renderSynastryLilith(c1,c2){ _renderSyn(c1,c2,'lyn',svgSynLi,'results-synastry-lilith','lilith'); }
+function renderSynastryLilith(c1,c2){
+  /* full mode: both extra bodies act as real activations for both people */
+  _renderSyn(augmentWithExtras(c1,['chiron','lilith']),
+             augmentWithExtras(c2,['chiron','lilith']),
+             'lyn',svgSynLi,'results-synastry-lilith','both');
+}
 
 function _renderSyn(c1,c2,P,svgSyn,SECT,EXTRA){
-  const XM=EXTRA?EXTRA_META[EXTRA]:null;
+  const XKEYS=EXTRA==='both'?['chiron','lilith']:(EXTRA?[EXTRA]:[]);
+  const XM=XKEYS.length?EXTRA_META[XKEYS[0]]:null;
   clearSVG(svgSyn);
 
   const p1Gates=new Set(Object.keys(c1.gate_sources).map(Number));
@@ -1071,8 +1126,8 @@ function _renderSyn(c1,c2,P,svgSyn,SECT,EXTRA){
   }
 
   // Planet cols
-  fillPlanetCol(c1.design,c1.personality,`${P}-p1-design`,`${P}-p1-personality`,false,EXTRA?c1[EXTRA]:null,XM);
-  fillPlanetColBox(c2.design,c2.personality,`${P}-p2-design`,`${P}-p2-personality`,EXTRA?c2[EXTRA]:null,XM);
+  fillPlanetColMulti(c1,`${P}-p1-design`,`${P}-p1-personality`,XKEYS);
+  fillPlanetColBoxMulti(c2,`${P}-p2-design`,`${P}-p2-personality`,XKEYS);
 
   // Find electromagnetic channels
   const emChannels=[];
@@ -1126,9 +1181,9 @@ function _renderSyn(c1,c2,P,svgSyn,SECT,EXTRA){
 
   /* ⚷ Chiron contact: same gate, or one person's Chiron on a gate the
      other has activated — the classic "wound meets healer" signature */
-  if(EXTRA&&c1[EXTRA]&&c2[EXTRA]){
-    const g1=new Set([c1[EXTRA].personality.gate,c1[EXTRA].design.gate]);
-    const g2=new Set([c2[EXTRA].personality.gate,c2[EXTRA].design.gate]);
+  if(XKEYS.length&&c1[XKEYS[0]]&&c2[XKEYS[0]]){
+    const g1=new Set();XKEYS.forEach(k=>{if(c1[k]){g1.add(c1[k].personality.gate);g1.add(c1[k].design.gate);}});
+    const g2=new Set();XKEYS.forEach(k=>{if(c2[k]){g2.add(c2[k].personality.gate);g2.add(c2[k].design.gate);}});
     const p1All=new Set(Object.keys(c1.gate_sources).map(Number));
     const p2All=new Set(Object.keys(c2.gate_sources).map(Number));
     const hits=[];
@@ -1137,11 +1192,9 @@ function _renderSyn(c1,c2,P,svgSyn,SECT,EXTRA){
     [...g2].forEach(g=>{ if(p1All.has(g))hits.push([`II ${XM.ka} → I კარიბჭე`,g]); });
     const seen=new Set();
     const uniq=hits.filter(([t,g])=>{const k=t+g;if(seen.has(k))return false;seen.add(k);return true;});
-    html=`<div class="ch-divider" style="color:${XM.col};opacity:.8">${XM.glyph} ${XM.ka} — I: `+
-      `${c1[EXTRA].personality.gate}.${c1[EXTRA].personality.line} / `+
-      `${c1[EXTRA].design.gate}.${c1[EXTRA].design.line} · II: `+
-      `${c2[EXTRA].personality.gate}.${c2[EXTRA].personality.line} / `+
-      `${c2[EXTRA].design.gate}.${c2[EXTRA].design.line}</div>`+
+    html=`<div class="ch-divider" style="color:${XM.col};opacity:.8">${XKEYS.map(k=>EXTRA_META[k].glyph).join("")} — I: `+
+      XKEYS.map(k=>c1[k]?`${EXTRA_META[k].glyph}${c1[k].personality.gate}.${c1[k].personality.line}/${c1[k].design.gate}.${c1[k].design.line} `:'').join('')+
+      ` · II: `+XKEYS.map(k=>c2[k]?`${EXTRA_META[k].glyph}${c2[k].personality.gate}.${c2[k].personality.line}/${c2[k].design.gate}.${c2[k].design.line} `:'').join('')+`</div>`+
       (uniq.length?uniq.map(([t,g])=>`<div class="ch-item" style="border-left-color:${XM.col}">
         <span class="pair" style="color:${XM.col}">${XM.glyph} ${g}</span>
         <span class="cname">${t}</span>
@@ -1203,10 +1256,42 @@ function fillPlanetCol(design,personality,dId,pId,isRed,extra,XM){
     ordered(personality).map(row).join('')+(extra?extraRow(extra.personality,isRed,XM):'');
 }
 
+/* synastry columns that can carry several extra bodies */
+function fillPlanetColMulti(chart,dId,pId,keys){
+  const row=a=>`<div class="prow">
+    <span class="g">${PLANET_GLYPH[a.planet]||''}</span>
+    <span class="nm">${PLANET_KA[a.planet]||a.planet}</span>
+    <span class="gl"><span class="gate">${a.gate}</span>.<span class="line">${a.line}</span></span>
+  </div>`;
+  const ex=(side,first)=>keys.map((k,i)=>{
+    const b=chart[k];if(!b)return '';
+    return extraRow(b[side],false,EXTRA_META[k],first&&i===0);
+  }).join('');
+  document.getElementById(dId).innerHTML='<h3>დიზაინი I</h3>'+
+    ordered(chart.design).map(row).join('')+ex('design',true);
+  document.getElementById(pId).innerHTML='<h3>პიროვნება I</h3>'+
+    ordered(chart.personality).map(row).join('')+ex('personality',true);
+}
+function fillPlanetColBoxMulti(chart,dId,pId,keys){
+  const row=a=>`<div class="prow red2">
+    <span class="g">${PLANET_GLYPH[a.planet]||''}</span>
+    <span class="nm">${PLANET_KA[a.planet]||a.planet}</span>
+    <span class="gl"><span class="gate">${a.gate}</span>.<span class="line">${a.line}</span></span>
+  </div>`;
+  const dEl=document.getElementById(dId),pEl=document.getElementById(pId);
+  const dH=dEl.querySelector('h3')?.outerHTML||'',pH=pEl.querySelector('h3')?.outerHTML||'';
+  const ex=(side,first)=>keys.map((k,i)=>{
+    const b=chart[k];if(!b)return '';
+    return extraRow(b[side],true,EXTRA_META[k],first&&i===0);
+  }).join('');
+  dEl.innerHTML=dH+ordered(chart.design).map(row).join('')+ex('design',true);
+  pEl.innerHTML=pH+ordered(chart.personality).map(row).join('')+ex('personality',true);
+}
+
 /* one shared extra-body row, tinted for whichever person owns it */
-function extraRow(a,isRed,XM){
+function extraRow(a,isRed,XM,first){
   const col=isRed?'#f0a0a0':(XM?XM.col:'#7ec8a0');
-  return `<div class="prow" style="border-top:1px solid rgba(196,149,80,.25);margin-top:4px;padding-top:5px">
+  return `<div class="prow" style="${first!==false?'border-top:1px solid rgba(196,149,80,.25);margin-top:4px;padding-top:5px':''}">
     <span class="g" style="color:${col}">${XM?XM.glyph:'⚷'}</span>
     <span class="nm" style="color:${col}">${XM?XM.ka:'ქირონი'}</span>
     <span class="gl"><span class="gate" style="color:${col}">${a.gate}</span>.<span class="line">${a.line}</span></span>
