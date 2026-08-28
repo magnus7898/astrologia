@@ -838,7 +838,8 @@ function clearSVG(sv){
   if(!sv)return;
   const tr=[];
   sv.classList.forEach(c=>{
-    if(c.startsWith('active-')||c.startsWith('detail-on-')||c.startsWith('center-active-'))tr.push(c);
+    if(c.startsWith('active-')||c.startsWith('detail-on-')||
+       c.startsWith('center-active-')||c.startsWith('extra-'))tr.push(c);
   });
   tr.forEach(c=>sv.classList.remove(c));
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));
@@ -907,11 +908,12 @@ const EXTRA_META={
   chiron:{glyph:'⚷',ka:'ქირონი',col:'#7ec8a0'},
   lilith:{glyph:'⚸',ka:'ლილიტი',col:'#c89ae0'}
 };
-function renderChiron(chart){ _renderExtra(chart,'chiron','ch',svgChiron,'results-chiron'); }
-function renderLilith(chart){ _renderExtra(chart,'lilith','li',svgLilith,'results-lilith'); }
+function renderChiron(chart){ _renderExtra(chart,['chiron','lilith'],'ch',svgChiron,'results-chiron'); }
+function renderLilith(chart){ _renderExtra(chart,['lilith'],'li',svgLilith,'results-lilith'); }
 
-function _renderExtra(chart,KEY,P,svg,SECT){
-  const M=EXTRA_META[KEY];
+function _renderExtra(chart,KEYS,P,svg,SECT){
+  if(!Array.isArray(KEYS))KEYS=[KEYS];
+  const M=EXTRA_META[KEYS[0]];
   clearSVG(svg);
   Object.entries(chart.gate_sources).forEach(([g,src])=>{
     const gi=parseInt(g,10);
@@ -925,7 +927,25 @@ function _renderExtra(chart,KEY,P,svg,SECT){
     if(el)el.style.setProperty('display','block','important');
   }
 
-  const ch=chart[KEY];
+  const ch=chart[KEYS[0]];
+  /* Light the gates Chiron / Lilith fall on, in their own colours so they
+     are never confused with the canonical personality / design activations.
+     Gates already active from the standard 13 keep their normal colour. */
+  const _std=new Set(Object.keys(chart.gate_sources).map(Number));
+  const _chG=new Set(), _liG=new Set();
+  if(KEYS.includes('chiron')&&chart.chiron){
+    [chart.chiron.personality.gate,chart.chiron.design.gate].forEach(g=>_chG.add(g));
+  }
+  if(KEYS.includes('lilith')&&chart.lilith){
+    [chart.lilith.personality.gate,chart.lilith.design.gate].forEach(g=>_liG.add(g));
+  }
+  const _extraGates=new Set([..._chG,..._liG]);
+  _extraGates.forEach(g=>{
+    if(_std.has(g))return;                       // already lit by a real planet
+    if(_chG.has(g)&&_liG.has(g))svg.classList.add('extra-both-'+g);
+    else if(_chG.has(g))svg.classList.add('extra-ch-'+g);
+    else svg.classList.add('extra-li-'+g);
+  });
 
   // gifts — same as natal
   document.getElementById(`${P}-gifts-list`).innerHTML=
@@ -949,14 +969,17 @@ function _renderExtra(chart,KEY,P,svg,SECT){
     {k:'მოტივაცია',v:chart.motivation||'',sm:true},
     {k:'პერსპექტივა',v:chart.perspective||'',sm:true},
   ];
-  if(ch)cards.push({k:M.glyph+' '+M.ka,
-    v:`${ch.personality.gate}.${ch.personality.line} · ${ch.design.gate}.${ch.design.line}`,hi:true});
+  KEYS.forEach(k=>{
+    const b=chart[k],m=EXTRA_META[k];
+    if(b&&m)cards.push({k:m.glyph+' '+m.ka,
+      v:`${b.personality.gate}.${b.personality.line} · ${b.design.gate}.${b.design.line}`,hi:true});
+  });
   document.getElementById(`${P}-summary-cards`).innerHTML=cards.map(c=>
     `<div class="card${c.hi?' hi':''}"><div class="k">${c.k}</div>`+
     `<div class="v${c.xs?' xs':c.sm?' sm':''}">${c.v||'—'}</div></div>`).join('');
 
   // planet columns — the standard 13 plus Chiron at the end
-  fillPlanetColExtra(chart,ch,P,M);
+  fillPlanetColExtra(chart,KEYS.map(k=>({b:chart[k],m:EXTRA_META[k]})).filter(x=>x.b&&x.m),P);
 
   // channels — same as natal
   const TKA={design:'დიზაინი',personality:'პიროვნება',mixed:'შერეული'};
@@ -978,8 +1001,9 @@ function _renderExtra(chart,KEY,P,svg,SECT){
     `<div><strong>ადგილი:</strong> ${inp.resolved_place}</div>`+
     `<div><strong>UTC:</strong> ${inp.utc_time}</div>`+
     `<div><strong>დიზაინი:</strong> ${chart.design_time_utc}</div>`+
-    (ch?`<div><strong>${M.glyph} ${M.ka}:</strong> პიროვნება ${ch.personality.gate}.${ch.personality.line} · `+
-        `დიზაინი ${ch.design.gate}.${ch.design.line}</div>`:'');
+    KEYS.map(k=>{const b=chart[k],m=EXTRA_META[k];
+      return (b&&m)?`<div><strong>${m.glyph} ${m.ka}:</strong> პიროვნება ${b.personality.gate}.${b.personality.line} · `+
+        `დიზაინი ${b.design.gate}.${b.design.line}</div>`:'';}).join('');
 
   document.getElementById(SECT).classList.remove('hidden');
   ['results-natal','results-synastry','results-synastry-chiron','results-chiron','results-lilith']
@@ -987,21 +1011,23 @@ function _renderExtra(chart,KEY,P,svg,SECT){
   document.getElementById(SECT).scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function fillPlanetColExtra(chart,ex,P,M){
+function fillPlanetColExtra(chart,list,P){
   const row=a=>`<div class="prow">
     <span class="g">${PLANET_GLYPH[a.planet]||''}</span>
     <span class="nm">${PLANET_KA[a.planet]||a.planet}</span>
     <span class="gl"><span class="gate">${a.gate}</span>.<span class="line">${a.line}</span></span>
   </div>`;
-  const exRow=a=>`<div class="prow" style="border-top:1px solid rgba(196,149,80,.25);margin-top:4px;padding-top:5px">
+  const exRow=(a,M,first)=>`<div class="prow" style="${first?'border-top:1px solid rgba(196,149,80,.25);margin-top:4px;padding-top:5px':''}">
     <span class="g" style="color:${M.col}">${M.glyph}</span>
     <span class="nm" style="color:${M.col}">${M.ka}</span>
     <span class="gl"><span class="gate" style="color:${M.col}">${a.gate}</span>.<span class="line">${a.line}</span></span>
   </div>`;
   document.getElementById(`${P}-col-design`).innerHTML='<h3>დიზაინი</h3>'+
-    ordered(chart.design).map(row).join('')+(ex?exRow(ex.design):'');
+    ordered(chart.design).map(row).join('')+
+    list.map((x,i)=>exRow(x.b.design,x.m,i===0)).join('');
   document.getElementById(`${P}-col-personality`).innerHTML='<h3>პიროვნება</h3>'+
-    ordered(chart.personality).map(row).join('')+(ex?exRow(ex.personality):'');
+    ordered(chart.personality).map(row).join('')+
+    list.map((x,i)=>exRow(x.b.personality,x.m,i===0)).join('');
 }
 
 // ── SYNASTRY RENDER ──
