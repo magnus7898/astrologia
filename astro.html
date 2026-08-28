@@ -2886,11 +2886,34 @@ function drawWheel(data1,data2,dualAsp){
     }
     const _wid={};
     for(const n of present)_wid[n]=itemWidth(n);
+
+    /* A body with its degree label claims ~38px of arc, so six of them in a
+       stellium would be pushed across 44° — far from where they really are.
+       Stagger neighbours onto two label rings instead: each ring then holds
+       every other body, halving the crowding and keeping glyphs near their
+       true longitude. _ring[n] = 0 (inner) or 1 (outer). */
+    const _ring={};
+    {
+      let prev=null;
+      for(const n of sorted){
+        if(prev===null){_ring[n]=0;prev=n;continue;}
+        let d=Math.abs(dispA[n]-dispA[prev]);
+        if(d>Math.PI)d=2*Math.PI-d;
+        const tight=d*Rg < (_wid[n]+_wid[prev])/2;
+        _ring[n]=tight?1-_ring[prev]:0;
+        prev=n;
+      }
+    }
+    window._lblRing=_ring;
+
+    /* spread within each ring separately */
     for(let it=0;it<600;it++){
       let moved=false;
       for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
         const a=sorted[i],b=sorted[j];
-        const need=((_wid[a]+_wid[b])/2)/Rg;
+        const sameRing=_ring[a]===_ring[b];
+        /* different rings only need the glyphs themselves to clear */
+        const need=(sameRing?(_wid[a]+_wid[b])/2:(isInner?15:19))/Rg;
         let d=dispA[b]-dispA[a];
         while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
         if(Math.abs(d)<need&&Math.abs(d)>0.0001){
@@ -2942,8 +2965,8 @@ function drawWheel(data1,data2,dualAsp){
         const pd=data.planets[name];
         if(pd&&pd.sign_degree!=null){
           const ang=wasMoved?dispA[name]:tA;
-          const dR=Rg+(isInner?15:24);   /* far enough out that the wider
-                                             degree+sign label clears its neighbours */
+          const _r=(window._lblRing&&window._lblRing[name])||0;
+          const dR=Rg+(isInner?15:24)+_r*(isInner?11:14);   /* second ring sits further out */
           const dx=CX+Math.cos(ang)*dR, dy=CY+Math.sin(ang)*dR;
           /* degree + its zodiac glyph, side by side and always horizontal */
           const si=Math.floor(((pd.degree%360)+360)%360/30)%12;
