@@ -242,28 +242,31 @@ header::after{content:"";display:block;width:280px;height:1px;
 .extras-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
   margin:0 auto 18px;max-width:760px;}
 .extras-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-dim);margin-right:2px;}
+  color:var(--ink-mid);opacity:.75;margin-right:2px;}
 .xchip{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;
   padding:7px 15px 7px 12px;border-radius:999px;font-size:.85rem;
-  border:1px solid rgba(120,100,70,.28);background:rgba(255,255,255,.5);
-  color:var(--ink-dim);transition:background .16s,border-color .16s,color .16s,transform .16s;}
-.xchip:hover{border-color:rgba(120,100,70,.5);background:rgba(255,255,255,.9);
+  border:1px solid rgba(196,149,80,.28);background:rgba(22,18,40,.7);
+  color:var(--ink-mid);transition:background .16s,border-color .16s,color .16s,transform .16s;}
+.xchip:hover{border-color:rgba(196,149,80,.55);background:rgba(30,24,52,.9);
   color:var(--ink);transform:translateY(-1px);}
 .xchip input{position:absolute;opacity:0;width:0;height:0;}
-.xchip .xg{font-size:1.05rem;line-height:1;opacity:.55;transition:opacity .16s;}
-.xchip.on{color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.18);}
+.xchip .xg{font-size:1.05rem;line-height:1;opacity:.5;transition:opacity .16s;}
+.xchip.on{color:#0d0a18;font-weight:500;box-shadow:0 2px 12px rgba(0,0,0,.5);}
 .xchip.on .xg{opacity:1;}
-.xchip.on[data-body="chiron"]{background:#3E9E75;border-color:#3E9E75;}
-.xchip.on[data-body="lilith"]{background:#9B6BC4;border-color:#9B6BC4;}
-.xchip.on[data-body="asc"]{background:#C89A4C;border-color:#C89A4C;}
-.xchip:focus-within{outline:2px solid rgba(120,100,70,.6);outline-offset:2px;}
-.extras-hint{width:18px;height:18px;border-radius:50%;border:1px solid rgba(120,100,70,.35);
+/* Chiron = jade · Lilith = rose-mauve · AC = sky — all readable on the dark
+   ground and clearly apart from the chart's own red/black activations */
+.xchip.on[data-body="chiron"]{background:#59C9A5;border-color:#59C9A5;}
+.xchip.on[data-body="lilith"]{background:#E08FB4;border-color:#E08FB4;}
+.xchip.on[data-body="asc"]{background:#7FC4E8;border-color:#7FC4E8;}
+.xchip:focus-within{outline:2px solid rgba(196,149,80,.7);outline-offset:2px;}
+.extras-hint{width:18px;height:18px;border-radius:50%;border:1px solid rgba(196,149,80,.35);
   display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;
-  color:var(--ink-dim);cursor:help;}
+  color:var(--ink-mid);cursor:help;}
 @media(max-width:640px){
   .extras-bar{gap:7px;}
   .extras-label{flex-basis:100%;text-align:center;margin-bottom:2px;}
   .xchip{padding:6px 12px 6px 10px;font-size:.8rem;}
+}
 }
 </style>
 </head>
@@ -683,9 +686,9 @@ function _drawNatal(chart,keys){
 }
 
 const EXTRA_META={
-  chiron:{glyph:'⚷',ka:'ქირონი',col:'#3E9E75'},
-  lilith:{glyph:'⚸',ka:'ლილიტი',col:'#9B6BC4'},
-  ascendant:{glyph:'AC',ka:'ასცენდენტი',col:'#C89A4C'}
+  chiron:{glyph:'⚷',ka:'ქირონი',col:'#59C9A5'},      /* jade       */
+  lilith:{glyph:'⚸',ka:'ლილიტი',col:'#E08FB4'},      /* rose-mauve */
+  ascendant:{glyph:'AC',ka:'ასცენდენტი',col:'#7FC4E8'} /* sky        */
 };
 /* which optional activations the user has switched on */
 function activeExtras(){
