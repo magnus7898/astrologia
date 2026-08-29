@@ -239,14 +239,32 @@ header::after{content:"";display:block;width:280px;height:1px;
   .page{padding:28px 16px 60px;}}
 @media(max-width:700px){.summary{grid-template-columns:repeat(2,1fr);}.brand{font-size:1.5rem;}}
 
-.extras-bar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center;
-  margin:0 auto 16px;padding:10px 16px;max-width:760px;
-  background:rgba(255,255,255,.55);border:1px solid rgba(196,149,80,.3);border-radius:10px;}
-.extras-label{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);}
-.extra-chk{display:flex;align-items:center;gap:6px;font-size:.86rem;cursor:pointer;user-select:none;}
-.extra-chk input{width:15px;height:15px;cursor:pointer;accent-color:#9B6BC4;}
-.extras-note{flex-basis:100%;text-align:center;font-size:.68rem;color:var(--ink-dim);opacity:.8;}
-@media(max-width:640px){.extras-bar{gap:12px;}.extras-note{display:none;}}
+.extras-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+  margin:0 auto 18px;max-width:760px;}
+.extras-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-dim);margin-right:2px;}
+.xchip{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;
+  padding:7px 15px 7px 12px;border-radius:999px;font-size:.85rem;
+  border:1px solid rgba(120,100,70,.28);background:rgba(255,255,255,.5);
+  color:var(--ink-dim);transition:background .16s,border-color .16s,color .16s,transform .16s;}
+.xchip:hover{border-color:rgba(120,100,70,.5);background:rgba(255,255,255,.9);
+  color:var(--ink);transform:translateY(-1px);}
+.xchip input{position:absolute;opacity:0;width:0;height:0;}
+.xchip .xg{font-size:1.05rem;line-height:1;opacity:.55;transition:opacity .16s;}
+.xchip.on{color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.18);}
+.xchip.on .xg{opacity:1;}
+.xchip.on[data-body="chiron"]{background:#3E9E75;border-color:#3E9E75;}
+.xchip.on[data-body="lilith"]{background:#9B6BC4;border-color:#9B6BC4;}
+.xchip.on[data-body="asc"]{background:#C89A4C;border-color:#C89A4C;}
+.xchip:focus-within{outline:2px solid rgba(120,100,70,.6);outline-offset:2px;}
+.extras-hint{width:18px;height:18px;border-radius:50%;border:1px solid rgba(120,100,70,.35);
+  display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;
+  color:var(--ink-dim);cursor:help;}
+@media(max-width:640px){
+  .extras-bar{gap:7px;}
+  .extras-label{flex-basis:100%;text-align:center;margin-bottom:2px;}
+  .xchip{padding:6px 12px 6px 10px;font-size:.8rem;}
+}
 </style>
 </head>
 <body>
@@ -266,11 +284,20 @@ header::after{content:"";display:block;width:280px;height:1px;
 
 <!-- FORMS -->
 <div class="extras-bar">
-  <span class="extras-label">დამატებითი აქტივაციები</span>
-  <label class="extra-chk"><input type="checkbox" id="opt-chiron" onchange="rerenderCurrent()"> <span style="color:#3E9E75">⚷</span> ქირონი</label>
-  <label class="extra-chk"><input type="checkbox" id="opt-lilith" onchange="rerenderCurrent()"> <span style="color:#9B6BC4">⚸</span> ლილიტი</label>
-  <label class="extra-chk"><input type="checkbox" id="opt-asc" onchange="rerenderCurrent()"> <span style="color:#C89A4C">AC</span> ასცენდენტი</label>
-  <span class="extras-note">არცერთი არ არის ოფიციალური HD-ის ნაწილი — ჩართვისას რუკა იცვლება</span>
+  <span class="extras-label">დამატებით</span>
+  <label class="xchip" data-body="chiron">
+    <input type="checkbox" id="opt-chiron" onchange="rerenderCurrent()">
+    <span class="xg">⚷</span><span class="xn">ქირონი</span>
+  </label>
+  <label class="xchip" data-body="lilith">
+    <input type="checkbox" id="opt-lilith" onchange="rerenderCurrent()">
+    <span class="xg">⚸</span><span class="xn">ლილიტი</span>
+  </label>
+  <label class="xchip" data-body="asc">
+    <input type="checkbox" id="opt-asc" onchange="rerenderCurrent()">
+    <span class="xg">AC</span><span class="xn">ასცენდენტი</span>
+  </label>
+  <span class="extras-hint" title="Human Design იყენებს ზუსტად 13 აქტივაციას — ეს სამი მათ შორის არ არის. ჩართვისას გადაითვლება კარიბჭეები, არხები, ცენტრები და ნიჭების სია.">?</span>
 </div>
 
 <div class="form-shell">
@@ -670,7 +697,15 @@ function activeExtras(){
 }
 /* last fetched charts, so ticking a box re-renders without refetching */
 let _lastNatal=null,_lastSyn=null;
+function syncChipStyles(){
+  [['opt-chiron','chiron'],['opt-lilith','lilith'],['opt-asc','asc']].forEach(([id,body])=>{
+    const inp=document.getElementById(id);
+    const chip=document.querySelector(`.xchip[data-body="${body}"]`);
+    if(inp&&chip)chip.classList.toggle('on',inp.checked);
+  });
+}
 function rerenderCurrent(){
+  syncChipStyles();
   if(currentMode==='natal'&&_lastNatal)renderNatal(_lastNatal);
   else if(currentMode==='synastry'&&_lastSyn)renderSynastry(_lastSyn[0],_lastSyn[1]);
 }
@@ -711,6 +746,20 @@ function augmentWithExtras(chart,keys){
   c.defined_channels=chans;
   c.defined_centers=[...centersFromGates(all)];
   c._extraAdded=added;
+
+  /* the backend built other_gifts from the standard 13 only, so gates that
+     arrive with Chiron / Lilith / AC were missing from the list. Rebuild it
+     from the augmented gate set, marking the newcomers. */
+  if(chart.gate_gifts){
+    const gifts=chart.gate_gifts, sunG=chart.sun_gate;
+    const addedGates=new Set(added.map(x=>x.gate));
+    c.other_gifts=[...all].sort((x,y)=>x-y)
+      .filter(g=>g!==sunG&&gifts[g])
+      .map(g=>{
+        const via=addedGates.has(g)?added.find(x=>x.gate===g):null;
+        return `${g} — ${gifts[g]}`+(via?` <span style="color:${EXTRA_META[via.body].col};font-size:.72rem">${EXTRA_META[via.body].glyph}</span>`:'');
+      });
+  }
   return c;
 }
 
