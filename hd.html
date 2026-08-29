@@ -239,33 +239,57 @@ header::after{content:"";display:block;width:280px;height:1px;
   .page{padding:28px 16px 60px;}}
 @media(max-width:700px){.summary{grid-template-columns:repeat(2,1fr);}.brand{font-size:1.5rem;}}
 
-.extras-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
-  margin:0 auto 18px;max-width:760px;}
-.extras-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--ink-mid);opacity:.75;margin-right:2px;}
-.xchip{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none;
-  padding:7px 15px 7px 12px;border-radius:999px;font-size:.85rem;
-  border:1px solid rgba(196,149,80,.28);background:rgba(22,18,40,.7);
-  color:var(--ink-mid);transition:background .16s,border-color .16s,color .16s,transform .16s;}
-.xchip:hover{border-color:rgba(196,149,80,.55);background:rgba(30,24,52,.9);
-  color:var(--ink);transform:translateY(-1px);}
-.xchip input{position:absolute;opacity:0;width:0;height:0;}
-.xchip .xg{font-size:1.05rem;line-height:1;opacity:.5;transition:opacity .16s;}
-.xchip.on{color:#0d0a18;font-weight:500;box-shadow:0 2px 12px rgba(0,0,0,.5);}
-.xchip.on .xg{opacity:1;}
-/* Chiron = jade · Lilith = rose-mauve · AC = sky — all readable on the dark
-   ground and clearly apart from the chart's own red/black activations */
-.xchip.on[data-body="chiron"]{background:#59C9A5;border-color:#59C9A5;}
-.xchip.on[data-body="lilith"]{background:#E08FB4;border-color:#E08FB4;}
-.xchip.on[data-body="asc"]{background:#7FC4E8;border-color:#7FC4E8;}
-.xchip:focus-within{outline:2px solid rgba(196,149,80,.7);outline-offset:2px;}
-.extras-hint{width:18px;height:18px;border-radius:50%;border:1px solid rgba(196,149,80,.35);
-  display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;
-  color:var(--ink-mid);cursor:help;}
-@media(max-width:640px){
-  .extras-bar{gap:7px;}
-  .extras-label{flex-basis:100%;text-align:center;margin-bottom:2px;}
-  .xchip{padding:6px 12px 6px 10px;font-size:.8rem;}
+/* ── optional activations panel ── */
+.extras-panel{max-width:660px;margin:0 auto 22px;padding:18px 22px 14px;
+  background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  position:relative;overflow:hidden;}
+.extras-panel::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);}
+.extras-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.extras-head h3{font-family:'Cinzel',serif;font-size:.62rem;font-weight:500;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
+.ex-rule{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(196,149,80,.28),transparent);}
+.extras-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.xopt{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;
+  padding:11px 12px;border-radius:var(--r);background:var(--card);
+  border:1px solid var(--border);position:relative;overflow:hidden;
+  transition:border-color .22s,transform .18s,box-shadow .22s,background .22s;}
+.xopt:hover{border-color:var(--border-h);transform:translateY(-2px);
+  box-shadow:0 5px 18px rgba(0,0,0,.38);}
+.xopt input{position:absolute;opacity:0;width:0;height:0;}
+.xbox{width:16px;height:16px;flex-shrink:0;border-radius:3px;
+  border:1px solid rgba(196,149,80,.4);display:flex;align-items:center;
+  justify-content:center;transition:background .18s,border-color .18s;}
+.xtick{font-size:10px;line-height:1;color:#0d0a18;opacity:0;transform:scale(.6);
+  transition:opacity .18s,transform .18s;}
+.xglyph{font-size:1.15rem;line-height:1;opacity:.42;transition:opacity .2s,color .2s;
+  color:var(--ink-mid);width:20px;text-align:center;}
+.xtext{display:flex;flex-direction:column;gap:1px;min-width:0;}
+.xname{font-size:.84rem;color:var(--ink-mid);transition:color .2s;}
+.xsub{font-size:.6rem;letter-spacing:.04em;color:var(--ink-dim);opacity:.7;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.xopt.on{background:var(--raised);}
+.xopt.on .xname{color:var(--ink);}
+.xopt.on .xglyph{opacity:1;}
+.xopt.on .xtick{opacity:1;transform:scale(1);}
+.xopt.on[data-body="chiron"]{border-color:#59C9A5;box-shadow:0 0 14px rgba(89,201,165,.16);}
+.xopt.on[data-body="chiron"] .xbox{background:#59C9A5;border-color:#59C9A5;}
+.xopt.on[data-body="chiron"] .xglyph{color:#59C9A5;}
+.xopt.on[data-body="lilith"]{border-color:#E08FB4;box-shadow:0 0 14px rgba(224,143,180,.16);}
+.xopt.on[data-body="lilith"] .xbox{background:#E08FB4;border-color:#E08FB4;}
+.xopt.on[data-body="lilith"] .xglyph{color:#E08FB4;}
+.xopt.on[data-body="asc"]{border-color:#7FC4E8;box-shadow:0 0 14px rgba(127,196,232,.16);}
+.xopt.on[data-body="asc"] .xbox{background:#7FC4E8;border-color:#7FC4E8;}
+.xopt.on[data-body="asc"] .xglyph{color:#7FC4E8;}
+.xopt:focus-within{outline:1px solid rgba(196,149,80,.6);outline-offset:2px;}
+.extras-foot{margin-top:12px;font-size:.62rem;line-height:1.6;text-align:center;
+  color:var(--ink-dim);opacity:.75;}
+@media(max-width:680px){
+  .extras-panel{padding:14px 14px 12px;}
+  .extras-grid{grid-template-columns:1fr;gap:7px;}
+  .xsub{display:none;}
+  .extras-foot{font-size:.58rem;}
+}
 }
 }
 </style>
@@ -286,21 +310,34 @@ header::after{content:"";display:block;width:280px;height:1px;
 </div>
 
 <!-- FORMS -->
-<div class="extras-bar">
-  <span class="extras-label">დამატებით</span>
-  <label class="xchip" data-body="chiron">
-    <input type="checkbox" id="opt-chiron" onchange="rerenderCurrent()">
-    <span class="xg">⚷</span><span class="xn">ქირონი</span>
-  </label>
-  <label class="xchip" data-body="lilith">
-    <input type="checkbox" id="opt-lilith" onchange="rerenderCurrent()">
-    <span class="xg">⚸</span><span class="xn">ლილიტი</span>
-  </label>
-  <label class="xchip" data-body="asc">
-    <input type="checkbox" id="opt-asc" onchange="rerenderCurrent()">
-    <span class="xg">AC</span><span class="xn">ასცენდენტი</span>
-  </label>
-  <span class="extras-hint" title="Human Design იყენებს ზუსტად 13 აქტივაციას — ეს სამი მათ შორის არ არის. ჩართვისას გადაითვლება კარიბჭეები, არხები, ცენტრები და ნიჭების სია.">?</span>
+<div class="extras-panel">
+  <div class="extras-head">
+    <span class="ex-rule"></span>
+    <h3>დამატებითი აქტივაციები</h3>
+    <span class="ex-rule"></span>
+  </div>
+  <div class="extras-grid">
+    <label class="xopt" data-body="chiron">
+      <input type="checkbox" id="opt-chiron" onchange="rerenderCurrent()">
+      <span class="xbox"><span class="xtick">✓</span></span>
+      <span class="xglyph">⚷</span>
+      <span class="xtext"><span class="xname">ქირონი</span><span class="xsub">ჭრილობა და მკურნალი</span></span>
+    </label>
+    <label class="xopt" data-body="lilith">
+      <input type="checkbox" id="opt-lilith" onchange="rerenderCurrent()">
+      <span class="xbox"><span class="xtick">✓</span></span>
+      <span class="xglyph">⚸</span>
+      <span class="xtext"><span class="xname">ლილიტი</span><span class="xsub">შავი მთვარე · აპოგეა</span></span>
+    </label>
+    <label class="xopt" data-body="asc">
+      <input type="checkbox" id="opt-asc" onchange="rerenderCurrent()">
+      <span class="xbox"><span class="xtick">✓</span></span>
+      <span class="xglyph">AC</span>
+      <span class="xtext"><span class="xname">ასცენდენტი</span><span class="xsub">ამომავალი ნიშანი</span></span>
+    </label>
+  </div>
+  <p class="extras-foot">Human Design იყენებს ზუსტად 13 აქტივაციას — ეს სამი მათ შორის არ არის.
+    ჩართვისას გადაითვლება კარიბჭეები, არხები, ცენტრები, ტიპი და ავტორიტეტი.</p>
 </div>
 
 <div class="form-shell">
@@ -703,7 +740,7 @@ let _lastNatal=null,_lastSyn=null;
 function syncChipStyles(){
   [['opt-chiron','chiron'],['opt-lilith','lilith'],['opt-asc','asc']].forEach(([id,body])=>{
     const inp=document.getElementById(id);
-    const chip=document.querySelector(`.xchip[data-body="${body}"]`);
+    const chip=document.querySelector(`.xopt[data-body="${body}"]`);
     if(inp&&chip)chip.classList.toggle('on',inp.checked);
   });
 }
