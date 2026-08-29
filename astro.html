@@ -2865,7 +2865,11 @@ function drawWheel(data1,data2,dualAsp){
     /* glyphs alone need 18/22px of arc; with the "15°42' ♌" labels
        underneath they need more, so widen the spread when they are on */
     const _w0=(typeof window!=='undefined'?window.innerWidth:1200);
-    const _b0=Math.min(2.2,Math.max(1,760/Math.max(320,_w0-24)));
+    /* Boost capped at 1.6: at 2.2 each "15°42' ♌" label ate 13.7° of arc, so
+       13 bodies wanted half the ring and collided. On narrow screens the sign
+       glyph is dropped too — the wheel already shows the sign. */
+    const _narrow=_w0<560;
+    const _b0=Math.min(_narrow?2.1:1.6,Math.max(1,780/Math.max(320,_w0-24)));
     /* Every point needs its own width. A single fixed gap was sized for
        one-character glyphs (☉ ♀), so AC / MC / Vx — two characters wide —
        and the degree label under them ran into their neighbours. Measure
@@ -2879,7 +2883,8 @@ function drawWheel(data1,data2,dualAsp){
         const pd=data.planets[n];
         if(pd&&pd.degree!=null){
           const dt=fmtDeg(pd.degree);
-          w=Math.max(w, dt.length*_fsDeg*0.52 + _fsDeg*0.22 + _fsDeg*1.2);
+          const glyphPart=_narrow?0:(_fsDeg*0.22+_fsDeg*1.2);
+          w=Math.max(w, dt.length*_fsDeg*0.52 + glyphPart);
         }
       }
       return w+(isInner?4:6);
@@ -2976,17 +2981,24 @@ function drawWheel(data1,data2,dualAsp){
              shrinks on phones. Scale the label up by the same factor to keep
              it readable (capped so it never dominates on desktop). */
           const _w=(typeof window!=='undefined'?window.innerWidth:1200);
-          const _boost=Math.min(2.2,Math.max(1,760/Math.max(320,_w-24)));
+          const narrow=_w<560;
+          const _boost=Math.min(narrow?2.1:1.6,Math.max(1,780/Math.max(320,_w-24)));
           const fs=(isInner?6:7)*_boost;
           const gp=el('g',{},svg);
           /* full precision: degrees AND minutes, same format as the table */
           const degTxt=fmtDeg(pd.degree);
-          const wDeg=degTxt.length*fs*0.52, wSym=fs*1.2, gap=fs*0.22;
-          const total=wDeg+gap+wSym;
-          txt(gp,degTxt,dx-total/2+wDeg/2,dy,
-            {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.9});
-          txt(gp,ZSYM[si],dx+total/2-wSym/2,dy,
-            {fill:ZCOL[si],'font-size':fs*1.15,'font-family':'serif',opacity:.95});
+          const wDeg=degTxt.length*fs*0.52;
+          if(narrow){
+            txt(gp,degTxt,dx,dy,
+              {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.92});
+          }else{
+            const wSym=fs*1.2, gap=fs*0.22;
+            const total=wDeg+gap+wSym;
+            txt(gp,degTxt,dx-total/2+wDeg/2,dy,
+              {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.9});
+            txt(gp,ZSYM[si],dx+total/2-wSym/2,dy,
+              {fill:ZCOL[si],'font-size':fs*1.15,'font-family':'serif',opacity:.95});
+          }
         }
       }
       if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
