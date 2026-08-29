@@ -748,6 +748,64 @@ function augmentWithExtras(chart,keys){
   }
   c.defined_channels=chans;
   c.defined_centers=[...centersFromGates(all)];
+  /* ── recompute TYPE / STRATEGY / AUTHORITY / DEFINITION ──
+     Ported line-for-line from hd_calc.py so the numbers agree exactly with
+     the backend when no extras are ticked. Adding a body can genuinely
+     change the type (a new motor-to-throat link, or a defined Sacral), so
+     the cards must follow the bodygraph or the chart contradicts itself. */
+  const MOTORS=new Set(['Heart','Sacral','Solar Plexus','Root']);
+  const defC=new Set(c.defined_centers);
+  const adj={};Object.keys(CENTER_GATES).forEach(k=>adj[k]=new Set());
+  chans.forEach(ch=>{
+    const ca=GATE_TO_CENTER[ch.gate_a],cb=GATE_TO_CENTER[ch.gate_b];
+    if(ca&&cb&&ca!==cb){adj[ca].add(cb);adj[cb].add(ca);}
+  });
+  const reach=start=>{
+    const seen=new Set([start]),st=[start];
+    while(st.length){const n=st.pop();
+      (adj[n]||new Set()).forEach(m=>{if(defC.has(m)&&!seen.has(m)){seen.add(m);st.push(m);}});}
+    return seen;
+  };
+  const sacral=defC.has('Sacral'), throat=defC.has('Throat');
+  let throatMotor=false;
+  if(throat){const r=reach('Throat');throatMotor=[...MOTORS].some(m=>r.has(m));}
+  let T;
+  if(defC.size===0)T='Reflector';
+  else if(sacral&&throatMotor)T='Manifesting Generator';
+  else if(sacral)T='Generator';
+  else if(throatMotor)T='Manifestor';
+  else T='Projector';
+  c.type=T;
+  c.strategy={'Manifestor':'To Inform','Generator':'To Respond',
+    'Manifesting Generator':'To Respond, then Inform',
+    'Projector':'Wait for the Invitation',
+    'Reflector':'Wait a Lunar Cycle (28 days)'}[T];
+  c.not_self={'Manifestor':'რისხვა','Generator':'იმედგაცრუება',
+    'Manifesting Generator':'რისხვა და იმედგაცრუება','Projector':'სიმწარე',
+    'Reflector':'იმედგაცრუება'}[T];
+  c.signature={'Manifestor':'სიმშვიდე','Generator':'კმაყოფილება',
+    'Manifesting Generator':'სიმშვიდე და კმაყოფილება','Projector':'წარმატება',
+    'Reflector':'სასიამოვნო გაკვირვება'}[T];
+  c.authority = defC.has('Solar Plexus') ? 'ემოციური (მზის წნული)'
+    : sacral ? 'საკრალური'
+    : defC.has('Spleen') ? 'სპლენური (ელენთა)'
+    : defC.has('Heart') ? 'ეგო (გული)'
+    : defC.has('G') ? 'თვით-პროექცია (G)'
+    : (T==='Reflector' ? 'მთვარე' : 'მენტალური / გარემო');
+  /* definition = number of connected groups among the defined centres */
+  {
+    const un=new Set(defC);let groups=0;
+    while(un.size){
+      const st=[[...un][0]];groups++;
+      while(st.length){const n=st.pop();
+        if(un.has(n)){un.delete(n);
+          (adj[n]||new Set()).forEach(m=>{if(un.has(m))st.push(m);});}}
+    }
+    c.definition={1:'ერთი მთლიანი განსაზღვრება',2:'გაყოფილი განსაზღვრება',
+      3:'სამად გაყოფილი განსაზღვრება',4:'ოთხად გაყოფილი განსაზღვრება'}[groups]
+      ||(groups===0?'განსაზღვრება არ არის':groups+'-ჯერადი გაყოფა');
+  }
+
   c._extraAdded=added;
 
   /* the backend built other_gifts from the standard 13 only, so gates that
