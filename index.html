@@ -152,7 +152,7 @@
     <div class="dline"></div><div class="dgem"></div><div class="dline"></div>
   </div>
 
-  <div class="grid">
+  <div class="grid" id="card-grid">
 
     <!-- 1. Astrology -->
     <a class="card c-astro" href="astro.html">
@@ -533,5 +533,38 @@
   <footer><span>&#10022; &nbsp; omnia ex uno &nbsp; &#10022;</span></footer>
 </div>
 
+<script>
+/* ── cards come from the admin panel ────────────────────────────
+   The tiles below are still in the HTML and act as the fallback: if
+   the backend is unreachable the page looks exactly as before. When
+   the API answers, the grid is rebuilt from it, so hiding, adding or
+   reordering a card in the panel shows up here with no code change. */
+(function(){
+  const BACKEND='https://astrology-production-b165.up.railway.app';
+  const grid=document.getElementById('card-grid');
+  if(!grid)return;
+  fetch(BACKEND+'/api/cards')
+    .then(r=>r.ok?r.json():Promise.reject())
+    .then(d=>{
+      const cards=d&&d.cards;
+      if(!cards||!cards.length)return;            // keep the static fallback
+      grid.innerHTML=cards.map(c=>`
+        <a class="card" href="${c.href}" style="--accent:${c.color}">
+          <div class="card-glow" style="background:radial-gradient(ellipse at 50% 110%,${hexA(c.color,.15)},transparent 65%)"></div>
+          <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+          <div class="sym" style="color:${c.color}">${c.symbol||'✦'}</div>
+          <div class="card-title">${esc(c.title)}</div>
+          <div class="card-sub">${esc(c.subtitle||'')}</div>
+        </a>`).join('');
+    })
+    .catch(()=>{});                                // offline: static cards stay
+  function esc(s){return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+  function hexA(hex,a){
+    const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
+    return m?`rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${a})`
+            :`rgba(201,168,76,${a})`;
+  }
+})();
+</script>
 </body>
 </html>
