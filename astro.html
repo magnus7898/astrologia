@@ -2882,7 +2882,10 @@ function drawWheel(data1,data2,dualAsp){
       if(SHOW_DEGREES){
         const pd=data.planets[n];
         if(pd&&pd.degree!=null){
-          const dt=fmtDeg(pd.degree);
+          /* on a phone the label must be SHORT, not just small: whole
+             degrees only, no minutes, no sign glyph. 6 chars -> 3 halves
+             the arc each body needs. */
+          const dt=_narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);
           const glyphPart=_narrow?0:(_fsDeg*0.22+_fsDeg*1.2);
           w=Math.max(w, dt.length*_fsDeg*0.52 + glyphPart);
         }
@@ -2897,6 +2900,16 @@ function drawWheel(data1,data2,dualAsp){
        Stagger neighbours onto two label rings instead: each ring then holds
        every other body, halving the crowding and keeping glyphs near their
        true longitude. _ring[n] = 0 (inner) or 1 (outer). */
+    /* Three label rings, spaced by the font size, plus a genuine RECTANGLE
+       collision pass. An arc-only test is not enough: labels on different
+       rings sit at nearly the same angle and are separated only radially,
+       so with boosted mobile text they still overlapped. */
+    const _ringGap=Math.max(isInner?12:15,_fsDeg*1.55);
+    const _base=(isInner?15:24);
+    const _ringOff=[_base,_base+_ringGap,_base+_ringGap*2,_base+_ringGap*3];
+    const _labelH=_fsDeg*1.3;
+    window._lblRingOff=_ringOff;
+
     const _ring={};
     {
       let prev=null;
@@ -2904,21 +2917,17 @@ function drawWheel(data1,data2,dualAsp){
         if(prev===null){_ring[n]=0;prev=n;continue;}
         let d=Math.abs(dispA[n]-dispA[prev]);
         if(d>Math.PI)d=2*Math.PI-d;
-        const tight=d*Rg < (_wid[n]+_wid[prev])/2;
-        _ring[n]=tight?1-_ring[prev]:0;
+        _ring[n]=(d*Rg < (_wid[n]+_wid[prev])/2) ? (_ring[prev]+1)%4 : 0;
         prev=n;
       }
     }
-    window._lblRing=_ring;
 
-    /* spread within each ring separately */
+    /* angular spread: same ring needs full width, different rings only glyphs */
     for(let it=0;it<600;it++){
       let moved=false;
       for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
         const a=sorted[i],b=sorted[j];
-        const sameRing=_ring[a]===_ring[b];
-        /* different rings only need the glyphs themselves to clear */
-        const need=(sameRing?(_wid[a]+_wid[b])/2:(isInner?15:19))/Rg;
+        const need=((_ring[a]===_ring[b])?(_wid[a]+_wid[b])/2:(isInner?13:17))/Rg;
         let d=dispA[b]-dispA[a];
         while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
         if(Math.abs(d)<need&&Math.abs(d)>0.0001){
@@ -2928,6 +2937,45 @@ function drawWheel(data1,data2,dualAsp){
       }
       if(!moved)break;
     }
+
+    /* ── label placement sweep ──────────────────────────────────────
+       The previous pass moved a clashing label to another ring but only
+       re-tested it against the ONE label it clashed with, so it happily
+       landed on a ring another label already occupied. Instead: walk the
+       bodies in angular order and, for each, take the first ring whose
+       box hits NOTHING already placed. If all four rings are taken, nudge
+       it forward angularly and try again. Each item is checked against
+       every placed item, so the result is collision-free by construction. */
+    if(SHOW_DEGREES){
+      const boxOf=(n,ring,ang)=>{
+        const R=Rg+_ringOff[ring];
+        return {x:CX+Math.cos(ang)*R,y:CY+Math.sin(ang)*R,
+                w:_wid[n]-(isInner?4:6),h:_labelH};
+      };
+      const hit=(p,q)=>Math.abs(p.x-q.x)<(p.w+q.w)/2+1 &&
+                       Math.abs(p.y-q.y)<(p.h+q.h)/2+1;
+      const placed=[];
+      const order=[...sorted].sort((a,b)=>dispA[a]-dispA[b]);
+      for(const n of order){
+        let done=false;
+        for(let attempt=0;attempt<24&&!done;attempt++){
+          for(let r=0;r<4;r++){
+            const bx=boxOf(n,r,dispA[n]);
+            if(!placed.some(p=>hit(p,bx))){
+              _ring[n]=r;placed.push(bx);done=true;break;
+            }
+          }
+          if(!done){
+            /* every ring blocked at this angle: step around the wheel */
+            dispA[n]+=(_wid[n]*0.45)/Rg;
+          }
+        }
+        if(!done){                       /* pathological: park it outermost */
+          _ring[n]=3;placed.push(boxOf(n,3,dispA[n]));
+        }
+      }
+    }
+    window._lblRing=_ring;
     for(const name of present){
       const info=PI[name]||{sym:'?',color:'#fff'};
       const tA=trueA[name];
@@ -2935,8 +2983,12 @@ function drawWheel(data1,data2,dualAsp){
       const symColor=isInner?info.color:info.color;
       let diff=dispA[name]-tA;
       while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
+      /* Always draw at the SPREAD angle. Snapping small moves back to the
+         true angle silently discarded the separation the spreader had just
+         created — anything nudged less than ~4px collided again. The leader
+         line is only drawn when the move is visible. */
       const wasMoved=Math.abs(diff)>0.015;
-      const gxy=pxy(wasMoved?dispA[name]:tA,Rg);
+      const gxy=pxy(dispA[name],Rg);
       const tickR1=isInner?R_iz_out:R1+1,tickR2=isInner?R_iz_out+6:R1+9;
       el('line',{x1:CX+Math.cos(tA)*tickR1,y1:CY+Math.sin(tA)*tickR1,x2:CX+Math.cos(tA)*tickR2,y2:CY+Math.sin(tA)*tickR2,stroke:color,'stroke-width':1.5},svg);
       el('circle',{cx:CX+Math.cos(tA)*tickR1,cy:CY+Math.sin(tA)*tickR1,r:1.8,fill:color},svg);
@@ -2969,10 +3021,9 @@ function drawWheel(data1,data2,dualAsp){
       if(SHOW_DEGREES){
         const pd=data.planets[name];
         if(pd&&pd.sign_degree!=null){
-          const ang=wasMoved?dispA[name]:tA;
+          const ang=dispA[name];   /* same angle as the glyph, always */
           const _r=(window._lblRing&&window._lblRing[name])||0;
-          const dR=Rg+(isInner?15:24)+_r*(isInner?11:14);   /* second ring sits further out */
-          const dx=CX+Math.cos(ang)*dR, dy=CY+Math.sin(ang)*dR;
+          /* dR/dx/dy computed below, once the font size is known */
           /* degree + its zodiac glyph, side by side and always horizontal */
           const si=Math.floor(((pd.degree%360)+360)%360/30)%12;
           /* sized so the whole "15° ♌" label fits inside MINGAP, the arc the
@@ -2984,9 +3035,15 @@ function drawWheel(data1,data2,dualAsp){
           const narrow=_w<560;
           const _boost=Math.min(narrow?2.1:1.6,Math.max(1,780/Math.max(320,_w-24)));
           const fs=(isInner?6:7)*_boost;
+          /* ring separation must exceed the label height, which grows with the
+             mobile boost — a fixed 14px was too little at 2.1x (label ~14.7px) */
+
+          const _offs=window._lblRingOff||[isInner?15:24];
+          const dR=Rg+(_offs[_r]!==undefined?_offs[_r]:_offs[0]);
+          const dx=CX+Math.cos(ang)*dR, dy=CY+Math.sin(ang)*dR;
           const gp=el('g',{},svg);
           /* full precision: degrees AND minutes, same format as the table */
-          const degTxt=fmtDeg(pd.degree);
+          const degTxt=narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);
           const wDeg=degTxt.length*fs*0.52;
           if(narrow){
             txt(gp,degTxt,dx,dy,
