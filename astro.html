@@ -2886,8 +2886,7 @@ function drawWheel(data1,data2,dualAsp){
              degrees only, no minutes, no sign glyph. 6 chars -> 3 halves
              the arc each body needs. */
           const dt=_narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);
-          const glyphPart=_narrow?0:(_fsDeg*0.22+_fsDeg*1.2);
-          w=Math.max(w, dt.length*_fsDeg*0.52 + glyphPart);
+          w=Math.max(w, dt.length*_fsDeg*0.52);
         }
       }
       return w+(isInner?4:6);
@@ -2955,6 +2954,10 @@ function drawWheel(data1,data2,dualAsp){
       const hit=(p,q)=>Math.abs(p.x-q.x)<(p.w+q.w)/2+1 &&
                        Math.abs(p.y-q.y)<(p.h+q.h)/2+1;
       const placed=[];
+      /* Within a crowded run the rings should climb in longitude order, so a
+         stack reads outward as the planets read around the wheel instead of
+         zig-zagging. Sorting by angle gives exactly that: each new label
+         takes the innermost free ring, so neighbours step outwards in turn. */
       const order=[...sorted].sort((a,b)=>dispA[a]-dispA[b]);
       for(const n of order){
         let done=false;
@@ -3041,21 +3044,20 @@ function drawWheel(data1,data2,dualAsp){
           const _offs=window._lblRingOff||[isInner?15:24];
           const dR=Rg+(_offs[_r]!==undefined?_offs[_r]:_offs[0]);
           const dx=CX+Math.cos(ang)*dR, dy=CY+Math.sin(ang)*dR;
-          const gp=el('g',{},svg);
-          /* full precision: degrees AND minutes, same format as the table */
+          /* Degrees only. Every planet in a stellium repeats the same sign
+             glyph and the wheel's sign band already shows it, so it was
+             duplication that inflated each label by a third — which is what
+             forced clusters onto four separate rings. */
           const degTxt=narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);
-          const wDeg=degTxt.length*fs*0.52;
-          if(narrow){
-            txt(gp,degTxt,dx,dy,
-              {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.92});
-          }else{
-            const wSym=fs*1.2, gap=fs*0.22;
-            const total=wDeg+gap+wSym;
-            txt(gp,degTxt,dx-total/2+wDeg/2,dy,
-              {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.9});
-            txt(gp,ZSYM[si],dx+total/2-wSym/2,dy,
-              {fill:ZCOL[si],'font-size':fs*1.15,'font-family':'serif',opacity:.95});
+          /* a hairline from the glyph to its own label, so a stacked cluster
+             stays legible: you can always see which degree belongs to which
+             planet without counting positions */
+          if(_r>0||Math.hypot(dx-gxy.x,dy-gxy.y)>fs*2.2){
+            el('line',{x1:gxy.x,y1:gxy.y,x2:dx,y2:dy,
+              stroke:symColor,'stroke-width':.5,opacity:.28},svg);
           }
+          txt(svg,degTxt,dx,dy,
+            {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.92});
         }
       }
       if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
