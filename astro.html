@@ -2953,6 +2953,34 @@ function drawWheel(data1,data2,dualAsp){
       };
       const hit=(p,q)=>Math.abs(p.x-q.x)<(p.w+q.w)/2+1 &&
                        Math.abs(p.y-q.y)<(p.h+q.h)/2+1;
+      /* ── keep labels off the AC / MC markers ──────────────────────
+         A planet sitting on an angle had its label land on the AC or MC
+         badge. Push it to its OWN side of the cusp instead: a body in the
+         9th house (before the MC) moves one way, a body in the 10th (after
+         it) moves the other, so the label always sits in the house the
+         planet actually occupies and the badge stays clear. Same for the
+         AC between the 12th and 1st. */
+      {
+        const cusps=[];
+        if(!data._timeUnknown){
+          if(data.asc!=null)cusps.push(e2s(data.asc,asc));
+          if(data.mc!=null) cusps.push(e2s(data.mc,asc));
+        }
+        const CLEAR=(isInner?26:30)/Rg;          /* half the badge plus a margin */
+        for(const n of sorted){
+          if(n==='AC'||n==='MC')continue;        /* the markers themselves */
+          for(const c of cusps){
+            let d=dispA[n]-c;
+            while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
+            if(Math.abs(d)<CLEAR){
+              /* sign of d says which side of the cusp — i.e. which house */
+              const dir=d===0?1:Math.sign(d);
+              dispA[n]=c+dir*CLEAR;
+            }
+          }
+        }
+      }
+
       const placed=[];
       /* Within a crowded run the rings should climb in longitude order, so a
          stack reads outward as the planets read around the wheel instead of
