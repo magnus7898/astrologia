@@ -2886,7 +2886,8 @@ function drawWheel(data1,data2,dualAsp){
              degrees only, no minutes, no sign glyph. 6 chars -> 3 halves
              the arc each body needs. */
           const dt=_narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);
-          w=Math.max(w, dt.length*_fsDeg*0.52);
+          /* degree + its sign glyph */
+          w=Math.max(w, dt.length*_fsDeg*0.52 + _fsDeg*0.24 + _fsDeg*1.15);
         }
       }
       return w+(isInner?4:6);
@@ -2981,7 +2982,24 @@ function drawWheel(data1,data2,dualAsp){
         }
       }
 
+      /* Seed the occupancy list with everything already on the wheel: each
+         planet glyph and the AC / MC badges. Previously only labels were
+         checked against each other, so a label could land squarely on a
+         planet symbol or an angle marker. */
       const placed=[];
+      const _glyphR=isInner?7:11;
+      for(const n of sorted){
+        placed.push({x:CX+Math.cos(dispA[n])*Rg,y:CY+Math.sin(dispA[n])*Rg,
+                     w:_glyphR*2,h:_glyphR*2});
+      }
+      if(!data._timeUnknown){
+        const badge=isInner?15:22;
+        [data.asc,data.mc].forEach(d=>{
+          if(d==null)return;
+          const a=e2s(d,asc);
+          placed.push({x:CX+Math.cos(a)*Rg,y:CY+Math.sin(a)*Rg,w:badge*2,h:badge*2});
+        });
+      }
       /* Within a crowded run the rings should climb in longitude order, so a
          stack reads outward as the planets read around the wheel instead of
          zig-zagging. Sorting by angle gives exactly that: each new label
@@ -3084,8 +3102,13 @@ function drawWheel(data1,data2,dualAsp){
             el('line',{x1:gxy.x,y1:gxy.y,x2:dx,y2:dy,
               stroke:symColor,'stroke-width':.5,opacity:.28},svg);
           }
-          txt(svg,degTxt,dx,dy,
+          /* degree and its sign glyph, side by side, centred on the slot */
+          const wDeg=degTxt.length*fs*0.52, wSym=fs*1.15, gapS=fs*0.24;
+          const totalW=wDeg+gapS+wSym;
+          txt(svg,degTxt,dx-totalW/2+wDeg/2,dy,
             {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.92});
+          txt(svg,ZSYM[si],dx+totalW/2-wSym/2,dy,
+            {fill:ZCOL[si],'font-size':fs*1.1,'font-family':'serif',opacity:.95});
         }
       }
       if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
