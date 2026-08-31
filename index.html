@@ -534,36 +534,59 @@
 </div>
 
 <script>
-/* ── cards come from the admin panel ────────────────────────────
-   The tiles below are still in the HTML and act as the fallback: if
-   the backend is unreachable the page looks exactly as before. When
-   the API answers, the grid is rebuilt from it, so hiding, adding or
-   reordering a card in the panel shows up here with no code change. */
+/* ── cards are ordered / hidden from the admin panel ─────────────
+   The 19 tiles stay in the HTML: each one carries a hand-drawn inline
+   SVG that would be lost if the grid were rebuilt from plain data. So
+   instead of replacing them, we harvest the existing tiles by their
+   href and then re-order / hide / add according to the API. If the
+   backend is unreachable the page is untouched. */
 (function(){
   const BACKEND='https://astrology-production-b165.up.railway.app';
   const grid=document.getElementById('card-grid');
   if(!grid)return;
+
+  /* keep the original tiles, keyed by file name */
+  const original={};
+  [...grid.querySelectorAll('a.card')].forEach(a=>{
+    const href=(a.getAttribute('href')||'').trim();
+    if(href)original[href]=a;
+  });
+
   fetch(BACKEND+'/api/cards')
     .then(r=>r.ok?r.json():Promise.reject())
     .then(d=>{
       const cards=d&&d.cards;
-      if(!cards||!cards.length)return;            // keep the static fallback
-      grid.innerHTML=cards.map(c=>`
-        <a class="card" href="${c.href}" style="--accent:${c.color}">
-          <div class="card-glow" style="background:radial-gradient(ellipse at 50% 110%,${hexA(c.color,.15)},transparent 65%)"></div>
-          <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
-          <div class="sym" style="color:${c.color}">${c.symbol||'✦'}</div>
-          <div class="card-title">${esc(c.title)}</div>
-          <div class="card-sub">${esc(c.subtitle||'')}</div>
-        </a>`).join('');
+      if(!cards||!cards.length)return;              // keep the page as authored
+      const frag=document.createDocumentFragment();
+      cards.forEach(c=>{
+        let el=original[c.href];
+        if(el){
+          /* existing tile: keep its artwork, apply any edited text */
+          el=el.cloneNode(true);
+          const t=el.querySelector('.card-title');
+          const s=el.querySelector('.card-sub');
+          if(t&&c.title&&t.textContent.replace(/\s+/g,' ').trim()!==c.title)
+            t.textContent=c.title;
+          if(s&&c.subtitle)s.textContent=c.subtitle;
+        }else{
+          /* a card added from the panel: build a simple tile */
+          el=document.createElement('a');
+          el.className='card '+(c.color||'c-freq');
+          el.href=c.href;
+          el.innerHTML='<div class="card-glow"></div>'+
+            '<div class="cn tl"></div><div class="cn tr"></div>'+
+            '<div class="cn bl"></div><div class="cn br"></div>'+
+            '<div class="sym">'+(c.symbol||'✦')+'</div>'+
+            '<div class="card-title"></div><div class="card-sub"></div>';
+          el.querySelector('.card-title').textContent=c.title||'';
+          el.querySelector('.card-sub').textContent=c.subtitle||'';
+        }
+        frag.appendChild(el);
+      });
+      grid.innerHTML='';
+      grid.appendChild(frag);
     })
-    .catch(()=>{});                                // offline: static cards stay
-  function esc(s){return String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
-  function hexA(hex,a){
-    const m=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex||'');
-    return m?`rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${a})`
-            :`rgba(201,168,76,${a})`;
-  }
+    .catch(()=>{});
 })();
 </script>
 </body>
