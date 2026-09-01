@@ -2927,7 +2927,13 @@ function drawWheel(data1,data2,dualAsp){
       let moved=false;
       for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
         const a=sorted[i],b=sorted[j];
-        const need=((_ring[a]===_ring[b])?(_wid[a]+_wid[b])/2:(isInner?13:17))/Rg;
+        /* Different rings still need the GLYPHS to clear: they sit on the
+           same radius whatever their label does. 13/17px was narrower than
+           a glyph (14/22px wide), so symbols overlapped even though the
+           labels were fine — which is what was still visible on the wheel. */
+        const _glyphGap=(isInner?15:24);
+        const need=((_ring[a]===_ring[b])?Math.max(_glyphGap,(_wid[a]+_wid[b])/2)
+                                         :_glyphGap)/Rg;
         let d=dispA[b]-dispA[a];
         while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
         if(Math.abs(d)<need&&Math.abs(d)>0.0001){
@@ -2938,6 +2944,30 @@ function drawWheel(data1,data2,dualAsp){
       if(!moved)break;
     }
 
+    /* Glyph separation and label placement affect each other: moving a
+       body to free a label slot can push two symbols together, and pushing
+       symbols apart invalidates label slots. So run both to a fixed point
+       instead of once each. */
+    const _glyphPass=()=>{
+      const gGap=(isInner?19:26)/Rg;   /* glyph is 14/22px wide; leave real air */
+      let changed=false;
+      for(let it=0;it<300;it++){
+        let moved=false;
+        for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
+          const a=sorted[i],b=sorted[j];
+          let d=dispA[b]-dispA[a];
+          while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
+          if(Math.abs(d)<gGap&&Math.abs(d)>1e-6){
+            const push=(gGap-Math.abs(d))/2,dir=d>0?1:-1;
+            dispA[a]-=push*dir;dispA[b]+=push*dir;moved=true;changed=true;
+          }
+        }
+        if(!moved)break;
+      }
+      return changed;
+    };
+    _glyphPass();
+
     /* ── label placement sweep ──────────────────────────────────────
        The previous pass moved a clashing label to another ring but only
        re-tested it against the ONE label it clashed with, so it happily
@@ -2946,7 +2976,7 @@ function drawWheel(data1,data2,dualAsp){
        box hits NOTHING already placed. If all four rings are taken, nudge
        it forward angularly and try again. Each item is checked against
        every placed item, so the result is collision-free by construction. */
-    if(SHOW_DEGREES){
+    const _labelSweep=()=>{
       const boxOf=(n,ring,ang)=>{
         const R=Rg+_ringOff[ring];
         return {x:CX+Math.cos(ang)*R,y:CY+Math.sin(ang)*R,
@@ -3023,7 +3053,19 @@ function drawWheel(data1,data2,dualAsp){
           _ring[n]=3;placed.push(boxOf(n,3,dispA[n]));
         }
       }
+    };
+    if(SHOW_DEGREES)_labelSweep();
+
+    /* alternate until neither pass wants to move anything */
+    for(let round=0;round<14;round++){
+      if(!_glyphPass())break;          /* glyphs clear -> label slots valid */
+      if(SHOW_DEGREES)_labelSweep();   /* re-place labels around the new angles */
     }
+    /* Whatever happens, glyphs must never touch: run the separation once more
+       as the final word. Labels hang off their glyph, so they travel with it
+       and their relative placement (already collision-free) is preserved. */
+    _glyphPass();
+
     window._lblRing=_ring;
     for(const name of present){
       const info=PI[name]||{sym:'?',color:'#fff'};
