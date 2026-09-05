@@ -183,6 +183,8 @@
     .row-manipura td{background:#C8A63C;color:#241703;}
     .row-svadhistana td{background:#C07A2C;color:#241100;}
     .row-muladhara td{background:#A5453F;color:#F8ECEA;}
+    .row-lelia    td{background:#B8656F;color:#F9EEF0;}
+    .row-lada     td{background:#7A5AA8;color:#F0EAF8;}
     .row-total    td{background:var(--ink-3);color:var(--brass-lt);font-weight:400;font-size:14px;}
 
     /* ── age readout ── */
@@ -304,16 +306,7 @@
       <div class="table-wrapper" id="chakra-panel">
         <table class="chakra-table">
           <thead><tr><th>ჩაკრა</th><th>ენერგია</th><th>ფიზიკა</th><th>ემოცია</th></tr></thead>
-          <tbody>
-            <tr class="row-sahasrara"><td>საჰასრარა (გვირგვინი)</td><td id="c-t3">-</td><td id="c-l3">-</td><td id="c-s1">-</td></tr>
-            <tr class="row-ajna"><td>აჯნა (მესამე თვალი)</td><td id="c-t2">-</td><td id="c-l2">-</td><td id="c-s2">-</td></tr>
-            <tr class="row-vishudha"><td>ვიშუდჰა (ყელის ჩაკრა)</td><td id="c-t1">-</td><td id="c-l1">-</td><td id="c-s3">-</td></tr>
-            <tr class="row-anahata"><td>ანაჰატა (გულის ჩაკრა)</td><td id="c-g2">-</td><td id="c-g1">-</td><td id="c-s4">-</td></tr>
-            <tr class="row-manipura"><td>მანიპურა (მზის წნული)</td><td id="c-cv">-</td><td id="c-cv2">-</td><td id="c-s5">-</td></tr>
-            <tr class="row-svadhistana"><td>სვადჰისტანა (საკრალური)</td><td id="c-b1">-</td><td id="c-r1">-</td><td id="c-s6">-</td></tr>
-            <tr class="row-muladhara"><td>მულადჰარა (ფუძის ჩაკრა)</td><td id="c-b3">-</td><td id="c-r3">-</td><td id="c-s7">-</td></tr>
-            <tr class="row-total"><td>სულ</td><td id="c-sum-e">-</td><td id="c-sum-l">-</td><td id="c-sum-s">-</td></tr>
-          </tbody>
+          <tbody id="chakra-body"></tbody>
         </table>
       </div>
       <!-- Single-row age/energy reveal (rendered above the chakra table via column-reverse) -->
@@ -325,7 +318,7 @@
 
   <!-- ცა / მიწა / ქალი / კაცი panels -->
   <div id="extra-panels">
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+    <div id="ep-lines-row" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
       <div class="ep-box"><div class="ep-title" style="color:rgba(210,130,255,0.95);">მამაკაცის ხაზი</div><div class="ep-row"><div class="ep-circ" id="ep-tl3"><span class="ep-label">TL3</span></div><div class="ep-circ" id="ep-br3"><span class="ep-label">BR3</span></div><div class="ep-circ ep-gold" id="ep-male-sum"><span class="ep-label">ჯამი</span></div></div></div>
       <div class="ep-box"><div class="ep-title" style="color:rgba(255,140,140,0.95);">ქალის ხაზი</div><div class="ep-row"><div class="ep-circ" id="ep-tr3"><span class="ep-label">TR3</span></div><div class="ep-circ" id="ep-bl3"><span class="ep-label">BL3</span></div><div class="ep-circ ep-gold" id="ep-fem-sum"><span class="ep-label">ჯამი</span></div></div></div>
     </div>
@@ -458,6 +451,38 @@ function validateDate(dd,mm,yyyy){
   return null;
 }
 
+/* ── ჩაკრების ცხრილი: 7 რიგი (მეთოდი 1-2) / 9 რიგი (მეთოდი 3) ── */
+function renderChakra(v, method){
+  const body=document.getElementById('chakra-body'); if(!body)return;
+  const rows = method===3 ? [
+    ['row-sahasrara',  'საჰასრარა (გვირგვინი)',   v.T3,  v.L3   ],
+    ['row-ajna',       'აჯნა (მესამე თვალი)',      v.T2,  v.L2   ],
+    ['row-vishudha',   'ვიშუდჰა (ყელის ჩაკრა)',    v.T1,  v.L1   ],
+    ['row-lelia',      'დალი (ქალის ხაზი)',        v.TR3, v.BL3  ],
+    ['row-lada',       'კოპალა (მამაკაცის ხაზი)',  v.TL3, v.BR3  ],
+    ['row-anahata',    'ანაჰატა (გულის ჩაკრა)',    v.Cv,  v.m3Cv2],
+    ['row-manipura',   'მანიპურა (მზის წნული)',    v.B1,  v.R1   ],
+    ['row-svadhistana','სვადჰისტანა (საკრალური)',  v.B2,  v.R2   ],
+    ['row-muladhara',  'მულადჰარა (ფუძის ჩაკრა)',  v.B3,  v.R3   ]
+  ] : [
+    ['row-sahasrara',  'საჰასრარა (გვირგვინი)',   v.T3, v.L3],
+    ['row-ajna',       'აჯნა (მესამე თვალი)',      v.T2, v.L2],
+    ['row-vishudha',   'ვიშუდჰა (ყელის ჩაკრა)',    v.T1, v.L1],
+    ['row-anahata',    'ანაჰატა (გულის ჩაკრა)',    v.G2, v.G1],
+    ['row-manipura',   'მანიპურა (მზის წნული)',    v.Cv, v.Cv],
+    ['row-svadhistana','სვადჰისტანა (საკრალური)',  v.B1, v.R1],
+    ['row-muladhara',  'მულადჰარა (ფუძის ჩაკრა)',  v.B3, v.R3]
+  ];
+  let html='',se=0,sl=0,ss=0;
+  for(const [cls,name,e,l] of rows){
+    const en=e||0, ln=l||0, sm=r22(en+ln);
+    se+=en; sl+=ln; ss+=sm;
+    html+='<tr class="'+cls+'"><td>'+name+'</td><td>'+en+'</td><td>'+ln+'</td><td>'+sm+'</td></tr>';
+  }
+  html+='<tr class="row-total"><td>სულ</td><td>'+r22(se)+'</td><td>'+r22(sl)+'</td><td>'+r22(ss)+'</td></tr>';
+  body.innerHTML=html;
+}
+
 function calculate(){
   const dd=parseInt(document.querySelector('[name=dd]').value,10);
   const mm=parseInt(document.querySelector('[name=mm]').value,10);
@@ -491,6 +516,8 @@ function calculate(){
   }
   document.getElementById('extra-panels').style.display='block';
   document.getElementById('chakra-panel').style.display='block';
+  /* მეთოდ 3-ში კაცის/ქალის პანელები ცხრილში დუბლირდება — ვმალავთ */
+  {const dup=document.getElementById('ep-lines-row'); if(dup) dup.style.display=(CUR===3?'none':'flex');}
   const sc=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   sc('ep-tl3',TL3);sc('ep-br3',BR3);sc('ep-male-sum',r22(TL3+BR3));
   sc('ep-tr3',TR3);sc('ep-bl3',BL3);sc('ep-fem-sum',r22(TR3+BL3));
@@ -499,9 +526,7 @@ function calculate(){
   const oT=r22(TL3+BR3),oB=r22(TR3+BL3),oM=r22(oT+oB);
   sc('ep-soc-top',oT);sc('ep-soc-bot',oB);sc('ep-soc-mid',oM);
   sc('ep-misia',r22(sM+oM));
-  sc('c-t3',T3);sc('c-l3',L3);sc('c-s1',r22(T3+L3));sc('c-t2',T2);sc('c-l2',L2);sc('c-s2',r22(T2+L2));sc('c-t1',T1);sc('c-l1',L1);sc('c-s3',r22(T1+L1));sc('c-g2',G2);sc('c-g1',G1);sc('c-s4',r22(G2+G1));sc('c-cv',Cv);sc('c-cv2',Cv);sc('c-s5',r22(Cv+Cv));sc('c-b1',B1);sc('c-r1',R1);sc('c-s6',r22(B1+R1));sc('c-b3',B3);sc('c-r3',R3);sc('c-s7',r22(B3+R3));
-  const eV=[T3,T2,T1,G2,Cv,B1,B3],lV=[L3,L2,L1,G1,Cv,R1,R3],sV=[r22(T3+L3),r22(T2+L2),r22(T1+L1),r22(G2+G1),r22(Cv+Cv),r22(B1+R1),r22(B3+R3)];
-  sc('c-sum-e',r22(eV.reduce((a,b)=>a+b,0)));sc('c-sum-l',r22(lV.reduce((a,b)=>a+b,0)));sc('c-sum-s',r22(sV.reduce((a,b)=>a+b,0)));
+  renderChakra({T3,T2,T1,L3,L2,L1,G1,G2,Cv,B1,B2,B3,R1,R2,R3,TL3,TR3,BL3,BR3,m3Cv2},CUR);
 }
 
 function calculateCompat(){
