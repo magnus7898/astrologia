@@ -10,7 +10,7 @@
    Called by circle click:  openBoxById(id)
 
    ── BOX FIELDS ───────────────────────────────────────────────
-   id      : matches circle ids in draw() so a click opens the box
+   id      : matches circle ids in draw() so a click opens the box 
    title   : zone name shown in the header
    keys    : circle/value names. 1 name = single number, 3 = combo
    color   : accent dot
