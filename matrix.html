@@ -184,7 +184,7 @@
     .row-svadhistana td{background:#C07A2C;color:#241100;}
     .row-muladhara td{background:#A5453F;color:#F8ECEA;}
     .row-lelia    td{background:#3A6EA5;color:#EDF3FA;}
-    .row-lada     td{background:#6B9B3F;color:#12200A;}
+    .row-lada     td{background:#1F6E5C;color:#E6F5F0;}
     .row-total    td{background:var(--ink-3);color:var(--brass-lt);font-weight:400;font-size:14px;}
 
     /* ── age readout ── */
@@ -591,9 +591,9 @@ function draw(v){
   if(!isCompat&&!isM3&&v.showRC!==false){circ(cx+rc_r+r2_r,cy,r2_r,dkFill,dkStr,1.5,v.RC1,false);circ(cx+rc_r+r2_r*2+r1_r,cy,r1_r,dkFill,dkStr,1.5,v.RC2,false);}
   const dc=(x,y,r,lbl)=>circ(x,y,r,dkFill,dkStr,1.5,lbl,false);
   /* დიდი დიაგონალური წრეები — ჩაკრების ცხრილის ფერებით */
-  const LADA_F='#6B9B3F',LADA_S='#41641F';    /* კოპალა — მამაკაცის ხაზი  TL3·BR3 (მწვანე) */
+  const LADA_F='#1F6E5C',LADA_S='#0F4437';    /* კოპალა — მამაკაცის ხაზი  TL3·BR3 (მუქი ზურმუხტი) */
   const LELIA_F='#3A6EA5',LELIA_S='#22466B';  /* დალი   — ქალის ხაზი      TR3·BL3 (ლურჯი) */
-  const dLada =(x,y,r,lbl)=>circ(x,y,r,cf(LADA_F), cs(LADA_S), 1.5,lbl,true);
+  const dLada =(x,y,r,lbl)=>circ(x,y,r,cf(LADA_F), cs(LADA_S), 1.5,lbl,false);
   const dLelia=(x,y,r,lbl)=>circ(x,y,r,cf(LELIA_F),cs(LELIA_S),1.5,lbl,false);
   if(!isCompat){dc(cx-dd1,cy-dd1,r1_r,v.TL1);dc(cx-dd2,cy-dd2,r2_r,v.TL2);dLada(cx-dd3,cy-dd3,r3_r,v.TL3);dc(cx+dd1,cy-dd1,r1_r,v.TR1);dc(cx+dd2,cy-dd2,r2_r,v.TR2);dLelia(cx+dd3,cy-dd3,r3_r,v.TR3);dc(cx-dd1,cy+dd1,r1_r,v.BL1);dc(cx-dd2,cy+dd2,r2_r,v.BL2);dLelia(cx-dd3,cy+dd3,r3_r,v.BL3);dc(cx+dd1,cy+dd1,r1_r,v.BR1);dc(cx+dd2,cy+dd2,r2_r,v.BR2);dLada(cx+dd3,cy+dd3,r3_r,v.BR3);}
   else{dc(cx-dd3,cy-dd3,r3_r,v.TL3);dc(cx+dd3,cy-dd3,r3_r,v.TR3);dc(cx-dd3,cy+dd3,r3_r,v.BL3);dc(cx+dd3,cy+dd3,r3_r,v.BR3);}
