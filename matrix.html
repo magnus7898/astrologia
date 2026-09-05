@@ -543,7 +543,16 @@ function calculateCompat(){
   document.getElementById('extra-panels').style.display='none';
   document.getElementById('chakra-panel').style.display='none';
   {const ap=document.getElementById('age-row-panel');if(ap)ap.style.display='none';}
-  {const mb=document.getElementById('matrix-boxes');if(mb)mb.style.display='none';}
+  /* ── განმარტების ბოქსები შეთავსების რეჟიმშიც ── */
+  if(typeof buildMatrixBoxes==='function'){
+    /* TL/TR/BR/BL-ის შიდა რგოლები აქ არ ითვლება — არ ვაწვდით, addon გამოტოვებს */
+    buildMatrixBoxes({L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,
+                      RC1,RC2,TL3,TR3,BR3,BL3,W1,W2,W3},4);
+    document.getElementById('matrix-boxes').style.display='flex';
+  }else{
+    const mb=document.getElementById('matrix-boxes');
+    if(mb)mb.style.display='none';
+  }
 }
 
 function base(p){const L3=r22(p.dd),T3=r22(p.mm),R3=r22(p.yyyy),B3=r22(L3+T3+R3);return{L3,T3,R3,B3};}
