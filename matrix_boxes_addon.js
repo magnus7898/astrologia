@@ -65,6 +65,23 @@ const BOXES = [
   { id:'emo_root',     title:'ფუძის ჩაკრა — ემოცია',         keys:['S7'], color:'#dc4646' },
 ];
 
+
+/* ═══════════ შეთავსების რეჟიმის ბოქსები (method 4) ═══════════
+   იგივე წრეები, სხვა მნიშვნელობა — წყვილზეა და არა ერთ ადამიანზე. */
+const COMPAT_BOXES = [
+  { id:'cp_center',        title:'ვინ არიან ერთმანეთისთვის',            keys:['Cv'],           color:'#ffd700' },
+  { id:'cp_persona',       title:'წყვილის საჯარო იმიჯი / როგორი მშობლები არიან', keys:['L3','L2','L1'], color:'#a78bfa' },
+  { id:'cp_karmic_tail',   title:'წყვილის კარმული კუდი',               keys:['B3','B2','B1'], color:'#8e44ad' },
+  { id:'cp_talent_zone',   title:'წყვილის უმაღლესი მისია',             keys:['T3','T2','T1'], color:'#2471a3' },
+  { id:'cp_material_karma',title:'წყვილის მატერიალური კარმა',          keys:['R3','R2','R1'], color:'#d35400' },
+  { id:'cp_tl3',           title:'როგორ იქცევა კაცი ამ ურთიერთობაში',  keys:['TL3'],          color:'#6B9B3F' },
+  { id:'cp_tr3',           title:'როგორ იქცევა ქალი ამ ურთიერთობაში',  keys:['TR3'],          color:'#3A6EA5' },
+  { id:'cp_br3',           title:'როგორ იქცეოდა კაცი წარსულ ცხოვრებაში', keys:['BR3'],        color:'#6B9B3F' },
+  { id:'cp_bl3',           title:'როგორ იქცეოდა ქალი წარსულ ცხოვრებაში', keys:['BL3'],        color:'#3A6EA5' },
+  { id:'cp_love',          title:'წყვილის სასიყვარულო თემა',           keys:['W1'],           color:'#ff6b8a' },
+  { id:'cp_money',         title:'წყვილის ფულის თემა',                 keys:['W3'],           color:'#7ec850' },
+];
+
 function buildMatrixBoxes(v, method){
   const panel=document.getElementById('matrix-boxes');
   if(!panel) return;
@@ -80,10 +97,15 @@ function buildMatrixBoxes(v, method){
   panel.innerHTML='';
   panel.style.display='flex';
 
-  for(const box of BOXES){
+  const LIST=(method===4)?COMPAT_BOXES:BOXES;
+
+  for(const box of LIST){
     if(box.m1only && method!==1) continue;                 // sexiness: method 1 only
 
-    const nums=(box.keys||[]).map(k=>VAL[k]).filter(n=>n!==undefined);
+    /* შეთავსების რეჟიმში ზოგი წრე არ ითვლება — ასეთ ბოქსს საერთოდ ვტოვებთ */
+    const raw=(box.keys||[]).map(k=>VAL[k]);
+    if(raw.length && raw.some(n=>n===undefined)) continue;
+    const nums=raw.filter(n=>n!==undefined);
     const hasNums=nums.length>0;
 
     // header number(s)
