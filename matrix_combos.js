@@ -2508,6 +2508,19 @@ const MATRIX_DB = {
   emo_sacral:   { singles:{ } },                                         // საკრალური ჩაკრა
   emo_root:     { singles:{ } },                                         // ფუძის ჩაკრა
 
+  /* ═══════════ CHAKRA COMBOS — ენერგია-ფიზიკა-ემოცია (ზუსტი რიგით) ═══════════
+     კოდი = ცხრილის რიგი მარცხნიდან მარჯვნივ: "ენერგია-ფიზიკა-ემოცია".   */
+  ch_sahasrara:   { combos:{ } },                                        // საჰასრარა (გვირგვინი)
+  ch_ajna:        { combos:{ } },                                        // აჯნა (მესამე თვალი)
+  ch_vishudha:    { combos:{ } },                                        // ვიშუდჰა (ყელი)
+  ch_lelia:       { combos:{ } },                                        // დალი — ქალის ხაზი (მეთოდი 3)
+  ch_lada:        { combos:{ } },                                        // კოპალა — მამაკაცის ხაზი (მეთოდი 3)
+  ch_anahata:     { combos:{ } },                                        // ანაჰატა (გული)
+  ch_manipura:    { combos:{ } },                                        // მანიპურა (მზის წნული)
+  ch_svadhistana: { combos:{ } },                                        // სვადჰისტანა (საკრალური)
+  ch_muladhara:   { combos:{ } },                                        // მულადჰარა (ფუძე)
+  ch_total:       { combos:{ } },                                        // ჩაკრების ჯამი — „სულ“ რიგი
+
 };
 
 /* ============================================================
@@ -2520,7 +2533,9 @@ const MATRIX_DB = {
      18-9-9  !=  9-9-18                   → different keys
    (Both may still share a title/name — that's up to your text.)
    ============================================================ */
-const EXACT_ORDER_ZONES = new Set(['karmic_tail']);
+const EXACT_ORDER_ZONES = new Set(['karmic_tail',
+  /* chakra rows are read energy→physics→emotion; never reverse them */
+  'ch_sahasrara','ch_ajna','ch_vishudha','ch_lelia','ch_lada','ch_anahata','ch_manipura','ch_svadhistana','ch_muladhara','ch_total']);
 
 /* raw code, order kept as-is */
 function comboKey(nums){ return nums.map(n => String(n)).join('-'); }
