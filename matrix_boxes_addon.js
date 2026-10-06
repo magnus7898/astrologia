@@ -116,6 +116,13 @@ function comboName(nums){
   return _names[nums.join('-')]||_names[[...nums].reverse().join('-')]||'';
 }
 
+/* your naming list: MATRIX_DB.ch_names, exact code or its reverse */
+function chakraShared(nums){
+  const DB=(typeof MATRIX_DB!=='undefined')?MATRIX_DB:(window.MATRIX_DB||{});
+  const c=(DB.ch_names||{}).combos||{};
+  return c[nums.join('-')]||c[[...nums].reverse().join('-')]||null;
+}
+
 function chakraRows(v,method,R){
   if(method===4) return [];
   if(method===3){
@@ -175,14 +182,16 @@ function buildMatrixBoxes(v, method){
     // article: MATRIX_DB first, then ENERGIES fallback for singles
     let art=null;
     if(hasNums && typeof lookup==='function') art=lookup(box.id,nums);
-    if(!art && box.chakra && nums.length===3 && typeof autoCombo==='function'){
-      const t=autoCombo(box.id,nums); if(t) art={title:'',text:t,auto:true};
-    }
-    /* chakra combos take the shared triplet name (same code = same name in
-       every general zone) unless a title is written in the ch_* zone itself */
+    /* chakra combos — priority:
+         title: ch_<chakra> zone → ch_names (your list) → shared triplet name
+         text : ch_<chakra> zone → ch_names text        → auto-text          */
     if(box.chakra && nums.length===3){
-      const nm=comboName(nums);
-      if(nm && (!art || !art.title)) art=Object.assign({text:''},art||{},{title:nm});
+      const own=art||{}, sh=chakraShared(nums)||{};
+      const has=x=>x&&String(x).trim();
+      const title=has(own.title)?own.title:has(sh.title)?sh.title:comboName(nums);
+      const text=has(own.text)?own.text:has(sh.text)?sh.text
+                :(typeof autoCombo==='function'?(autoCombo(box.id,nums)||''):'');
+      art={title,text};
     }
     if(!art && nums.length===1 && typeof getE==='function'){
       const e=getE(nums[0]); art={title:e.name, text:e.desc};
