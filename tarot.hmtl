@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ტარო · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#05040b;--surface:#0e0b1a;--raised:#161127;--card:#120e20;
+  --gold:#c9a84c;--gold-lt:#ecd59a;--gold-dim:#7a5f2a;
+  --ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);
+  --fire:#e2683c;--water:#4a90d9;--air:#c9c2a0;--earth:#5fae6e;--major:#a77bdb;
+  --cw:96px;--ch:160px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(120,70,200,.12),transparent 60%),var(--void);
+  color:var(--ink);font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.6}
+.page{max-width:1180px;margin:0 auto;padding:34px 18px 80px}
+a{color:inherit}
+header{text-align:center;margin-bottom:26px;position:relative}
+.back{position:absolute;left:0;top:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);
+  opacity:.7;text-decoration:none;border:1px solid var(--border);border-radius:3px;padding:6px 11px}
+.back:hover{opacity:1;border-color:var(--border-h)}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5vw,44px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:12px;color:var(--ink-dim);margin-top:4px;letter-spacing:1px}
+
+/* ── spread picker ── */
+.groups{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
+.grp-t{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--gold);opacity:.75;margin-bottom:7px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:var(--raised);border:1px solid var(--border);border-radius:5px;color:var(--ink-mid);cursor:pointer;
+  padding:7px 11px;font-family:inherit;font-size:12.5px;transition:all .2s}
+.chip small{color:var(--ink-dim);margin-left:5px;font-size:10px}
+.chip:hover{border-color:var(--border-h);color:var(--ink)}
+.chip.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.08)}
+
+.ask{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;margin-bottom:22px}
+.ask h2{font-family:'Cinzel',serif;font-weight:400;font-size:15px;letter-spacing:2px;color:var(--gold-lt)}
+.ask .desc{font-size:12.5px;color:var(--ink-mid);margin:4px 0 12px}
+.ask .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ask input[type=text]{flex:1 1 260px;background:rgba(10,8,24,.8);border:1px solid rgba(201,168,76,.25);border-radius:6px;
+  color:var(--ink);padding:9px 12px;font:inherit;font-size:13px;outline:none}
+.ask input[type=text]:focus{border-color:var(--gold)}
+.opt{font-size:12px;color:var(--ink-mid);display:flex;align-items:center;gap:6px;cursor:pointer}
+.opt input{accent-color:var(--gold)}
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:10px 20px;
+  font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;cursor:pointer;font-weight:600}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:none;color:var(--gold);border:1px solid var(--border-h);font-weight:400}
+.ab{display:none;gap:10px;flex-wrap:wrap;margin-top:12px}
+.ab.show{display:flex}
+.note{font-size:11px;color:var(--ink-dim);margin-top:10px}
+.ab-names{display:none;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ab-names.show{display:flex}
+.ab-names input{flex:1 1 200px}
+
+/* ── table ── */
+.table-wrap{overflow-x:auto;padding:10px 0 20px;margin-bottom:10px}
+.table{display:grid;gap:14px 12px;justify-content:center;margin:0 auto;min-width:min-content}
+.slot{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.slot .pn{font-size:10px;color:var(--ink-dim);text-align:center;max-width:calc(var(--cw) + 16px);line-height:1.3;min-height:26px}
+.slot .pn b{color:var(--gold);font-family:'Cinzel',serif;font-weight:400;margin-right:3px}
+.slot.cross{z-index:2;transform:translateY(-16px)}
+.slot.cross .card3d{transform:rotate(90deg)}
+.slot.cross .pn{position:absolute;bottom:-34px;}
+
+.card3d{width:var(--cw);height:var(--ch);perspective:900px;cursor:pointer;opacity:0;transform:translateY(-14px);
+  animation:deal .45s ease forwards}
+@keyframes deal{to{opacity:1;transform:none}}
+.slot.cross .card3d{animation:dealx .45s ease forwards}
+@keyframes dealx{from{opacity:0}to{opacity:1;transform:rotate(90deg)}}
+.inner{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d}
+.card3d.up .inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:7px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.back-f{background:#130d24;border:1px solid rgba(201,168,76,.45);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.back-f svg{width:100%;height:100%}
+.front{transform:rotateY(180deg);border:1px solid rgba(255,255,255,.12);box-shadow:0 8px 22px rgba(0,0,0,.55)}
+.cf{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:7px 5px 6px;
+  background:linear-gradient(170deg,var(--c1),var(--c2))}
+.cf.rev{transform:rotate(180deg)}
+.cf-top{font-family:'Cinzel',serif;font-size:11px;color:rgba(255,255,255,.85);letter-spacing:1px}
+.cf-art{flex:1;display:flex;align-items:center;justify-content:center;width:100%}
+.cf-art .big{font-size:40px;line-height:1;color:#fff;text-shadow:0 0 12px rgba(255,255,255,.35);font-family:'Segoe UI Symbol','Noto Sans Symbols 2',serif}
+.cf-art svg{stroke:#fff;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.pips{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;max-width:70px}
+.pips svg{width:17px;height:17px}
+.solo svg{width:44px;height:44px}
+.court{display:flex;flex-direction:column;align-items:center;gap:2px}
+.court svg{width:34px;height:34px}
+.court span{font-family:'Cinzel',serif;font-size:16px;color:#fff;opacity:.9}
+.cf-name{font-size:9.5px;text-align:center;color:#fff;line-height:1.2;background:rgba(0,0,0,.28);border-radius:3px;padding:2px 4px;width:100%}
+.el-fire{--c1:#5a1d10;--c2:#2a0c08}.el-water{--c1:#12305a;--c2:#081428}.el-air{--c1:#4a4630;--c2:#1f1d14}
+.el-earth{--c1:#1d4526;--c2:#0b1c0f}.el-major{--c1:#3b2066;--c2:#170c2c}
+.el-major{border-color:rgba(201,168,76,.55)}
+
+/* ── reading ── */
+.reading{display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-top:6px}
+.reading.show{display:block}
+.reading h3{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:14px;margin-bottom:4px}
+.q{font-size:12.5px;color:var(--ink-mid);font-style:italic;margin-bottom:12px}
+.ri{display:grid;grid-template-columns:28px 1fr;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.05)}
+.ri .no{font-family:'Cinzel',serif;color:var(--gold);font-size:15px;text-align:center}
+.ri .pos{font-size:11px;color:var(--ink-dim);letter-spacing:.5px}
+.ri .nm{font-size:14.5px;color:var(--ink);margin:1px 0 2px}
+.ri .nm .rv{color:#e58c8c;font-size:11px;margin-left:6px}
+.ri .tags{font-size:10.5px;color:var(--ink-dim);margin-bottom:3px}
+.ri .mn{font-size:13px;color:var(--ink-mid)}
+.ri.pending .nm{color:var(--ink-dim);font-style:italic;font-size:12.5px}
+.verdict{margin:6px 0 12px;padding:12px 14px;border-radius:6px;font-size:14px;border:1px solid}
+.verdict b{font-family:'Cinzel',serif;letter-spacing:2px;font-size:16px;margin-right:8px}
+.v-yes{border-color:rgba(95,174,110,.6);background:rgba(95,174,110,.08)}.v-yes b{color:#7fd08e}
+.v-no{border-color:rgba(226,104,60,.6);background:rgba(226,104,60,.08)}.v-no b{color:#f08a63}
+.v-maybe{border-color:rgba(201,168,76,.6);background:rgba(201,168,76,.07)}.v-maybe b{color:var(--gold-lt)}
+.summary{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.summary h4{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px 18px;margin-bottom:10px}
+.bar{font-size:11.5px;color:var(--ink-mid)}
+.bar .tr{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:3px}
+.bar .tr i{display:block;height:100%;border-radius:3px}
+.insight{font-size:12.8px;color:var(--ink-mid);padding:3px 0 3px 14px;position:relative}
+.insight::before{content:'✦';position:absolute;left:0;color:var(--gold);font-size:9px;top:6px}
+.quint{margin-top:10px;padding:10px 12px;border:1px dashed var(--border-h);border-radius:6px;font-size:13px;color:var(--ink-mid)}
+.quint b{color:var(--gold-lt)}
+.health{font-size:11px;color:#e0a07a;margin-top:10px}
+
+/* ── encyclopedia ── */
+details.enc{margin-top:28px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+details.enc summary{cursor:pointer;list-style:none;padding:13px 18px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;color:var(--gold)}
+details.enc summary::-webkit-details-marker{display:none}
+.enc-in{padding:0 18px 18px}
+.enc-f{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.enc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.enc-c{background:var(--raised);border:1px solid var(--border);border-left:3px solid var(--elc,#888);border-radius:5px;padding:9px 11px;font-size:12px}
+.enc-c b{display:block;font-size:13.5px;color:var(--ink);margin-bottom:2px}
+.enc-c .t{font-size:10.5px;color:var(--ink-dim)}
+.enc-c .u{color:var(--ink-mid);margin-top:4px}
+.enc-c .r{color:#c99a9a;margin-top:3px}
+@media(max-width:640px){
+  :root{--cw:70px;--ch:118px}
+  .back{position:static;display:inline-block;margin-bottom:12px}
+  .cf-art .big{font-size:28px}.pips svg{width:12px;height:12px}.pips{max-width:52px}
+  .solo svg{width:32px;height:32px}.court svg{width:24px;height:24px}.court span{font-size:12px}
+  .cf-name{font-size:7.5px}.cf-top{font-size:9px}
+  .table{gap:10px 8px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html?g=fun">← გასართობი</a>
+  <h1>ტარო</h1>
+  <div class="sub">78 არკანი · რაიდერ–უეიტის ტრადიცია · ოქროს განთიადის ასტროლოგიური შესაბამისობები</div>
+</header>
+
+<div class="groups" id="groups"></div>
+
+<div class="ask">
+  <h2 id="sp-title"></h2>
+  <div class="desc" id="sp-desc"></div>
+  <div class="ab-names" id="ab-names">
+    <input type="text" id="opt-a" placeholder="გზა A — მაგ. ვრჩები ახლანდელ სამსახურში">
+    <input type="text" id="opt-b" placeholder="გზა B — მაგ. ვიწყებ ახალ საქმეს">
+  </div>
+  <div class="row" style="margin-top:10px">
+    <input type="text" id="question" placeholder="შენი კითხვა (არჩევითი) — მაგ. რა მელის ამ ურთიერთობაში?">
+    <label class="opt"><input type="checkbox" id="rev" checked> შებრუნებული ბარათები</label>
+    <button class="btn" id="draw">✦ აურიე და გაშალე</button>
+  </div>
+  <div class="ab" id="actions">
+    <button class="btn ghost" id="flipall">ყველას გადაბრუნება</button>
+    <button class="btn ghost" id="copy">ტექსტის კოპირება</button>
+  </div>
+  <div class="note">ბარათზე დაჭერით ის გადაბრუნდება. დაფიქრდი კითხვაზე, სანამ აურევ.</div>
+</div>
+
+<div class="table-wrap"><div class="table" id="table"></div></div>
+<div class="reading" id="reading"></div>
+
+<details class="enc" id="enc">
+  <summary>✦ ბარათების ცნობარი — 78 არკანი</summary>
+  <div class="enc-in">
+    <div class="enc-f" id="enc-f"></div>
+    <div class="enc-g" id="enc-g"></div>
+  </div>
+</details>
+</div>
+
+<script>
+'use strict';
+/* ════════════════════════════════════════════════════════════════
+   DECK — Rider–Waite order (VIII Strength, XI Justice).
+   yn: yes/no weight (y / m / n) used by the yes-or-no spread.
+   astro: Golden Dawn attribution of the Major Arcana.
+   ════════════════════════════════════════════════════════════════ */
+const ROMAN=['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
+const MAJORS=[
+ ['სულელი','🜁 ჰაერი','✧','y','ახალი დასაწყისი, სპონტანურობა, ნდობა ცხოვრების მიმართ — ნაბიჯი უცნობისკენ.','დაუფიქრებლობა, რისკის უგულებელყოფა ან, პირიქით, დაწყების შიში.'],
+ ['მაგი','☿ მერკური','∞','y','ნება და ოსტატობა: ყველა რესურსი ხელთ გაქვს — მოქმედების დროა.','მანიპულაცია, გამოუყენებელი ნიჭი, ენერგიის არასწორი მიმართვა.'],
+ ['მღვდელქალი','☽ მთვარე','☾','m','ინტუიცია, ფარული ცოდნა, ქვეცნობიერის ხმა. პასუხი სიჩუმეშია.','შინაგანი ხმის იგნორირება, საიდუმლოებები, ზედაპირული ხედვა.'],
+ ['იმპერატრიცა','♀ ვენერა','♀','y','ნაყოფიერება, სიუხვე, სიყვარული, შემოქმედება და ბუნებრივი ზრდა.','შემოქმედებითი ბლოკი, დამოკიდებულება, საკუთარი თავის უგულებელყოფა.'],
+ ['იმპერატორი','♈ ვერძი','♈','y','სტრუქტურა, ავტორიტეტი, სტაბილურობა და მყარი საფუძველი.','სიხისტე, ტირანია ან დისციპლინისა და კონტროლის ნაკლებობა.'],
+ ['იეროფანტი','♉ კურო','♉','y','ტრადიცია, სულიერი სწავლება, მენტორი, ინსტიტუტი, ღირებულებები.','დოგმისგან გათავისუფლება, საკუთარი გზა, შეჯახება წესებთან.'],
+ ['შეყვარებულები','♊ ტყუპები','♊','y','სიყვარული, ჰარმონია, კავშირი და არჩევანი, რომელიც ღირებულებებს ეხმიანება.','დისბალანსი, ღირებულებების შეუსაბამობა, გადაწყვეტილებისგან გაქცევა.'],
+ ['ეტლი','♋ კირჩხიბი','♋','y','გამარჯვება ნებისყოფით, მიმართულება, საპირისპირო ძალების მართვა.','მიმართულების დაკარგვა, აგრესია, კონტროლის გაშვება.'],
+ ['ძალა','♌ ლომი','♌','y','შინაგანი ძალა, სიმამაცე, მოთმინება — ნაზი, მაგრამ ურყევი კონტროლი.','თვითდაეჭვება, სისუსტის შეგრძნება, უკონტროლო ემოციები.'],
+ ['განდეგილი','♍ ქალწული','☼','m','განმარტოება, ჩაღრმავება, შინაგანი სინათლისა და სიბრძნის ძიება.','იზოლაცია, მარტოობა, ან საკუთარ თავთან შეხვედრისგან გაქცევა.'],
+ ['ბედის ბორბალი','♃ იუპიტერი','☸','y','ბედის შემობრუნება, ახალი ციკლი, გარდამტეხი მომენტი, იღბალი.','უიღბლო ციკლი, ცვლილებისადმი წინააღმდეგობა, ძველი სცენარის გამეორება.'],
+ ['სამართლიანობა','♎ სასწორი','⚖','m','სამართლიანობა, სიმართლე, მიზეზ-შედეგი — რასაც თესავ, იმას იმკი.','უსამართლობა, პასუხისმგებლობის არიდება, თვითმოტყუება.'],
+ ['ჩამოკიდებული','🜄 წყალი','♆','m','პაუზა, დანებება, ახალი კუთხიდან დანახვა, ნებაყოფლობითი მსხვერპლი.','გაჭიანურება, უაზრო მსხვერპლი, ცვლილებისადმი წინააღმდეგობა.'],
+ ['სიკვდილი','♏ მორიელი','♏','n','ტრანსფორმაცია: ძველი სრულდება, რათა ახალს ადგილი დაუთმოს.','ცვლილების შიში, სტაგნაცია, წარსულზე მიჯაჭვულობა.'],
+ ['ზომიერება','♐ მშვილდოსანი','♐','y','ბალანსი, მოთმინება, ზომიერება და ჰარმონიული სინთეზი.','დისბალანსი, უკიდურესობები, მოუთმენლობა.'],
+ ['ეშმაკი','♑ თხის რქა','♑','n','მიჯაჭვულობა, ცდუნება, დამოკიდებულება — ჩრდილი, რომელიც გმართავს.','განთავისუფლება, ჯაჭვების გაწყვეტა, ჩრდილის გაცნობიერება.'],
+ ['კოშკი','♂ მარსი','♂','n','მოულოდნელი გარდატეხა, ილუზიების ნგრევა, სიმართლის გამოცხადება.','კატასტროფის თავიდან არიდება, ცვლილების შიში, შინაგანი გარდატეხა.'],
+ ['ვარსკვლავი','♒ მერწყული','★','y','იმედი, განკურნება, შთაგონება და სულიერი განახლება.','იმედის დაკარგვა, ცინიზმი, რწმენის ნაკლებობა.'],
+ ['მთვარე','♓ თევზები','☽','n','ილუზიები, შიშები, ქვეცნობიერი — ყველაფერი ის არ არის, რაც ჩანს.','შიშის განთავისუფლება, სიმართლის გამოაშკარავება, სიცხადის დაბრუნება.'],
+ ['მზე','☉ მზე','☉','y','სიხარული, წარმატება, სიცხადე, სიცოცხლისუნარიანობა — ყველაზე ნათელი ბარათი.','დროებითი ღრუბლები, ზედმეტი ოპტიმიზმი, სიხარულის დაბლოკვა.'],
+ ['განსჯა','🜂 ცეცხლი','♇','y','გამოღვიძება, მოწოდება, განახლება — დროა გაიგო სულის ძახილი.','თვითკრიტიკა, მოწოდების იგნორირება, ეჭვი საკუთარ გზაში.'],
+ ['სამყარო','♄ სატურნი','♁','y','დასრულება, მთლიანობა, მიღწევა — ციკლი წარმატებით იხურება.','დაუსრულებლობა, შეფერხება ფინიშთან, სრულყოფის ნაკლებობა.'],
+];
+const SUITS={
+ wands:{ka:'კვერთხები',gen:'კვერთხების',el:'fire',elka:'ცეცხლი'},
+ cups:{ka:'თასები',gen:'თასების',el:'water',elka:'წყალი'},
+ swords:{ka:'მახვილები',gen:'მახვილების',el:'air',elka:'ჰაერი'},
+ pentacles:{ka:'პენტაკლები',gen:'პენტაკლების',el:'earth',elka:'მიწა'},
+};
+const RANK_KA=['','ტუზი','ორიანი','სამიანი','ოთხიანი','ხუთიანი','ექვსიანი','შვიდიანი','რვიანი','ცხრიანი','ათიანი','მხლებელი','რაინდი','დედოფალი','მეფე'];
+const RANK_SHORT=['','A','2','3','4','5','6','7','8','9','10','მხ','რნ','დდ','მფ'];
+/* [yn, upright, reversed] for ranks 1..14 */
+const MINORS={
+wands:[
+ ['y','ახალი იმპულსი, შთაგონება, შემოქმედებითი ნაპერწკალი — დაიწყე.','ენერგიის დაბრკოლება, გადადებული დასაწყისი, ენთუზიაზმის ნაკლებობა.'],
+ ['y','დაგეგმვა, ხედვა, პირველი გადაწყვეტილება სამყაროსკენ გასვლაზე.','გაურკვევლობა, უცნობის შიში, კომფორტის ზონაში დარჩენა.'],
+ ['y','გაფართოება, პირველი შედეგები, შორს ხედვა და ახალი ჰორიზონტები.','დაყოვნება, მოლოდინების იმედგაცრუება, ცუდი დაგეგმვა.'],
+ ['y','დღესასწაული, სტაბილურობა, სახლი, ჰარმონიული ეტაპის დასრულება.','არასტაბილურობა სახლში, გადადებული ზეიმი, გარდამავალი პერიოდი.'],
+ ['m','კონკურენცია, დაძაბულობა, აზრთა შეჯახება.','კონფლიქტის დასრულება, შინაგანი ბრძოლა, დაძაბულობის არიდება.'],
+ ['y','გამარჯვება, აღიარება, საზოგადოებრივი წარმატება.','თვითშეფასების კრიზისი, აღიარების ნაკლებობა, ამპარტავნება.'],
+ ['m','საკუთარი პოზიციის დაცვა, გამძლეობა, შეუპოვრობა.','დაღლა, დათმობა, თავდაცვის ზედმეტი წნეხი.'],
+ ['y','სისწრაფე, მოძრაობა, ამბები — მოვლენები სწრაფად ვითარდება.','შეფერხება, აჩქარება, ფრუსტრაცია, არეული კომუნიკაცია.'],
+ ['m','გამძლეობა, ბოლო ძალისხმევა, საზღვრების დაცვა.','გადაღლა, ეჭვიანობა, დამარცხების შეგრძნება ზღვარზე.'],
+ ['n','ტვირთი, პასუხისმგებლობის სიმძიმე, ზედმეტად ბევრი საქმე.','ტვირთის მოხსნა, დელეგირება — ან სრული გადაწვა.'],
+ ['y','ცნობისმოყვარეობა, ახალი იდეა, ენთუზიაზმით სავსე ცნობა.','მიმოფანტულობა, ნაჩქარევი იდეები, მიმართულების ნაკლებობა.'],
+ ['y','მოქმედება, თავგადასავალი, ვნებიანი სწრაფვა წინ.','იმპულსურობა, მოუთმენლობა, დაუმთავრებელი საქმეები.'],
+ ['y','თავდაჯერებულობა, სითბო, ქარიზმა, დამოუკიდებლობა.','ეჭვიანობა, თვითდაეჭვება, მომთხოვნობა.'],
+ ['y','ლიდერობა, ხედვა, მეწარმეობა, შთაგონებული ძალა.','ავტორიტარიზმი, მოუთმენლობა, ზედმეტი მოლოდინები.'],
+],
+cups:[
+ ['y','ახალი სიყვარული, ემოციური გახსნა, ინტუიცია და თანაგრძნობა.','ემოციური დაბლოკვა, თვითსიყვარულის ნაკლებობა, შინაგანი სიცარიელე.'],
+ ['y','ურთიერთმიზიდულობა, პარტნიორობა, ორმხრივი გრძნობა.','დისბალანსი ურთიერთობაში, განშორება, გაუგებრობა.'],
+ ['y','მეგობრობა, ზეიმი, საზოგადოება, საერთო სიხარული.','ზედმეტობა, ჭორი, გარიყულობის შეგრძნება.'],
+ ['m','აპათია, ჩაფიქრება, შეთავაზების ვერდანახვა.','გამოღვიძება, ახალი შესაძლებლობის მიღება, ჩაკეტილობიდან გამოსვლა.'],
+ ['n','დანაკარგი, სინანული — დარჩენილის ვერდანახვა.','მიღება, პატიება, წინ წასვლა დანაკარგის შემდეგ.'],
+ ['y','ნოსტალგია, ბავშვობა, უმანკოება, წარსულის საჩუქრები.','წარსულში ჩარჩენა, გაზრდის შიში, იდეალიზაცია.'],
+ ['m','ბევრი არჩევანი, ილუზიები, ფანტაზიები.','სიცხადე, რეალობასთან დაბრუნება, ფოკუსის პოვნა.'],
+ ['n','წასვლა — იმის მიტოვება, რაც აღარ კვებავს სულს.','წასვლის შიში, უმიზნო ხეტიალი, ძველთან დაბრუნება.'],
+ ['y','სურვილის ასრულება, კმაყოფილება, ემოციური კეთილდღეობა.','კმაყოფილების ნაკლებობა, მატერიალიზმი, ზედაპირული სიამოვნება.'],
+ ['y','ოჯახური ბედნიერება, ჰარმონია, ემოციური სისრულე.','ოჯახური დაძაბულობა, დამსხვრეული იდეალი, განცალკევება.'],
+ ['y','ემოციური ცნობა, შემოქმედებითი სიურპრიზი, ინტუიციური გზავნილი.','ემოციური მოუმწიფებლობა, შემოქმედებითი ბლოკი, ზედმეტი მგრძნობელობა.'],
+ ['y','რომანტიკა, შეთავაზება, მომხიბვლელობა — გულის მიყოლა.','ხასიათის ცვალებადობა, არარეალისტური მოლოდინები, ეჭვიანობა.'],
+ ['y','თანაგრძნობა, ინტუიცია, ემოციური სიღრმე, მზრუნველობა.','ემოციური დამოკიდებულება, თვითმსხვერპლობა, საზღვრების ნაკლებობა.'],
+ ['y','ემოციური სიმწიფე, დიპლომატია, მშვიდი სიბრძნე.','ემოციური მანიპულაცია, ხასიათის ცვალებადობა, გრძნობების ჩახშობა.'],
+],
+swords:[
+ ['y','სიცხადე, სიმართლე, ახალი იდეა, გონებრივი გარღვევა.','დაბნეულობა, მცდარი აზრი, სიტყვის ძალის ბოროტად გამოყენება.'],
+ ['m','გაურკვევლობა, რთული არჩევანი, თვალის დახუჭვა სიმართლეზე.','ინფორმაციის გადატვირთვა — ან ჩიხის გარღვევა და გადაწყვეტილება.'],
+ ['n','გულის ტკივილი, მწუხარება, მტკივნეული სიმართლე.','განკურნება, პატიება, ტკივილის გაშვება.'],
+ ['m','დასვენება, აღდგენა, მედიტაცია, შეჩერება.','გადაღლა, დასვენების უგულებელყოფა, აქტიურობაში დაბრუნება.'],
+ ['n','კონფლიქტი, ძვირად ნაყიდი გამარჯვება, ეგოისტური მოგება.','შერიგება, ძველი კონფლიქტის დასრულება, წყენის გაშვება.'],
+ ['y','გადასვლა, მძიმე ეტაპის დატოვება, მშვიდი წყლებისკენ მოძრაობა.','დაუსრულებელი საქმე, წინააღმდეგობა ცვლილებისადმი, ტვირთის თან წაღება.'],
+ ['n','ეშმაკობა, სტრატეგია, ფარული მოქმედება, ტყუილი.','აღიარება, სინდისი, საიდუმლოს გამჟღავნება.'],
+ ['n','შეზღუდვა, მსხვერპლის როლი, საკუთარი აზრების ტყვეობა.','განთავისუფლება, ახალი ხედვა, შიშის დაძლევა.'],
+ ['n','შფოთვა, უძილობა, შიშები, ზედმეტი ფიქრი.','იმედი, შიშის შემცირება, დახმარების თხოვნა.'],
+ ['n','მტკივნეული დასასრული, ფსკერი — შემდეგ მხოლოდ აღმასვლაა.','აღდგენა, გადარჩენა, დასასრულისთვის წინააღმდეგობის გაწევა.'],
+ ['m','ცნობისმოყვარეობა, სიფხიზლე, ახალი ცოდნის წყურვილი.','ჭორი, ნაჩქარევი სიტყვები, ცინიზმი.'],
+ ['m','ამბიცია, სწრაფი მოქმედება, მიზანზე ორიენტირება.','უგუნურება, აგრესია, ფიქრის გარეშე მოქმედება.'],
+ ['m','დამოუკიდებლობა, სიცხადე, პირდაპირობა, მკაფიო საზღვრები.','სიცივე, მწარე კრიტიკა, ემოციური ჩაკეტილობა.'],
+ ['m','ინტელექტი, ავტორიტეტი, სამართლიანობა, ლოგიკა.','მანიპულაცია, ძალაუფლების ბოროტად გამოყენება, სისასტიკე.'],
+],
+pentacles:[
+ ['y','ახალი მატერიალური შესაძლებლობა, კეთილდღეობა, ფინანსური დასაწყისი.','ხელიდან გაშვებული შანსი, დაგეგმვის ნაკლებობა, ფინანსური სიფრთხილე.'],
+ ['y','ბალანსი, მოქნილობა, რამდენიმე საქმის ერთდროულად წარმართვა.','გადატვირთვა, ცუდი ფინანსური მართვა, დისბალანსი.'],
+ ['y','გუნდური მუშაობა, ოსტატობა, თანამშრომლობა.','უთანხმოება გუნდში, დაბალი ხარისხი, მოტივაციის ნაკლებობა.'],
+ ['m','კონტროლი, დაზოგვა, უსაფრთხოება, ფლობის სურვილი.','სიძუნწე, ზედმეტი კონტროლი ან უყაირათობა, გაშვების სწავლა.'],
+ ['n','ფინანსური სირთულე, გარიყულობა, მატერიალური დანაკარგი.','აღდგენა, დახმარების მიღება, სირთულის დასასრული.'],
+ ['y','გულუხვობა, გაცემა და მიღება, ბალანსი, ქველმოქმედება.','ვალები, ცალმხრივი გაცემა, პირობითი დახმარება.'],
+ ['m','მოთმინება, გრძელვადიანი ხედვა, ინვესტიცია, შედეგის მოლოდინი.','მოუთმენლობა, ცუდი ინვესტიცია, უშედეგო შრომა.'],
+ ['y','შრომისმოყვარეობა, ოსტატობის სრულყოფა, დეტალებზე ყურადღება.','პერფექციონიზმი, მონოტონურობა, ზერელე შრომა.'],
+ ['y','დამოუკიდებლობა, ფუფუნება, თვითკმარობა, ნაყოფის მოწევა.','ზედმეტი შრომა, ფინანსური დამოკიდებულება, ზედაპირული კეთილდღეობა.'],
+ ['y','სიმდიდრე, მემკვიდრეობა, ოჯახის სტაბილურობა, გრძელვადიანი წარმატება.','ოჯახური დავა ქონებაზე, ფინანსური არასტაბილურობა.'],
+ ['y','სწავლა, ახალი პრაქტიკული შესაძლებლობა, მიზანდასახულობა.','დაუდევრობა, პროგრესის ნაკლებობა, გადადება.'],
+ ['y','საიმედოობა, მეთოდურობა, ნელი, მაგრამ მყარი წინსვლა.','სიჯიუტე, მოწყენილობა, სტაგნაცია.'],
+ ['y','მზრუნველობა, პრაქტიკულობა, სიუხვე, მიწიერი სითბო.','თავის უგულებელყოფა, მატერიალიზმი, საქმესა და სახლს შორის დისბალანსი.'],
+ ['y','სიმდიდრე, ბიზნესი, უსაფრთხოება, მატერიალური ოსტატობა.','სიხარბე, მატერიალიზმი, სიჯიუტე ფინანსებში.'],
+]};
+
+/* build the 78-card deck */
+const DECK=[];
+MAJORS.forEach((m,i)=>DECK.push({id:'M'+i,major:true,n:i,name:m[0],astro:m[1],glyph:m[2],yn:m[3],up:m[4],rv:m[5],el:'major'}));
+for(const s of Object.keys(SUITS))MINORS[s].forEach((m,i)=>{
+  const r=i+1;
+  DECK.push({id:s+r,major:false,suit:s,rank:r,name:`${RANK_KA[r]} ${SUITS[s].gen}`,
+    yn:m[0],up:m[1],rv:m[2],el:SUITS[s].el});
+});
+
+/* ── suit icons (original line drawings) ── */
+const ICON={
+ wands:'<path d="M12 2.5v19"/><path d="M12 7c2.5-.4 4-1.8 4.6-4"/><path d="M12 11c-2.5-.4-4-1.8-4.6-4"/><path d="M12 15c2.5-.4 4-1.8 4.6-4"/>',
+ cups:'<path d="M6 4h12v3.5a6 6 0 0 1-12 0z"/><path d="M12 13.5v5"/><path d="M8 20.5h8"/>',
+ swords:'<path d="M12 2l2 3v10.5h-4V5z"/><path d="M7 15.5h10"/><path d="M12 15.5V22"/>',
+ pentacles:'<circle cx="12" cy="12" r="9.5"/><path d="M12 5L16.11 17.66L5.34 9.84H18.66L7.89 17.66Z"/>',
+};
+const svgIcon=s=>`<svg viewBox="0 0 24 24">${ICON[s]}</svg>`;
+const BACK=`<svg viewBox="0 0 100 166" preserveAspectRatio="none"><defs><pattern id="bp" width="16" height="16" patternUnits="userSpaceOnUse">
+  <path d="M8 0L16 8L8 16L0 8Z" fill="none" stroke="rgba(201,168,76,.18)" stroke-width=".7"/></pattern></defs>
+  <rect width="100" height="166" fill="url(#bp)"/><rect x="5" y="5" width="90" height="156" rx="4" fill="none" stroke="rgba(201,168,76,.55)" stroke-width=".8"/>
+  <circle cx="50" cy="83" r="20" fill="#130d24" stroke="rgba(201,168,76,.6)" stroke-width=".8"/>
+  <polygon points="50,66 64,92 36,92" fill="none" stroke="rgba(201,168,76,.6)" stroke-width=".7"/>
+  <polygon points="50,100 36,74 64,74" fill="none" stroke="rgba(201,168,76,.6)" stroke-width=".7"/>
+  <circle cx="50" cy="83" r="2" fill="rgba(201,168,76,.8)"/></svg>`;
+
+function faceHTML(c,rev){
+  let top,art;
+  if(c.major){top=ROMAN[c.n];art=`<div class="big">${c.glyph}\uFE0E</div>`;}
+  else if(c.rank===1){top='A';art=`<div class="solo">${svgIcon(c.suit)}</div>`;}
+  else if(c.rank<=10){top=String(c.rank);art=`<div class="pips">${svgIcon(c.suit).repeat(c.rank)}</div>`;}
+  else{top=RANK_SHORT[c.rank];art=`<div class="court">${svgIcon(c.suit)}<span>${RANK_SHORT[c.rank]}</span></div>`;}
+  return `<div class="cf el-${c.el}${rev?' rev':''}"><div class="cf-top">${top}</div><div class="cf-art">${art}</div><div class="cf-name">${c.name}</div></div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SPREADS — positions: [title, meaning, col, row, cross?]
+   ════════════════════════════════════════════════════════════════ */
+const SPREADS=[
+ {id:'daily',g:'ყოველდღიური',t:'დღის ბარათი',d:'ერთი ბარათი — დღის ენერგია და რჩევა.',
+  p:[['დღის ენერგია','რა მოაქვს დღეს და რას მიაქციო ყურადღება',1,1]]},
+ {id:'yesno',g:'ყოველდღიური',t:'კი თუ არა',yn:true,d:'სამი ბარათი. ცენტრალური ორმაგად ითვლება; შებრუნებული ბარათი პასუხს ასუსტებს.',
+  p:[['ვითარება','რა გავლენას ახდენს კითხვაზე',1,1],['ძირითადი პასუხი','მთავარი ენერგია — ორმაგი წონით',2,1],['შედეგი','საით მიდის ვითარება',3,1]]},
+ {id:'ppf',g:'ყოველდღიური',t:'წარსული · აწმყო · მომავალი',d:'კლასიკური სამბარათიანი განლაგება.',
+  p:[['წარსული','რამაც მოგიყვანა აქამდე',1,1],['აწმყო','სად ხარ ახლა',2,1],['მომავალი','საით მიდის ეს გზა',3,1]]},
+ {id:'bms',g:'ყოველდღიური',t:'სხეული · გონება · სული',d:'სამი დონის მოკლე შემოწმება.',
+  p:[['სხეული','ფიზიკური მდგომარეობა და მოთხოვნილება',1,1],['გონება','აზრები და მენტალური ფონი',2,1],['სული','სულიერი მდგომარეობა და გზავნილი',3,1]]},
+
+ {id:'love',g:'სიყვარული',t:'სიყვარული — ჩვენ',d:'ხუთბარათიანი განლაგება არსებული ურთიერთობისთვის.',
+  p:[['შენ','შენი ენერგია ამ ურთიერთობაში',1,2],['კავშირი','რა გაკავშირებთ',2,2],['პარტნიორი','მისი ენერგია ამ ურთიერთობაში',3,2],['მიმართულება','საით მიდის ურთიერთობა',2,1],['გამოწვევა','რა არის გადასალახი',2,3]]},
+ {id:'newlove',g:'სიყვარული',t:'ახალი სიყვარული',d:'მათთვის, ვინც სიყვარულს ელოდება.',
+  p:[['რას ვეძებ','რა მჭირდება ნამდვილად',1,1],['რა მაბრკოლებს','შიში ან ძველი ნიმუში',2,1],['რა უნდა გავხსნა','შინაგანი ცვლილება',3,1],['როგორ მოვა','როგორ გამოჩნდება სიყვარული',4,1],['შედეგი','უახლოესი პერსპექტივა',5,1]]},
+ {id:'think',g:'სიყვარული',t:'რას ფიქრობს ჩემზე?',d:'სამი ბარათი სხვა ადამიანის დამოკიდებულებაზე.',
+  p:[['რას ფიქრობს','მისი აზრები შენზე',1,1],['რას გრძნობს','მისი გრძნობები',2,1],['რას აპირებს','მისი სავარაუდო ქმედება',3,1]]},
+ {id:'relfuture',g:'სიყვარული',t:'ურთიერთობის მომავალი',d:'ექვსი ბარათი: საფუძველიდან შედეგამდე.',
+  p:[['საფუძველი','რაზე დგას ურთიერთობა',1,2],['წარსული','რა დარჩა უკან',2,3],['აწმყო','ახლანდელი ენერგია',2,2],['ფარული','რაც არ ჩანს ან არ ითქმის',2,1],['რჩევა','რა უნდა გააკეთო',3,1],['მომავალი','სად მიდის ურთიერთობა',3,3]]},
+
+ {id:'paths',g:'გადაწყვეტილება და სცენარები',t:'ორი გზა',ab:true,d:'შეადარე ორი არჩევანი: დაასახელე გზა A და გზა B.',
+  p:[['ვითარება','სად დგახარ არჩევანის წინ',2,1],['A: ქმედება','რას ნიშნავს ამ გზაზე წასვლა',1,2],['A: შედეგი','სავარაუდო შედეგი',1,3],['A: გაკვეთილი','რას გასწავლის',1,4],
+     ['B: ქმედება','რას ნიშნავს ამ გზაზე წასვლა',3,2],['B: შედეგი','სავარაუდო შედეგი',3,3],['B: გაკვეთილი','რას გასწავლის',3,4]]},
+ {id:'scen',g:'გადაწყვეტილება და სცენარები',t:'სამი სცენარი',d:'საუკეთესო, სავარაუდო და უარესი განვითარება — და რჩევა.',
+  p:[['საუკეთესო სცენარი','როგორ შეიძლება ყველაფერი კარგად წარიმართოს',1,1],['სავარაუდო სცენარი','ყველაზე მოსალოდნელი განვითარება',2,1],['უარესი სცენარი','რას უნდა მოერიდო',3,1],['რჩევა','როგორ მიხვიდე საუკეთესომდე',2,2]]},
+ {id:'decide',g:'გადაწყვეტილება და სცენარები',t:'გადაწყვეტილება',d:'ხუთი ბარათი რთული გადაწყვეტილებისთვის.',
+  p:[['საკითხის არსი','რას ეხება ნამდვილად',1,1],['რა მაჩერებს','შიში ან დაბრკოლება',2,1],['რაზე უნდა დავეყრდნო','შენი რესურსი',3,1],['რას ამბობს გული','ინტუიციის პასუხი',4,1],['საუკეთესო ნაბიჯი','რჩევა მოქმედებისთვის',5,1]]},
+
+ {id:'energy',g:'ენერგია და ჯანმრთელობა',t:'რა ენერგიები ვარ',d:'შვიდი ბარათი შენს ენერგეტიკულ პორტრეტზე. ქვემოთ — ელემენტების ბალანსი.',
+  p:[['ჩემი ბირთვი','შენი მთავარი ენერგია ახლა',2,2],['ცნობიერი','რასაც აცნობიერებ და იყენებ',2,1],['ქვეცნობიერი','რაც სიღრმეში მოქმედებს',2,3],['რას ვასხივებ','როგორ გხედავენ სხვები',1,1],['რას ვიზიდავ','რა მოდის შენკენ',3,1],['ფარული ძალა','გამოუყენებელი პოტენციალი',1,3],['რა მიშლის ენერგიას','სად იკარგება ძალა',3,3]]},
+ {id:'chakra',g:'ენერგია და ჯანმრთელობა',t:'ჩაკრები',d:'შვიდი ბარათი — თითო ჩაკრაზე, გვირგვინიდან ფუძემდე.',
+  p:[['საჰასრარა','სულიერი კავშირი, აზრი',1,1],['აჯნა','ინტუიცია, ხედვა',1,2],['ვიშუდჰა','თვითგამოხატვა, სიტყვა',1,3],['ანაჰატა','სიყვარული, მიღება',1,4],['მანიპურა','ნება, თვითშეფასება',1,5],['სვადჰისტანა','სიამოვნება, შემოქმედება',1,6],['მულადჰარა','უსაფრთხოება, საყრდენი',1,7]]},
+ {id:'health',g:'ენერგია და ჯანმრთელობა',t:'ჯანმრთელობა',health:true,d:'ხუთი ბარათი სხეულის, გონებისა და სულის მდგომარეობაზე. ეს არ არის სამედიცინო რჩევა.',
+  p:[['სხეული','რას გეუბნება სხეული',2,2],['გონება','მენტალური ფონი, სტრესი',1,1],['სული','სულიერი მდგომარეობა',3,1],['რა მასუსტებს','რა აცლის ენერგიას',1,3],['რა მკურნალობს','რა აღგიდგენს ძალას',3,3]]},
+
+ {id:'career',g:'საქმე და ფინანსები',t:'კარიერა',d:'ხუთი ბარათი სამსახურისა და მოწოდებისთვის.',
+  p:[['ახლანდელი პოზიცია','სად ხარ პროფესიულად',1,1],['ძლიერი მხარე','შენი უპირატესობა',2,1],['გამოწვევა','რა არის გადასალახი',3,1],['შესაძლებლობა','რა იხსნება',4,1],['შედეგი','საით მიდის',5,1]]},
+ {id:'money',g:'საქმე და ფინანსები',t:'ფინანსები',d:'ოთხი ბარათი ფულის ენერგიაზე.',
+  p:[['ახლანდელი მდგომარეობა','ფინანსური ფონი',1,1],['რა ბლოკავს','რა აჩერებს შემოსავალს',2,1],['რა ზრდის','რა გაზრდის სიუხვეს',3,1],['რჩევა','პრაქტიკული ნაბიჯი',4,1]]},
+
+ {id:'shadow',g:'სიღრმე',t:'ჩრდილის მუშაობა',d:'ხუთი ბარათი შენი ჩრდილის გასაცნობად და მის ინტეგრაციისთვის.',
+  p:[['ჩემი ჩრდილი','რას ვერ ვხედავ ან ვმალავ',1,1],['საიდან მოდის','ფესვი, წარმოშობა',2,1],['როგორ ვლინდება','სად ჩანს ცხოვრებაში',3,1],['რას მასწავლის','ჩრდილის საჩუქარი',4,1],['ინტეგრაცია','როგორ მივიღო და გამოვიყენო',5,1]]},
+ {id:'horseshoe',g:'სიღრმე',t:'ნალი',d:'შვიდბარათიანი კლასიკური განლაგება ვითარების სრული სურათისთვის.',
+  p:[['წარსული','რამაც განაპირობა',1,1],['აწმყო','ახლანდელი ვითარება',2,2],['ფარული გავლენები','რაც არ ჩანს',3,3],['დაბრკოლება','მთავარი სირთულე',4,4],['გარემო','სხვების გავლენა',5,3],['რჩევა','როგორ მოიქცე',6,2],['შედეგი','სავარაუდო დასასრული',7,1]]},
+ {id:'celtic',g:'სიღრმე',t:'კელტური ჯვარი',d:'ათი ბარათი — ყველაზე სრული კლასიკური განლაგება.',
+  p:[['ვითარება','საკითხის გული',2,2],['გადამკვეთი','რა გეღობება ან რა გეხმარება',2,2,true],['ფესვი','ქვეცნობიერი საფუძველი',2,3],['წარსული','რაც მიდის',1,2],['გვირგვინი','ცნობიერი მიზანი, საუკეთესო შესაძლებლობა',2,1],['უახლოესი მომავალი','რაც მოდის',3,2],
+     ['შენ','შენი დამოკიდებულება',5,4],['გარემო','სხვები და გარემოებები',5,3],['იმედები და შიშები','რას ელი და რისი გეშინია',5,2],['შედეგი','საით მიდის ყველაფერი',5,1]]},
+ {id:'newmoon',g:'მთვარის ციკლი',t:'ახალი მთვარე',d:'ოთხი ბარათი განზრახვების დასასახად.',
+  p:[['რას ვრგავ','ახალი განზრახვა',1,1],['რას ვუშვებ','რაც აღარ მჭირდება',2,1],['რა მეხმარება','მოკავშირე ენერგია',3,1],['პირველი ნაბიჯი','საიდან დავიწყო',4,1]]},
+ {id:'fullmoon',g:'მთვარის ციკლი',t:'სავსე მთვარე',d:'ოთხი ბარათი ციკლის კულმინაციისთვის.',
+  p:[['რა დასრულდა','რა მოიწია',1,1],['რა გამოჩნდა','რა გაცხადდა',2,1],['რა უნდა გავუშვა','რისგან უნდა გავთავისუფლდე',3,1],['მადლიერება','რისთვის ვარ მადლიერი',4,1]]},
+ {id:'year',g:'მთვარის ციკლი',t:'წელიწადი წინ',d:'წლის თემა და თითო ბარათი მომდევნო 12 თვიდან თითოეულზე.',year:true,p:[]},
+];
+/* year spread: theme + 12 months starting this month */
+(()=>{
+  const sp=SPREADS.find(s=>s.id==='year');
+  const MON=['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+  const now=new Date();
+  sp.p.push(['წლის თემა','მთავარი ენერგია მთელი წლისთვის',2,1]);
+  for(let i=0;i<12;i++){
+    const m=(now.getMonth()+i)%12,y=now.getFullYear()+Math.floor((now.getMonth()+i)/12);
+    sp.p.push([`${MON[m]} ${y}`,'თვის ენერგია',1+(i%3),2+Math.floor(i/3)]);
+  }
+})();
+
+/* ════════════════════════════════════════════════════════════════
+   ANALYSIS
+   ════════════════════════════════════════════════════════════════ */
+const EL={fire:['ცეცხლი','მოქმედება, ვნება, ნება, შემოქმედებითი იმპულსი','var(--fire)'],
+          water:['წყალი','ემოციები, ურთიერთობები, ინტუიცია','var(--water)'],
+          air:['ჰაერი','აზრები, კომუნიკაცია, გადაწყვეტილებები, კონფლიქტი','var(--air)'],
+          earth:['მიწა','მატერია, ფული, სხეული, სტაბილურობა','var(--earth)']};
+const RANK_MSG={1:'ახალი დასაწყისები — რამდენიმე სფეროში ერთდროულად იწყება რაღაც ახალი',
+ 2:'არჩევანი და პარტნიორობა — ბალანსის პოვნა ორ ძალას შორის',3:'ზრდა და თანამშრომლობა — პირველი ნაყოფი',
+ 4:'სტაბილიზაცია — საფუძვლის აგება, ზოგჯერ ჩარჩენაც',5:'კონფლიქტი და ცვლილება — დაძაბულობა, რომელიც ზრდას იწვევს',
+ 6:'ჰარმონია და აღდგენა — ბალანსი ბრუნდება',7:'გამოცდა და შეფასება — სიღრმისეული გადახედვა',
+ 8:'მოძრაობა და ძალა — ტემპი იზრდება',9:'კულმინაცია — თითქმის დასრულებული ციკლი',
+ 10:'დასრულება — ციკლი იხურება, ახალი ახლოვდება',11:'ცნობები და სწავლა — ახალი ინფორმაცია მოდის',
+ 12:'მოძრაობა და ქმედება — მოვლენები სწრაფად ვითარდება',13:'შინაგანი ოსტატობა — ემოციური და ინტუიციური სიმწიფე',
+ 14:'გარეგანი ავტორიტეტი — კონტროლი, პასუხისმგებლობა, ლიდერობა'};
+const YN_W={y:1,m:0,n:-1};
+function ynOf(c,rev){const v=YN_W[c.yn];return rev?(v>0?0:-1):v;}   /* reversed: yes→maybe, maybe→no */
+/* quintessence: majors count their number, pips their rank, courts 0;
+   reduced by digit sum while above 22 (same as the matrix r22); 22 → 0 */
+function r22(n){while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;}
+function quintessence(drawn){
+  const s=drawn.reduce((a,{c})=>a+(c.major?c.n:(c.rank<=10?c.rank:0)),0);
+  if(!s)return null;
+  const q=r22(s);return {sum:s,n:q===22?0:q};
+}
+function analyse(sp,drawn){
+  const n=drawn.length,out=[];
+  const cnt={fire:0,water:0,air:0,earth:0},ranks={};
+  let maj=0,rev=0,courts=0;
+  for(const {c,rev:r} of drawn){
+    if(c.major)maj++;else{cnt[c.el]++;ranks[c.rank]=(ranks[c.rank]||0)+1;if(c.rank>10)courts++;}
+    if(r)rev++;
+  }
+  const minors=n-maj;
+  let bars='<div class="bars">';
+  for(const k of ['fire','water','air','earth']){const v=cnt[k],p=minors?v/minors*100:0;
+    bars+=`<div class="bar">${EL[k][0]} — ${v}<div class="tr"><i style="width:${p}%;background:${EL[k][2]}"></i></div></div>`;}
+  bars+=`<div class="bar">დიდი არკანი — ${maj}<div class="tr"><i style="width:${n?maj/n*100:0}%;background:var(--major)"></i></div></div></div>`;
+  if(minors){
+    const mx=Math.max(...Object.values(cnt));
+    const dom=Object.keys(cnt).filter(k=>cnt[k]===mx&&mx>0);
+    if(dom.length===1&&mx>=2)out.push(`დომინანტი ელემენტი — <b>${EL[dom[0]][0]}</b>: ${EL[dom[0]][1]}. ვითარების მთავარი ენა სწორედ ესაა.`);
+    if(n>=5){const miss=Object.keys(cnt).filter(k=>!cnt[k]);
+      if(miss.length&&miss.length<4)out.push(`აკლია: <b>${miss.map(k=>EL[k][0]).join(', ')}</b> — ${miss.map(k=>EL[k][1].split(',')[0]).join(', ')} ამჟამად ნაკლებად მონაწილეობს; ღირს ამ მხარის გაძლიერება.`);}
+  }
+  if(n>=3){
+    if(maj/n>=.5)out.push('დიდი არკანი ჭარბობს — ეს ბედისწერის მნიშვნელობის ვითარებაა, ღრმა ცვლილებები და გაკვეთილები მიმდინარეობს.');
+    else if(maj===0)out.push('დიდი არკანი არ არის — ვითარება ყოველდღიური დონისაა და მეტწილად შენს ხელშია.');
+    if(rev/n>=.5)out.push('შებრუნებული ბარათები ჭარბობს — ენერგია შინაგანადაა მიმართული: შენელება, დაბლოკვა ან ფარული პროცესები.');
+    if(courts>=2)out.push(`სასახლის ${courts} ბარათი — ვითარებაში ჩართულია სხვა ადამიანები ან შენი პიროვნების სხვადასხვა მხარე.`);
+  }
+  for(const [r,k] of Object.entries(ranks))if(k>=2)out.push(`${k}× ${RANK_KA[r]} — ${RANK_MSG[r]}.`);
+  const q=quintessence(drawn);
+  let html=`<div class="summary"><h4>ენერგიების ბალანსი</h4>${bars}${out.map(t=>`<div class="insight">${t}</div>`).join('')}`;
+  if(q){const M=MAJORS[q.n];html+=`<div class="quint">კვინტესენცია: ${drawn.map(({c})=>c.major?c.n:(c.rank<=10?c.rank:0)).join(' + ')} = ${q.sum} → <b>${ROMAN[q.n]} ${M[0]}</b> — ${M[4]} <span style="color:var(--ink-dim)">(მთლიანი განლაგების ფარული რჩევა)</span></div>`;}
+  if(sp.health)html+='<div class="health">⚠ ტარო არ ცვლის ექიმს. ჯანმრთელობის პრობლემისას მიმართე სპეციალისტს.</div>';
+  return html+'</div>';
+}
+
+/* ════════════════════════════════════════════════════════════════
+   UI
+   ════════════════════════════════════════════════════════════════ */
+const $=id=>document.getElementById(id);
+let cur=SPREADS[0],drawn=[],question='';
+function rnd(n){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;}
+function shuffle(){const d=DECK.slice();for(let i=d.length-1;i>0;i--){const j=rnd(i+1);[d[i],d[j]]=[d[j],d[i]];}return d;}
+
+function renderGroups(){
+  const gs=[...new Set(SPREADS.map(s=>s.g))];
+  $('groups').innerHTML=gs.map(g=>`<div><div class="grp-t">${g}</div><div class="chips">${
+    SPREADS.filter(s=>s.g===g).map(s=>`<button class="chip${s===cur?' on':''}" data-id="${s.id}">${s.t}<small>${s.p.length}</small></button>`).join('')}</div></div>`).join('');
+  $('groups').querySelectorAll('.chip').forEach(b=>b.onclick=()=>select(b.dataset.id));
+}
+function select(id){
+  cur=SPREADS.find(s=>s.id===id);renderGroups();
+  $('sp-title').textContent=`${cur.t} · ${cur.p.length} ბარათი`;
+  $('sp-desc').textContent=cur.d;
+  $('ab-names').classList.toggle('show',!!cur.ab);
+  drawn=[];$('table').innerHTML='';$('reading').classList.remove('show');$('actions').classList.remove('show');
+  layoutEmpty();
+}
+function posLabel(i){
+  let t=cur.p[i][0];
+  if(cur.ab){const a=$('opt-a').value.trim(),b=$('opt-b').value.trim();
+    if(a)t=t.replace(/^A:/,a+':');if(b)t=t.replace(/^B:/,b+':');}
+  return t;
+}
+function gridSize(){return [Math.max(...cur.p.map(p=>p[2])),Math.max(...cur.p.map(p=>p[3]))];}
+function layoutEmpty(){
+  const [cols,rows]=gridSize(),t=$('table');
+  t.style.gridTemplateColumns=`repeat(${cols},calc(var(--cw) + 16px))`;
+  t.style.gridTemplateRows=`repeat(${rows},auto)`;
+  t.innerHTML=cur.p.map((p,i)=>`<div class="slot${p[4]?' cross':''}" style="grid-column:${p[2]};grid-row:${p[3]}">
+     <div class="pn"><b>${i+1}</b>${posLabel(i)}</div>
+     <div style="width:var(--cw);height:var(--ch);border:1px dashed rgba(201,168,76,.18);border-radius:7px${p[4]?';transform:rotate(90deg)':''}"></div></div>`).join('');
+}
+function draw(){
+  const deck=shuffle(),useRev=$('rev').checked;
+  question=$('question').value.trim();
+  drawn=cur.p.map((p,i)=>({c:deck[i],rev:useRev&&rnd(2)===1,up:false}));
+  const [cols,rows]=gridSize(),t=$('table');
+  t.style.gridTemplateColumns=`repeat(${cols},calc(var(--cw) + 16px))`;
+  t.style.gridTemplateRows=`repeat(${rows},auto)`;
+  t.innerHTML=cur.p.map((p,i)=>`<div class="slot${p[4]?' cross':''}" style="grid-column:${p[2]};grid-row:${p[3]}">
+     <div class="pn"><b>${i+1}</b>${posLabel(i)}</div>
+     <div class="card3d" data-i="${i}" style="animation-delay:${i*70}ms"><div class="inner">
+       <div class="face back-f">${BACK}</div><div class="face front">${faceHTML(drawn[i].c,drawn[i].rev)}</div></div></div></div>`).join('');
+  t.querySelectorAll('.card3d').forEach(el=>el.onclick=()=>flip(+el.dataset.i));
+  $('actions').classList.add('show');
+  renderReading();
+}
+function flip(i){
+  if(drawn[i].up)return;drawn[i].up=true;
+  $('table').querySelector(`.card3d[data-i="${i}"]`).classList.add('up');
+  renderReading();
+}
+function flipAll(){drawn.forEach((_,i)=>setTimeout(()=>flip(i),i*120));}
+function cardTags(c){
+  return c.major?`დიდი არკანი ${ROMAN[c.n]} · ${c.astro}`:`${SUITS[c.suit].ka} · ${SUITS[c.suit].elka}`;
+}
+function renderReading(){
+  const R=$('reading');R.classList.add('show');
+  const up=drawn.filter(d=>d.up).length;
+  let h=`<h3>${cur.t}</h3>${question?`<div class="q">„${question.replace(/</g,'&lt;')}“</div>`:''}`;
+  if(cur.yn&&up===drawn.length){
+    const w=[1,2,1];let sc=0;drawn.forEach((d,i)=>sc+=ynOf(d.c,d.rev)*w[i]);
+    const [cls,lab,txt]=sc>=2?['v-yes','კი','ბარათები დადებით პასუხს აძლევენ.']:sc<=-2?['v-no','არა','ბარათები უარყოფით პასუხს აძლევენ — ან ახლა არ არის ამის დრო.']
+      :['v-maybe','შესაძლოა','პასუხი ჯერ არ არის გადაწყვეტილი — ბევრი რამ შენს ქმედებაზეა დამოკიდებული.'];
+    h+=`<div class="verdict ${cls}"><b>${lab}</b>${txt} <span style="color:var(--ink-dim);font-size:12px">(ქულა ${sc>0?'+':''}${sc} · კი = +1, შესაძლოა = 0, არა = −1, ცენტრი ×2)</span></div>`;
+  }
+  drawn.forEach((d,i)=>{
+    const p=cur.p[i];
+    if(!d.up){h+=`<div class="ri pending"><div class="no">${i+1}</div><div><div class="pos">${posLabel(i)} — ${p[1]}</div><div class="nm">დახურულია — დააჭირე ბარათს</div></div></div>`;return;}
+    const c=d.c,yn=cur.yn?` · ${['არა','შესაძლოა','კი'][ynOf(c,d.rev)+1]}`:'';
+    h+=`<div class="ri"><div class="no">${i+1}</div><div><div class="pos">${posLabel(i)} — ${p[1]}</div>
+      <div class="nm">${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?'<span class="rv">შებრუნებული</span>':''}</div>
+      <div class="tags">${cardTags(c)}${yn}</div><div class="mn">${d.rev?c.rv:c.up}</div></div></div>`;
+  });
+  if(up===drawn.length&&drawn.length)h+=analyse(cur,drawn);
+  else if(drawn.length)h+=`<div class="note">გადაბრუნებულია ${up} / ${drawn.length} — ბალანსი გამოჩნდება ყველას გადაბრუნების შემდეგ.</div>`;
+  R.innerHTML=h;
+}
+function copyText(){
+  const lines=[`ტარო — ${cur.t}`];if(question)lines.push(`კითხვა: ${question}`);
+  drawn.forEach((d,i)=>{if(!d.up)return;const c=d.c;
+    lines.push(`${i+1}. ${posLabel(i)}: ${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?' (შებრ.)':''} — ${d.rev?c.rv:c.up}`);});
+  const q=quintessence(drawn.filter(d=>d.up));if(q&&drawn.every(d=>d.up))lines.push(`კვინტესენცია: ${ROMAN[q.n]} ${MAJORS[q.n][0]}`);
+  const txt=lines.join('\n');
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{$('copy').textContent='✔ დაკოპირდა';
+    setTimeout(()=>$('copy').textContent='ტექსტის კოპირება',1500);}).catch(()=>prompt('დააკოპირე:',txt));
+}
+
+/* ── encyclopedia ── */
+let encF='all';
+function renderEnc(){
+  const F=[['all','ყველა'],['major','დიდი არკანი'],['wands','კვერთხები'],['cups','თასები'],['swords','მახვილები'],['pentacles','პენტაკლები']];
+  $('enc-f').innerHTML=F.map(([k,t])=>`<button class="chip${k===encF?' on':''}" data-f="${k}">${t}</button>`).join('');
+  $('enc-f').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{encF=b.dataset.f;renderEnc();});
+  const col={major:'var(--major)',fire:'var(--fire)',water:'var(--water)',air:'var(--air)',earth:'var(--earth)'};
+  $('enc-g').innerHTML=DECK.filter(c=>encF==='all'||(encF==='major'?c.major:c.suit===encF)).map(c=>
+    `<div class="enc-c" style="--elc:${col[c.el]}"><b>${c.major?ROMAN[c.n]+' ':''}${c.name}</b><div class="t">${cardTags(c)} · კი/არა: ${{y:'კი',m:'შესაძლოა',n:'არა'}[c.yn]}</div>
+     <div class="u">▲ ${c.up}</div><div class="r">▼ ${c.rv}</div></div>`).join('');
+}
+
+$('draw').onclick=draw;$('flipall').onclick=flipAll;$('copy').onclick=copyText;
+['opt-a','opt-b'].forEach(id=>$(id).addEventListener('input',()=>{if(drawn.length){
+  document.querySelectorAll('.slot .pn').forEach((el,i)=>el.innerHTML=`<b>${i+1}</b>${posLabel(i)}`);renderReading();}else layoutEmpty();}));
+const qs=new URLSearchParams(location.search).get('spread');
+select(SPREADS.some(s=>s.id===qs)?qs:'daily');
+renderEnc();
+window._tarot={DECK,SPREADS,quintessence,ynOf,analyse};
+</script>
+</body>
+</html>
