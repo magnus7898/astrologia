@@ -113,7 +113,7 @@
 
   /* ── umbrella boxes / group page header ── */
   .card.grp .grp-n { position:absolute;top:10px;right:24px;font-size:8px;letter-spacing:1px;color:var(--gold);opacity:.55; }
-  .grp-head { width:100%;max-width:1240px;display:flex;align-items:center;gap:18px;margin:-26px 0 22px; }
+  .grp-head { width:100%;max-width:720px;display:flex;align-items:center;gap:18px;margin:-26px 0 22px; }
   .grp-head[hidden] { display:none; }
   .grp-head a { font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.7;text-decoration:none;
     border:1px solid rgba(201,168,76,.25);border-radius:3px;padding:7px 12px;transition:opacity .2s,border-color .2s; }
@@ -134,6 +134,21 @@
   }
   @media (max-width:520px) { .grid { grid-template-columns:1fr 1fr; } }
   @media (max-width:340px) { .grid { grid-template-columns:1fr; } }
+  /* ── box pages: centred 2×2 / 3×3 grid ── */
+  .grid.sub { --cols:3;--gap:14px;display:flex !important;flex-wrap:wrap;justify-content:center;gap:var(--gap);
+    max-width:calc(var(--cols) * 230px + (var(--cols) - 1) * var(--gap));margin:0 auto; }
+  .grid.sub > .card { flex:0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols));height:180px; }
+  .grid.sub > .card .sym { width:40px;height:40px;margin-bottom:13px; }
+  .grid.sub > .card .card-title { font-size:11px;letter-spacing:2px; }
+  .grid.sub > .card .card-sub { opacity:.4; }
+  .grp-head { justify-content:center;position:relative; }
+  .grp-head a { position:absolute;left:0; }
+  @media (max-width:520px) {
+    .grid.sub { --cols:2 !important;--gap:10px; }
+    .grid.sub > .card { height:150px; }
+    .grp-head { flex-direction:column;gap:12px; }
+    .grp-head a { position:static; }
+  }
   /* ── 2 × 2 main boxes ── */
   .grid.main4 { grid-template-columns:1fr 1fr !important;max-width:820px;gap:14px; }
   .grid.main4 > .card.main { height:210px; }
@@ -586,8 +601,8 @@
      A box with a single member is that tile itself — a plain link.
      label: how a member is titled INSIDE its box (optional).            */
   const GROUPS=[
-    {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · Sidereal · Moon · Planetocentric',css:'c-astro',art:'astro.html',
-     members:['astro.html','vedic.html','true_sidereal.html','moon.html','planeta.html'],
+    {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · Sidereal · Moon · Planetocentric · Asteroids',css:'c-astro',art:'astro.html',
+     members:['astro.html','vedic.html','true_sidereal.html','moon.html','planeta.html','asteroid.html'],
      label:{'astro.html':'დასავლური ასტროლოგია'}},
     {key:'numerology',title:'ნუმეროლოგია',sub:'Matrix · Pythagoras · Name',css:'c-name',art:'name.html',
      members:['matrix.html','pythagoras.html','name.html'],label:{}},
@@ -621,6 +636,10 @@
         tiles.forEach(t=>{const lb=G0.label[t.getAttribute('href')];
           if(lb){const x=t.querySelector('.card-title');if(x)x.textContent=lb;}});
         grid.innerHTML='';grid.classList.remove('main4');
+        /* 2×2 / 3×3 style: 3 → one row of 3, ≤4 → 2 columns, ≤9 → 3, more → 4;
+           an incomplete last row is centred */
+        const n=tiles.length,cols=n===3?3:n<=4?2:n<=9?3:4;
+        grid.classList.add('sub');grid.style.setProperty('--cols',cols);
         tiles.forEach(t=>grid.appendChild(t));
         if(head){head.querySelector('h2').textContent=G0.title;head.hidden=false;}
         document.title='MAGNUS · '+G0.title;
@@ -651,7 +670,7 @@
       box.querySelector('.card-sub').textContent=G.sub;
       boxes.push(box);
     }
-    grid.innerHTML='';grid.classList.add('main4');
+    grid.innerHTML='';grid.classList.remove('sub');grid.classList.add('main4');
     boxes.forEach(b=>grid.appendChild(b));
     document.title='MAGNUS';
   }
