@@ -64,18 +64,18 @@ const BOXES = [
   { id:'emo_sacral',   title:'საკრალური ჩაკრა — ემოცია',     keys:['S6'], color:'#ef9f27' },
   { id:'emo_root',     title:'ფუძის ჩაკრა — ემოცია',         keys:['S7'], color:'#dc4646' },
 
-  /* ───── CHAKRA COMBOS: ენერგია-ფიზიკა-ემოცია (ცხრილის რიგი) ─────
+  /* ───── CHAKRA COMBOS: ენერგია-ემოცია-ფიზიკა (ემოცია შუაშია) ─────
      დალი / კოპალა მხოლოდ მეთოდ 3-ში არსებობს — სხვაგან ბოქსი არ ჩანს. */
-  { id:'ch_sahasrara', title:'საჰასრარა — ჩაკრის კომბინაცია', keys:['CH_sahasrara_E','CH_sahasrara_P','CH_sahasrara_S'], color:'#7e57c2', chakra:true },
-  { id:'ch_ajna', title:'აჯნა — ჩაკრის კომბინაცია', keys:['CH_ajna_E','CH_ajna_P','CH_ajna_S'], color:'#5c9bd6', chakra:true },
-  { id:'ch_vishudha', title:'ვიშუდჰა — ჩაკრის კომბინაცია', keys:['CH_vishudha_E','CH_vishudha_P','CH_vishudha_S'], color:'#b5d4f4', chakra:true },
-  { id:'ch_lelia', title:'დალი — ქალის ხაზი — ჩაკრის კომბინაცია', keys:['CH_lelia_E','CH_lelia_P','CH_lelia_S'], color:'#3A6EA5', chakra:true },
-  { id:'ch_lada', title:'კოპალა — მამაკაცის ხაზი — ჩაკრის კომბინაცია', keys:['CH_lada_E','CH_lada_P','CH_lada_S'], color:'#1F6E5C', chakra:true },
-  { id:'ch_anahata', title:'ანაჰატა — ჩაკრის კომბინაცია', keys:['CH_anahata_E','CH_anahata_P','CH_anahata_S'], color:'#66bb6a', chakra:true },
-  { id:'ch_manipura', title:'მანიპურა — ჩაკრის კომბინაცია', keys:['CH_manipura_E','CH_manipura_P','CH_manipura_S'], color:'#ffd700', chakra:true },
-  { id:'ch_svadhistana', title:'სვადჰისტანა — ჩაკრის კომბინაცია', keys:['CH_svadhistana_E','CH_svadhistana_P','CH_svadhistana_S'], color:'#ef9f27', chakra:true },
-  { id:'ch_muladhara', title:'მულადჰარა — ჩაკრის კომბინაცია', keys:['CH_muladhara_E','CH_muladhara_P','CH_muladhara_S'], color:'#dc4646', chakra:true },
-  { id:'ch_total', title:'ჩაკრების ჯამი — „სულ“ რიგის კომბინაცია', keys:['CH_total_E','CH_total_P','CH_total_S'], color:'#E3BE84', chakra:true },
+  { id:'ch_sahasrara', title:'საჰასრარა — ჩაკრის კომბინაცია', keys:['CH_sahasrara_E','CH_sahasrara_S','CH_sahasrara_P'], color:'#7e57c2', chakra:true },
+  { id:'ch_ajna', title:'აჯნა — ჩაკრის კომბინაცია', keys:['CH_ajna_E','CH_ajna_S','CH_ajna_P'], color:'#5c9bd6', chakra:true },
+  { id:'ch_vishudha', title:'ვიშუდჰა — ჩაკრის კომბინაცია', keys:['CH_vishudha_E','CH_vishudha_S','CH_vishudha_P'], color:'#b5d4f4', chakra:true },
+  { id:'ch_lelia', title:'დალი — ქალის ხაზი — ჩაკრის კომბინაცია', keys:['CH_lelia_E','CH_lelia_S','CH_lelia_P'], color:'#3A6EA5', chakra:true },
+  { id:'ch_lada', title:'კოპალა — მამაკაცის ხაზი — ჩაკრის კომბინაცია', keys:['CH_lada_E','CH_lada_S','CH_lada_P'], color:'#1F6E5C', chakra:true },
+  { id:'ch_anahata', title:'ანაჰატა — ჩაკრის კომბინაცია', keys:['CH_anahata_E','CH_anahata_S','CH_anahata_P'], color:'#66bb6a', chakra:true },
+  { id:'ch_manipura', title:'მანიპურა — ჩაკრის კომბინაცია', keys:['CH_manipura_E','CH_manipura_S','CH_manipura_P'], color:'#ffd700', chakra:true },
+  { id:'ch_svadhistana', title:'სვადჰისტანა — ჩაკრის კომბინაცია', keys:['CH_svadhistana_E','CH_svadhistana_S','CH_svadhistana_P'], color:'#ef9f27', chakra:true },
+  { id:'ch_muladhara', title:'მულადჰარა — ჩაკრის კომბინაცია', keys:['CH_muladhara_E','CH_muladhara_S','CH_muladhara_P'], color:'#dc4646', chakra:true },
+  { id:'ch_total', title:'ჩაკრების ჯამი — „სულ“ რიგის კომბინაცია', keys:['CH_total_E','CH_total_S','CH_total_P'], color:'#E3BE84', chakra:true },
 ];
 
 
