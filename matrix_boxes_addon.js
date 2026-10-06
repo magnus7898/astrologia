@@ -63,6 +63,19 @@ const BOXES = [
   { id:'emo_solar',    title:'მზის წნულის ჩაკრა — ემოცია',   keys:['S5'], color:'#ffd700' },
   { id:'emo_sacral',   title:'საკრალური ჩაკრა — ემოცია',     keys:['S6'], color:'#ef9f27' },
   { id:'emo_root',     title:'ფუძის ჩაკრა — ემოცია',         keys:['S7'], color:'#dc4646' },
+
+  /* ───── CHAKRA COMBOS: ენერგია-ფიზიკა-ემოცია (ცხრილის რიგი) ─────
+     დალი / კოპალა მხოლოდ მეთოდ 3-ში არსებობს — სხვაგან ბოქსი არ ჩანს. */
+  { id:'ch_sahasrara', title:'საჰასრარა — ჩაკრის კომბინაცია', keys:['CH_sahasrara_E','CH_sahasrara_P','CH_sahasrara_S'], color:'#7e57c2', chakra:true },
+  { id:'ch_ajna', title:'აჯნა — ჩაკრის კომბინაცია', keys:['CH_ajna_E','CH_ajna_P','CH_ajna_S'], color:'#5c9bd6', chakra:true },
+  { id:'ch_vishudha', title:'ვიშუდჰა — ჩაკრის კომბინაცია', keys:['CH_vishudha_E','CH_vishudha_P','CH_vishudha_S'], color:'#b5d4f4', chakra:true },
+  { id:'ch_lelia', title:'დალი — ქალის ხაზი — ჩაკრის კომბინაცია', keys:['CH_lelia_E','CH_lelia_P','CH_lelia_S'], color:'#3A6EA5', chakra:true },
+  { id:'ch_lada', title:'კოპალა — მამაკაცის ხაზი — ჩაკრის კომბინაცია', keys:['CH_lada_E','CH_lada_P','CH_lada_S'], color:'#1F6E5C', chakra:true },
+  { id:'ch_anahata', title:'ანაჰატა — ჩაკრის კომბინაცია', keys:['CH_anahata_E','CH_anahata_P','CH_anahata_S'], color:'#66bb6a', chakra:true },
+  { id:'ch_manipura', title:'მანიპურა — ჩაკრის კომბინაცია', keys:['CH_manipura_E','CH_manipura_P','CH_manipura_S'], color:'#ffd700', chakra:true },
+  { id:'ch_svadhistana', title:'სვადჰისტანა — ჩაკრის კომბინაცია', keys:['CH_svadhistana_E','CH_svadhistana_P','CH_svadhistana_S'], color:'#ef9f27', chakra:true },
+  { id:'ch_muladhara', title:'მულადჰარა — ჩაკრის კომბინაცია', keys:['CH_muladhara_E','CH_muladhara_P','CH_muladhara_S'], color:'#dc4646', chakra:true },
+  { id:'ch_total', title:'ჩაკრების ჯამი — „სულ“ რიგის კომბინაცია', keys:['CH_total_E','CH_total_P','CH_total_S'], color:'#E3BE84', chakra:true },
 ];
 
 
@@ -82,17 +95,42 @@ const COMPAT_BOXES = [
   { id:'cp_money',         title:'წყვილის ფულის თემა',                 keys:['W3'],           color:'#7ec850' },
 ];
 
+/* rows of the chakra table: [key, energy, physics]. Mirrors renderChakra()
+   in matrix.html. Method 3's second heart value (m3Cv2) is the sum of the
+   four (name-overridden) diagonal corners, exactly as calculate() makes it. */
+function chakraRows(v,method,R){
+  if(method===4) return [];
+  if(method===3){
+    const m3Cv2=R(v.TL3+v.TR3+v.BR3+v.BL3);
+    return [['sahasrara',v.T3,v.L3],['ajna',v.T2,v.L2],['vishudha',v.T1,v.L1],
+            ['lelia',v.TR3,v.BL3],['lada',v.TL3,v.BR3],['anahata',v.Cv,m3Cv2],
+            ['manipura',v.B1,v.R1],['svadhistana',v.B2,v.R2],['muladhara',v.B3,v.R3]]
+           .map(([k,e,p])=>[k,e||0,p||0]);
+  }
+  return [['sahasrara',v.T3,v.L3],['ajna',v.T2,v.L2],['vishudha',v.T1,v.L1],
+          ['anahata',v.G2,v.G1],['manipura',v.Cv,v.Cv],['svadhistana',v.B1,v.R1],
+          ['muladhara',v.B3,v.R3]].map(([k,e,p])=>[k,e||0,p||0]);
+}
+
 function buildMatrixBoxes(v, method){
   const panel=document.getElementById('matrix-boxes');
   if(!panel) return;
   const R=(typeof r22==='function')?r22:(n=>n);
 
-  // chakra emotion values (same formulas as the table's ემოცია column)
-  const S={
-    S1:R(v.T3+v.L3), S2:R(v.T2+v.L2), S3:R(v.T1+v.L1),
-    S4:R(v.G2+v.G1), S5:R(v.Cv+v.Cv), S6:R(v.B1+v.R1), S7:R(v.B3+v.R3)
-  };
-  const VAL=Object.assign({},v,S);
+  /* chakra rows — the SAME rows the table renders (renderChakra), so the
+     emotion singles and the chakra combos always match what is on screen,
+     in methods 1-2 (7 rows) and method 3 (9 rows) alike */
+  const CH=chakraRows(v,method,R);
+  const VAL=Object.assign({},v);
+  const EMO={sahasrara:'S1',ajna:'S2',vishudha:'S3',anahata:'S4',manipura:'S5',svadhistana:'S6',muladhara:'S7'};
+  let se=0,sp=0,ss=0;
+  for(const [k,e,ph] of CH){
+    const sm=R(e+ph);
+    VAL['CH_'+k+'_E']=e; VAL['CH_'+k+'_P']=ph; VAL['CH_'+k+'_S']=sm;
+    if(EMO[k]) VAL[EMO[k]]=sm;
+    se+=e; sp+=ph; ss+=sm;
+  }
+  if(CH.length){ VAL.CH_total_E=R(se); VAL.CH_total_P=R(sp); VAL.CH_total_S=R(ss); }
 
   panel.innerHTML='';
   panel.style.display='flex';
@@ -119,6 +157,9 @@ function buildMatrixBoxes(v, method){
     // article: MATRIX_DB first, then ENERGIES fallback for singles
     let art=null;
     if(hasNums && typeof lookup==='function') art=lookup(box.id,nums);
+    if(!art && box.chakra && nums.length===3 && typeof autoCombo==='function'){
+      const t=autoCombo(box.id,nums); if(t) art={title:'',text:t,auto:true};
+    }
     if(!art && nums.length===1 && typeof getE==='function'){
       const e=getE(nums[0]); art={title:e.name, text:e.desc};
     }
@@ -153,3 +194,4 @@ function openBoxById(id){
 
 window.buildMatrixBoxes=buildMatrixBoxes;
 window.openBoxById=openBoxById;
+window.chakraRows=chakraRows;
