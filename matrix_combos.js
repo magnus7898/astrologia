@@ -2508,8 +2508,8 @@ const MATRIX_DB = {
   emo_sacral:   { singles:{ } },                                         // საკრალური ჩაკრა
   emo_root:     { singles:{ } },                                         // ფუძის ჩაკრა
 
-  /* ═══════════ CHAKRA COMBOS — ენერგია-ფიზიკა-ემოცია (ზუსტი რიგით) ═══════════
-     კოდი = ცხრილის რიგი მარცხნიდან მარჯვნივ: "ენერგია-ფიზიკა-ემოცია".   */
+  /* ═══════════ CHAKRA COMBOS — ენერგია-ემოცია-ფიზიკა (ზუსტი რიგით) ═══════════
+     კოდი = "ენერგია-ემოცია-ფიზიკა" — ემოცია შუაშია.   */
   ch_sahasrara:   { combos:{ } },                                        // საჰასრარა (გვირგვინი)
   ch_ajna:        { combos:{ } },                                        // აჯნა (მესამე თვალი)
   ch_vishudha:    { combos:{ } },                                        // ვიშუდჰა (ყელი)
@@ -2534,7 +2534,7 @@ const MATRIX_DB = {
    (Both may still share a title/name — that's up to your text.)
    ============================================================ */
 const EXACT_ORDER_ZONES = new Set(['karmic_tail',
-  /* chakra rows are read energy→physics→emotion; never reverse them */
+  /* chakra combos are read energy→emotion→physics; never reverse them */
   'ch_sahasrara','ch_ajna','ch_vishudha','ch_lelia','ch_lada','ch_anahata','ch_manipura','ch_svadhistana','ch_muladhara','ch_total']);
 
 /* raw code, order kept as-is */
