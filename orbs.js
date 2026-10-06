@@ -124,6 +124,7 @@ const CONJ=()=>ASPECTS_DEF[0];
 function build(){
   const P=prof(),m=modeNow();
   const panel=$('orb-panel');if(!panel)return;
+  panel.style.display=MODE_KA[m]?'':'none';   /* e.g. ტრუტინა: no aspects */
   panel.querySelector('summary').textContent='⚙ ორბისები · '+(MODE_KA[m]||m);
   const aspRows=ASPECTS_DEF.map(a=>{const v=P.asp[a.name];return `
     <div class="ob-r${v.on?'':' off'}" data-k="a" data-n="${a.name}">
