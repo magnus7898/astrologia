@@ -82,7 +82,13 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5v
 .cf{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:7px 5px 6px;
   background:linear-gradient(170deg,var(--c1),var(--c2))}
 .cf.rev{transform:rotate(180deg)}
-.cf-top{font-family:'Cinzel',serif;font-size:11px;color:rgba(255,255,255,.85);letter-spacing:1px}
+.cf-top{font-family:'Cinzel',serif;font-size:11px;color:rgba(255,255,255,.85);letter-spacing:1px;position:relative}
+.cf-frame{position:absolute;inset:4px;border:1px solid rgba(255,255,255,.18);border-radius:4px;pointer-events:none}
+.el-major .cf-frame{border-color:rgba(236,213,154,.45);box-shadow:inset 0 0 0 2px rgba(0,0,0,.25),inset 0 0 0 3px rgba(236,213,154,.18)}
+.el-major .cf-art{background:radial-gradient(circle at 50% 50%,rgba(236,213,154,.22),transparent 58%)}
+.el-major .cf-art .big{color:#f6e7bd;text-shadow:0 0 14px rgba(236,213,154,.55)}
+.cf-art,.cf-name{position:relative}
+.cimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:6px;z-index:3;background:#111}
 .cf-art{flex:1;display:flex;align-items:center;justify-content:center;width:100%}
 .cf-art .big{font-size:40px;line-height:1;color:#fff;text-shadow:0 0 12px rgba(255,255,255,.35);font-family:'Segoe UI Symbol','Noto Sans Symbols 2',serif}
 .cf-art svg{stroke:#fff;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -108,7 +114,11 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5v
 .ri .nm{font-size:14.5px;color:var(--ink);margin:1px 0 2px}
 .ri .nm .rv{color:#e58c8c;font-size:11px;margin-left:6px}
 .ri .tags{font-size:10.5px;color:var(--ink-dim);margin-bottom:3px}
-.ri .mn{font-size:13px;color:var(--ink-mid)}
+.ri .mn{font-size:13px;color:var(--ink-mid);line-height:1.7}
+.kw{display:flex;flex-wrap:wrap;gap:4px;margin:3px 0 6px}
+.kw span{font-size:10.5px;color:var(--gold-lt);border:1px solid rgba(201,168,76,.3);border-radius:10px;padding:0 8px;background:rgba(201,168,76,.05)}
+.ctx{font-size:12.5px;color:#cbb9e6;margin-top:6px}.ctx b{color:#d8c6f5;font-weight:600}.ctx i{color:var(--ink-dim);font-size:11px}
+.adv{font-size:12.5px;color:#a9d2b2;margin-top:4px}.adv b{color:#bfe5c7;font-weight:600}
 .ri.pending .nm{color:var(--ink-dim);font-style:italic;font-size:12.5px}
 .verdict{margin:6px 0 12px;padding:12px 14px;border-radius:6px;font-size:14px;border:1px solid}
 .verdict b{font-family:'Cinzel',serif;letter-spacing:2px;font-size:16px;margin-right:8px}
@@ -133,10 +143,17 @@ details.enc summary{cursor:pointer;list-style:none;padding:13px 18px;font-family
 details.enc summary::-webkit-details-marker{display:none}
 .enc-in{padding:0 18px 18px}
 .enc-f{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.enc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.enc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px;align-items:start}
 .enc-c{background:var(--raised);border:1px solid var(--border);border-left:3px solid var(--elc,#888);border-radius:5px;padding:9px 11px;font-size:12px}
+.enc-c summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center}
+.enc-c summary::-webkit-details-marker{display:none}
+.enc-c .mini{position:relative;width:44px;height:73px;border-radius:4px;overflow:hidden;display:block}
+.enc-c .mini .cf{transform:scale(.4583);transform-origin:0 0;width:96px;height:160px}
+.enc-c .mini .cf.rev{transform:scale(.4583) rotate(180deg)}
 .enc-c b{display:block;font-size:13.5px;color:var(--ink);margin-bottom:2px}
-.enc-c .t{font-size:10.5px;color:var(--ink-dim)}
+.enc-c .t{display:block;font-size:10.5px;color:var(--ink-dim)}
+.enc-c .kwl{display:block;font-size:10.5px;color:var(--gold-lt);margin-top:2px}
+.enc-b{margin-top:8px;line-height:1.7}
 .enc-c .u{color:var(--ink-mid);margin-top:4px}
 .enc-c .r{color:#c99a9a;margin-top:3px}
 @media(max-width:640px){
@@ -175,7 +192,7 @@ details.enc summary::-webkit-details-marker{display:none}
     <button class="btn ghost" id="flipall">ყველას გადაბრუნება</button>
     <button class="btn ghost" id="copy">ტექსტის კოპირება</button>
   </div>
-  <div class="note">ბარათზე დაჭერით ის გადაბრუნდება. დაფიქრდი კითხვაზე, სანამ აურევ.</div>
+  <div class="note">ბარათზე დაჭერით ის გადაბრუნდება. დაფიქრდი კითხვაზე, სანამ აურევ. <span id="img-note"></span></div>
 </div>
 
 <div class="table-wrap"><div class="table" id="table"></div></div>
@@ -190,6 +207,7 @@ details.enc summary::-webkit-details-marker{display:none}
 </details>
 </div>
 
+<script src="tarot_texts.js"></script>
 <script>
 'use strict';
 /* ════════════════════════════════════════════════════════════════
@@ -297,6 +315,16 @@ pentacles:[
  ['y','სიმდიდრე, ბიზნესი, უსაფრთხოება, მატერიალური ოსტატობა.','სიხარბე, მატერიალიზმი, სიჯიუტე ფინანსებში.'],
 ]};
 
+/* Golden Dawn: Hebrew letter of each Major, decan (planet in sign) of Minors 2–10 */
+const HEBREW=['א ალეფი','ב ბეთი','ג გიმელი','ד დალეთი','ה ჰე','ו ვავი','ז ზაინი','ח ხეთი','ט ტეთი','י იოდი','כ კაფი',
+  'ל ლამედი','מ მემი','נ ნუნი','ס სამეხი','ע აინი','פ პე','צ ცადე','ק კოფი','ר რეში','ש შინი','ת თავი'];
+const DECAN={
+ wands:['♂ ვერძში','☉ ვერძში','♀ ვერძში','♄ ლომში','♃ ლომში','♂ ლომში','☿ მშვილდოსანში','☽ მშვილდოსანში','♄ მშვილდოსანში'],
+ cups:['♀ კირჩხიბში','☿ კირჩხიბში','☽ კირჩხიბში','♂ მორიელში','☉ მორიელში','♀ მორიელში','♄ თევზებში','♃ თევზებში','♂ თევზებში'],
+ swords:['☽ სასწორში','♄ სასწორში','♃ სასწორში','♀ მერწყულში','☿ მერწყულში','☽ მერწყულში','♃ ტყუპებში','♂ ტყუპებში','☉ ტყუპებში'],
+ pentacles:['♃ თხის რქაში','♂ თხის რქაში','☉ თხის რქაში','☿ კუროში','☽ კუროში','♄ კუროში','☉ ქალწულში','♀ ქალწულში','☿ ქალწულში']};
+const COURT_ROLE={11:'მხლებელი — შეტყობინება, სწავლა, ახალგაზრდა ენერგია',12:'რაინდი — მოძრაობა, ქმედება, ძიება',
+  13:'დედოფალი — შინაგანი ოსტატობა, ზრუნვა',14:'მეფე — გარეგანი ავტორიტეტი, მართვა'};
 /* build the 78-card deck */
 const DECK=[];
 MAJORS.forEach((m,i)=>DECK.push({id:'M'+i,major:true,n:i,name:m[0],astro:m[1],glyph:m[2],yn:m[3],up:m[4],rv:m[5],el:'major'}));
@@ -304,6 +332,14 @@ for(const s of Object.keys(SUITS))MINORS[s].forEach((m,i)=>{
   const r=i+1;
   DECK.push({id:s+r,major:false,suit:s,rank:r,name:`${RANK_KA[r]} ${SUITS[s].gen}`,
     yn:m[0],up:m[1],rv:m[2],el:SUITS[s].el});
+});
+const TX=(typeof TAROT_TEXTS!=='undefined')?TAROT_TEXTS:{};
+DECK.forEach(c=>{
+  c.tx=TX[c.id]||null;
+  c.corr=c.major?`${c.astro} · ${HEBREW[c.n]}`
+        :c.rank===1?`${{fire:'ცეცხლის',water:'წყლის',air:'ჰაერის',earth:'მიწის'}[c.el]} ფესვი`
+        :c.rank<=10?`დეკანი: ${DECAN[c.suit][c.rank-2]}`
+        :COURT_ROLE[c.rank];
 });
 
 /* ── suit icons (original line drawings) ── */
@@ -322,13 +358,30 @@ const BACK=`<svg viewBox="0 0 100 166" preserveAspectRatio="none"><defs><pattern
   <polygon points="50,100 36,74 64,74" fill="none" stroke="rgba(201,168,76,.6)" stroke-width=".7"/>
   <circle cx="50" cy="83" r="2" fill="rgba(201,168,76,.8)"/></svg>`;
 
+/* ── optional card images ──────────────────────────────────────
+   Put files in a tarot/ folder next to tarot.html:
+     majors   m00 … m21           (m00 = Fool, m21 = World)
+     minors   wands01 … wands14   cups01 … cups14   swords01 …   pentacles01 …
+              (01 Ace … 10, 11 Page, 12 Knight, 13 Queen, 14 King)
+   jpg, png or webp. Checked once on load (m00); missing → drawn faces. */
+const IMG={dir:'tarot/',ext:null};
+const imgName=c=>c.major?'m'+String(c.n).padStart(2,'0'):c.suit+String(c.rank).padStart(2,'0');
+function probeImages(){
+  return new Promise(res=>{
+    const exts=['jpg','png','webp'];let i=0;
+    const next=()=>{if(i>=exts.length)return res(null);const e=exts[i++],im=new Image();
+      im.onload=()=>res(e);im.onerror=next;im.src=IMG.dir+'m00.'+e;};
+    next();
+  });
+}
+const imgTag=c=>IMG.ext?`<img class="cimg" src="${IMG.dir}${imgName(c)}.${IMG.ext}" alt="" loading="lazy" onerror="this.remove()">`:'';
 function faceHTML(c,rev){
   let top,art;
   if(c.major){top=ROMAN[c.n];art=`<div class="big">${c.glyph}\uFE0E</div>`;}
   else if(c.rank===1){top='A';art=`<div class="solo">${svgIcon(c.suit)}</div>`;}
   else if(c.rank<=10){top=String(c.rank);art=`<div class="pips">${svgIcon(c.suit).repeat(c.rank)}</div>`;}
   else{top=RANK_SHORT[c.rank];art=`<div class="court">${svgIcon(c.suit)}<span>${RANK_SHORT[c.rank]}</span></div>`;}
-  return `<div class="cf el-${c.el}${rev?' rev':''}"><div class="cf-top">${top}</div><div class="cf-art">${art}</div><div class="cf-name">${c.name}</div></div>`;
+  return `<div class="cf el-${c.el}${rev?' rev':''}"><div class="cf-frame"></div><div class="cf-top">${top}</div><div class="cf-art">${art}</div><div class="cf-name">${c.name}</div>${imgTag(c)}</div>`;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -516,7 +569,18 @@ function flip(i){
 }
 function flipAll(){drawn.forEach((_,i)=>setTimeout(()=>flip(i),i*120));}
 function cardTags(c){
-  return c.major?`დიდი არკანი ${ROMAN[c.n]} · ${c.astro}`:`${SUITS[c.suit].ka} · ${SUITS[c.suit].elka}`;
+  return c.major?`დიდი არკანი ${ROMAN[c.n]} · ${c.corr}`:`${SUITS[c.suit].ka} · ${SUITS[c.suit].elka} · ${c.corr}`;
+}
+/* which extra line a spread asks for */
+function ctxKey(sp){return sp.g==='სიყვარული'?'l':sp.g==='საქმე და ფინანსები'?'w':null;}
+function richText(c,rev,sp){
+  const t=c.tx;
+  if(!t)return `<div class="mn">${rev?c.rv:c.up}</div>`;
+  const k=ctxKey(sp),lab={l:'სიყვარულში',w:'საქმესა და ფინანსებში'};
+  return `<div class="kw">${(rev?t.kr:t.k).split(',').map(x=>`<span>${x.trim()}</span>`).join('')}</div>
+    <div class="mn">${rev?t.xr:t.x}</div>
+    ${k&&t[k]?`<div class="ctx"><b>${lab[k]}:</b> ${t[k]}${rev?' <i>(შებრუნებული ბარათი ამას ასუსტებს ან აბრკოლებს)</i>':''}</div>`:''}
+    ${t.a?`<div class="adv"><b>რჩევა:</b> ${t.a}</div>`:''}`;
 }
 function renderReading(){
   const R=$('reading');R.classList.add('show');
@@ -534,7 +598,7 @@ function renderReading(){
     const c=d.c,yn=cur.yn?` · ${['არა','შესაძლოა','კი'][ynOf(c,d.rev)+1]}`:'';
     h+=`<div class="ri"><div class="no">${i+1}</div><div><div class="pos">${posLabel(i)} — ${p[1]}</div>
       <div class="nm">${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?'<span class="rv">შებრუნებული</span>':''}</div>
-      <div class="tags">${cardTags(c)}${yn}</div><div class="mn">${d.rev?c.rv:c.up}</div></div></div>`;
+      <div class="tags">${cardTags(c)}${yn}</div>${richText(c,d.rev,cur)}</div></div>`;
   });
   if(up===drawn.length&&drawn.length)h+=analyse(cur,drawn);
   else if(drawn.length)h+=`<div class="note">გადაბრუნებულია ${up} / ${drawn.length} — ბალანსი გამოჩნდება ყველას გადაბრუნების შემდეგ.</div>`;
@@ -543,7 +607,9 @@ function renderReading(){
 function copyText(){
   const lines=[`ტარო — ${cur.t}`];if(question)lines.push(`კითხვა: ${question}`);
   drawn.forEach((d,i)=>{if(!d.up)return;const c=d.c;
-    lines.push(`${i+1}. ${posLabel(i)}: ${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?' (შებრ.)':''} — ${d.rev?c.rv:c.up}`);});
+    const t=c.tx,k=ctxKey(cur);
+    lines.push(`${i+1}. ${posLabel(i)}: ${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?' (შებრ.)':''}\n   ${t?(d.rev?t.xr:t.x):(d.rev?c.rv:c.up)}`+
+      (t&&k&&t[k]?`\n   ${k==='l'?'სიყვარულში':'საქმეში'}: ${t[k]}`:'')+(t&&t.a?`\n   რჩევა: ${t.a}`:''));});
   const q=quintessence(drawn.filter(d=>d.up));if(q&&drawn.every(d=>d.up))lines.push(`კვინტესენცია: ${ROMAN[q.n]} ${MAJORS[q.n][0]}`);
   const txt=lines.join('\n');
   (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{$('copy').textContent='✔ დაკოპირდა';
@@ -558,8 +624,13 @@ function renderEnc(){
   $('enc-f').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{encF=b.dataset.f;renderEnc();});
   const col={major:'var(--major)',fire:'var(--fire)',water:'var(--water)',air:'var(--air)',earth:'var(--earth)'};
   $('enc-g').innerHTML=DECK.filter(c=>encF==='all'||(encF==='major'?c.major:c.suit===encF)).map(c=>
-    `<div class="enc-c" style="--elc:${col[c.el]}"><b>${c.major?ROMAN[c.n]+' ':''}${c.name}</b><div class="t">${cardTags(c)} · კი/არა: ${{y:'კი',m:'შესაძლოა',n:'არა'}[c.yn]}</div>
-     <div class="u">▲ ${c.up}</div><div class="r">▼ ${c.rv}</div></div>`).join('');
+    `<details class="enc-c" style="--elc:${col[c.el]}"><summary><span class="mini">${faceHTML(c,false)}</span><span>
+       <b>${c.major?ROMAN[c.n]+' ':''}${c.name}</b><span class="t">${cardTags(c)} · კი/არა: ${{y:'კი',m:'შესაძლოა',n:'არა'}[c.yn]}</span>
+       ${c.tx?`<span class="kwl">${c.tx.k}</span>`:''}</span></summary>
+       <div class="enc-b">
+        <div class="u">▲ ${c.tx?c.tx.x:c.up}</div><div class="r">▼ ${c.tx?c.tx.xr:c.rv}</div>
+        ${c.tx?`<div class="ctx"><b>სიყვარულში:</b> ${c.tx.l}</div><div class="ctx"><b>საქმეში:</b> ${c.tx.w}</div><div class="adv"><b>რჩევა:</b> ${c.tx.a}</div>`:''}
+       </div></details>`).join('');
 }
 
 $('draw').onclick=draw;$('flipall').onclick=flipAll;$('copy').onclick=copyText;
@@ -568,7 +639,9 @@ $('draw').onclick=draw;$('flipall').onclick=flipAll;$('copy').onclick=copyText;
 const qs=new URLSearchParams(location.search).get('spread');
 select(SPREADS.some(s=>s.id===qs)?qs:'daily');
 renderEnc();
-window._tarot={DECK,SPREADS,quintessence,ynOf,analyse};
+probeImages().then(e=>{if(!e)return;IMG.ext=e;renderEnc();
+  const n=$('img-note');if(n)n.textContent='✔ გამოიყენება შენი სურათები (tarot/*.'+e+')';});
+window._tarot={DECK,SPREADS,quintessence,ynOf,analyse,IMG,imgName};
 </script>
 </body>
 </html>
