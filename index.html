@@ -568,6 +568,24 @@
       <div class="card-sub">Asteroid Placements & Conjunctions</div>
     </a>
 
+    <a class="card c-stone" href="tarot.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- three fanned cards -->
+          <rect x="5" y="7" width="12" height="19" rx="1.5" transform="rotate(-16 11 16.5)" stroke-width="0.9" opacity="0.55"/>
+          <rect x="15" y="7" width="12" height="19" rx="1.5" transform="rotate(16 21 16.5)" stroke-width="0.9" opacity="0.55"/>
+          <rect x="10" y="5" width="12" height="20" rx="1.5" stroke-width="1.1"/>
+          <!-- star on the front card -->
+          <path d="M16 10.5l1.4 3 3.2.3-2.4 2.1.7 3.1-2.9-1.7-2.9 1.7.7-3.1-2.4-2.1 3.2-.3z" stroke-width="0.8" fill="currentColor" fill-opacity="0.25"/>
+          <circle cx="16" cy="22" r="0.8" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="card-title">ტარო</div>
+      <div class="card-sub">Tarot Spreads</div>
+    </a>
+
   </div>
 
   <footer><span>&#10022; &nbsp; omnia ex uno &nbsp; &#10022;</span></footer>
@@ -608,7 +626,7 @@
      members:['matrix.html','pythagoras.html','name.html'],label:{}},
     {key:'hd',title:'ადამიანის დიზაინი',sub:'Human Design',css:'c-freq',art:'hd.html',
      members:['hd.html'],label:{}},
-    {key:'fun',title:'გასართობი',sub:'Frequencies · Cards · Calendars · Sky · Stones…',css:'c-stone',art:'cards.html',
+    {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
   ];
   /* ?g=<key> → that box's own page (its tiles in the normal grid);
@@ -636,9 +654,9 @@
         tiles.forEach(t=>{const lb=G0.label[t.getAttribute('href')];
           if(lb){const x=t.querySelector('.card-title');if(x)x.textContent=lb;}});
         grid.innerHTML='';grid.classList.remove('main4');
-        /* 2×2 / 3×3 style: 3 → one row of 3, ≤4 → 2 columns, ≤9 → 3, more → 4;
+        /* 2×2 / 3×3 style: 3 → one row of 3, ≤4 → 2 columns, ≤9 → 3, 10 → 5×2, more → 4;
            an incomplete last row is centred */
-        const n=tiles.length,cols=n===3?3:n<=4?2:n<=9?3:4;
+        const n=tiles.length,cols=n===3?3:n<=4?2:n<=9?3:n===10?5:4;
         grid.classList.add('sub');grid.style.setProperty('--cols',cols);
         tiles.forEach(t=>grid.appendChild(t));
         if(head){head.querySelector('h2').textContent=G0.title;head.hidden=false;}
