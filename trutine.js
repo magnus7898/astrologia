@@ -1,21 +1,13 @@
 /* trutine.js — ჰერმესის ტრუტინა (Trutine of Hermes) birth-time rectification.
-   Self-injecting: adds a panel to the natal form, calls /api/trutine,
-   and "გამოყენება" writes the rectified date/time into the form and
-   regenerates the chart. astro.html needs only:
+   Self-injecting: adds its own tab (ტრუტინა) at the end of the tab bar, calls /api/trutine,
+   and "გამოყენება" carries the rectified date/time to the natal tab and
+   draws the chart there. astro.html needs only:
        <script src="trutine.js"></script>                                  */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
 
 const CSS=`
-#tru-box{margin:6px 0 4px;border:1px solid rgba(201,162,76,.35);border-radius:10px;background:rgba(20,14,9,.55)}
-#tru-box>summary{cursor:pointer;list-style:none;padding:9px 12px;font-family:Cinzel,serif;font-size:10px;letter-spacing:2px;color:var(--gold-l,#F0D48A)}
-#tru-box>summary::-webkit-details-marker{display:none}
-#tru-box .tru-in{padding:0 12px 12px}
-#tru-box .tru-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px}
-#tru-box .tru-row .field{flex:1;min-width:140px}
-#tru-run{background:linear-gradient(135deg,#C9A24C,#7A5A22);color:#140E09;border:none;border-radius:8px;padding:9px 16px;font-family:Cinzel,serif;font-size:11px;letter-spacing:1px;cursor:pointer;font-weight:600}
-#tru-run:disabled{opacity:.5;cursor:wait}
 .tru-note{font-size:10px;color:rgba(196,176,148,.6);line-height:1.6;margin-bottom:8px}
 .tru-c{border-top:1px solid rgba(122,90,34,.35);padding:7px 0}
 .tru-c.best{background:rgba(201,162,76,.07);border-radius:6px;padding:7px 6px}
@@ -28,40 +20,94 @@ const CSS=`
 .tru-ap:hover{background:rgba(201,162,76,.18)}
 `;
 
+const F=id=>'tru-'+id;
+function field(lbl,id,val,min,max){return `<div class="field"><label>${lbl}</label><input type="number" id="tru-${id}" value="${val}" min="${min}" max="${max}"></div>`;}
+
 function inject(){
-  const sec=$('form-natal');
-  if(!sec||$('tru-box'))return;
+  const bar=document.querySelector('.tab-bar'),card=document.querySelector('.form-card');
+  if(!bar||!card||$('tru-tab-btn'))return;
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
-  const box=document.createElement('details');
-  box.id='tru-box';
-  box.innerHTML=`
-    <summary>⚖ ჰერმესის ტრუტინა — დროის რექტიფიკაცია</summary>
-    <div class="tru-in">
-      <div class="tru-note">ჩასახვის მომენტის ☽ = დაბადების AC, ჩასახვის AC = დაბადების ☽.
-        პოულობს დაბადების ზუსტ წუთს და ასცენდენტს, რომელზეც ორივე პირობა სრულდება.</div>
-      <div class="tru-row">
-        <div class="field"><label>მეთოდი</label>
-          <select id="tru-mode">
-            <option value="bailey">ბეილი — პრენატალური ეპოქა (AC/DC)</option>
-            <option value="classic">კლასიკური ჰერმესი (მხოლოდ AC)</option>
-          </select></div>
-        <div class="field"><label>ძიების დიაპაზონი</label>
-          <select id="tru-win">
-            <option value="30">± 30 წთ</option>
-            <option value="60">± 1 სთ</option>
-            <option value="120" selected>± 2 სთ</option>
-            <option value="240">± 4 სთ</option>
-            <option value="720">± 12 სთ</option>
-          </select></div>
-        <button type="button" id="tru-run">⚖ გამოთვლა</button>
-      </div>
-      <div id="tru-out"></div>
-    </div>`;
-  /* insert BEFORE the generate button: generate() finds it via
-     ".gen-btn:last-child", so it must stay the section's last child */
-  const gen=sec.querySelector('.gen-btn');
-  if(gen)sec.insertBefore(box,gen);else sec.appendChild(box);
+  /* tab — appended LAST so the original buttons keep their positions */
+  const btn=document.createElement('button');
+  btn.className='tab-btn';btn.id='tru-tab-btn';btn.textContent='ტრუტინა';
+  btn.onclick=activate;
+  bar.appendChild(btn);
+  /* own form section */
+  const sec=document.createElement('div');
+  sec.id='form-trutine';sec.className='form-section';
+  sec.innerHTML=`
+    <div class="person-label">⚖ ჰერმესის ტრუტინა — დროის რექტიფიკაცია</div>
+    <div class="tru-note">ჩასახვის მომენტის ☽ = დაბადების AC, ჩასახვის AC = დაბადების ☽.
+      პოულობს დაბადების ზუსტ წამს და ასცენდენტს, რომელზეც ორივე პირობა სრულდება.
+      <button type="button" class="tru-ap" id="tru-copy" style="margin-left:6px">↧ ნატალურიდან</button></div>
+    <div class="field wide" style="margin-bottom:10px"><label>სახელი</label><input id="tru-name" placeholder="სახელი"></div>
+    <div class="form-grid">${field('დღე','day',1,1,31)}${field('თვე','month',1,1,12)}${field('წელი','year',1990,1,3000)}</div>
+    <div class="form-grid" id="tru-time-fields">${field('საათი (სავარაუდო)','hour',12,0,23)}${field('წუთი','minute',0,0,59)}${field('წამი','second',0,0,59)}</div>
+    <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <input type="checkbox" id="tru-time-unknown" onchange="toggleTU('tru')" style="width:15px;height:15px;accent-color:#C9A24C;cursor:pointer">
+      <label for="tru-time-unknown" style="font-size:11px;letter-spacing:1px;text-transform:none;cursor:pointer">დრო უცნობია — სკანირება მთელი დღე</label>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>ქალაქი</label>
+      <input id="tru-city" placeholder="თბილისი, London, Paris..." oninput="searchCity('tru')">
+      <div class="city-hint" id="tru-city-hint"></div></div>
+    <div class="form-grid-2" style="margin-bottom:8px">
+      <div class="field"><label>განედი</label><input type="number" id="tru-lat" step="0.0001" readonly></div>
+      <div class="field"><label>გრძედი</label><input type="number" id="tru-lon" step="0.0001" readonly></div>
+    </div>
+    <input type="hidden" id="tru-tz" value="UTC">
+    <div class="tz-display" id="tru-tz-display">⏳ ქალაქის შეყვანის შემდეგ სარტყელი განისაზღვრება</div>
+    <div class="form-grid-2" style="margin-bottom:8px">
+      <div class="field"><label>მეთოდი</label>
+        <select id="tru-mode">
+          <option value="bailey">ბეილი — პრენატალური ეპოქა (AC/DC)</option>
+          <option value="classic">კლასიკური ჰერმესი (მხოლოდ AC)</option>
+        </select></div>
+      <div class="field"><label>ძიების დიაპაზონი</label>
+        <select id="tru-win">
+          <option value="30">± 30 წთ</option><option value="60">± 1 სთ</option>
+          <option value="120" selected>± 2 სთ</option><option value="240">± 4 სთ</option>
+          <option value="720">± 12 სთ</option>
+        </select></div>
+    </div>
+    <button type="button" class="gen-btn" id="tru-run">⚖ რექტიფიკაცია ✦</button>
+    <div id="tru-out" style="margin-top:12px"></div>`;
+  card.insertBefore(sec,$('orb-panel')||null);
   $('tru-run').addEventListener('click',run);
+  $('tru-copy').addEventListener('click',copyFromNatal);
+  fixSetMode();
+}
+
+/* setMode() highlights tabs by POSITION; inserted tabs (futurelife, this
+   one) shift that. Re-highlight by each button's own onclick target. */
+function fixSetMode(){
+  if(typeof setMode!=='function'||setMode._truFixed)return;
+  const orig=setMode;
+  const wrapped=function(mode){
+    orig(mode);
+    document.querySelectorAll('.tab-btn').forEach(b=>{
+      const oc=b.getAttribute('onclick')||'';
+      b.classList.toggle('active',oc.indexOf("'"+mode+"'")>=0);
+    });
+  };
+  wrapped._truFixed=true;
+  window.setMode=wrapped;
+}
+
+function activate(){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  $('tru-tab-btn').classList.add('active');
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  $('form-trutine').classList.add('active');
+  const ca=$('chart-area');if(ca)ca.style.display='none';
+  const acg=$('acg-section');if(acg)acg.style.display='none';
+  try{currentMode='trutine';}catch(e){}
+}
+
+const PAIRS=['name','day','month','year','hour','minute','second','city','lat','lon','tz'];
+function copyFromNatal(){
+  for(const k of PAIRS){const a=$('n-'+k),b=$('tru-'+k);if(a&&b)b.value=a.value;}
+  const tz=$('n-tz-display'),tt=$('tru-tz-display');if(tz&&tt)tt.textContent=tz.textContent;
+  const h=$('n-city-hint'),th=$('tru-city-hint');if(h&&th)th.textContent=h.textContent;
 }
 
 const fmtOff=m=>{
@@ -71,7 +117,7 @@ const fmtOff=m=>{
 
 async function run(){
   const out=$('tru-out'),btn=$('tru-run');
-  const p=getPersonData('n');
+  const p=getPersonData('tru');
   if(!p.lat||!p.lon){out.innerHTML='<div style="color:#f87171;font-size:11px">❌ ჯერ შეიყვანეთ ქალაქი</div>';return;}
   btn.disabled=true;btn.textContent='⏳ სკანირება...';
   out.innerHTML='';
@@ -86,7 +132,7 @@ async function run(){
   }catch(e){
     out.innerHTML='<div style="color:#f87171;font-size:11px">❌ '+e.message+'</div>';
   }finally{
-    btn.disabled=false;btn.textContent='⚖ გამოთვლა';
+    btn.disabled=false;btn.textContent='⚖ რექტიფიკაცია ✦';
   }
 }
 
@@ -121,10 +167,15 @@ function render(d,p){
 function apply(i){
   const c=(window._truCands||[])[i];if(!c)return;
   const set=(id,v)=>{const e=$(id);if(e)e.value=v;};
+  for(const k of ['name','city','lat','lon','tz'])set('n-'+k,($('tru-'+k)||{}).value||'');
+  const tz=$('tru-tz-display'),nz=$('n-tz-display');if(tz&&nz)nz.textContent=tz.textContent;
   set('n-year',c.year);set('n-month',c.month);set('n-day',c.day);
   set('n-hour',c.hour);set('n-minute',c.minute);set('n-second',c.second);
   const tu=$('n-time-unknown');
   if(tu&&tu.checked){tu.checked=false;if(typeof toggleTU==='function')toggleTU('n');}
+  /* click the real tab so every listener (orb panel etc.) follows */
+  const nb=document.querySelector(".tab-btn[onclick*=\"'natal'\"]");
+  if(nb)nb.click();else setMode('natal');
   if(typeof generate==='function')generate();
 }
 
