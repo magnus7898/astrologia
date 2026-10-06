@@ -8,7 +8,8 @@
      • channels opened right now: your hanging gate + transit body in the
        partner gate, and purely transit (collective) channels
      • the chart UNDER the transit (centers, type, authority) — conditioning
-     • timeline: when each hanging channel opens, by which body, how long
+     • picker: choose channels / gates (one or several) → when each is
+       activated and by which transit body, computed from the ingress table
    The 88° rule is natal-only; transits are plain current positions.      */
 (function(){
 'use strict';
@@ -19,7 +20,8 @@ const BODY_KA={"Sun":"მზე","Earth":"დედამიწა","North Node"
   "Saturn":"სატურნი","Uranus":"ურანი","Neptune":"ნეპტუნი","Pluto":"პლუტონი"};
 const CKA=c=>(typeof CENTER_KA!=='undefined'&&CENTER_KA[c])||c;
 const TKA=t=>(typeof TYPE_KA!=='undefined'&&TYPE_KA[t])||t;
-let svgT=null,last=null,view='channel';
+let svgT=null,last=null,pkTab='ch';
+const SEL=new Set();          /* 'c:10-20' / 'g:20' — survives a recalculation */
 
 /* ── CSS: transit colour on the bodygraph + panel bits ── */
 function css(){
@@ -31,7 +33,7 @@ function css(){
   }
   for(const c of ['Head','Ajna','Throat','G','Heart','SolarPlexus','Spleen','Sacral','Root']){
     const n=c==='SolarPlexus'?'Solar Plexus':c;
-    s+=`svg.tr-nc-${c}.tr-nc-${c} .chakra[data-center='${n}']{fill-opacity:.5!important;stroke:${TCOL}!important;stroke-width:3px!important;stroke-dasharray:6 3!important}`;
+    s+=`svg.tr-nc-${c}.tr-nc-${c} .chakra[data-center='${n}']{stroke:${TCOL}!important;stroke-width:3px!important}`;
   }
   s+=`
 #results-transit .tr-layout{display:grid;grid-template-columns:110px 110px 1fr 120px;gap:6px}
@@ -46,20 +48,36 @@ function css(){
 .ch-item.trs{border-left-color:#5b6b7a;opacity:.85}
 .tr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:14px 0}
 .tr-note{font-size:.72rem;color:var(--ink-mid);line-height:1.6;margin:6px 0 2px}
-.tr-ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-.tr-ctrl select,.tr-ctrl button{background:var(--raised,#1a1424);color:var(--ink);border:1px solid var(--border);
-  border-radius:6px;padding:5px 9px;font-size:.72rem;font-family:inherit;cursor:pointer}
-.tr-ctrl button.on{border-color:${TCOL};color:#9cc8f4}
-.tw{display:grid;grid-template-columns:120px 1fr auto;gap:8px;align-items:center;padding:6px 8px;
-  border-bottom:1px solid rgba(255,255,255,.04);font-size:.74rem}
+.tr-ctrl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.tr-ctrl button{background:var(--raised,#1a1424);color:var(--ink-mid);border:1px solid var(--border);
+  border-radius:6px;padding:5px 10px;font-size:.7rem;font-family:inherit;cursor:pointer}
+.tr-ctrl button.on{border-color:${TCOL};color:#cfe3fa;background:rgba(58,141,222,.12)}
+.tr-ctrl .sp{flex:1}
+.pk-grid{display:grid;gap:5px;margin-bottom:12px}
+.pk-grid.ch{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.pk-grid.gt{grid-template-columns:repeat(auto-fill,minmax(46px,1fr))}
+.pk{position:relative;background:var(--raised,#1a1424);border:1px solid var(--border);border-radius:5px;
+  padding:5px 7px;cursor:pointer;color:var(--ink-mid);font-size:.68rem;line-height:1.3;text-align:left;font-family:inherit}
+.pk b{color:var(--ink);font-weight:500;font-size:.78rem}
+.pk.gt{text-align:center;padding:6px 2px}
+.pk.nat{border-color:rgba(196,149,80,.55)} .pk.nat b{color:var(--gold-lt,#e8c47a)}
+.pk.hang{border-left:3px solid rgba(196,149,80,.7)}
+.pk.now::after{content:"";position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:${TCOL}}
+.pk.sel{outline:2px solid ${TCOL};outline-offset:-1px;background:rgba(58,141,222,.14);color:#cfe3fa}
+.pk-key{display:flex;gap:14px;flex-wrap:wrap;font-size:.64rem;color:var(--ink-dim);margin:-4px 0 12px}
+.pk-key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.rb{border:1px solid var(--border);border-radius:6px;margin-bottom:10px;overflow:hidden}
+.rb-h{display:flex;justify-content:space-between;gap:8px;align-items:baseline;padding:8px 12px;background:rgba(58,141,222,.07);
+  font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.08em;color:#cfe3fa}
+.rb-h small{font-family:inherit;letter-spacing:0;color:var(--ink-dim);font-size:.66rem}
+.rb-x{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:.9rem}
+.tw{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:6px 12px;
+  border-top:1px solid rgba(255,255,255,.04);font-size:.74rem}
 .tw:hover{background:rgba(58,141,222,.05)}
-.tw .who{color:#9cc8f4;white-space:nowrap}.tw .when{color:var(--ink)}.tw .sub{color:var(--ink-dim);font-size:.66rem}
+.tw .when{color:var(--ink)}.tw .sub{color:var(--ink-dim);font-size:.67rem}
+.tw .who{color:#9cc8f4}
 .tw .nowb{display:inline-block;background:${TCOL};color:#fff;border-radius:3px;padding:0 5px;font-size:.6rem;margin-left:5px}
-.tw .nc{display:inline-block;border:1px dashed ${TCOL};color:#9cc8f4;border-radius:3px;padding:0 5px;font-size:.6rem;margin-left:4px}
 .tw .eye{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:5px;padding:2px 7px;cursor:pointer;font-size:.7rem}
-.tg-h{font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.12em;color:var(--gold);margin:14px 0 4px;
-  padding-bottom:4px;border-bottom:1px solid var(--border)}
-.tg-h small{color:var(--ink-dim);letter-spacing:0;font-family:inherit;margin-left:6px}
 .tr-empty{color:var(--ink-dim);font-style:italic;font-size:.74rem;padding:4px 8px}
 `;
   const st=document.createElement('style');st.id='hd-transit-css';st.textContent=s;document.head.appendChild(st);
@@ -110,7 +128,7 @@ function inject(){
       <div class="leg-item"><div class="leg-dot" style="background:#2C363F;border:1px solid #888"></div>პიროვნება (ნატ.)</div>
       <div class="leg-item"><div class="leg-dot" style="background:#E75A7C"></div>დიზაინი (ნატ.)</div>
       <div class="leg-item"><div class="leg-dot" style="background:${TCOL}"></div><span style="color:#9cc8f4">ტრანზიტი</span></div>
-      <div class="leg-item"><div class="leg-dot" style="background:transparent;border:2px dashed ${TCOL}"></div>ტრანზიტით განსაზღვრული ცენტრი</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#c49550;border:2px solid ${TCOL}"></div>ტრანზიტით განსაზღვრული ცენტრი (ლურჯი კონტური)</div>
     </div>
     <div class="sec-head"><span>სხეულის გრაფიკა · ნატალი + ტრანზიტი</span></div>
     <div class="chart-area tr-layout">
@@ -125,15 +143,21 @@ function inject(){
       <div class="channel-list" id="tr-now-list"></div>
     </div>
     <div class="panel" style="margin-bottom:20px">
-      <h2>როდის გაიხსნება არხები <small id="tr-tl-count"></small></h2>
-      <div class="tr-note">შენი „ჩამოკიდებული“ კარიბჭე + ტრანზიტული პლანეტა მეწყვილე კარიბჭეში = არხი ღიაა, სანამ პლანეტა იქ დგას.
-        ℞ — რეტროგრადული გავლა (იგივე კარიბჭე შეიძლება რამდენჯერმე გაიაროს).</div>
+      <h2>როდის აქტიურდება <small id="tr-pk-period"></small></h2>
       <div class="tr-ctrl">
-        <button type="button" data-v="channel" class="on">არხების მიხედვით</button>
-        <button type="button" data-v="time">ქრონოლოგიით</button>
-        <select id="tr-fplanet"><option value="">ყველა პლანეტა</option></select>
+        <button type="button" data-tab="ch" class="on">არხები (36)</button>
+        <button type="button" data-tab="gt">კარიბჭეები (64)</button>
+        <span class="sp"></span>
+        <button type="button" data-q="hang">ჩამოკიდებული არხები</button>
+        <button type="button" data-q="clear">გასუფთავება</button>
       </div>
-      <div id="tr-tl"></div>
+      <div class="pk-key">
+        <span><i style="border:1px solid #c49550"></i>ნატალური</span>
+        <span><i style="border-left:3px solid #c49550;background:#1a1424"></i>ჩამოკიდებული (ერთი კარიბჭე შენია)</span>
+        <span><i style="background:${TCOL};border-radius:50%"></i>ახლა ღიაა / ტრანზიტშია</span>
+      </div>
+      <div id="tr-pk"></div>
+      <div id="tr-res"><div class="tr-empty">აირჩიე ერთი ან რამდენიმე არხი ან კარიბჭე — აქ გამოჩნდება, როდის აქტიურდება და რომელი პლანეტით.</div></div>
     </div>`;
   const syn=$('results-synastry');
   (syn&&syn.parentNode?syn.parentNode:document.body).insertBefore(sec,syn?syn.nextSibling:null);
@@ -143,10 +167,14 @@ function inject(){
   $('tr-now').onclick=()=>{const n=new Date();
     set('tt-day',n.getDate());set('tt-month',n.getMonth()+1);set('tt-year',n.getFullYear());
     set('tt-hour',n.getHours());set('tt-minute',n.getMinutes());};
-  sec.querySelectorAll('.tr-ctrl button').forEach(b=>b.onclick=()=>{
-    view=b.dataset.v;sec.querySelectorAll('.tr-ctrl button').forEach(x=>x.classList.toggle('on',x===b));
-    if(last)renderTimeline(last);});
-  $('tr-fplanet').onchange=()=>{if(last)renderTimeline(last);};
+  sec.querySelectorAll('.tr-ctrl button[data-tab]').forEach(b=>b.onclick=()=>{
+    pkTab=b.dataset.tab;sec.querySelectorAll('.tr-ctrl button[data-tab]').forEach(x=>x.classList.toggle('on',x===b));
+    if(last)renderPicker(last);});
+  sec.querySelectorAll('.tr-ctrl button[data-q]').forEach(b=>b.onclick=()=>{
+    if(!last)return;
+    if(b.dataset.q==='clear')SEL.clear();
+    else last.channels_all.forEach(c=>{if(chState(last,c)==='hang')SEL.add('c:'+c.gate_a+'-'+c.gate_b);});
+    renderPicker(last);renderResults(last);});
 
   /* the page's setMode() highlights tabs by index: keep ours in sync */
   if(typeof setMode==='function'&&!setMode._tr){
@@ -279,50 +307,115 @@ function render(d){
   $('tr-now-list').innerHTML=h;
   $('tr-now-count').textContent=`⚡${comp.length} ტრანზიტით · ${coll.length} კოლექტ.`;
 
-  const fp=$('tr-fplanet'),keep=fp.value;
-  const ps=[...new Set(d.timeline.windows.map(w=>w.planet))];
-  fp.innerHTML='<option value="">ყველა პლანეტა</option>'+(typeof PLANET_ORDER!=='undefined'?PLANET_ORDER:ps).filter(p=>ps.includes(p))
-    .map(p=>`<option value="${p}"${p===keep?' selected':''}>${BODY_KA[p]||p}</option>`).join('');
-  renderTimeline(d);
+  renderPicker(d);renderResults(d);
 
   $('results-transit').classList.remove('hidden');
   ['results-natal','results-synastry'].forEach(id=>{const e=$(id);if(e)e.classList.add('hidden');});
   $('results-transit').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function winRow(w,showCh){
-  const dur=w.days>=1?`${w.days.toFixed(w.days<10?1:0)} დღე`:`${Math.round(w.days*24)} სთ`;
-  return `<div class="tw">
-    <span class="who">${w.glyph} ${BODY_KA[w.planet]||w.planet}${w.retrograde?' ℞':''}<br><span class="sub">კარიბჭე ${w.gate}</span></span>
-    <span><span class="when">${w.open_start?'უკვე ღიაა':w.start} → ${w.open_end?'პერიოდის ბოლომდე':w.end}</span>${w.open_start?'<span class="nowb">ახლა</span>':''}
-      <br><span class="sub">${showCh?`${w.gate_a}–${w.gate_b} ${w.name} · `:''}${dur}</span>${w.new_centers.map(c=>`<span class="nc">+${CKA(c)}</span>`).join('')}</span>
-    <button type="button" class="eye" data-jd="${(w.start_jd+w.end_jd)/2}" title="ამ მომენტის გრაფიკი">👁</button>
-  </div>`;
+/* ── picker ─────────────────────────────────────────────── */
+const TZ=()=>Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
+const fmt=jd=>{const p=jdParts(jd,TZ());return `${p.y}-${pad(p.m)}-${pad(p.d)} ${pad(p.h)}:${pad(p.mi)}`;};
+const dur=d=>d>=1?`${d.toFixed(d<10?1:0)} დღე`:`${Math.max(1,Math.round(d*24))} სთ`;
+function nowGates(d){return new Set(d.activations.map(a=>a.gate));}
+function chState(d,c){
+  const N=new Set(d.natal_gates),na=N.has(c.gate_a),nb=N.has(c.gate_b);
+  if(na&&nb)return 'nat';
+  return (na||nb)?'hang':'';
 }
-function renderTimeline(d){
-  const T=d.timeline,f=$('tr-fplanet').value;
-  const W=T.windows.filter(w=>!f||w.planet===f);
-  const per=T.days>=365?`${Math.round(T.days/365)} წელი`:`${T.days} დღე`;
-  $('tr-tl-count').textContent=`${W.length} ფანჯარა · ${per}${T.moon?' · მთვარით':''}`;
+function renderPicker(d){
+  const N=new Set(d.natal_gates),T=nowGates(d);
+  const openNow=new Set(d.channels.filter(c=>c.kind!=='natal').map(c=>c.gate_a+'-'+c.gate_b));
   let h='';
-  if(view==='time'){
-    h=W.length?W.map(w=>winRow(w,true)).join(''):'<div class="tr-empty">ამ პერიოდში აქტივაცია არ არის</div>';
+  if(pkTab==='ch'){
+    h='<div class="pk-grid ch">'+d.channels_all.map(c=>{
+      const k='c:'+c.gate_a+'-'+c.gate_b,st=chState(d,c);
+      return `<button type="button" class="pk ${st}${openNow.has(c.gate_a+'-'+c.gate_b)?' now':''}${SEL.has(k)?' sel':''}" data-k="${k}">
+        <b>${c.gate_a}–${c.gate_b}</b> ${c.name}</button>`;}).join('')+'</div>';
   }else{
-    /* every hanging channel, even those that never open in the period */
-    const seen=new Set(),chans=[];
-    Object.values(T.targets).flat().forEach(c=>{const k=c.gate_a+'-'+c.gate_b;if(!seen.has(k)){seen.add(k);chans.push(c);}});
-    chans.sort((a,b)=>a.gate_a-b.gate_a||a.gate_b-b.gate_b);
-    for(const c of chans){
-      const ws=W.filter(w=>w.gate_a===c.gate_a&&w.gate_b===c.gate_b);
-      const miss=c.natal_gate===c.gate_a?c.gate_b:c.gate_a;
-      h+=`<div class="tg-h">${c.gate_a}–${c.gate_b} ${c.name}<small>შენი ${c.natal_gate} · საჭიროა ${miss} · ${ws.length} ფანჯარა</small></div>`;
-      h+=ws.length?ws.map(w=>winRow(w,false)).join(''):'<div class="tr-empty">ამ პერიოდში არ იხსნება</div>';
-    }
-    if(!chans.length)h='<div class="tr-empty">ჩამოკიდებული კარიბჭე არ არის</div>';
+    h='<div class="pk-grid gt">';
+    for(let g=1;g<=64;g++){const k='g:'+g;
+      h+=`<button type="button" class="pk gt${N.has(g)?' nat':''}${T.has(g)?' now':''}${SEL.has(k)?' sel':''}" data-k="${k}"><b>${g}</b></button>`;}
+    h+='</div>';
   }
-  $('tr-tl').innerHTML=h;
-  $('tr-tl').querySelectorAll('.eye').forEach(b=>b.onclick=()=>{
-    const p=jdParts(+b.dataset.jd,Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC');
+  $('tr-pk').innerHTML=h;
+  $('tr-pk').querySelectorAll('.pk').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;SEL.has(k)?SEL.delete(k):SEL.add(k);
+    b.classList.toggle('sel',SEL.has(k));renderResults(d);});
+  const P=d.period,yrs=P.days>=365?`${Math.round(P.days/365)} წელი`:`${P.days} დღე`;
+  $('tr-pk-period').textContent=`${fmt(P.jd0)} → ${yrs}${P.moon?' · მთვარით':' · მთვარის გარეშე'}`;
+}
+
+/* every [start,end] a gate is held by a transit body (one row per pass) */
+function gatePasses(d,g){
+  const out=[];
+  for(const [body,segs] of Object.entries(d.segments))
+    for(const [gg,s,e,r] of segs) if(gg===g) out.push({body,s,e,r});
+  return out.sort((a,b)=>a.s-b.s);
+}
+/* gate covered by natal or by any transit body, merged into intervals */
+function coverage(d,g){
+  const P=d.period;
+  if(d.natal_gates.includes(g))return [{s:P.jd0,e:P.jd1,natal:true}];
+  const ps=gatePasses(d,g),out=[];
+  for(const p of ps){
+    const l=out[out.length-1];
+    if(l&&p.s<=l.e+1e-6)l.e=Math.max(l.e,p.e);else out.push({s:p.s,e:p.e});
+  }
+  return out;
+}
+function intersect(A,B){
+  const out=[];let i=0,j=0;
+  while(i<A.length&&j<B.length){
+    const s=Math.max(A[i].s,B[j].s),e=Math.min(A[i].e,B[j].e);
+    if(e>s+1e-6)out.push({s,e});
+    A[i].e<B[j].e?i++:j++;
+  }
+  return out;
+}
+function whoIn(d,g,s,e){
+  if(d.natal_gates.includes(g))return `${g} — შენი`;
+  const bs=[...new Set(gatePasses(d,g).filter(p=>p.s<e-1e-6&&p.e>s+1e-6).map(p=>(PLANET_GLYPH[p.body]||'')+' '+(BODY_KA[p.body]||p.body)+(p.r?' ℞':'')))];
+  return `${g} — ${bs.join(', ')}`;
+}
+function rowHTML(s,e,main,sub){
+  const P=last.period,open0=s<=P.jd0+1e-5,open1=e>=P.jd1-1e-5;
+  return `<div class="tw"><span><span class="when">${open0?'უკვე აქტიურია':fmt(s)} → ${open1?'პერიოდის ბოლომდე':fmt(e)}</span>${open0?'<span class="nowb">ახლა</span>':''}
+    <br><span class="who">${main}</span> <span class="sub">· ${dur(e-s)}${sub?' · '+sub:''}</span></span>
+    <button type="button" class="eye" data-jd="${(s+e)/2}" title="ამ მომენტის გრაფიკი">👁</button></div>`;
+}
+function renderResults(d){
+  const box=$('tr-res');
+  if(!SEL.size){box.innerHTML='<div class="tr-empty">აირჩიე ერთი ან რამდენიმე არხი ან კარიბჭე — აქ გამოჩნდება, როდის აქტიურდება და რომელი პლანეტით.</div>';return;}
+  const N=new Set(d.natal_gates),natC=new Set(d.natal_centers);
+  const items=[...SEL].sort();
+  box.innerHTML=items.map(k=>{
+    const x=`<button type="button" class="rb-x" data-k="${k}" title="მოხსნა">✕</button>`;
+    if(k[0]==='g'){
+      const g=+k.slice(2),ps=gatePasses(d,g);
+      const head=`<div class="rb-h"><span>კარიბჭე ${g} <small>· ${CKA(GATE_TO_CENTER[g])}${N.has(g)?' · შენი ნატალური':''}</small></span><span><small>${ps.length} გავლა</small> ${x}</span></div>`;
+      return `<div class="rb">${head}${ps.length?ps.map(p=>rowHTML(p.s,p.e,(PLANET_GLYPH[p.body]||'')+' '+(BODY_KA[p.body]||p.body)+(p.r?' ℞':''),'')).join('')
+        :'<div class="tr-empty">ამ პერიოდში არცერთი ტრანზიტული პლანეტა არ გადის</div>'}</div>`;
+    }
+    const [a,b]=k.slice(2).split('-').map(Number),c=d.channels_all.find(z=>z.gate_a===a&&z.gate_b===b);
+    const st=chState(d,c);
+    const newC=[...new Set([c.center_a,c.center_b])].filter(z=>!natC.has(z));
+    const tag=st==='nat'?'შენი ნატალური':st==='hang'?`შენი ${N.has(a)?a:b} · საჭიროა ${N.has(a)?b:a}`:'ორივე კარიბჭე ტრანზიტით';
+    let rows;
+    if(st==='nat')rows='<div class="tr-empty">ეს არხი ნატალურად მუდმივად ღიაა — ტრანზიტი მას არ ცვლის</div>';
+    else{
+      const iv=intersect(coverage(d,a),coverage(d,b));
+      rows=iv.length?iv.map(v=>rowHTML(v.s,v.e,`${whoIn(d,a,v.s,v.e)} · ${whoIn(d,b,v.s,v.e)}`,
+        newC.length?'+'+newC.map(CKA).join(', '):'')).join('')
+        :'<div class="tr-empty">ამ პერიოდში არ იხსნება</div>';
+      rows=`<div class="tr-empty" style="font-style:normal">${iv.length} ფანჯარა</div>`+rows;
+    }
+    return `<div class="rb"><div class="rb-h"><span>${a}–${b} ${c.name} <small>· ${tag}</small></span><span>${x}</span></div>${rows}</div>`;
+  }).join('');
+  box.querySelectorAll('.rb-x').forEach(b=>b.onclick=()=>{SEL.delete(b.dataset.k);renderPicker(d);renderResults(d);});
+  box.querySelectorAll('.eye').forEach(b=>b.onclick=()=>{
+    const p=jdParts(+b.dataset.jd,TZ());
     set('tt-year',p.y);set('tt-month',p.m);set('tt-day',p.d);set('tt-hour',p.h);set('tt-minute',p.mi);run();});
 }
 function jdParts(jd,tz){
