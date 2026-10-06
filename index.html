@@ -111,6 +111,19 @@
   .card-sub { font-family:'IM Fell English',serif;font-style:italic;font-size:9px;color:var(--silver);opacity:0;margin-top:5px;transition:opacity 0.3s;text-align:center;padding:0 6px;line-height:1.4; }
   .card:hover .card-sub { opacity:0.45; }
 
+  /* ── umbrella tiles (ასტროლოგია / ნუმეროლოგია) ── */
+  .card.grp { cursor:pointer; font:inherit; color:inherit; }
+  .card.grp .grp-n { position:absolute;top:10px;right:24px;font-size:8px;letter-spacing:1px;color:var(--gold);opacity:.55; }
+  .card.grp .grp-arrow { font-size:8px;color:var(--gold);opacity:.45;margin-top:6px;transition:transform .3s; }
+  .card.grp.open { border-color:rgba(201,168,76,0.45); }
+  .card.grp.open .grp-arrow { transform:rotate(180deg); }
+  .grp-panel { grid-column:1/-1;display:none;position:relative;padding:14px 12px 12px;
+    border:1px solid rgba(201,168,76,0.18);border-radius:3px;background:rgba(201,168,76,0.03); }
+  .grp-panel.open { display:block;animation:grpIn .28s ease; }
+  .grp-panel::before { content:attr(data-title);position:absolute;top:-7px;left:16px;padding:0 8px;
+    background:var(--void);font-size:8px;letter-spacing:3px;color:var(--gold);opacity:.7; }
+  .grp-panel .grp-inner { display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px; }
+  @keyframes grpIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
   footer { margin-top:72px;text-align:center; }
   footer span { font-size:9px;letter-spacing:6px;text-transform:uppercase;color:rgba(201,168,76,0.2); }
 
@@ -539,7 +552,8 @@
    SVG that would be lost if the grid were rebuilt from plain data. So
    instead of replacing them, we harvest the existing tiles by their
    href and then re-order / hide / add according to the API. If the
-   backend is unreachable the page is untouched. */
+   backend is unreachable the page keeps its authored order. Either way
+   the umbrella groups (GROUPS) are applied last. */
 (function(){
   const BACKEND='https://astrology-production-b165.up.railway.app';
   const grid=document.getElementById('card-grid');
@@ -551,6 +565,62 @@
     const href=(a.getAttribute('href')||'').trim();
     if(href)original[href]=a;
   });
+
+  /* ── umbrella groups ─────────────────────────────────────────────
+     The member tiles stay ordinary cards (same artwork, same admin-panel
+     order / visibility); they are only moved into a fold-out panel behind
+     one umbrella tile, which takes the place of the first member.
+     label: how a member is titled INSIDE the group (optional).          */
+  const GROUPS=[
+    {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · True Sidereal',css:'c-astro',art:'astro.html',
+     members:['astro.html','vedic.html','true_sidereal.html'],
+     label:{'astro.html':'დასავლური ასტროლოგია'}},
+    {key:'numerology',title:'ნუმეროლოგია',sub:'Matrix · Pythagoras · Name',css:'c-name',art:'name.html',
+     members:['matrix.html','pythagoras.html','name.html'],label:{}},
+  ];
+  const openKey=()=>{try{return sessionStorage.getItem('magnus_grp')||'';}catch(e){return '';}};
+  function applyGroups(){
+    const cur=openKey();
+    for(const G of GROUPS){
+      const tiles=G.members.map(h=>grid.querySelector(':scope > a.card[href="'+h+'"]')).filter(Boolean);
+      if(!tiles.length)continue;                       /* all hidden in the admin panel */
+      /* keep the order the admin panel gave them */
+      tiles.sort((a,b)=>[...grid.children].indexOf(a)-[...grid.children].indexOf(b));
+      const src=original[G.art]||tiles[0];
+      const um=document.createElement('button');
+      um.type='button';um.className='card grp '+G.css;um.dataset.grp=G.key;
+      um.setAttribute('aria-expanded','false');
+      const sym=src.querySelector('.sym');
+      um.innerHTML='<div class="card-glow"></div><div class="cn tl"></div><div class="cn tr"></div>'+
+        '<div class="cn bl"></div><div class="cn br"></div><span class="grp-n">'+tiles.length+'</span>'+
+        (sym?sym.outerHTML:'<div class="sym">✦</div>')+
+        '<div class="card-title"></div><div class="card-sub"></div><div class="grp-arrow">▼</div>';
+      um.querySelector('.card-title').textContent=G.title;
+      um.querySelector('.card-sub').textContent=G.sub;
+      const panel=document.createElement('div');
+      panel.className='grp-panel';panel.dataset.title=G.title;   /* no toUpperCase: Georgian would turn into Mtavruli */
+      const inner=document.createElement('div');inner.className='grp-inner';panel.appendChild(inner);
+      grid.insertBefore(um,tiles[0]);
+      grid.insertBefore(panel,um.nextSibling);
+      tiles.forEach(t=>{
+        const lb=G.label[t.getAttribute('href')];
+        if(lb){const tt=t.querySelector('.card-title');if(tt)tt.textContent=lb;}
+        inner.appendChild(t);
+      });
+      um.addEventListener('click',()=>toggle(G.key));
+      if(cur===G.key)toggle(G.key,true);
+    }
+  }
+  function toggle(key,force){
+    grid.querySelectorAll(':scope > .card.grp').forEach(u=>{
+      const on=u.dataset.grp===key&&(force||!u.classList.contains('open'));
+      u.classList.toggle('open',on);u.setAttribute('aria-expanded',on?'true':'false');
+      const p=u.nextElementSibling;if(p&&p.classList.contains('grp-panel'))p.classList.toggle('open',on);
+      if(on){try{sessionStorage.setItem('magnus_grp',key);}catch(e){}}
+      else if(u.dataset.grp===key){try{sessionStorage.removeItem('magnus_grp');}catch(e){}}
+    });
+  }
+  applyGroups();
 
   fetch(BACKEND+'/api/cards')
     .then(r=>r.ok?r.json():Promise.reject())
@@ -585,6 +655,7 @@
       });
       grid.innerHTML='';
       grid.appendChild(frag);
+      applyGroups();                                  /* regroup the API order */
     })
     .catch(()=>{});
 })();
