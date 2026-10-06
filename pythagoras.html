@@ -244,8 +244,8 @@ const MODE_META={
     desc:"საუკუნის შესწორება: <b>XX საუკუნე (19xx) → −2</b> — ორიანი ემატება კვადრატს, რადგან 19xx თარიღები მას არ იძლევა. <b>XXI საუკუნე (20xx) → +19</b> — ერთიანი და ცხრიანი ემატება, რადგან 20xx თარიღებს ისინი აკლია. III = I ± კორექცია.",
     labels:["I · ჯამი","კორექცია","III","IV"]},
   crisis:{title:"ციფრების კვადრატი · კრიზისული",
-    desc:"როგორ იქცევა ადამიანი <b>კრიზისულ სიტუაციაში</b>: პირველ სამუშაო რიცხვს აკლდება 9 (I − 9), დანარჩენი გამოთვლა იგივეა. კვადრატი აჩვენებს ენერგიების განაწილებას სტრესის დროს.",
-    labels:["I − 9","II","III","IV"]}
+    desc:"როგორ იქცევა ადამიანი <b>კრიზისულ სიტუაციაში</b>: პირველ სამუშაო რიცხვს აკლდება 9 — თუ შედეგი უარყოფითია, აიღება მოდული <b>|I − 9|</b>; III-შიც მოდულს ვაკლებთ 2×დღის პირველ ციფრს: <b>|I′ − 2×ციფრი|</b>. კვადრატი აჩვენებს ენერგიების განაწილებას სტრესის დროს.",
+    labels:["|I − 9|","II","III","IV"]}
 };
 
 document.getElementById("birth").addEventListener("input",function(e){
@@ -289,7 +289,7 @@ const COMPOUND={
    classic:   I=Σთარიღი, II=Σ(I), III=|I−2×დღის პირვ.ციფრი|, IV=Σ(III)
    corrected: XX(19xx): II→−2 (ციფრი 2 ითვლება), III=I−2
               XXI(20xx): II→+19 (ციფრები 1,9 ითვლება), III=I+19; IV=Σ(III)
-   crisis:    I'=I−9, შემდეგ კლასიკურივით                              */
+   crisis:    I'=|I−9| (მოდული), III'=|I'−2×დღის პირვ.ციფრი|                              */
 function computeModes(day,month,year){
   const birthDigits=(day+month+year).split("").map(Number);
   const A=birthDigits.reduce((a,b)=>a+b,0);
@@ -311,9 +311,10 @@ function computeModes(day,month,year){
       extra:[...digitsOf(A),2,...digitsOf(C),...digitsOf(D)],note:"XX საუკუნე · −2"};
   }
 
-  const kA=A-9,kB=sumDigits(kA),kC=Math.abs(kA-2*fd),kD=sumDigits(kC);
+  /* crisis: every subtraction is a modulus — |I−9|, then |I'−2×fd| */
+  const kA=Math.abs(A-9),kB=sumDigits(kA),kC=Math.abs(kA-2*fd),kD=sumDigits(kC);
   const crisis={disp:[String(kA),String(kB),String(kC),String(kD)],
-    extra:[...digitsOf(kA),...digitsOf(kB),...digitsOf(kC),...digitsOf(kD)],note:"I − 9"};
+    extra:[...digitsOf(kA),...digitsOf(kB),...digitsOf(kC),...digitsOf(kD)],note:"|"+A+"−9| = "+kA+" · |"+kA+"−"+(2*fd)+"| = "+kC};
 
   const mk=extra=>{
     const count={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
