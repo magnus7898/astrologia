@@ -98,6 +98,24 @@ const COMPAT_BOXES = [
 /* rows of the chakra table: [key, energy, physics]. Mirrors renderChakra()
    in matrix.html. Method 3's second heart value (m3Cv2) is the sum of the
    four (name-overridden) diagonal corners, exactly as calculate() makes it. */
+/* ── shared combo names ────────────────────────────────────────
+   A triplet's name is the same in all "general" zones (verified: they agree
+   on every common code). karmic_tail (exact-order, own names) and couple
+   zones (cp_*) are left out on purpose. Matched exact first, then reversed. */
+const NAME_ZONES=['persona','talent_zone','tl','tr','br','bl','material_karma','love','money'];
+let _names=null;
+function comboName(nums){
+  if(!_names){
+    _names={};
+    const DB=(typeof MATRIX_DB!=='undefined')?MATRIX_DB:(window.MATRIX_DB||{});
+    for(const z of NAME_ZONES){
+      const c=(DB[z]||{}).combos||{};
+      for(const k in c){const t=(c[k]&&c[k].title||'').trim(); if(t && !_names[k]) _names[k]=t;}
+    }
+  }
+  return _names[nums.join('-')]||_names[[...nums].reverse().join('-')]||'';
+}
+
 function chakraRows(v,method,R){
   if(method===4) return [];
   if(method===3){
@@ -160,6 +178,12 @@ function buildMatrixBoxes(v, method){
     if(!art && box.chakra && nums.length===3 && typeof autoCombo==='function'){
       const t=autoCombo(box.id,nums); if(t) art={title:'',text:t,auto:true};
     }
+    /* chakra combos take the shared triplet name (same code = same name in
+       every general zone) unless a title is written in the ch_* zone itself */
+    if(box.chakra && nums.length===3){
+      const nm=comboName(nums);
+      if(nm && (!art || !art.title)) art=Object.assign({text:''},art||{},{title:nm});
+    }
     if(!art && nums.length===1 && typeof getE==='function'){
       const e=getE(nums[0]); art={title:e.name, text:e.desc};
     }
@@ -195,3 +219,4 @@ function openBoxById(id){
 window.buildMatrixBoxes=buildMatrixBoxes;
 window.openBoxById=openBoxById;
 window.chakraRows=chakraRows;
+window.comboName=comboName;
