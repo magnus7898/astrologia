@@ -360,21 +360,30 @@ const BACK=`<svg viewBox="0 0 100 166" preserveAspectRatio="none"><defs><pattern
 
 /* ── optional card images ──────────────────────────────────────
    Put files in a tarot/ folder next to tarot.html:
-     majors   m00 … m21           (m00 = Fool, m21 = World)
-     minors   wands01 … wands14   cups01 … cups14   swords01 …   pentacles01 …
-              (01 Ace … 10, 11 Page, 12 Knight, 13 Queen, 14 King)
-   jpg, png or webp. Checked once on load (m00); missing → drawn faces. */
+     majors   0 … 21              (0 = Fool, 21 = World)
+     minors   "wands 1" … "wands 14", "cups 1" …, "swords 1" …, "pentacles 1" …
+              (1 Ace … 10, 11 Page, 12 Knight, 13 Queen, 14 King)
+   jpg, jpeg, png or webp. Checked once on load (file "0"); missing → drawn faces.
+   ALIAS: alternative file names tried if the main one is missing.          */
 const IMG={dir:'tarot/',ext:null};
-const imgName=c=>c.major?'m'+String(c.n).padStart(2,'0'):c.suit+String(c.rank).padStart(2,'0');
+const ALIAS={'pentacles 14':'pentacles 15'};
+const imgName=c=>c.major?String(c.n):`${c.suit} ${c.rank}`;
+const imgURL=n=>IMG.dir+encodeURIComponent(n)+'.'+IMG.ext;
 function probeImages(){
   return new Promise(res=>{
-    const exts=['jpg','png','webp'];let i=0;
+    const exts=['jpg','png','jpeg','webp','JPG','PNG'];let i=0;
     const next=()=>{if(i>=exts.length)return res(null);const e=exts[i++],im=new Image();
-      im.onload=()=>res(e);im.onerror=next;im.src=IMG.dir+'m00.'+e;};
+      im.onload=()=>res(e);im.onerror=next;im.src=IMG.dir+'0.'+e;};
     next();
   });
 }
-const imgTag=c=>IMG.ext?`<img class="cimg" src="${IMG.dir}${imgName(c)}.${IMG.ext}" alt="" loading="lazy" onerror="this.remove()">`:'';
+function imgTag(c){
+  if(!IMG.ext)return '';
+  const n=imgName(c),alt=ALIAS[n];
+  /* main name → alias (if any) → give up and show the drawn face */
+  const onerr=alt?`if(!this.dataset.a){this.dataset.a=1;this.src='${imgURL(alt)}'}else this.remove()`:'this.remove()';
+  return `<img class="cimg" src="${imgURL(n)}" alt="" loading="lazy" onerror="${onerr}">`;
+}
 function faceHTML(c,rev){
   let top,art;
   if(c.major){top=ROMAN[c.n];art=`<div class="big">${c.glyph}\uFE0E</div>`;}
@@ -640,7 +649,10 @@ const qs=new URLSearchParams(location.search).get('spread');
 select(SPREADS.some(s=>s.id===qs)?qs:'daily');
 renderEnc();
 probeImages().then(e=>{if(!e)return;IMG.ext=e;renderEnc();
-  const n=$('img-note');if(n)n.textContent='✔ გამოიყენება შენი სურათები (tarot/*.'+e+')';});
+  const n=$('img-note');if(n)n.textContent='✔ გამოიყენება შენი სურათები (tarot/*.'+e+')';
+  /* a reading already on the table gets its pictures too */
+  document.querySelectorAll('#table .card3d').forEach(el=>{const i=+el.dataset.i,f=el.querySelector('.front');
+    if(f&&drawn[i])f.innerHTML=faceHTML(drawn[i].c,drawn[i].rev);});});
 window._tarot={DECK,SPREADS,quintessence,ynOf,analyse,IMG,imgName};
 </script>
 </body>
