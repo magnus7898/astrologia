@@ -655,6 +655,9 @@ const themeOf=sp=>THEMES.find(t=>t.g===sp.g)||THEMES[0];
 const icon=(t,cls='')=>`<svg class="${cls}" viewBox="0 0 32 32" fill="none" stroke="${t.c}" style="color:${t.c}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">${ICO[t.key]}</svg>`;
 /* the yes/no spread reads cards as an answer, not as everyday events */
 SPREADS.forEach(sp=>{if(sp.id==='yesno')sp.ctx='d';});
+/* once a day (local 00:00 → 00:00, per browser): the same cards come back
+   all day; a new draw unlocks at midnight. Add ids here to extend it. */
+const ONCE_A_DAY=new Set(['daily']);
 const CTX_LABEL={l:'სიყვარულსა და ურთიერთობებში',w:'საქმესა და ფინანსებში',h:'ენერგიასა და ჯანმრთელობაში',
   d:'როგორც პასუხი და გზა',s:'სულიერ გზაზე'};
 
@@ -698,7 +701,10 @@ function select(id){
   $('fb-n').innerHTML=`${cur.p.length}<small>ბარათი</small>`;
   window.scrollTo({top:0});
   $('ab-names').classList.toggle('show',!!cur.ab);
+  $('fb-desc').textContent=cur.d+(ONCE_A_DAY.has(cur.id)?' იშლება დღეში ერთხელ — 00:00-დან 00:00-მდე.':'');
   drawn=[];$('table').innerHTML='';$('reading').classList.remove('show');$('actions').classList.remove('show');
+  lockButton(false);
+  if(ONCE_A_DAY.has(cur.id)&&loadDay(cur.id)){draw(true);return;}
   layoutEmpty();
 }
 function posLabel(i){
@@ -733,10 +739,39 @@ function layoutEmpty(){
      <div class="pn"><b>${i+1}</b>${posLabel(i)}</div>
      <div style="width:var(--cw);height:calc(var(--cw) * 1.72);border:1px dashed rgba(201,168,76,.18);border-radius:7px${p[4]?';transform:rotate(90deg)':''}"></div></div>`).join('');
 }
-function draw(){
+/* ── once-a-day lock ── */
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
+const dayKey=id=>'magnus_tarot_day_'+id;
+function loadDay(id){
+  try{const v=JSON.parse(localStorage.getItem(dayKey(id))||'null');return v&&v.date===today()?v:null;}catch(e){return null;}
+}
+function saveDay(){
+  if(!cur||!ONCE_A_DAY.has(cur.id))return;
+  try{localStorage.setItem(dayKey(cur.id),JSON.stringify({date:today(),q:question,
+    cards:drawn.map(d=>({id:d.c.id,rev:d.rev,up:d.up}))}));}catch(e){}
+}
+let _cd=null;
+function lockButton(on){
+  const b=$('draw');clearInterval(_cd);
+  if(!on){b.disabled=false;b.textContent='✦ აურიე და გაშალე';return;}
+  b.disabled=true;
+  const tick=()=>{const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);
+    const s=Math.max(0,Math.floor((m-n)/1000));
+    if(!s){lockButton(false);if(cur&&ONCE_A_DAY.has(cur.id))select(cur.id);return;}
+    b.textContent=`✔ დღის ბარათი უკვე გაშლილია · ახალი ${String(Math.floor(s/3600)).padStart(2,'0')}:${String(Math.floor(s/60)%60).padStart(2,'0')}:${String(s%60).padStart(2,'0')}-ში`;};
+  tick();_cd=setInterval(tick,1000);
+}
+function draw(restore){
+  const once=ONCE_A_DAY.has(cur.id),saved=once?loadDay(cur.id):null;
+  if(saved&&!restore)return;                      /* already drawn today */
   const deck=shuffle(),useRev=$('rev').checked;
-  question=$('question').value.trim();
-  drawn=cur.p.map((p,i)=>({c:deck[i],rev:useRev&&rnd(2)===1,up:false}));
+  if(saved){
+    question=saved.q||'';$('question').value=question;
+    drawn=saved.cards.map(x=>({c:DECK.find(c=>c.id===x.id),rev:x.rev,up:false,_up:x.up}));
+  }else{
+    question=$('question').value.trim();
+    drawn=cur.p.map((p,i)=>({c:deck[i],rev:useRev&&rnd(2)===1,up:false}));
+  }
   const [cols,rows]=gridSize(),t=$('table');sizeCards();
   t.style.gridTemplateColumns=`repeat(${cols},calc(var(--cw) + 16px))`;
   t.style.gridTemplateRows=`repeat(${rows},auto)`;
@@ -747,7 +782,12 @@ function draw(){
   t.querySelectorAll('.card3d').forEach(el=>el.onclick=()=>{const i=+el.dataset.i;drawn[i].up?openZoom(i):flip(i);});
   $('actions').classList.add('show');
   renderReading();
-  setTimeout(()=>$('table').scrollIntoView({behavior:'smooth',block:'start'}),60);
+  if(once){
+    saveDay();lockButton(true);
+    /* restored: turn back the cards that were already open */
+    if(saved)drawn.forEach((d,i)=>{if(d._up)flip(i);});
+  }
+  if(!saved)setTimeout(()=>$('table').scrollIntoView({behavior:'smooth',block:'start'}),60);
 }
 /* ── zoom: one card large, with its full text; ← → walk the spread ── */
 let zi=-1;
@@ -770,7 +810,7 @@ function step(dir){
 }
 function closeZoom(){const Z=$('zoom');if(Z)Z.hidden=true;zi=-1;}
 function flip(i){
-  if(!drawn[i]||drawn[i].up)return;drawn[i].up=true;
+  if(!drawn[i]||drawn[i].up)return;drawn[i].up=true;saveDay();
   $('table').querySelector(`.card3d[data-i="${i}"]`).classList.add('up');
   renderReading();
 }
@@ -849,7 +889,7 @@ function renderEnc(){
        </div></details>`).join('');
 }
 
-$('draw').onclick=draw;$('flipall').onclick=flipAll;$('copy').onclick=copyText;
+$('draw').onclick=()=>draw();$('flipall').onclick=flipAll;$('copy').onclick=copyText;
 ['opt-a','opt-b'].forEach(id=>$(id).addEventListener('input',()=>{if(drawn.length){
   document.querySelectorAll('.slot .pn').forEach((el,i)=>el.innerHTML=`<b>${i+1}</b>${posLabel(i)}`);renderReading();}else layoutEmpty();}));
 route();
