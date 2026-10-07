@@ -157,6 +157,40 @@ details.enc summary::-webkit-details-marker{display:none}
 .enc-c .r{color:#c99a9a;margin-top:3px}
 /* ── gallery of spreads ── */
 .groups{gap:22px}
+/* ── theme tiles, same language as index.html ── */
+.gt-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;max-width:1040px;margin:6px auto 0}
+.gt{--c:#c9a84c;flex:0 0 calc((100% - 3 * 14px) / 4);height:200px;position:relative;border-radius:3px;overflow:hidden;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:inherit;color:inherit;
+  border:1px solid rgba(201,168,76,.14);background:rgba(8,6,18,.72);transition:transform .3s,box-shadow .3s,border-color .3s}
+.gt:hover,.gt:focus-visible{transform:translateY(-6px);border-color:rgba(201,168,76,.38);box-shadow:0 20px 44px rgba(0,0,0,.5);outline:none}
+.gt::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .35s;
+  background:radial-gradient(ellipse at 50% 115%,color-mix(in srgb,var(--c) 26%,transparent),transparent 65%)}
+.gt:hover::before{opacity:1}
+.gt .cn{position:absolute;width:11px;height:11px;border-color:rgba(201,168,76,.2);border-style:solid;transition:border-color .3s}
+.gt:hover .cn{border-color:rgba(201,168,76,.55)}
+.gt .tl{top:9px;left:9px;border-width:1px 0 0 1px}.gt .tr{top:9px;right:9px;border-width:1px 1px 0 0}
+.gt .bl{bottom:9px;left:9px;border-width:0 0 1px 1px}.gt .br{bottom:9px;right:9px;border-width:0 1px 1px 0}
+.gt svg{width:48px;height:48px;color:var(--c);stroke:var(--c);opacity:.6;transition:opacity .3s,transform .3s;margin-bottom:8px;position:relative}
+.gt:hover svg{opacity:1;transform:scale(1.1)}
+.gt .gt-t{font-family:'Noto Serif Georgian',serif;font-size:15px;color:var(--gold-lt);text-align:center;padding:0 12px;line-height:1.3;position:relative}
+.gt .gt-s{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--ink-dim);text-transform:uppercase;position:relative}
+.gt .gt-n{position:absolute;top:11px;right:26px;font-family:'Cinzel',serif;font-size:10px;color:var(--c);opacity:.75}
+.gp-head{display:flex;align-items:center;gap:16px;margin:0 0 18px}
+.gp-head svg{width:40px;height:40px;flex:none}
+.gp-head h2{font-family:'Noto Serif Georgian',serif;font-weight:600;font-size:clamp(20px,3vw,28px);color:var(--gold-lt)}
+.gp-head .gp-s{font-size:12px;color:var(--ink-mid)}
+.gp-head .fb-back{margin-left:auto}
+/* ── context-specific meaning ── */
+.ctx-main{font-size:13.5px;line-height:1.75;color:var(--ink);margin:2px 0 4px;padding:8px 11px;border-left:2px solid var(--ctxc,var(--gold));
+  background:rgba(255,255,255,.025);border-radius:0 6px 6px 0}
+.ctx-main b{display:block;font-family:'Cinzel',serif;font-weight:400;font-size:9.5px;letter-spacing:2px;color:var(--ctxc,var(--gold));margin-bottom:2px}
+details.gen{margin-top:4px}
+details.gen summary{cursor:pointer;font-size:11px;color:var(--ink-dim);list-style:none}
+details.gen summary::-webkit-details-marker{display:none}
+details.gen summary::before{content:'▸ '}details.gen[open] summary::before{content:'▾ '}
+.enc-ctx{display:grid;gap:6px;margin-top:8px}
+.enc-ctx div{font-size:12px;color:var(--ink-mid)}.enc-ctx b{color:var(--ctxc);font-weight:600}
+.enc-ctx i{color:#c99a9a;font-style:normal}
 .grp-t{font-size:10px;margin-bottom:9px}
 .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px}
 .chip{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:13px 15px;border-radius:8px;
@@ -219,6 +253,8 @@ body.focus .page{max-width:1500px}
   .focus-bar{flex-wrap:wrap;gap:10px;padding:12px 14px}
   .fb-back{order:3;width:100%}
   .chips{grid-template-columns:1fr 1fr}
+  .gt{flex:0 0 calc((100% - 14px) / 2);height:160px}.gt svg{width:38px;height:38px}.gt .gt-t{font-size:13px}
+  .gp-head{flex-wrap:wrap}.gp-head .fb-back{margin-left:0;width:100%}
   .chip{min-height:74px;padding:11px 12px}.chip b{font-size:13.5px}.chip .cd{display:none}
 }
 @media(max-width:640px){
@@ -274,6 +310,7 @@ body.focus .page{max-width:1500px}
 </div>
 
 <script src="tarot_texts.js"></script>
+<script src="tarot_context.js"></script>
 <script>
 'use strict';
 /* ════════════════════════════════════════════════════════════════
@@ -593,23 +630,71 @@ let cur=SPREADS[0],drawn=[],question='';
 function rnd(n){const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;}
 function shuffle(){const d=DECK.slice();for(let i=d.length-1;i>0;i--){const j=rnd(i+1);[d[i],d[j]]=[d[j],d[i]];}return d;}
 
-function renderGroups(){
-  const gs=[...new Set(SPREADS.map(s=>s.g))];
-  $('groups').innerHTML=gs.map(g=>`<div><div class="grp-t">${g}</div><div class="chips">${
-    SPREADS.filter(s=>s.g===g).map(s=>`<button class="chip" data-id="${s.id}"><b>${s.t}</b><span class="cd">${s.d}</span><small>${s.p.length}</small></button>`).join('')}</div></div>`).join('');
-  $('groups').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{select(b.dataset.id);
-    history.pushState({sp:b.dataset.id},'','?spread='+b.dataset.id);});
+/* ── themes: tile, icon, colour, and which meaning of a card they read ──
+   ctx: key into TAROT_CTX (l love · w work · h health · d decision · s spirit);
+   null = the general meaning. A spread can override it with its own ctx.  */
+const ICO={
+ daily:'<circle cx="16" cy="16" r="6"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M25.2 6.8l-2.8 2.8M9.6 22.4l-2.8 2.8"/>',
+ love:'<path d="M16 27C9 21.5 4 17.4 4 11.8 4 8.6 6.6 6 9.8 6c2.5 0 4.6 1.5 6.2 3.8C17.6 7.5 19.7 6 22.2 6 25.4 6 28 8.6 28 11.8 28 17.4 23 21.5 16 27z"/><path d="M11 12.5c.4-1.4 1.6-2.4 3-2.4" opacity=".5"/>',
+ decide:'<path d="M16 29V17"/><path d="M16 17 8 9M16 17l8-8"/><path d="M5 9h6M8 6v6" opacity=".55"/><path d="M21 9h6M24 6v6" opacity=".55"/><circle cx="16" cy="17" r="1.6" fill="currentColor"/>',
+ energy:'<path d="M16 4c3 4 3 8 0 12-3-4-3-8 0-12z"/><path d="M16 16c4-3 8-3 11 0-3 3-7 3-11 0z"/><path d="M16 16c-4-3-8-3-11 0 3 3 7 3 11 0z"/><path d="M16 16c3 4 3 8 0 12-3-4-3-8 0-12z" opacity=".55"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/>',
+ work:'<circle cx="16" cy="16" r="12"/><path d="M16 5.5 22.2 24.5 6 12.8h20L9.8 24.5z"/>',
+ depth:'<path d="M3 16c3.5-5.5 8-8.3 13-8.3S25.5 10.5 29 16c-3.5 5.5-8 8.3-13 8.3S6.5 21.5 3 16z"/><circle cx="16" cy="16" r="4.5"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/>',
+ moon:'<circle cx="5" cy="16" r="2.6"/><path d="M12.5 13.4a2.6 2.6 0 1 0 0 5.2 3.6 3.6 0 0 1 0-5.2z"/><circle cx="16" cy="16" r="3.6" fill="currentColor" fill-opacity=".25"/><path d="M19.5 13.4a2.6 2.6 0 1 1 0 5.2 3.6 3.6 0 0 0 0-5.2z"/><circle cx="27" cy="16" r="2.6" fill="currentColor"/>',
+};
+const THEMES=[
+ {g:'ყოველდღიური',key:'daily',sub:'Daily',c:'#e0a030',ctx:null},
+ {g:'სიყვარული',key:'love',sub:'Love',c:'#e05585',ctx:'l'},
+ {g:'გადაწყვეტილება და სცენარები',key:'decide',sub:'Decisions',c:'#3fa9e8',ctx:'d'},
+ {g:'ენერგია და ჯანმრთელობა',key:'energy',sub:'Energy · Health',c:'#30c890',ctx:'h'},
+ {g:'საქმე და ფინანსები',key:'work',sub:'Career · Money',c:'#d4a843',ctx:'w'},
+ {g:'სიღრმე',key:'depth',sub:'Depth · Shadow',c:'#9b6be6',ctx:'s'},
+ {g:'მთვარის ციკლი',key:'moon',sub:'Moon Cycle',c:'#9fb6e0',ctx:'s'},
+];
+const themeOf=sp=>THEMES.find(t=>t.g===sp.g)||THEMES[0];
+const icon=(t,cls='')=>`<svg class="${cls}" viewBox="0 0 32 32" fill="none" stroke="${t.c}" style="color:${t.c}" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">${ICO[t.key]}</svg>`;
+/* the yes/no spread reads cards as an answer, not as everyday events */
+SPREADS.forEach(sp=>{if(sp.id==='yesno')sp.ctx='d';});
+const CTX_LABEL={l:'სიყვარულსა და ურთიერთობებში',w:'საქმესა და ფინანსებში',h:'ენერგიასა და ჯანმრთელობაში',
+  d:'როგორც პასუხი და გზა',s:'სულიერ გზაზე'};
+
+/* level 1: the seven themes */
+function renderHome(){
+  $('groups').innerHTML=`<div class="gt-grid">${THEMES.map(t=>{
+    const n=SPREADS.filter(s=>s.g===t.g).length;
+    return `<button class="gt" type="button" data-k="${t.key}" style="--c:${t.c}"><span class="cn tl"></span><span class="cn tr"></span>
+      <span class="cn bl"></span><span class="cn br"></span><span class="gt-n">${n}</span>${icon(t)}
+      <span class="gt-t">${t.g}</span><span class="gt-s">${t.sub}</span></button>`;}).join('')}</div>`;
+  $('groups').querySelectorAll('.gt').forEach(b=>b.onclick=()=>go('?g='+b.dataset.k));
 }
-/* gallery ⇄ focus. The back button of the browser works too. */
-function showGallery(){
+/* level 2: the spreads of one theme */
+function renderTheme(t){
+  $('groups').innerHTML=`<div class="gp-head">${icon(t)}<div><h2>${t.g}</h2><div class="gp-s">${t.sub} · აირჩიე განლაგება</div></div>
+      <button class="fb-back" type="button" id="gp-back">← ყველა თემა</button></div>
+    <div class="chips">${SPREADS.filter(s=>s.g===t.g).map(s=>
+      `<button class="chip" data-id="${s.id}" style="border-left:2px solid ${t.c}"><b>${s.t}</b><span class="cd">${s.d}</span><small>${s.p.length}</small></button>`).join('')}</div>`;
+  $('gp-back').onclick=()=>go(location.pathname);
+  $('groups').querySelectorAll('.chip').forEach(b=>b.onclick=()=>go('?spread='+b.dataset.id));
+}
+function showGallery(theme){
   document.body.classList.remove('focus');cur=null;closeZoom();
-  document.title='ტარო · MAGNUS';window.scrollTo({top:0});
+  theme?renderTheme(theme):renderHome();
+  document.title=(theme?theme.g+' · ':'')+'ტარო · MAGNUS';window.scrollTo({top:0});
 }
+/* URL decides the level: ?spread=… → focus · ?g=… → theme · none → themes */
+function route(){
+  const q=new URLSearchParams(location.search),id=q.get('spread'),g=q.get('g');
+  if(SPREADS.some(s=>s.id===id))select(id);
+  else showGallery(THEMES.find(t=>t.key===g)||null);
+}
+function go(url){history.pushState({},'',url);route();}
 function select(id){
   cur=SPREADS.find(s=>s.id===id);
   document.body.classList.add('focus');
   document.title=cur.t+' · ტარო';
-  $('fb-grp').textContent=cur.g;$('fb-title').textContent=cur.t;$('fb-desc').textContent=cur.d;
+  const th=themeOf(cur);
+  $('fb-grp').innerHTML=`<span style="color:${th.c}">●</span> ${cur.g}`;$('fb-title').textContent=cur.t;$('fb-desc').textContent=cur.d;
+  $('fb-back').textContent='← '+cur.g;
   $('fb-n').innerHTML=`${cur.p.length}<small>ბარათი</small>`;
   window.scrollTo({top:0});
   $('ab-names').classList.toggle('show',!!cur.ab);
@@ -694,15 +779,19 @@ function cardTags(c){
   return c.major?`დიდი არკანი ${ROMAN[c.n]} · ${c.corr}`:`${SUITS[c.suit].ka} · ${SUITS[c.suit].elka} · ${c.corr}`;
 }
 /* which extra line a spread asks for */
-function ctxKey(sp){return sp.g==='სიყვარული'?'l':sp.g==='საქმე და ფინანსები'?'w':null;}
+/* which meaning of a card this spread reads (spread override → theme) */
+function ctxKey(sp){return sp.ctx!==undefined?sp.ctx:themeOf(sp).ctx;}
+const CX=(typeof TAROT_CTX!=='undefined')?TAROT_CTX:{};
+function ctxText(c,rev,k){const e=k&&CX[c.id]&&CX[c.id][k];return e?e[rev?1:0]:'';}
+function generalText(c,rev){const t=c.tx;return t?(rev?t.xr:t.x):(rev?c.rv:c.up);}
 function richText(c,rev,sp){
-  const t=c.tx;
-  if(!t)return `<div class="mn">${rev?c.rv:c.up}</div>`;
-  const k=ctxKey(sp),lab={l:'სიყვარულში',w:'საქმესა და ფინანსებში'};
-  return `<div class="kw">${(rev?t.kr:t.k).split(',').map(x=>`<span>${x.trim()}</span>`).join('')}</div>
-    <div class="mn">${rev?t.xr:t.x}</div>
-    ${k&&t[k]?`<div class="ctx"><b>${lab[k]}:</b> ${t[k]}${rev?' <i>(შებრუნებული ბარათი ამას ასუსტებს ან აბრკოლებს)</i>':''}</div>`:''}
-    ${t.a?`<div class="adv"><b>რჩევა:</b> ${t.a}</div>`:''}`;
+  const t=c.tx,k=ctxKey(sp),ct=ctxText(c,rev,k),col=themeOf(sp).c;
+  const kw=t?`<div class="kw">${(rev?t.kr:t.k).split(',').map(x=>`<span>${x.trim()}</span>`).join('')}</div>`:'';
+  /* the theme's own reading leads; the general meaning folds away under it */
+  const body=ct?`<div class="ctx-main" style="--ctxc:${col}"><b>${CTX_LABEL[k]}</b>${ct}</div>
+      <details class="gen"><summary>ზოგადი მნიშვნელობა</summary><div class="mn">${generalText(c,rev)}</div></details>`
+    :`<div class="mn">${generalText(c,rev)}</div>`;
+  return kw+body+(t&&t.a?`<div class="adv"><b>რჩევა:</b> ${t.a}</div>`:'');
 }
 function renderReading(){
   const R=$('reading');R.classList.add('show');
@@ -732,9 +821,9 @@ function renderReading(){
 function copyText(){
   const lines=[`ტარო — ${cur.t}`];if(question)lines.push(`კითხვა: ${question}`);
   drawn.forEach((d,i)=>{if(!d.up)return;const c=d.c;
-    const t=c.tx,k=ctxKey(cur);
-    lines.push(`${i+1}. ${posLabel(i)}: ${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?' (შებრ.)':''}\n   ${t?(d.rev?t.xr:t.x):(d.rev?c.rv:c.up)}`+
-      (t&&k&&t[k]?`\n   ${k==='l'?'სიყვარულში':'საქმეში'}: ${t[k]}`:'')+(t&&t.a?`\n   რჩევა: ${t.a}`:''));});
+    const t=c.tx,k=ctxKey(cur),ct=ctxText(c,d.rev,k);
+    lines.push(`${i+1}. ${posLabel(i)}: ${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?' (შებრ.)':''}\n   ${ct||generalText(c,d.rev)}`+
+      (t&&t.a?`\n   რჩევა: ${t.a}`:''));});
   const q=quintessence(drawn.filter(d=>d.up));if(q&&drawn.every(d=>d.up))lines.push(`კვინტესენცია: ${ROMAN[q.n]} ${MAJORS[q.n][0]}`);
   const txt=lines.join('\n');
   (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{$('copy').textContent='✔ დაკოპირდა';
@@ -754,19 +843,18 @@ function renderEnc(){
        ${c.tx?`<span class="kwl">${c.tx.k}</span>`:''}</span></summary>
        <div class="enc-b">
         <div class="u">▲ ${c.tx?c.tx.x:c.up}</div><div class="r">▼ ${c.tx?c.tx.xr:c.rv}</div>
-        ${c.tx?`<div class="ctx"><b>სიყვარულში:</b> ${c.tx.l}</div><div class="ctx"><b>საქმეში:</b> ${c.tx.w}</div><div class="adv"><b>რჩევა:</b> ${c.tx.a}</div>`:''}
+        ${CX[c.id]?`<div class="enc-ctx">${['l','w','h','d','s'].map(k=>{const th=THEMES.find(t=>t.ctx===k);
+            return `<div style="--ctxc:${th.c}"><b>${CTX_LABEL[k]}:</b> ${CX[c.id][k][0]} <i>▼ ${CX[c.id][k][1]}</i></div>`;}).join('')}</div>`:''}
+        ${c.tx?`<div class="adv"><b>რჩევა:</b> ${c.tx.a}</div>`:''}
        </div></details>`).join('');
 }
 
 $('draw').onclick=draw;$('flipall').onclick=flipAll;$('copy').onclick=copyText;
 ['opt-a','opt-b'].forEach(id=>$(id).addEventListener('input',()=>{if(drawn.length){
   document.querySelectorAll('.slot .pn').forEach((el,i)=>el.innerHTML=`<b>${i+1}</b>${posLabel(i)}`);renderReading();}else layoutEmpty();}));
-const qs=new URLSearchParams(location.search).get('spread');
-renderGroups();
-if(SPREADS.some(s=>s.id===qs))select(qs);else showGallery();
-$('fb-back').onclick=()=>{history.pushState({},'',location.pathname);showGallery();};
-window.addEventListener('popstate',e=>{const id=new URLSearchParams(location.search).get('spread');
-  SPREADS.some(s=>s.id===id)?select(id):showGallery();});
+route();
+$('fb-back').onclick=()=>go('?g='+themeOf(cur).key);
+window.addEventListener('popstate',route);
 $('zoom').addEventListener('click',e=>{if(e.target.id==='zoom')closeZoom();});
 document.addEventListener('keydown',e=>{if($('zoom').hidden)return;
   if(e.key==='Escape')closeZoom();else if(e.key==='ArrowRight')step(1);else if(e.key==='ArrowLeft')step(-1);});
