@@ -149,13 +149,18 @@
     .grp-head { flex-direction:column;gap:12px; }
     .grp-head a { position:static; }
   }
-  /* ── 2 × 2 main boxes ── */
-  .grid.main4 { grid-template-columns:1fr 1fr !important;max-width:820px;gap:14px; }
-  .grid.main4 > .card.main { height:210px; }
+  /* ── main boxes: 1 × 4 (desktop) · 2 × 2 (tablet / phone) ── */
+  /* 1 × 4 — one row of four; 2 × 2 on tablets, see below */
+  .grid.main4 { grid-template-columns:repeat(4,1fr) !important;max-width:1180px;gap:16px; }
+  .grid.main4 > .card.main { height:260px; }
   .grid.main4 > .card.main .sym { width:46px;height:46px;margin-bottom:14px; }
   .grid.main4 > .card.main .card-title { font-size:13px;letter-spacing:2.5px; }
   .grid.main4 > .card.main .card-sub { opacity:.4;font-size:10px; }
   .grid.main4 > .card.main .grp-n { top:12px;right:28px;font-size:9px; }
+  @media (max-width:900px) {
+    .grid.main4 { grid-template-columns:1fr 1fr !important;max-width:620px; }
+    .grid.main4 > .card.main { height:200px; }
+  }
   @media (max-width:520px) {
     .grid.main4 { gap:10px; }
     .grid.main4 > .card.main { height:160px; }
@@ -611,7 +616,7 @@
     if(href)original[href]=a;
   });
 
-  /* ── four main boxes, 2 × 2 ─────────────────────────────────────
+  /* ── four main boxes, 1 × 4 ─────────────────────────────────────
      1 ასტროლოგია · 2 ნუმეროლოგია · 3 ადამიანის დიზაინი · 4 გასართობი
      Member tiles stay ordinary cards (same artwork, admin-panel order and
      visibility); clicking a box opens its own page (index.html?g=<key>).
