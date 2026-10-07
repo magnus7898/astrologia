@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ვედური ასტროლოგია · ჯიოტიში</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--void:#04030a;--deep:#07071a;--gold:#c9a84c;--gold-l:#f0d080;--purple:#a78bfa;--purple-d:#2d1f6e;--txt:#e0d8ff;--dim:rgba(155,168,184,0.6);--brd:rgba(45,31,110,0.8);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;overflow-x:hidden;position:relative;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.55) 0,transparent 100%),radial-gradient(1px 1px at 23% 35%,rgba(255,255,255,.35) 0,transparent 100%),radial-gradient(1px 1px at 41% 8%,rgba(255,255,255,.45) 0,transparent 100%),radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1.5px 1.5px at 34% 51%,rgba(167,139,250,.25) 0,transparent 100%);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%);}
+.hero{position:relative;z-index:1;text-align:center;padding:40px 24px 24px;width:100%}
+.hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:10px;font-family:'Cinzel',serif}
+.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4vw,38px);font-weight:400;letter-spacing:3px;background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,#e8d5a0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:8px}
+.hero-divider{display:flex;align-items:center;gap:14px;margin:16px auto 0;max-width:300px}
+.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
+.hero-gem{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.5;flex-shrink:0}
+.form-card{position:relative;z-index:1;background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.6);border-radius:16px;padding:24px;width:100%;max-width:620px;margin:16px auto;backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,.5);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field.wide{grid-column:span 3}
+label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
+input{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:8px;color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%;transition:border-color .2s;}
+input:focus{outline:none;border-color:var(--purple)}
+input::placeholder{color:rgba(155,168,184,.35)}
+#city-hint{font-size:11px;color:var(--purple);margin-top:2px;min-height:14px}
+#tz-display{font-size:11px;color:var(--gold);margin-bottom:12px;background:rgba(6,5,18,.5);border-radius:6px;padding:5px 10px;border-left:2px solid rgba(201,168,76,.3);min-height:28px;}
+.gen-btn{width:100%;background:linear-gradient(135deg,#6d28d9,#4c1d95);color:#fff;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:13px;font-size:13px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;transition:all .3s;box-shadow:0 4px 20px rgba(109,40,217,.3);margin-top:8px;}
+.gen-btn:hover{background:linear-gradient(135deg,#7c3aed,#5b21b6);transform:translateY(-1px)}
+.gen-btn:disabled{opacity:.4;cursor:wait;transform:none}
+.time-disabled input{opacity:.3;pointer-events:none}
+#chart-area{position:relative;z-index:1;width:100%;max-width:840px;padding:0 16px}
+.sec-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;text-align:center;margin:28px 0 14px;display:flex;align-items:center;gap:14px;}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
+.tables-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
+@media(max-width:600px){.tables-wrap{grid-template-columns:1fr}}
+.data-card{background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.5);border-radius:12px;overflow:hidden;}
+.data-card-title{background:rgba(167,139,250,.07);padding:9px 14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(45,31,110,.5);}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{color:rgba(155,168,184,.5);padding:6px 12px;text-align:left;font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(45,31,110,.4)}
+td{padding:5px 12px;border-bottom:1px solid rgba(15,13,40,.8);vertical-align:middle;font-size:12px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(19,16,58,.6)}
+.retro{color:#f87171;font-size:9px}
+.house-badge{display:inline-block;background:rgba(26,21,69,.8);border:1px solid rgba(61,42,138,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
+.deg-val{font-family:'Cinzel',serif;font-size:11px;color:#c8d8f0;white-space:nowrap}
+.nak-name{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-l)}
+.pada-badge{display:inline-block;background:rgba(45,31,110,.5);border:1px solid rgba(100,70,200,.4);border-radius:10px;padding:2px 8px;font-size:9px;color:var(--purple);font-family:'Cinzel',serif;letter-spacing:1px}
+.pct-bar{display:inline-block;width:48px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;vertical-align:middle;margin-left:5px;position:relative}
+.pct-fill{position:absolute;left:0;top:0;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--gold))}
+.moon-sym{color:#b8d8ff;text-shadow:0 0 8px rgba(100,160,255,.9);font-size:20px;font-family:serif}
+.p-sym{font-family:serif;font-size:18px;line-height:1;display:inline-block}
+/* Varga boxes (top of the chart area) */
+.vg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 10px;
+  font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+.vg-head b{font-weight:400;color:var(--gold-l)}
+.vg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:8px;margin-bottom:6px}
+.vg{display:flex;flex-direction:column;gap:2px;text-align:left;padding:9px 10px 8px;border-radius:9px;cursor:pointer;
+  background:rgba(8,6,20,.78);border:1px solid rgba(45,31,110,.6);color:var(--txt);font-family:inherit;min-height:74px;
+  transition:border-color .2s,transform .15s,background .2s;position:relative}
+.vg:hover{border-color:var(--purple);transform:translateY(-2px)}
+.vg.active{border-color:rgba(201,168,76,.75);background:rgba(45,31,110,.45);box-shadow:0 0 0 1px rgba(201,168,76,.3)}
+.vg b{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-l);font-weight:600;line-height:1.1}
+.vg .k{font-size:11px;color:var(--txt);line-height:1.3}
+.vg .m{font-size:9.5px;color:var(--dim);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vg.minor{display:none}
+.vg-grid.all .vg.minor,.vg.minor.active{display:flex}
+.vg.minor b{font-size:13px;color:rgba(240,208,128,.75)}
+@media(max-width:520px){.vg-grid{grid-template-columns:repeat(3,1fr);gap:6px}.vg{min-height:66px;padding:7px 7px 6px}.vg .m{display:none}}
+/* aspects */
+.af{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 4px}
+.af button{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:14px;color:var(--dim);font-size:11px;
+  padding:3px 10px;cursor:pointer;font-family:inherit}
+.af button.on{color:var(--gold-l);border-color:rgba(201,168,76,.6);background:rgba(45,31,110,.35)}
+.af button i{font-style:normal;font-family:serif;margin-right:3px}
+.orb-bar{display:inline-block;width:40px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;vertical-align:middle;margin-left:6px;position:relative}
+.orb-bar i{position:absolute;left:0;top:0;height:100%;border-radius:2px}
+details.orbs{margin:0 12px 10px;border:1px solid rgba(45,31,110,.6);border-radius:10px;background:rgba(6,5,18,.5)}
+details.orbs summary{cursor:pointer;list-style:none;padding:8px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold)}
+details.orbs summary::-webkit-details-marker{display:none}
+.ob-in{padding:0 12px 12px}
+.ob-note{font-size:10px;color:var(--dim);line-height:1.6;margin-bottom:8px}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}
+@media(max-width:600px){.ob-grid{grid-template-columns:1fr}}
+.ob-r{display:flex;align-items:center;gap:7px;font-size:11px;padding:2px 0}
+.ob-r input[type=checkbox]{width:14px;height:14px;accent-color:#7c3aed;flex:none}
+.ob-r .g{width:20px;text-align:center;font-family:serif;font-size:14px;flex:none}
+.ob-r .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ob-r input[type=number]{width:62px;padding:4px 6px;font-size:12px;flex:none}
+.ob-r .u{width:12px;font-size:10px;color:var(--dim)}
+.ob-r .e{width:52px;text-align:right;font-size:10px;color:var(--dim)}
+.ob-r.off .n,.ob-r.off .g{opacity:.35}
+.ob-h{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(201,168,76,.75);margin:10px 0 6px;text-transform:uppercase}
+.ob-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ob-bar label{text-transform:none;letter-spacing:0;font-size:11px;opacity:1;color:var(--txt);display:flex;align-items:center;gap:6px;font-family:inherit}
+.ob-bar button{background:none;border:1px solid rgba(201,168,76,.4);color:var(--gold-l);border-radius:6px;padding:3px 10px;font-size:10px;cursor:pointer}
+/* old varga list (unused) */
+.varga-list::-webkit-scrollbar{width:4px}
+.varga-list::-webkit-scrollbar-track{background:rgba(8,6,20,.5)}
+.varga-list::-webkit-scrollbar-thumb{background:rgba(100,65,200,.4);border-radius:2px}
+.varga-item{display:flex;align-items:center;gap:6px;padding:6px 10px;cursor:pointer;border:1px solid rgba(15,13,40,.6);transition:background .15s;}
+.varga-item:hover{background:rgba(45,31,110,.4)}
+.varga-item.active{background:rgba(109,40,217,.25);border-left:2px solid var(--purple)}
+.varga-num{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);min-width:32px;font-weight:600}
+.varga-name{font-size:11px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.varga-meaning{font-size:9px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main-badge{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;opacity:.7}
+/* chart view toggle */
+.vt-btn{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:8px;color:var(--dim);padding:6px 14px;font-size:11px;font-family:'Cinzel',serif;letter-spacing:1px;cursor:pointer;transition:.2s}
+.vt-btn:hover{color:var(--txt);border-color:var(--purple)}
+.vt-btn.active{color:var(--gold-l);border-color:rgba(201,168,76,.6);background:rgba(45,31,110,.35)}
+/* fixed square chart boxes — hard width+height, no aspect-ratio tricks */
+.chart-box{display:none;width:min(540px,92vw);height:min(540px,92vw);margin:0 auto}
+.chart-box svg{width:100%;height:100%;display:block}
+</style>
+</head>
+<body>
+<div class="hero">
+  <svg width="48" height="48" viewBox="0 0 56 56" fill="none" style="margin:0 auto 16px;display:block;opacity:.7">
+    <circle cx="28" cy="28" r="26.5" stroke="rgba(201,168,76,.25)" stroke-width=".5"/>
+    <circle cx="28" cy="28" r="17" stroke="rgba(201,168,76,.18)" stroke-width=".5"/>
+    <polygon points="28,3 51,43 5,43" stroke="rgba(201,168,76,.38)" stroke-width=".5" fill="none"/>
+    <polygon points="28,53 5,13 51,13" stroke="rgba(201,168,76,.38)" stroke-width=".5" fill="none"/>
+    <circle cx="28" cy="28" r="2.5" fill="rgba(201,168,76,.7)"/>
+  </svg>
+  <div class="hero-eyebrow">ვედური ასტროლოგია · ლაჰირი აიანამსა</div>
+  <h1 class="hero-title">ჯიოტიში · ვარგა ჩარტები</h1>
+  <p class="hero-sub">Jyotish · Sidereal · Whole Sign · 60 Divisional Charts</p>
+  <div class="hero-divider"><div class="hero-line"></div><div class="hero-gem"></div><div class="hero-line"></div></div>
+</div>
+
+<div class="form-card">
+  <div class="field wide" style="margin-bottom:10px">
+    <label>სახელი</label><input id="name" placeholder="სახელი">
+  </div>
+  <div class="form-grid">
+    <div class="field"><label>დღე</label><input type="number" id="day" value="1" min="1" max="31"></div>
+    <div class="field"><label>თვე</label><input type="number" id="month" value="1" min="1" max="12"></div>
+    <div class="field"><label>წელი</label><input type="number" id="year" value="1990"></div>
+  </div>
+  <div class="form-grid" id="time-fields">
+    <div class="field"><label>საათი</label><input type="number" id="hour" value="12" min="0" max="23"></div>
+    <div class="field"><label>წუთი</label><input type="number" id="minute" value="0" min="0" max="59"></div>
+    <div class="field"><label>წამი</label><input type="number" id="second" value="0" min="0" max="59"></div>
+  </div>
+  <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
+    <input type="checkbox" id="time-unknown" onchange="toggleTU()" style="width:15px;height:15px;accent-color:#7c3aed;cursor:pointer">
+    <label style="font-size:11px;color:rgba(167,139,250,.7);letter-spacing:1px;text-transform:none;cursor:pointer" for="time-unknown">დრო უცნობია</label>
+  </div>
+  <div class="field" style="margin-bottom:8px">
+    <label>ქალაქი</label>
+    <input id="city" placeholder="თბილისი, Mumbai, Delhi..." oninput="searchCity()">
+    <div id="city-hint"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
+    <div class="field"><label>განედი</label><input type="number" id="lat" step="0.0001" readonly></div>
+    <div class="field"><label>გრძედი</label><input type="number" id="lon" step="0.0001" readonly></div>
+  </div>
+  <div id="tz-display">⏳ ქალაქის შეყვანის შემდეგ სარტყელი განისაზღვრება</div>
+  <input type="hidden" id="tz_name" value="UTC">
+  <button class="gen-btn" onclick="generate()">✦ ვედური რუქის გენერაცია ✦</button>
+</div>
+
+<div id="chart-area" style="display:none">
+  <div id="ayanamsa-bar" style="text-align:center;font-size:11px;color:rgba(201,168,76,.5);margin-bottom:6px;font-family:'Cinzel',serif;letter-spacing:1px"></div>
+  <div class="vg-head">
+    <span>ვარგები · <b id="vg-count">16 მთავარი</b></span>
+    <button type="button" id="vg-all" class="vt-btn">ყველა 60 ▾</button>
+  </div>
+  <div id="varga-list" class="vg-grid"></div>
+  <div class="sec-title">D1 · ვედური ბორბალი · Rashi Chakra</div>
+  <div id="view-toggle" style="display:flex;justify-content:center;gap:6px;margin-bottom:10px">
+    <button class="vt-btn active" data-v="wheel" onclick="setChartView('wheel')">◉ ბორბალი</button>
+    <button class="vt-btn" data-v="ni" onclick="setChartView('ni')">◇ ჩრდილოეთი</button>
+    <button class="vt-btn" data-v="si" onclick="setChartView('si')">▦ სამხრეთი</button>
+  </div>
+  <div style="position:relative;" id="wheel-wrap"><svg id="wheel" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg"></svg><div id="planet-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;"></div></div>
+  <div id="ni-wrap" class="chart-box"></div>
+  <div id="si-wrap" class="chart-box"></div>
+
+  <div class="sec-title">გრჰები · Grahas</div>
+  <div class="tables-wrap">
+    <div class="data-card">
+      <div class="data-card-title">🪐 პლანეტები</div>
+      <table><thead><tr><th></th><th>სახელი</th><th>გრადუსი</th><th>რაში</th><th>სახ.</th><th>℞</th></tr></thead>
+      <tbody id="planet-tbody"></tbody></table>
+    </div>
+    <div class="data-card">
+      <div class="data-card-title">🏠 ბჰავები · Whole Sign</div>
+      <table><thead><tr><th>ბჰავა</th><th>რაში</th></tr></thead>
+      <tbody id="house-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="sec-title" onclick="toggleAsp()" style="cursor:pointer;user-select:none">
+    ასპექტები · Aspects <span id="asp-icon" style="font-size:12px;opacity:.6">▼</span>
+  </div>
+  <div id="asp-collapse" style="display:none;margin-bottom:8px;">
+    <div class="data-card" style="padding:0 0 8px;">
+      <div class="data-card-title" id="asp-title">⚡ ასპექტები</div>
+      <div class="af" id="asp-filters"></div>
+      <details class="orbs" id="orb-panel"></details>
+      <table><thead><tr><th>გრჰა 1</th><th>ასპ.</th><th>გრჰა 2</th><th>კუთხე</th><th>ორბი</th></tr></thead>
+      <tbody id="asp-tbody"></tbody></table>
+    </div>
+  </div>
+  <div class="sec-title">ნაქშატრები · Nakshatras</div>
+  <div class="data-card" style="margin-bottom:8px">
+    <div class="data-card-title">⭐ ნაქშატრა · პადა · მმართველი</div>
+    <table><thead><tr><th>გრჰა</th><th>ნაქშატრა</th><th>პადა</th><th>ნ.მმართ.</th><th>პ.მმართ.</th><th>%</th></tr></thead>
+    <tbody id="nak-tbody"></tbody></table>
+  </div>
+
+</div>
+
+<script>
+const BACKEND='https://astrology-production-b165.up.railway.app';
+const CX=350,CY=350,R1=270,R2=202,R3=135,R4=105;
+const NS='http://www.w3.org/2000/svg';
+
+const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎'];
+const RASHI=['მეშ.','ვრიშ.','მით.','კარკ.','სიმჰ.','კანია','თულა','ვრიშჩ.','დჰანუ','მაკ.','კუმბ.','მინა'];
+const RCOL=['#e05252','#8aab6e','#89b4d4','#5b8ec4','#e05252','#8aab6e','#89b4d4','#5b8ec4','#e05252','#8aab6e','#89b4d4','#5b8ec4'];
+const EFILL=['#1a0808','#081008','#08101a','#08101a','#1a0808','#081008','#08101a','#081018','#1a0808','#081008','#08101a','#081018'];
+const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+const PI={
+  'Sun':{sym:'sun',color:'#f9c646'},'Moon':{sym:'☽',color:'#c8d8f0'},
+  'Mars':{sym:'♂',color:'#e84040'},'Mercury':{sym:'☿',color:'#50d890'},
+  'Jupiter':{sym:'♃',color:'#e89040'},'Venus':{sym:'♀',color:'#e878a8'},
+  'Saturn':{sym:'♄',color:'#90a8c8'},'Uranus':{sym:'♅',color:'#7ec8c8'},
+  'Neptune':{sym:'♆',color:'#6080e0'},'Rahu':{sym:'☊',color:'#9060d0'},'Ketu':{sym:'☋',color:'#c06060'}
+};
+const PORDER=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu','Uranus','Neptune'];
+
+// ── 60 VARGAS ──
+const VARGAS=[
+  {n:1,name:'Rashi',ka:'რაში',meaning:'ნატალური · ზოგადი ცხოვრება',main:true},
+  {n:2,name:'Hora',ka:'ჰორა',meaning:'სიმდიდრე · ფინანსები',main:true},
+  {n:3,name:'Drekkana',ka:'დრეკანა',meaning:'და-ძმები · გამბედაობა',main:true},
+  {n:4,name:'Chaturthamsha',ka:'ჩატურთამშა',meaning:'ბედი · საკუთრება',main:true},
+  {n:5,name:'Panchamsha',ka:'პანჩამშა',meaning:'წარსული დამსახ. · შვილები'},
+  {n:6,name:'Shashthamsha',ka:'შაშთამშა',meaning:'ჯანმრთელობა · მტრები'},
+  {n:7,name:'Saptamsha',ka:'საპტამშა',meaning:'შვილები · შვილიშვილები',main:true},
+  {n:8,name:'Ashtamsha',ka:'აშტამშა',meaning:'სიცოცხლე · დაბრკოლებები'},
+  {n:9,name:'Navamsha',ka:'ნავამშა',meaning:'ქორწინება · სული · დჰარმა',main:true},
+  {n:10,name:'Dashamsha',ka:'დაშამშა',meaning:'კარიერა · სტატუსი',main:true},
+  {n:11,name:'Rudramsha',ka:'რუდრამშა',meaning:'სიკვდილი · განადგურება'},
+  {n:12,name:'Dvadashamsha',ka:'დვადაშამშა',meaning:'მშობლები · წინაპრები',main:true},
+  {n:13,name:'Trayodasha',ka:'ტრაიოდაშა',meaning:'ეთერი · ბედი'},
+  {n:14,name:'Chaturdasha',ka:'ჩატურდაშა',meaning:'ძალა · სულიერება'},
+  {n:15,name:'Panchadasha',ka:'პანჩადაშა',meaning:'ძლევა · ძალა'},
+  {n:16,name:'Shodashamsha',ka:'შოდაშამშა',meaning:'ტრანსპ. · კომფორტი',main:true},
+  {n:17,name:'Saptadashamsha',ka:'საპტ.დაშამშა',meaning:'სიძლიერე · სიზარმაცე'},
+  {n:18,name:'Ashtadashamsha',ka:'აშტ.დაშამშა',meaning:'სმა · ეთიკა'},
+  {n:19,name:'Ekavimsha',ka:'ეკავიმშა',meaning:'ნიჭი · შემოქმედება'},
+  {n:20,name:'Vimshamsha',ka:'ვიმშამშა',meaning:'სულიერი პრაქტიკა',main:true},
+  {n:21,name:'Ekavimshamsha',ka:'ეკავიმშამშა',meaning:'ძალა · სიმტკიცე'},
+  {n:22,name:'Dvavimshamsha',ka:'დვავიმშამშა',meaning:'ძლიერება · ძლევა'},
+  {n:23,name:'Tryavimshamsha',ka:'ტრი.ვიმშამშა',meaning:'სიძლიერე'},
+  {n:24,name:'Chaturvimshamsha',ka:'ჩ.ვიმშამშა',meaning:'განათლება · ცოდნა',main:true},
+  {n:25,name:'Panchavimshamsha',ka:'პ.ვიმშამშა',meaning:'ძლიერება'},
+  {n:26,name:'Shadvimshamsha',ka:'შ.ვიმშამშა',meaning:'სისუსტეები'},
+  {n:27,name:'Nakshatramsha',ka:'ნაქშ.მშა',meaning:'ძლ. · სუსტ. · ბჰამშა',main:true},
+  {n:28,name:'Ashtavimshamsha',ka:'აშტ.ვიმშამშა',meaning:'ძლიერება'},
+  {n:29,name:'Ekonatimshamsha',ka:'ეკ.ატიმშ.',meaning:'ძლევა'},
+  {n:30,name:'Trimshamsha',ka:'ტრიმშამშა',meaning:'უბედურება · ბოროტება',main:true},
+  {n:31,name:'Ekatrimshamsha',ka:'ეკ.ტრიმშ.',meaning:'ბედი'},
+  {n:32,name:'Dvatrimshamsha',ka:'დვ.ტრიმშ.',meaning:'ბედი'},
+  {n:33,name:'Tritrimshamsha',ka:'ტრ.ტრიმშ.',meaning:'ბედი'},
+  {n:34,name:'Chaturtimshamsha',ka:'ჩ.ტრიმშ.',meaning:'ბედი'},
+  {n:35,name:'Panchatrimshamsha',ka:'პ.ტრიმშ.',meaning:'ბედი'},
+  {n:36,name:'Shadtrimshamsha',ka:'შ.ტრიმშ.',meaning:'ბედი'},
+  {n:37,name:'Saptatrimshamsha',ka:'სა.ტრიმშ.',meaning:'ბედი'},
+  {n:38,name:'Ashtrimshamsha',ka:'აშ.ტრიმშ.',meaning:'ბედი'},
+  {n:39,name:'Ekonatimsha',ka:'ეკ.ონ.ტიმ.',meaning:'ბედი'},
+  {n:40,name:'Khavedamsha',ka:'ხავედამშა',meaning:'კეთილი · ავი ეფ.',main:true},
+  {n:41,name:'Ekakhavedamsha',ka:'ეკ.ხავ.',meaning:'ბედი'},
+  {n:42,name:'Dvakhavedamsha',ka:'დვ.ხავ.',meaning:'ბედი'},
+  {n:43,name:'Trikhavedamsha',ka:'ტრ.ხავ.',meaning:'ბედი'},
+  {n:44,name:'Chaturkhavedamsha',ka:'ჩ.ხავ.',meaning:'ბედი'},
+  {n:45,name:'Akshavedamsha',ka:'აქშ.ვედ.',meaning:'ხასიათი · ზოგ.',main:true},
+  {n:46,name:'Ekakshavedamsha',ka:'ეკ.აქშ.',meaning:'ბედი'},
+  {n:47,name:'Dvakshavedamsha',ka:'დვ.აქშ.',meaning:'ბედი'},
+  {n:48,name:'Triakshavedamsha',ka:'ტრ.აქშ.',meaning:'ბედი'},
+  {n:49,name:'Chaturdakshavedamsha',ka:'ჩ.აქშ.',meaning:'ბედი'},
+  {n:50,name:'Panchadakshavedamsha',ka:'პ.აქშ.',meaning:'ბედი'},
+  {n:51,name:'Shaddakshavedamsha',ka:'შ.აქშ.',meaning:'ბედი'},
+  {n:52,name:'Saptadakshavedamsha',ka:'სა.აქშ.',meaning:'ბედი'},
+  {n:53,name:'Ashtadakshavedamsha',ka:'ა.აქშ.',meaning:'ბედი'},
+  {n:54,name:'Ekonapadamsha',ka:'ეკ.პად.',meaning:'ბედი'},
+  {n:55,name:'Padamsha',ka:'პადამშა',meaning:'ბედი'},
+  {n:56,name:'Ekapadamsha',ka:'ეკ.ა.პ.',meaning:'ბედი'},
+  {n:57,name:'Dvapadamsha',ka:'დვ.პ.',meaning:'ბედი'},
+  {n:58,name:'Tripadamsha',ka:'ტრ.პ.',meaning:'ბედი'},
+  {n:59,name:'Chaturdashamshamsha',ka:'ჩ.მ.ა.ოთხ.',meaning:'ბედი'},
+  {n:60,name:'Shashtiamsha',ka:'შაშტიამშა',meaning:'წარსული სიცოცხლის კარმა',main:true},
+];
+
+// ── VARGA CALCULATION ──
+// 16 Parashara (Shodasha)vargas per BPHS; all other D-numbers use the
+// cyclic-from-Aries scheme (same as JHora's default for non-classical vargas).
+function calcVargaSign(sidDeg, N) {
+  const si = Math.floor(sidDeg / 30) % 12;
+  const pos = sidDeg % 30;
+  const part = Math.floor(pos * N / 30);
+  const odd = si % 2 === 0;               // Aries=0 → odd sign
+  switch(N) {
+    case 1: return si;
+    case 2: // Hora — Leo/Cancer only
+      return odd ? (part === 0 ? 4 : 3) : (part === 0 ? 3 : 4);
+    case 3: // Drekkana — si, si+4, si+8
+      return (si + part * 4) % 12;
+    case 4: // Chaturthamsha — si, si+3, si+6, si+9
+      return (si + part * 3) % 12;
+    case 7: // Saptamsha — from sign itself (odd) / 7th from it (even)
+      return (si + (odd ? 0 : 6) + part) % 12;
+    case 9: // Navamsha
+      return (si * 9 + part) % 12;
+    case 10: // Dashamsha — from sign itself (odd) / 9th from it (even)
+      return (si + (odd ? 0 : 8) + part) % 12;
+    case 12: // Dvadashamsha — from sign itself
+      return (si + part) % 12;
+    case 16: // Shodashamsha — movable→Ar, fixed→Le, dual→Sg
+      return ([0,4,8][si % 3] + part) % 12;
+    case 20: // Vimshamsha — movable→Ar, fixed→Sg, dual→Le
+      return ([0,8,4][si % 3] + part) % 12;
+    case 24: // Chaturvimshamsha — odd→Le, even→Cn
+      return ((odd ? 4 : 3) + part) % 12;
+    case 27: // Bhamsha — fire→Ar, earth→Cn, air→Li, water→Cp
+      return ([0,3,6,9][si % 4] + part) % 12;
+    case 30: // Trimshamsha — unequal
+      if (odd) { // Ar5, Aq5, Sg8, Ge7, Li5
+        if (pos < 5) return 0; if (pos < 10) return 10;
+        if (pos < 18) return 8; if (pos < 25) return 2; return 6;
+      } else {   // Ta5, Vi7, Pi8, Cp5, Sc5
+        if (pos < 5) return 1; if (pos < 12) return 5;
+        if (pos < 20) return 11; if (pos < 25) return 9; return 7;
+      }
+    case 40: // Khavedamsha — odd→Ar, even→Li
+      return ((odd ? 0 : 6) + part) % 12;
+    case 45: // Akshavedamsha — movable→Ar, fixed→Le, dual→Sg
+      return ([0,4,8][si % 3] + part) % 12;
+    case 60: // Shashtiamsha — from the sign itself
+      return (si + part) % 12;
+    default: // non-Parashari vargas: cyclic from Aries
+      return Math.floor(sidDeg * N / 30) % 12;
+  }
+}
+
+function getVargaData(data, N) {
+  if (N === 1) return data;
+  const ascNewSi = calcVargaSign(data.asc, N);
+  const planets = {};
+  for (const [name, p] of Object.entries(data.planets)) {
+    const newSi = calcVargaSign(p.sidereal, N);
+    const newSid = newSi * 30 + (p.sidereal % 30);
+    planets[name] = {...p, sidereal: newSid, sign_idx: newSi,
+      dms: fmtDegVarga(newSid),
+      house: ((newSi - ascNewSi + 12) % 12) + 1};
+  }
+  return {...data, planets, asc: ascNewSi * 30 + (data.asc % 30), asc_sign_idx: ascNewSi};
+}
+
+function fmtDegVarga(sid){
+  const d=Math.floor(sid%30),m=Math.floor((sid%30-d)*60);
+  return `${d}°${String(m).padStart(2,'0')}'`;
+}
+
+// ── UTILS ──
+function fmtDeg(sid){
+  const d=Math.floor(sid%30),m=Math.floor((sid%30-d)*60);
+  return `${d}°${String(m).padStart(2,'0')}'`;
+}
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const[k,v] of Object.entries(attrs))e.setAttribute(k,v);if(parent)parent.appendChild(e);return e;}
+function txt(parent,s,x,y,attrs={}){const t=el('text',{'text-anchor':'middle','dominant-baseline':'central',x,y,...attrs},parent);t.textContent=s;return t;}
+function toRad(d){return d*Math.PI/180;}
+function v2a(sid,lagStart){return toRad(-(sid-lagStart))+Math.PI;}
+function pxy(a,r){return{x:CX+Math.cos(a)*r,y:CY+Math.sin(a)*r};}
+function sunSVG(sz=20){return `<svg width="${sz}" height="${sz}" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;display:inline-block"><circle cx="11" cy="11" r="8" fill="none" stroke="#f9c646" stroke-width="2"/><circle cx="11" cy="11" r="2" fill="#f9c646"/></svg>`;}
+
+
+function toggleAsp(){
+  const c=document.getElementById('asp-collapse');
+  const ic=document.getElementById('asp-icon');
+  const open=c.style.display!=='none';
+  c.style.display=open?'none':'block';
+  ic.textContent=open?'▼':'▲';
+}
+
+/* ── aspects: same system as the tropical page (astro.html) ──────────
+   base orb of each aspect is the orb for a LUMINARY pair; every other
+   pair narrows it through four tiers. On top of that the viewer can set
+   every aspect orb and a per-planet % (saved in this browser).        */
+const ASPECTS_DEF=[
+  {name:'შეერთება',angle:0,orb:11,sym:'☌',color:'#f9c646'},
+  {name:'ოპოზიცია',angle:180,orb:11,sym:'☍',color:'#e04040'},
+  {name:'ტრინი',angle:120,orb:9,sym:'△',color:'#4a90e2'},
+  {name:'კვადრატი',angle:90,orb:9,sym:'□',color:'#e04040'},
+  {name:'სექსტილი',angle:60,orb:6,sym:'⚹',color:'#4a90e2'},
+  {name:'კვინკონსი',angle:150,orb:4,sym:'⚻',color:'#3fbf7f'},
+];
+const ORB_TIER={Sun:'inner',Moon:'inner',Mercury:'inner',Venus:'inner',Mars:'inner',Lagna:'inner',
+  Jupiter:'social',Saturn:'social',Uranus:'outer',Neptune:'outer',Pluto:'outer',Rahu:'virtual',Ketu:'virtual'};
+const ORB_PAIR={'inner|inner':1.00,'inner|social':0.92,'inner|outer':0.80,'inner|virtual':0.60,
+  'social|social':0.85,'outer|social':0.75,'social|virtual':0.55,'outer|outer':0.65,'outer|virtual':0.50,'virtual|virtual':0.40};
+const ASP_BODIES=[...PORDER,'Lagna'];
+const LG={sym:'Lg',color:'#e8c06e'};
+const pinfo=n=>n==='Lagna'?LG:(PI[n]||{sym:'?',color:'#aaa'});
+const ORB_KEY='magnus_vedic_orbs_v1';
+function orbDefaults(){const asp={},pl={};
+  ASPECTS_DEF.forEach(a=>asp[a.name]={on:true,orb:a.orb});ASP_BODIES.forEach(n=>pl[n]={on:true,pct:100});
+  return {tiers:true,asp,pl};}
+let ORBS;
+try{const v=JSON.parse(localStorage.getItem(ORB_KEY)||'null');ORBS=orbDefaults();
+  if(v){ORBS.tiers=v.tiers!==false;for(const k in ORBS.asp)if(v.asp&&v.asp[k])Object.assign(ORBS.asp[k],v.asp[k]);
+    for(const k in ORBS.pl)if(v.pl&&v.pl[k])Object.assign(ORBS.pl[k],v.pl[k]);}}catch(e){ORBS=orbDefaults();}
+function saveOrbs(){try{localStorage.setItem(ORB_KEY,JSON.stringify(ORBS));}catch(e){}}
+function tierF(n1,n2){const k=[ORB_TIER[n1]||'virtual',ORB_TIER[n2]||'virtual'].sort().join('|');return ORB_PAIR[k]??0.5;}
+function orbFor(asp,n1,n2){
+  const a=ORBS.asp[asp.name],q1=ORBS.pl[n1],q2=ORBS.pl[n2];
+  if(a&&!a.on)return -1;if((q1&&!q1.on)||(q2&&!q2.on))return -1;
+  return (a?a.orb:asp.orb)*(ORBS.tiers?tierF(n1,n2):1)*(((q1?q1.pct:100)+(q2?q2.pct:100))/200);
+}
+/* every pair → closest aspect within its orb. Rahu–Ketu is always 180°: skipped. */
+function calcAspects(data,withLagna){
+  const pos={};PORDER.forEach(n=>{if(data.planets[n])pos[n]=data.planets[n].sidereal;});
+  if(withLagna&&!data._timeUnknown)pos.Lagna=data.asc;
+  const names=ASP_BODIES.filter(n=>pos[n]!=null),out=[];
+  for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
+    const n1=names[i],n2=names[j];
+    if((n1==='Rahu'&&n2==='Ketu')||(n1==='Ketu'&&n2==='Rahu'))continue;
+    const sep=Math.abs(((pos[n2]-pos[n1])%360+540)%360-180);
+    let best=null,bo=999,ba=0;
+    for(const asp of ASPECTS_DEF){const allow=orbFor(asp,n1,n2);if(allow<0)continue;
+      const o=Math.abs(sep-asp.angle);if(o<=allow&&o<bo){bo=o;best=asp;ba=allow;}}
+    if(best)out.push({n1,n2,asp:best,orb:bo,allow:ba});
+  }
+  return out;
+}
+const fmtOrb=o=>`${Math.floor(o)}°${String(Math.round((o%1)*60)).padStart(2,'0')}'`;
+let ASP_F='all',_aspAll=[];
+function calcAndDrawAspects(data){
+  _aspAll=calcAspects(data,true);
+  /* sort like the tropical table: by first body, then aspect type */
+  _aspAll.sort((a,b)=>ASP_BODIES.indexOf(a.n1)-ASP_BODIES.indexOf(b.n1)||ASPECTS_DEF.indexOf(a.asp)-ASPECTS_DEF.indexOf(b.asp)||a.orb-b.orb);
+  renderAspFilters();renderAspRows();buildOrbPanel();
+  document.getElementById('asp-collapse').style.display='block';
+  document.getElementById('asp-icon').textContent='▲';
+}
+function renderAspFilters(){
+  const box=document.getElementById('asp-filters');if(!box)return;
+  const cnt=n=>_aspAll.filter(a=>a.asp.name===n).length;
+  box.innerHTML=`<button type="button" data-f="all" class="${ASP_F==='all'?'on':''}">ყველა ${_aspAll.length}</button>`+
+    ASPECTS_DEF.map(a=>`<button type="button" data-f="${a.name}" class="${ASP_F===a.name?'on':''}"><i style="color:${a.color}">${a.sym}</i>${a.name} ${cnt(a.name)}</button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>{ASP_F=b.dataset.f;renderAspFilters();renderAspRows();});
+}
+function renderAspRows(){
+  const tb=document.getElementById('asp-tbody');if(!tb)return;tb.innerHTML='';
+  const L=_aspAll.filter(a=>ASP_F==='all'||a.asp.name===ASP_F);
+  if(!L.length){tb.innerHTML='<tr><td colspan="5" style="color:rgba(100,80,150,.6);text-align:center;padding:14px">ასპექტები არ მოიძებნა</td></tr>';}
+  const sym=n=>n==='Sun'?sunSVG(14):`<span style="color:${pinfo(n).color};font-family:${n==='Lagna'?"'Cinzel',serif":'serif'};font-size:${n==='Lagna'?10:13}px">${pinfo(n).sym}</span>`;
+  L.forEach(({n1,n2,asp,orb,allow})=>{
+    const st=Math.max(0,1-orb/allow);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${sym(n1)} <span style="font-size:10px;color:${pinfo(n1).color}">${n1}</span></td>
+      <td><span style="color:${asp.color};font-size:15px">${asp.sym}</span></td>
+      <td>${sym(n2)} <span style="font-size:10px;color:${pinfo(n2).color}">${n2}</span></td>
+      <td style="color:${asp.color};font-size:10px;white-space:nowrap">${asp.name} ${asp.angle}°</td>
+      <td style="color:rgba(160,130,220,.85);font-size:10px;white-space:nowrap">${fmtOrb(orb)} <span style="opacity:.5">/ ${allow.toFixed(1)}°</span><span class="orb-bar"><i style="width:${st*100}%;background:${asp.color}"></i></span></td>`;
+    tb.appendChild(tr);
+  });
+  const title=document.getElementById('asp-title');
+  if(title)title.textContent=`⚡ ასპექტები — სულ ${_aspAll.length}`+(ASP_F!=='all'?` · ნაჩვენებია ${L.length}`:'');
+}
+/* orb panel — same controls as the tropical page */
+function buildOrbPanel(){
+  const box=document.getElementById('orb-panel');if(!box||box.dataset.built)return;box.dataset.built=1;
+  const g=n=>n==='Sun'?'☉':pinfo(n).sym;
+  box.innerHTML=`<summary>⚙ ორბისები</summary><div class="ob-in">
+    <div class="ob-note">ეფექტური ორბი = ასპექტის ორბი × წყვილის კოეფიციენტი × (გრჰა₁% + გრჰა₂%) / 200 — იგივე სისტემა, რაც ტროპიკულ რუქაზე. ინახება ამ ბრაუზერში.</div>
+    <div class="ob-bar"><label><input type="checkbox" id="ob-tiers" ${ORBS.tiers?'checked':''}> წყვილის კოეფიციენტები (შიდა · სოციალური · გარე · კვანძები)</label>
+      <button type="button" id="ob-reset">↺ ნაგულისხმევი</button></div>
+    <div class="ob-h">ასპექტები — ორბი მნათობების წყვილისთვის</div><div class="ob-grid">${ASPECTS_DEF.map(a=>{const v=ORBS.asp[a.name];
+      return `<div class="ob-r${v.on?'':' off'}" data-k="a" data-n="${a.name}"><input type="checkbox" ${v.on?'checked':''}><span class="g" style="color:${a.color}">${a.sym}</span><span class="n">${a.name} ${a.angle}°</span><input type="number" min="0" max="30" step="0.5" value="${v.orb}"><span class="u">°</span></div>`;}).join('')}</div>
+    <div class="ob-h">გრჰები — ორბის % · მარჯვნივ: ☌ მზესთან</div><div class="ob-grid">${ASP_BODIES.map(n=>{const v=ORBS.pl[n];
+      return `<div class="ob-r${v.on?'':' off'}" data-k="p" data-n="${n}"><input type="checkbox" ${v.on?'checked':''}><span class="g" style="color:${pinfo(n).color}">${g(n)}</span><span class="n">${n}</span><input type="number" min="0" max="300" step="5" value="${v.pct}"><span class="u">%</span><span class="e" data-e="${n}"></span></div>`;}).join('')}</div></div>`;
+  const eff=()=>box.querySelectorAll('[data-e]').forEach(e=>{const n=e.dataset.e,q=ORBS.pl[n],s=ORBS.pl.Sun;
+    e.textContent=(!q.on||!s.on)?'—':'☌ '+(ORBS.asp['შეერთება'].orb*(ORBS.tiers?tierF(n,'Sun'):1)*(q.pct+s.pct)/200).toFixed(1)+'°';});
+  let t;const redo=()=>{saveOrbs();eff();clearTimeout(t);t=setTimeout(()=>{if(window._lastVd){calcAndDrawAspects(window._lastVd);if(CHART_VIEW==='wheel')renderChartView(window._lastVd);}},200);};
+  const onEdit=e=>{
+    if(e.target.id==='ob-tiers'){ORBS.tiers=e.target.checked;return redo();}
+    const r=e.target.closest('.ob-r');if(!r)return;const o=r.dataset.k==='a'?ORBS.asp[r.dataset.n]:ORBS.pl[r.dataset.n];
+    if(e.target.type==='checkbox'){o.on=e.target.checked;r.classList.toggle('off',!o.on);}
+    else{const v=parseFloat(e.target.value);if(!isFinite(v))return;if(r.dataset.k==='a')o.orb=Math.max(0,Math.min(30,v));else o.pct=Math.max(0,Math.min(300,v));}
+    redo();};
+  box.addEventListener('change',onEdit);box.addEventListener('input',onEdit);
+  box.querySelector('#ob-reset').onclick=()=>{ORBS=orbDefaults();saveOrbs();delete box.dataset.built;box.open=true;buildOrbPanel();box.open=true;redo();};
+  eff();
+}
+
+function highlightPlanet(name){
+  const svg=document.getElementById('wheel');
+  svg.querySelectorAll('.asp-line').forEach(l=>{
+    const active=l.dataset.p1===name||l.dataset.p2===name;
+    l.style.opacity=active?'0.9':'0';
+    l.style.strokeWidth=active?'2':'0';
+  });
+  document.querySelectorAll('#asp-tbody tr').forEach(tr=>{
+    tr.style.opacity=tr.textContent.includes(name)?'1':'0.1';
+  });
+}
+function clearHighlight(){
+  const svg=document.getElementById('wheel');
+  svg.querySelectorAll('.asp-line').forEach(l=>{
+    l.style.opacity='0.5';l.style.strokeWidth='0.7';
+  });
+  document.querySelectorAll('#asp-tbody tr').forEach(tr=>tr.style.opacity='1');
+}
+
+
+
+
+function setupPlanetHover(){
+  const svg=document.getElementById('wheel');
+  const overlay=document.getElementById('planet-overlay');
+  if(!overlay)return;
+  overlay.innerHTML='';
+  const rect=svg.getBoundingClientRect();
+  const scale=rect.width/700;
+  for(const[name,pos] of Object.entries(window._vedicPlanets||{})){
+    const div=document.createElement('div');
+    const px=pos.x*scale,py=pos.y*scale,sz=36;
+    div.style.cssText='position:absolute;width:'+sz+'px;height:'+sz+'px;'+
+      'left:'+(px-sz/2)+'px;top:'+(py-sz/2)+'px;'+
+      'border-radius:50%;cursor:crosshair;pointer-events:all;';
+    div.addEventListener('mouseenter',()=>highlightPlanet(name));
+    div.addEventListener('mouseleave',()=>clearHighlight());
+    overlay.appendChild(div);
+  }
+}
+
+window.addEventListener('resize',setupPlanetHover);
+// ── GEOCODE ──
+let _ct=null;
+function searchCity(){
+  clearTimeout(_ct);_ct=setTimeout(async()=>{
+    const city=document.getElementById('city').value;
+    if(city.length<2)return;
+    const hint=document.getElementById('city-hint');hint.textContent='⏳';
+    try{
+      const r=await fetch(`${BACKEND}/geocode`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city})});
+      const d=await r.json();
+      if(d.error){hint.textContent='❌ '+d.error;return;}
+      document.getElementById('lat').value=d.lat.toFixed(4);
+      document.getElementById('lon').value=d.lon.toFixed(4);
+      document.getElementById('tz_name').value=d.tz_name||'UTC';
+      document.getElementById('tz-display').textContent='🕐 '+d.tz_name+' · 📍 '+d.display;
+      hint.textContent='📍 '+d.display;
+    }catch(e){hint.textContent='❌ '+e.message;}
+  },600);
+}
+function toggleTU(){document.getElementById('time-fields').classList.toggle('time-disabled',document.getElementById('time-unknown').checked);}
+
+// ── GENERATE ──
+let _chartData=null;
+async function generate(){
+  const lat=document.getElementById('lat').value,lon=document.getElementById('lon').value;
+  if(!lat||!lon){alert('შეიყვანეთ ქალაქი');return;}
+  const btn=document.querySelector('.gen-btn');btn.disabled=true;btn.textContent='⏳...';
+  const tu=document.getElementById('time-unknown').checked;
+  try{
+    const r=await fetch(`${BACKEND}/vedic`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      year:+document.getElementById('year').value,month:+document.getElementById('month').value,
+      day:+document.getElementById('day').value,hour:tu?12:+document.getElementById('hour').value,
+      minute:tu?0:+document.getElementById('minute').value,second:tu?0:+document.getElementById('second').value,
+      lat:+lat,lon:+lon,tz_name:document.getElementById('tz_name').value
+    })});
+    const data=await r.json();
+    if(data.error)throw new Error(data.error);
+    data._timeUnknown=tu;
+    _chartData=data;
+    document.getElementById('chart-area').style.display='block';
+    document.getElementById('ayanamsa-bar').textContent=`Lahiri Ayanamsa: ${data.ayanamsa.toFixed(4)}° · Lagna: ${data.asc_sign} ${fmtDeg(data.asc)}`;
+    drawNakTable(data);
+    buildVargaList();
+    showVarga(1);
+    document.getElementById('chart-area').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){alert('შეცდომა: '+e.message);}
+  finally{btn.disabled=false;btn.textContent='✦ ვედური რუქის გენერაცია ✦';}
+}
+
+// ── DRAW WHEEL ──
+function drawWheel(data, svgId){
+  const svg=document.getElementById(svgId);
+  svg.innerHTML='';
+  const lagSi=data.asc_sign_idx;
+  const lagStart=lagSi*30;
+  const defs=el('defs',{},svg);
+  const bgG=el('radialGradient',{id:'bg_'+svgId,cx:'50%',cy:'50%',r:'50%'},defs);
+  el('stop',{offset:'0%','stop-color':'#120e2a'},bgG);el('stop',{offset:'100%','stop-color':'#04030e'},bgG);
+  const sf=el('filter',{id:'sf_'+svgId,x:'-60%',y:'-60%',width:'220%',height:'220%'},defs);
+  el('feGaussianBlur',{stdDeviation:'3',result:'blur'},sf);
+  const fm=el('feMerge',{},sf);el('feMergeNode',{in:'blur'},fm);el('feMergeNode',{in:'SourceGraphic'},fm);
+  el('rect',{width:700,height:700,fill:'url(#bg_'+svgId+')'},svg);
+  for(let i=0;i<12;i++){
+    const si=(lagSi+i)%12;
+    const a0=v2a(lagStart+i*30,lagStart),a1=v2a(lagStart+(i+1)*30,lagStart);
+    const p=(a,r)=>`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;
+    el('path',{d:`M${p(a0,R2)} L${p(a0,R1)} A${R1},${R1} 0 0,0 ${p(a1,R1)} L${p(a1,R2)} A${R2},${R2} 0 0,1 ${p(a0,R2)} Z`,fill:EFILL[si]},svg);
+    el('path',{d:`M${p(a0,R3)} L${p(a0,R2)} A${R2},${R2} 0 0,0 ${p(a1,R2)} L${p(a1,R3)} A${R3},${R3} 0 0,1 ${p(a0,R3)} Z`,fill:i%2?'rgba(6,5,18,1)':'rgba(10,8,26,1)'},svg);
+    el('line',{x1:CX+Math.cos(a0)*R1,y1:CY+Math.sin(a0)*R1,x2:CX+Math.cos(a0)*R2,y2:CY+Math.sin(a0)*R2,stroke:RCOL[si],'stroke-width':1.2,opacity:.85},svg);
+    const am=v2a(lagStart+i*30+15,lagStart),Rzs=(R1+R2)/2;
+    const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(am)*Rzs,y:CY+Math.sin(am)*Rzs,fill:RCOL[si],'font-size':20,'font-family':'serif','font-weight':'bold'},svg);
+    zt.textContent=ZSYM[si];
+    txt(svg,ROMAN[i],CX+Math.cos(v2a(lagStart+i*30+15,lagStart))*(R2+R3)/2,CY+Math.sin(v2a(lagStart+i*30+15,lagStart))*(R2+R3)/2,{fill:'rgba(180,150,255,.75)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});
+  }
+  el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(4,3,14,1)'},svg);
+  for(let d=0;d<360;d++){const a=v2a(lagStart+d,lagStart),is30=d%30===0,is10=d%10===0;const len=is30?20:is10?13:5;el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*(R1-len),y2:CY+Math.sin(a)*(R1-len),stroke:is30?'rgba(255,220,255,1)':is10?'rgba(180,130,255,.9)':'rgba(80,55,150,.6)','stroke-width':is30?2:is10?1.4:.5},svg);}
+  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(140,90,230,.85)','stroke-width':1.8},svg);
+  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(100,65,200,.8)','stroke-width':1.5},svg);
+  el('circle',{cx:CX,cy:CY,r:R3,fill:'none',stroke:'rgba(70,45,160,.75)','stroke-width':1.2},svg);
+  el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(50,32,120,.7)','stroke-width':1},svg);
+
+  // ── LAGNA ──
+  if(!data._timeUnknown){
+    const la=v2a(data.asc,lagStart);
+    el('line',{x1:CX+Math.cos(la)*R1,y1:CY+Math.sin(la)*R1,x2:CX+Math.cos(la)*(R1+24),y2:CY+Math.sin(la)*(R1+24),stroke:'#e8c06e','stroke-width':2.5},svg);
+    txt(svg,'Lg',CX+Math.cos(la)*(R1+38),CY+Math.sin(la)*(R1+38),{fill:'#e8c06e','font-size':11,'font-weight':'bold','font-family':'Cinzel,serif'});
+  }
+
+  // ── PLANETS ──
+  window._vedicPlanets={};
+  const present=PORDER.filter(n=>data.planets[n]);
+  const trueA={};for(const n of present)trueA[n]=v2a(data.planets[n].sidereal,lagStart);
+  const sorted=[...present].sort((a,b)=>trueA[a]-trueA[b]);
+  const dispA={};for(const n of present)dispA[n]=trueA[n];
+  const MINGAP=22/(R1+30);
+  for(let it=0;it<400;it++){let mv=false;for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){const a=sorted[i],b=sorted[j];let d=dispA[b]-dispA[a];while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;if(Math.abs(d)<MINGAP&&Math.abs(d)>0.0001){const push=(MINGAP-Math.abs(d))/2,dir=d>0?1:-1;dispA[a]-=push*dir;dispA[b]+=push*dir;mv=true;}}if(!mv)break;}
+  for(const name of present){
+    const info=PI[name]||{sym:'?',color:'#fff'};
+    const tA=trueA[name],col=info.color;
+    let diff=dispA[name]-tA;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
+    const mv=Math.abs(diff)>0.015;
+    const gxy=pxy(mv?dispA[name]:tA,R1+30);
+    el('line',{x1:CX+Math.cos(tA)*(R1+1),y1:CY+Math.sin(tA)*(R1+1),x2:CX+Math.cos(tA)*(R1+9),y2:CY+Math.sin(tA)*(R1+9),stroke:col,'stroke-width':1.5},svg);
+    el('circle',{cx:CX+Math.cos(tA)*(R1+1),cy:CY+Math.sin(tA)*(R1+1),r:1.8,fill:col},svg);
+    if(mv)el('line',{x1:CX+Math.cos(tA)*(R1+10),y1:CY+Math.sin(tA)*(R1+10),x2:gxy.x,y2:gxy.y,stroke:col,'stroke-width':.5,opacity:.4,'stroke-dasharray':'2 2'},svg);
+    if(name==='Sun'){const sg=el('g',{},svg);el('circle',{cx:gxy.x,cy:gxy.y,r:9,fill:'rgba(249,198,70,.12)'},sg);el('circle',{cx:gxy.x,cy:gxy.y,r:8,fill:'none',stroke:'#f9c646','stroke-width':'2',filter:'url(#sf_'+svgId+')'},sg);el('circle',{cx:gxy.x,cy:gxy.y,r:2,fill:'#f9c646'},sg);}
+    else if(name==='Moon'){const mg=el('g',{},svg);txt(mg,'☽',gxy.x,gxy.y,{fill:'#b8d8ff','font-size':20,'font-family':'serif'});}
+    else txt(svg,info.sym,gxy.x,gxy.y,{fill:col,'font-size':18,'font-family':'serif'});
+    if(data.planets[name].retrograde===true||data.planets[name].retrograde==='true')txt(svg,'℞',gxy.x+10,gxy.y-8,{fill:'#f87171','font-size':7,'font-family':'serif'});
+    window._vedicPlanets[name]={x:gxy.x,y:gxy.y};
+  }
+
+  // ── PLANET-TO-PLANET ASPECTS (same orbs as the table) ──
+  for(const {n1,n2,asp} of calcAspects(data,false)){
+    const a1=v2a(data.planets[n1].sidereal,lagStart),a2=v2a(data.planets[n2].sidereal,lagStart);
+    const ln=el('line',{x1:CX+Math.cos(a1)*R4,y1:CY+Math.sin(a1)*R4,x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
+      stroke:asp.color,'stroke-width':0.7,opacity:.5,'stroke-dasharray':'3 3','class':'asp-line','pointer-events':'none'},svg);
+    ln.dataset.p1=n1;ln.dataset.p2=n2;
+  }
+}
+
+// ── TABLES ──
+function drawPlanetTable(data){
+  const tb=document.getElementById('planet-tbody');tb.innerHTML='';
+  for(const name of PORDER){
+    if(!data.planets[name])continue;
+    const info=PI[name],p=data.planets[name],si=p.sign_idx;
+    const sym=name==='Sun'?sunSVG(18):name==='Moon'?'<span class="moon-sym" style="font-size:16px">☽</span>':`<span class="p-sym" style="color:${info.color}">${info.sym}</span>`;
+    const isRetro=p.retrograde===true||p.retrograde==='true';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${sym}</td><td style="color:${info.color};font-size:11px">${name}</td><td class="deg-val">${p.dms}</td><td><span style="font-size:14px;font-family:serif;color:${RCOL[si]}">${ZSYM[si]}</span> <span style="font-size:10px;color:${RCOL[si]}">${RASHI[si]}</span></td><td><span class="house-badge">${p.house||'?'}</span></td><td>${isRetro?'<span class="retro">℞</span>':''}</td>`;
+    tb.appendChild(tr);
+  }
+}
+function drawHouseTable(data){
+  const tb=document.getElementById('house-tbody');tb.innerHTML='';
+  const lsi=data.asc_sign_idx;
+  for(let i=0;i<12;i++){const si=(lsi+i)%12;const tr=document.createElement('tr');tr.innerHTML=`<td style="font-family:'Cinzel',serif;font-size:11px;color:${i===0?'#e8c06e':'rgba(180,150,255,.7)'}">${ROMAN[i]}${i===0?' · Lg':''}</td><td><span style="font-size:14px;font-family:serif;color:${RCOL[si]}">${ZSYM[si]}</span> <span style="font-size:10px;color:${RCOL[si]}">${RASHI[si]}</span></td>`;tb.appendChild(tr);}
+}
+function drawNakTable(data){
+  const tb=document.getElementById('nak-tbody');tb.innerHTML='';
+  [...PORDER.filter(n=>data.planets[n]),'Lagna'].forEach(name=>{
+    const isL=name==='Lagna',info=isL?{sym:'Lg',color:'#e8c06e'}:PI[name];
+    const nak=isL?data.lagna_nak:data.planets[name]?.nakshatra;if(!nak)return;
+    const sym=isL?`<span style="color:#e8c06e;font-family:'Cinzel',serif;font-size:10px">Lg</span>`:name==='Sun'?sunSVG(16):name==='Moon'?'<span class="moon-sym" style="font-size:16px">☽</span>':`<span style="color:${info.color};font-family:serif;font-size:15px">${info.sym}</span>`;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${sym} <span style="font-size:10px;color:${info.color}">${name}</span></td><td><div class="nak-name">${nak.nakshatra}</div><div style="font-size:9px;color:var(--dim)">${nak.deity}</div></td><td><span class="pada-badge">Pada ${nak.pada}</span><br><span style="font-size:9px;color:var(--dim)">${nak.pada_sign}</span></td><td style="font-size:11px;color:rgba(180,150,255,.8)">${nak.nakshatra_ruler}</td><td style="font-size:11px;color:rgba(180,150,255,.8)">${nak.pada_ruler}</td><td><span style="font-size:10px;color:var(--gold)">${nak.pct}%</span><span class="pct-bar"><span class="pct-fill" style="width:${nak.pct}%"></span></span></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+// ── VARGA LIST ──
+/* 16 classical (Shodashavarga) boxes always; the other 44 behind "ყველა 60" */
+function buildVargaList(){
+  const list=document.getElementById('varga-list');
+  list.innerHTML='';
+  VARGAS.forEach(v=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='vg'+(v.main?'':' minor')+(v.n===1?' active':'');
+    b.id='vi-'+v.n;b.title=`D${v.n} · ${v.name} — ${v.meaning}`;
+    b.innerHTML=`<b>D${v.n}</b><span class="k">${v.ka}</span><span class="m">${v.meaning}</span>`;
+    b.onclick=()=>showVarga(v.n,true);
+    list.appendChild(b);
+  });
+  const all=document.getElementById('vg-all');
+  all.onclick=()=>{const on=list.classList.toggle('all');
+    all.textContent=on?'მხოლოდ 16 ▴':'ყველა 60 ▾';
+    document.getElementById('vg-count').textContent=on?'60':'16 მთავარი';};
+}
+
+function showVarga(N,scroll){
+  if(!_chartData)return;
+  document.querySelectorAll('.vg').forEach(e=>e.classList.remove('active'));
+  const item=document.getElementById('vi-'+N);
+  if(item)item.classList.add('active');
+  window._curV=N;
+  const v=VARGAS.find(x=>x.n===N);
+  const vd=getVargaData(_chartData,N);
+  document.querySelector('.sec-title').textContent=`D${N} · ${v?.ka} · ${v?.name} — ${v?.meaning}`;
+  window._lastVd=vd;
+  renderChartView(vd);
+  drawPlanetTable(vd);
+  drawHouseTable(vd);
+  calcAndDrawAspects(vd);
+  if(scroll)document.querySelector('.sec-title').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ══ CHART VIEW TOGGLE — wheel / North Indian diamond / South Indian grid ══ */
+let CHART_VIEW='wheel';
+function setChartView(v){
+  CHART_VIEW=v;
+  document.querySelectorAll('.vt-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===v));
+  if(window._lastVd)renderChartView(window._lastVd);
+}
+function renderChartView(vd){
+  const ww=document.getElementById('wheel-wrap'),ni=document.getElementById('ni-wrap'),si=document.getElementById('si-wrap');
+  ww.style.display=CHART_VIEW==='wheel'?'block':'none';
+  ni.style.display=CHART_VIEW==='ni'?'block':'none';
+  si.style.display=CHART_VIEW==='si'?'block':'none';
+  if(CHART_VIEW==='wheel'){drawWheel(vd,'wheel');setTimeout(setupPlanetHover,50);}
+  else if(CHART_VIEW==='ni')ni.innerHTML=niChartSVG(vd);
+  else si.innerHTML=siChartSVG(vd);
+}
+function _hplanets(vd){ // {houseIdx0..11:[names]} from sign placements vs lagna
+  const asc=vd.asc_sign_idx,by={};
+  for(const n of PORDER){const p=vd.planets[n];if(!p)continue;
+    const h=((p.sign_idx-asc)+12)%12;(by[h]=by[h]||[]).push(n);}
+  return by;
+}
+function _pLabel(vd,n){ // short label + color + retro
+  const p=(vd&&vd.planets&&vd.planets[n])||{};
+  const info=PI[n]||{sym:'?',color:'#fff'};
+  const short={Sun:'Su',Moon:'Mo',Mars:'Ma',Mercury:'Me',Jupiter:'Ju',Venus:'Ve',
+    Saturn:'Sa',Rahu:'Ra',Ketu:'Ke',Uranus:'Ur',Neptune:'Ne'}[n]||n;
+  const retro=(p.retrograde===true||p.retrograde==='true')&&n!=='Sun'&&n!=='Moon';
+  return{t:short+(retro?'℞':''),c:info.color};
+}
+/* ── label packer ─────────────────────────────────────────────
+   Each house is a polygon. Candidate spots lie on a grid centred on the
+   house's anchor; a spot is kept only if the whole label box lies inside
+   the polygon (with a margin) and clears the reserved boxes (sign number,
+   Lg). The nearest spots to the anchor win, then they are read row by
+   row. If a house is crowded the font and grid shrink until all fit.   */
+function _inPoly(x,y,P){let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const[xi,yi]=P[i],[xj,yj]=P[j];
+  if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c;}return c;}
+function _boxIn(cx,cy,w,h,P,m){return [[cx-w/2-m,cy-h/2-m],[cx+w/2+m,cy-h/2-m],[cx-w/2-m,cy+h/2+m],[cx+w/2+m,cy+h/2+m],[cx,cy-h/2-m],[cx,cy+h/2+m],[cx-w/2-m,cy],[cx+w/2+m,cy]].every(([x,y])=>_inPoly(x,y,P));}
+const _hit=(a,b)=>Math.abs(a.x-b.x)*2<a.w+b.w&&Math.abs(a.y-b.y)*2<a.h+b.h;
+function packLabels(n,P,anchor,reserved,wy=2.2){
+  if(!n)return {fs:12,pts:[]};
+  for(const [fs,sx,sy] of [[12.5,33,16],[11.5,30,15],[10.5,27,13.5],[9.5,24,12],[8.5,21,11]]){
+    const w=sx-4,h=sy-3,xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),c=[];
+    for(let y=anchor[1]-Math.ceil((anchor[1]-Math.min(...ys))/sy)*sy;y<=Math.max(...ys);y+=sy)
+      for(let x=anchor[0]-Math.ceil((anchor[0]-Math.min(...xs))/(sx/2))*(sx/2);x<=Math.max(...xs);x+=sx/2){
+        const b={x,y,w,h};
+        if(_boxIn(x,y,w,h,P,2)&&!reserved.some(r=>_hit(b,r)))c.push(b);}
+    /* wy>1 → fill rows side by side first; wy<1 → stack (tall side triangles) */
+    c.sort((a,b)=>Math.hypot(a.x-anchor[0],(a.y-anchor[1])*wy)-Math.hypot(b.x-anchor[0],(b.y-anchor[1])*wy));
+    const pick=[];for(const b of c){if(pick.every(q=>!_hit(b,q)))pick.push(b);if(pick.length===n)break;}
+    if(pick.length===n){pick.sort((a,b)=>a.y-b.y||a.x-b.x);return {fs,pts:pick};}
+  }
+  return {fs:8,pts:Array.from({length:n},(_,i)=>({x:anchor[0],y:anchor[1]+i*10,w:20,h:9}))};
+}
+function _labels(vd,names,P,anchor,reserved,wy){
+  const {fs,pts}=packLabels(names.length,P,anchor,reserved,wy);let s='';
+  names.forEach((n,i)=>{const L=_pLabel(vd,n),p=pts[i];
+    s+=`<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="${fs}" fill="${L.c}" font-family="Cinzel,serif">${L.t}</text>`;});
+  return s;
+}
+const _vname=()=>{const v=VARGAS.find(x=>x.n===(window._curV||1));return v?[`D${v.n}`,v.ka]:['D1','რაში'];};
+/* North Indian: houses fixed (H1 top diamond, counter-clockwise); polygons on a 400 square */
+const NI_HOUSES=[
+ {P:[[200,0],[100,100],[200,200],[300,100]],a:[200,100],num:[200,176]},           // 1
+ {P:[[0,0],[200,0],[100,100]],a:[100,28],num:[100,76]},                           // 2
+ {P:[[0,0],[100,100],[0,200]],a:[28,100],num:[76,100],wy:.7},                     // 3
+ {P:[[0,200],[100,100],[200,200],[100,300]],a:[96,200],num:[176,200]},            // 4
+ {P:[[0,200],[100,300],[0,400]],a:[28,300],num:[76,300],wy:.7},                   // 5
+ {P:[[0,400],[100,300],[200,400]],a:[100,372],num:[100,324]},                     // 6
+ {P:[[200,400],[100,300],[200,200],[300,300]],a:[200,302],num:[200,224]},         // 7
+ {P:[[200,400],[300,300],[400,400]],a:[300,372],num:[300,324]},                   // 8
+ {P:[[400,400],[300,300],[400,200]],a:[372,300],num:[324,300],wy:.7},             // 9
+ {P:[[400,200],[300,100],[200,200],[300,300]],a:[304,200],num:[224,200]},         // 10
+ {P:[[400,200],[300,100],[400,0]],a:[372,100],num:[324,100],wy:.7},               // 11
+ {P:[[200,0],[400,0],[300,100]],a:[300,28],num:[300,76]},                         // 12
+];
+function niChartSVG(vd){
+  const asc=vd.asc_sign_idx,by=_hplanets(vd);
+  let s=`<svg viewBox="-4 -4 408 408" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+   <rect x="0" y="0" width="400" height="400" fill="rgba(8,6,20,.8)" stroke="rgba(201,168,76,.6)" stroke-width="1.6" rx="4"/>
+   <path d="M0 0 L400 400 M400 0 L0 400 M200 0 L0 200 L200 400 L400 200 Z" fill="none" stroke="rgba(201,168,76,.45)" stroke-width="1"/>`;
+  for(let h=0;h<12;h++){
+    const H=NI_HOUSES[h],sign=(asc+h)%12,res=[{x:H.num[0],y:H.num[1],w:20,h:15}];
+    s+=`<text x="${H.num[0]}" y="${H.num[1]}" text-anchor="middle" dominant-baseline="central" font-size="12" fill="${RCOL[sign]}" opacity=".85" font-family="Cinzel,serif">${sign+1}</text>`;
+    if(h===0&&!vd._timeUnknown){s+=`<text x="200" y="34" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#e8c06e" font-family="Cinzel,serif">Lg</text>`;res.push({x:200,y:34,w:22,h:13});}
+    s+=_labels(vd,by[h]||[],H.P,H.a,res,H.wy);
+  }
+  return s+'</svg>';
+}
+/* South Indian: signs fixed (Pisces top-left, clockwise), lagna marked */
+const SI_CELLS={11:[0,0],0:[1,0],1:[2,0],2:[3,0],3:[3,1],4:[3,2],5:[3,3],6:[2,3],7:[1,3],8:[0,3],9:[0,2],10:[0,1]};
+function siChartSVG(vd){
+  const asc=vd.asc_sign_idx,C=100,[dn,dk]=_vname();
+  const bySign={};
+  for(const n of PORDER){const p=vd.planets[n];if(!p)continue;(bySign[p.sign_idx]=bySign[p.sign_idx]||[]).push(n);}
+  let s=`<svg viewBox="-4 -4 408 408" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="400" height="400" fill="rgba(8,6,20,.8)" stroke="rgba(201,168,76,.6)" stroke-width="1.6" rx="4"/>
+    <text x="200" y="190" text-anchor="middle" font-size="22" fill="rgba(240,208,128,.75)" font-family="Cinzel,serif">${dn}</text>
+    <text x="200" y="214" text-anchor="middle" font-size="12" fill="rgba(155,168,184,.7)" font-family="Noto Sans Georgian,sans-serif">${dk}</text>`;
+  for(const sign in SI_CELLS){
+    const sn=+sign,x=SI_CELLS[sign][0]*C,y=SI_CELLS[sign][1]*C,isL=sn===asc&&!vd._timeUnknown;
+    const res=[{x:x+15,y:y+13,w:22,h:18}];
+    s+=`<rect x="${x}" y="${y}" width="${C}" height="${C}" fill="${isL?'rgba(201,168,76,.06)':'none'}" stroke="rgba(201,168,76,.35)"/>
+       <text x="${x+15}" y="${y+14}" text-anchor="middle" dominant-baseline="central" font-size="13" fill="${RCOL[sn]}" opacity=".8" font-family="serif">${ZSYM[sn]}</text>`;
+    if(isL){res.push({x:x+C-17,y:y+13,w:26,h:16});
+      s+=`<rect x="${x+2.5}" y="${y+2.5}" width="${C-5}" height="${C-5}" fill="none" stroke="#e8c06e" stroke-width="1.2" opacity=".75" rx="2"/>
+        <text x="${x+C-17}" y="${y+14}" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#e8c06e" font-family="Cinzel,serif">Lg</text>`;}
+    s+=_labels(vd,bySign[sn]||[],[[x,y],[x+C,y],[x+C,y+C],[x,y+C]],[x+C/2,y+C/2+8],res);
+  }
+  return s+'</svg>';
+}
+</script>
+</body>
+</html>
