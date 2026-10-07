@@ -12,7 +12,6 @@
   --ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
   --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);
   --fire:#e2683c;--water:#4a90d9;--air:#c9c2a0;--earth:#5fae6e;--major:#a77bdb;
-  --cw:96px;--ch:160px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(120,70,200,.12),transparent 60%),var(--void);
@@ -68,7 +67,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5v
 .slot.cross .card3d{transform:rotate(90deg)}
 .slot.cross .pn{position:absolute;bottom:-34px;}
 
-.card3d{width:var(--cw);height:var(--ch);perspective:900px;cursor:pointer;opacity:0;transform:translateY(-14px);
+.card3d{width:var(--cw);height:calc(var(--cw) * 1.72);perspective:900px;cursor:pointer;opacity:0;transform:translateY(-14px);
   animation:deal .45s ease forwards}
 @keyframes deal{to{opacity:1;transform:none}}
 .slot.cross .card3d{animation:dealx .45s ease forwards}
@@ -147,8 +146,8 @@ details.enc summary::-webkit-details-marker{display:none}
 .enc-c{background:var(--raised);border:1px solid var(--border);border-left:3px solid var(--elc,#888);border-radius:5px;padding:9px 11px;font-size:12px}
 .enc-c summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center}
 .enc-c summary::-webkit-details-marker{display:none}
-.enc-c .mini{position:relative;width:44px;height:73px;border-radius:4px;overflow:hidden;display:block}
-.enc-c .mini .cf{transform:scale(.4583);transform-origin:0 0;width:96px;height:160px}
+.enc-c .mini{--cw:96px;position:relative;width:44px;height:76px;border-radius:4px;overflow:hidden;display:block}
+.enc-c .mini .cf{transform:scale(.4583);transform-origin:0 0;width:96px;height:165px}
 .enc-c .mini .cf.rev{transform:scale(.4583) rotate(180deg)}
 .enc-c b{display:block;font-size:13.5px;color:var(--ink);margin-bottom:2px}
 .enc-c .t{display:block;font-size:10.5px;color:var(--ink-dim)}
@@ -156,12 +155,74 @@ details.enc summary::-webkit-details-marker{display:none}
 .enc-b{margin-top:8px;line-height:1.7}
 .enc-c .u{color:var(--ink-mid);margin-top:4px}
 .enc-c .r{color:#c99a9a;margin-top:3px}
+/* ── gallery of spreads ── */
+.groups{gap:22px}
+.grp-t{font-size:10px;margin-bottom:9px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px}
+.chip{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;padding:13px 15px;border-radius:8px;
+  font-size:15px;color:var(--ink);min-height:86px;position:relative}
+.chip b{font-weight:400;font-family:'Noto Serif Georgian',serif;font-size:15.5px;line-height:1.3}
+.chip .cd{font-size:11px;color:var(--ink-dim);line-height:1.45}
+.chip small{position:absolute;top:10px;right:12px;margin:0;font-family:'Cinzel',serif;font-size:11px;color:var(--gold);opacity:.7}
+.chip:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.4)}
+/* ── focus mode: one spread fills the screen ── */
+.focus-bar{display:none;align-items:center;gap:18px;margin:0 0 18px;padding:16px 20px;background:var(--surface);
+  border:1px solid var(--border-h);border-radius:10px;position:sticky;top:0;z-index:20;backdrop-filter:blur(8px);
+  background:rgba(14,11,26,.92)}
+.fb-back{background:none;border:1px solid var(--border-h);color:var(--gold);border-radius:6px;padding:8px 13px;cursor:pointer;
+  font-family:inherit;font-size:12px;white-space:nowrap}
+.fb-back:hover{background:rgba(201,168,76,.1)}
+.fb-main{flex:1;min-width:0}
+.fb-grp{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--gold);opacity:.7}
+.fb-main h2{font-family:'Noto Serif Georgian',serif;font-weight:600;font-size:clamp(20px,3vw,30px);color:var(--gold-lt);line-height:1.25}
+.fb-desc{font-size:12.5px;color:var(--ink-mid)}
+.fb-n{font-family:'Cinzel',serif;font-size:28px;color:var(--gold);text-align:center;line-height:1}
+.fb-n small{display:block;font-size:9px;letter-spacing:2px;opacity:.7;font-family:'Noto Serif Georgian',serif}
+body.focus .groups{display:none}
+body.focus .focus-bar{display:flex}
+body:not(.focus) .ask,body:not(.focus) .table-wrap,body:not(.focus) .reading{display:none}
+body.focus .page{max-width:1500px}
+/* ── cards scale with the space; faces scale with the card ── */
+.table{--cw:120px}
+.table .slot .pn{font-size:calc(9px + var(--cw) * .035);max-width:calc(var(--cw) + 30px)}
+.cf-top{font-size:calc(var(--cw) * .11)}
+.cf-art .big{font-size:calc(var(--cw) * .44)}
+.pips{max-width:calc(var(--cw) * .74)}.pips svg{width:calc(var(--cw) * .18);height:calc(var(--cw) * .18)}
+.solo svg{width:calc(var(--cw) * .46);height:calc(var(--cw) * .46)}
+.court svg{width:calc(var(--cw) * .36);height:calc(var(--cw) * .36)}.court span{font-size:calc(var(--cw) * .16)}
+.cf-name{font-size:calc(var(--cw) * .095)}
+.card3d{width:var(--cw);height:calc(var(--cw) * 1.72)}
+.face{border-radius:calc(var(--cw) * .06)}
+.card3d.up{cursor:zoom-in}
+.card3d:hover .inner{box-shadow:0 0 0 1px rgba(236,213,154,.5),0 10px 30px rgba(0,0,0,.55);border-radius:8px}
+.slot.hl .card3d .inner{box-shadow:0 0 0 2px var(--gold),0 0 26px rgba(201,168,76,.45);border-radius:8px}
+.ri{cursor:pointer;border-radius:6px;padding-left:6px;padding-right:6px}
+.ri:hover,.ri.hl{background:rgba(201,168,76,.06)}
+/* ── zoom ── */
+.zoom{position:fixed;inset:0;z-index:100;background:rgba(3,2,8,.86);backdrop-filter:blur(6px);display:flex;align-items:center;
+  justify-content:center;padding:20px;animation:zf .2s ease}
+.zoom[hidden]{display:none}
+@keyframes zf{from{opacity:0}}
+.zoom-in{display:grid;grid-template-columns:auto minmax(0,460px);gap:26px;align-items:center;max-height:100%;overflow:auto;
+  background:var(--surface);border:1px solid var(--border-h);border-radius:12px;padding:22px;position:relative}
+.zoom-card{--cw:min(300px,38vw);width:var(--cw);height:calc(var(--cw) * 1.72);position:relative;border-radius:10px;overflow:hidden;
+  box-shadow:0 18px 50px rgba(0,0,0,.7)}
+.zoom-card .cf{border-radius:10px}
+.zoom-x{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--ink-mid);font-size:22px;cursor:pointer}
+.zoom-nav{display:flex;gap:8px;margin-top:14px}
+.zoom-nav button{background:none;border:1px solid var(--border-h);color:var(--gold);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit}
+.zoom .pos{font-size:12px;color:var(--ink-dim)}.zoom .nm{font-size:20px;color:var(--gold-lt);margin:2px 0 4px}
+.zoom .mn{font-size:14px;line-height:1.75;color:var(--ink-mid)}
+@media(max-width:700px){
+  .zoom-in{grid-template-columns:1fr;justify-items:center;padding:16px}
+  .zoom-card{--cw:min(230px,62vw)}
+  .focus-bar{flex-wrap:wrap;gap:10px;padding:12px 14px}
+  .fb-back{order:3;width:100%}
+  .chips{grid-template-columns:1fr 1fr}
+  .chip{min-height:74px;padding:11px 12px}.chip b{font-size:13.5px}.chip .cd{display:none}
+}
 @media(max-width:640px){
-  :root{--cw:70px;--ch:118px}
   .back{position:static;display:inline-block;margin-bottom:12px}
-  .cf-art .big{font-size:28px}.pips svg{width:12px;height:12px}.pips{max-width:52px}
-  .solo svg{width:32px;height:32px}.court svg{width:24px;height:24px}.court span{font-size:12px}
-  .cf-name{font-size:7.5px}.cf-top{font-size:9px}
   .table{gap:10px 8px}
 }
 </style>
@@ -176,9 +237,13 @@ details.enc summary::-webkit-details-marker{display:none}
 
 <div class="groups" id="groups"></div>
 
-<div class="ask">
-  <h2 id="sp-title"></h2>
-  <div class="desc" id="sp-desc"></div>
+<div class="focus-bar" id="focus-bar">
+  <button class="fb-back" id="fb-back" type="button">← ყველა განლაგება</button>
+  <div class="fb-main"><div class="fb-grp" id="fb-grp"></div><h2 id="fb-title"></h2><div class="fb-desc" id="fb-desc"></div></div>
+  <div class="fb-n" id="fb-n"></div>
+</div>
+
+<div class="ask" id="ask">
   <div class="ab-names" id="ab-names">
     <input type="text" id="opt-a" placeholder="გზა A — მაგ. ვრჩები ახლანდელ სამსახურში">
     <input type="text" id="opt-b" placeholder="გზა B — მაგ. ვიწყებ ახალ საქმეს">
@@ -192,11 +257,12 @@ details.enc summary::-webkit-details-marker{display:none}
     <button class="btn ghost" id="flipall">ყველას გადაბრუნება</button>
     <button class="btn ghost" id="copy">ტექსტის კოპირება</button>
   </div>
-  <div class="note">ბარათზე დაჭერით ის გადაბრუნდება. დაფიქრდი კითხვაზე, სანამ აურევ. <span id="img-note"></span></div>
+  <div class="note">ბარათზე დაჭერით ის გადაბრუნდება, გადაბრუნებულზე — გადიდდება. დაფიქრდი კითხვაზე, სანამ აურევ. <span id="img-note"></span></div>
 </div>
 
 <div class="table-wrap"><div class="table" id="table"></div></div>
 <div class="reading" id="reading"></div>
+<div class="zoom" id="zoom" hidden><div class="zoom-in" id="zoom-in"></div></div>
 
 <details class="enc" id="enc">
   <summary>✦ ბარათების ცნობარი — 78 არკანი</summary>
@@ -530,13 +596,22 @@ function shuffle(){const d=DECK.slice();for(let i=d.length-1;i>0;i--){const j=rn
 function renderGroups(){
   const gs=[...new Set(SPREADS.map(s=>s.g))];
   $('groups').innerHTML=gs.map(g=>`<div><div class="grp-t">${g}</div><div class="chips">${
-    SPREADS.filter(s=>s.g===g).map(s=>`<button class="chip${s===cur?' on':''}" data-id="${s.id}">${s.t}<small>${s.p.length}</small></button>`).join('')}</div></div>`).join('');
-  $('groups').querySelectorAll('.chip').forEach(b=>b.onclick=()=>select(b.dataset.id));
+    SPREADS.filter(s=>s.g===g).map(s=>`<button class="chip" data-id="${s.id}"><b>${s.t}</b><span class="cd">${s.d}</span><small>${s.p.length}</small></button>`).join('')}</div></div>`).join('');
+  $('groups').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{select(b.dataset.id);
+    history.pushState({sp:b.dataset.id},'','?spread='+b.dataset.id);});
+}
+/* gallery ⇄ focus. The back button of the browser works too. */
+function showGallery(){
+  document.body.classList.remove('focus');cur=null;closeZoom();
+  document.title='ტარო · MAGNUS';window.scrollTo({top:0});
 }
 function select(id){
-  cur=SPREADS.find(s=>s.id===id);renderGroups();
-  $('sp-title').textContent=`${cur.t} · ${cur.p.length} ბარათი`;
-  $('sp-desc').textContent=cur.d;
+  cur=SPREADS.find(s=>s.id===id);
+  document.body.classList.add('focus');
+  document.title=cur.t+' · ტარო';
+  $('fb-grp').textContent=cur.g;$('fb-title').textContent=cur.t;$('fb-desc').textContent=cur.d;
+  $('fb-n').innerHTML=`${cur.p.length}<small>ბარათი</small>`;
+  window.scrollTo({top:0});
   $('ab-names').classList.toggle('show',!!cur.ab);
   drawn=[];$('table').innerHTML='';$('reading').classList.remove('show');$('actions').classList.remove('show');
   layoutEmpty();
@@ -548,31 +623,69 @@ function posLabel(i){
   return t;
 }
 function gridSize(){return [Math.max(...cur.p.map(p=>p[2])),Math.max(...cur.p.map(p=>p[3]))];}
-function layoutEmpty(){
+/* card width: as big as the width allows; spreads of ≤3 rows should also
+   fit the screen height, so the whole spread is seen at once */
+function sizeCards(){
+  if(!cur)return;
   const [cols,rows]=gridSize(),t=$('table');
+  const W=Math.min(t.parentElement.clientWidth||window.innerWidth,1460);
+  const gap=W<640?8:12,lab=W<640?34:44;
+  let cw=(W-(cols-1)*gap)/cols-(W<640?8:30);
+  /* 1–2 rows: fit the screen height too, so the whole spread is in view;
+     taller spreads scroll, with a smaller cap so they stay readable */
+  if(rows<=2){const H=window.innerHeight-(W<640?120:220);cw=Math.min(cw,(H/rows-lab-gap)/1.72);}
+  const cap=W<640?150:rows<=2?230:rows<=4?190:150;
+  cw=Math.max(W<640?66:120,Math.min(cw,cap));
+  t.style.setProperty('--cw',Math.floor(cw)+'px');
+  t.style.columnGap=gap+'px';
+}
+let _rz;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(sizeCards,120);});
+function layoutEmpty(){
+  const [cols,rows]=gridSize(),t=$('table');sizeCards();
   t.style.gridTemplateColumns=`repeat(${cols},calc(var(--cw) + 16px))`;
   t.style.gridTemplateRows=`repeat(${rows},auto)`;
   t.innerHTML=cur.p.map((p,i)=>`<div class="slot${p[4]?' cross':''}" style="grid-column:${p[2]};grid-row:${p[3]}">
      <div class="pn"><b>${i+1}</b>${posLabel(i)}</div>
-     <div style="width:var(--cw);height:var(--ch);border:1px dashed rgba(201,168,76,.18);border-radius:7px${p[4]?';transform:rotate(90deg)':''}"></div></div>`).join('');
+     <div style="width:var(--cw);height:calc(var(--cw) * 1.72);border:1px dashed rgba(201,168,76,.18);border-radius:7px${p[4]?';transform:rotate(90deg)':''}"></div></div>`).join('');
 }
 function draw(){
   const deck=shuffle(),useRev=$('rev').checked;
   question=$('question').value.trim();
   drawn=cur.p.map((p,i)=>({c:deck[i],rev:useRev&&rnd(2)===1,up:false}));
-  const [cols,rows]=gridSize(),t=$('table');
+  const [cols,rows]=gridSize(),t=$('table');sizeCards();
   t.style.gridTemplateColumns=`repeat(${cols},calc(var(--cw) + 16px))`;
   t.style.gridTemplateRows=`repeat(${rows},auto)`;
-  t.innerHTML=cur.p.map((p,i)=>`<div class="slot${p[4]?' cross':''}" style="grid-column:${p[2]};grid-row:${p[3]}">
+  t.innerHTML=cur.p.map((p,i)=>`<div class="slot${p[4]?' cross':''}" data-i="${i}" style="grid-column:${p[2]};grid-row:${p[3]}">
      <div class="pn"><b>${i+1}</b>${posLabel(i)}</div>
      <div class="card3d" data-i="${i}" style="animation-delay:${i*70}ms"><div class="inner">
        <div class="face back-f">${BACK}</div><div class="face front">${faceHTML(drawn[i].c,drawn[i].rev)}</div></div></div></div>`).join('');
-  t.querySelectorAll('.card3d').forEach(el=>el.onclick=()=>flip(+el.dataset.i));
+  t.querySelectorAll('.card3d').forEach(el=>el.onclick=()=>{const i=+el.dataset.i;drawn[i].up?openZoom(i):flip(i);});
   $('actions').classList.add('show');
   renderReading();
+  setTimeout(()=>$('table').scrollIntoView({behavior:'smooth',block:'start'}),60);
 }
+/* ── zoom: one card large, with its full text; ← → walk the spread ── */
+let zi=-1;
+function openZoom(i){
+  zi=i;const d=drawn[i],c=d.c,p=cur.p[i],Z=$('zoom');
+  $('zoom-in').innerHTML=`<button class="zoom-x" type="button" aria-label="დახურვა">✕</button>
+    <div class="zoom-card">${faceHTML(c,d.rev)}</div>
+    <div><div class="pos">${i+1}. ${posLabel(i)} — ${p[1]}</div>
+      <div class="nm">${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?' <span class="rv" style="color:#e58c8c;font-size:12px">შებრუნებული</span>':''}</div>
+      <div class="tags" style="font-size:11px;color:var(--ink-dim);margin-bottom:6px">${cardTags(c)}</div>
+      ${richText(c,d.rev,cur)}
+      <div class="zoom-nav"><button type="button" data-d="-1">← წინა</button><button type="button" data-d="1">შემდეგი →</button></div></div>`;
+  Z.hidden=false;
+  Z.querySelector('.zoom-x').onclick=closeZoom;
+  Z.querySelectorAll('.zoom-nav button').forEach(b=>b.onclick=()=>step(+b.dataset.d));
+}
+function step(dir){
+  for(let k=1;k<=drawn.length;k++){const j=(zi+dir*k+drawn.length*2)%drawn.length;
+    if(drawn[j].up){openZoom(j);return;}}
+}
+function closeZoom(){const Z=$('zoom');if(Z)Z.hidden=true;zi=-1;}
 function flip(i){
-  if(drawn[i].up)return;drawn[i].up=true;
+  if(!drawn[i]||drawn[i].up)return;drawn[i].up=true;
   $('table').querySelector(`.card3d[data-i="${i}"]`).classList.add('up');
   renderReading();
 }
@@ -605,13 +718,16 @@ function renderReading(){
     const p=cur.p[i];
     if(!d.up){h+=`<div class="ri pending"><div class="no">${i+1}</div><div><div class="pos">${posLabel(i)} — ${p[1]}</div><div class="nm">დახურულია — დააჭირე ბარათს</div></div></div>`;return;}
     const c=d.c,yn=cur.yn?` · ${['არა','შესაძლოა','კი'][ynOf(c,d.rev)+1]}`:'';
-    h+=`<div class="ri"><div class="no">${i+1}</div><div><div class="pos">${posLabel(i)} — ${p[1]}</div>
+    h+=`<div class="ri" data-i="${i}"><div class="no">${i+1}</div><div><div class="pos">${posLabel(i)} — ${p[1]}</div>
       <div class="nm">${c.major?ROMAN[c.n]+' ':''}${c.name}${d.rev?'<span class="rv">შებრუნებული</span>':''}</div>
       <div class="tags">${cardTags(c)}${yn}</div>${richText(c,d.rev,cur)}</div></div>`;
   });
   if(up===drawn.length&&drawn.length)h+=analyse(cur,drawn);
   else if(drawn.length)h+=`<div class="note">გადაბრუნებულია ${up} / ${drawn.length} — ბალანსი გამოჩნდება ყველას გადაბრუნების შემდეგ.</div>`;
   R.innerHTML=h;
+  R.querySelectorAll('.ri[data-i]').forEach(el=>{const i=+el.dataset.i,sl=$('table').querySelector(`.slot[data-i="${i}"]`);
+    el.onmouseenter=()=>sl&&sl.classList.add('hl');el.onmouseleave=()=>sl&&sl.classList.remove('hl');
+    el.onclick=()=>openZoom(i);});
 }
 function copyText(){
   const lines=[`ტარო — ${cur.t}`];if(question)lines.push(`კითხვა: ${question}`);
@@ -646,7 +762,14 @@ $('draw').onclick=draw;$('flipall').onclick=flipAll;$('copy').onclick=copyText;
 ['opt-a','opt-b'].forEach(id=>$(id).addEventListener('input',()=>{if(drawn.length){
   document.querySelectorAll('.slot .pn').forEach((el,i)=>el.innerHTML=`<b>${i+1}</b>${posLabel(i)}`);renderReading();}else layoutEmpty();}));
 const qs=new URLSearchParams(location.search).get('spread');
-select(SPREADS.some(s=>s.id===qs)?qs:'daily');
+renderGroups();
+if(SPREADS.some(s=>s.id===qs))select(qs);else showGallery();
+$('fb-back').onclick=()=>{history.pushState({},'',location.pathname);showGallery();};
+window.addEventListener('popstate',e=>{const id=new URLSearchParams(location.search).get('spread');
+  SPREADS.some(s=>s.id===id)?select(id):showGallery();});
+$('zoom').addEventListener('click',e=>{if(e.target.id==='zoom')closeZoom();});
+document.addEventListener('keydown',e=>{if($('zoom').hidden)return;
+  if(e.key==='Escape')closeZoom();else if(e.key==='ArrowRight')step(1);else if(e.key==='ArrowLeft')step(-1);});
 renderEnc();
 probeImages().then(e=>{if(!e)return;IMG.ext=e;renderEnc();
   const n=$('img-note');if(n)n.textContent='✔ გამოიყენება შენი სურათები (tarot/*.'+e+')';
