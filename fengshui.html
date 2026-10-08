@@ -96,7 +96,7 @@
   <div class="frow">
     <div><label>დღე</label><input type="number" id="k-day" min="1" max="31" value="15"></div>
     <div><label>თვე</label><input type="number" id="k-month" min="1" max="12" value="5"></div>
-    <div><label>წელი</label><input type="number" id="k-year" min="1900" max="2035" value="1990"></div>
+    <div><label>წელი</label><input type="number" id="k-year" min="1900" max="2100" value="1990"></div>
     <div><label>სქესი</label><select id="k-sex"><option value="m">მამრობითი</option><option value="f">მდედრობითი</option></select></div>
   </div>
   <button class="go" onclick="calcKua()">გამოთვლა</button>
@@ -108,7 +108,7 @@
       <div class="dir-col good"><h4>✦ კეთილი მიმართულებები</h4><div id="kua-good"></div></div>
       <div class="dir-col bad"><h4>✦ არასასურველი მიმართულებები</h4><div id="kua-bad"></div></div>
     </div>
-    <div class="note">4 თებერვლამდე (ლი ჩუნი) დაბადებულებისთვის გამოიყენება წინა წელი — ავტომატურად გათვალისწინებულია.</div>
+    <div class="note" id="kua-note">ლი ჩუნამდე (გაზაფხულის დასაწყისი, მზე 315°, 3–5 თებერვალი) დაბადებულებისთვის გამოიყენება წინა წელი — ავტომატურად გათვალისწინებულია.</div>
   </div>
 </div>
 
@@ -163,13 +163,30 @@ const KUA_DIRS={
  9:{good:{E:'შენ ჩი — წარმატება',SE:'ტიან ი — ჯანმრთელობა',N:'იან ნიენ — ურთიერთობები',S:'ფუ ვეი — სტაბილურობა'},
     bad:{NE:'ჰო ჰაი — უიღბლობა',W:'ვუ გუი — ხუთი მოჩვენება',SW:'ლიუ შა — ექვსი მკვლელი',NW:'ძუე მინ — სრული დანაკარგი'}}};
 const KUA_EL={1:'წყალი',2:'მიწა',3:'ხე',4:'ხე',6:'ლითონი',7:'ლითონი',8:'მიწა',9:'ცეცხლი'};
+/* ლი ჩუნი = the moment the Sun reaches 315° (Meeus low-precision Sun,
+   ±0.01° ≈ 15 min). Returned as the calendar date in China time (UTC+8),
+   which is how the Chinese solar calendar counts the day. */
+function sunLon(jd){
+  const T=(jd-2451545)/36525,R=Math.PI/180;
+  const L0=280.46646+36000.76983*T+0.0003032*T*T,M=(357.52911+35999.05029*T-0.0001537*T*T)*R;
+  const C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M)+(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
+  const om=(125.04-1934.136*T)*R;
+  return(((L0+C-0.00569-0.00478*Math.sin(om))%360)+360)%360;
+}
+function liChun(y){
+  let jd=Date.UTC(y,1,4)/86400000+2440587.5;                 /* start: 4 Feb 0h UT */
+  for(let i=0;i<8;i++){let d=315-sunLon(jd);if(d>180)d-=360;if(d<-180)d+=360;jd+=d/0.98565;}
+  const t=new Date((jd-2440587.5)*86400000+8*3600000);       /* China time */
+  return{m:t.getUTCMonth()+1,d:t.getUTCDate(),hh:t.getUTCHours(),mm:t.getUTCMinutes()};
+}
 function digitSum(n){while(n>9){n=String(n).split('').reduce((a,c)=>a+ +c,0);}return n;}
 function calcKua(){
   let y=+document.getElementById('k-year').value;
   const m=+document.getElementById('k-month').value,d=+document.getElementById('k-day').value;
   const sex=document.getElementById('k-sex').value;
   if(!y||y<1900)return;
-  if(m<2||(m===2&&d<4))y--;                       // Li Chun boundary
+  const y0=y,lc=liChun(y),onLc=(m===lc.m&&d===lc.d);
+  if(m<lc.m||(m===lc.m&&d<lc.d))y--;                // before Li Chun → previous solar year
   const s=digitSum(y);
   let k=sex==='m'?11-s:4+s;
   k=digitSum(k);
@@ -183,10 +200,14 @@ function calcKua(){
   document.getElementById('kua-bad').innerHTML=Object.entries(D.bad).map(([dir,me])=>
     `<div class="dir-item"><span class="dir-name">${DIR_KA[dir]}</span><span class="dir-mean">${me}</span></div>`).join('');
   drawCompass(D);
+  document.getElementById('kua-note').innerHTML=`ლი ჩუნი ${lc.d} ${lc.m===2?'თებერვალი':'იანვარი'} ${y0}, ${String(lc.hh).padStart(2,'0')}:${String(lc.mm).padStart(2,'0')} (ჩინეთის დრო, UTC+8). `+
+    `მანამდე დაბადებულებისთვის გამოიყენება წინა წელი — ავტომატურად გათვალისწინებულია.`+
+    (onLc?`<br><span style="color:#e0c040">⚠ თქვენ ლი ჩუნის დღეს დაიბადეთ — თუ ამ დრომდე (ჩინეთის დროით) დაიბადეთ, გამოიყენეთ წინა წლის გუა.</span>`:'');
   document.getElementById('kua-out').style.display='block';
   showZodiac(y);
   renderColors(k);
 }
+const CMP_KA={N:'ჩ',NE:'ჩა',E:'ა',SE:'სა',S:'ს',SW:'სდ',W:'დ',NW:'ჩდ'};
 function drawCompass(D){
   const ANG={N:0,NE:45,E:90,SE:135,S:180,SW:225,W:270,NW:315};
   let svg='<circle cx="115" cy="115" r="100" fill="none" stroke="rgba(201,168,76,.3)"/><circle cx="115" cy="115" r="58" fill="none" stroke="rgba(201,168,76,.15)"/>';
@@ -198,9 +219,9 @@ function drawCompass(D){
     const tx=115+82*Math.cos(rad),ty=115+82*Math.sin(rad);
     const col=good?'#2fae7d':'#c0503a';
     svg+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="9" stroke-linecap="round" opacity=".75"/>`;
-    svg+=`<text x="${115+112*Math.cos(rad)}" y="${115+112*Math.sin(rad)+3}" text-anchor="middle" fill="${col}" font-size="11">${dir}</text>`;
+    svg+=`<text x="${115+112*Math.cos(rad)}" y="${115+112*Math.sin(rad)+3}" text-anchor="middle" fill="${col}" font-size="10">${CMP_KA[dir]}</text>`;
   }
-  svg+='<circle cx="115" cy="115" r="3" fill="#c9a84c"/>';
+  svg+='<circle cx="115" cy="115" r="3" fill="#c9a84c"/><text x="115" y="132" text-anchor="middle" fill="rgba(155,168,184,.6)" font-size="8">ჩრდილოეთი ზემოთ</text>';
   document.getElementById('kua-compass').innerHTML=svg;
 }
 const EL_DATA={
@@ -248,12 +269,24 @@ function showZodiac(yAdj){
   document.getElementById('zoo-out').innerHTML=
     `<div class="zoo-glyph">${ZOO[b][1]}</div>
      <div><div style="font-size:20px;color:#e8d5a0">${ZEL[st]} ${ZOO[b][0]}${yin}</div>
-     <div style="font-size:11px;color:#9ba8b8;margin-top:4px">ჩინური წელი: ${yAdj} (4 თებერვლის საზღვრით)</div></div>`;
+     <div style="font-size:11px;color:#9ba8b8;margin-top:4px">მზის წელი: ${yAdj} (ლი ჩუნის საზღვრით — ფენ-შუი / ბაძი)</div>
+     <div style="font-size:10px;color:rgba(155,168,184,.55);margin-top:3px">პოპულარული ჩინური ზოდიაქო წელს მთვარის ახალი წლიდან ითვლის (21 იანვარი – 20 თებერვალი), ამიტომ იანვარ-თებერვალში დაბადებულებთან ცხოველი შეიძლება განსხვავდებოდეს.</div></div>`;
   document.getElementById('zoo-out').style.display='flex';
 }
-const FS_MEAN={1:['თეთრი — კარიერა, წყალი','#7ec8f0'],2:['შავი — ავადმყოფობა','#8a8a8a'],3:['ხის — კონფლიქტი, დავა','#5a9a5a'],
+const FS_MEAN={1:['თეთრი — კარიერა, წყალი','#7ec8f0'],2:['შავი — ავადმყოფობა','#8a8a8a'],3:['ნეფრიტისფერი — კონფლიქტი, დავა','#5a9a5a'],
  4:['მწვანე — რომანტიკა, სწავლა','#2fae7d'],5:['ყვითელი — უბედურება ⚠','#e0c040'],6:['თეთრი — ზეციური დახმარება','#e8e2d0'],
- 7:['წითელი — ძარცვა, დანაკარგი','#c0503a'],8:['თეთრი — სიმდიდრე ★','#c9a84c'],9:['იისფერი — ზეიმი, კეთილდღეობა','#a070d0']};
+ 7:['წითელი — ძარცვა, დანაკარგი','#c0503a'],8:['თეთრი — სიმდიდრე','#c9a84c'],9:['იისფერი — ზეიმი, კეთილდღეობა','#a070d0']};
+/* 20-year periods of the Three Cycles (San Yuan): the period's own star is the
+   strongest wealth star, the next one is "future prosperity", the previous one
+   is retreating. Period 9 = 2024–2043. */
+const periodOf=y=>{const p=Math.floor((y-1864)/20)%9+1;return p;};
+function fsMean(n,y){
+  const P=periodOf(y),nx=P%9+1,pv=(P+7)%9+1;let [m,c]=FS_MEAN[n];
+  if(n===P)m=m.replace(/ — .*/,'')+' — ★ პერიოდის ვარსკვლავი: სიმდიდრე, წარმატება';
+  else if(n===nx)m+=' · მომავალი კეთილდღეობა';
+  else if(n===pv&&(n===8||n===7))m=m.replace(/ — .*/,'')+' — მიმავალი: სუსტდება';
+  return[m,c];
+}
 function drawFS(){
   const y=+document.getElementById('fs-year').value;if(!y)return;
   let c=(11-(y%9))%9;if(c===0)c=9;
@@ -261,13 +294,13 @@ function drawFS(){
   const star=d=>{if(d==='C')return c;let v=(c+off[d])%9;return v===0?9:v;};
   const layout=[['SE','S','SW'],['E','C','W'],['NE','N','NW']];   // South at top
   document.getElementById('fs-grid').innerHTML=layout.flat().map(d=>{
-    const n=star(d);const [mean,col]=FS_MEAN[n];
+    const n=star(d);const [mean,col]=fsMean(n,y);
     return `<div class="fs-cell"${n===5?' style="border-color:rgba(224,192,64,.5)"':''}>
       <div class="fs-dir">${d==='C'?'ცენტრი':DIR_KA[d]}</div>
       <div class="fs-num" style="color:${col}">${n}</div>
       <div class="fs-mean">${mean}</div></div>`;
   }).join('');
-  document.getElementById('fs-center').textContent=c;
+  document.getElementById('fs-center').textContent=c+' · პერიოდი '+periodOf(y)+' ('+(1864+(Math.floor((y-1864)/20))*20)+'–'+(1883+(Math.floor((y-1864)/20))*20)+')';
   document.getElementById('fs-out').style.display='block';
 }
 const BAGUA=[['SE','სიმდიდრე','ხე · მწვანე/იისფერი'],['S','დიდება, რეპუტაცია','ცეცხლი · წითელი'],['SW','სიყვარული, ქორწინება','მიწა · ვარდისფერი'],
@@ -275,6 +308,7 @@ const BAGUA=[['SE','სიმდიდრე','ხე · მწვანე/ი�
  ['NE','ცოდნა, სიბრძნე','მიწა · ბეჟი, ტერაკოტა'],['N','კარიერა, გზა','წყალი · შავი/ლურჯი'],['NW','დამხმარეები, მოგზაურობა','ლითონი · ნაცრისფერი']];
 document.getElementById('bagua').innerHTML=BAGUA.map(([d,area,el])=>
   `<div class="bg-cell"><div class="bg-dir">${d==='C'?'ცენტრი':DIR_KA[d]}</div><div class="bg-area">${area}</div><div class="bg-el">${el}</div></div>`).join('');
+document.getElementById('fs-year').value=new Date().getFullYear();
 drawFS();
 </script>
 </body>
