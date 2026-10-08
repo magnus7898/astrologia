@@ -1,8 +1,12 @@
-/* chartpanels.js — side panels next to the natal wheel (astro.html)
+/* chartpanels.js — page layout + side panels of the natal chart (astro.html)
    Self-injecting add-on. In astro.html, after the other add-ons:
        <script src="chartpanels.js"></script>
-   Wide screens (≥1400px): two panels left and right of the wheel.
-   Narrower screens: the same two panels as cards under the wheel.
+   Layout (≥1400px):
+     [ dominants + balance ]  [ wheel ]  [ planets + portrait ]
+     [ houses ] [ fixed stars ] [ aspects ]
+     [ Cinderella ] [ hard periods ]
+     [ true sky   ] [ sky poster   ]
+   Narrower screens fold the same blocks into 2 columns, phones into 1.
    LEFT  — balance: elements, modalities, yang/yin, hemispheres
    RIGHT — portrait: big three, chart ruler, Moon phase, aspect balance,
            retrograde planets, stelliums
@@ -23,8 +27,40 @@ const HARM=new Set(['ტრინი','სექსტილი']),TENSE=new Set
 function css(){
   if($('cp-css'))return;
   const s=document.createElement('style');s.id='cp-css';s.textContent=`
-#side-panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0 4px}
-@media(max-width:640px){#side-panels{grid-template-columns:1fr}}
+#side-panels{display:none}
+#chart-area>.sec-title.lay-hide,#chart-area>.tables-wrap{display:none!important}
+.lay{display:grid;gap:14px;margin:14px 0 16px;width:100%}
+.lay .data-card{margin:0!important;overflow-x:auto}
+@media(min-width:1000px){#chart-area .lay{width:min(1720px,calc(100vw - 32px));position:relative;left:50%;transform:translateX(-50%)}}
+/* top row: wheel + planets + dominants + the two panels */
+#lay-top{grid-template-columns:1fr 1fr;align-items:start;margin-top:0}
+#lay-top>#wheel-wrap{grid-column:1/-1;order:0;max-width:820px;width:100%;justify-self:center}
+#lay-col-l,#lay-col-r{display:contents}
+#dominants-card{order:2}#lay-planets{order:1}#cp-left{order:3}#cp-right{order:4}
+@media(max-width:700px){#lay-top{grid-template-columns:1fr}}
+@media(min-width:1400px){
+  #lay-top{grid-template-columns:minmax(370px,1fr) minmax(560px,820px) minmax(370px,1fr)}
+  #lay-col-l,#lay-col-r{display:flex;flex-direction:column;gap:14px;min-width:0}
+  #lay-top>#wheel-wrap{grid-column:auto}
+  #lay-col-r td,#lay-col-l td,#lay-col-r th{padding-left:6px;padding-right:6px}
+  #lay-planets td{white-space:normal}
+  #lay-col-l .domx-grid{grid-template-columns:1fr!important;gap:6px!important}
+  #lay-planets td:nth-child(2){white-space:nowrap}
+}
+/* middle row: houses · fixed stars · aspects */
+#lay-mid{grid-template-columns:1fr;align-items:start}
+@media(min-width:800px){
+  #lay-mid{grid-template-columns:1fr 1fr}
+  #lay-mid.has-fs>.asp-card{grid-column:1/-1}
+}
+@media(min-width:1300px){
+  #lay-mid.has-fs{grid-template-columns:.8fr 1.15fr 1.15fr}
+  #lay-mid.has-fs>.asp-card{grid-column:auto}
+  #lay-mid:not(.has-fs){grid-template-columns:.8fr 1.2fr}
+}
+/* bottom: the four analysis cards, 2 × 2 */
+#lay-bot{grid-template-columns:1fr;align-items:start}
+@media(min-width:900px){#lay-bot{grid-template-columns:1fr 1fr}}
 .cp{background:rgba(8,6,20,.72);border:1px solid rgba(45,31,110,.55);border-radius:14px;padding:14px 16px 12px;
   backdrop-filter:blur(8px);box-shadow:0 8px 30px rgba(0,0,0,.35);font-family:'Noto Sans Georgian',sans-serif}
 .cp h3{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,.85);
@@ -56,24 +92,40 @@ function css(){
 .cp-asp{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
 .cp-asp span{background:rgba(45,31,110,.3);border-radius:10px;padding:2px 9px;font-size:11px;color:#d8d0f0}
 .cp-asp span i{font-style:normal;font-family:serif;margin-right:4px}
-@media(min-width:1400px){
-  #side-panels{display:block;margin:0}
-  #side-panels .cp{position:absolute;top:var(--cp-top,40px);width:min(330px,calc((100vw - 820px)/2 - 56px))}
-  #cp-left{right:calc(100% + 28px)}
-  #cp-right{left:calc(100% + 28px)}
-}`;
+`;
   document.head.appendChild(s);
 }
-function host(){
-  let h=$('side-panels');
-  if(!h){
-    const ww=$('wheel-wrap');if(!ww)return null;
-    h=document.createElement('div');h.id='side-panels';
-    h.innerHTML='<aside class="cp" id="cp-left"></aside><aside class="cp" id="cp-right"></aside>';
-    ww.parentNode.insertBefore(h,ww.nextSibling);
-  }
-  return h;
+/* ── LAYOUT: move the existing cards into three grids (once) ── */
+function layout(){
+  if($('lay-top'))return true;
+  const ww=$('wheel-wrap'),ca=$('chart-area');if(!ww||!ca)return false;
+  const pc=$('planet-tbody')&&$('planet-tbody').closest('.data-card'),hc=$('house-card'),
+        ac=$('aspect-tbody')&&$('aspect-tbody').closest('.data-card'),dom=$('dominants-card');
+  if(!pc||!hc||!ac)return false;
+  pc.id=pc.id||'lay-planets';ac.classList.add('asp-card');
+  const mk=(id,cls)=>{const e=document.createElement('div');e.id=id;if(cls)e.className=cls;return e;};
+  const top=mk('lay-top','lay'),L=mk('lay-col-l'),Rc=mk('lay-col-r');
+  ww.parentNode.insertBefore(top,ww);
+  const cl=document.createElement('aside');cl.className='cp';cl.id='cp-left';cl.style.display='none';
+  const cr=document.createElement('aside');cr.className='cp';cr.id='cp-right';cr.style.display='none';
+  if(dom)L.appendChild(dom);L.appendChild(cl);      /* dominants first, then balance */
+  Rc.appendChild(pc);Rc.appendChild(cr);             /* planets first, then portrait  */
+  top.appendChild(L);top.appendChild(ww);top.appendChild(Rc);
+  /* middle: houses · stars · aspects, where the tables were */
+  const tw=document.querySelector('#chart-area .tables-wrap');
+  const mid=mk('lay-mid','lay');
+  (tw||ac).parentNode.insertBefore(mid,tw||ac);
+  mid.appendChild(hc);mid.appendChild(ac);
+  /* the two section titles that no longer describe what follows */
+  ca.querySelectorAll(':scope>.sec-title').forEach(t=>{const x=t.textContent.trim();
+    if(x==='პლანეტები'||x==='ასპექტები')t.classList.add('lay-hide');});
+  /* bottom: the four analysis cards */
+  const four=['cinderella-card','hardperiods-card','skymap-card','skychart-card'].map($).filter(Boolean);
+  if(four.length){const bot=mk('lay-bot','lay');four[0].parentNode.insertBefore(bot,four[0]);four.forEach(c=>bot.appendChild(c));}
+  return true;
 }
+function host(){return layout()?$('lay-top'):null;}
+const showCp=on=>['cp-left','cp-right'].forEach(id=>{const e=$(id);if(e)e.style.display=on?'':'none';});
 const si=d=>Math.floor((((+d)%360)+360)%360/30);
 const glyph=n=>{const i=(typeof PI!=='undefined'&&PI[n])||null;
   if(n==='მზე')return '☉';if(n==='AC'||n==='MC')return n;return i?i.sym:n;};
@@ -152,51 +204,39 @@ function right(d,asps){
 }
 
 function render(d){
-  const h=host();if(!h)return;
+  if(!host())return;
   try{
     $('cp-left').innerHTML=left(d);
     let asps=d._allAspects||[];
     try{asps=asps.filter(isAspectVisible);}catch(e){}
     $('cp-right').innerHTML=right(d,asps);
-    h.style.display='';
-    const ww=$('wheel-wrap');
-    if(ww)h.style.setProperty('--cp-top',(ww.offsetTop+20)+'px');
-  }catch(e){console.warn('chartpanels',e);h.style.display='none';}
+    showCp(true);
+  }catch(e){console.warn('chartpanels',e);showCp(false);}
 }
 if(typeof drawWheel==='function'){
   const orig=drawWheel;
   window.drawWheel=function(d1,d2){
     const r=orig.apply(this,arguments);
-    try{
-      const h=host();
-      if(d1&&!d2&&d1.planets)render(d1);else if(h)h.style.display='none';
-    }catch(e){}
+    try{if(d1&&!d2&&d1.planets)render(d1);else showCp(false);}catch(e){}
     return r;
   };
 }
 css();
 /* hide when the wheel itself is hidden (astrocartography, etc.) */
 const ww=$('wheel-wrap');
-if(ww&&typeof MutationObserver!=='undefined')new MutationObserver(()=>{const h=$('side-panels');
-  if(h&&ww.style.display==='none')h.style.display='none';}).observe(ww,{attributes:true,attributeFilter:['style']});
-/* aspects and dominants side by side */
-function aspDom(){
-  const at=$('aspect-tbody'),dom=$('dominants-card');
-  if(!at||!dom||$('asp-dom'))return;
-  const ac=at.closest('.data-card');if(!ac)return;
-  const w=document.createElement('div');w.id='asp-dom';w.className='asp-dom';
-  ac.parentNode.insertBefore(w,ac);w.appendChild(ac);w.appendChild(dom);
-  const st=document.createElement('style');st.textContent=`
-.asp-dom{display:grid;grid-template-columns:1fr;gap:14px;align-items:start;margin-bottom:8px}
-.asp-dom>.data-card{margin:0!important}
-@media(min-width:1000px){.asp-dom.two{grid-template-columns:1fr 1fr}}
-@media(min-width:1300px){#chart-area .asp-dom.two{grid-template-columns:1fr 1.1fr;width:min(1300px,calc(100vw - 48px));
-  position:relative;left:50%;transform:translateX(-50%)}}`;
-  document.head.appendChild(st);
-  const upd=()=>{const vis=e=>e.style.display!=='none';w.classList.toggle('two',vis(ac)&&vis(dom));};
-  const mo=new MutationObserver(upd);mo.observe(dom,{attributes:true,attributeFilter:['style']});
-  mo.observe(ac,{attributes:true,attributeFilter:['style']});upd();
+if(ww&&typeof MutationObserver!=='undefined')new MutationObserver(()=>{
+  if(ww.style.display==='none')showCp(false);}).observe(ww,{attributes:true,attributeFilter:['style']});
+/* Selena: the wheel draws its symbol; the tables showed the text "SEL" */
+const SEL_SVG='<svg width="14" height="14" viewBox="0 0 14 14" style="vertical-align:-2px"><circle cx="7" cy="7" r="5.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.8 7a5.2 5.2 0 0 1 10.4 0z" fill="currentColor"/></svg>';
+function fixSel(root){if(!root)return;root.querySelectorAll('span').forEach(sp=>{
+  if(!sp.children.length&&sp.textContent.trim()==='SEL')sp.innerHTML=SEL_SVG;});}
+for(const fn of ['drawPlanetTable','drawAspectTable']){
+  if(typeof window[fn]!=='function')continue;
+  const orig=window[fn];
+  window[fn]=function(){const r=orig.apply(this,arguments);
+    try{fixSel($(arguments[fn==='drawPlanetTable'?2:1]||'aspect-tbody'));fixSel($('fs-tbody'));}catch(e){}return r;};
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',aspDom);else aspDom();
+window._SEL_SVG=SEL_SVG;
+layout();
 window._chartPanels={render};
 })();
