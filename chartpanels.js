@@ -2,10 +2,10 @@
    Self-injecting add-on. In astro.html, after the other add-ons:
        <script src="chartpanels.js"></script>
    Layout (wide screens):
-     [ big three ] [ elements ] [ moon day ] [ almuten ] [ doryphory & charioteer ]
-                                             (the last two: natal only)
-     [ orb controller ]
+     [ big three ] [ elements ] [ moon day ] [ almuten + doryphory + charioteer ]
+                                             (the last box: natal only)
      [ wheel ]                [ aspect filter · aspects ]
+     [ orb controller ]
      [ planets ] [ houses ] [ fixed stars ]
      [ dominants — full width, 4 columns ]
      [ Cinderella ] [ hard periods ]
@@ -40,12 +40,15 @@ function css(){
 #lay-strip{grid-template-columns:1fr;align-items:stretch;margin-bottom:10px}
 @media(min-width:800px){#lay-strip{grid-template-columns:1fr 1fr}#lay-strip>#lunar-badge{grid-column:1/-1}}
 @media(min-width:1100px){#lay-strip{grid-template-columns:1fr 1fr .55fr}#lay-strip>#lunar-badge{grid-column:auto;flex-direction:column}
-  #lay-strip.nat{grid-template-columns:1fr 1fr .5fr}#lay-strip.nat>#nx-alm{grid-column:1/3}}
-@media(min-width:1500px){#lay-strip.nat{grid-template-columns:.95fr 1fr .5fr 1.3fr .95fr}#lay-strip.nat>#nx-alm{grid-column:auto}}
+  #lay-strip.nat>#nx-alm{grid-column:1/-1}}
+@media(min-width:1500px){#lay-strip.nat{grid-template-columns:.9fr .95fr .45fr 2.1fr}#lay-strip.nat>#nx-alm{grid-column:auto}}
+.nx-in{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:700px){.nx-in{grid-template-columns:1.4fr 1fr;gap:20px}
+  .nx-sbw{border-left:1px solid rgba(45,31,110,.45);padding-left:18px}}
 #lay-strip .cp{min-width:0}
 #lay-strip>#lunar-badge{margin:0!important;display:flex!important;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px}
 #lay-strip>#lunar-badge[style*="display: none"],#lay-strip>#lunar-badge[style*="display:none"]{display:none!important}
-#lay-orb{margin:0 0 14px}
+#lay-orb{margin:4px 0 14px}
 @media(min-width:1000px){#chart-area #lay-orb{width:min(1640px,calc(100vw - 40px));position:relative;left:50%;transform:translateX(-50%)}}
 #lay-orb #orb-panel{margin:0}
 .nx-win{font-size:13px;color:#e8e0ff;margin:-2px 0 8px}
@@ -133,21 +136,21 @@ function layout(){
   if(!pc||!hc||!ac)return false;
   pc.id=pc.id||'lay-planets';ac.classList.add('asp-card');
   const mk=(id,cls)=>{const e=document.createElement('div');e.id=id;if(cls)e.className=cls;return e;};
-  /* 0 — top strip: moon day · almuten figuris · doryphory & charioteer,
-         then the orb controller; 1 — wheel + (aspect filter, aspect list) */
+  /* 0 — top strip: big three · elements · moon day · (almuten + doryphory
+         + charioteer); 1 — wheel + (aspect filter, aspect list); then orbs */
   const strip=mk('lay-strip','lay'),orb=mk('lay-orb'),top=mk('lay-top','lay'),A=mk('lay-asp');
   ww.parentNode.insertBefore(strip,ww);
-  ww.parentNode.insertBefore(orb,ww);
   ww.parentNode.insertBefore(top,ww);
   /* order: big three · elements · moon day · almuten · doryphory/charioteer */
   const cl=document.createElement('aside');cl.className='cp';cl.id='cp-left';cl.style.display='none';
   const cr=document.createElement('aside');cr.className='cp';cr.id='cp-right';cr.style.display='none';
   strip.appendChild(cr);strip.appendChild(cl);
   const lb=$('lunar-badge');if(lb)strip.appendChild(lb);
+  /* one box: almuten figuris + doryphory & charioteer */
   const xa=document.createElement('aside');xa.className='cp nx';xa.id='nx-alm';xa.style.display='none';
-  const xb=document.createElement('aside');xb.className='cp nx';xb.id='nx-aur';xb.style.display='none';
-  strip.appendChild(xa);strip.appendChild(xb);
+  strip.appendChild(xa);
   top.appendChild(ww);top.appendChild(A);
+  top.parentNode.insertBefore(orb,top.nextSibling);
   const af=$('asp-filters');if(af)A.appendChild(af);
   A.appendChild(ac);
   /* 2 — planets · houses · fixed stars, where the tables were */
@@ -171,7 +174,7 @@ function layout(){
 function moveOrbPanel(){const op=$('orb-panel'),O=$('lay-orb');
   if(op&&O&&op.parentNode!==O)O.appendChild(op);}
 function host(){return layout()?$('lay-top'):null;}
-const showCp=on=>{['cp-left','cp-right'].concat(on?[]:['nx-alm','nx-aur']).forEach(id=>{const e=$(id);if(e)e.style.display=on?'':'none';});
+const showCp=on=>{['cp-left','cp-right'].concat(on?[]:['nx-alm']).forEach(id=>{const e=$(id);if(e)e.style.display=on?'':'none';});
   if(!on){const st=$('lay-strip');if(st)st.classList.remove('nat');}};
 const si=d=>Math.floor((((+d)%360)+360)%360/30);
 const glyph=n=>{const i=(typeof PI!=='undefined'&&PI[n])||null;
@@ -409,12 +412,13 @@ function render(d){
     showCp(true);
     moveOrbPanel();
     const natal=(typeof currentMode==='undefined')||currentMode==='natal';
-    const ca=$('nx-alm'),cb=$('nx-aur');
-    if(ca&&cb){
+    const ca=$('nx-alm');
+    if(ca){
       if(natal){const x=extraHTML(d);
-        ca.innerHTML='<h3>♛ ალმუტენ ფიგურის · Almuten Figuris</h3>'+x.a;cb.innerHTML='<h3>⚔ დორიფორი და მეეტლე</h3>'+x.b;
-        ca.style.display=cb.style.display='';}
-      else ca.style.display=cb.style.display='none';
+        ca.innerHTML='<div class="nx-in"><div><h3>♛ ალმუტენ ფიგურის · Almuten Figuris</h3>'+x.a+
+          '</div><div class="nx-sbw"><h3>⚔ დორიფორი და მეეტლე</h3>'+x.b+'</div></div>';
+        ca.style.display='';}
+      else ca.style.display='none';
       const st=$('lay-strip');if(st)st.classList.toggle('nat',natal);
     }
   }catch(e){console.warn('chartpanels',e);showCp(false);}
