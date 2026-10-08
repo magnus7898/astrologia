@@ -179,5 +179,24 @@ css();
 const ww=$('wheel-wrap');
 if(ww&&typeof MutationObserver!=='undefined')new MutationObserver(()=>{const h=$('side-panels');
   if(h&&ww.style.display==='none')h.style.display='none';}).observe(ww,{attributes:true,attributeFilter:['style']});
+/* aspects and dominants side by side */
+function aspDom(){
+  const at=$('aspect-tbody'),dom=$('dominants-card');
+  if(!at||!dom||$('asp-dom'))return;
+  const ac=at.closest('.data-card');if(!ac)return;
+  const w=document.createElement('div');w.id='asp-dom';w.className='asp-dom';
+  ac.parentNode.insertBefore(w,ac);w.appendChild(ac);w.appendChild(dom);
+  const st=document.createElement('style');st.textContent=`
+.asp-dom{display:grid;grid-template-columns:1fr;gap:14px;align-items:start;margin-bottom:8px}
+.asp-dom>.data-card{margin:0!important}
+@media(min-width:1000px){.asp-dom.two{grid-template-columns:1fr 1fr}}
+@media(min-width:1300px){#chart-area .asp-dom.two{grid-template-columns:1fr 1.1fr;width:min(1300px,calc(100vw - 48px));
+  position:relative;left:50%;transform:translateX(-50%)}}`;
+  document.head.appendChild(st);
+  const upd=()=>{const vis=e=>e.style.display!=='none';w.classList.toggle('two',vis(ac)&&vis(dom));};
+  const mo=new MutationObserver(upd);mo.observe(dom,{attributes:true,attributeFilter:['style']});
+  mo.observe(ac,{attributes:true,attributeFilter:['style']});upd();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',aspDom);else aspDom();
 window._chartPanels={render};
 })();
