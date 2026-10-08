@@ -101,6 +101,15 @@ input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(12
 .pending{padding:18px 16px;text-align:center;font-size:11px;color:var(--dim);line-height:1.8}
 .pending b{color:var(--gold-l);font-weight:500}
 
+.yr-nav{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px 0;flex-wrap:wrap}
+.yr-nav button{background:rgba(45,31,110,.5);border:1px solid rgba(100,70,200,.45);color:var(--purple);border-radius:8px;
+  padding:5px 12px;font-size:12px;cursor:pointer;font-family:'Cinzel',serif}
+.yr-nav button:hover{border-color:var(--purple);color:#fff}
+.yr-lbl{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-l);letter-spacing:1px;text-align:center}
+.yr-lbl small{display:block;font-family:'Noto Sans Georgian',sans-serif;font-size:10px;color:var(--dim);letter-spacing:0}
+.mini-slot.now .pcard{box-shadow:0 0 0 3px rgba(4,3,10,1),0 0 0 5px rgba(167,139,250,.9),0 0 26px rgba(167,139,250,.45)}
+.mini-slot.now .mini-label{color:var(--purple);opacity:1}
+.note{font-size:10px;color:var(--dim);line-height:1.7;padding:0 14px 12px;text-align:center}
 table{width:100%;border-collapse:collapse;font-size:12px}
 td{padding:6px 14px;border-bottom:1px solid rgba(15,13,40,.8)}
 tr:last-child td{border-bottom:none}
@@ -153,10 +162,20 @@ td.k{color:var(--dim);font-size:10px;letter-spacing:1px;text-transform:uppercase
     </div>
   </div>
 
-  <div class="sec-title">52-დღიანი პერიოდები · Planetary Periods</div>
+  <div class="sec-title">სიცოცხლის გზა · Life Path Cards</div>
   <div class="data-card">
-    <div class="data-card-title">🪐 პლანეტური პერიოდები დაბადების დღიდან</div>
+    <div class="data-card-title">🌌 სიცოცხლის გზის ბარათები — მთელი ცხოვრება (Life Spread)</div>
+    <div class="dc-body" id="lifepath-body"></div>
+  </div>
+
+  <div class="sec-title">52-დღიანი პერიოდები · Yearly Spread</div>
+  <div class="data-card">
+    <div class="data-card-title">🪐 წლიური ბარათები და პლანეტური პერიოდები</div>
+    <div class="yr-nav"><button type="button" id="yr-prev">◀ წინა</button><div class="yr-lbl" id="yr-lbl"></div><button type="button" id="yr-next">შემდეგი ▶</button></div>
     <div class="dc-body" id="periods-body"></div>
+    <div class="dc-body" id="year-extra" style="padding-top:0"></div>
+    <div class="note">ყოველ დაბადების დღეს იწყება ახალი წლიური განლაგება (ასაკი 0 = Life Spread, ციკლი 90 წელია).
+      წელი იყოფა 7 × 52-დღიან პერიოდად — მერკურიდან ნეპტუნამდე.</div>
   </div>
 
   <div class="sec-title">დეტალები</div>
@@ -169,7 +188,7 @@ td.k{color:var(--dim);font-size:10px;letter-spacing:1px;text-transform:uppercase
 /* ════════════════════════════════════════════════════════════════
    SPREAD DATA
    Positions are indexed 0..51 in reading order (right→left, top→down,
-   crown line first — Camp chart convention).
+   Mercury row … Neptune row, then the 3-card crown line — Camp convention).
 
    SPIRITUAL_SPREAD is the natural order A♥ → K♠ (canonical).
    LIFE_SPREAD (Grand Solar Spread, age 0) must be entered from
@@ -234,6 +253,20 @@ function zodiacFor(month,day){
   return ZODIAC[ZODIAC.length-1];
 }
 
+/* ── YEARLY SPREADS ──
+   Each year the deck is "quadrated" once more. The quadration is a fixed
+   shuffle of POSITIONS, and the Life Spread is the first quadration of the
+   Spiritual (natural) Spread — so the shuffle can be read off directly:
+   LIFE[i] = SPIRITUAL[Q[i]]  →  next[i] = prev[Q[i]].
+   Check: Q has cycles 1·1·1·2·2·45 → it repeats after exactly 90 steps,
+   the 90-year cycle of the system; K♠ J♥ 8♣ stay fixed, A♣↔2♥ and 7♦↔9♥
+   swap every year (the fixed and semi-fixed cards).
+   Age 0 = Life Spread, age 1 = second quadration, … age 90 = Life again. */
+const QUAD=LIFE_SPREAD.map(c=>SPIRITUAL_SPREAD.indexOf(c));
+const YEARLY=[LIFE_SPREAD];
+for(let a=1;a<90;a++){const p=YEARLY[a-1];YEARLY.push(QUAD.map(i=>p[i]));}
+const yearlySpread=age=>YEARLY[((age%90)+90)%90];
+
 /* ── SPREAD DERIVATIONS (need LIFE_SPREAD) ── */
 function posOf(spread,code){return spread.indexOf(code);}
 function cardAt(spread,idx){return spread[((idx%52)+52)%52];}
@@ -252,6 +285,7 @@ function lifeDerivations(code){
   return{
     moon:cardAt(LIFE_SPREAD,pL-1),
     planetary:[1,2,3,4,5,6,7].map(i=>cardAt(LIFE_SPREAD,pL+i)), // Mercury..Neptune
+    pluto:cardAt(LIFE_SPREAD,pL+8),result:cardAt(LIFE_SPREAD,pL+9),
     karma
   };
 }
@@ -274,6 +308,46 @@ function cardNameKa(code){
 }
 const KA_MONTHS=['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
 function fmtDate(d){return `${d.getDate()} ${KA_MONTHS[d.getMonth()]}`;}
+
+/* ── YEARLY READING (52-day periods of one birthday-year) ── */
+let STATE=null;
+function renderYear(){
+  const {code,month,day,year,age,nowAge}=STATE;
+  const bday=new Date(year+age,month-1,day);
+  const next=new Date(year+age+1,month-1,day);next.setDate(next.getDate()-1);
+  document.getElementById('yr-lbl').innerHTML=`ასაკი ${age}${age===nowAge?' · მიმდინარე':''}`+
+    `<small>${fmtDate(bday)} ${bday.getFullYear()} — ${fmtDate(next)} ${next.getFullYear()}</small>`;
+  document.getElementById('yr-prev').disabled=age<=0;
+  const periods=document.getElementById('periods-body'),extra=document.getElementById('year-extra');
+  if(code==='JOKER'){
+    periods.innerHTML='<div class="pending">ჯოკერს წლიური ბარათები არ აქვს — ის ნებისმიერი ბარათის როლს ირგებს.</div>';extra.innerHTML='';return;
+  }
+  const Y=yearlySpread(age),pY=Y.indexOf(code),pL=LIFE_SPREAD.indexOf(code);
+  const today=new Date();today.setHours(0,0,0,0);
+  let ph='';
+  for(let i=0;i<7;i++){
+    const start=new Date(bday);start.setDate(start.getDate()+i*52);
+    const end=new Date(bday);end.setDate(end.getDate()+(i+1)*52-1);
+    if(i===6)end.setTime(next.getTime());                    /* 7×52 = 364: Neptune takes the last day */
+    const c=cardAt(Y,pY+1+i),on=today>=start&&today<=end;
+    ph+=`<div class="mini-slot${on?' now':''}">${cardHTML(c,true)}
+      <div class="mini-label">${PLANET_GLYPH[i]} ${PLANETS_KA[i]}${on?' · ახლა':''}</div>
+      <div class="mini-dates">${fmtDate(start)} — ${fmtDate(end)}</div>
+      <div class="mini-dates">${cardNameKa(c)}</div></div>`;
+  }
+  periods.innerHTML=ph;
+  const env=Y[pL],disp=LIFE_SPREAD[pY];
+  const ex=[[cardAt(Y,pY+8),'♇ პლუტონი','წლის გამოწვევა'],[cardAt(Y,pY+9),'✦ შედეგი','წლის შედეგი / ჯილდო'],
+            [env,'🏞 გარემო','ბარათი, რომელიც შენს Life-ადგილზე დგას — წლის კეთილი გავლენა'],
+            [disp,'⇄ ჩანაცვლება','ბარათი, რომლის Life-ადგილზეც შენ დგახარ — წლის ამოცანა']];
+  extra.innerHTML=ex.map(([c,l,t])=>`<div class="mini-slot" title="${t}">${cardHTML(c,true)}<div class="mini-label">${l}</div>
+    <div class="mini-dates">${cardNameKa(c)}</div></div>`).join('');
+}
+document.addEventListener('click',e=>{
+  if(!STATE)return;
+  if(e.target.id==='yr-prev'&&STATE.age>0){STATE.age--;renderYear();}
+  if(e.target.id==='yr-next'){STATE.age++;renderYear();}
+});
 
 /* ── MAIN ── */
 function generate(){
@@ -344,22 +418,19 @@ function generate(){
     }
   }
 
-  // 52-day periods — dates always computable; cards need spread
-  const periods=document.getElementById('periods-body');
-  let ph='';
+  // Life path cards (Life Spread — the same for the whole life)
   const der2=(code!=='JOKER')?lifeDerivations(code):null;
+  document.getElementById('lifepath-body').innerHTML=der2?
+    [...der2.planetary.map((c,i)=>[c,PLANET_GLYPH[i]+' '+PLANETS_KA[i]]),[der2.pluto,'♇ პლუტონი'],[der2.result,'✦ შედეგი']]
+      .map(([c,l])=>`<div class="mini-slot">${cardHTML(c,true)}<div class="mini-label">${l}</div><div class="mini-dates">${cardNameKa(c)}</div></div>`).join('')
+    :'<div class="pending">ჯოკერს სიცოცხლის გზის ბარათები არ აქვს</div>';
+
+  // yearly spread for the current age (birthday to birthday)
   const now=new Date();
-  let bday=new Date(now.getFullYear(),month-1,day);
-  if(bday>now)bday=new Date(now.getFullYear()-1,month-1,day);
-  for(let i=0;i<7;i++){
-    const start=new Date(bday);start.setDate(start.getDate()+i*52);
-    const end=new Date(bday);end.setDate(end.getDate()+(i+1)*52-1);
-    const cardPart=der2?cardHTML(der2.planetary[i],true):`<div class="pcard sm blk" style="opacity:.25"><div class="big-suit">?</div></div>`;
-    ph+=`<div class="mini-slot">${cardPart}
-      <div class="mini-label">${PLANET_GLYPH[i]} ${PLANETS_KA[i]}</div>
-      <div class="mini-dates">${fmtDate(start)} — ${fmtDate(end)}</div></div>`;
-  }
-  periods.innerHTML=ph;
+  let by=now.getFullYear();
+  if(new Date(by,month-1,day)>now)by--;
+  STATE={code,month,day,year,age:Math.max(0,by-year),nowAge:Math.max(0,by-year)};
+  renderYear();
 
   // Meta
   const rows=[
