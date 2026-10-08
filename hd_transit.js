@@ -8,8 +8,11 @@
      • channels opened right now: your hanging gate + transit body in the
        partner gate, and purely transit (collective) channels
      • the chart UNDER the transit (centers, type, authority) — conditioning
-     • picker: choose channels / gates (one or several) → when each is
-       activated and by which transit body, computed from the ingress table
+     • search by CHANNELS, GATES and PLANETS (one or several, mixed):
+         – channel / gate  → when it is activated and by which body
+         – planet alone    → its full gate-by-gate route in the period
+         – planet + gate/channel → only the windows THAT planet makes
+       plus a free-text search box ("20", "10-20", "მარსი, 34")
    The 88° rule is natal-only; transits are plain current positions.      */
 (function(){
 'use strict';
@@ -21,7 +24,14 @@ const BODY_KA={"Sun":"მზე","Earth":"დედამიწა","North Node"
 const CKA=c=>(typeof CENTER_KA!=='undefined'&&CENTER_KA[c])||c;
 const TKA=t=>(typeof TYPE_KA!=='undefined'&&TYPE_KA[t])||t;
 let svgT=null,last=null,pkTab='ch';
-const SEL=new Set();          /* 'c:10-20' / 'g:20' — survives a recalculation */
+const SEL=new Set();          /* 'c:10-20' / 'g:20' / 'p:Mars' — survives a recalculation */
+const BODIES=["Sun","Earth","North Node","South Node","Moon","Mercury","Venus","Mars",
+  "Jupiter","Saturn","Uranus","Neptune","Pluto"];
+const BODY_EN={"Sun":"sun","Earth":"earth","North Node":"north node rahu","South Node":"south node ketu",
+  "Moon":"moon","Mercury":"mercury","Venus":"venus","Mars":"mars","Jupiter":"jupiter","Saturn":"saturn",
+  "Uranus":"uranus","Neptune":"neptune","Pluto":"pluto"};
+const GL=b=>(typeof PLANET_GLYPH!=='undefined'&&PLANET_GLYPH[b])||'';
+let ONLY_KEY=false;           /* planet route: only gates that matter for you */
 
 /* ── CSS: transit colour on the bodygraph + panel bits ── */
 function css(){
@@ -79,6 +89,19 @@ function css(){
 .tw .nowb{display:inline-block;background:${TCOL};color:#fff;border-radius:3px;padding:0 5px;font-size:.6rem;margin-left:5px}
 .tw .eye{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:5px;padding:2px 7px;cursor:pointer;font-size:.7rem}
 .tr-empty{color:var(--ink-dim);font-style:italic;font-size:.74rem;padding:4px 8px}
+.pk-grid.pl{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+.pk.pl .gn{float:right;color:#9cc8f4;font-size:.7rem}
+.pk.pl.off{opacity:.35;cursor:not-allowed}
+.tr-q{flex:1 1 220px;min-width:180px;background:var(--raised,#1a1424);color:var(--ink);border:1px solid var(--border);
+  border-radius:6px;padding:5px 10px;font-size:.74rem;font-family:inherit}
+.tr-q:focus{outline:none;border-color:${TCOL}}
+.tr-qmsg{font-size:.66rem;color:#e8a070;min-height:1em;margin:-6px 0 8px}
+.tr-flt{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.7rem;color:#cfe3fa;
+  background:rgba(58,141,222,.08);border:1px dashed rgba(58,141,222,.45);border-radius:6px;padding:6px 10px;margin-bottom:10px}
+.tr-flt .chip{background:rgba(58,141,222,.18);border-radius:10px;padding:1px 8px;cursor:pointer}
+.tw .tag{display:inline-block;border-radius:3px;padding:0 5px;font-size:.6rem;margin-left:4px;border:1px solid rgba(196,149,80,.6);color:var(--gold-lt,#e8c47a)}
+.tw .tag.op{border-color:${TCOL};color:#9cc8f4}
+.tw .gbig{display:inline-block;min-width:26px;font-family:'Cinzel',serif;color:#cfe3fa}
 `;
   const st=document.createElement('style');st.id='hd-transit-css';st.textContent=s;document.head.appendChild(st);
 }
@@ -147,6 +170,8 @@ function inject(){
       <div class="tr-ctrl">
         <button type="button" data-tab="ch" class="on">არხები (36)</button>
         <button type="button" data-tab="gt">კარიბჭეები (64)</button>
+        <button type="button" data-tab="pl">პლანეტები (13)</button>
+        <input class="tr-q" id="tr-q" placeholder="ძიება: 20 · 10-20 · მარსი · 34, იუპიტერი ↵">
         <span class="sp"></span>
         <button type="button" data-q="hang">ჩამოკიდებული არხები</button>
         <button type="button" data-q="clear">გასუფთავება</button>
@@ -156,8 +181,9 @@ function inject(){
         <span><i style="border-left:3px solid #c49550;background:#1a1424"></i>ჩამოკიდებული (ერთი კარიბჭე შენია)</span>
         <span><i style="background:${TCOL};border-radius:50%"></i>ახლა ღიაა / ტრანზიტშია</span>
       </div>
+      <div class="tr-qmsg" id="tr-qmsg"></div>
       <div id="tr-pk"></div>
-      <div id="tr-res"><div class="tr-empty">აირჩიე ერთი ან რამდენიმე არხი ან კარიბჭე — აქ გამოჩნდება, როდის აქტიურდება და რომელი პლანეტით.</div></div>
+      <div id="tr-res"><div class="tr-empty">აირჩიე არხი, კარიბჭე ან პლანეტა (ან რამდენიმე ერთად) — აქ გამოჩნდება, როდის აქტიურდება და რომელი პლანეტით.</div></div>
     </div>`;
   const syn=$('results-synastry');
   (syn&&syn.parentNode?syn.parentNode:document.body).insertBefore(sec,syn?syn.nextSibling:null);
@@ -172,9 +198,10 @@ function inject(){
     if(last)renderPicker(last);});
   sec.querySelectorAll('.tr-ctrl button[data-q]').forEach(b=>b.onclick=()=>{
     if(!last)return;
-    if(b.dataset.q==='clear')SEL.clear();
+    if(b.dataset.q==='clear'){SEL.clear();$('tr-qmsg').textContent='';}
     else last.channels_all.forEach(c=>{if(chState(last,c)==='hang')SEL.add('c:'+c.gate_a+'-'+c.gate_b);});
     renderPicker(last);renderResults(last);});
+  $('tr-q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doSearch();}});
 
   /* the page's setMode() highlights tabs by index: keep ours in sync */
   if(typeof setMode==='function'&&!setMode._tr){
@@ -333,6 +360,12 @@ function renderPicker(d){
       const k='c:'+c.gate_a+'-'+c.gate_b,st=chState(d,c);
       return `<button type="button" class="pk ${st}${openNow.has(c.gate_a+'-'+c.gate_b)?' now':''}${SEL.has(k)?' sel':''}" data-k="${k}">
         <b>${c.gate_a}–${c.gate_b}</b> ${c.name}</button>`;}).join('')+'</div>';
+  }else if(pkTab==='pl'){
+    const cur={};d.activations.forEach(a=>{cur[a.planet]=a.gate;});
+    h='<div class="pk-grid pl">'+BODIES.map(b=>{
+      const k='p:'+b,has=!!d.segments[b];
+      return `<button type="button" class="pk pl${has?'':' off'}${SEL.has(k)?' sel':''}" data-k="${k}"${has?'':' disabled title="მთვარე: ჩართე „მთვარის ტრანზიტებიც“"'}>
+        <b>${GL(b)} ${BODY_KA[b]||b}</b>${cur[b]!=null?`<span class="gn">${cur[b]}</span>`:''}</button>`;}).join('')+'</div>';
   }else{
     h='<div class="pk-grid gt">';
     for(let g=1;g<=64;g++){const k='g:'+g;
@@ -340,7 +373,7 @@ function renderPicker(d){
     h+='</div>';
   }
   $('tr-pk').innerHTML=h;
-  $('tr-pk').querySelectorAll('.pk').forEach(b=>b.onclick=()=>{
+  $('tr-pk').querySelectorAll('.pk:not([disabled])').forEach(b=>b.onclick=()=>{
     const k=b.dataset.k;SEL.has(k)?SEL.delete(k):SEL.add(k);
     b.classList.toggle('sel',SEL.has(k));renderResults(d);});
   const P=d.period,yrs=P.days>=365?`${Math.round(P.days/365)} წელი`:`${P.days} დღე`;
@@ -348,17 +381,21 @@ function renderPicker(d){
 }
 
 /* every [start,end] a gate is held by a transit body (one row per pass) */
-function gatePasses(d,g){
+/* planets chosen as a filter (empty = every transit body) */
+const pFilter=()=>new Set([...SEL].filter(k=>k[0]==='p').map(k=>k.slice(2)));
+function gatePasses(d,g,P){
   const out=[];
-  for(const [body,segs] of Object.entries(d.segments))
+  for(const [body,segs] of Object.entries(d.segments)){
+    if(P&&P.size&&!P.has(body))continue;
     for(const [gg,s,e,r] of segs) if(gg===g) out.push({body,s,e,r});
+  }
   return out.sort((a,b)=>a.s-b.s);
 }
 /* gate covered by natal or by any transit body, merged into intervals */
-function coverage(d,g){
+function coverage(d,g,F){
   const P=d.period;
   if(d.natal_gates.includes(g))return [{s:P.jd0,e:P.jd1,natal:true}];
-  const ps=gatePasses(d,g),out=[];
+  const ps=gatePasses(d,g,F),out=[];
   for(const p of ps){
     const l=out[out.length-1];
     if(l&&p.s<=l.e+1e-6)l.e=Math.max(l.e,p.e);else out.push({s:p.s,e:p.e});
@@ -374,9 +411,9 @@ function intersect(A,B){
   }
   return out;
 }
-function whoIn(d,g,s,e){
+function whoIn(d,g,s,e,F){
   if(d.natal_gates.includes(g))return `${g} — შენი`;
-  const bs=[...new Set(gatePasses(d,g).filter(p=>p.s<e-1e-6&&p.e>s+1e-6).map(p=>(PLANET_GLYPH[p.body]||'')+' '+(BODY_KA[p.body]||p.body)+(p.r?' ℞':'')))];
+  const bs=[...new Set(gatePasses(d,g,F).filter(p=>p.s<e-1e-6&&p.e>s+1e-6).map(p=>(PLANET_GLYPH[p.body]||'')+' '+(BODY_KA[p.body]||p.body)+(p.r?' ℞':'')))];
   return `${g} — ${bs.join(', ')}`;
 }
 function rowHTML(s,e,main,sub){
@@ -387,16 +424,27 @@ function rowHTML(s,e,main,sub){
 }
 function renderResults(d){
   const box=$('tr-res');
-  if(!SEL.size){box.innerHTML='<div class="tr-empty">აირჩიე ერთი ან რამდენიმე არხი ან კარიბჭე — აქ გამოჩნდება, როდის აქტიურდება და რომელი პლანეტით.</div>';return;}
+  if(!SEL.size){box.innerHTML='<div class="tr-empty">აირჩიე არხი, კარიბჭე ან პლანეტა (ან რამდენიმე ერთად) — აქ გამოჩნდება, როდის აქტიურდება და რომელი პლანეტით.</div>';return;}
   const N=new Set(d.natal_gates),natC=new Set(d.natal_centers);
-  const items=[...SEL].sort();
-  box.innerHTML=items.map(k=>{
+  const F=pFilter();
+  const items=[...SEL].filter(k=>k[0]!=='p').sort((x,y)=>x[0]===y[0]?
+    (+x.slice(2).split('-')[0])-(+y.slice(2).split('-')[0]):x<y?-1:1);
+  const fname=[...F].map(b=>GL(b)+' '+(BODY_KA[b]||b));
+  let pre='';
+  if(F.size&&items.length){
+    pre=`<div class="tr-flt">🔎 მხოლოდ: ${[...F].map(b=>`<span class="chip" data-k="p:${b}" title="მოხსნა">${GL(b)} ${BODY_KA[b]||b} ✕</span>`).join('')}
+      <span style="color:var(--ink-dim)">— არხები და კარიბჭეები ნაჩვენებია მხოლოდ ამ პლანეტ(ებ)ის გავლით</span></div>`;
+  }
+  /* planets with nothing else selected → each planet's gate route */
+  const routes=(!items.length&&F.size)?[...F].filter(b=>d.segments[b]).sort((a,b)=>BODIES.indexOf(a)-BODIES.indexOf(b))
+    .map(b=>planetRoute(d,b)).join(''):'';
+  box.innerHTML=pre+routes+items.map(k=>{
     const x=`<button type="button" class="rb-x" data-k="${k}" title="მოხსნა">✕</button>`;
     if(k[0]==='g'){
-      const g=+k.slice(2),ps=gatePasses(d,g);
+      const g=+k.slice(2),ps=gatePasses(d,g,F);
       const head=`<div class="rb-h"><span>კარიბჭე ${g} <small>· ${CKA(GATE_TO_CENTER[g])}${N.has(g)?' · შენი ნატალური':''}</small></span><span><small>${ps.length} გავლა</small> ${x}</span></div>`;
       return `<div class="rb">${head}${ps.length?ps.map(p=>rowHTML(p.s,p.e,(PLANET_GLYPH[p.body]||'')+' '+(BODY_KA[p.body]||p.body)+(p.r?' ℞':''),'')).join('')
-        :'<div class="tr-empty">ამ პერიოდში არცერთი ტრანზიტული პლანეტა არ გადის</div>'}</div>`;
+        :`<div class="tr-empty">ამ პერიოდში ${F.size?fname.join(', ')+' ამ კარიბჭეში არ შედის':'არცერთი ტრანზიტული პლანეტა არ გადის'}</div>`}</div>`;
     }
     const [a,b]=k.slice(2).split('-').map(Number),c=d.channels_all.find(z=>z.gate_a===a&&z.gate_b===b);
     const st=chState(d,c);
@@ -405,19 +453,75 @@ function renderResults(d){
     let rows;
     if(st==='nat')rows='<div class="tr-empty">ეს არხი ნატალურად მუდმივად ღიაა — ტრანზიტი მას არ ცვლის</div>';
     else{
-      const iv=intersect(coverage(d,a),coverage(d,b));
-      rows=iv.length?iv.map(v=>rowHTML(v.s,v.e,`${whoIn(d,a,v.s,v.e)} · ${whoIn(d,b,v.s,v.e)}`,
+      const iv=intersect(coverage(d,a,F),coverage(d,b,F));
+      rows=iv.length?iv.map(v=>rowHTML(v.s,v.e,`${whoIn(d,a,v.s,v.e,F)} · ${whoIn(d,b,v.s,v.e,F)}`,
         newC.length?'+'+newC.map(CKA).join(', '):'')).join('')
-        :'<div class="tr-empty">ამ პერიოდში არ იხსნება</div>';
+        :`<div class="tr-empty">ამ პერიოდში არ იხსნება${F.size?' (ფილტრი: '+fname.join(', ')+')':''}</div>`;
       rows=`<div class="tr-empty" style="font-style:normal">${iv.length} ფანჯარა</div>`+rows;
     }
     return `<div class="rb"><div class="rb-h"><span>${a}–${b} ${c.name} <small>· ${tag}</small></span><span>${x}</span></div>${rows}</div>`;
   }).join('');
-  box.querySelectorAll('.rb-x').forEach(b=>b.onclick=()=>{SEL.delete(b.dataset.k);renderPicker(d);renderResults(d);});
+  box.querySelectorAll('.rb-x,.tr-flt .chip').forEach(b=>b.onclick=()=>{SEL.delete(b.dataset.k);renderPicker(d);renderResults(d);});
+  const ok=box.querySelectorAll('.rb-only');
+  ok.forEach(c=>c.onchange=()=>{ONLY_KEY=c.checked;renderResults(d);});
   box.querySelectorAll('.eye').forEach(b=>b.onclick=()=>{
     const p=jdParts(+b.dataset.jd,TZ());
     set('tt-year',p.y);set('tt-month',p.m);set('tt-day',p.d);set('tt-hour',p.h);set('tt-minute',p.mi);run();});
 }
+/* one planet: every gate it occupies in the period, with what it does for you */
+function planetRoute(d,b){
+  const N=new Set(d.natal_gates),segs=d.segments[b]||[];
+  const opens={};          /* missing partner gate -> channels it would complete */
+  d.channels_all.forEach(c=>{
+    if(N.has(c.gate_a)&&!N.has(c.gate_b))(opens[c.gate_b]=opens[c.gate_b]||[]).push(c);
+    if(N.has(c.gate_b)&&!N.has(c.gate_a))(opens[c.gate_a]=opens[c.gate_a]||[]).push(c);
+  });
+  const rows=segs.filter(([g])=>!ONLY_KEY||N.has(g)||opens[g]).map(([g,s,e,r])=>{
+    const tags=(N.has(g)?'<span class="tag">შენი კარიბჭე</span>':'')+
+      (opens[g]||[]).map(c=>`<span class="tag op">⚡ ხსნის ${c.gate_a}–${c.gate_b}</span>`).join('');
+    return rowHTML(s,e,`<span class="gbig">${g}</span> ${CKA(GATE_TO_CENTER[g])}${r?' ℞':''}${tags}`,'');
+  }).join('');
+  const nKey=segs.filter(([g])=>N.has(g)||opens[g]).length;
+  return `<div class="rb"><div class="rb-h"><span>${GL(b)} ${BODY_KA[b]||b} <small>· ${segs.length} კარიბჭე · ${nKey} შენთვის მნიშვნელოვანი</small></span>
+    <span><label style="font-family:inherit;letter-spacing:0;font-size:.64rem;color:var(--ink-dim);cursor:pointer">
+      <input type="checkbox" class="rb-only" ${ONLY_KEY?'checked':''} style="accent-color:${TCOL};vertical-align:-2px"> მხოლოდ მნიშვნელოვანი</label>
+      <button type="button" class="rb-x" data-k="p:${b}" title="მოხსნა">✕</button></span></div>
+    ${rows||'<div class="tr-empty">—</div>'}</div>`;
+}
+
+/* free-text search: "20", "10-20", "მარსი", "34, jupiter" */
+function doSearch(){
+  const d=last,q=$('tr-q').value.trim(),msg=$('tr-qmsg');
+  if(!d||!q)return;
+  const bad=[];let added=0,tab=null;
+  q.split(/[,;]+/).map(t=>t.trim().toLowerCase()).filter(Boolean).forEach(t=>{
+    let m=t.match(/^(\d{1,2})\s*[-–—/ ]\s*(\d{1,2})$/);
+    if(m){
+      const a=+m[1],b=+m[2],c=d.channels_all.find(z=>(z.gate_a===a&&z.gate_b===b)||(z.gate_a===b&&z.gate_b===a));
+      if(c){SEL.add('c:'+c.gate_a+'-'+c.gate_b);added++;tab=tab||'ch';}else bad.push(t+' (ასეთი არხი არ არსებობს)');
+      return;
+    }
+    if(/^\d{1,2}$/.test(t)){
+      const g=+t; if(g>=1&&g<=64){SEL.add('g:'+g);added++;tab=tab||'gt';}else bad.push(t);
+      return;
+    }
+    const hit=BODIES.find(b=>(BODY_KA[b]||'').toLowerCase().startsWith(t)||
+      BODY_EN[b].split(' ').some(w=>w.startsWith(t))||BODY_EN[b].startsWith(t));
+    if(hit){
+      if(!d.segments[hit]){bad.push((BODY_KA[hit]||hit)+' — ჩართე „მთვარის ტრანზიტებიც“');return;}
+      SEL.add('p:'+hit);added++;tab=tab||'pl';return;
+    }
+    const byName=d.channels_all.filter(c=>c.name.toLowerCase().includes(t));
+    if(byName.length){byName.forEach(c=>SEL.add('c:'+c.gate_a+'-'+c.gate_b));added+=byName.length;tab=tab||'ch';return;}
+    bad.push(t);
+  });
+  msg.textContent=bad.length?'ვერ მოიძებნა: '+bad.join(', '):'';
+  if(added){$('tr-q').value='';
+    if(tab&&tab!==pkTab){pkTab=tab;document.querySelectorAll('#results-transit .tr-ctrl button[data-tab]')
+      .forEach(x=>x.classList.toggle('on',x.dataset.tab===tab));}
+    renderPicker(d);renderResults(d);}
+}
+
 function jdParts(jd,tz){
   const dt=new Date((jd-2440587.5)*86400000);
   const o={};new Intl.DateTimeFormat('en-GB',{timeZone:tz,year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',hourCycle:'h23'})
