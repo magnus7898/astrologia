@@ -92,7 +92,7 @@ if(typeof drawPlanetTable==='function'){
 function starCard(){
   let c=document.getElementById('fs-card');
   if(c)return c;
-  const tw=document.querySelector('#chart-area .tables-wrap');if(!tw)return null;
+  const lm=document.getElementById('lay-mid'),tw=lm||document.querySelector('#chart-area .tables-wrap');if(!tw)return null;
   if(!document.getElementById('fs-css')){const st=document.createElement('style');st.id='fs-css';st.textContent=`
 #fs-card .fs-tog{float:right;background:none;border:1px solid rgba(240,208,112,.35);color:${COL};border-radius:5px;
   padding:1px 8px;font-size:10px;cursor:pointer;font-family:inherit;letter-spacing:0;text-transform:none}
@@ -106,7 +106,8 @@ function starCard(){
   c=document.createElement('div');c.className='data-card';c.id='fs-card';c.style.display='none';
   c.innerHTML=`<div class="data-card-title"><span id="fs-title">★ ფიქსირებული ვარსკვლავები</span><button type="button" class="fs-tog" id="fs-tog"></button></div>
     <table><thead><tr><th></th><th>ვარსკვლავი</th><th>გრადუსი</th><th>ნიშანი</th><th>სახ.</th><th>☌</th></tr></thead><tbody id="fs-tbody"></tbody></table>`;
-  tw.appendChild(c);
+  const asp=lm&&lm.querySelector('.asp-card');
+  if(asp)tw.insertBefore(c,asp);else tw.appendChild(c);
   return c;
 }
 function hideStarCard(){const c=document.getElementById('fs-card');if(c){c.style.display='none';
@@ -151,12 +152,13 @@ function starRows(tb,list){
     const si=Math.floor(s.lon/30)%12,on=s.hits.length>0;
     const sc=typeof signClass==='function'?signClass(si):'';
     const hits=s.hits.map(h=>{const i=(typeof PI!=='undefined'&&PI[h.n])||{sym:h.n,color:'#ccc'};
-      const sym=(h.n==='AC'||h.n==='MC')?h.n:h.n==='მზე'?(typeof sunSVG==='function'?sunSVG(12):'☉'):i.sym;
+      const sym=(h.n==='AC'||h.n==='MC')?h.n:h.n==='მზე'?(typeof sunSVG==='function'?sunSVG(12):'☉'):
+        (i.sym==='SEL'&&window._SEL_SVG)?window._SEL_SVG:i.sym;
       return `<span title="${h.n} — ორბი ${h.orb.toFixed(2)}°" style="color:${i.color};white-space:nowrap">☌${sym}<small style="opacity:.6"> ${h.orb.toFixed(1)}°</small></span>`;}).join(' ');
     const tip=`${s.n} · ${s.nat} · სიკაშკაშე ${s.mag==null?'—':s.mag} · ეკლ. განედი ${s.lat.toFixed(1)}° · ორბი ${s.orb}°\n${s.m}`;
     const r=document.createElement('tr');r.className='fs-row';r.title=tip;
     r.innerHTML=`<td><span style="color:${on?COL:'rgba(240,208,112,.45)'};font-size:${s.mag!=null&&s.mag<=1?15:12}px">★</span></td>
-      <td style="color:${on?COL:'rgba(220,210,170,.7)'};font-size:11px;white-space:nowrap">${s.ka}
+      <td style="color:${on?COL:'rgba(220,210,170,.7)'};font-size:11px">${s.ka}
         <span style="font-size:9px;color:rgba(200,190,150,.55);margin-left:3px">${s.nat}</span></td>
       <td class="deg-val">${typeof fmtDeg==='function'?fmtDeg(s.lon):s.lon.toFixed(2)+'°'}</td>
       <td><span class="${sc}" style="font-size:13px;font-family:serif">${ZSYM[si]}</span> <span style="font-size:10px;color:${ZCOL[si]}">${SIGN_KA[si]}</span></td>
