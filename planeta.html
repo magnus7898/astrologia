@@ -62,6 +62,28 @@ tr:hover td{background:rgba(30,40,70,.45)}
 .note{font-size:10px;color:rgba(190,205,230,.45);line-height:1.7;margin-top:10px}
 .hl{background:rgba(124,154,208,.10);border-left:3px solid var(--acc);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;line-height:1.9}
 .odd{background:rgba(176,120,64,.12);border-left:3px solid #b07840;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;line-height:1.8}
+details.orbp>summary{cursor:pointer;list-style:none;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--acc-l);text-transform:uppercase;padding:12px 14px}
+details.orbp>summary::-webkit-details-marker{display:none}
+.ob-in{padding:0 14px 14px}
+.ob-note{font-size:10px;color:var(--dim);line-height:1.6;margin-bottom:8px}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}
+@media(max-width:600px){.ob-grid{grid-template-columns:1fr}}
+.ob-r{display:flex;align-items:center;gap:7px;font-size:11px;padding:2px 0}
+.ob-r input[type=checkbox]{width:14px;height:14px;accent-color:#7c9ad0;flex:none}
+.ob-r .g{width:20px;text-align:center;font-family:serif;font-size:14px;flex:none}
+.ob-r .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ob-r input[type=number]{width:62px;padding:4px 6px;font-size:12px;flex:none}
+.ob-r .u{width:12px;font-size:10px;color:var(--dim)}
+.ob-r .e{width:52px;text-align:right;font-size:10px;color:var(--dim)}
+.ob-r.off .n,.ob-r.off .g{opacity:.35}
+.ob-h{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--acc-l);opacity:.8;margin:10px 0 6px;text-transform:uppercase}
+.ob-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ob-bar input[type=checkbox]{width:14px;height:14px;flex:none;accent-color:#7c9ad0}
+.ob-bar label{text-transform:none;letter-spacing:0;font-size:11px;opacity:1;color:var(--txt);display:flex;align-items:center;gap:6px;font-family:inherit}
+.ob-bar button{background:none;border:1px solid rgba(124,154,208,.4);color:var(--acc-l);border-radius:6px;padding:3px 10px;font-size:10px;cursor:pointer}
+.orb-bar{display:inline-block;width:34px;height:3px;background:rgba(124,154,208,.15);border-radius:2px;margin-left:6px;vertical-align:middle;overflow:hidden}
+.orb-bar i{display:block;height:100%}
+.warn{background:rgba(200,150,40,.12);border:1px solid rgba(220,170,60,.35);border-radius:8px;color:#e8c070;font-size:11px;padding:8px 12px;margin-top:10px}
 .err{background:rgba(200,40,40,.15);border:1px solid rgba(220,60,60,.4);border-radius:8px;
   color:#f87171;font-size:12px;padding:10px 14px;margin-top:10px}
 </style>
@@ -104,6 +126,9 @@ tr:hover td{background:rgba(30,40,70,.45)}
       <div class="field"><label>წელი</label><input type="number" id="i-year" value="1990"></div>
       <div class="field"><label>საათი</label><input type="number" id="i-hour" value="12" min="0" max="23"></div>
       <div class="field"><label>წუთი</label><input type="number" id="i-min" value="0" min="0" max="59"></div>
+      <div class="field" style="min-width:160px"><label>დროის სარტყელი</label>
+        <input id="i-tz" value="Asia/Tbilisi" list="tzlist" autocomplete="off" spellcheck="false">
+        <datalist id="tzlist"></datalist></div>
     </div>
     <div style="border-top:1px solid rgba(124,154,208,.15);margin:14px 0 10px;padding-top:12px">
       <div class="card-title" style="margin-bottom:10px">🌍 დედამიწის დაბადების ადგილი → პლანეტაზე</div>
@@ -146,6 +171,7 @@ tr:hover td{background:rgba(30,40,70,.45)}
       <table><thead><tr><th>სხეული 1</th><th>ასპ.</th><th>სხეული 2</th><th>ტიპი</th><th>ორბი</th></tr></thead>
       <tbody id="atb"></tbody></table>
     </div>
+    <details class="card orbp" id="orb-panel" style="padding:0"></details>
     <div class="card">
       <div class="card-title">🌐 პლანეტის მონაცემები</div>
       <div id="info" style="font-size:12px;line-height:2"></div>
@@ -278,16 +304,18 @@ function sectorAt(obs,lon){
    the true 2-D lookup (a body off the plane can sit in a different one) */
 function degInConst(obs,lon,abbr){
   const S=SECT[obs],x=norm(lon);
-  for(let pass=0;pass<2;pass++){
-    for(let i=0;i<S.length;i++){
-      if(pass===0&&S[i][2]!==abbr)continue;
-      let a=S[i][0],b=S[i][1];
-      if(a<0){ if(x>=norm(a))return{deg:x-360-a,w:b-a};
-               if(x<b)return{deg:x-a,w:b-a}; }
-      else if(x>=a&&x<b)return{deg:x-a,w:b-a};
-    }
+  let best=null,bd=1e9;
+  for(let i=0;i<S.length;i++){
+    if(S[i][2]!==abbr)continue;
+    const w=S[i][1]-S[i][0],d=norm(x-S[i][0]);
+    if(d<w)return{deg:d,w:w};
+    /* body sits in this constellation but just off the band's sector
+       (high latitude): pin it to the nearest edge of that sector */
+    const past=d-w,before=360-d;
+    if(Math.min(past,before)<bd){bd=Math.min(past,before);best={deg:past<before?w:0,w:w};}
   }
-  return{deg:x%30,w:30};
+  /* constellation not on this planet's ecliptic band at all */
+  return best||{deg:null,w:null};
 }
 
 const jd=function(dt){return dt.getTime()/86400000+2440587.5;};
@@ -391,15 +419,130 @@ function angles(obs,J,lat,lonE,fr){
   const Z=unit([ax.xe[0]*Zb[0]+ax.ye[0]*Zb[1]+ax.ze[0]*Zb[2],
                 ax.xe[1]*Zb[0]+ax.ye[1]*Zb[1]+ax.ze[1]*Zb[2],
                 ax.xe[2]*Zb[0]+ax.ye[2]*Zb[1]+ax.ze[2]*Zb[2]]);
-  const E=unit(crossV(fr.pole,Z)),n=fr.n;
+  /* the sky rises on the side the surface moves toward: ω×Z.  ω is the
+     IAU pole for prograde rotators, minus the pole when W decreases
+     (Venus, Uranus) — otherwise their AC would really be the DC */
+  const sp=ROT[obs][5]<0?-1:1;
+  const E0=unit(crossV(fr.pole,Z)),E=[E0[0]*sp,E0[1]*sp,E0[2]*sp],n=fr.n;
   let mc=unit(crossV(E,n)); if(dot(mc,Z)<0)mc=[-mc[0],-mc[1],-mc[2]];
   let asc=unit(crossV(Z,n)); if(dot(asc,E)<0)asc=[-asc[0],-asc[1],-asc[2]];
-  return{ascV:asc,mcV:mc,tilt:Math.acos(Math.abs(dot(fr.pole,n)))*R2D};
+  /* obliquity = angle between the spin vector and the orbit normal
+     (Venus 177°, Uranus 98°, Pluto 120°). Above 90° the sky turns
+     against the orbital motion: the signs RISE IN REVERSE ORDER, so the
+     houses (and the wheel) run the other way round: dir = -1 */
+  const cw=sp*dot(fr.pole,n);
+  return{ascV:asc,mcV:mc,tilt:Math.acos(Math.max(-1,Math.min(1,cw)))*R2D,dir:cw<0?-1:1};
 }
 
-const ASP=[{n:'შეერთება',a:[0],o:10,s:'☌',c:'#f9c646'},{n:'ოპოზიცია',a:[180],o:10,s:'☍',c:'#f08050'},
- {n:'ტრინი',a:[120,240],o:8,s:'△',c:'#a078f0'},{n:'კვადრატი',a:[90,270],o:8,s:'□',c:'#e84040'},
- {n:'სექსტილი',a:[60,300],o:6,s:'⚹',c:'#30c890'}];
+const ASP=[{n:'შეერთება',a:0,o:11,s:'☌',c:'#f9c646'},{n:'ოპოზიცია',a:180,o:11,s:'☍',c:'#f08050'},
+ {n:'ტრინი',a:120,o:9,s:'△',c:'#a078f0'},{n:'კვადრატი',a:90,o:9,s:'□',c:'#e84040'},
+ {n:'სექსტილი',a:60,o:6,s:'⚹',c:'#30c890'},{n:'კვინკონსი',a:150,o:4,s:'⚻',c:'#3fbf7f'}];
+/* orbs — same system as the tropical chart:
+   effective orb = aspect orb × pair factor × (body1% + body2%) / 200 */
+const ORB_TIER={'მზე':'inner','მერკური':'inner','ვენერა':'inner','დედამიწა':'inner','მარსი':'inner',
+  'AC':'inner','MC':'inner','იუპიტერი':'social','სატურნი':'social',
+  'ურანი':'outer','ნეპტუნი':'outer','პლუტონი':'outer'};
+const ORB_PAIR={'inner|inner':1.00,'inner|social':0.92,'inner|outer':0.80,'social|social':0.85,
+  'outer|social':0.75,'outer|outer':0.65};
+const ASP_BODIES=ORDER.slice();
+const ORB_KEY='magnus_planeta_orbs_v1';
+function orbDefaults(){const asp={},pl={};
+  ASP.forEach(function(a){asp[a.n]={on:true,orb:a.o};});
+  ASP_BODIES.forEach(function(n){pl[n]={on:true,pct:100};});
+  return{tiers:true,asp:asp,pl:pl};}
+let ORBS=orbDefaults();
+try{const v=JSON.parse(localStorage.getItem(ORB_KEY)||'null');
+  if(v){ORBS.tiers=v.tiers!==false;
+    for(const k in ORBS.asp)if(v.asp&&v.asp[k])Object.assign(ORBS.asp[k],v.asp[k]);
+    for(const k in ORBS.pl)if(v.pl&&v.pl[k])Object.assign(ORBS.pl[k],v.pl[k]);}}catch(e){ORBS=orbDefaults();}
+function saveOrbs(){try{localStorage.setItem(ORB_KEY,JSON.stringify(ORBS));}catch(e){}}
+function tierF(a,b){const k=[ORB_TIER[a]||'outer',ORB_TIER[b]||'outer'].sort().join('|');
+  return ORB_PAIR[k]!=null?ORB_PAIR[k]:0.65;}
+function orbFor(asp,a,b){
+  const o=ORBS.asp[asp.n],q1=ORBS.pl[a],q2=ORBS.pl[b];
+  if(o&&!o.on)return -1; if((q1&&!q1.on)||(q2&&!q2.on))return -1;
+  return(o?o.orb:asp.o)*(ORBS.tiers?tierF(a,b):1)*(((q1?q1.pct:100)+(q2?q2.pct:100))/200);
+}
+function calcAspects(pos){
+  const ks=ASP_BODIES.filter(function(n){return pos[n]!=null;}),out=[];
+  for(let i=0;i<ks.length;i++)for(let j=i+1;j<ks.length;j++){
+    if((ks[i]==='AC'&&ks[j]==='MC'))continue;
+    const sep=Math.abs(((pos[ks[j]]-pos[ks[i]])%360+540)%360-180);
+    let best=null,bo=999,ba=0;
+    for(let x=0;x<ASP.length;x++){
+      const allow=orbFor(ASP[x],ks[i],ks[j]); if(allow<0)continue;
+      const df=Math.abs(sep-ASP[x].a);
+      if(df<=allow&&df<bo){bo=df;best=ASP[x];ba=allow;}
+    }
+    if(best)out.push({p1:ks[i],p2:ks[j],type:best.n,ang:best.a,sym:best.s,color:best.c,
+                      orb:Math.round(bo*100)/100,allow:ba});
+  }
+  return out.sort(function(a,b){return a.orb-b.orb;});
+}
+function buildOrbPanel(){
+  const box=$('orb-panel');if(!box||box.dataset.built)return;box.dataset.built=1;
+  box.innerHTML='<summary>⚙ ორბისები</summary><div class="ob-in">'+
+    '<div class="ob-note">ეფექტური ორბი = ასპექტის ორბი × წყვილის კოეფიციენტი × (სხეული₁% + სხეული₂%) / 200 — იგივე სისტემა, რაც ტროპიკულ რუქაზე. ინახება ამ ბრაუზერში.</div>'+
+    '<div class="ob-bar"><label><input type="checkbox" id="ob-tiers"'+(ORBS.tiers?' checked':'')+'> წყვილის კოეფიციენტები (შიდა · სოციალური · გარე)</label>'+
+    '<button type="button" id="ob-reset">↺ ნაგულისხმევი</button></div>'+
+    '<div class="ob-h">ასპექტები</div><div class="ob-grid">'+ASP.map(function(a){const v=ORBS.asp[a.n];
+      return '<div class="ob-r'+(v.on?'':' off')+'" data-k="a" data-n="'+a.n+'"><input type="checkbox"'+(v.on?' checked':'')+'>'+
+        '<span class="g" style="color:'+a.c+'">'+a.s+'</span><span class="n">'+a.n+' '+a.a+'°</span>'+
+        '<input type="number" min="0" max="30" step="0.5" value="'+v.orb+'"><span class="u">°</span></div>';}).join('')+'</div>'+
+    '<div class="ob-h">სხეულები — ორბის % · მარჯვნივ: ☌ მზესთან</div><div class="ob-grid">'+ASP_BODIES.map(function(n){
+      const v=ORBS.pl[n],inf=PI_[n];
+      return '<div class="ob-r'+(v.on?'':' off')+'" data-k="p" data-n="'+n+'"><input type="checkbox"'+(v.on?' checked':'')+'>'+
+        '<span class="g" style="color:'+inf.color+(n.length<3?';font-family:Cinzel,serif;font-size:10px':'')+'">'+inf.sym+'</span>'+
+        '<span class="n">'+n+'</span><input type="number" min="0" max="300" step="5" value="'+v.pct+'"><span class="u">%</span>'+
+        '<span class="e" data-e="'+n+'"></span></div>';}).join('')+'</div></div>';
+  const eff=function(){box.querySelectorAll('[data-e]').forEach(function(e){
+    const n=e.dataset.e,q=ORBS.pl[n],s=ORBS.pl['მზე'];
+    e.textContent=(n==='მზე'||!q.on||!s.on||!ORBS.asp['შეერთება'].on)?'—':
+      '☌ '+(ORBS.asp['შეერთება'].orb*(ORBS.tiers?tierF(n,'მზე'):1)*(q.pct+s.pct)/200).toFixed(1)+'°';});};
+  let t;const redo=function(){saveOrbs();eff();clearTimeout(t);
+    t=setTimeout(function(){if($('out').style.display!=='none')gen(true);},250);};
+  const onEdit=function(e){
+    if(e.target.id==='ob-tiers'){ORBS.tiers=e.target.checked;return redo();}
+    const r=e.target.closest('.ob-r');if(!r)return;
+    const o=r.dataset.k==='a'?ORBS.asp[r.dataset.n]:ORBS.pl[r.dataset.n];
+    if(e.target.type==='checkbox'){o.on=e.target.checked;r.classList.toggle('off',!o.on);}
+    else{const v=parseFloat(e.target.value);if(!isFinite(v))return;
+      if(r.dataset.k==='a')o.orb=Math.max(0,Math.min(30,v));else o.pct=Math.max(0,Math.min(300,v));}
+    redo();};
+  box.addEventListener('change',onEdit);box.addEventListener('input',onEdit);
+  box.querySelector('#ob-reset').onclick=function(){ORBS=orbDefaults();saveOrbs();
+    delete box.dataset.built;buildOrbPanel();box.open=true;redo();};
+  eff();
+}
+
+/* ── time zone: local birth time → UTC (browser tz database, with
+   historical DST rules — same result as pytz on the server) ── */
+function tzOffsetMin(tz,ms){
+  const f=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',
+    day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'});
+  const p={};f.formatToParts(new Date(ms)).forEach(function(x){p[x.type]=x.value;});
+  const d=new Date(0);d.setUTCFullYear(+p.year,+p.month-1,+p.day);d.setUTCHours(+p.hour%24,+p.minute,+p.second,0);
+  return Math.round((d.getTime()-Math.floor(ms/1000)*1000)/60000);
+}
+function localToUTC(y,m,d,h,mi,tz){
+  const g=new Date(0);g.setUTCFullYear(y,m-1,d);g.setUTCHours(h,mi,0,0);
+  const guess=g.getTime();
+  const o1=tzOffsetMin(tz,guess);let t=guess-o1*60000;
+  const o2=tzOffsetMin(tz,t);if(o2!==o1)t=guess-o2*60000;
+  return{date:new Date(t),off:tzOffsetMin(tz,t)};
+}
+const fmtOff=function(m){const s=m<0?'−':'+',a=Math.abs(m);
+  return'UTC'+s+Math.floor(a/60)+(a%60?':'+String(a%60).padStart(2,'0'):'');};
+
+/* positions from the server's Swiss Ephemeris vectors */
+function pcFrom(obs,H){
+  const o=H[obs],out={};
+  const ll=function(v){const r=Math.hypot(v[0],v[1],v[2]);
+    return{lon:norm(Math.atan2(v[1],v[0])*R2D),lat:Math.asin(v[2]/r)*R2D,d:r};};
+  out['მზე']=ll([-o[0],-o[1],-o[2]]);
+  for(const k in KEP){ if(k===obs)continue; out[EN2KA[k]]=ll(sub(H[k],o)); }
+  return out;
+}
 
 /* ═══ WHEEL ═══ */
 const CX=350,CY=350,R1=268,R2=200,R3=132,R4=100;
@@ -409,11 +552,12 @@ const el=function(t,at,p){const e=document.createElementNS(NS,t);
 const txt=function(p,s,x,y,at){
   const e=el('text',Object.assign({'text-anchor':'middle','dominant-baseline':'central',x:x,y:y},at||{}),p);
   e.textContent=s; return e;};
-const e2s=function(ec,asc){return(-(ec-asc))*D2R+Math.PI;};
+let WDIR=1;   /* +1: zodiac counter-clockwise (Earth-like); -1: clockwise */
+const e2s=function(ec,asc){return(-WDIR*(ec-asc))*D2R+Math.PI;};
 const fmt2=function(d){const x=Math.floor(d);
   return x+'°'+String(Math.floor((d-x)*60)).padStart(2,'0')+"'";};
 
-function drawWheel(P,asc,mc,houses,asps,bands,MO){
+function drawWheel(P,asc,mc,houses,asps,bands,MO,POS){
   const svg=$('wheel');svg.innerHTML='';
   const RO=272;                 /* the big outer circle              */
   const RSi=196;                /* inner edge of the sign band       */
@@ -429,8 +573,9 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO){
     const p=function(d,r){const a=e2s(d,asc);
       return(CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
     const span=b.e-b.s,la=span>180?1:0;
-    el('path',{d:'M'+p(b.s,RO)+' A'+RO+','+RO+' 0 '+la+',0 '+p(b.e,RO)+
-                 ' L'+p(b.e,RSi)+' A'+RSi+','+RSi+' 0 '+la+',1 '+p(b.s,RSi)+' Z',
+    const s1=WDIR>0?0:1,s2=1-s1;
+    el('path',{d:'M'+p(b.s,RO)+' A'+RO+','+RO+' 0 '+la+','+s1+' '+p(b.e,RO)+
+                 ' L'+p(b.e,RSi)+' A'+RSi+','+RSi+' 0 '+la+','+s2+' '+p(b.s,RSi)+' Z',
       fill:'rgba(14,18,38,.85)',stroke:b.col,'stroke-width':.8,opacity:.9},svg);
     if(span>2.2){
       const a=e2s(b.s+span/2,asc);
@@ -456,7 +601,7 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO){
   });
   el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(6,8,18,.95)',stroke:'rgba(60,80,130,.6)','stroke-width':1},svg);
   asps.forEach(function(a){
-    const a1=e2s(P[a.p1].lon,asc),a2=e2s(P[a.p2].lon,asc);
+    const a1=e2s(POS[a.p1],asc),a2=e2s(POS[a.p2],asc);
     el('line',{x1:CX+Math.cos(a1)*R4,y1:CY+Math.sin(a1)*R4,
       x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
       stroke:a.color,'stroke-width':1,opacity:.45},svg);
@@ -520,7 +665,7 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO){
 }
 
 /* ═══ GENERATE ═══ */
-async function gen(){
+async function gen(quiet){
   $('err').innerHTML='';
   try{
     if(typeof iauFromEcliptic!=='function'){
@@ -528,24 +673,39 @@ async function gen(){
     const obs=$('i-obs').value,pd=PLA[obs];
     const y=+$('i-year').value,m=+$('i-month').value,d=+$('i-day').value,
           h=+$('i-hour').value,mi=+$('i-min').value;
-    const dt=new Date(Date.UTC(y,m-1,d,h,mi,0));
+    const tz=($('i-tz').value||'UTC').trim();
+    if(![y,m,d,h,mi].every(isFinite)||m<1||m>12||d<1||d>31||h<0||h>23||mi<0||mi>59){
+      $('err').innerHTML='<div class="err">⚠ არასწორი თარიღი ან დრო</div>';return;}
+    let lu;
+    try{lu=localToUTC(y,m,d,h,mi,tz);}
+    catch(e){$('err').innerHTML='<div class="err">⚠ უცნობი დროის სარტყელი: '+tz+' (მაგ. Asia/Tbilisi, Europe/London, UTC)</div>';return;}
+    const dt=lu.date;
     if(isNaN(dt.getTime())){$('err').innerHTML='<div class="err">⚠ არასწორი თარიღი</div>';return;}
+    const uy=dt.getUTCFullYear(),um=dt.getUTCMonth()+1,ud=dt.getUTCDate(),uh=dt.getUTCHours(),umi=dt.getUTCMinutes();
     const J=jd(dt),T=(J-2451545.0)/36525;
     const mode=$('i-mode').value,iau=(mode==='iau');
     const fr=planetFrame(obs,T),aya=ayanamsa(fr);
+    /* the IAU sectors were measured from the J2000 node → use that frame */
+    const frJ=planetFrame(obs,0);
 
     const mp=earthPlaceTo(obs,J,+$('i-elat').value,+$('i-elon').value);
     $('i-derived').innerHTML='🪐 <b style="color:'+pd.col+'">'+
       Math.abs(mp.lat).toFixed(2)+'°'+(mp.lat>=0?'N':'S')+' '+mp.lon.toFixed(2)+'°E</b> — '+
       pd.ka+'ზე შესაბამისი წერტილი<br><span style="color:rgba(190,205,230,.5);font-size:10px">'+
-      'ზენიტის მიმართულება RA '+mp.ra.toFixed(2)+'° Dec '+mp.dec.toFixed(2)+'°</span>';
+      'ზენიტის მიმართულება RA '+mp.ra.toFixed(2)+'° Dec '+mp.dec.toFixed(2)+'° (J2000) · UTC '+
+      uy+'-'+String(um).padStart(2,'0')+'-'+String(ud).padStart(2,'0')+' '+
+      String(uh).padStart(2,'0')+':'+String(umi).padStart(2,'0')+' ('+fmtOff(lu.off)+')</span>';
 
-    const F=planetoCentric(obs,J),F2=planetoCentric(obs,J+1);
-    const ang=angles(obs,J,mp.lat,mp.lon,fr);
+    /* server: Swiss Ephemeris planets + moons. Offline → JPL Keplerian */
+    const md=await getMoons(obs,uy,um,ud,uh,umi);
+    const srv=!!(md&&md.helio&&md.helio_next&&md.helio[obs]);
+    const F=srv?pcFrom(obs,md.helio):planetoCentric(obs,J),
+          F2=srv?pcFrom(obs,md.helio_next):planetoCentric(obs,J+1);
+    const ang=angles(obs,J,mp.lat,mp.lon,iau?frJ:fr);
 
     /* display longitude in the chosen frame */
     const dispV=function(v){
-      if(iau)return norm(Math.atan2(dot(v,fr.nodeY),dot(v,fr.node))*R2D);
+      if(iau)return norm(Math.atan2(dot(v,frJ.nodeY),dot(v,frJ.node))*R2D);
       const L=norm(Math.atan2(dot(v,fr.eqY),dot(v,fr.eq))*R2D);
       return (mode==='psid')?norm(L-aya):L;
     };
@@ -554,14 +714,15 @@ async function gen(){
 
     const P={};
     for(const k in F){
-      let dl=F2[k].lon-F[k].lon; if(dl>180)dl-=360; if(dl<-180)dl+=360;
-      P[k]={lon:disp(F[k].lon,F[k].lat),raw:F[k].lon,lat:F[k].lat,d:F[k].d,retro:dl<0};
+      /* retrograde = longitude decreasing in THIS planet's own frame */
+      const L1=disp(F[k].lon,F[k].lat),L2=disp(F2[k].lon,F2[k].lat);
+      let dl=L2-L1; if(dl>180)dl-=360; if(dl<-180)dl+=360;
+      P[k]={lon:L1,raw:F[k].lon,lat:F[k].lat,d:F[k].d,retro:dl<0};
     }
 
     /* moons of the observer planet, put into the same display frame */
     let MO=[],moonNA=[],moonErr='';
     try{
-      const md=await getMoons(obs,y,m,d,h,mi);
       moonNA=md.unavailable||[];
       moonErr=md.error||'';
       MO=(md.moons||[]).map(function(mo){
@@ -586,21 +747,14 @@ async function gen(){
       }
     }catch(e){MO=[];moonNA=[];moonErr=e.message;}
 
-    const houses=[];for(let i=0;i<12;i++)houses.push(norm(asc+i*30));
-    const hOf=function(L){return Math.floor(norm(L-asc)/30)+1;};
+    /* equal houses in RISING order: H2 is the next point to rise */
+    const hd=ang.dir;WDIR=hd;
+    const houses=[];for(let i=0;i<12;i++)houses.push(norm(asc+hd*i*30));
+    const hOf=function(L){return Math.floor(norm(hd*(L-asc))/30)+1;};
 
-    const asps=[],ks=Object.keys(P);
-    for(let i=0;i<ks.length;i++)for(let j=i+1;j<ks.length;j++){
-      const raw=norm(P[ks[j]].lon-P[ks[i]].lon);
-      let best=null,bo=999;
-      for(let x=0;x<ASP.length;x++)for(let t=0;t<ASP[x].a.length;t++){
-        let df=Math.abs(raw-ASP[x].a[t]); if(df>180)df=360-df;
-        if(df<=ASP[x].o&&df<bo){bo=df;best=ASP[x];}
-      }
-      if(best)asps.push({p1:ks[i],p2:ks[j],type:best.n,sym:best.s,color:best.c,
-                         orb:Math.round(bo*100)/100});
-    }
-    asps.sort(function(a,b){return a.orb-b.orb;});
+    const POS={AC:asc,MC:mc};
+    for(const k in P)POS[k]=P[k].lon;
+    const asps=calcAspects(POS);
 
     /* wheel bands */
     let bands;
@@ -614,7 +768,7 @@ async function gen(){
       bands=ZSYM.map(function(sy,i){
         return{s:i*30,e:(i+1)*30,sym:sy,col:ZCOL[i],ka:SIGN_KA[i]};});
     }
-    drawWheel(P,asc,mc,houses,asps,bands,MO);
+    drawWheel(P,asc,mc,houses,asps,bands,MO,POS);
 
     $('out').style.display='block';
     $('orb').style.background='radial-gradient(circle at 34% 30%,'+pd.g1+' 0%,'+pd.col+' 45%,'+pd.g2+' 80%,#0a0810 100%)';
@@ -627,7 +781,7 @@ async function gen(){
 
     const sigOf=function(v){
       if(iau){
-        const r=iauFromEcliptic(v.rawEcl!=null?v.rawEcl:v.raw,v.lat||0);
+        const r=iauFromEcliptic(v.raw,v.lat||0);
         const d=degInConst(obs,v.lon,r.abbr);
         return{sym:r.sym,ka:r.ka,col:r.col,abbr:r.abbr,
                deg:d.deg,width:d.w,lat:v.lat};
@@ -638,14 +792,17 @@ async function gen(){
     };
     const inWhat={};
     $('ptb').innerHTML=ORDER.filter(function(n){return P[n]||n==='AC'||n==='MC';}).map(function(n){
-      const v=n==='AC'?{lon:asc,raw:lonOf(ang.ascV),lat:0}:
-              n==='MC'?{lon:mc,raw:lonOf(ang.mcV),lat:0}:P[n];
+      /* AC/MC lie in this planet's orbital plane, so they DO have an
+         ecliptic latitude (up to the orbit's inclination) */
+      const latV=function(u){return Math.asin(Math.max(-1,Math.min(1,u[2])))*R2D;};
+      const v=n==='AC'?{lon:asc,raw:lonOf(ang.ascV),lat:latV(ang.ascV)}:
+              n==='MC'?{lon:mc,raw:lonOf(ang.mcV),lat:latV(ang.mcV)}:P[n];
       const s=sigOf(v),inf=PI_[n];
       if(s.abbr)inWhat[n]=s.abbr;
       return '<tr><td><span style="color:'+inf.color+';font-family:serif;font-size:16px">'+inf.sym+'</span></td>'+
         '<td style="color:'+inf.color+';font-size:11px">'+n+'</td>'+
-        '<td class="deg">'+fmt2(s.deg)+
-          (iau?' <span class="lat">/'+s.width.toFixed(1)+'°</span>':'')+
+        '<td class="deg">'+(s.deg==null?'—':fmt2(s.deg))+
+          (iau&&s.width!=null?' <span class="lat">/'+s.width.toFixed(1)+'°</span>':'')+
           (iau&&s.lat!=null?' <span class="lat">β'+(s.lat>=0?'+':'')+
             s.lat.toFixed(1)+'°</span>':'')+'</td>'+
         '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
@@ -663,8 +820,8 @@ async function gen(){
           '<td><span style="color:'+info.color+';font-family:Cinzel,serif;font-size:11px">'+info.sym+'</span></td>'+
           '<td style="color:'+info.color+';font-size:11px">'+mo.name_ka+
             ' <span class="lat">მთვარე</span></td>'+
-          '<td class="deg">'+fmt2(s.deg)+
-            (iau?' <span class="lat">/'+s.width.toFixed(1)+'°</span>':'')+'</td>'+
+          '<td class="deg">'+(s.deg==null?'—':fmt2(s.deg))+
+            (iau&&s.width!=null?' <span class="lat">/'+s.width.toFixed(1)+'°</span>':'')+'</td>'+
           '<td><span style="color:'+s.col+';font-family:serif;font-size:13px">'+s.sym+'</span> '+
           '<span style="font-size:10px;color:'+s.col+'">'+s.ka+'</span></td>'+
           '<td><span class="badge">H'+hOf(mo.lon)+'</span></td>'+
@@ -735,9 +892,12 @@ async function gen(){
         '<td><span style="color:'+a.color+';font-size:15px;font-family:serif">'+a.sym+'</span></td>'+
         '<td><span style="color:'+i2.color+';font-family:serif">'+i2.sym+'</span> '+
         '<span style="font-size:10px;color:'+i2.color+'">'+a.p2+'</span></td>'+
-        '<td style="color:'+a.color+';font-size:10px">'+a.type+'</td>'+
-        '<td style="color:rgba(190,205,230,.6);font-size:10px">'+a.orb+'°</td></tr>';
-    }).join('');
+        '<td style="color:'+a.color+';font-size:10px;white-space:nowrap">'+a.type+' '+a.ang+'°</td>'+
+        '<td style="color:rgba(190,205,230,.7);font-size:10px;white-space:nowrap">'+fmt2(a.orb)+
+          ' <span style="opacity:.5">/ '+a.allow.toFixed(1)+'°</span><span class="orb-bar"><i style="width:'+
+          (Math.max(0,1-a.orb/a.allow)*100).toFixed(0)+'%;background:'+a.color+'"></i></span></td></tr>';
+    }).join('')||'<tr><td colspan="5" style="color:var(--dim);text-align:center;padding:14px">ასპექტები არ მოიძებნა</td></tr>';
+    buildOrbPanel();
 
     /* non-zodiacal constellations present */
     if(iau){
@@ -776,7 +936,9 @@ async function gen(){
       ' &nbsp;·&nbsp; <span style="color:rgba(190,205,230,.55);font-size:11px">წელი:</span> <b>'+
       yr.toLocaleString('ka-GE')+' დღე</b>'+
       ' &nbsp;·&nbsp; <span style="color:rgba(190,205,230,.55);font-size:11px">ღერძის დახრა ორბიტასთან:</span> <b>'+
-      ang.tilt.toFixed(2)+'°</b><br>'+
+      ang.tilt.toFixed(2)+'°</b>'+
+      (ang.dir<0?'<br><span style="color:#e0b080;font-size:11px">↺ დახრა 90°-ზე მეტია — ცა ორბიტული მოძრაობის საწინააღმდეგოდ ბრუნავს, '+
+        'ნიშნები უკუღმა ამოდის. ამიტომ სახლები და ზოდიაქო რუქაზე საათის ისრის მიმართულებით მიდის (AC მაინც მარცხნივ, MC ზემოთ).</span>':'')+'<br>'+
       '<span style="color:rgba(190,205,230,.55);font-size:11px">ორბიტის დახრა ეკლიპტიკასთან:</span> <b>'+
       KEP[obs][2].toFixed(3)+'°</b>'+
       (mode==='psid'?' &nbsp;·&nbsp; <span style="color:rgba(190,205,230,.55);font-size:11px">აიანამსა:</span> <b>'+
@@ -787,21 +949,27 @@ async function gen(){
       (iau?'IAU საზღვრები Roman 1987 · B1875 · 2-D ძიება':
        mode==='ptrop'?'12 თანაბარი ნიშანი '+pd.ka+'ის ბუნიობის წერტილიდან':
        '12 თანაბარი ნიშანი · სპიკაზე მიბმული')+
-      ' · ეფემერიდი: JPL Keplerian (1800–2100, ~1′)'+
+      (srv?' · ეფემერიდი: Swiss Ephemeris (სერვერი, J2000, გეომეტრიული)':
+           ' · ეფემერიდი: JPL Keplerian — სერვერი მიუწვდომელია, მიახლოებითი (1800–2050, ≤15′)')+
       (MO.length?' · მთვარეები: PyEphem სატელიტური თეორიები':'')+'</span>';
 
-    $('out').scrollIntoView({behavior:'smooth',block:'start'});
+    if(!srv&&(uy<1800||uy>2050))$('innerbox').innerHTML+='<div class="warn">⚠ სერვერი მიუწვდომელია და თარიღი JPL-ის ელემენტების '+
+      'მოქმედების არეს (1800–2050) გარეთაა — პოზიციები შეიძლება რამდენიმე გრადუსით ცდებოდეს.</div>';
+    if(!quiet)$('out').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
     $('err').innerHTML='<div class="err">⚠ '+e.message+'</div>';
     console.error(e);
   }
 }
 function setNow(){
-  const n=new Date();
+  let n=new Date();
+  try{n=new Date(n.getTime()+tzOffsetMin(($('i-tz').value||'UTC').trim(),n.getTime())*60000);}catch(e){}
   $('i-day').value=n.getUTCDate();$('i-month').value=n.getUTCMonth()+1;
   $('i-year').value=n.getUTCFullYear();$('i-hour').value=n.getUTCHours();
   $('i-min').value=n.getUTCMinutes();
 }
+(function(){try{const L=(Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):[]).concat(['UTC']);
+  $('tzlist').innerHTML=L.map(function(z){return'<option value="'+z+'">';}).join('');}catch(e){}})();
 const BACKEND='https://astrology-production-b165.up.railway.app';
 let cityTimer=null;
 $('i-city').addEventListener('input',function(){
@@ -816,15 +984,16 @@ $('i-city').addEventListener('input',function(){
       .then(function(d){
         if(d.error){$('i-cityhint').textContent='❌ '+d.error;return;}
         $('i-elat').value=(+d.lat).toFixed(4);$('i-elon').value=(+d.lon).toFixed(4);
+        if(d.tz_name)$('i-tz').value=d.tz_name;
         $('i-cityhint').textContent='📍 '+(d.display||q);
         if($('out').style.display!=='none')gen();})
       .catch(function(){$('i-cityhint').textContent='❌ ხელით შეიყვანეთ განედი/გრძედი';});
   },600);
 });
-['i-obs','i-mode','i-elat','i-elon'].forEach(function(id){
+['i-obs','i-mode','i-elat','i-elon','i-tz'].forEach(function(id){
   $(id).addEventListener('change',function(){if($('out').style.display!=='none')gen();});
 });
-$('btn-gen').addEventListener('click',gen);
+$('btn-gen').addEventListener('click',function(){gen();});
 $('btn-now').addEventListener('click',function(){setNow();gen();});
 setNow();
 </script>
