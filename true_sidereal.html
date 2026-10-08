@@ -156,7 +156,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
     </div>
     <div class="data-card">
       <div class="data-card-title">🏠 სახლები · Placidus Houses</div>
-      <table><thead><tr><th>სახლი</th><th>კონსტელაცია</th><th>გრადუსი</th></tr></thead>
+      <table><thead><tr><th>სახლი</th><th>კონსტელაცია</th><th>გრადუსი კონსტ.-ში</th></tr></thead>
       <tbody id="house-tbody"></tbody></table>
     </div>
   </div>
@@ -252,7 +252,7 @@ function displayLunarBadge(data){
     const L=data.lunar; if(!L) return;
     const hrs=L.hours_to_next, pct=L.pct_elapsed;
     let nextStr=hrs<1?`${Math.round(hrs*60)} წთ-ში`:`${Math.floor(hrs)} სთ ${Math.round((hrs%1)*60)} წთ-ში`;
-    document.getElementById('lunar-day').textContent=`🌙 მთვარის მე-${L.lunar_day} დღე`;
+    document.getElementById('lunar-day').textContent=`მთვარის მე-${L.lunar_day} დღე`;
     document.getElementById('lunar-pct').textContent=`შემდეგი ${nextStr} · ${pct}% გასული`;
     document.getElementById('lunar-badge').style.display='block';
   }catch(e){}
@@ -364,7 +364,8 @@ function drawWheel(data){
   svg.innerHTML='';
   // Rising constellation start at left
   // ASC degree at left (9 o'clock position)
-  const ascRef=data._timeUnknown?ARIES_START:data.asc;
+  const aries=CONS.find(c=>c.name==='Aries');
+  const ascRef=data._timeUnknown?(aries?aries.start:ARIES_START):data.asc;
   // ── DEFS ──
   const defs=el('defs',{},svg);
   const bgG=el('radialGradient',{id:'bgG',cx:'50%',cy:'50%',r:'50%'},defs);
@@ -411,11 +412,8 @@ function drawWheel(data){
       stroke:color,'stroke-width':1.2,opacity:.85},svg);
 
     // Symbol at midpoint of outer ring
-    const midTrop=(con.start+(con.end%360))/2;
-    // Handle Pisces wrap
-    let mt=midTrop;
-    if(con.name==='Pisces') mt=(con.start+29+360)/2;  // mid between 351.5 and 389(=29)
-    const amid=t2a(mt%360,ascRef);
+    const mt=con.start+con.span/2;          // works across 0° (Pisces) too
+    const amid=t2a(((mt%360)+360)%360,ascRef);
     const Rzs=(R1+R2)/2;
     const symText=el('text',{'text-anchor':'middle','dominant-baseline':'central',
       x:CX+Math.cos(amid)*Rzs,y:CY+Math.sin(amid)*Rzs,
@@ -447,7 +445,7 @@ function drawWheel(data){
 
   // ── DEGREE TICKS — all identical ──
   for(let deg=0;deg<360;deg++){
-    const trop=(ARIES_START+deg)%360;
+    const trop=((aries?aries.start:ARIES_START)+deg)%360;
     const a=t2a(trop,ascRef);
     el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
       x2:CX+Math.cos(a)*(R1-7),y2:CY+Math.sin(a)*(R1-7),
@@ -585,7 +583,7 @@ function drawPlanetTable(data){
       <td style="color:${info.color};font-size:11px;white-space:nowrap">${name}</td>
       <td class="deg-val">${p.dms}</td>
       <td><span style="font-size:16px;font-family:serif;color:${color}">${p.sym}\ufe0e</span> <span style="font-size:10px;color:${color}">${p.constellation_ka||p.constellation}</span></td>
-      <td><span class="house-badge">${p.house||'?'}</span></td>
+      <td>${p.house?`<span class="house-badge">${p.house}</span>`:'<span style="color:var(--dim)">—</span>'}</td>
       <td>${p.retrograde?'<span class="retro">\u211e</span>':''}</td>`;
     tbody.appendChild(tr);
   }
@@ -595,16 +593,18 @@ function drawPlanetTable(data){
 function drawHouseTable(data){
   const tbody=document.getElementById('house-tbody');
   tbody.innerHTML='';
+  if(data._timeUnknown){tbody.innerHTML='<tr><td colspan="3" style="color:var(--dim);text-align:center;padding:14px;font-size:11px">დრო უცნობია — სახლები არ ითვლება</td></tr>';return;}
   const ANG={0:'AC',3:'IC',6:'DC',9:'MC'};
   for(let i=0;i<12;i++){
     const deg=data.houses[i];
     // Find which constellation this tropical degree falls in
-    let conName='?',conSym='?',conColor='#aaa',conKa='?';
+    let conName='?',conSym='?',conColor='#aaa',conKa='?',inCon=null;
     for(const con of CONS){
       const s=con.start%360, e=con.end%360;
       const d=deg%360;
       if(s<e?s<=d&&d<e:d>=s||d<e){
-        conName=con.name;conSym=con.sym;conColor=CON_COLORS[con.name]||'#aaa';conKa=con.ka||con.name;break;
+        conName=con.name;conSym=con.sym;conColor=CON_COLORS[con.name]||'#aaa';conKa=con.ka||con.name;
+        inCon=((d-s)%360+360)%360;break;
       }
     }
     const ang=ANG[i];
@@ -612,7 +612,7 @@ function drawHouseTable(data){
     tr.innerHTML=`
       <td style="color:${ang?'#e8c06e':'rgba(180,150,255,.7)'};font-family:'Cinzel',serif;font-size:11px;font-weight:${ang?600:400}">${ROMAN[i]}${ang?` <span style="font-size:9px">${ang}</span>`:''}</td>
       <td><span style="font-size:14px;font-family:serif;color:${conColor}">${conSym}\ufe0e</span> <span style="font-size:10px;color:${conColor}">${conKa}</span></td>
-      <td class="deg-val">${Math.floor(deg%30)}°${String(Math.floor((deg%30-Math.floor(deg%30))*60)).padStart(2,'0')}'</td>`;
+      <td class="deg-val">${inCon==null?'—':`${Math.floor(inCon)}°${String(Math.floor((inCon%1)*60)).padStart(2,'0')}'`}</td>`;
     tbody.appendChild(tr);
   }
 }
@@ -651,8 +651,8 @@ function drawConTable(data){
     const tr=document.createElement('tr');
     tr.innerHTML=`
       <td><span style="font-size:18px;font-family:serif;color:${color}">${con.sym}\ufe0e</span> <span style="font-size:11px;color:${color}">${con.ka||con.name}</span></td>
-      <td class="deg-val">${con.start}°</td>
-      <td class="deg-val">${con.end%360}°</td>
+      <td class="deg-val">${(+con.start).toFixed(2)}°</td>
+      <td class="deg-val">${(con.end%360).toFixed(2)}°</td>
       <td class="deg-val">${con.span}°</td>
       <td><span style="font-size:10px;color:var(--gold)">${pct}%</span>
           <span class="pct-bar"><span class="pct-fill" style="width:${pct}%"></span></span></td>`;
