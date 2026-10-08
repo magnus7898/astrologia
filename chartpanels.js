@@ -2,11 +2,12 @@
    Self-injecting add-on. In astro.html, after the other add-ons:
        <script src="chartpanels.js"></script>
    Layout (wide screens):
-     [ moon day ] [ almuten figuris ] [ doryphory & charioteer ]   ← natal only
+     [ big three ] [ elements ] [ moon day ] [ almuten ] [ doryphory & charioteer ]
+                                             (the last two: natal only)
      [ orb controller ]
      [ wheel ]                [ aspect filter · aspects ]
      [ planets ] [ houses ] [ fixed stars ]
-     [ dominants ] [ big three / portrait ] [ elements / balance ]
+     [ dominants — full width, 4 columns ]
      [ Cinderella ] [ hard periods ]
      [ true sky   ] [ sky poster   ]
    Narrower screens fold the same blocks into 2 columns, phones into 1.
@@ -37,8 +38,11 @@ function css(){
 @media(min-width:1000px){#chart-area .lay{width:min(1640px,calc(100vw - 40px));position:relative;left:50%;transform:translateX(-50%)}}
 /* 0 — top strip */
 #lay-strip{grid-template-columns:1fr;align-items:stretch;margin-bottom:10px}
-@media(min-width:900px){#lay-strip.nat{grid-template-columns:1fr 1fr}#lay-strip.nat>#lunar-badge{grid-column:1/-1}}
-@media(min-width:1200px){#lay-strip.nat{grid-template-columns:.55fr 1.3fr 1fr}#lay-strip.nat>#lunar-badge{grid-column:auto;flex-direction:column}}
+@media(min-width:800px){#lay-strip{grid-template-columns:1fr 1fr}#lay-strip>#lunar-badge{grid-column:1/-1}}
+@media(min-width:1100px){#lay-strip{grid-template-columns:1fr 1fr .55fr}#lay-strip>#lunar-badge{grid-column:auto;flex-direction:column}
+  #lay-strip.nat{grid-template-columns:1fr 1fr .5fr}#lay-strip.nat>#nx-alm{grid-column:1/3}}
+@media(min-width:1500px){#lay-strip.nat{grid-template-columns:.95fr 1fr .5fr 1.3fr .95fr}#lay-strip.nat>#nx-alm{grid-column:auto}}
+#lay-strip .cp{min-width:0}
 #lay-strip>#lunar-badge{margin:0!important;display:flex!important;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px}
 #lay-strip>#lunar-badge[style*="display: none"],#lay-strip>#lunar-badge[style*="display:none"]{display:none!important}
 #lay-orb{margin:0 0 14px}
@@ -73,10 +77,8 @@ function css(){
 @media(min-width:800px){#lay-mid{grid-template-columns:1fr 1fr}#lay-mid.has-fs>#fs-card{grid-column:1/-1}}
 @media(min-width:1300px){#lay-mid.has-fs{grid-template-columns:1.1fr .8fr 1.2fr}#lay-mid.has-fs>#fs-card{grid-column:auto}}
 /* 3 — dominants · big three/portrait · elements/balance */
-#lay-info{grid-template-columns:1fr;align-items:start}
-@media(min-width:800px){#lay-info{grid-template-columns:1fr 1fr}#lay-info>#dominants-card{grid-column:1/-1}}
-@media(min-width:1300px){#lay-info{grid-template-columns:1.25fr 1fr 1fr}#lay-info>#dominants-card{grid-column:auto}}
-@media(min-width:1300px) and (max-width:1599px){#lay-info .domx-grid{grid-template-columns:1fr!important;gap:6px!important}}
+#lay-info{grid-template-columns:1fr}
+@media(min-width:1100px){#lay-info .domx-grid{grid-template-columns:repeat(4,1fr)!important;gap:26px!important}}
 /* 4 — the four analysis cards as a 2 × 2 grid of boxes */
 #lay-bot{grid-template-columns:1fr}
 @media(min-width:900px){#lay-bot{grid-template-columns:1fr 1fr}}
@@ -137,6 +139,10 @@ function layout(){
   ww.parentNode.insertBefore(strip,ww);
   ww.parentNode.insertBefore(orb,ww);
   ww.parentNode.insertBefore(top,ww);
+  /* order: big three · elements · moon day · almuten · doryphory/charioteer */
+  const cl=document.createElement('aside');cl.className='cp';cl.id='cp-left';cl.style.display='none';
+  const cr=document.createElement('aside');cr.className='cp';cr.id='cp-right';cr.style.display='none';
+  strip.appendChild(cr);strip.appendChild(cl);
   const lb=$('lunar-badge');if(lb)strip.appendChild(lb);
   const xa=document.createElement('aside');xa.className='cp nx';xa.id='nx-alm';xa.style.display='none';
   const xb=document.createElement('aside');xb.className='cp nx';xb.id='nx-aur';xb.style.display='none';
@@ -149,12 +155,10 @@ function layout(){
   const mid=mk('lay-mid','lay');
   (tw||top).parentNode.insertBefore(mid,tw?tw:top.nextSibling);
   mid.appendChild(pc);mid.appendChild(hc);
-  /* 3 — dominants · portrait (big three) · balance (elements) */
+  /* 3 — dominants, one full-width row */
   const info=mk('lay-info','lay');
   mid.parentNode.insertBefore(info,mid.nextSibling);
-  const cl=document.createElement('aside');cl.className='cp';cl.id='cp-left';cl.style.display='none';
-  const cr=document.createElement('aside');cr.className='cp';cr.id='cp-right';cr.style.display='none';
-  if(dom)info.appendChild(dom);info.appendChild(cr);info.appendChild(cl);
+  if(dom)info.appendChild(dom);
   ca.querySelectorAll(':scope>.sec-title').forEach(t=>{const x=t.textContent.trim();
     if(x==='პლანეტები'||x==='ასპექტები')t.classList.add('lay-hide');});
   /* 4 — the four analysis cards */
