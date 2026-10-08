@@ -232,10 +232,9 @@
     <div class="inputs">
       <div class="field"><label>თარიღი</label><input type="date" id="bdate" value="1990-06-15"></div>
       <div class="field"><label>დრო</label><input type="time" id="btime" value="14:30"></div>
-    <div class="fld"><label>ქალაქი (სახლებისთვის)</label>
-      <input type="text" id="bcity" placeholder="თბილისი">
+      <div class="field"><label>ქალაქი (სახლებისთვის)</label>
+      <input type="text" id="bcity" value="Tbilisi" placeholder="თბილისი">
       <div id="cityhint" style="font-size:11px;color:var(--freq);margin-top:3px"></div></div>
-      <div class="field"><label>ადგილი</label><input type="text" id="bplace" value="Tbilisi" placeholder="City"></div>
       <div class="field"><label>ორბი (°)</label><input type="number" id="orb" value="3" min="0.5" max="10" step="0.5"></div>
       <button class="btn" id="calcBtn" onclick="calc()">გამოთვლა</button>
     </div>
@@ -397,7 +396,7 @@ async function calc(){
   if(!d){alert('შეიყვანეთ თარიღი');return}
   const orb=parseFloat(document.getElementById('orb').value)||3;
   const btn=document.getElementById('calcBtn');
-  if(btn){btn.disabled=true;btn.textContent='⏳ გამოთვლა... (პირველად შეიძლება ~15 წმ)';}
+  if(btn){btn.disabled=true;btn.textContent='⏳ გამოთვლა...';}
   const [Y,M,D]=d.split('-').map(Number);
   const [hh,mm]=t.split(':').map(Number);
 
@@ -432,10 +431,14 @@ async function calc(){
     document.getElementById('s3').textContent=new Set(data.map(a=>a.si)).size;
     document.getElementById('s4').textContent=new Set(data.map(a=>a.house)).size;
     document.getElementById('results').style.display='block';
-    const nHz=(j.asteroids||[]).filter(a=>a.source==='horizons').length;
+    const all=j.asteroids||[];
+    const nSw=all.filter(a=>a.source==='swisseph').length,nNb=all.filter(a=>a.source==='nbody').length;
     const srcBox=document.getElementById('srcNote');
-    if(srcBox)srcBox.innerHTML=nHz?('<div style="font-size:11px;color:var(--mut);margin:8px 0">'+
-      'პოზიციები: '+((j.asteroids||[]).length-nHz)+' Swiss Ephemeris · '+nHz+' NASA/JPL Horizons</div>'):'';
+    if(srcBox)srcBox.innerHTML='<div style="font-size:11px;color:var(--mut);margin:8px 0;line-height:1.7">'+
+      'პოზიციები: '+nSw+' Swiss Ephemeris · '+nNb+' რიცხვითი ინტეგრაცია (JPL საწყისი ვექტორი, სიზუსტე &lt;1′)'+
+      (unavailable.length?'<br><span style="color:var(--orange)">ჯერ მიუწვდომელია: '+
+        unavailable.map(u=>{const a=AST.find(x=>x.id===u.id);return a?a.n:('#'+u.id);}).join(', ')+
+        ' — სერვერი მონაცემებს ამზადებს, სცადეთ ერთ წუთში.</span>':'')+'</div>';
     render();
   }catch(e){
     alert('ვერ მოხერხდა გამოთვლა — '+e.message);
@@ -453,14 +456,14 @@ function row(a,full=true){
     <td><span class="aname">${a.n}</span></td>
     <td><span class="cat-tag ${cc}">${a.c}</span></td>
     <td><span class="zbadge ${ec}">${a.sign.s} ${a.sign.n}</span></td>
-    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span></td>
+    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span>${a.retro?' <span style="color:var(--red);font-size:.7rem">℞</span>':''}</td>
     <td>${a.house}</td>
     <td style="text-transform:capitalize">${a.sign.e}</td>
     <td><span class="meaning">${a.m}</span></td>
     <td>${cj}</td>`:`<td><span class="aid">${a.id}</span></td>
     <td><span class="aname">${a.n}</span></td>
     <td><span class="zbadge ${ec}">${a.sign.s} ${a.sign.n}</span></td>
-    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span></td>
+    <td><span class="deg">${Math.floor(a.deg)}°${String(Math.floor((a.deg%1)*60)).padStart(2,'0')}′</span>${a.retro?' <span style="color:var(--red);font-size:.7rem">℞</span>':''}</td>
     <td>${a.house}</td>
     <td><span class="meaning">${a.m}</span></td>
     <td>${cj}</td>`;
