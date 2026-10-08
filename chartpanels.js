@@ -2,7 +2,9 @@
    Self-injecting add-on. In astro.html, after the other add-ons:
        <script src="chartpanels.js"></script>
    Layout (wide screens):
-     [ wheel ]                [ moon day · aspect filter · orbs · aspects ]
+     [ moon day ] [ almuten figuris ] [ doryphory & charioteer ]   ← natal only
+     [ orb controller ]
+     [ wheel ]                [ aspect filter · aspects ]
      [ planets ] [ houses ] [ fixed stars ]
      [ dominants ] [ big three / portrait ] [ elements / balance ]
      [ Cinderella ] [ hard periods ]
@@ -33,6 +35,29 @@ function css(){
 .lay{display:grid;gap:16px;margin:16px 0 18px;width:100%}
 .lay .data-card,.lay .cp{margin:0!important;overflow-x:auto}
 @media(min-width:1000px){#chart-area .lay{width:min(1640px,calc(100vw - 40px));position:relative;left:50%;transform:translateX(-50%)}}
+/* 0 — top strip */
+#lay-strip{grid-template-columns:1fr;align-items:stretch;margin-bottom:10px}
+@media(min-width:900px){#lay-strip.nat{grid-template-columns:1fr 1fr}#lay-strip.nat>#lunar-badge{grid-column:1/-1}}
+@media(min-width:1200px){#lay-strip.nat{grid-template-columns:.55fr 1.3fr 1fr}#lay-strip.nat>#lunar-badge{grid-column:auto;flex-direction:column}}
+#lay-strip>#lunar-badge{margin:0!important;display:flex!important;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px}
+#lay-strip>#lunar-badge[style*="display: none"],#lay-strip>#lunar-badge[style*="display:none"]{display:none!important}
+#lay-orb{margin:0 0 14px}
+@media(min-width:1000px){#chart-area #lay-orb{width:min(1640px,calc(100vw - 40px));position:relative;left:50%;transform:translateX(-50%)}}
+#lay-orb #orb-panel{margin:0}
+.nx-win{font-size:13px;color:#e8e0ff;margin:-2px 0 8px}
+.nx-win b{color:#f0d080;font-weight:500;font-size:15px}
+.nx-win span{font-size:11px;color:rgba(200,190,230,.65);margin-left:6px}
+.nx-t{width:100%;border-collapse:collapse;font-size:10.5px;text-align:center}
+.nx-t th{font-weight:400;color:rgba(200,190,230,.6);font-size:10px;padding:2px 3px;line-height:1.25}
+.nx-t td{padding:2px 3px;border-top:1px solid rgba(45,31,110,.35);color:#c8c0e8}
+.nx-t tr.top td{color:#f0d080;background:rgba(201,168,76,.08)}
+.nx-sb{padding:6px 0 8px;border-bottom:1px solid rgba(45,31,110,.35)}
+.nx-sb:last-child{border-bottom:none}
+.nx-sb .l{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:rgba(201,168,76,.85);text-transform:uppercase}
+.nx-sb .l small{font-family:'Noto Sans Georgian',sans-serif;letter-spacing:0;text-transform:none;color:rgba(200,190,230,.5);margin-left:6px;font-size:9.5px}
+.nx-sb .p{font-size:13px;color:#e8e0ff;margin-top:3px}
+.nx-sb .p b{color:#f0d080;font-weight:500}
+.nx-sb .p span{font-size:10.5px;color:rgba(200,190,230,.6);margin-left:6px}
 /* 1 — wheel left · aspect controls + aspect list right */
 #lay-top{grid-template-columns:1fr;align-items:start;margin-top:0}
 #lay-top>#wheel-wrap{max-width:820px;width:100%;justify-self:center}
@@ -106,11 +131,18 @@ function layout(){
   if(!pc||!hc||!ac)return false;
   pc.id=pc.id||'lay-planets';ac.classList.add('asp-card');
   const mk=(id,cls)=>{const e=document.createElement('div');e.id=id;if(cls)e.className=cls;return e;};
-  /* 1 — wheel + (moon day, aspect filter, orb controls, aspect list) */
-  const top=mk('lay-top','lay'),A=mk('lay-asp');
+  /* 0 — top strip: moon day · almuten figuris · doryphory & charioteer,
+         then the orb controller; 1 — wheel + (aspect filter, aspect list) */
+  const strip=mk('lay-strip','lay'),orb=mk('lay-orb'),top=mk('lay-top','lay'),A=mk('lay-asp');
+  ww.parentNode.insertBefore(strip,ww);
+  ww.parentNode.insertBefore(orb,ww);
   ww.parentNode.insertBefore(top,ww);
+  const lb=$('lunar-badge');if(lb)strip.appendChild(lb);
+  const xa=document.createElement('aside');xa.className='cp nx';xa.id='nx-alm';xa.style.display='none';
+  const xb=document.createElement('aside');xb.className='cp nx';xb.id='nx-aur';xb.style.display='none';
+  strip.appendChild(xa);strip.appendChild(xb);
   top.appendChild(ww);top.appendChild(A);
-  ['lunar-badge','asp-filters'].forEach(id=>{const e=$(id);if(e)A.appendChild(e);});
+  const af=$('asp-filters');if(af)A.appendChild(af);
   A.appendChild(ac);
   /* 2 — planets · houses · fixed stars, where the tables were */
   const tw=document.querySelector('#chart-area .tables-wrap');
@@ -132,10 +164,11 @@ function layout(){
 }
 /* the orb controller lives in the form until a chart exists; then it
    moves next to the aspect list it controls */
-function moveOrbPanel(){const op=$('orb-panel'),A=$('lay-asp'),ac=A&&A.querySelector('.asp-card');
-  if(op&&A&&op.parentNode!==A)A.insertBefore(op,ac||null);}
+function moveOrbPanel(){const op=$('orb-panel'),O=$('lay-orb');
+  if(op&&O&&op.parentNode!==O)O.appendChild(op);}
 function host(){return layout()?$('lay-top'):null;}
-const showCp=on=>['cp-left','cp-right'].forEach(id=>{const e=$(id);if(e)e.style.display=on?'':'none';});
+const showCp=on=>{['cp-left','cp-right'].concat(on?[]:['nx-alm','nx-aur']).forEach(id=>{const e=$(id);if(e)e.style.display=on?'':'none';});
+  if(!on){const st=$('lay-strip');if(st)st.classList.remove('nat');}};
 const si=d=>Math.floor((((+d)%360)+360)%360/30);
 const glyph=n=>{const i=(typeof PI!=='undefined'&&PI[n])||null;
   if(n==='მზე')return '☉';if(n==='AC'||n==='MC')return n;return i?i.sym:n;};
@@ -213,6 +246,155 @@ function right(d,asps){
   return h;
 }
 
+/* ═══ NATAL EXTRAS: Almuten Figuris · Doryphory · Charioteer (Auriga) ═══
+   Natal mode only. Traditional seven planets.
+   Almuten Figuris (Ibn Ezra / Bonatti, as used by Zoller and in ZET):
+     5 hylegiacal points — Sun, Moon, Ascendant, Part of Fortune (by sect),
+     prenatal syzygy (last New/Full Moon before birth);
+     each scored by essential dignity: domicile 5 · exaltation 4 ·
+     triplicity 3 (Dorothean, ruler of the sect) · term 2 (Egyptian) ·
+     face 1 (Chaldean); + ruler of the planetary day 7 + of the hour 6.
+   Doryphory  — the planet rising just BEFORE the Sun (behind it in longitude).
+   Charioteer — the planet rising just AFTER the Sun (Возничий, Auriga).   */
+const T7=['სატურნი','იუპიტერი','მარსი','მზე','ვენერა','მერკური','მთვარე'];      /* Chaldean order */
+const DOM=['მარსი','ვენერა','მერკური','მთვარე','მზე','მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','სატურნი','იუპიტერი'];
+const EXA={0:'მზე',1:'მთვარე',5:'მერკური',11:'ვენერა',9:'მარსი',3:'იუპიტერი',6:'სატურნი'};
+const TRIP=[['მზე','იუპიტერი'],['ვენერა','მთვარე'],['სატურნი','მერკური'],['ვენერა','მარსი']]; /* fire earth air water: [day,night] */
+const S_='სატურნი',J_='იუპიტერი',M_='მარსი',V_='ვენერა',R_='მერკური';
+const TERMS=[[[6,J_],[12,V_],[20,R_],[25,M_],[30,S_]],[[8,V_],[14,R_],[22,J_],[27,S_],[30,M_]],
+ [[6,R_],[12,J_],[17,V_],[24,M_],[30,S_]],[[7,M_],[13,V_],[19,R_],[26,J_],[30,S_]],
+ [[6,J_],[11,V_],[18,S_],[24,R_],[30,M_]],[[7,R_],[17,V_],[21,J_],[28,M_],[30,S_]],
+ [[6,S_],[14,R_],[21,J_],[28,V_],[30,M_]],[[7,M_],[11,V_],[19,R_],[24,J_],[30,S_]],
+ [[12,J_],[17,V_],[21,R_],[26,S_],[30,M_]],[[7,R_],[14,J_],[22,V_],[26,S_],[30,M_]],
+ [[7,R_],[13,V_],[20,J_],[25,M_],[30,S_]],[[12,V_],[16,J_],[19,R_],[28,M_],[30,S_]]];
+const FACE=['მარსი','მზე','ვენერა','მერკური','მთვარე','სატურნი','იუპიტერი'];
+const n360=x=>((x%360)+360)%360;
+function dignities(lon,day){
+  const s=Math.floor(n360(lon)/30),d=n360(lon)-s*30,o={};
+  const add=(p,v,why)=>{o[p]=o[p]||{v:0,w:[]};o[p].v+=v;o[p].w.push(why);};
+  add(DOM[s],5,'სახლი');
+  if(EXA[s])add(EXA[s],4,'ამაღლება');
+  add(TRIP[s%4][day?0:1],3,'ტრიპლიციტეტი');
+  add(TERMS[s].find(t=>d<t[0])[1],2,'ტერმი');
+  add(FACE[Math.floor(n360(lon)/10)%7],1,'დეკანი');
+  return o;
+}
+/* Sun longitude (Meeus low precision, ±0.01°) */
+function sunL(jd){
+  const T=(jd-2451545)/36525,R=Math.PI/180,M=(357.52911+35999.05029*T)*R;
+  const C=(1.914602-0.004817*T)*Math.sin(M)+0.019993*Math.sin(2*M)+0.000289*Math.sin(3*M);
+  return n360(280.46646+36000.76983*T+C-0.00569-0.00478*Math.sin((125.04-1934.136*T)*R));
+}
+/* true New/Full Moon (Meeus ch. 49), JDE */
+function phaseJD(k){
+  const R=Math.PI/180,T=k/1236.85,full=Math.abs(k%1)>0.25;
+  let jd=2451550.09766+29.530588861*k+0.00015437*T*T;
+  const E=1-0.002516*T,M=(2.5534+29.1053567*k)*R,Mp=(201.5643+385.81693528*k+0.0107582*T*T)*R,
+        F=(160.7108+390.67050284*k-0.0016118*T*T)*R,O=(124.7746-1.56375588*k)*R,sin=Math.sin;
+  jd+=full?
+    -0.40614*sin(Mp)+0.17302*E*sin(M)+0.01614*sin(2*Mp)+0.01043*sin(2*F)+0.00734*E*sin(Mp-M)-0.00515*E*sin(Mp+M)
+    +0.00209*E*E*sin(2*M)-0.00111*sin(Mp-2*F)-0.00057*sin(Mp+2*F)+0.00056*E*sin(2*Mp+M)-0.00042*sin(3*Mp)
+    +0.00042*E*sin(M+2*F)+0.00038*E*sin(M-2*F)-0.00024*E*sin(2*Mp-M)-0.00017*sin(O)
+   :-0.40720*sin(Mp)+0.17241*E*sin(M)+0.01608*sin(2*Mp)+0.01039*sin(2*F)+0.00739*E*sin(Mp-M)-0.00514*E*sin(Mp+M)
+    +0.00208*E*E*sin(2*M)-0.00111*sin(Mp-2*F)-0.00057*sin(Mp+2*F)+0.00056*E*sin(2*Mp+M)-0.00042*sin(3*Mp)
+    +0.00042*E*sin(M+2*F)+0.00038*E*sin(M-2*F)-0.00024*E*sin(2*Mp-M)-0.00017*sin(O);
+  return jd;
+}
+function prenatalSyzygy(jd){
+  let k=Math.floor((jd-2451550.09766)/29.530588861*2)/2+1,best=null;
+  for(let i=0;i<6;i++,k-=0.5){const t=phaseJD(k);if(t<=jd){best={jd:t,full:Math.abs(k%1)>0.25};break;}}
+  if(!best)return null;
+  const s=sunL(best.jd);return{jd:best.jd,full:best.full,lon:best.full?n360(s+180):s};
+}
+/* local wall time in a zone → UT Julian day */
+function utJD(q){
+  const y=+q.year,m=+q.month,d=+q.day,h=+(q.hour||0),mi=+(q.minute||0),se=+(q.second||0),tz=q.tz_name||'UTC';
+  const g=Date.UTC(y,m-1,d,h,mi,se);
+  const off=ms=>{const p={};new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',
+    day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'}).formatToParts(new Date(ms)).forEach(x=>p[x.type]=x.value);
+    return Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute,+p.second)-ms;};
+  let t=g-off(g);t=g-off(t);
+  return t/86400000+2440587.5;
+}
+/* sunrise / sunset (UT JD) of the local day that starts at UT `mid` (local
+   mean midnight), apparent upper limb with refraction (-0.833°) */
+function sunEvent(mid,lat,lon,rise){
+  const R=Math.PI/180;let t=mid+(rise?0.25:0.75);
+  for(let i=0;i<4;i++){
+    const T=(t-2451545)/36525,L=sunL(t)*R,eps=(23.439-0.013*T)*R;
+    const dec=Math.asin(Math.sin(eps)*Math.sin(L)),ra=Math.atan2(Math.cos(eps)*Math.sin(L),Math.cos(L))/R;
+    const cosH=(Math.sin(-0.833*R)-Math.sin(lat*R)*Math.sin(dec))/(Math.cos(lat*R)*Math.cos(dec));
+    if(cosH<-1||cosH>1)return null;                          /* polar day / night */
+    const H=Math.acos(cosH)/R*(rise?-1:1);
+    const lst=n360(280.46061837+360.98564736629*(t-2451545)+lon);
+    const ha=((lst-ra)%360+540)%360-180;
+    t+=(H-ha)/360.9856;
+  }
+  return t;
+}
+/* ruler of the planetary day (from sunrise) and of the planetary hour */
+function planetaryRulers(jd,lat,lon){
+  let day=Math.floor(jd+lon/360+0.5);                        /* local date, as the JD at its noon */
+  const mid=dd=>dd-0.5-lon/360;
+  let rise=sunEvent(mid(day),lat,lon,true);
+  if(rise==null)return null;
+  if(jd<rise){day--;rise=sunEvent(mid(day),lat,lon,true);}
+  const set=sunEvent(mid(day),lat,lon,false),next=sunEvent(mid(day+1),lat,lon,true);
+  if(rise==null||set==null||next==null)return null;
+  const WD=['მზე','მთვარე','მარსი','მერკური','იუპიტერი','ვენერა','სატურნი'];  /* Sunday … Saturday */
+  const dayRuler=WD[(day+1)%7];
+  let n=jd<set?Math.floor((jd-rise)/((set-rise)/12)):12+Math.floor((jd-set)/((next-set)/12));
+  n=Math.max(0,Math.min(23,n));
+  return{dayRuler,hourRuler:T7[(T7.indexOf(dayRuler)+n)%7],hour:n+1,rise,set};
+}
+function almuten(d){
+  const P=d.planets||{},q=d._fsReq;if(!q||d._timeUnknown||d.asc==null)return null;
+  const sun=+P['მზე'].degree,moon=+P['მთვარე'].degree,asc=+d.asc;
+  const sh=P['მზე'].house,day=sh?sh>=7:true;
+  const fort=n360(day?asc+moon-sun:asc+sun-moon);
+  const jd=utJD(q),syz=prenatalSyzygy(jd);
+  const pts=[['☉','მზე',sun],['☽','მთვარე',moon],['AC','ასცენდენტი',asc],['⊗','ფორტუნა',fort]];
+  if(syz)pts.push([syz.full?'○':'●',(syz.full?'სავსე':'ახალი')+' მთვარე (სიზიგია)',syz.lon]);
+  const score={};T7.forEach(p=>score[p]={pts:[],tot:0,bonus:0});
+  pts.forEach(([g,,lon],i)=>{const dg=dignities(lon,day);
+    T7.forEach(p=>{const v=dg[p]?dg[p].v:0;score[p].pts[i]=v;score[p].tot+=v;});});
+  const lat=+d.lat,lon=+d.lon;let pr=null;
+  if(isFinite(lat)&&isFinite(lon))pr=planetaryRulers(jd,lat,lon);
+  if(pr){score[pr.dayRuler].bonus+=7;score[pr.hourRuler].bonus+=6;}
+  const rank=T7.map(p=>({...score[p],p,base:score[p].tot,tot:score[p].tot+score[p].bonus})).sort((a,b)=>b.tot-a.tot||b.base-a.base);
+  return{rank,pts,day,pr,syz,fort};
+}
+function spearBearers(d){
+  const P=d.planets||{};if(!P['მზე'])return null;
+  const sun=+P['მზე'].degree,list=REAL.filter(n=>n!=='მზე'&&P[n]&&P[n].degree!=null);
+  let dor=null,aur=null;
+  for(const n of list){const x=+P[n].degree,before=n360(sun-x),after=n360(x-sun);
+    if(!dor||before<dor.arc)dor={n,arc:before};if(!aur||after<aur.arc)aur={n,arc:after};}
+  return{dor,aur};
+}
+function extraHTML(d){
+  const A=almuten(d),B=spearBearers(d),g=n=>`<span style="font-family:serif;font-size:15px">${glyph(n)}</span>`;
+  const sg=lon=>{const s=si(lon);return `<span style="color:${ZCOL[s]}">${ZSYM[s]}</span>`;};
+  let a;
+  if(!A)a='<div class="cp-hint">ალმუტენისთვის დაბადების ზუსტი დრო საჭიროა.</div>';
+  else{
+    const w=A.rank[0],tie=A.rank[1]&&A.rank[1].tot===w.tot;
+    a=`<div class="nx-win">${g(w.p)} <b>${w.p}</b> <span>${w.tot} ქულა</span>${tie?` <small>(თანაბარი: ${A.rank[1].p})</small>`:''}</div>
+     <table class="nx-t"><tr><th></th>${A.pts.map(p=>`<th title="${p[1]} ${fmtDeg?fmtDeg(p[2]):''}">${p[0]}<br>${sg(p[2])}</th>`).join('')}<th title="დღის (+7) და საათის (+6) მმართველი">დ/ს</th><th>Σ</th></tr>
+     ${A.rank.map((r,i)=>`<tr class="${i===0?'top':''}"><td>${g(r.p)}</td>${r.pts.map(v=>`<td>${v||'·'}</td>`).join('')}<td>${r.bonus||'·'}</td><td><b>${r.tot}</b></td></tr>`).join('')}</table>
+     <div class="cp-hint" style="font-size:9.5px;opacity:.7">${A.day?'დღის':'ღამის'} რუქა · ⊗ ${A.day?'AC+☽−☉':'AC+☉−☽'}${A.syz?` · ${A.syz.full?'სავსე':'ახალი'} მთვარე ${fmtDeg?fmtDeg(A.syz.lon):''} ${SIGN_KA[si(A.syz.lon)]}`:''}${A.pr?` · დღის მმართველი ${A.pr.dayRuler} (+7), ${A.pr.hour}-ე საათი — ${A.pr.hourRuler} (+6)`:''}<br>
+       სახლი 5 · ამაღლება 4 · ტრიპლიციტეტი 3 · ტერმი 2 · დეკანი 1 (იბნ ეზრა)</div>`;
+  }
+  let b='';
+  if(B){
+    const it=(lbl,sub,x,txt)=>x?`<div class="nx-sb"><div class="l">${lbl}<small>${sub}</small></div><div class="p">${g(x.n)} <b>${x.n}</b>
+      <span>${x.arc.toFixed(1)}° ${lbl.startsWith('დორ')?'მზის წინ':'მზის შემდეგ'}</span></div><div class="cp-hint" style="margin:2px 0 0">${txt}</div></div>`:'';
+    b=it('დორიფორი','შუბოსანი · Дорифорий',B.dor,'ამოდის მზემდე — „სავიზიტო ბარათი“: რითაც პირველად გამჩნევენ.')+
+      it('მეეტლე','Auriga · Возничий',B.aur,'ამოდის მზის შემდეგ — რითაც გიმახსოვრებენ; თვისება, რომელიც დროთა განმავლობაში ვლინდება.');
+  }
+  return{a,b};
+}
+
 function render(d){
   if(!host())return;
   try{
@@ -222,6 +404,15 @@ function render(d){
     $('cp-right').innerHTML=right(d,asps);
     showCp(true);
     moveOrbPanel();
+    const natal=(typeof currentMode==='undefined')||currentMode==='natal';
+    const ca=$('nx-alm'),cb=$('nx-aur');
+    if(ca&&cb){
+      if(natal){const x=extraHTML(d);
+        ca.innerHTML='<h3>♛ ალმუტენ ფიგურის · Almuten Figuris</h3>'+x.a;cb.innerHTML='<h3>⚔ დორიფორი და მეეტლე</h3>'+x.b;
+        ca.style.display=cb.style.display='';}
+      else ca.style.display=cb.style.display='none';
+      const st=$('lay-strip');if(st)st.classList.toggle('nat',natal);
+    }
   }catch(e){console.warn('chartpanels',e);showCp(false);}
 }
 if(typeof drawWheel==='function'){
@@ -249,5 +440,5 @@ for(const fn of ['drawPlanetTable','drawAspectTable']){
 }
 window._SEL_SVG=SEL_SVG;
 layout();
-window._chartPanels={render};
+window._chartPanels={render,almuten,spearBearers,prenatalSyzygy,planetaryRulers,sunEvent,utJD,dignities};
 })();
