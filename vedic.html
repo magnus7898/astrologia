@@ -773,7 +773,8 @@ function _boxIn(cx,cy,w,h,P,m){return [[cx-w/2-m,cy-h/2-m],[cx+w/2+m,cy-h/2-m],[
 const _hit=(a,b)=>Math.abs(a.x-b.x)*2<a.w+b.w&&Math.abs(a.y-b.y)*2<a.h+b.h;
 function packLabels(n,P,anchor,reserved,wy=2.2){
   if(!n)return {fs:12,pts:[]};
-  for(const [fs,sx,sy] of [[12.5,33,16],[11.5,30,15],[10.5,27,13.5],[9.5,24,12],[8.5,21,11]]){
+  /* fs = glyph size; a glyph + its small ℞ fits in sx × sy */
+  for(const [fs,sx,sy] of [[19,30,24],[17,27,22],[15,24,19],[13,21,17],[11.5,18,15]]){
     const w=sx-4,h=sy-3,xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),c=[];
     for(let y=anchor[1]-Math.ceil((anchor[1]-Math.min(...ys))/sy)*sy;y<=Math.max(...ys);y+=sy)
       for(let x=anchor[0]-Math.ceil((anchor[0]-Math.min(...xs))/(sx/2))*(sx/2);x<=Math.max(...xs);x+=sx/2){
@@ -784,12 +785,23 @@ function packLabels(n,P,anchor,reserved,wy=2.2){
     const pick=[];for(const b of c){if(pick.every(q=>!_hit(b,q)))pick.push(b);if(pick.length===n)break;}
     if(pick.length===n){pick.sort((a,b)=>a.y-b.y||a.x-b.x);return {fs,pts:pick};}
   }
-  return {fs:8,pts:Array.from({length:n},(_,i)=>({x:anchor[0],y:anchor[1]+i*10,w:20,h:9}))};
+  return {fs:10,pts:Array.from({length:n},(_,i)=>({x:anchor[0],y:anchor[1]+i*12,w:16,h:12}))};
+}
+/* planet glyph exactly as on the wheel (☉ drawn as a ringed dot), with a
+   small red ℞ tucked at the upper right when retrograde */
+function _glyph(vd,n,x,y,fs){
+  const p=(vd.planets&&vd.planets[n])||{},info=PI[n]||{sym:'?',color:'#fff'};
+  const rx=(p.retrograde===true||p.retrograde==='true')&&n!=='Sun'&&n!=='Moon';
+  const ox=rx?-fs*.12:0;   /* nudge left so glyph + ℞ stay centred */
+  let g=`<g class="pl" data-n="${n}" data-x="${x}" data-y="${y}"><title>${n}${rx?' ℞':''}</title>`;
+  if(n==='Sun')g+=`<circle cx="${x+ox}" cy="${y}" r="${fs*.36}" fill="rgba(249,198,70,.12)" stroke="#f9c646" stroke-width="${Math.max(1.2,fs*.08)}"/><circle cx="${x+ox}" cy="${y}" r="${fs*.09}" fill="#f9c646"/>`;
+  else g+=`<text x="${x+ox}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="${n==='Moon'?fs*1.05:fs}" fill="${n==='Moon'?'#b8d8ff':info.color}" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',serif">${info.sym}\uFE0E</text>`;
+  if(rx)g+=`<text x="${x+ox+fs*.5}" y="${y-fs*.38}" text-anchor="middle" dominant-baseline="central" font-size="${fs*.42}" fill="#f87171" font-family="serif">℞</text>`;
+  return g+'</g>';
 }
 function _labels(vd,names,P,anchor,reserved,wy){
   const {fs,pts}=packLabels(names.length,P,anchor,reserved,wy);let s='';
-  names.forEach((n,i)=>{const L=_pLabel(vd,n),p=pts[i];
-    s+=`<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="${fs}" fill="${L.c}" font-family="Cinzel,serif">${L.t}</text>`;});
+  names.forEach((n,i)=>{const p=pts[i];s+=_glyph(vd,n,p.x,p.y,fs);});
   return s;
 }
 const _vname=()=>{const v=VARGAS.find(x=>x.n===(window._curV||1));return v?[`D${v.n}`,v.ka]:['D1','რაში'];};
