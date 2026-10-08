@@ -1,9 +1,10 @@
 /* chartpanels.js — page layout + side panels of the natal chart (astro.html)
    Self-injecting add-on. In astro.html, after the other add-ons:
        <script src="chartpanels.js"></script>
-   Layout (≥1400px):
-     [ dominants + balance ]  [ wheel ]  [ planets + portrait ]
-     [ houses ] [ fixed stars ] [ aspects ]
+   Layout (wide screens):
+     [ wheel ]                [ moon day · aspect filter · orbs · aspects ]
+     [ planets ] [ houses ] [ fixed stars ]
+     [ dominants ] [ big three / portrait ] [ elements / balance ]
      [ Cinderella ] [ hard periods ]
      [ true sky   ] [ sky poster   ]
    Narrower screens fold the same blocks into 2 columns, phones into 1.
@@ -29,38 +30,39 @@ function css(){
   const s=document.createElement('style');s.id='cp-css';s.textContent=`
 #side-panels{display:none}
 #chart-area>.sec-title.lay-hide,#chart-area>.tables-wrap{display:none!important}
-.lay{display:grid;gap:14px;margin:14px 0 16px;width:100%}
-.lay .data-card{margin:0!important;overflow-x:auto}
-@media(min-width:1000px){#chart-area .lay{width:min(1720px,calc(100vw - 32px));position:relative;left:50%;transform:translateX(-50%)}}
-/* top row: wheel + planets + dominants + the two panels */
-#lay-top{grid-template-columns:1fr 1fr;align-items:start;margin-top:0}
-#lay-top>#wheel-wrap{grid-column:1/-1;order:0;max-width:820px;width:100%;justify-self:center}
-#lay-col-l,#lay-col-r{display:contents}
-#dominants-card{order:2}#lay-planets{order:1}#cp-left{order:3}#cp-right{order:4}
-@media(max-width:700px){#lay-top{grid-template-columns:1fr}}
-@media(min-width:1400px){
-  #lay-top{grid-template-columns:minmax(370px,1fr) minmax(560px,820px) minmax(370px,1fr)}
-  #lay-col-l,#lay-col-r{display:flex;flex-direction:column;gap:14px;min-width:0}
-  #lay-top>#wheel-wrap{grid-column:auto}
-  #lay-col-r td,#lay-col-l td,#lay-col-r th{padding-left:6px;padding-right:6px}
-  #lay-planets td{white-space:normal}
-  #lay-col-l .domx-grid{grid-template-columns:1fr!important;gap:6px!important}
-  #lay-planets td:nth-child(2){white-space:nowrap}
+.lay{display:grid;gap:16px;margin:16px 0 18px;width:100%}
+.lay .data-card,.lay .cp{margin:0!important;overflow-x:auto}
+@media(min-width:1000px){#chart-area .lay{width:min(1640px,calc(100vw - 40px));position:relative;left:50%;transform:translateX(-50%)}}
+/* 1 — wheel left · aspect controls + aspect list right */
+#lay-top{grid-template-columns:1fr;align-items:start;margin-top:0}
+#lay-top>#wheel-wrap{max-width:820px;width:100%;justify-self:center}
+#lay-asp{display:flex;flex-direction:column;gap:12px;min-width:0}
+#lay-asp>#asp-filters,#lay-asp>#lunar-badge{margin:0!important}
+#lay-asp #orb-panel{margin:0}
+@media(min-width:1200px){
+  #lay-top{grid-template-columns:minmax(560px,1.12fr) minmax(440px,1fr)}
+  #lay-top>#wheel-wrap{justify-self:stretch;max-width:none}
 }
-/* middle row: houses · fixed stars · aspects */
+/* 2 — planets · houses · fixed stars */
 #lay-mid{grid-template-columns:1fr;align-items:start}
-@media(min-width:800px){
-  #lay-mid{grid-template-columns:1fr 1fr}
-  #lay-mid.has-fs>.asp-card{grid-column:1/-1}
-}
-@media(min-width:1300px){
-  #lay-mid.has-fs{grid-template-columns:.8fr 1.15fr 1.15fr}
-  #lay-mid.has-fs>.asp-card{grid-column:auto}
-  #lay-mid:not(.has-fs){grid-template-columns:.8fr 1.2fr}
-}
-/* bottom: the four analysis cards, 2 × 2 */
-#lay-bot{grid-template-columns:1fr;align-items:start}
+@media(min-width:800px){#lay-mid{grid-template-columns:1fr 1fr}#lay-mid.has-fs>#fs-card{grid-column:1/-1}}
+@media(min-width:1300px){#lay-mid.has-fs{grid-template-columns:1.1fr .8fr 1.2fr}#lay-mid.has-fs>#fs-card{grid-column:auto}}
+/* 3 — dominants · big three/portrait · elements/balance */
+#lay-info{grid-template-columns:1fr;align-items:start}
+@media(min-width:800px){#lay-info{grid-template-columns:1fr 1fr}#lay-info>#dominants-card{grid-column:1/-1}}
+@media(min-width:1300px){#lay-info{grid-template-columns:1.25fr 1fr 1fr}#lay-info>#dominants-card{grid-column:auto}}
+@media(min-width:1300px) and (max-width:1599px){#lay-info .domx-grid{grid-template-columns:1fr!important;gap:6px!important}}
+/* 4 — the four analysis cards as a 2 × 2 grid of boxes */
+#lay-bot{grid-template-columns:1fr}
 @media(min-width:900px){#lay-bot{grid-template-columns:1fr 1fr}}
+#lay-bot>.data-card{min-height:190px;display:flex!important;flex-direction:column;border-radius:16px;
+  background:linear-gradient(160deg,rgba(30,20,70,.55),rgba(8,6,20,.85));border:1px solid rgba(124,58,237,.35);
+  box-shadow:0 10px 30px rgba(0,0,0,.4)}
+#lay-bot>.data-card[style*="display: none"],#lay-bot>.data-card[style*="display:none"]{display:none!important}
+#lay-bot>.data-card>.data-card-title{font-size:11px;letter-spacing:3px;padding:12px 16px}
+#lay-bot>.data-card>div:last-child{flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:18px!important}
+#lay-bot>.data-card>div:last-child>button{align-self:center;font-size:13px!important;padding:12px 22px!important}
+#lay-bot>.data-card>div:last-child>div{text-align:center}
 .cp{background:rgba(8,6,20,.72);border:1px solid rgba(45,31,110,.55);border-radius:14px;padding:14px 16px 12px;
   backdrop-filter:blur(8px);box-shadow:0 8px 30px rgba(0,0,0,.35);font-family:'Noto Sans Georgian',sans-serif}
 .cp h3{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(201,168,76,.85);
@@ -104,26 +106,34 @@ function layout(){
   if(!pc||!hc||!ac)return false;
   pc.id=pc.id||'lay-planets';ac.classList.add('asp-card');
   const mk=(id,cls)=>{const e=document.createElement('div');e.id=id;if(cls)e.className=cls;return e;};
-  const top=mk('lay-top','lay'),L=mk('lay-col-l'),Rc=mk('lay-col-r');
+  /* 1 — wheel + (moon day, aspect filter, orb controls, aspect list) */
+  const top=mk('lay-top','lay'),A=mk('lay-asp');
   ww.parentNode.insertBefore(top,ww);
-  const cl=document.createElement('aside');cl.className='cp';cl.id='cp-left';cl.style.display='none';
-  const cr=document.createElement('aside');cr.className='cp';cr.id='cp-right';cr.style.display='none';
-  if(dom)L.appendChild(dom);L.appendChild(cl);      /* dominants first, then balance */
-  Rc.appendChild(pc);Rc.appendChild(cr);             /* planets first, then portrait  */
-  top.appendChild(L);top.appendChild(ww);top.appendChild(Rc);
-  /* middle: houses · stars · aspects, where the tables were */
+  top.appendChild(ww);top.appendChild(A);
+  ['lunar-badge','asp-filters'].forEach(id=>{const e=$(id);if(e)A.appendChild(e);});
+  A.appendChild(ac);
+  /* 2 — planets · houses · fixed stars, where the tables were */
   const tw=document.querySelector('#chart-area .tables-wrap');
   const mid=mk('lay-mid','lay');
-  (tw||ac).parentNode.insertBefore(mid,tw||ac);
-  mid.appendChild(hc);mid.appendChild(ac);
-  /* the two section titles that no longer describe what follows */
+  (tw||top).parentNode.insertBefore(mid,tw?tw:top.nextSibling);
+  mid.appendChild(pc);mid.appendChild(hc);
+  /* 3 — dominants · portrait (big three) · balance (elements) */
+  const info=mk('lay-info','lay');
+  mid.parentNode.insertBefore(info,mid.nextSibling);
+  const cl=document.createElement('aside');cl.className='cp';cl.id='cp-left';cl.style.display='none';
+  const cr=document.createElement('aside');cr.className='cp';cr.id='cp-right';cr.style.display='none';
+  if(dom)info.appendChild(dom);info.appendChild(cr);info.appendChild(cl);
   ca.querySelectorAll(':scope>.sec-title').forEach(t=>{const x=t.textContent.trim();
     if(x==='პლანეტები'||x==='ასპექტები')t.classList.add('lay-hide');});
-  /* bottom: the four analysis cards */
+  /* 4 — the four analysis cards */
   const four=['cinderella-card','hardperiods-card','skymap-card','skychart-card'].map($).filter(Boolean);
   if(four.length){const bot=mk('lay-bot','lay');four[0].parentNode.insertBefore(bot,four[0]);four.forEach(c=>bot.appendChild(c));}
   return true;
 }
+/* the orb controller lives in the form until a chart exists; then it
+   moves next to the aspect list it controls */
+function moveOrbPanel(){const op=$('orb-panel'),A=$('lay-asp'),ac=A&&A.querySelector('.asp-card');
+  if(op&&A&&op.parentNode!==A)A.insertBefore(op,ac||null);}
 function host(){return layout()?$('lay-top'):null;}
 const showCp=on=>['cp-left','cp-right'].forEach(id=>{const e=$(id);if(e)e.style.display=on?'':'none';});
 const si=d=>Math.floor((((+d)%360)+360)%360/30);
@@ -211,6 +221,7 @@ function render(d){
     try{asps=asps.filter(isAspectVisible);}catch(e){}
     $('cp-right').innerHTML=right(d,asps);
     showCp(true);
+    moveOrbPanel();
   }catch(e){console.warn('chartpanels',e);showCp(false);}
 }
 if(typeof drawWheel==='function'){
