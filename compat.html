@@ -81,6 +81,12 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(28px,5v
 .mx td{width:34px;height:28px;text-align:center;font-size:10.5px;border-radius:5px;cursor:pointer;color:#0b0812;font-weight:600}
 .mx td.on{outline:2px solid #fff}
 .mx .cap{font-size:11px;color:var(--dim);text-align:center;margin-bottom:10px}
+.ttl{font-weight:400;font-size:21px;line-height:1.5;margin-bottom:14px;text-align:center}
+.ttl .g{font-family:serif;font-size:25px}
+.desc p{font-size:15px;line-height:1.95;color:#ddd6c6;margin-bottom:14px;text-indent:1.4em}
+.desc p:first-child{text-indent:0;color:var(--gold-l);font-size:16px}
+.desc b{font-weight:600;color:var(--gold-l)}
+.res{max-width:820px;margin-left:auto;margin-right:auto;padding:28px 30px}
 .note{font-size:10.5px;color:var(--dim);text-align:center;margin-top:18px;line-height:1.7}
 </style>
 </head>
@@ -95,12 +101,11 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(28px,5v
 
   <div class="pick">
     <div class="pcard" id="pa"></div>
-    <div class="mid"><button class="swap" id="swap" title="სქესების შებრუნება">⇄</button><div class="cnt">144 კომბინაცია<br>კაცი × ქალი</div></div>
+    <div class="mid"><button class="swap" id="swap" title="სქესების შებრუნება">⇄</button><div class="cnt">სქესის<br>შებრუნება</div></div>
     <div class="pcard" id="pb"></div>
   </div>
 
   <div class="res" id="res"></div>
-  <div class="mx" id="mx"></div>
   <div class="note">ზოდიაქოს შეთავსება მზის ნიშნებს ეყრდნობა. სრული სურათისთვის საჭიროა ორივე ნატალური რუკა — მთვარე, ვენერა, მარსი და ასცენდენტი (იხ. „სინასტრია“).</div>
 </div>
 
@@ -276,11 +281,11 @@ function compute(a,ga,b,gb){
   /* polarity: yang = fire/air, yin = earth/water */
   const ya=yang(a),yb=yang(b);let pol;
   const nA=S[a].n+' '+GEN[ga].gen,nB=S[b].n+' '+GEN[gb].gen;
-  if(ya&&yb){pol='ორივე ნიშანი აქტიურია (იან): ორი ლიდერი, ბევრი ენერგია და ცოტა კონკურენცია — ერთმანეთის პარტნიორები უნდა იყვნენ და არა მეტოქეები.';v[1]+=4;v[3]-=3;}
-  else if(!ya&&!yb){pol='ორივე ნიშანი მიმღებია (ინ): სიმშვიდე, ემოციური სიღრმე და ზრუნვა — თუმცა ინიციატივა ვიღაცამ მაინც უნდა აიღოს.';v[0]+=3;v[1]-=3;}
+  if(ya&&yb){pol='ორივე ნიშანი აქტიურია: ორი ლიდერი, ბევრი ენერგია და ცოტა კონკურენცია — ერთმანეთის პარტნიორები უნდა იყვნენ და არა მეტოქეები.';v[1]+=4;v[3]-=3;}
+  else if(!ya&&!yb){pol='ორივე ნიშანი მიმღებია: სიმშვიდე, ემოციური სიღრმე და ზრუნვა — თუმცა ინიციატივა ვიღაცამ მაინც უნდა აიღოს.';v[0]+=3;v[1]-=3;}
   else{
     const act=ya?nA:nB,rec=ya?nB:nA;
-    pol=act[0].toUpperCase()+act.slice(1)+' ნიშანი აქტიურია (იან), '+rec+' — მიმღები (ინ).';
+    pol=act[0].toUpperCase()+act.slice(1)+' ნიშანი აქტიურია, '+rec+' — მიმღები.';
     const man=ga==='m'?a:(gb==='m'?b:null),wom=ga==='f'?a:(gb==='f'?b:null);
     if(man!=null&&wom!=null&&ga!==gb){
       if(yang(man)&&!yang(wom)){pol+=' კლასიკური პოლარობა: კაცი იღებს ინიციატივას, ქალი ქმნის ემოციურ გარემოს — როლები ბუნებრივად ნაწილდება.';v[3]+=3;}
@@ -311,43 +316,18 @@ function render(){
   const {a,ga,b,gb}=st,R=compute(a,ga,b,gb);
   const PA=GEN[ga].P[a],PB=GEN[gb].P[b];
   const lab=(i,g)=>`<span class="g" style="color:${ELC[el(i)]}">${G(S[i].g)}</span> ${S[i].n} <span style="color:${g==='m'?'var(--m)':'var(--f)'}">${GEN[g].w}</span>`;
-  const C=2*Math.PI*50,off=C*(1-R.tot/100);
+  const na=S[a].n+' '+GEN[ga].w,nb=S[b].n+' '+GEN[gb].w;
   document.getElementById('res').innerHTML=`
-   <div class="rh">
-     <div class="ring"><svg width="118" height="118"><circle cx="59" cy="59" r="50" stroke="rgba(255,255,255,.07)" stroke-width="8" fill="none"/>
-       <circle cx="59" cy="59" r="50" stroke="url(#gg)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}"/>
-       <defs><linearGradient id="gg"><stop offset="0" stop-color="#f08cb8"/><stop offset="1" stop-color="#c9a84c"/></linearGradient></defs></svg>
-       <div class="v"><b>${R.tot}%</b><small>შეთავსება</small></div></div>
-     <div class="pair"><h2>${lab(a,ga)} &nbsp;+&nbsp; ${lab(b,gb)}</h2>
-       <div class="verdict">${verdict(R.tot)}</div>
-       <span class="tag">${R.A[0]}</span><span class="tag">${ELN[el(a)]} · ${ELN[el(b)]}</span><span class="tag">${MON[mo(a)]} · ${MON[mo(b)]}</span></div>
-   </div>
-   <div class="bars">${R.sc.map((x,i)=>`<div class="bar"><span>${CAT[i]}</span><span class="t"><i style="width:${x}%;background:${CATC[i]}"></i></span><em>${x}%</em></div>`).join('')}</div>
-   <div class="sec"><h3>✦ წყვილი</h3><p>${R.pr[1]}</p></div>
-   <div class="sec two">
-     <div class="prof" style="border-color:${ga==='m'?'var(--m)':'var(--f)'}"><h4>${lab(a,ga)} სიყვარულში</h4><p>${PA[0]}</p></div>
-     <div class="prof" style="border-color:${gb==='m'?'var(--m)':'var(--f)'}"><h4>${lab(b,gb)} სიყვარულში</h4><p>${PB[0]}</p></div>
-   </div>
-   <div class="sec"><h3>⇄ ერთმანეთს რას აძლევენ</h3><div class="kv">
-     <b>${S[a].n} ${GEN[ga].w}</b> აძლევს ${PA[1]} და ელის ${PA[2]}.<br>
-     <b>${S[b].n} ${GEN[gb].w}</b> აძლევს ${PB[1]} და ელის ${PB[2]}.<br>
-     <span style="color:#f0a080">სიფრთხილე:</span> ${S[a].n} ${GEN[ga].gen} მხრიდან — ${PA[3]}; ${S[b].n} ${GEN[gb].gen} მხრიდან — ${PB[3]}.</div></div>
-   <div class="sec"><h3>☍ ასპექტი · ${R.A[0]}</h3><p>${R.A[1]}</p></div>
-   <div class="sec two"><div><h3>🜂 ელემენტები</h3><p>${ELP[R.ek]}</p></div><div><h3>⟳ მოდალობა</h3><p>${MOP[R.mk]}</p></div></div>
-   <div class="sec"><h3>☯ პოლარობა</h3><p>${R.pol}</p></div>
-   <div class="sec"><h3>✧ რჩევა</h3><p>${R.A[2]} მმართველები: ${S[a].n} — ${RULER[a]}, ${S[b].n} — ${RULER[b]}.</p></div>`;
-  matrix();
+   <h2 class="ttl">${lab(a,ga)} &nbsp;+&nbsp; ${lab(b,gb)}</h2>
+   <div class="desc">
+     <p>${R.pr[1]}</p>
+     <p><b>${na}</b> — ${PA[0]} <b>${nb}</b> — ${PB[0]}</p>
+     <p>${na} ამ ურთიერთობაში აძლევს ${PA[1]} და პარტნიორისგან ელის ${PA[2]}. ${nb} კი აძლევს ${PB[1]} და ელის ${PB[2]}.</p>
+     <p>${R.A[1]} ${ELP[R.ek].replace(/^[^:]+:\s*/,'')} ${MOP[R.mk]}</p>
+     <p>${R.pol}</p>
+     <p>რას უნდა გაუფრთხილდნენ: ${S[a].n} ${GEN[ga].gen} მხრიდან — ${PA[3]}, ${S[b].n} ${GEN[gb].gen} მხრიდან — ${PB[3]}. ${R.A[2]}</p>
+   </div>`;
   try{history.replaceState(null,'',`?a=${a}&ga=${ga}&b=${b}&gb=${gb}`);}catch(e){}
-}
-function matrix(){
-  const {ga,gb}=st,col=t=>`hsl(${Math.round((t-40)/58*130)},55%,${50+(t-40)/58*12}%)`;
-  let h=`<div class="cap">ცხრილი: რიგები — ${GEN[ga].w} (პირველი), სვეტები — ${GEN[gb].w} (მეორე) · დააჭირე უჯრას</div><table><tr><th></th>${S.map(s=>`<th class="c" title="${s.n}">${G(s.g)}</th>`).join('')}</tr>`;
-  for(let i=0;i<12;i++){h+=`<tr><th class="r" title="${S[i].n}">${G(S[i].g)}</th>`;
-    for(let j=0;j<12;j++){const t=compute(i,ga,j,gb).tot;
-      h+=`<td data-i="${i}" data-j="${j}" class="${st.a===i&&st.b===j?'on':''}" style="background:${col(t)}" title="${S[i].n} ${GEN[ga].w} + ${S[j].n} ${GEN[gb].w}: ${t}%">${t}</td>`;}
-    h+='</tr>';}
-  const mx=document.getElementById('mx');mx.innerHTML=h+'</table>';
-  mx.querySelectorAll('td').forEach(td=>td.onclick=()=>{st.a=+td.dataset.i;st.b=+td.dataset.j;render();document.getElementById('res').scrollIntoView({behavior:'smooth',block:'start'});});
 }
 document.getElementById('swap').onclick=()=>{[st.ga,st.gb]=[st.gb,st.ga];render();};   /* Taurus man + Scorpio woman ⇄ Taurus woman + Scorpio man */
 render();
