@@ -1856,16 +1856,15 @@ async function generate(){
 const DOMX=(()=>{
 const K=["sun","moon","mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","chiron","node","lilith","asc","mc"];
 const OI={sun:30,moon:25,mercury:10,venus:10,mars:10,jupiter:10,saturn:10,uranus:10,neptune:10,pluto:10,chiron:5,node:5,lilith:5,asc:20,mc:15};
-const HI=[20,5,2,8,5,2,10,5,2,15,5,2];
-const AORB=10,APROX={asc:15,mc:12,dsc:8,ic:6},CRIT=15,ACNT=3;
-const R1S={1:"pluto",2:"venus",3:"mercury",4:"moon",5:"sun",6:"mercury",7:"venus",8:"mars",9:"jupiter",10:"saturn",11:"uranus",12:"neptune"};
-const R2S={1:"mars",8:"pluto",11:"saturn",12:"jupiter"};
-const OR1={sun:5,moon:4,mercury:3,venus:7,mars:8,jupiter:9,saturn:10,uranus:11,neptune:12,pluto:1,chiron:9,node:11,lilith:8,asc:1,mc:10};
-const OR2={mercury:6,venus:2,mars:1,jupiter:12,saturn:11,pluto:8};
-const EX={sun:1,moon:2,mercury:6,venus:12,mars:10,jupiter:4,saturn:7,uranus:8,neptune:4,pluto:11,chiron:12,node:3,lilith:12,asc:2,mc:10};
+const HI=[20,0,0,10,0,0,5,0,0,15,0,0];   // Astrolog rHouseInf
+const R1S={1:"mars",2:"venus",3:"mercury",4:"moon",5:"sun",6:"mercury",7:"venus",8:"pluto",9:"jupiter",10:"saturn",11:"uranus",12:"neptune"};
+const R2S={8:"mars",11:"saturn",12:"jupiter"};
+const OR1={sun:5,moon:4,mercury:3,venus:7,mars:1,jupiter:9,saturn:10,uranus:11,neptune:12,pluto:8,chiron:9,node:11,lilith:8,asc:1,mc:10};
+const OR2={mercury:6,venus:2,mars:8,jupiter:12,saturn:11};
+const EX={sun:1,moon:2,mercury:6,venus:12,mars:10,jupiter:4,saturn:7,uranus:8,neptune:4,pluto:11,chiron:12,node:3,lilith:12,asc:10,mc:7};
 const AS=[[0,1.0,7],[180,0.8,7],[90,0.8,7],[120,0.6,7],[60,0.6,6]];
 const OO={node:2},OA={sun:1,moon:1};
-const RETRO_F=0.9,RETRO_OK=new Set(["mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","chiron"]);
+const RETRO_OK=new Set(["mercury","venus","mars","jupiter","saturn","uranus","neptune","pluto","chiron"]);
 const nrm=d=>{d%=360;return d<0?d+360:d;};
 const sgn=l=>Math.floor(nrm(l)/30)+1;
 function hse(l,c){l=nrm(l);for(let h=0;h<12;h++){const a=nrm(c[h]),b=nrm(c[(h+1)%12]);
@@ -1883,11 +1882,7 @@ function compute(P,cusps,retro){
  if(H.asc!=null)H.asc=1;if(H.mc!=null)H.mc=10;
  for(const o of os){const s=S[o],h=H[o];
   p1[o]+=OI[o]+HI[h-1];
-  const sd=pos[o]%30;CRX[o]=(sd<1||sd>=29);if(CRX[o])p1[o]+=CRIT;
-  if(o!=="asc"&&o!=="mc"){let bp=0;
-   for(const a in APROX){const dd=sep(pos[o],ANG[a]);
-    if(dd<=AORB)bp=Math.max(bp,APROX[a]*(1-dd/AORB));}
-   p1[o]+=bp;}
+  const sd=pos[o]%30;CRX[o]=(sd<1||sd>=29);   // marker only, no score
   if(OR1[o]===s||OR2[o]===s)p1[o]+=20;if(EX[o]===s)p1[o]+=10;
   if(OR1[o]===h||OR2[o]===h)p1[o]+=15;if(EX[o]===h)p1[o]+=5;
   const hf=OI[o]/2;
@@ -1900,8 +1895,6 @@ function compute(P,cusps,retro){
    const orb=Math.min(ao,OO[a]??360,OO[b]??360)+(OA[a]??0)+(OA[b]??0);
    const df=Math.abs(d-ang);if(df<=orb&&(!bt||df<bt[0]))bt=[df,inf,orb];}
   if(bt){const f=1-bt[0]/bt[2];p2[a]+=bt[1]*OI[b]*f;p2[b]+=bt[1]*OI[a]*f;NC[a]++;NC[b]++;}}
- for(const o of os)p2[o]+=ACNT*NC[o];
- for(const o of os)if(RXF[o]){p1[o]*=RETRO_F;p2[o]*=RETRO_F;}
  const T={};let tt=0;for(const o of os){T[o]=p1[o]+p2[o];tt+=T[o];}
  const ord=[...os].sort((a,b)=>T[b]-T[a]);
  const pls=ord.map((o,i)=>({key:o,pct:tt?Math.round(T[o]/tt*1000)/10:0,rank:i+1,total:Math.round(T[o]*10)/10,rx:RXF[o],crit:CRX[o],nasp:NC[o]}));
@@ -1980,7 +1973,7 @@ function renderDominants(data){
      ${r.houses.map((x,i)=>bar(x.house+' სახლი',x.pct,r.houses[0].pct||1,i===0)).join('')}
     </div>
    </div>
-   <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">Pullen −j (მოდიფ.) · ℞ რეტროგრადი · • კრიტიკული გრადუსი (0°/29°) · Nasp ასპექტების რაოდენობა</div>`;
+   <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">Astrolog −j (W. Pullen, ორიგინალი) · ℞ რეტროგრადი · • კრიტიკული გრადუსი (0°/29°) · Nasp ასპექტების რაოდენობა</div>`;
   if(window.matchMedia&&matchMedia('(max-width:600px)').matches)
    body.querySelector('.domx-grid').style.gridTemplateColumns='1fr';
   card.style.display='block';
