@@ -750,6 +750,10 @@
         }
         frag.appendChild(el);
       });
+      /* tiles that are not in the panel's database yet (new pages) stay
+         visible instead of vanishing when the API list arrives */
+      const inApi=new Set(cards.map(c=>c.href));
+      ['compat.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       grid.innerHTML='';
       grid.appendChild(frag);
       applyGroups();                                  /* regroup the API order */
