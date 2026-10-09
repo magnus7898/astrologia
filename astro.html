@@ -2826,8 +2826,11 @@ function drawWheel(data1,data2,dualAsp){
   for(const asp of lineAspects){
     let deg1,deg2;
     if(data2&&_origD1&&_origD2){
-      deg1=(_origD1.planets[asp.p1]??_origD1._aspPlanets?.[asp.p1])?.degree;
-      deg2=(_origD2.planets[asp.p2]??_origD2._aspPlanets?.[asp.p2])?.degree;
+      /* after ⇄ the stored aspects are flipped (p1 belongs to the second
+         person), so look each end up in its own chart — same lines, new view */
+      const _A=_swapped?_origD2:_origD1,_B=_swapped?_origD1:_origD2;
+      deg1=(_A.planets[asp.p1]??_A._aspPlanets?.[asp.p1])?.degree;
+      deg2=(_B.planets[asp.p2]??_B._aspPlanets?.[asp.p2])?.degree;
     }else{
       const p=allPlanetsForLines;
       deg1=p[asp.p1]?.degree;
@@ -2872,7 +2875,7 @@ function drawWheel(data1,data2,dualAsp){
     function itemWidth(n){
       const s=(PI[n]||{}).sym||'?';
       let w=(s==='SEL')?_fsGlyph*0.8:_fsGlyph*(0.62+Math.max(0,s.length-1)*0.58);
-      if(SHOW_DEGREES){
+      if(SHOW_DEGREES&&!isInner){
         const pd=data.planets[n];
         if(pd&&pd.degree!=null){
           /* on a phone the label must be SHORT, not just small: whole
@@ -3047,12 +3050,12 @@ function drawWheel(data1,data2,dualAsp){
         }
       }
     };
-    if(SHOW_DEGREES)_labelSweep();
+    if(SHOW_DEGREES&&!isInner)_labelSweep();
 
     /* alternate until neither pass wants to move anything */
     for(let round=0;round<14;round++){
       if(!_glyphPass())break;          /* glyphs clear -> label slots valid */
-      if(SHOW_DEGREES)_labelSweep();   /* re-place labels around the new angles */
+      if(SHOW_DEGREES&&!isInner)_labelSweep();   /* re-place labels around the new angles */
     }
     /* Whatever happens, glyphs must never touch: run the separation once more
        as the final word. Labels hang off their glyph, so they travel with it
@@ -3102,7 +3105,7 @@ function drawWheel(data1,data2,dualAsp){
       }
       /* degree label, placed radially outside the glyph so it never sits on
          the wheel, the ticks or a neighbouring planet */
-      if(SHOW_DEGREES){
+      if(SHOW_DEGREES&&!isInner){
         const pd=data.planets[name];
         if(pd&&pd.sign_degree!=null){
           const ang=dispA[name];   /* same angle as the glyph, always */
