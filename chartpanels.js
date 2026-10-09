@@ -41,7 +41,7 @@ function css(){
 @media(min-width:800px){#lay-strip{grid-template-columns:1fr 1fr}#lay-strip>#lunar-badge{grid-column:1/-1}}
 @media(min-width:1100px){#lay-strip{grid-template-columns:1fr 1fr .55fr}#lay-strip>#lunar-badge{grid-column:auto;flex-direction:column}
   #lay-strip.nat>#nx-alm{grid-column:1/-1}}
-@media(min-width:1500px){#lay-strip.nat{grid-template-columns:.9fr .95fr .45fr 2.1fr}#lay-strip.nat>#nx-alm{grid-column:auto}}
+@media(min-width:1500px){#lay-strip.nat{grid-template-columns:1fr 1fr .62fr 1.45fr}#lay-strip.nat>#nx-alm{grid-column:auto}}
 .nx-in{display:block}
 .nx-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:4px 18px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(45,31,110,.45)}
 .nx-row .nx-sb{border-bottom:none;padding:4px 0}
@@ -56,7 +56,9 @@ function css(){
 .nx-win{font-size:13px;color:#e8e0ff;margin:-2px 0 8px}
 .nx-win b{color:#f0d080;font-weight:500;font-size:15px}
 .nx-win span{font-size:11px;color:rgba(200,190,230,.65);margin-left:6px}
-.nx-t{width:100%;border-collapse:collapse;font-size:10.5px;text-align:center}
+.nx-t{width:100%;border-collapse:collapse;font-size:10.5px;text-align:center;table-layout:fixed}
+.nx-t th,.nx-t td{text-align:center;vertical-align:middle}
+.nx-t th:first-child,.nx-t td:first-child{width:30px}
 .nx-t th{font-weight:400;color:rgba(200,190,230,.6);font-size:10px;padding:2px 3px;line-height:1.25}
 .nx-t td{padding:2px 3px;border-top:1px solid rgba(45,31,110,.35);color:#c8c0e8}
 .nx-t tr.top td{color:#f0d080;background:rgba(201,168,76,.08)}
@@ -439,7 +441,7 @@ function render(d){
     if(ca){
       if(natal){const x=extraHTML(d);
         ca.innerHTML='<div class="nx-in"><h3>♛ ალმუტენ ფიგურის · Almuten Figuris</h3>'+x.a+
-          '<div class="nx-row"><h4>⚔ დორიფორი და მეეტლე'+(x.c?' · ☥ სიცოცხლე და სიკვდილი':'')+'</h4>'+x.b+x.c+'</div></div>';
+          '<div class="nx-row"><h4>⚔ დორიფორი და მეეტლე</h4>'+x.b+'</div></div>';
         ca.style.display='';}
       else ca.style.display='none';
       const st=$('lay-strip');if(st)st.classList.toggle('nat',natal);
