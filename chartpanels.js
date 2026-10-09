@@ -488,6 +488,143 @@ for(const fn of ['drawPlanetTable','drawAspectTable']){
     try{fixSel($(arguments[fn==='drawPlanetTable'?2:1]||'aspect-tbody'));fixSel($('fs-tbody'));}catch(e){}return r;};
 }
 window._SEL_SVG=SEL_SVG;
+/* ════ DUAL CHARTS (synastry · composite · transit …) ════ */
+const isNatal=()=>(typeof currentMode==='undefined')||currentMode==='natal';
+/* moon day / phase badge: natal only */
+function lunarGate(){const lb=$('lunar-badge');if(lb&&!isNatal())lb.style.display='none';}
+if(typeof displayLunarBadge==='function'){const o=displayLunarBadge;
+  window.displayLunarBadge=function(){const r=o.apply(this,arguments);try{lunarGate();}catch(e){}return r;};}
+
+/* 1 — two-person forms: the two data blocks side by side */
+function sideForms(){
+  if(!$('pf-css')){const st=document.createElement('style');st.id='pf-css';st.textContent=`
+.pf-grid{display:grid;grid-template-columns:1fr;gap:6px 26px}
+.pf-grid>.person-sep{display:none}
+@media(min-width:820px){.pf-grid{grid-template-columns:1fr 1fr}
+  .pf-col+.pf-col{border-left:1px solid rgba(122,90,34,.35);padding-left:26px}
+  .form-card:has(.form-section.active .pf-grid){max-width:1120px}}
+@media(max-width:819px){.pf-col+.pf-col{border-top:1px solid rgba(122,90,34,.35);padding-top:14px;margin-top:6px}}`;
+    document.head.appendChild(st);}
+  document.querySelectorAll('.form-section').forEach(sec=>{
+    if(sec.querySelector(':scope>.pf-grid'))return;
+    const sep=sec.querySelector(':scope>.person-sep');if(!sep)return;
+    const kids=[...sec.children],i=kids.indexOf(sep);
+    let j=kids.findIndex((k,n)=>n>i&&k.classList.contains('gen-btn'));if(j<0)j=kids.length;
+    const g=document.createElement('div');g.className='pf-grid';
+    const A=document.createElement('div'),B=document.createElement('div');A.className=B.className='pf-col';
+    sec.insertBefore(g,kids[0]);
+    kids.slice(0,i).forEach(k=>A.appendChild(k));
+    kids.slice(i+1,j).forEach(k=>B.appendChild(k));
+    g.appendChild(A);g.appendChild(sep);g.appendChild(B);
+  });
+}
+
+/* 5 — second person: planets · houses · fixed stars, a row of its own */
+function mid2(){
+  let m=$('lay-mid2');if(m)return m;
+  const lm=$('lay-mid');if(!lm)return null;
+  if(!$('m2-css')){const st=document.createElement('style');st.id='m2-css';st.textContent=`
+#lay-mid2{grid-template-columns:1fr;align-items:start}
+@media(min-width:800px){#lay-mid2{grid-template-columns:1fr 1fr}#lay-mid2>#fs-b-card{grid-column:1/-1}}
+@media(min-width:1300px){#lay-mid2{grid-template-columns:1.1fr .8fr 1.2fr}#lay-mid2>#fs-b-card{grid-column:auto}}
+#lay-mid2 .data-card-title,.pb-title{color:#c4b5fd}
+#lay-mid2 .fs-tog{float:right;background:none;border:1px solid rgba(240,208,112,.35);color:#f0d070;border-radius:5px;padding:1px 8px;font-size:10px;cursor:pointer;font-family:inherit}
+#planet-b-wrap>.sec-title{display:none!important}`;document.head.appendChild(st);}
+  m=document.createElement('div');m.id='lay-mid2';m.className='lay';m.style.display='none';
+  lm.parentNode.insertBefore(m,lm.nextSibling);
+  const pb=$('planet-b-tbody')&&$('planet-b-tbody').closest('.data-card');
+  if(pb){if(!pb.querySelector('.data-card-title')){const t=document.createElement('div');t.className='data-card-title';t.id='pb-title2';pb.insertBefore(t,pb.firstChild);}
+    pb.id='planet-b-card';m.appendChild(pb);}
+  const hb=document.createElement('div');hb.className='data-card';hb.id='house-b-card';
+  hb.innerHTML='<div class="data-card-title" id="house-b-title">🏠 სახლები</div><table><thead><tr><th>სახლი</th><th>ნიშანი</th><th>გრადუსი</th></tr></thead><tbody id="house-b-tbody"></tbody></table>';
+  m.appendChild(hb);
+  const fb=document.createElement('div');fb.className='data-card';fb.id='fs-b-card';
+  fb.innerHTML='<div class="data-card-title"><span id="fs-b-title">★ ფიქსირებული ვარსკვლავები</span><button type="button" class="fs-tog" id="fs-b-tog"></button></div><table><thead><tr><th></th><th>ვარსკვლავი</th><th>გრადუსი</th><th>ნიშანი</th><th>სახ.</th><th>☌</th></tr></thead><tbody id="fs-b-tbody"></tbody></table>';
+  m.appendChild(fb);
+  return m;
+}
+function houseInto(data,tbodyId){       /* reuse drawHouseTable on another tbody */
+  const a=$('house-tbody'),b=$(tbodyId);if(!a||!b||typeof drawHouseTable!=='function')return;
+  a.id='house-tbody-x';b.id='house-tbody';
+  try{drawHouseTable(data);}finally{b.id=tbodyId;a.id='house-tbody';}
+}
+function starsInto(data){
+  const F=window._fixedStars,card=$('fs-b-card');if(!card)return;
+  const st=F&&data&&data._fsReq?F.starsFor(data):null;
+  if(!st){card.style.display='none';return;}
+  card.style.display='';
+  const tb=$('fs-b-tbody');tb.innerHTML='';
+  const hit=st.filter(s=>s.hits.length),list=F.showAll?st:hit;
+  $('fs-b-title').textContent=`★ ${data.__name||''} — ფიქსირებული ვარსკვლავები · ${hit.length} ☌`;
+  const tg=$('fs-b-tog');tg.textContent=F.showAll?'მხოლოდ შეერთებები':'ყველა '+st.length;
+  tg.onclick=()=>{F.showAll=!F.showAll;try{redrawCurrent();}catch(e){}};
+  if(!list.length){tb.innerHTML='<tr><td colspan="6" style="font-size:10px;color:rgba(200,190,150,.5);text-align:center;padding:14px">შეერთება არცერთ ვარსკვლავთან არ არის</td></tr>';return;}
+  F.starRows(tb,list);
+}
+function showMid2(d1,d2,n1,n2){
+  const m=mid2();if(!m)return;
+  if(!d2){m.style.display='none';return;}
+  m.style.display='';
+  const t=$('pb-title2');if(t)t.textContent=`🪐 ${n2} — პლანეტები`;
+  $('house-b-title').textContent=`🏠 ${n2} — სახლები`;
+  const ht=$('house-card')&&$('house-card').querySelector('.data-card-title');if(ht)ht.textContent=`🏠 ${n1} — სახლები`;
+  houseInto(d2,'house-b-tbody');
+  d2.__name=n2;starsInto(d2);
+  const ft=$('fs-title');if(ft&&!/—/.test(ft.textContent))ft.textContent=ft.textContent.replace('★ ','★ '+n1+' — ');
+}
+
+/* 6 — synastry score tiles filter the aspect list */
+let synCat=null;
+const CAT_KA={love:'💗 სიყვარული',hot:'🔥 ვნება',good:'✨ კარგი',bad:'⚡ ცუდი'};
+function synCats(a){
+  try{
+    const key=_pairKey(a.p1,a.p2),maxo=SYN_ORB[a.type]||10;
+    const w=_pairWeight(a.p1,a.p2)*Math.pow(Math.max(0,1-a.orb/maxo),2);
+    if(w<=0)return[];
+    const L=SYN_LOVE.has(key),H=SYN_HOT.has(key),c=[];
+    if(a.type==='ტრინი'||a.type==='სექსტილი'){c.push('good');if(L)c.push('love');else if(H)c.push('hot');}
+    else if(a.type==='შეერთება'){
+      if(L)c.push('love','good');else if(H)c.push('hot','good');
+      else if((SYN_MALEFIC.has(a.p1)&&SYN_PERSONAL.has(a.p2))||(SYN_MALEFIC.has(a.p2)&&SYN_PERSONAL.has(a.p1)))c.push('bad');}
+    else if(a.type==='კვადრატი'||a.type==='ოპოზიცია'){c.push('bad');if(H)c.push('hot');}
+    return c;
+  }catch(e){return[];}
+}
+const synOn=()=>synCat&&typeof _d2!=='undefined'&&_d2&&currentMode==='synastry';
+if(typeof isAspectVisible==='function'){const o=isAspectVisible;
+  window.isAspectVisible=function(a){
+    if(synOn()&&a&&!a.star)return synCats(a).includes(synCat);
+    return o.apply(this,arguments);};}
+function synTitle(){
+  const t=$('aspect-table-title');if(!t||!synOn())return;
+  const n=$('aspect-tbody')?[...$('aspect-tbody').querySelectorAll('tr')].filter(r=>!r.querySelector('td[colspan]')).length:0;
+  t.textContent=t.textContent.replace(/ · (💗|🔥|✨|⚡).*$/,'')+` · ${CAT_KA[synCat]} (${n})`;
+}
+function tilesWire(){
+  const body=$('synastry-score-body');if(!body)return;
+  const T=[...body.querySelectorAll('.syn-tiles>div')],K=['love','hot','good','bad'];
+  T.forEach((d,i)=>{const k=K[i];if(!k)return;
+    d.style.cursor='pointer';d.title='დააჭირე — მხოლოდ ეს ასპექტები; კიდევ ერთხელ — ყველა';
+    d.style.outline=synCat===k?'2px solid rgba(240,208,128,.75)':'';d.style.opacity=synCat&&synCat!==k?'.55':'';
+    d.onclick=()=>{synCat=synCat===k?null:k;tilesWire();
+      try{applyAspFilter();}catch(e){}synTitle();
+      const ac=$('aspect-tbody');if(ac&&synCat)ac.closest('.data-card').scrollIntoView({behavior:'smooth',block:'nearest'});};});
+}
+if(typeof renderSynastryScore==='function'){const o=renderSynastryScore;
+  window.renderSynastryScore=function(){const r=o.apply(this,arguments);try{tilesWire();}catch(e){}return r;};}
+if(typeof showDoubleChart==='function'){const o=showDoubleChart;
+  window.showDoubleChart=function(){synCat=null;return o.apply(this,arguments);};}
+if(typeof _renderDouble==='function'){const o=_renderDouble;
+  window._renderDouble=function(d1,d2,n1,n2){const r=o.apply(this,arguments);
+    try{lunarGate();showMid2(d1,d2,n1,n2);synTitle();
+      /* score tiles sit right above the aspect list they filter */
+      const sc=$('synastry-score-card'),A=$('lay-asp');
+      if(sc&&A&&sc.parentNode!==A){A.insertBefore(sc,A.firstChild);sc.style.margin='0 0 12px';}
+    }catch(e){console.warn('dual',e);}return r;};}
+if(typeof showSingleChart==='function'){const o=showSingleChart;
+  window.showSingleChart=function(){synCat=null;const r=o.apply(this,arguments);
+    try{lunarGate();showMid2(null,null);const ht=$('house-card')&&$('house-card').querySelector('.data-card-title');if(ht)ht.textContent='🏠 სახლები';}catch(e){}return r;};}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sideForms);else sideForms();
 layout();
 window._chartPanels={render,lots,almuten,spearBearers,prenatalSyzygy,planetaryRulers,sunEvent,utJD,dignities};
 })();
