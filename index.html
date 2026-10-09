@@ -151,7 +151,7 @@
   }
   /* ── main boxes: 1 × 4 (desktop) · 2 × 2 (tablet / phone) ── */
   /* 1 × 4 — one row of four; 2 × 2 on tablets, see below */
-  .grid.main4 { grid-template-columns:repeat(4,1fr) !important;max-width:1180px;gap:16px; }
+  .grid.main4 { grid-template-columns:repeat(var(--n,4),1fr) !important;max-width:calc(var(--n,4) * 290px);gap:16px; }
   .grid.main4 > .card.main { height:260px; }
   .grid.main4 > .card.main .sym { width:46px;height:46px;margin-bottom:14px; }
   .grid.main4 > .card.main .card-title { font-size:13px;letter-spacing:2.5px; }
@@ -159,6 +159,7 @@
   .grid.main4 > .card.main .grp-n { top:12px;right:28px;font-size:9px; }
   @media (max-width:900px) {
     .grid.main4 { grid-template-columns:1fr 1fr !important;max-width:620px; }
+    .grid.main4 > .card.main:last-child:nth-child(odd) { grid-column:1/-1;justify-self:center;width:calc(50% - 8px); }
     .grid.main4 > .card.main { height:200px; }
   }
   @media (max-width:520px) {
@@ -641,12 +642,14 @@
      label: how a member is titled INSIDE its box (optional).            */
   const GROUPS=[
     {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · Sidereal · Moon · Planetocentric · Asteroids',css:'c-astro',art:'astro.html',
-     members:['astro.html','vedic.html','true_sidereal.html','moon.html','planeta.html','asteroid.html','compat.html'],
+     members:['astro.html','vedic.html','true_sidereal.html','moon.html','planeta.html','asteroid.html'],
      label:{'astro.html':'დასავლური ასტროლოგია'}},
     {key:'numerology',title:'ნუმეროლოგია',sub:'Matrix · Pythagoras · Name',css:'c-name',art:'name.html',
      members:['matrix.html','pythagoras.html','name.html'],label:{}},
     {key:'hd',title:'ადამიანის დიზაინი',sub:'Human Design',css:'c-freq',art:'hd.html',
      members:['hd.html'],label:{}},
+    {key:'compat',title:'შეთავსება',sub:'Zodiac Compatibility',css:'c-astro',art:'compat.html',
+     members:['compat.html'],label:{}},
     {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
   ];
@@ -710,6 +713,7 @@
       boxes.push(box);
     }
     grid.innerHTML='';grid.classList.remove('sub');grid.classList.add('main4');
+    grid.style.setProperty('--n',boxes.length);           /* 5 boxes → one row of five */
     boxes.forEach(b=>grid.appendChild(b));
     document.title='MAGNUS';
   }
