@@ -42,9 +42,11 @@ function css(){
 @media(min-width:1100px){#lay-strip{grid-template-columns:1fr 1fr .55fr}#lay-strip>#lunar-badge{grid-column:auto;flex-direction:column}
   #lay-strip.nat>#nx-alm{grid-column:1/-1}}
 @media(min-width:1500px){#lay-strip.nat{grid-template-columns:.9fr .95fr .45fr 2.1fr}#lay-strip.nat>#nx-alm{grid-column:auto}}
-.nx-in{display:grid;grid-template-columns:1fr;gap:14px}
-@media(min-width:700px){.nx-in{grid-template-columns:1.4fr 1fr;gap:20px}
-  .nx-sbw{border-left:1px solid rgba(45,31,110,.45);padding-left:18px}}
+.nx-in{display:block}
+.nx-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:4px 18px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(45,31,110,.45)}
+.nx-row .nx-sb{border-bottom:none;padding:4px 0}
+.nx-row h4{grid-column:1/-1;margin:2px 0 0;font-family:'Cinzel',serif;font-weight:400;font-size:10px;letter-spacing:2px;color:rgba(201,168,76,.7)}
+.nx-sb .p .lot-l{color:#7ee0a0}.nx-sb .p .lot-d{color:#ff8a8a}
 #lay-strip .cp{min-width:0}
 #lay-strip>#lunar-badge{margin:0!important;display:flex!important;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px}
 #lay-strip>#lunar-badge[style*="display: none"],#lay-strip>#lunar-badge[style*="display:none"]{display:none!important}
@@ -379,6 +381,21 @@ function spearBearers(d){
     if(!dor||before<dor.arc)dor={n,arc:before};if(!aur||after<aur.arc)aur={n,arc:after};}
   return{dor,aur};
 }
+/* Lots of Life & Death (Arabic parts) */
+function lots(d){
+  const P=d.planets||{},H=d.houses;
+  if(d._timeUnknown||d.asc==null||!H||H.length<12)return null;
+  const g=n=>P[n]&&P[n].degree!=null?+P[n].degree:null;
+  const asc=+d.asc,c8=+H[7],mo=g('მთვარე'),sa=g('სატურნი'),ju=g('იუპიტერი');
+  if(mo==null||sa==null||ju==null)return null;
+  const sh=P['მზე']&&P['მზე'].house,day=sh?sh>=7:true;
+  return{day,
+    life:n360(day?asc+ju-sa:asc+sa-ju),            // al-Biruni / Bonatti: Saturn→Jupiter by day, reversed by night, from ASC
+    death:n360(sa+c8-mo),                           // Dorotheus / al-Biruni / Bonatti: Moon→cusp 8, from Saturn
+    deathR:n360(asc+c8-mo)};                        // Rhetorius / Theophilus: Moon→cusp 8, from ASC
+}
+function houseOf(lon,H){if(!H)return null;for(let i=0;i<12;i++){const a=+H[i],b=+H[(i+1)%12];
+  if(n360(lon-a)<n360(b-a))return i+1;}return null;}
 function extraHTML(d){
   const A=almuten(d),B=spearBearers(d),g=n=>`<span style="font-family:serif;font-size:15px">${glyph(n)}</span>`;
   const sg=lon=>{const s=si(lon);return `<span style="color:${ZCOL[s]}">${ZSYM[s]}</span>`;};
@@ -399,7 +416,13 @@ function extraHTML(d){
     b=it('დორიფორი','შუბოსანი · Дорифорий',B.dor,'ამოდის მზემდე — „სავიზიტო ბარათი“: რითაც პირველად გამჩნევენ.')+
       it('მეეტლე','Auriga · Возничий',B.aur,'ამოდის მზის შემდეგ — რითაც გიმახსოვრებენ; თვისება, რომელიც დროთა განმავლობაში ვლინდება.');
   }
-  return{a,b};
+  let c='';const L=lots(d);
+  if(L){const fd=x=>`${Math.floor(x%30)}°${String(Math.floor((x%1)*60)).padStart(2,'0')}′ ${sg(x)} <span>${SIGN_KA[si(x)]} · ${houseOf(x,d.houses)||'?'} სახლი</span>`;
+    const lt=(cls,sym,lbl,sub,x,txt)=>`<div class="nx-sb"><div class="l">${lbl}<small>${sub}</small></div><div class="p"><span class="${cls}" style="font-size:15px;margin:0">${sym}</span> ${fd(x)}</div><div class="cp-hint" style="margin:2px 0 0">${txt}</div></div>`;
+    c=lt('lot-l','☥','სიცოცხლის წერტილი','Pars Vitae',L.life,`${L.day?'AC + ♃ − ♄':'AC + ♄ − ♃'} (ალ-ბირუნი, ბონატი) — სიცოცხლისუნარიანობა, რითაც ცოცხლობ.`)+
+      lt('lot-d','✝','სიკვდილის წერტილი','Pars Mortis',L.death,`♄ + 8-ე სახლი − ☽ (დოროთეოსი, ალ-ბირუნი). რიტორიუსის ვარიანტი: AC + 8 − ☽ = ${fmtDeg?fmtDeg(L.deathR):L.deathR.toFixed(1)+'°'} ${SIGN_KA[si(L.deathR)]}. კრიზისები, დასასრულები, ტრანსფორმაცია.`);
+  }
+  return{a,b,c};
 }
 
 function render(d){
@@ -415,8 +438,8 @@ function render(d){
     const ca=$('nx-alm');
     if(ca){
       if(natal){const x=extraHTML(d);
-        ca.innerHTML='<div class="nx-in"><div><h3>♛ ალმუტენ ფიგურის · Almuten Figuris</h3>'+x.a+
-          '</div><div class="nx-sbw"><h3>⚔ დორიფორი და მეეტლე</h3>'+x.b+'</div></div>';
+        ca.innerHTML='<div class="nx-in"><h3>♛ ალმუტენ ფიგურის · Almuten Figuris</h3>'+x.a+
+          '<div class="nx-row"><h4>⚔ დორიფორი და მეეტლე'+(x.c?' · ☥ სიცოცხლე და სიკვდილი':'')+'</h4>'+x.b+x.c+'</div></div>';
         ca.style.display='';}
       else ca.style.display='none';
       const st=$('lay-strip');if(st)st.classList.toggle('nat',natal);
@@ -428,8 +451,24 @@ if(typeof drawWheel==='function'){
   window.drawWheel=function(d1,d2){
     const r=orig.apply(this,arguments);
     try{if(d1&&!d2&&d1.planets)render(d1);else showCp(false);}catch(e){}
+    try{markLots(d1,d2);}catch(e){}
     return r;
   };
+}
+function markLots(d1,d2){
+  const svg=$('wheel');if(!svg)return;
+  const natal=(typeof currentMode==='undefined')||currentMode==='natal';
+  if(!d1||d2||!natal)return;const L=lots(d1);if(!L)return;
+  const NS='http://www.w3.org/2000/svg',mk=(t,a,par)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(par||svg).appendChild(e);return e;};
+  const cx=350,cy=350,r2=202,asc=+d1.asc,ang=lon=>(-(lon-asc))*Math.PI/180+Math.PI;
+  const g=mk('g',{id:'lots-g'});
+  [[L.life,'#7ee0a0','☥','სიცოცხლის წერტილი'],[L.death,'#ff8a8a','✝','სიკვდილის წერტილი']].forEach(([lon,col,sym,ttl])=>{
+    const a=ang(lon),c=Math.cos(a),s=Math.sin(a),gg=mk('g',{},g);
+    mk('title',{},gg).textContent=ttl+' '+(fmtDeg?fmtDeg(lon):lon.toFixed(1))+' '+SIGN_KA[si(lon)];
+    mk('line',{x1:cx+c*(r2+8),y1:cy+s*(r2+8),x2:cx+c*(r2-7),y2:cy+s*(r2-7),stroke:col,'stroke-width':1.8},gg);
+    mk('circle',{cx:cx+c*(r2-17),cy:cy+s*(r2-17),r:9.5,fill:'rgba(10,8,26,.92)',stroke:col,'stroke-width':1},gg);
+    const t=mk('text',{x:cx+c*(r2-17),y:cy+s*(r2-17)+4.5,'text-anchor':'middle','font-size':13,fill:col,'font-family':'serif'},gg);t.textContent=sym;
+  });
 }
 css();
 /* hide when the wheel itself is hidden (astrocartography, etc.) */
@@ -448,5 +487,5 @@ for(const fn of ['drawPlanetTable','drawAspectTable']){
 }
 window._SEL_SVG=SEL_SVG;
 layout();
-window._chartPanels={render,almuten,spearBearers,prenatalSyzygy,planetaryRulers,sunEvent,utJD,dignities};
+window._chartPanels={render,lots,almuten,spearBearers,prenatalSyzygy,planetaryRulers,sunEvent,utJD,dignities};
 })();
