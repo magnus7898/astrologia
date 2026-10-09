@@ -135,11 +135,11 @@ tr.now td{background:rgba(var(--primary-rgb),0.12)}
         <div class="tile"><div class="tile-k" id="l-time">ადგილობრივი დრო</div>
           <div class="tile-v" id="c-time">--:--:--</div><div class="tile-s" id="l-tsub">—</div></div>
         <div class="tile"><div class="tile-k">სოლი ეპოქიდან</div>
-          <div class="tile-v" id="c-sol">—</div><div class="tile-s">J2000-დან</div></div>
+          <div class="tile-v" id="c-sol">—</div><div class="tile-s">J2000-დან (საშუალო)</div></div>
         <div class="tile"><div class="tile-k">Ls მზის გრძედი</div>
           <div class="tile-v" id="c-ls">—</div><div class="tile-s">ასტრონომიული</div></div>
         <div class="tile"><div class="tile-k">პლანეტური წელი</div>
-          <div class="tile-v" id="c-yr">—</div><div class="tile-s">წელი 0 = 2000</div></div>
+          <div class="tile-v" id="c-yr">—</div><div class="tile-s">წელი 0 = ბუნიობა J2000-მდე</div></div>
       </div>
       <div class="result" style="margin-top:14px">
         <div class="big" id="c-date">—</div>
@@ -290,6 +290,76 @@ function Ls(p,J){                       /* true solar longitude */
   const o=helio(p,T),s=[-o[0],-o[1],-o[2]];
   return norm(Math.atan2(dot(s,ey),dot(s,eq))*R2D);
 }
+/* ── calibration from the ephemeris itself ──
+   The static table above had the wrong year lengths (e.g. Earth 365.2578,
+   Uranus +18 d) and started every calendar at J2000 instead of at the
+   planet's own vernal equinox, so months did not match the seasons.
+   Everything below is derived from Ls() and the IAU rotation models.   */
+/* IAU WGCCRE prime meridian: W = W0 + Wd·d  (deg, d = days from J2000) */
+const PM={mercury:[329.5988,6.1385108],venus:[160.20,-1.4813688],earth:[190.147,360.9856235],
+ mars:[176.049863,350.891982443297],jupiter:[284.95,870.5360000],saturn:[38.90,810.7939024],
+ uranus:[203.81,-501.1600928],neptune:[253.18,536.3128492],pluto:[302.695,56.3625225]};
+const TT=69.184/86400;                  /* TT − UTC, days */
+function poleOf(p,T){const r=ROT[p],a0=(r[0]+r[1]*T)*D2R,d0=(r[2]+r[3]*T)*D2R;
+  return[Math.cos(d0)*Math.cos(a0),Math.cos(d0)*Math.sin(a0),Math.sin(d0)];}
+/* true solar time at the prime meridian, hours */
+function trueSolar(p,J){
+  const d=J+TT-2451545.0,T=d/36525,o=helio(p,T);
+  const s=[-o[0],-o[1]*Math.cos(EPS)-o[2]*Math.sin(EPS),-o[1]*Math.sin(EPS)+o[2]*Math.cos(EPS)];
+  const pe=poleOf(p,T),r=ROT[p],a0=(r[0]+r[1]*T)*D2R;
+  const Q=[-Math.sin(a0),Math.cos(a0),0],QQ=crossV(pe,Q);
+  const W=(PM[p][0]+PM[p][1]*d)*D2R,M=[0,1,2].map(function(i){return Math.cos(W)*Q[i]+Math.sin(W)*QQ[i];});
+  const E=crossV(pe,M);
+  const east=Math.atan2(dot(s,E),dot(s,M))*R2D;        /* sun east of the meridian */
+  const h=12+(PM[p][1]>0?-east:east)/15;
+  return((h%24)+24)%24;
+}
+const CAL={};
+function lsCross(p,J,dir,target){       /* next (dir=+1) / previous (dir=-1) time Ls passes target */
+  const step=C[p].Porb/720*dir;let a=J,va=norm(Ls(p,a)-target);
+  for(let i=0;i<2000;i++){const b=a+step,vb=norm(Ls(p,b)-target);
+    const hit=dir>0?(va>300&&vb<60):(vb>300&&va<60);
+    if(hit){let lo=dir>0?a:b,hi=dir>0?b:a;
+      for(let k=0;k<60;k++){const m=(lo+hi)/2;(norm(Ls(p,m)-target)>180?lo=m:hi=m);}return(lo+hi)/2;}
+    a=b;va=vb;}
+  return null;
+}
+function calibrate(p){
+  if(CAL[p])return CAL[p];
+  const c=C[p],e0=KEP[p];
+  const sid=36525*360/e0[9];                              /* sidereal orbit, days */
+  const Prot=360/Math.abs(PM[p][1]);
+  const T0=0,pe=poleOf(p,T0),I=e0[2]*D2R,Om=e0[5]*D2R;
+  const nrm=[Math.sin(I)*Math.sin(Om),-Math.sin(I)*Math.cos(Om),Math.cos(I)];
+  const pec=[pe[0],pe[1]*Math.cos(EPS)+pe[2]*Math.sin(EPS),-pe[1]*Math.sin(EPS)+pe[2]*Math.cos(EPS)];
+  const retro=(dot(pec,nrm)>0)!==(PM[p][1]>0);           /* spin opposite to the orbit */
+  const Psol=p==='earth'?1:p==='mars'?1.0274912517:1/(1/Prot+(retro?1:-1)/sid);
+  c.Porb=sid;c.Prot=Prot;c.Psol=Psol;c.retro=retro;
+  /* year 0 starts at the last northern vernal equinox (Ls = 0) before J2000 */
+  const J0=lsCross(p,2451545.0,-1,0),J1=lsCross(p,J0+1,1,0);
+  const Y=J1-J0;c.trop=Y;
+  c.sols=Y/Psol;c.base=Math.floor(c.sols);c.frac=c.sols-c.base;
+  const arc=360/c.nmon,bound=[J0];
+  for(let k=1;k<c.nmon;k++)bound.push(lsCross(p,bound[k-1]+1e-6,1,k*arc));
+  bound.push(J1);
+  c.monf=c.monf.map(function(_,k){return(bound[k+1]-bound[k])/Psol;});
+  /* integer months (largest remainder) that sum to the common year */
+  const fl=c.monf.map(Math.floor);let need=c.base-fl.reduce(function(a,b){return a+b;},0);
+  const ord=c.monf.map(function(v,i){return[v-Math.floor(v),i];}).sort(function(a,b){return b[0]-a[0];});
+  for(let i=0;i<ord.length&&need>0;i++,need--)fl[ord[i][1]]++;
+  c.mon=fl;
+  /* mean-solar phase: chosen so the mean clock follows the true sun on average */
+  let sx=0,sy=0;
+  for(let i=0;i<360;i++){const J=J0+Y*i/360,f=trueSolar(p,J)/24-(J-2451545.0)/Psol;
+    sx+=Math.cos(2*Math.PI*f);sy+=Math.sin(2*Math.PI*f);}
+  let ph=Math.atan2(sy,sx)/(2*Math.PI);
+  if(p==='mars')ph=((2451545.0+TT-2405522.0028779)/Psol)%1;   /* exactly MTC (Airy-0) */
+  if(p==='earth')ph=0.5;                                        /* exactly UTC */
+  c.ph=ph;c.J0=J0;
+  c.S0=Math.floor((J0-2451545.0)/Psol+ph);                       /* sol of Ls = 0, day 1 */
+  CAL[p]=c;return c;
+}
+Object.keys(C).forEach(calibrate);
 /* ── civil calendar ── */
 const yLen=function(p,y){return C[p].base+(isLeap(p,y)?1:0);};
 function isLeap(p,y){const f=C[p].frac;
@@ -302,9 +372,9 @@ function monLens(p,y){
   }
   return L;
 }
-function solOf(p,ms){return (jdOf(ms)-2451545.0)/C[p].Psol;}
+function solOf(p,ms){return (jdOf(ms)-2451545.0)/C[p].Psol+C[p].ph;}   /* mean sols, integer = midnight at 0° */
 function calDate(p,ms){
-  let n=Math.floor(solOf(p,ms)),y=0;
+  let n=Math.floor(solOf(p,ms))-C[p].S0,y=0;
   if(n>=0){for(;;){const L=yLen(p,y);if(n<L)break;n-=L;y++;}}
   else{while(n<0){y--;n+=yLen(p,y);}}
   const L=monLens(p,y);let m=0;
@@ -364,7 +434,8 @@ function tick(){
   const pad=function(n){return String(n).padStart(2,'0');};
   $('c-time').textContent=pad(h)+':'+pad(mi)+':'+pad(s);
   $('l-time').textContent=p.ka+'ული დრო';
-  $('l-tsub').textContent='1 სოლი = '+(c.Psol<2?(c.Psol*24).toFixed(3)+' სთ':fmtN(c.Psol,3)+' დღე');
+  const ts=trueSolar(cur,jdOf(ms)),th=Math.floor(ts),tm=Math.floor((ts-th)*60);
+  $('l-tsub').textContent=(cur==='mars'?'MTC · ':cur==='earth'?'UTC · ':'0° მერიდიანი · ')+'ჭეშმარიტი მზე '+pad(th)+':'+pad(tm);
   $('c-sol').textContent=fmtN(Math.floor(solF));
   const J=jdOf(ms),ls=Ls(cur,J);
   $('c-ls').textContent=ls.toFixed(1)+'°';
@@ -380,7 +451,7 @@ function tick(){
   $('c-earth').textContent=now.toLocaleString('ka-GE',{dateStyle:'long',timeStyle:'medium'});
   $('c-note').innerHTML='1 სოლი (მზის დღე) = <b>'+fmtN(c.Psol,4)+' დედამიწის დღე</b> · '+
     'ვარსკვლავური ბრუნვა = '+fmtN(c.Prot,4)+' დღე'+(c.retro?' <b>(რეტროგრადი)</b>':'')+' · '+
-    'წელი = <b>'+fmtN(c.sols,3)+' სოლი</b> · ღერძის დახრა '+c.tilt.toFixed(2)+'°';
+    'ტროპიკული წელი = <b>'+fmtN(c.sols,3)+' სოლი</b> ('+fmtN(c.trop,2)+' დღე) · ღერძის დახრა '+c.tilt.toFixed(2)+'°';
   $('c-warn').innerHTML=degen?('<div class="warn">⚠ <b>'+p.ka+'ზე ჩვეულებრივი კალენდარი შეუძლებელია.</b> '+
     'მზის დღე ('+fmtN(c.Psol,2)+' დღე) უფრო გრძელია, ვიდრე წელი ('+fmtN(c.Porb,2)+' დღე): '+
     'წელიწადში მხოლოდ <b>'+c.sols.toFixed(3)+' სოლია</b>.'+
@@ -438,7 +509,8 @@ function renderYear(){
   const sp=Math.max.apply(null,c.monf)/Math.min.apply(null,c.monf);
   $('y-note').innerHTML='თვე = მზის გრძედის '+(360/c.nmon).toFixed(0)+'° რკალი — თვეები სეზონებზეა მიბმული. '+
     'კეპლერის მე-2 კანონით ისინი არათანაბარია: ყველაზე გრძელი/ყველაზე მოკლე = <b>'+sp.toFixed(2)+'×</b>. '+
-    'ნაკიანობა: floor((y+1)·f) > floor(y·f), f='+c.frac.toFixed(6)+' — გრძელვადიანი ცდომილება &lt; 0.001 სოლი/წელი.';
+    'წელი იწყება ჩრდილოეთის გაზაფხულის ბუნიობით (Ls = 0°). ნაკიანობა: floor((y+1)·f) > floor(y·f), f='+c.frac.toFixed(6)+
+    ' — ტროპიკული წლიდან, ამიტომ კალენდარი სეზონებს არ სცილდება.';
 }
 function calcAge(){
   const bd=new Date(Date.UTC(+$('b-y').value,+$('b-m').value-1,+$('b-d').value,+$('b-h').value));
