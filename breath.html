@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>სუნთქვის ტექნიკები · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#04030a;--gold:#c9a84c;--gold-l:#e8d5a0;--silver:#9ba8b8;--txt:#e9e2d0;--dim:rgba(155,168,184,.62);
+  --card:rgba(10,8,22,.78);--brd:rgba(201,168,76,.18);--in:#5fc8b0;--hold:#c9a84c;--out:#7f9cf0;--warn:#f0a070}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(ellipse 700px 500px at 20% 10%,rgba(40,160,140,.09),transparent 60%),
+  radial-gradient(ellipse 600px 500px at 85% 75%,rgba(90,110,220,.08),transparent 60%),var(--void);
+  color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding:0 16px 80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.55),transparent),radial-gradient(1px 1px at 41% 8%,rgba(255,255,255,.45),transparent),
+  radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.5),transparent),radial-gradient(1px 1px at 15% 68%,rgba(255,255,255,.35),transparent),
+  radial-gradient(1px 1px at 82% 80%,rgba(255,255,255,.4),transparent),radial-gradient(1px 1px at 60% 45%,rgba(255,255,255,.3),transparent)}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto}
+.back{display:inline-block;margin-top:22px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.75;
+  text-decoration:none;border:1px solid rgba(201,168,76,.25);border-radius:3px;padding:7px 12px}
+.back:hover{opacity:1}
+header{text-align:center;padding:24px 0 22px}
+.eyebrow{font-family:'Cinzel',serif;font-size:9px;letter-spacing:7px;color:var(--gold);opacity:.5;margin-bottom:12px}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5vw,42px);letter-spacing:2px;
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,var(--gold-l) 80%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--silver);opacity:.6;margin-top:8px}
+.today{text-align:center;font-size:12px;color:var(--dim);margin:-6px 0 18px;min-height:18px}
+.today b{color:var(--gold-l);font-weight:400}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:22px}
+.tq{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:12px 14px;cursor:pointer;text-align:left;color:var(--txt);
+  font-family:inherit;transition:all .2s;position:relative}
+.tq:hover{border-color:rgba(201,168,76,.4);transform:translateY(-2px)}
+.tq.on{border-color:var(--gold);background:rgba(201,168,76,.09);box-shadow:0 0 18px rgba(201,168,76,.12)}
+.tq b{display:block;font-weight:600;font-size:13.5px;line-height:1.35}
+.tq .pt{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:1.5px;margin-top:5px}
+.tq .pu{font-size:10.5px;color:var(--dim);margin-top:3px}
+.tq .dn{position:absolute;top:9px;right:10px;font-size:10px;color:var(--in)}
+.player{display:grid;grid-template-columns:1.05fr 1fr;gap:22px;background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:22px}
+@media(max-width:860px){.player{grid-template-columns:1fr}}
+.info h2{font-weight:400;font-size:21px;line-height:1.4}
+.info .en{font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--silver);opacity:.7;margin-top:2px}
+.info p{font-size:13.5px;line-height:1.85;color:#d9d2c2;margin-top:12px}
+.info h3{font-family:'Cinzel',serif;font-weight:400;font-size:10px;letter-spacing:3px;color:var(--gold);margin-top:16px}
+.daily{margin-top:14px;padding:10px 14px;border-left:3px solid var(--in);background:rgba(95,200,176,.07);border-radius:8px;font-size:13px;line-height:1.7}
+.warn{margin-top:10px;padding:10px 14px;border-left:3px solid var(--warn);background:rgba(240,160,112,.08);border-radius:8px;font-size:12.5px;line-height:1.7;color:#f3d6c4}
+.stage{display:flex;flex-direction:column;align-items:center}
+.ring{position:relative;width:min(330px,80vw);aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.orb{position:absolute;width:78%;height:78%;border-radius:50%;transform:scale(.45);
+  background:radial-gradient(circle at 38% 32%,rgba(255,255,255,.35),rgba(95,200,176,.55) 35%,rgba(30,80,90,.55) 70%,rgba(10,20,40,.4));
+  box-shadow:0 0 60px rgba(95,200,176,.35),inset 0 0 30px rgba(255,255,255,.08);transition:background .6s,box-shadow .6s}
+.ring .c{position:relative;text-align:center;z-index:2;pointer-events:none}
+.ring .ph{font-size:19px;font-weight:600;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+.ring .sec{font-family:'Cinzel',serif;font-size:46px;line-height:1.1;text-shadow:0 1px 10px rgba(0,0,0,.7)}
+.ring .cy{font-size:12px;color:#e8e2d4;opacity:.85;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.pat{display:flex;gap:6px;justify-content:center;margin:14px 0 4px;flex-wrap:wrap}
+.pat span{font-size:11px;padding:3px 10px;border-radius:12px;border:1px solid;opacity:.55;transition:opacity .2s}
+.pat span.on{opacity:1}
+.ctl{display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.ctl .n{display:flex;align-items:center;border:1px solid var(--brd);border-radius:20px;overflow:hidden}
+.ctl .n button{background:none;border:none;color:var(--gold);font-size:18px;width:34px;height:34px;cursor:pointer}
+.ctl .n input{width:52px;background:none;border:none;color:var(--txt);text-align:center;font-size:15px;font-family:inherit}
+.ctl .n input::-webkit-inner-spin-button{display:none}
+.ctl small{color:var(--dim);font-size:11.5px}
+.btns{display:flex;gap:10px;margin-top:16px}
+.btn{font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;border-radius:24px;padding:11px 26px;cursor:pointer;border:1px solid rgba(201,168,76,.45);
+  background:linear-gradient(135deg,rgba(201,168,76,.22),rgba(95,200,176,.14));color:var(--gold-l)}
+.btn:hover{box-shadow:0 0 22px rgba(201,168,76,.2)}
+.btn.ghost{background:none;color:var(--dim);border-color:rgba(255,255,255,.12)}
+.btn.big{display:none;margin-top:14px;font-size:14px;padding:14px 30px;border-color:var(--in);color:#d8fff5;background:rgba(95,200,176,.18)}
+.opts{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:14px;font-size:12px;color:var(--dim)}
+.opts label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.opts input{accent-color:var(--gold)}
+.bar{width:100%;max-width:330px;height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--in),var(--gold))}
+.rem{font-size:11.5px;color:var(--dim);margin-top:6px;min-height:16px}
+.note{font-size:11px;color:var(--dim);text-align:center;margin-top:22px;line-height:1.75}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header>
+    <div class="eyebrow">ჯანმრთელობა</div>
+    <h1>სუნთქვის ტექნიკები</h1>
+    <div class="sub">აირჩიე ტექნიკა · ტაიმერი ხმოვანი სიგნალებით</div>
+  </header>
+  <div class="today" id="today"></div>
+  <div class="list" id="list"></div>
+
+  <div class="player">
+    <div class="info" id="info"></div>
+    <div class="stage">
+      <div class="ring">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1.6"/>
+          <circle id="arc" cx="50" cy="50" r="47" fill="none" stroke="#5fc8b0" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="295.3" stroke-dashoffset="295.3"/></svg>
+        <div class="orb" id="orb"></div>
+        <div class="c"><div class="ph" id="ph">მზად ხარ?</div><div class="sec" id="sec">—</div><div class="cy" id="cy"></div></div>
+      </div>
+      <button class="btn big" id="tap">✓ ჩავისუნთქე</button>
+      <div class="pat" id="pat"></div>
+      <div class="bar"><i id="prog"></i></div>
+      <div class="rem" id="rem"></div>
+      <div class="ctl">
+        <div class="n"><button id="minus">−</button><input id="cycles" type="number" min="1" max="200"><button id="plus">+</button></div>
+        <small id="cyLbl"></small>
+      </div>
+      <div class="btns"><button class="btn" id="go">▶ დაწყება</button><button class="btn ghost" id="stop">■ გაჩერება</button></div>
+      <div class="opts">
+        <label><input type="checkbox" id="oSnd" checked> ხმა</label>
+        <label><input type="checkbox" id="oTick"> წამების ტიკი</label>
+        <label><input type="checkbox" id="oVib" checked> ვიბრაცია</label>
+      </div>
+    </div>
+  </div>
+  <div class="note">სუნთქვის ვარჯიში არ ცვლის მკურნალობას. თუ თავბრუ გეხვევა, გული გერევა ან უსიამოვნო შეგრძნება გაქვს, შეწყვიტე და ჩვეულებრივად ისუნთქე.<br>
+    აქტიური ტექნიკები (კაპალაბჰატი, ვიმ ჰოფი) მხოლოდ მჯდომარე ან წოლით, უსაფრთხო ადგილას — არასდროს წყალში ან საჭესთან.</div>
+</div>
+
+<script>
+/* ═════ techniques ═════
+   phase kinds: in · hold · out · empty (hold on empty lungs)
+                wave  — n rhythmic deep breaths (Wim Hof)
+                pulse — n quick active exhalations (kapalabhati)
+                open  — retention until the user taps (max seconds)            */
+const P=(k,s,l)=>({k,s,l});
+const T=[
+ {id:'478',name:'4-7-8 · დამამშვიდებელი სუნთქვა',en:'Dr. Andrew Weil',pu:'ძილი · შფოთვა',
+  desc:'ენდრიუ უეილის ტექნიკა, რომელიც იოგური პრანაიამიდან მოდის. ხანგრძლივი შეკავება და ორჯერ გრძელი ამოსუნთქვა ააქტიურებს პარასიმპათიკურ ნერვულ სისტემას — სხეული დასვენების რეჟიმზე გადადის და ძილი ადვილდება.',
+  how:'ენის წვერი დაადე ზედა კბილების უკან. ჩაისუნთქე ცხვირით ჩუმად (4), შეიკავე (7), ამოისუნთქე პირით ხმაურით, „ვუუშ“ (8).',
+  daily:'4 ციკლი, დღეში 2-ჯერ (დილით და ძილის წინ). პირველ თვეს — არაუმეტეს 4 ციკლისა, შემდეგ 8-მდე.',
+  warn:'პირველ დღეებში მსუბუქი თავბრუსხვევა ნორმალურია — ასეთ დროს შეწყვიტე.',
+  cyc:4,max:8,ph:[P('in',4),P('hold',7),P('out',8,'ამოისუნთქე პირით')]},
+ {id:'box',name:'კვადრატული სუნთქვა 4-4-4-4',en:'Box breathing',pu:'სტრესი · ფოკუსი',
+  desc:'ოთხი თანაბარი ფაზა: ჩასუნთქვა, შეკავება, ამოსუნთქვა, შეკავება. იყენებენ სამხედროები, ექიმები და სპორტსმენები სტრესულ სიტუაციაში — აწყნარებს გულისცემას და აბრუნებს კონცენტრაციას.',
+  how:'ცხვირით ჩაისუნთქე 4 წამი, შეიკავე 4, ამოისუნთქე 4, ცარიელ ფილტვებზე შეიკავე 4.',
+  daily:'15 ციკლი (4 წუთი), დღეში 1–3-ჯერ ან სტრესის დროს.',
+  cyc:15,max:60,ph:[P('in',4),P('hold',4),P('out',4),P('empty',4)]},
+ {id:'coh',name:'კოჰერენტული სუნთქვა 5.5-5.5',en:'Resonance breathing · HRV',pu:'გულის რიტმი · ბალანსი',
+  desc:'წუთში დაახლოებით 5.5 სუნთქვა — სიხშირე, რომელზეც გულის რიტმი, არტერიული წნევა და სუნთქვა რეზონანსში შედის. ზრდის გულის რიტმის ვარიაბელობას (HRV) და ამცირებს სტრესს.',
+  how:'ნაზად ჩაისუნთქე ცხვირით 5.5 წამი და ისევე ნაზად ამოისუნთქე 5.5 წამი, პაუზების გარეშე. ისუნთქე მუცლით.',
+  daily:'10–20 წუთი დღეში: 55 ციკლი = 10 წუთი.',
+  cyc:55,max:120,ph:[P('in',5.5),P('out',5.5)]},
+ {id:'sigh',name:'ფიზიოლოგიური ამოხვნეშა',en:'Cyclic sighing · Stanford 2023',pu:'სწრაფი დამშვიდება',
+  desc:'ორმაგი ჩასუნთქვა ცხვირით და ხანგრძლივი ამოსუნთქვა პირით. მეორე, მოკლე ჩასუნთქვა ფილტვებს ბოლომდე ავსებს, ხანგრძლივი ამოსუნთქვა კი სწრაფად ამშვიდებს. სტენფორდის კვლევაში (2023) ხუთწუთიანი ყოველდღიური პრაქტიკა განწყობას მედიტაციაზე მეტად აუმჯობესებდა.',
+  how:'ჩაისუნთქე ცხვირით ღრმად (2), დაამატე კიდევ ერთი მოკლე ჩასუნთქვა (1), შემდეგ ნელა ამოისუნთქე პირით (6).',
+  daily:'5 წუთი დღეში — 33 ციკლი.',
+  cyc:33,max:80,ph:[P('in',2),P('in',1,'კიდევ ცოტა ჩაისუნთქე'),P('out',6,'ნელა ამოისუნთქე პირით')]},
+ {id:'46',name:'გახანგრძლივებული ამოსუნთქვა 4-6',en:'Extended exhale',pu:'ყოველდღიური სიმშვიდე',
+  desc:'როცა ამოსუნთქვა ჩასუნთქვაზე გრძელია, გულისცემა ბუნებრივად ნელდება — აქტიურდება ცთომილი (ვაგუსის) ნერვი. მარტივი და უსაფრთხო ტექნიკაა ნებისმიერ დროს.',
+  how:'ჩაისუნთქე ცხვირით 4 წამი, ამოისუნთქე ნელა 6 წამი.',
+  daily:'5 წუთი — 30 ციკლი, დღეში 1–2-ჯერ.',
+  cyc:30,max:90,ph:[P('in',4),P('out',6)]},
+ {id:'711',name:'7-11 სუნთქვა',en:'7-11 breathing',pu:'პანიკა · შფოთვა',
+  desc:'შფოთვისა და პანიკური შეტევის დროს გამოყენებული ტექნიკა: გრძელი ჩასუნთქვა და კიდევ უფრო გრძელი ამოსუნთქვა სწრაფად ამცირებს აგზნებას.',
+  how:'ჩაისუნთქე მუცლით 7 წამი, ამოისუნთქე 11 წამი. თუ 7 წამი რთულია, ჯერ ტემპი შეამცირე და თანდათან გაზარდე.',
+  daily:'5–10 წუთი ან საჭიროებისამებრ — 17 ციკლი ≈ 5 წუთი.',
+  cyc:17,max:40,ph:[P('in',7),P('out',11)]},
+ {id:'tri',name:'სამკუთხა სუნთქვა 4-4-4',en:'Triangle breathing',pu:'ფოკუსი · სიმშვიდე',
+  desc:'სამი თანაბარი ფაზა — ჩასუნთქვა, შეკავება, ამოსუნთქვა. კვადრატულ სუნთქვაზე მსუბუქია და კარგია დამწყებთათვის.',
+  how:'ჩაისუნთქე 4 წამი, შეიკავე 4, ამოისუნთქე 4.',
+  daily:'15 ციკლი (3 წუთი), დღეში 1–2-ჯერ.',
+  cyc:15,max:60,ph:[P('in',4),P('hold',4),P('out',4)]},
+ {id:'nadi',name:'ნადი შოდჰანა — მონაცვლე ნესტოებით',en:'Anulom Vilom',pu:'ბალანსი · სიმშვიდე',
+  desc:'იოგური პრანაიამა: ჰაერი მონაცვლეობით გადის მარცხენა და მარჯვენა ნესტოში. აბალანსებს ნერვულ სისტემას და ამშვიდებს გონებას.',
+  how:'მარჯვენა ცერით დახურე მარჯვენა ნესტო და ჩაისუნთქე მარცხენით (4), შეიკავე (4), დახურე მარცხენა ბეჭდის თითით და ამოისუნთქე მარჯვენით (6). შემდეგ ჩაისუნთქე მარჯვენით (4), შეიკავე (4), ამოისუნთქე მარცხენით (6) — ეს ერთი ციკლია.',
+  daily:'9 ციკლი (≈ 4 წუთი), დღეში 1–2-ჯერ.',
+  cyc:9,max:30,ph:[P('in',4,'ჩაისუნთქე მარცხენით'),P('hold',4),P('out',6,'ამოისუნთქე მარჯვენით'),P('in',4,'ჩაისუნთქე მარჯვენით'),P('hold',4),P('out',6,'ამოისუნთქე მარცხენით')]},
+ {id:'bhr',name:'ბჰრამარი — ფუტკრის სუნთქვა',en:'Bhramari pranayama',pu:'ნერვები · ძილი',
+  desc:'ამოსუნთქვისას დახურული ტუჩებით გამოიცემა ფუტკრის ზუზუნის მსგავსი „მმმმ“ ბგერა. ვიბრაცია ამშვიდებს გონებას და ამცირებს გაღიზიანებას.',
+  how:'ცერებით დახურე ყურები, თვალები დახუჭე. ჩაისუნთქე ცხვირით (4), ამოისუნთქე ზუზუნით „მმმმ“ (8).',
+  daily:'7–10 ციკლი, დღეში 1–2-ჯერ.',
+  cyc:7,max:20,hum:true,ph:[P('in',4),P('out',8,'ამოისუნთქე ზუზუნით — მმმ')]},
+ {id:'kap',name:'კაპალაბჰატი — ცეცხლის სუნთქვა',en:'Kapalabhati',pu:'ენერგია · სიფხიზლე',
+  desc:'სწრაფი, აქტიური ამოსუნთქვები მუცლის კუნთებით და პასიური ჩასუნთქვები. აცოცხლებს და ათბობს სხეულს. სრულდება დილით, უზმოზე.',
+  how:'ყოველ ბიძგზე მუცელი მკვეთრად შეიწიე და ამოისუნთქე ცხვირით — ჩასუნთქვა თავისით ხდება. 30 ბიძგის შემდეგ ორჯერ მშვიდად ისუნთქე.',
+  daily:'3 რაუნდი × 30 ბიძგი, დილით.',
+  warn:'არ გააკეთო ორსულობისას, მაღალი წნევის, გულის დაავადების, ეპილეფსიის, თიაქრის ან ბოლოდროინდელი ოპერაციის დროს. თავბრუსხვევისას შეწყვიტე.',
+  cyc:3,max:6,ph:[{k:'pulse',n:30,s:30,l:'ბიძგი — ამოისუნთქე'},P('in',4,'მშვიდად ჩაისუნთქე'),P('out',6,'მშვიდად ამოისუნთქე'),P('in',4,'მშვიდად ჩაისუნთქე'),P('out',6,'მშვიდად ამოისუნთქე')]},
+ {id:'wim',name:'ვიმ ჰოფის მეთოდი',en:'Wim Hof breathing',pu:'ენერგია · იმუნიტეტი',
+  desc:'30 ღრმა, რიტმული სუნთქვა, შემდეგ შეკავება ამოსუნთქულზე — სანამ კომფორტულია — და 15-წამიანი შეკავება ჩასუნთქულზე. კვლევაში (Kox et al., 2014) ამცირებდა ორგანიზმის ანთებით რეაქციას.',
+  how:'ჩაისუნთქე ღრმად, ამოუშვი თავისუფლად — 30-ჯერ, ტალღასავით. ბოლო ამოსუნთქვის შემდეგ შეიკავე სუნთქვა; როცა მოგინდება ჩასუნთქვა, დააჭირე „ჩავისუნთქე“, ღრმად ჩაისუნთქე და შეიკავე 15 წამი.',
+  daily:'3 რაუნდი, დილით, უზმოზე.',
+  warn:'არასდროს გააკეთო წყალში, საჭესთან ან ფეხზე მდგომმა — შესაძლებელია გონების დაკარგვა. არ გააკეთო ორსულობისას, ეპილეფსიის ან გულის დაავადების დროს.',
+  cyc:3,max:5,ph:[{k:'wave',n:30,s:96,l:'ღრმად ისუნთქე'},{k:'open',s:180,l:'შეიკავე ამოსუნთქულზე'},P('in',2,'ღრმად ჩაისუნთქე'),P('hold',15,'შეიკავე'),P('out',3,'გაუშვი')]}];
+const LBL={in:'ჩაისუნთქე',hold:'შეიკავე',out:'ამოისუნთქე',empty:'შეიკავე ცარიელზე',pulse:'ბიძგი',wave:'ღრმად ისუნთქე',open:'შეიკავე'};
+const COL={in:'#5fc8b0',hold:'#c9a84c',out:'#7f9cf0',empty:'#9a84d8',pulse:'#f0a070',wave:'#5fc8b0',open:'#c9a84c'};
+const $=id=>document.getElementById(id);
+const roundSec=t=>t.ph.reduce((a,p)=>a+(p.k==='open'?60:p.s),0);
+const fmtT=s=>{s=Math.max(0,Math.round(s));const m=Math.floor(s/60),r=s%60;return m?`${m} წთ ${r?r+' წმ':''}`.trim():`${r} წმ`;};
+const patStr=t=>t.ph.filter(p=>!['pulse','wave','open'].includes(p.k)).map(p=>p.s).join(' · ');
+
+/* ═════ daily log (this device only) ═════ */
+const dayKey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
+function logGet(){try{const j=JSON.parse(localStorage.getItem('breath-log')||'{}');return j[dayKey()]||{};}catch(e){return{};}}
+function logAdd(id){try{const all=JSON.parse(localStorage.getItem('breath-log')||'{}'),k=dayKey();
+  all[k]=all[k]||{};all[k][id]=(all[k][id]||0)+1;
+  for(const x of Object.keys(all))if(x!==k&&Object.keys(all).length>40)delete all[x];
+  localStorage.setItem('breath-log',JSON.stringify(all));}catch(e){}}
+function showToday(){const L=logGet(),ks=Object.keys(L);
+  $('today').innerHTML=ks.length?'დღეს შესრულებული: '+ks.map(k=>{const t=T.find(x=>x.id===k);return t?`<b>${t.name.split(' ·')[0].split(' —')[0]}</b> ×${L[k]}`:'';}).join(' · '):'';
+  document.querySelectorAll('.tq').forEach(b=>{const n=L[b.dataset.id];b.querySelector('.dn').textContent=n?'✓ '+n:'';});}
+
+/* ═════ sound ═════ */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(f1,f2,dur,type,vol){
+  if(!$('oSnd').checked)return;const a=ac();if(!a)return;
+  const t=a.currentTime,o=a.createOscillator(),g=a.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f1,t);if(f2&&f2!==f1)o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.18,t+Math.min(0.08,dur/4));
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+0.05);
+}
+function bell(f,vol){tone(f,f,1.4,'triangle',vol||0.16);tone(f*2.01,f*2.01,0.9,'sine',(vol||0.16)*0.35);}
+function hum(dur){if(!$('oSnd').checked)return;const a=ac();if(!a)return;const t=a.currentTime;
+  [130.8,196.2].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.type=i?'sine':'triangle';o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(i?0.03:0.06,t+0.4);g.gain.setValueAtTime(i?0.03:0.06,t+dur-0.6);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.connect(g).connect(a.destination);o.start(t);o.stop(t+dur+0.05);});}
+function cue(p,cur){
+  const d=Math.min(p.s||1,1.6);
+  if(p.k==='in')tone(220,330,d,'sine',0.17);
+  else if(p.k==='out'){tone(330,220,d,'sine',0.17);if(cur&&cur.hum)hum(p.s);}
+  else if(p.k==='hold'||p.k==='open')bell(392);
+  else if(p.k==='empty')bell(294,0.13);
+  if($('oVib').checked&&navigator.vibrate)try{navigator.vibrate(p.k==='in'?60:p.k==='out'?[40,60,40]:120);}catch(e){}
+}
+const finishChime=()=>{[523.3,659.3,784].forEach((f,i)=>setTimeout(()=>bell(f,0.15),i*260));};
+
+/* ═════ UI ═════ */
+let cur=T[0];
+function buildList(){
+  $('list').innerHTML=T.map(t=>`<button class="tq" data-id="${t.id}"><span class="dn"></span><b>${t.name}</b>
+    <div class="pt">${t.id==='wim'?'30 · შეკავება · 15':t.id==='kap'?'30 ბიძგი × 3':patStr(t)}</div><div class="pu">${t.pu}</div></button>`).join('');
+  document.querySelectorAll('.tq').forEach(b=>b.onclick=()=>{select(b.dataset.id);
+    if(innerWidth<860)document.querySelector('.player').scrollIntoView({behavior:'smooth'});});
+}
+function select(id){
+  stop(true);cur=T.find(t=>t.id===id)||T[0];
+  document.querySelectorAll('.tq').forEach(b=>b.classList.toggle('on',b.dataset.id===cur.id));
+  $('info').innerHTML=`<h2>${cur.name}</h2><div class="en">${cur.en} · ${cur.pu}</div><p>${cur.desc}</p>
+    <h3>როგორ</h3><p>${cur.how}</p><div class="daily">📅 <b>დღიური ნორმა:</b> ${cur.daily}</div>${cur.warn?`<div class="warn">⚠ ${cur.warn}</div>`:''}`;
+  $('cycles').value=cur.cyc;updCyc();
+  $('pat').innerHTML=cur.ph.map((p,i)=>`<span data-i="${i}" style="border-color:${COL[p.k]};color:${COL[p.k]}">${p.l||LBL[p.k]}${p.k==='wave'||p.k==='pulse'?' ×'+p.n:p.k==='open'?'':' '+p.s}</span>`).join('');
+  try{history.replaceState(null,'','#'+cur.id);}catch(e){}
+}
+function cycles(){return Math.max(1,Math.min(cur.max*3,+$('cycles').value||cur.cyc));}
+function updCyc(){$('cyLbl').textContent=(cur.id==='wim'||cur.id==='kap'?'რაუნდი':'ციკლი')+' · ≈ '+fmtT(roundSec(cur)*cycles());}
+$('minus').onclick=()=>{$('cycles').value=Math.max(1,cycles()-1);updCyc();};
+$('plus').onclick=()=>{$('cycles').value=cycles()+1;updCyc();};
+$('cycles').oninput=updCyc;
+
+/* ═════ engine ═════ */
+let run=null,raf=0,wake=null;
+const orb=$('orb'),arc=$('arc'),CIRC=295.3;
+const ease=x=>0.5-0.5*Math.cos(Math.PI*Math.min(1,Math.max(0,x)));
+function seq(){const out=[],n=cycles();for(let c=0;c<n;c++)cur.ph.forEach((p,i)=>out.push({...p,c,i}));return out;}
+function start(){
+  ac();
+  if(run&&run.paused){run.paused=false;run.t0=performance.now()-run.el*1000;$('go').textContent='⏸ პაუზა';loop();return;}
+  if(run){pause();return;}
+  run={list:seq(),i:0,t0:performance.now(),el:0,paused:false,lastSub:-1,lastTick:-1,tech:cur};
+  run.total=run.list.reduce((a,p)=>a+(p.k==='open'?60:p.s),0);
+  $('go').textContent='⏸ პაუზა';
+  try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(w=>wake=w).catch(()=>{});}catch(e){}
+  enter(0);loop();
+}
+function pause(){if(!run)return;run.paused=true;cancelAnimationFrame(raf);$('go').textContent='▶ გაგრძელება';$('ph').textContent='პაუზა';}
+function stop(silent){
+  cancelAnimationFrame(raf);run=null;$('go').textContent='▶ დაწყება';$('tap').style.display='none';
+  orb.style.transform='scale(.45)';arc.style.strokeDashoffset=CIRC;$('prog').style.width='0';
+  $('ph').textContent='მზად ხარ?';$('sec').textContent='—';$('cy').textContent='';$('rem').textContent='';
+  document.querySelectorAll('#pat span').forEach(s=>s.classList.remove('on'));
+  try{if(wake){wake.release();wake=null;}}catch(e){}
+}
+function enter(i){
+  run.i=i;run.t0=performance.now();run.el=0;run.lastSub=-1;run.lastTick=-1;
+  const p=run.list[i];cue(p,run.tech);
+  document.querySelectorAll('#pat span').forEach(s=>s.classList.toggle('on',+s.dataset.i===p.i));
+  $('tap').style.display=p.k==='open'?'inline-block':'none';
+  const col=COL[p.k];arc.style.stroke=col;
+  orb.style.boxShadow=`0 0 60px ${col}66, inset 0 0 30px rgba(255,255,255,.08)`;
+}
+function next(){
+  if(!run)return;
+  {const cp=run.list[run.i];if(cp.k==='open')cp.used=run.el;}
+  if(run.i+1>=run.list.length){const id=run.tech.id;stop(true);finishChime();logAdd(id);showToday();
+    $('ph').textContent='✦ დასრულდა';$('sec').textContent='✓';$('cy').textContent='კარგი სამუშაო';return;}
+  enter(run.i+1);
+}
+$('tap').onclick=()=>{if(run&&run.list[run.i].k==='open')next();};
+function doneBefore(){let s=0;for(let j=0;j<run.i;j++){const p=run.list[j];s+=p.k==='open'?(p.used||60):p.s;}return s;}
+function loop(){
+  raf=requestAnimationFrame(loop);if(!run||run.paused)return;
+  const p=run.list[run.i],el=(performance.now()-run.t0)/1000;run.el=el;
+  let scale=.45,left=p.s-el,lbl=p.l||LBL[p.k],frac=el/p.s;
+  if(p.k==='in')scale=.45+.55*ease(frac);
+  else if(p.k==='hold')scale=1;
+  else if(p.k==='out')scale=1-.55*ease(frac);
+  else if(p.k==='empty')scale=.45;
+  else if(p.k==='wave'){const per=p.s/p.n,sub=Math.floor(el/per),f=(el%per)/per;
+    scale=f<.5?.45+.55*ease(f*2):1-.55*ease((f-.5)*2);
+    if(sub!==run.lastSub&&sub<p.n){run.lastSub=sub;tone(240,320,0.25,'sine',0.08);}
+    lbl=(f<.5?'ჩაისუნთქე':'ამოუშვი')+' · '+Math.min(p.n,sub+1)+'/'+p.n;left=p.s-el;}
+  else if(p.k==='pulse'){const per=p.s/p.n,sub=Math.floor(el/per),f=(el%per)/per;
+    scale=f<.25?.62-.17*(f/.25):.45+.17*Math.min(1,(f-.25)/.75);
+    if(sub!==run.lastSub&&sub<p.n){run.lastSub=sub;tone(520,380,0.09,'square',0.05);}
+    lbl='ბიძგი · '+Math.min(p.n,sub+1)+'/'+p.n;}
+  else if(p.k==='open'){scale=.45+.03*Math.sin(el*2);left=el;frac=el/p.s;}
+  orb.style.transform=`scale(${scale.toFixed(3)})`;
+  arc.style.strokeDashoffset=(CIRC*(1-Math.min(1,frac))).toFixed(1);
+  $('ph').textContent=lbl;$('ph').style.color=COL[p.k];
+  $('sec').textContent=p.k==='open'?Math.floor(el)+'″':Math.max(1,Math.ceil(left));
+  const unit=run.tech.id==='wim'||run.tech.id==='kap'?'რაუნდი':'ციკლი';
+  $('cy').textContent=`${unit} ${p.c+1} / ${run.list[run.list.length-1].c+1}`;
+  /* seconds tick */
+  if($('oTick').checked&&p.k!=='wave'&&p.k!=='pulse'){const w=Math.floor(el);if(w!==run.lastTick&&w>0){run.lastTick=w;tone(880,880,0.04,'sine',0.035);}}
+  const done=doneBefore()+Math.min(el,p.s);
+  $('prog').style.width=(100*Math.min(1,done/run.total)).toFixed(1)+'%';
+  $('rem').textContent='დარჩა ≈ '+fmtT(run.total-done);
+  if(p.k==='open'){if(el>=p.s){p.used=el;next();}}
+  else if(el>=p.s)next();
+}
+$('go').onclick=start;$('stop').onclick=()=>stop();
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target.tagName!=='INPUT'){e.preventDefault();
+  if(run&&run.list[run.i].k==='open')next();else start();}});
+/* remember the sound options on this device */
+['oSnd','oTick','oVib'].forEach(id=>{try{const v=localStorage.getItem('breath-'+id);if(v!==null)$(id).checked=v==='1';}catch(e){}
+  $(id).onchange=()=>{try{localStorage.setItem('breath-'+id,$(id).checked?'1':'0');}catch(e){}};});
+buildList();select((location.hash||'').slice(1)||'478');showToday();
+</script>
+</body>
+</html>
