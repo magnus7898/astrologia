@@ -4,32 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ბიორიტმი — სასიცოცხლო ციკლების ვიზუალიზაცია</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600;700&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #080b10;
-    --surface: rgba(255,255,255,0.032);
-    --surface2: rgba(255,255,255,0.05);
-    --border: rgba(200,210,255,0.09);
-    --physical: #00e5ff;
-    --emotional: #ff4d8d;
-    --intellectual: #a78bfa;
-    --intuitive: #34d399;
-    --text: #eaedf5;
-    --muted: #8a96b0;
-    --accent: #00e5ff;
-    --glow-p: 0 0 24px rgba(0,229,255,0.3);
-    --glow-e: 0 0 24px rgba(255,77,141,0.3);
-    --glow-i: 0 0 24px rgba(167,139,250,0.3);
-    --glow-t: 0 0 24px rgba(52,211,153,0.3);
+    --bg: #04030a;
+    --surface: rgba(10,8,22,0.78);
+    --surface2: rgba(201,168,76,0.07);
+    --border: rgba(201,168,76,0.18);
+    --physical: #f07a4a;
+    --emotional: #f08cb8;
+    --intellectual: #7fb2f0;
+    --intuitive: #5fc8b0;
+    --text: #e9e2d0;
+    --muted: rgba(155,168,184,0.72);
+    --accent: #c9a84c;
+    --gold-l: #e8d5a0;
+    --glow-p: 0 0 18px rgba(201,168,76,0.3);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: #080b10;
+    background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Noto Sans Georgian', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
@@ -40,10 +38,9 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(90,60,180,0.18) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 85% 10%,  rgba(0,160,200,0.10) 0%, transparent 55%),
-      radial-gradient(ellipse 70% 60% at 50% 110%, rgba(30,20,60,0.6)   0%, transparent 60%),
-      radial-gradient(ellipse 100% 80% at 50% 50%, rgba(8,11,16,1) 40%, transparent 100%);
+      radial-gradient(ellipse 700px 500px at 20% 15%, rgba(100,50,200,0.10), transparent 60%),
+      radial-gradient(ellipse 600px 500px at 82% 70%, rgba(25,155,220,0.07), transparent 60%),
+      radial-gradient(ellipse 500px 400px at 50% 95%, rgba(200,55,130,0.06), transparent 60%);
     pointer-events: none;
     z-index: 0;
   }
@@ -57,7 +54,7 @@
     background-size: 160px;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.6;
+    opacity: 0.25;
   }
 
   #starsCanvas {
@@ -67,6 +64,9 @@
     z-index: 0;
   }
 
+  .back { display:inline-block; margin-top:22px; font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--accent);
+    opacity:.75; text-decoration:none; border:1px solid rgba(201,168,76,.25); border-radius:3px; padding:7px 12px; }
+  .back:hover { opacity:1; }
   .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -78,28 +78,28 @@
   /* ── HEADER ── */
   header {
     text-align: center;
-    padding: 48px 0 36px;
+    padding: 26px 0 30px;
     position: relative;
   }
 
   .header-eyebrow {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 11px;
-    letter-spacing: 0.3em;
+    letter-spacing: 7px;
     color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 16px;
     opacity: 0;
-    animation: fadeUp 0.8s 0.1s forwards;
+    margin-bottom: 14px;
+    opacity: 0;
+    animation: fadeUpHalf 0.8s 0.1s forwards;
   }
 
   header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(32px, 6vw, 72px);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    background: linear-gradient(135deg, #ffffff 0%, var(--accent) 50%, #a78bfa 100%);
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(30px, 5.5vw, 50px);
+    font-weight: 400;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    background: linear-gradient(160deg, #f5e8ba 0%, var(--accent) 35%, #9a7028 60%, var(--gold-l) 80%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -109,14 +109,16 @@
   }
 
   .header-subtitle {
-    font-size: clamp(12px, 3vw, 15px);
+    font-family: 'IM Fell English', 'Noto Sans Georgian', serif;
+    font-style: italic;
+    font-size: clamp(12px, 3vw, 14px);
     color: var(--muted);
-    font-weight: 300;
     opacity: 0;
     animation: fadeUp 0.8s 0.3s forwards;
     padding: 0 8px;
   }
 
+  @keyframes fadeUpHalf { from { opacity: 0; transform: translateY(20px); } to { opacity: .55; transform: none; } }
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -144,10 +146,10 @@
   }
 
   .panel-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--accent);
     text-transform: uppercase;
     margin-bottom: 20px;
   }
@@ -167,7 +169,7 @@
   .field { display: flex; flex-direction: column; gap: 8px; }
 
   .field label {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 10px;
     letter-spacing: 0.2em;
     color: var(--muted);
@@ -179,7 +181,7 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Noto Sans Georgian', sans-serif;
     font-size: 15px;
     padding: 12px 14px;
     outline: none;
@@ -190,7 +192,7 @@
 
   .field input:focus, .field select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(0,229,255,0.1);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
   }
 
   .field input[type="date"] {
@@ -214,7 +216,7 @@
     border: none;
     background: transparent;
     color: var(--muted);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 10px;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -224,8 +226,8 @@
   }
 
   .period-btn.active {
-    background: var(--accent);
-    color: #000;
+    background: linear-gradient(135deg, var(--gold-l), var(--accent));
+    color: #160f04;
     font-weight: 700;
     box-shadow: var(--glow-p);
   }
@@ -239,9 +241,10 @@
   }
 
   .btn-calculate {
-    background: linear-gradient(135deg, var(--accent), #0070ff);
-    color: #000;
-    font-family: 'Space Mono', monospace;
+    background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(95,200,176,0.16));
+    border: 1px solid rgba(201,168,76,0.5) !important;
+    color: var(--gold-l);
+    font-family: 'Cinzel', serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -257,7 +260,7 @@
 
   .btn-calculate:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0,229,255,0.4);
+    box-shadow: 0 0 24px rgba(201,168,76,0.28);
   }
 
   /* ── LEGEND ── */
@@ -289,17 +292,17 @@
   }
 
   .legend-label { color: var(--text); font-size: 13px; }
-  .legend-sub { color: var(--muted); font-size: 10px; font-family: 'Space Mono', monospace; }
+  .legend-sub { color: var(--muted); font-size: 10px; font-family: 'Cinzel', serif; }
 
   .today-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(0,229,255,0.1);
-    border: 1px solid rgba(0,229,255,0.3);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
     border-radius: 20px;
     padding: 4px 12px 4px 8px;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--accent);
@@ -339,7 +342,7 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(167,139,250,0.5), transparent);
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.45), transparent);
   }
 
   .chart-header {
@@ -352,13 +355,14 @@
   }
 
   .chart-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(16px, 3vw, 20px);
-    color: var(--text);
+    font-family: 'Cinzel', serif; font-weight: 400;
+    font-size: clamp(13px, 2.5vw, 15px);
+    letter-spacing: 2px;
+    color: var(--gold-l);
   }
 
   .chart-period-label {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 11px;
     color: var(--accent);
     letter-spacing: 0.15em;
@@ -402,7 +406,7 @@
   .cycle-card .card-icon { font-size: 24px; margin-bottom: 8px; }
 
   .cycle-card .card-name {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 8px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -411,13 +415,13 @@
   }
 
   .cycle-card .card-value {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cinzel', serif; font-weight: 400;
     font-size: clamp(28px, 5vw, 38px);
     font-weight: 700;
     color: var(--card-color);
     line-height: 1;
     margin-bottom: 6px;
-    text-shadow: 0 0 20px var(--card-color);
+    text-shadow: 0 0 14px var(--card-color);
   }
 
   .cycle-card .card-label {
@@ -440,7 +444,7 @@
   }
 
   .cycle-card .cycle-days {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 9px;
     color: var(--muted);
     margin-top: 8px;
@@ -476,7 +480,7 @@
   }
 
   .spark-name {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 9px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -484,7 +488,7 @@
   }
 
   .spark-val {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cinzel', serif; font-weight: 400;
     font-size: 20px;
     font-weight: 700;
     color: var(--spark-color);
@@ -506,9 +510,10 @@
   }
 
   .table-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(18px, 3vw, 22px);
-    color: var(--text);
+    font-family: 'Cinzel', serif; font-weight: 400;
+    font-size: clamp(13px, 2.5vw, 15px);
+    letter-spacing: 2px;
+    color: var(--gold-l);
   }
 
   .table-controls { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -519,7 +524,7 @@
     border: 1px solid var(--border);
     background: transparent;
     color: var(--muted);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 9px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -530,7 +535,7 @@
   .tab-btn.active {
     background: var(--surface2);
     color: var(--text);
-    border-color: rgba(100,180,255,0.3);
+    border-color: rgba(201,168,76,0.3);
   }
 
   .table-wrap {
@@ -557,7 +562,7 @@
   thead th {
     padding: 8px 12px;
     text-align: left;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 9px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
@@ -567,13 +572,13 @@
   }
 
   tbody tr {
-    border-bottom: 1px solid rgba(100,180,255,0.05);
+    border-bottom: 1px solid rgba(201,168,76,0.05);
     transition: background 0.15s;
   }
 
-  tbody tr:hover { background: rgba(0,229,255,0.03); }
+  tbody tr:hover { background: rgba(201,168,76,0.03); }
   tbody tr:last-child { border-bottom: none; }
-  tbody tr.today-row { background: rgba(0,229,255,0.06) !important; }
+  tbody tr.today-row { background: rgba(201,168,76,0.06) !important; }
 
   tbody td {
     padding: 6px 12px;
@@ -582,13 +587,13 @@
   }
 
   tbody td:first-child {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 11px;
     color: var(--muted);
   }
 
   .value-cell {
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 11px;
     font-weight: 700;
     display: block;
@@ -615,14 +620,14 @@
     display: inline-block;
     padding: 3px 8px;
     border-radius: 20px;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 8px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     border: 1px solid;
   }
 
-  .phase-high     { color: #34d399; border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.07); }
+  .phase-high     { color: #6fd08c; border-color: rgba(111,208,140,0.3); background: rgba(111,208,140,0.07); }
   .phase-low      { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.07); }
   .phase-critical { color: #fbbf24; border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.07); }
   .phase-rising   { color: #60a5fa; border-color: rgba(96,165,250,0.3);  background: rgba(96,165,250,0.07); }
@@ -632,7 +637,7 @@
     text-align: center;
     padding: 48px 20px;
     color: var(--muted);
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     font-size: 11px;
     letter-spacing: 0.1em;
   }
@@ -642,7 +647,7 @@
     padding: 28px 0 0;
     color: var(--muted);
     font-size: 11px;
-    font-family: 'Space Mono', monospace;
+    font-family: 'Cinzel', serif;
     letter-spacing: 0.08em;
     border-top: 1px solid var(--border);
     margin-top: 40px;
@@ -655,6 +660,7 @@
 <body>
 <canvas id="starsCanvas"></canvas>
 <div class="container">
+  <a class="back" href="index.html">← მთავარი</a>
 
   <header>
     <div class="header-eyebrow">✦ ბიოლოგიური რიტმის ანალიზი</div>
@@ -731,6 +737,7 @@
         <button class="tab-btn" data-table="physical">ფიზ.</button>
         <button class="tab-btn" data-table="emotional">ემო.</button>
         <button class="tab-btn" data-table="intellectual">ინტ.</button>
+        <button class="tab-btn" data-table="intuitive">ინტუ.</button>
       </div>
     </div>
     <div class="table-wrap table-scroll">
@@ -743,7 +750,7 @@
             <th>ემოციური</th>
             <th>ინტელექტ.</th>
             <th>ინტუიციური</th>
-            <th>ფაზა</th>
+            <th id="phaseTh">ფაზა (ფიზ.)</th>
             <th>ტენდ.</th>
           </tr>
         </thead>
@@ -762,14 +769,16 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 const CYCLES = {
-  physical:     { period: 23, color: '#00e5ff', label: 'ფიზიკური',        icon: '⚡', glow: 'rgba(0,229,255,0.5)'   },
-  emotional:    { period: 28, color: '#ff4d8d', label: 'ემოციური',         icon: '❤',  glow: 'rgba(255,77,141,0.5)'  },
-  intellectual: { period: 33, color: '#a78bfa', label: 'ინტელექტუალური',  icon: '🧠', glow: 'rgba(167,139,250,0.5)' },
-  intuitive:    { period: 38, color: '#34d399', label: 'ინტუიციური',       icon: '✨', glow: 'rgba(52,211,153,0.5)'  },
+  physical:     { period: 23, color: '#f07a4a', label: 'ფიზიკური',        icon: '⚡', glow: 'rgba(240,122,74,0.5)'   },
+  emotional:    { period: 28, color: '#f08cb8', label: 'ემოციური',         icon: '❤',  glow: 'rgba(255,77,141,0.5)'  },
+  intellectual: { period: 33, color: '#7fb2f0', label: 'ინტელექტუალური',  icon: '🧠', glow: 'rgba(201,168,76,0.45)' },
+  intuitive:    { period: 38, color: '#5fc8b0', label: 'ინტუიციური',       icon: '✨', glow: 'rgba(52,211,153,0.5)'  },
 };
 
 function calcValue(d, p) { return Math.sin((2 * Math.PI * d) / p); }
 function daysBetween(d1, d2) { return Math.round((d2 - d1) / 86400000); }
+function localDate(v) { const [y,m,d] = v.split('-').map(Number); return new Date(y, m-1, d); }
+function isoLocal(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 
 const GEO_MONTHS = ['იანვ','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
 const GEO_DAYS   = ['კვი','ორშ','სამ','ოთხ','ხუთ','პარ','შაბ'];
@@ -781,17 +790,17 @@ function pct(v)      { return Math.round(v * 100); }
 
 function getPhase(v, prev) {
   const p = pct(v), diff = v - prev;
-  if (Math.abs(p) < 8) return { label: 'კრიტ.',  cls: 'phase-critical' };
+  if (Math.abs(p) < 8) return { label: 'კრიტიკული', cls: 'phase-critical' };
   if (p > 0 && diff > 0) return { label: 'მზარდი', cls: 'phase-rising'   };
-  if (p > 0 && diff < 0) return { label: 'მაღალი', cls: 'phase-high'     };
+  if (p > 0 && diff < 0) return { label: 'პიკის შემდეგ', cls: 'phase-high' };
   if (p < 0 && diff < 0) return { label: 'კლებ.',  cls: 'phase-falling'  };
-  return { label: 'დაბალი', cls: 'phase-low' };
+  return { label: 'აღდგენა', cls: 'phase-low' };
 }
 
 let period = 30, chartInst = null, sparkCharts = {}, lastData = null;
 
 const today = new Date(); today.setHours(0,0,0,0);
-document.getElementById('startDate').valueAsDate = today;
+document.getElementById('startDate').value = isoLocal(today);
 document.getElementById('todayLabel').textContent = fmtDate(today);
 
 document.querySelectorAll('.period-btn').forEach(btn => {
@@ -812,6 +821,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 document.getElementById('calcBtn').addEventListener('click', calculate);
+['dob','startDate'].forEach(id => document.getElementById(id).addEventListener('change', calculate));
+try { const v = localStorage.getItem('bio-dob'); if (v) document.getElementById('dob').value = v; } catch(e) {}
 calculate();
 
 function calculate() {
@@ -819,9 +830,8 @@ function calculate() {
   const startInput = document.getElementById('startDate').value;
   if (!dobInput) return;
 
-  const dob   = new Date(dobInput);   dob.setHours(0,0,0,0);
-  const start = startInput ? new Date(startInput) : today;
-  start.setHours(0,0,0,0);
+  const dob   = localDate(dobInput);
+  const start = startInput ? localDate(startInput) : new Date(today);
 
   const rows = [];
   for (let i = 0; i < period; i++) {
@@ -843,6 +853,7 @@ function calculate() {
   }
 
   lastData = { rows, dob, start };
+  try { localStorage.setItem('bio-dob', dobInput); } catch(e) {}
 
   const labelP = { 7:'7-დღ. ხედი', 30:'30-დღ. ხედი', 90:'90-დღ. ხედი', 365:'365-დღ. ხედი' }[period];
   document.getElementById('chartPeriodLabel').textContent = labelP;
@@ -887,12 +898,12 @@ function renderChart(rows) {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: 'rgba(12,21,37,0.95)',
-          borderColor: 'rgba(100,180,255,0.2)',
+          backgroundColor: 'rgba(10,8,22,0.95)',
+          borderColor: 'rgba(201,168,76,0.2)',
           borderWidth: 1,
           padding: 12,
-          titleFont: { family: 'Space Mono', size: 10 },
-          bodyFont:  { family: 'Space Mono', size: 11 },
+          titleFont: { family: 'Cinzel', size: 10 },
+          bodyFont:  { family: 'Cinzel', size: 11 },
           callbacks: {
             title: items => fmtDate(rows[items[0].dataIndex].date),
             label: item => { const v = item.raw; return ` ${item.dataset.label}: ${v >= 0 ? '+' : ''}${v}%`; }
@@ -901,19 +912,19 @@ function renderChart(rows) {
       },
       scales: {
         x: {
-          grid: { color: 'rgba(100,180,255,0.05)', drawTicks: false },
+          grid: { color: 'rgba(201,168,76,0.05)', drawTicks: false },
           border: { display: false },
-          ticks: { color: '#6b7a9a', font: { family: 'Space Mono', size: 9 }, maxRotation: 45, maxTicksLimit: period <= 30 ? 30 : period <= 90 ? 15 : 24 }
+          ticks: { color: 'rgba(155,168,184,.7)', font: { family: 'Cinzel', size: 9 }, maxRotation: 45, maxTicksLimit: period <= 30 ? 30 : period <= 90 ? 15 : 24 }
         },
         y: {
           min: -110, max: 110,
           grid: {
-            color: ctx => ctx.tick.value === 0 ? 'rgba(100,180,255,0.25)' : 'rgba(100,180,255,0.04)',
+            color: ctx => ctx.tick.value === 0 ? 'rgba(201,168,76,0.25)' : 'rgba(201,168,76,0.04)',
             lineWidth: ctx => ctx.tick.value === 0 ? 1.5 : 1,
             drawTicks: false,
           },
           border: { display: false },
-          ticks: { color: '#6b7a9a', font: { family: 'Space Mono', size: 9 }, callback: v => v + '%', stepSize: 25 }
+          ticks: { color: 'rgba(155,168,184,.7)', font: { family: 'Cinzel', size: 9 }, callback: v => v + '%', stepSize: 25 }
         }
       }
     }
@@ -929,12 +940,12 @@ function renderChart(rows) {
       const ca = chartInst.chartArea;
       const c2 = chartInst.ctx;
       c2.save();
-      c2.strokeStyle = 'rgba(0,229,255,0.4)';
+      c2.strokeStyle = 'rgba(201,168,76,0.4)';
       c2.lineWidth = 1.5;
       c2.setLineDash([4,4]);
       c2.beginPath(); c2.moveTo(x, ca.top); c2.lineTo(x, ca.bottom); c2.stroke();
-      c2.fillStyle = 'rgba(0,229,255,0.9)';
-      c2.font = '9px Space Mono';
+      c2.fillStyle = '#e8d5a0';
+      c2.font = '10px Cinzel';
       c2.textAlign = 'center';
       c2.fillText('დღეს', x, ca.top - 5);
       c2.restore();
@@ -945,10 +956,10 @@ function renderChart(rows) {
 function renderTodayCards(rows) {
   const row = rows.find(r => r.date.getTime() === today.getTime()) || rows[0];
   const cards = [
-    { key:'ფიზიკური',       period:23, color:'#00e5ff', val: pct(row.physical),     icon:'⚡' },
-    { key:'ემოციური',        period:28, color:'#ff4d8d', val: pct(row.emotional),    icon:'❤'  },
-    { key:'ინტელექტ.',      period:33, color:'#a78bfa', val: pct(row.intellectual), icon:'🧠' },
-    { key:'ინტუიციური',      period:38, color:'#34d399', val: pct(row.intuitive),    icon:'✨' },
+    { key:'ფიზიკური',       period:23, color:'#f07a4a', val: pct(row.physical),     icon:'⚡' },
+    { key:'ემოციური',        period:28, color:'#f08cb8', val: pct(row.emotional),    icon:'❤'  },
+    { key:'ინტელექტ.',      period:33, color:'#7fb2f0', val: pct(row.intellectual), icon:'🧠' },
+    { key:'ინტუიციური',      period:38, color:'#5fc8b0', val: pct(row.intuitive),    icon:'✨' },
   ];
   document.getElementById('todayCards').innerHTML = cards.map(c => {
     const barPct  = ((c.val + 100) / 200 * 100).toFixed(1);
@@ -970,9 +981,9 @@ function renderSparklines(rows) {
   sparkCharts = {};
 
   const sparks = [
-    { key:'physical',     label:'ფიზ. ტენდ.', color:'#00e5ff' },
-    { key:'emotional',    label:'ემო. ტენდ.', color:'#ff4d8d' },
-    { key:'intellectual', label:'ინტ. ტენდ.', color:'#a78bfa' },
+    { key:'physical',     label:'ფიზ. ტენდ.', color:'#f07a4a' },
+    { key:'emotional',    label:'ემო. ტენდ.', color:'#f08cb8' },
+    { key:'intellectual', label:'ინტ. ტენდ.', color:'#7fb2f0' },
   ];
 
   document.getElementById('sparklineRow').innerHTML = sparks.map(s => `
@@ -1007,10 +1018,15 @@ function renderSparklines(rows) {
 }
 
 function renderTable(rows, dob) {
+  const f = (document.querySelector('.tab-btn.active') || {}).dataset?.table || 'all';
+  const KEYS = ['physical','emotional','intellectual','intuitive'], show = f === 'all' ? KEYS : [f];
+  const ths = document.querySelectorAll('#bioTable thead th');
+  KEYS.forEach((k,i) => { ths[2+i].style.display = show.includes(k) ? '' : 'none'; });
+  document.getElementById('phaseTh').textContent = 'ფაზა (' + ({all:'ფიზ.',physical:'ფიზ.',emotional:'ემო.',intellectual:'ინტ.',intuitive:'ინტუ.'})[f] + ')';
   document.getElementById('tableBody').innerHTML = rows.map(r => {
     const isToday = r.date.getTime() === today.getTime();
     const trend = r.composite >= 0.3 ? '↑ ძლ.' : r.composite >= 0 ? '↗ ზომ+' : r.composite >= -0.3 ? '↘ ზომ−' : '↓ სუს.';
-    const trendColor = r.composite >= 0.3 ? '#34d399' : r.composite >= 0 ? '#60a5fa' : r.composite >= -0.3 ? '#c084fc' : '#f87171';
+    const trendColor = r.composite >= 0.3 ? '#5fc8b0' : r.composite >= 0 ? '#60a5fa' : r.composite >= -0.3 ? '#c084fc' : '#f87171';
 
     function valCell(v, color) {
       const p = pct(v), bw = Math.abs(p) / 2, off = p >= 0 ? '50%' : `${50 - bw}%`;
@@ -1018,14 +1034,11 @@ function renderTable(rows, dob) {
     }
 
     return `<tr class="${isToday ? 'today-row' : ''}">
-      <td style="font-family:'Space Mono',monospace;font-size:11px;color:#8a96b0">${fmtShort(r.date)}${isToday ? ' <span class="today-badge" style="font-size:8px;padding:2px 6px"><span class="today-dot"></span>დღეს</span>' : ''}</td>
-      <td style="color:#6b7a9a;font-family:'Space Mono',monospace;font-size:10px">${weekday(r.date)}</td>
-      ${valCell(r.physical, CYCLES.physical.color)}
-      ${valCell(r.emotional, CYCLES.emotional.color)}
-      ${valCell(r.intellectual, CYCLES.intellectual.color)}
-      ${valCell(r.intuitive, CYCLES.intuitive.color)}
-      <td><span class="phase-badge ${r.phasePhy.cls}">${r.phasePhy.label}</span></td>
-      <td style="color:${trendColor};font-family:'Space Mono',monospace;font-size:10px">${trend}</td>
+      <td style="font-family:'Cinzel',serif;font-size:11px;color:rgba(155,168,184,.8)">${fmtShort(r.date)}${isToday ? ' <span class="today-badge" style="font-size:8px;padding:2px 6px"><span class="today-dot"></span>დღეს</span>' : ''}</td>
+      <td style="color:rgba(155,168,184,.7);font-family:'Cinzel',serif;font-size:10px">${weekday(r.date)}</td>
+      ${show.map(k => valCell(r[k], CYCLES[k].color)).join('')}
+      <td><span class="phase-badge ${(f === 'all' ? r.phasePhy : getPhase(r[f], calcValue(r.days - 1, CYCLES[f].period))).cls}">${(f === 'all' ? r.phasePhy : getPhase(r[f], calcValue(r.days - 1, CYCLES[f].period))).label}</span></td>
+      <td style="color:${trendColor};font-family:'Cinzel',serif;font-size:10px">${trend}</td>
     </tr>`;
   }).join('');
 }
