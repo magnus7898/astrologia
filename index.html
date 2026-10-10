@@ -608,6 +608,22 @@
       <div class="card-sub">Zodiac Compatibility</div>
     </a>
 
+    <!-- Breathing techniques -->
+    <a class="card c-name" href="breath.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="16" cy="16" r="13" stroke-dasharray="2 2.4" opacity="0.6"/>
+          <circle cx="16" cy="16" r="8.5"/>
+          <path d="M9 15c2-2 4-2 7 0s5 2 7 0"/>
+          <path d="M10.5 19c1.6-1.4 3.2-1.4 5.5 0s3.9 1.4 5.5 0" opacity="0.7"/>
+        </svg>
+      </div>
+      <div class="card-title">სუნთქვის ტექნიკები</div>
+      <div class="card-sub">Breathing · Timer</div>
+    </a>
+
   </div>
 
   <footer><span>&#10022; &nbsp; omnia ex uno &nbsp; &#10022;</span></footer>
@@ -650,6 +666,8 @@
      members:['hd.html'],label:{}},
     {key:'compat',title:'შეთავსება',sub:'Zodiac Compatibility',css:'c-astro',art:'compat.html',
      members:['compat.html'],label:{}},
+    {key:'health',title:'ჯანმრთელობა',sub:'Breathing · Wellness',css:'c-name',art:'breath.html',
+     members:['breath.html'],label:{},always:true},
     {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
   ];
@@ -694,7 +712,7 @@
     for(const G of GROUPS){
       const tiles=groupTiles(G,all);
       if(!tiles.length)continue;                       /* everything hidden in the panel */
-      if(tiles.length===1&&G.members!=='*'){           /* single member: the tile is the box */
+      if(tiles.length===1&&G.members!=='*'&&!G.always){           /* single member: the tile is the box */
         const t=tiles[0];t.classList.add('main');
         const tt=t.querySelector('.card-title');if(tt)tt.textContent=G.title;
         boxes.push(t);continue;
@@ -713,7 +731,7 @@
       boxes.push(box);
     }
     grid.innerHTML='';grid.classList.remove('sub');grid.classList.add('main4');
-    grid.style.setProperty('--n',boxes.length);           /* 5 boxes → one row of five */
+    grid.style.setProperty('--n',boxes.length===6?3:boxes.length);           /* 5 boxes → one row of five */
     boxes.forEach(b=>grid.appendChild(b));
     document.title='MAGNUS';
   }
@@ -753,7 +771,7 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['compat.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['compat.html','breath.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       grid.innerHTML='';
       grid.appendChild(frag);
       applyGroups();                                  /* regroup the API order */
