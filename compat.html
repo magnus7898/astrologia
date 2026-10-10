@@ -87,6 +87,16 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(28px,5v
 .desc p:first-child{text-indent:0;color:var(--gold-l);font-size:16px}
 .desc b{font-weight:600;color:var(--gold-l)}
 .res{max-width:820px;margin-left:auto;margin-right:auto;padding:28px 30px}
+.tth{font-family:'Cinzel',serif;font-weight:400;font-size:10px;letter-spacing:3px;color:var(--gold);text-align:center;margin:22px 0 12px;border-top:1px solid rgba(201,168,76,.15);padding-top:18px}
+.tarot{display:flex;gap:18px;align-items:flex-start}
+.tarot .tc{flex:0 0 130px}
+.tarot .tc img{width:130px;border-radius:8px;border:1px solid rgba(201,168,76,.35);box-shadow:0 6px 24px rgba(0,0,0,.5)}
+.tarot .tn{font-size:18px;color:var(--gold-l)}
+.tarot .tn span{font-size:13px;color:#f0a080}
+.tarot .tk{font-size:12px;color:var(--gold);margin:4px 0 8px;opacity:.85}
+.tarot p{font-size:14.5px;line-height:1.9;color:#ddd6c6}
+.tarot .tw{font-size:11.5px;color:var(--dim);margin-top:8px;line-height:1.7}
+@media(max-width:560px){.tarot{flex-direction:column;align-items:center;text-align:center}}
 .note{font-size:10.5px;color:var(--dim);text-align:center;margin-top:18px;line-height:1.7}
 </style>
 </head>
@@ -109,6 +119,8 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(28px,5v
   <div class="note">ზოდიაქოს შეთავსება მზის ნიშნებს ეყრდნობა. სრული სურათისთვის საჭიროა ორივე ნატალური რუკა — მთვარე, ვენერა, მარსი და ასცენდენტი (იხ. „სინასტრია“).</div>
 </div>
 
+<script src="tarot_text.js"></script>
+<script src="tarot_context.js"></script>
 <script>
 /* ═════ data ═════ */
 const S=[
@@ -311,6 +323,69 @@ function picker(id,which){
   box.querySelectorAll('.sg').forEach(b=>b.onclick=()=>{st[k]=+b.dataset.i;render();});
   box.querySelectorAll('.gender button').forEach(b=>b.onclick=()=>{st[gk]=b.dataset.g;render();});
 }
+
+/* ═════ tarot card of the couple ═════
+   78 sign pairs ↔ 78 cards, built on the Golden Dawn attributions:
+   same sign → the sign's own major · opposition → the major of the planet
+   exalted/fallen on that axis · trine → the element's court · sextile →
+   aces, pages and the elemental/planetary majors · 30°/90°/150° → the
+   36 decan cards (2–10). Who is the man decides upright or reversed.   */
+const TMAJ=['სულელი','მაგი','მღვდელქალი','იმპერატრიცა','იმპერატორი','იეროფანტი','შეყვარებულები','ეტლი','ძალა','განდეგილი','ბედის ბორბალი','სამართლიანობა','ჩამოკიდებული','სიკვდილი','ზომიერება','ეშმაკი','კოშკი','ვარსკვლავი','მთვარე','მზე','განსჯა','სამყარო'];
+const TRANK=['','ტუზი','ორიანი','სამიანი','ოთხიანი','ხუთიანი','ექვსიანი','შვიდიანი','რვიანი','ცხრიანი','ათიანი','მხლებელი','რაინდი','დედოფალი','მეფე'];
+const TSUIT={wands:'კვერთხების',cups:'თასების',swords:'მახვილების',pentacles:'პენტაკლების'};
+const EL_SUIT={F:'wands',E:'pentacles',A:'swords',W:'cups'};
+const SIGN_MAJ=[4,5,6,7,8,9,11,13,14,15,17,18];
+const OPP={'0-6':['M19','ვერძი–სასწორის ღერძი: მზე ვერძში ამაღლებულია, სასწორში — დაცემაში. „მე“ და „ჩვენ“ ერთ სინათლეში — მზე.'],
+ '1-7':['M2','კურო–მორიელის ღერძი: მთვარე კუროში ამაღლებულია, მორიელში — დაცემაში. ფარული ვნება და ინტუიცია — მღვდელქალი (მთვარე).'],
+ '2-8':['M0','ტყუპები–მშვილდოსნის ღერძი: გზის, ცოდნისა და თავისუფლების ღერძი — ჰაერის ბარათი, სულელი.'],
+ '3-9':['M10','კირჩხიბი–თხის რქის ღერძი: იუპიტერი კირჩხიბში ამაღლებულია, თხის რქაში — დაცემაში. ოჯახი და ბედი — ბედის ბორბალი (იუპიტერი).'],
+ '4-10':['M21','ლომი–მერწყულის ღერძი: მერწყულს სატურნი მართავს, მზე იქ დევნილია — „მე“ და „ყველა“ ერთ წრეში: სამყარო (სატურნი).'],
+ '5-11':['M1','ქალწული–თევზების ღერძი: მერკური ქალწულში ამაღლებულია, თევზებში — დაცემაში. ლოგიკა და რწმენა ერთად — მაგი (მერკური).']};
+const SEXT={'0-2':['swords11','ცეცხლისა და ჰაერის სექსტილი: სწრაფი გონება, ხუმრობა და კამათის სიყვარული — მახვილების მხლებელი.'],
+ '0-10':['M16','მარსი (ვერძი) და ურანი (მერწყული): მოულოდნელი, ელექტრული, ყველაფრის შემცვლელი კავშირი — კოშკი (მარსი).'],
+ '2-4':['wands11','ცეცხლისა და ჰაერის სექსტილი: თამაში, ფლირტი და ხალისი — კვერთხების მხლებელი.'],
+ '4-6':['wands1','ლომისა და სასწორის სექსტილი: რომანტიკული ნაპერწკალი და ხიბლი — კვერთხების ტუზი.'],
+ '6-8':['M20','სამართლიანობა და რწმენა, უმაღლესი მოწოდება — განსჯა (ცეცხლი).'],
+ '8-10':['swords1','იდეალები, სიმართლე და თავისუფალი გონება — მახვილების ტუზი.'],
+ '1-3':['M3','ვენერა (კურო) და მთვარე (კირჩხიბი): სახლი, სიუხვე, ნაყოფიერება — იმპერატრიცა (ვენერა).'],
+ '1-11':['cups11','მიწისა და წყლის სექსტილი: ნაზი, პოეტური რომანტიკა — თასების მხლებელი.'],
+ '3-5':['pentacles11','მიწისა და წყლის სექსტილი: ყოველდღიური ზრუნვა და ერთგულება — პენტაკლების მხლებელი.'],
+ '5-7':['M12','ანალიზი და სიღრმე, კონტროლის დათმობა — ჩამოკიდებული (წყალი).'],
+ '7-9':['pentacles1','ძალაუფლება, ამბიცია და საერთო მატერიალური საძირკველი — პენტაკლების ტუზი.'],
+ '9-11':['cups1','სატურნის კლდე, რომელიც ემოციების ნაკადს იღებს — თასების ტუზი.']};
+function cardName(id){if(id[0]==='M')return TMAJ[+id.slice(1)];const m=id.match(/^([a-z]+)(\d+)$/);return TRANK[+m[2]]+' '+TSUIT[m[1]];}
+function cardImg(id){if(id[0]==='M')return 'tarot/'+id.slice(1)+'.jpg';const m=id.match(/^([a-z]+)(\d+)$/);return 'tarot/'+encodeURIComponent(m[1]+' '+m[2])+'.jpg';}
+function pairCard(a,b){
+  const lo=Math.min(a,b),hi=Math.max(a,b),key=lo+'-'+hi,d0=hi-lo,d=Math.min(d0,12-d0);
+  if(a===b)return{id:'M'+SIGN_MAJ[a],owner:a,why:`ერთი ნიშანი — ${S[a].n}ს საკუთარი დიდი არკანი (ოქროს განთიადის ატრიბუცია): ორი ერთნაირი ენერგია ერთ ბარათში.`};
+  if(d===6)return{id:OPP[key][0],owner:lo,why:OPP[key][1]};
+  if(d===2)return{id:SEXT[key][0],owner:lo,why:SEXT[key][1]};
+  if(d===4){const su=EL_SUIT[el(lo)],ms=[mo(lo),mo(hi)].sort().join('');
+    const r=ms==='CX'?14:ms==='MX'?12:13;
+    return{id:su+r,owner:lo,why:`ერთი ელემენტის (${ELN[el(lo)]}) ტრინი — ${TSUIT[su]} სამეფო კარი: ${r===14?'მეფე — კარდინალური და ფიქსირებული ნიშნის კავშირი':r===13?'დედოფალი — კარდინალური და მუტაბელური ნიშნის კავშირი':'რაინდი — ფიქსირებული და მუტაბელური ნიშნის კავშირი'}.`};}
+  /* 30° · 90° · 150°: the decan card of the sign that "leads" the pair */
+  const own=((hi-lo)%12===d)?lo:hi, k=d, dec={1:0,3:1,5:2}[k];
+  const base={C:2,X:5,M:8}[mo(own)],r=base+dec,su=EL_SUIT[el(own)];
+  const asp={1:'მეზობელი ნიშნები (30°)',3:'კვადრატი (90°)',5:'კვინკონსი (150°)'}[k];
+  return{id:su+r,owner:own,why:`${asp} — ${S[own].n}ს ${dec+1}-ე დეკანის ბარათი (ოქროს განთიადის 36 დეკანი).`};
+}
+function tarotBlock(a,ga,b,gb){
+  const c=pairCard(a,b);let rev;
+  if(a===b)rev=ga===gb;
+  else if(ga!==gb){const man=ga==='m'?a:b;rev=man!==c.owner;}
+  else rev=a!==c.owner;
+  const ctx=typeof TAROT_CTX!=='undefined'&&TAROT_CTX[c.id],txt=typeof TAROT_TEXTS!=='undefined'&&TAROT_TEXTS[c.id];
+  const love=ctx&&ctx.l?ctx.l[rev?1:0]:(txt?txt.l:'');
+  const kw=txt?(rev?txt.kr:txt.k):'';
+  const who=a===b?(ga===gb?'ერთსქესიანი წყვილი — შებრუნებული':'კაცი და ქალი ერთ ნიშანში — პირდაპირი')
+    :`პირდაპირია, როცა ${S[c.owner].n} ${ga!==gb?'მამაკაცია':'პირველი პირია'}; ${rev?'აქ — პირიქით, ამიტომ შებრუნებული':'აქ ზუსტად ასეა'}`;
+  return `<div class="tarot"><div class="tc"><img src="${cardImg(c.id)}" alt="" style="${rev?'transform:rotate(180deg)':''}" onerror="this.style.display='none'"></div>
+    <div class="tt"><div class="tn">🃏 ${cardName(c.id)}${rev?' <span>· შებრუნებული</span>':''}</div>
+    ${kw?`<div class="tk">${kw}</div>`:''}
+    ${love?`<p>${love}</p>`:''}
+    <div class="tw">${c.why}<br>${who}.</div></div></div>`;
+}
+
 function render(){
   picker('pa','a');picker('pb','b');
   const {a,ga,b,gb}=st,R=compute(a,ga,b,gb);
@@ -326,7 +401,9 @@ function render(){
      <p>${R.A[1]} ${ELP[R.ek].replace(/^[^:]+:\s*/,'')} ${MOP[R.mk]}</p>
      <p>${R.pol}</p>
      <p>რას უნდა გაუფრთხილდნენ: ${S[a].n} ${GEN[ga].gen} მხრიდან — ${PA[3]}, ${S[b].n} ${GEN[gb].gen} მხრიდან — ${PB[3]}. ${R.A[2]}</p>
-   </div>`;
+   </div>
+   <h3 class="tth">✦ წყვილის ტაროს ბარათი</h3>
+   ${tarotBlock(a,ga,b,gb)}`;
   try{history.replaceState(null,'',`?a=${a}&ga=${ga}&b=${b}&gb=${gb}`);}catch(e){}
 }
 document.getElementById('swap').onclick=()=>{[st.ga,st.gb]=[st.gb,st.ga];render();};   /* Taurus man + Scorpio woman ⇄ Taurus woman + Scorpio man */
