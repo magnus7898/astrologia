@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ცივი შხაპი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.plan{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;font-size:10.5px;text-align:center}
+.plan div{padding:7px 2px;border-radius:7px;background:rgba(255,255,255,.035);color:var(--dim);line-height:1.35}
+.plan div b{display:block;color:var(--txt);font-size:12px;font-weight:400}
+.plan div.done{background:rgba(127,178,240,.18);color:#cfe0ff}
+.plan div.today{outline:1.5px solid var(--gold)}
+#cue{text-align:center;font-size:17px;min-height:28px;margin-top:6px}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>ცივი შხაპი</h1><div class="sub">თანდათანობითი პროგრამა · 15 წამიდან 3 წუთამდე</div></header>
+  <div class="grid2">
+    <div class="card">
+      <div class="ringw"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="2.5"/>
+        <circle id="arc" cx="50" cy="50" r="46" fill="none" stroke="#7fb2f0" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="c"><div style="font-size:30px">❄</div><div class="big" id="cd">0:30</div><div class="mid" id="tg"></div></div></div>
+      <div id="cue">დღის მიზანი</div>
+      <div class="btns"><button class="btn" id="go">▶ დაწყება</button><button class="btn ghost" id="stop">■ დასრულება</button></div>
+      <div class="opts"><label><input type="checkbox" id="oSnd" checked> ხმა</label><label><input type="checkbox" id="oVib" checked> ვიბრაცია</label></div>
+    </div>
+    <div class="card"><h2>📅 4-კვირიანი პროგრამა</h2>
+      <div class="txt" id="day" style="margin-bottom:10px"></div>
+      <div class="plan" id="plan"></div>
+      <div class="btns"><button class="btn ghost sm" id="restart">↻ პროგრამის თავიდან დაწყება</button></div>
+    </div>
+  </div>
+  <div class="card"><h2>✦ როგორ</h2><div class="tips">
+    <div class="tip"><i>🚿</i>ჩვეულებრივი თბილი შხაპის ბოლოს გადართე ცივზე — ჯერ ფეხები და ხელები, შემდეგ მხრები და ზურგი.</div>
+    <div class="tip"><i>🌬</i>პირველ წამებში სუნთქვა გიჩქარდება — ეს „ცივი შოკის“ რეაქციაა. ნელა და ღრმად ისუნთქე ცხვირით, ამოსუნთქვა გაახანგრძლივე.</div>
+    <div class="tip"><i>📈</i>მიზანი თანდათან იზრდება — დისკომფორტი უნდა იყოს მართვადი და არა მტკივნეული. საუკეთესო დრო — დილა.</div>
+    <div class="tip"><i>🔬</i>კვლევებში (ნიდერლანდები, 2016) 30–90 წამიანი ცივი შხაპის ბოლოს ავადმყოფობის გამო სამსახურის გაცდენა ~29%-ით ნაკლები იყო. სიფხიზლეს და განწყობასაც აუმჯობესებს.</div>
+  </div>
+  <div class="warn">⚠ არ დაიწყო ექიმთან კონსულტაციის გარეშე, თუ გაქვს გულის დაავადება, მაღალი წნევა, რეინოს სინდრომი ან ორსულად ხარ. თუ თავბრუ გეხვევა ან კანკალი არ გიჩერდება, შეწყვიტე. ყინულიან წყალში მარტო არასდროს იბანავო.</div></div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+H.opts();
+/* 28-day progression, seconds */
+const PLAN=[15,15,20,20,25,25,30, 30,35,40,40,45,50,60, 60,70,75,80,90,90,100, 100,110,120,135,150,165,180];
+const st=H.get('cold',{start:H.dayKey(),done:{}});
+function dayIdx(){const s=new Date(st.start+'T00:00:00'),n=new Date(H.dayKey()+'T00:00:00');return Math.max(0,Math.round((n-s)/864e5));}
+function target(){return PLAN[Math.min(PLAN.length-1,dayIdx())];}
+function render(){
+  const di=dayIdx(),t=target();
+  H.$('day').innerHTML=di<PLAN.length?`დღე <b>${di+1}</b> / 28 · დღის მიზანი: <b>${t} წამი</b>`:`პროგრამა დასრულდა ✦ — გააგრძელე <b>${t} წამით</b> ან მეტით`;
+  if(!run){H.$('cd').textContent=H.mmss(t);H.$('tg').textContent='დღის მიზანი';H.ring(arc,1);}
+  H.$('plan').innerHTML=PLAN.map((s,i)=>{const d=new Date(st.start+'T00:00:00');d.setDate(d.getDate()+i);const k=H.dayKey(d);
+    return `<div class="${st.done[k]?'done':''} ${i===di?'today':''}"><b>${s}″</b>${i+1}</div>`;}).join('');
+  H.mark('cold',!!st.done[H.dayKey()]);
+}
+const arc=H.$('arc');let run=null;
+const CUES=['ნელა ჩაისუნთქე ცხვირით…','ამოსუნთქვა გაახანგრძლივე…','მხრები მოადუნე','შენ აკონტროლებ სუნთქვას','კიდევ ცოტა…'];
+function tick(){
+  if(!run)return;const el=(Date.now()-run.t0)/1000,t=run.t;
+  if(el<t){H.$('cd').textContent=H.mmss(t-el);H.ring(arc,1-el/t);H.$('tg').textContent='დარჩა';
+    const c=Math.floor(el/8)%CUES.length;H.$('cue').textContent=CUES[c];
+    const w=Math.floor(el);if(w!==run.w){run.w=w;if(t-el<=5)H.tone(880,880,0.05,'sine',0.06);}}
+  else{if(!run.hit){run.hit=true;H.chime();H.vib([200,100,200]);st.done[H.dayKey()]=Math.round(el);H.set('cold',st);render();}
+    H.$('cd').textContent='+'+H.mmss(el-t);H.$('tg').textContent='მიზანი შესრულდა ✓';H.$('cue').textContent='შეგიძლია დაასრულო';H.ring(arc,0);}
+}
+H.$('go').onclick=()=>{H.ac();if(run)return;run={t0:Date.now(),t:target(),w:-1};H.bell(392,0.15);H.wake(true);run.int=setInterval(tick,200);};
+H.$('stop').onclick=()=>{if(!run)return;clearInterval(run.int);const el=(Date.now()-run.t0)/1000;
+  if(el>=10&&!st.done[H.dayKey()]){st.done[H.dayKey()]=Math.round(el);H.set('cold',st);}run=null;H.wake(false);H.$('cue').textContent='✦ კარგია — გაიმშრალე და გათბი';render();};
+H.$('restart').onclick=()=>{if(confirm('პროგრამა თავიდან დაიწყოს დღეიდან?')){st.start=H.dayKey();H.set('cold',st);render();}};
+render();
+
+</script>
+</body>
+</html>

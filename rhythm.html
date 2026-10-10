@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ცირკადული საათი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.clk{width:min(400px,86vw);margin:0 auto;display:block}
+.ev{display:grid;gap:6px}
+.e{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:8px 12px;border-radius:9px;background:rgba(255,255,255,.025);font-size:13px;line-height:1.55;color:#cfc8b8;border-left:3px solid transparent}
+.e b{font-family:'Cinzel',serif;font-weight:400;color:var(--gold)}
+.e.on{background:rgba(95,200,176,.09);color:var(--txt)}
+.e small{display:block;color:var(--dim);font-size:11.5px}
+.now{text-align:center;font-size:15px;margin-top:8px;min-height:24px}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>ცირკადული საათი</h1><div class="sub">სხეულის 24-საათიანი რიტმი · ორგანოების ტრადიციული საათი</div></header>
+  <div style="text-align:center;margin-bottom:14px"><div class="seg" id="mode"><button data-m="sci" class="on">🔬 მეცნიერული (ცირკადული)</button><button data-m="tcm">☯ ტრადიციული (ჩინური მედიცინა)</button></div></div>
+  <div class="grid2">
+    <div class="card">
+      <svg class="clk" id="clk" viewBox="0 0 400 400"></svg>
+      <div class="now" id="now"></div>
+      <div class="row" style="justify-content:center;margin-top:10px" id="wk"><div class="field" style="max-width:200px"><label class="l">ჩვეულებრივ ვიღვიძებ</label><input type="time" id="wake" value="07:00"></div></div>
+    </div>
+    <div class="card"><h2 id="evh">დღის რიტმი</h2><div class="ev" id="ev"></div></div>
+  </div>
+  <div class="card" id="about"></div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+let mode='sci';
+const S=[ /* offset from wake (h), length (h), title, text, colour */
+ [0,1,'გაღვიძება და შუქი','კორტიზოლი პიკს აღწევს გაღვიძებიდან 30–45 წუთში. დილის მზის შუქი საათს „აწყობს“.','#f0c060'],
+ [1,1.5,'საუზმე და აქტივაცია','მეტაბოლიზმი აქტიურდება; ინსულინისადმი მგრძნობელობა დილით უფრო მაღალია.','#e0a050'],
+ [2.5,3,'მაქსიმალური სიფხიზლე','ანალიტიკური, რთული სამუშაოს საუკეთესო დრო — ყურადღება და მეხსიერება პიკზეა.','#5fc8b0'],
+ [5.5,1,'სადილი','მთავარი კვება დღის პირველ ნახევარში უკეთ ითვისება.','#8fc070'],
+ [6.5,2,'შუადღის დაქვეითება','ბუნებრივი „ჩავარდნა“ — 10–20 წუთიანი ძილი ან გასეირნება ეხმარება.','#9a84d8'],
+ [8.5,3,'ფიზიკური პიკი','სხეულის ტემპერატურა, კუნთების ძალა და კოორდინაცია მაქსიმუმთანაა — საუკეთესოა ვარჯიშისთვის.','#f07a4a'],
+ [11.5,2,'შენელება','მსუბუქი ვახშამი; შემდეგ — მშვიდი საქმიანობა.','#c9a84c'],
+ [13.5,2.5,'მელატონინის დაწყება','ძილამდე ~2 საათით ადრე იწყება მელატონინის გამოყოფა — კაშკაშა შუქი და ეკრანები მას აფერხებს.','#7f9cf0'],
+ [16,3,'ღრმა ძილი','ღამის პირველ ნახევარში ჭარბობს ღრმა ძილი — სხეულის აღდგენა, ზრდის ჰორმონი.','#3a4fa0'],
+ [19,3,'REM ძილი და ტემპერატურის მინიმუმი','დილისკენ მატულობს REM — სიზმრები, ემოციური მეხსიერება; სხეულის ტემპერატურა მინიმუმზეა გაღვიძებამდე ~2 სთ-ით ადრე.','#5a4fa8'],
+ [22,2,'ძილის დასასრული','მსუბუქი ძილი, სხეული გაღვიძებისთვის ემზადება.','#7a6fc0']];
+const TCM=[[3,'ფილტვები','სუნთქვა, მწუხარება; სიღრმისეული ძილის საათები.','#cfd6e0'],[5,'მსხვილი ნაწლავი','გაწმენდა — დილის ჭიქა წყალი.','#b8c0c8'],
+ [7,'კუჭი','ყველაზე მნიშვნელოვანი კვება — საუზმე.','#e0b050'],[9,'ელენთა / პანკრეასი','მონელება, გონებრივი აქტიურობა.','#d0a040'],
+ [11,'გული','ენერგია, სიხარული; მსუბუქი სადილი.','#e05050'],[13,'წვრილი ნაწლავი','საკვების ათვისება და დახარისხება.','#d04848'],
+ [15,'შარდის ბუშტი','ენერგია და სამუშაო; დალიე წყალი.','#4a7ad0'],[17,'თირკმელი','ენერგიის „რეზერვი“; მსუბუქი ვახშამი.','#3a68c0'],
+ [19,'პერიკარდიუმი','ურთიერთობები, დასვენება, ოჯახი.','#c05070'],[21,'სამმაგი გამათბობელი','წონასწორობა — მოემზადე ძილისთვის.','#b04868'],
+ [23,'ნაღვლის ბუშტი','ძილის დრო; გადაწყვეტილებები „მწიფდება“.','#50a060'],[1,'ღვიძლი','სისხლის „განწმენდა“, ღრმა ძილი.','#408850']];
+const p2=a=>[200+150*Math.sin(a),200-150*Math.cos(a)];
+const ang=h=>((h%24)+24)%24/24*2*Math.PI;
+function arcPath(h0,h1,r1,r2){const a0=ang(h0),a1=ang(h0+(h1-h0)),large=(h1-h0)>12?1:0;
+  const P=(a,r)=>[200+r*Math.sin(a),200-r*Math.cos(a)];const [x1,y1]=P(a0,r2),[x2,y2]=P(a1,r2),[x3,y3]=P(a1,r1),[x4,y4]=P(a0,r1);
+  return `M${x1} ${y1}A${r2} ${r2} 0 ${large} 1 ${x2} ${y2}L${x3} ${y3}A${r1} ${r1} 0 ${large} 0 ${x4} ${y4}Z`;}
+const fmt=h=>{h=((h%24)+24)%24;return H.pad(Math.floor(h))+':'+H.pad(Math.round((h%1)*60)%60);};
+function wakeH(){const [a,b]=(H.$('wake').value||'07:00').split(':').map(Number);return a+b/60;}
+function cur(){const d=new Date();return d.getHours()+d.getMinutes()/60;}
+function render(){
+  const W=wakeH(),now=cur();let segs,on=-1;
+  if(mode==='sci')segs=S.map(s=>({h0:W+s[0],h1:W+s[0]+s[1],t:s[2],x:s[3],c:s[4]}));
+  else segs=TCM.map(s=>({h0:s[0],h1:s[0]+2,t:s[1],x:s[2],c:s[3]}));
+  segs.forEach((s,i)=>{const r=((now-s.h0)%24+24)%24;if(r<s.h1-s.h0)on=i;});
+  let g='<circle cx="200" cy="200" r="182" fill="rgba(10,8,22,.6)" stroke="rgba(201,168,76,.18)"/>';
+  segs.forEach((s,i)=>{g+=`<path d="${arcPath(s.h0,s.h1,118,178)}" fill="${s.c}" opacity="${i===on?.95:.42}" stroke="#04030a" stroke-width="1.5"><title>${fmt(s.h0)}–${fmt(s.h1)} ${s.t}</title></path>`;});
+  for(let h=0;h<24;h++){const a=ang(h),[x,y]=[200+104*Math.sin(a),200-104*Math.cos(a)];
+    g+=`<text x="${x}" y="${y+4}" text-anchor="middle" font-size="${h%6?9:12}" fill="${h%6?'rgba(155,168,184,.55)':'#e8d5a0'}" font-family="Cinzel,serif">${h}</text>`;}
+  const a=ang(now);g+=`<line x1="200" y1="200" x2="${200+182*Math.sin(a)}" y2="${200-182*Math.cos(a)}" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="200" cy="200" r="5" fill="#fff"/><text x="200" y="232" text-anchor="middle" font-size="22" fill="#f3ecdc" font-family="Cinzel,serif">${fmt(now)}</text>`;
+  if(mode==='sci'){const sl=W-8;g+=`<text x="200" y="176" text-anchor="middle" font-size="10" fill="rgba(155,168,184,.7)">ძილი ${fmt(sl)}–${fmt(W)}</text>`;}
+  H.$('clk').innerHTML=g;
+  H.$('now').innerHTML=on>=0?`ახლა: <b style="color:${segs[on].c}">${segs[on].t}</b>`:'';
+  H.$('ev').innerHTML=segs.map((s,i)=>{
+    return `<div class="e ${i===on?'on':''}" style="border-left-color:${s.c}"><b>${fmt(s.h0)}–${fmt(s.h1)}</b><div>${s.t}<small>${s.x}</small></div></div>`;}).join('');
+  H.$('wk').style.display=mode==='sci'?'':'none';
+  H.$('evh').textContent=mode==='sci'?'დღის რიტმი (შენი გაღვიძების მიხედვით)':'ორგანოების საათი';
+  H.$('about').innerHTML=mode==='sci'
+    ?'<h2>🔬 მეცნიერული საფუძველი</h2><p>ცირკადული რიტმი — ტვინის „მთავარი საათის“ (ჰიპოთალამუსის სუპრაქიაზმური ბირთვი) მიერ მართული ~24-საათიანი ციკლი, რომელიც შუქით სინქრონიზდება. დროები საშუალოა და დამოკიდებულია ქრონოტიპზე: „ტოროლებისთვის“ ადრე იწყება, „ბუებისთვის“ — გვიან. ამიტომ დრო გაღვიძების მიხედვით გადაითვლება.</p>'
+    :'<h2>☯ ტრადიციული ჩინური მედიცინა</h2><p>ორგანოების საათი ტრადიციული ჩინური მედიცინის კონცეფციაა: ყოველი 2 საათი ერთ-ერთ ორგანოსა და მის მერიდიანს ეკუთვნის. ეს ფილოსოფიური სისტემაა და მეცნიერული კვლევებით არ არის დადასტურებული — გამოიყენე როგორც ტრადიციული ცოდნა და არა სამედიცინო რჩევა.</p>';
+  H.set('rhythm',{mode,wake:H.$('wake').value});
+}
+const s0=H.get('rhythm',null);if(s0){mode=s0.mode||'sci';H.$('wake').value=s0.wake||'07:00';}
+document.querySelectorAll('#mode button').forEach(b=>{b.classList.toggle('on',b.dataset.m===mode);b.onclick=()=>{mode=b.dataset.m;
+  document.querySelectorAll('#mode button').forEach(x=>x.classList.toggle('on',x===b));render();};});
+H.$('wake').oninput=render;render();setInterval(render,30000);
+
+</script>
+</body>
+</html>

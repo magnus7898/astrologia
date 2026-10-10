@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ძილის კალკულატორი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.res{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px}
+.opt{border:1px solid var(--brd);border-radius:12px;padding:12px;text-align:center;background:rgba(255,255,255,.02)}
+.opt b{display:block;font-family:'Cinzel',serif;font-size:28px;color:#f3ecdc;font-weight:400}
+.opt span{font-size:11.5px;color:var(--dim)}
+.opt.best{border-color:var(--acc);background:rgba(95,200,176,.08)}
+.opt.best span{color:var(--acc)}
+.opt.short{opacity:.6}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>ძილის კალკულატორი</h1><div class="sub">90-წუთიანი ციკლები · როდის დავწვე, როდის ავდგე</div></header>
+  <div class="card">
+    <div style="text-align:center"><div class="seg" id="mode"><button data-m="wake" class="on">⏰ უნდა ავდგე…</button><button data-m="now">🛏 ახლა ვწვები</button><button data-m="bed">🌙 დავწვები…</button></div></div>
+    <div class="row" style="justify-content:center;margin-top:16px" id="inrow">
+      <div class="field" style="max-width:180px"><label class="l" id="inl">გაღვიძების დრო</label><input type="time" id="t" value="07:00"></div>
+      <div class="field" style="max-width:180px"><label class="l">ჩაძინებას მჭირდება (წთ)</label><input type="number" id="fall" value="15" min="0" max="60"></div>
+    </div>
+    <div class="res" id="res"></div>
+    <div class="ok" id="sum"></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>☕ კოფეინი და ეკრანები</h2><div class="tips" id="plan"></div></div>
+    <div class="card"><h2>✦ რჩევები ღრმა ძილისთვის</h2><div class="tips">
+      <div class="tip"><i>☀</i>დილით, გაღვიძებიდან პირველ საათში, 10–15 წუთი ბუნებრივი შუქი — ეს ადებს „შინაგან საათს“ და საღამოს ჩაძინებას აადვილებს.</div>
+      <div class="tip"><i>🕰</i>ერთი და იგივე დრო ყოველდღე, შაბათ-კვირასაც — სხვაობა 1 საათზე მეტი არ უნდა იყოს.</div>
+      <div class="tip"><i>❄</i>საძინებელი გრილი (17–19°C), ბნელი და მშვიდი.</div>
+      <div class="tip"><i>🍷</i>ალკოჰოლი ჩაძინებას აადვილებს, მაგრამ ღრმა და REM ძილს ამცირებს. მძიმე ვახშამი — ძილამდე 3 საათით ადრე.</div>
+      <div class="tip"><i>🧘</i>ლოგინში 20 წუთზე მეტხანს თუ ვერ იძინებ, ადექი, მკრთალ შუქზე მშვიდად დაჯექი და დაბრუნდი, როცა ძილი მოვა. სცადე 4-7-8 სუნთქვა.</div>
+    </div></div>
+  </div>
+  <div class="card"><h2>⏳ რამდენი ძილია საჭირო</h2><div class="txt">
+    მოზრდილს (18–64 წ.) — <b>7–9 საათი</b>, 65 წლის ზემოთ — 7–8, მოზარდს (14–17) — 8–10, სკოლის ასაკის ბავშვს (6–13) — 9–11 საათი (აშშ-ის ძილის ეროვნული ფონდი).
+    ძილი 90-წუთიანი ციკლებისგან შედგება — მსუბუქი, ღრმა და REM ფაზები. ციკლის ბოლოს გაღვიძება გაცილებით ადვილია, ვიდრე ღრმა ძილის შუაში. ციკლის ხანგრძლივობა ადამიანებში 80–110 წუთამდე მერყეობს, ამიტომ გამოთვლა მიახლოებითია.</div></div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+let mode='wake';
+const CYC=90;
+function addMin(d,m){return new Date(d.getTime()+m*60000);}
+function render(){
+  const fall=Math.max(0,+H.$('fall').value||0),[hh,mm]=(H.$('t').value||'07:00').split(':').map(Number);
+  const base=new Date();base.setSeconds(0,0);
+  H.$('inrow').querySelector('.field').style.display=mode==='now'?'none':'';
+  H.$('inl').textContent=mode==='wake'?'გაღვიძების დრო':'დაწოლის დრო';
+  let opts=[];
+  if(mode==='wake'){const w=new Date(base);w.setHours(hh,mm,0,0);
+    for(const n of [6,5,4,3]){const bed=addMin(w,-(n*CYC+fall));opts.push({t:bed,n,lbl:'დაწექი'});}}
+  else{let b=new Date(base);if(mode==='bed'){b.setHours(hh,mm,0,0);if(b<base)b=addMin(b,1440);}
+    for(const n of [3,4,5,6]){opts.push({t:addMin(b,fall+n*CYC),n,lbl:'გაიღვიძე'});}}
+  H.$('res').innerHTML=opts.map(o=>`<div class="opt ${o.n>=5?'best':o.n<=3?'short':''}"><span>${o.lbl}</span><b>${H.hm(o.t)}</b>
+    <span>${o.n} ციკლი · ${(o.n*1.5).toString().replace('.',',')} სთ${o.n>=5?' ✓':''}</span></div>`).join('');
+  const best=opts.find(o=>o.n===5)||opts[0];
+  H.$('sum').innerHTML=mode==='wake'
+    ?`საუკეთესოა <b>${H.hm(opts[0].t)}</b> (6 ციკლი, 9 სთ) ან <b>${H.hm(opts[1].t)}</b> (5 ციკლი, 7.5 სთ) — დათვლილია ${fall} წუთი ჩაძინებისთვის.`
+    :`5–6 ციკლის შემდეგ, <b>${H.hm(opts[2].t)}</b> ან <b>${H.hm(opts[3].t)}</b>-ზე გაღვიძება ყველაზე ადვილი იქნება.`;
+  const bed=mode==='wake'?opts[1].t:(mode==='bed'?(()=>{const b=new Date(base);b.setHours(hh,mm,0,0);return b;})():base);
+  const wake=mode==='wake'?(()=>{const w=new Date(base);w.setHours(hh,mm,0,0);return w;})():opts[2].t;
+  H.$('plan').innerHTML=`
+    <div class="tip"><i>☕</i>ბოლო ყავა ან ჩაი — არაუგვიანეს <b>&nbsp;${H.hm(addMin(bed,-8*60))}</b>&nbsp; (ძილამდე 8 სთ: კოფეინის ნახევარი ორგანიზმში 5–6 საათი რჩება).</div>
+    <div class="tip"><i>🍽</i>ბოლო მძიმე კვება — <b>&nbsp;${H.hm(addMin(bed,-3*60))}</b>-მდე.</div>
+    <div class="tip"><i>📱</i>ეკრანები და კაშკაშა შუქი გამორთე — <b>&nbsp;${H.hm(addMin(bed,-60))}</b>-დან.</div>
+    <div class="tip"><i>☀</i>დილის შუქი — <b>&nbsp;${H.hm(wake)}–${H.hm(addMin(wake,60))}</b>.</div>`;
+  H.set('sleep',{mode,t:H.$('t').value,fall});
+}
+const s=H.get('sleep',null);if(s){mode=s.mode||'wake';H.$('t').value=s.t||'07:00';H.$('fall').value=s.fall??15;}
+document.querySelectorAll('#mode button').forEach(b=>{b.classList.toggle('on',b.dataset.m===mode);b.onclick=()=>{mode=b.dataset.m;
+  document.querySelectorAll('#mode button').forEach(x=>x.classList.toggle('on',x===b));
+  if(mode==='bed'&&H.$('t').value==='07:00')H.$('t').value='23:00';if(mode==='wake'&&H.$('t').value==='23:00')H.$('t').value='07:00';render();};});
+H.$('t').oninput=render;H.$('fall').oninput=render;render();
+setInterval(()=>{if(mode==='now')render();},30000);
+
+</script>
+</body>
+</html>

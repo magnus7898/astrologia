@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>მოძრაობის შესვენება · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.ex{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.ex div{padding:10px 12px;border:1px solid var(--brd);border-radius:10px;font-size:12.5px;line-height:1.6;color:#d9d2c2;transition:all .3s}
+.ex div b{display:block;font-size:13.5px;color:var(--txt)}
+.ex div.on{border-color:var(--acc);background:rgba(95,200,176,.1)}
+.ex div.done{opacity:.45}
+#cur{font-size:20px;text-align:center;min-height:30px;margin-top:4px}
+#curd{text-align:center;font-size:13px;color:var(--dim);min-height:22px}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>მოძრაობის შესვენება</h1><div class="sub">ჯდომის შემდეგ — 3 წუთი მოძრაობა · შეხსენება და ვარჯიშის ტაიმერი</div></header>
+  <div class="grid2">
+    <div class="card">
+      <h2>⏰ შეხსენება ჯდომისას</h2>
+      <div class="big" id="cd">45:00</div><div class="mid" id="cdl">შემდეგ შესვენებამდე</div>
+      <div class="row" style="margin-top:14px">
+        <div class="field"><label class="l">ყოველ</label><select id="every"><option value="30">30 წთ</option><option value="45" selected>45 წთ</option><option value="60">60 წთ</option><option value="90">90 წთ</option></select></div>
+      </div>
+      <div class="btns"><button class="btn" id="go">▶ ჩართვა</button><button class="btn ghost" id="reset">↻ თავიდან</button></div>
+      <div class="opts"><label><input type="checkbox" id="oSnd" checked> ხმა</label><label><input type="checkbox" id="oVib" checked> ვიბრაცია</label><label><input type="checkbox" id="oNot"> შეტყობინება ფონზე</label></div>
+      <div class="ok" id="cnt"></div>
+    </div>
+    <div class="card">
+      <h2>🤸 შესვენება · 8 × 20 წამი</h2>
+      <div class="ringw" style="width:min(200px,60vw)"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="3"/>
+        <circle id="arc" cx="50" cy="50" r="46" fill="none" stroke="#5fc8b0" stroke-width="3" stroke-linecap="round"/></svg>
+        <div class="c"><div class="big" id="bs" style="font-size:44px">20</div></div></div>
+      <div id="cur">მზად ხარ?</div><div id="curd"></div>
+      <div class="btns"><button class="btn" id="bgo">▶ შესვენება ახლა</button><button class="btn ghost" id="bstop">■</button></div>
+    </div>
+  </div>
+  <div class="card"><h2>📋 ვარჯიშები (თითო 20 წამი)</h2><div class="ex" id="ex"></div></div>
+  <div class="card"><h2>✦ რატომ</h2><div class="tips">
+    <div class="tip"><i>🪑</i>ხანგრძლივი უწყვეტი ჯდომა დაკავშირებულია გულ-სისხლძარღვთა რისკთან და ზურგის ტკივილთან — ყოველდღიური ვარჯიშის მიუხედავადაც.</div>
+    <div class="tip"><i>📉</i>კვლევებში ყოველ 30–45 წუთში რამდენიმეწუთიანი სიარული ან ბუქნები ჭამის შემდეგ სისხლში შაქრის მატებას შესამჩნევად ამცირებდა.</div>
+    <div class="tip"><i>💧</i>შესვენებაზე წყალიც დალიე და შორს გაიხედე — თვალებსაც დაისვენებს.</div>
+  </div></div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+H.opts();
+const EX=[
+ ['ადექი და გაიწელე','ხელები მაღლა, თითის წვერებზე აიწიე, ღრმად ჩაისუნთქე.'],
+ ['კისრის მოძრაობა','ნელა დახარე თავი მარჯვნივ, წინ, მარცხნივ — წრეები ორივე მიმართულებით.'],
+ ['მხრების წრეები','მხრები ასწიე ყურებისკენ და უკან ჩამოუშვი — 10-ჯერ.'],
+ ['მკერდის გახსნა','ხელები ზურგს უკან შეკარი, მხრის ძვლები შეაერთე, მკერდი წინ.'],
+ ['ტანის ბრუნი','ფეხზე მდგომი, ნელა მოტრიალდი მარჯვნივ და მარცხნივ.'],
+ ['ბუქნები','10 ნელი ბუქნი — მუხლები ფეხის თითებს არ გასცდეს.'],
+ ['წვივის აწევა','თითის წვერებზე აიწიე და ჩამოდი — 15-ჯერ.'],
+ ['ადგილზე სიარული','მუხლების მაღლა აწევით, ღრმად ისუნთქე.']];
+const SEG=20;
+H.$('ex').innerHTML=EX.map((e,i)=>`<div data-i="${i}"><b>${i+1}. ${e[0]}</b>${e[1]}</div>`).join('');
+const st=H.get('move',{every:45,on:false,t0:0,log:{}});H.$('every').value=st.every;
+function save(){H.set('move',st);}
+function cnt(){const n=st.log[H.dayKey()]||0;H.$('cnt').innerHTML=`დღეს შესრულებული შესვენებები: <b>${n}</b> · მიზანი 6+`;H.mark('move',n>=4);}
+function tick(){
+  const every=+H.$('every').value*60;
+  if(!st.on){H.$('cd').textContent=H.mmss(every);H.$('cdl').textContent='შეხსენება გამორთულია';H.$('go').textContent='▶ ჩართვა';return;}
+  H.$('go').textContent='⏸ გამორთვა';
+  const left=every-(Date.now()-st.t0)/1000;
+  if(left<=0){st.t0=Date.now();save();H.alarm();H.vib([200,100,200]);H.notify('🤸 დროა ადგე','2 წუთი მოძრაობა — შესვენება გელოდება');H.$('cdl').textContent='⏰ დროა ადგე!';return;}
+  H.$('cd').textContent=H.mmss(left);H.$('cdl').textContent='შემდეგ შესვენებამდე';
+}
+H.$('go').onclick=()=>{H.ac();st.on=!st.on;st.t0=Date.now();st.every=+H.$('every').value;save();tick();};
+H.$('reset').onclick=()=>{st.t0=Date.now();save();tick();};
+H.$('every').onchange=()=>{st.every=+H.$('every').value;st.t0=Date.now();save();tick();};
+setInterval(tick,1000);tick();cnt();
+/* break routine */
+let br=null,raf=0;
+const arc=H.$('arc');
+function bstep(){
+  raf=requestAnimationFrame(bstep);if(!br)return;
+  const el=(performance.now()-br.t0)/1000,i=Math.floor(el/SEG),f=(el%SEG)/SEG;
+  if(i>=EX.length){cancelAnimationFrame(raf);br=null;H.chime();const k=H.dayKey();st.log[k]=(st.log[k]||0)+1;st.t0=Date.now();save();cnt();
+    H.$('cur').textContent='✦ კარგი სამუშაო!';H.$('curd').textContent='შემდეგი შეხსენება ახლიდან ითვლება';H.$('bs').textContent='✓';H.wake(false);
+    document.querySelectorAll('#ex div').forEach(d=>d.className='');return;}
+  if(i!==br.i){br.i=i;H.bell(i%2?523:659,0.13);H.vib(120);
+    document.querySelectorAll('#ex div').forEach(d=>{const j=+d.dataset.i;d.className=j===i?'on':j<i?'done':'';});
+    H.$('cur').textContent=EX[i][0];H.$('curd').textContent=EX[i][1];}
+  const left=Math.ceil(SEG-(el%SEG));if(left<=3&&left!==br.lt){br.lt=left;H.tone(880,880,0.05,'sine',0.05);}
+  H.$('bs').textContent=left;H.ring(arc,1-f);
+}
+H.$('bgo').onclick=()=>{H.ac();if(br)return;br={t0:performance.now(),i:-1};H.wake(true);bstep();};
+H.$('bstop').onclick=()=>{cancelAnimationFrame(raf);br=null;H.wake(false);H.$('cur').textContent='მზად ხარ?';H.$('curd').textContent='';H.$('bs').textContent='20';H.ring(arc,1);
+  document.querySelectorAll('#ex div').forEach(d=>d.className='');};
+H.ring(arc,1);
+
+</script>
+</body>
+</html>

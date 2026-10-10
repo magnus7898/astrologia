@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>დღის ჩეკლისტი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.score{text-align:center}
+.score .big{font-size:56px}
+.items{display:grid;gap:8px}
+.it{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--brd);border-radius:12px;cursor:pointer;background:rgba(255,255,255,.02);transition:all .2s;user-select:none}
+.it:hover{border-color:rgba(201,168,76,.35)}
+.it .ck{width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.it.on{border-color:rgba(95,200,176,.5);background:rgba(95,200,176,.08)}
+.it.on .ck{background:var(--acc);border-color:var(--acc);color:#04030a}
+.it .t{flex:1}
+.it .t b{display:block;font-weight:600;font-size:14px}
+.it .t small{color:var(--dim);font-size:11.5px}
+.it a{font-size:11px;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.3);border-radius:12px;padding:3px 10px;white-space:nowrap}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.heat span{aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,.05);font-size:9px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.55)}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>დღის ჩეკლისტი</h1><div class="sub">ჯანსაღი ჩვევები · ავტომატური მონიშვნა ინსტრუმენტებიდან</div></header>
+  <div class="grid2">
+    <div class="card score">
+      <div class="ringw" style="width:min(220px,60vw)"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="4"/>
+        <circle id="arc" cx="50" cy="50" r="44" fill="none" stroke="#5fc8b0" stroke-width="4" stroke-linecap="round"/></svg>
+        <div class="c"><div class="big" id="sc">0/9</div><div class="mid" id="sl">დღეს</div></div></div>
+      <div class="ok" id="streak" style="text-align:left"></div>
+    </div>
+    <div class="card"><h2>📅 ბოლო 4 კვირა</h2><div class="heat" id="heat"></div>
+      <div class="txt" style="font-size:11.5px;color:var(--dim);margin-top:8px">რაც უფრო მუქია მწვანე, მით მეტი ჩვევაა შესრულებული.</div></div>
+  </div>
+  <div class="card"><h2>✓ დღეს</h2><div class="items" id="items"></div>
+    <div class="txt" style="font-size:11.5px;color:var(--dim);margin-top:10px">ზოგი პუნქტი ავტომატურად ინიშნება, როცა შესაბამის ინსტრუმენტში ნორმას შეასრულებ. ნებისმიერი შეგიძლია ხელითაც მონიშნო.</div></div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+const IT=[
+ ['water','💧 წყლის ნორმა','დღიური ნორმა შესრულებულია','water.html'],
+ ['move','🤸 მოძრაობა','4+ შესვენება ან 30 წუთი სიარული','move.html'],
+ ['sun','☀ დილის შუქი','10–15 წუთი გარეთ, გაღვიძებიდან ერთ საათში','rhythm.html'],
+ ['breath','🌬 სუნთქვის ვარჯიში','ერთი სესია მაინც','breath.html'],
+ ['meditate','🪷 მედიტაცია','5 წუთი ან მეტი','meditation.html'],
+ ['eyes','👁 თვალის დასვენება','6+ დასვენება 20-20-20','eyes.html'],
+ ['cold','❄ ცივი შხაპი','დღის მიზანი','cold.html'],
+ ['sleep','🛏 7+ საათი ძილი','წუხელ საკმარისად გამოიძინე','sleep.html'],
+ ['nature','🌿 დრო ბუნებაში / ადამიანებთან','გასეირნება, მეგობარი, ოჯახი','']];
+/* breath page logs its own sessions — read them */
+function breathDone(){try{const j=JSON.parse(localStorage.getItem('breath-log')||'{}');const d=new Date();
+  const k=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();return !!(j[k]&&Object.keys(j[k]).length);}catch(e){return false;}}
+function render(){
+  if(breathDone()&&!H.day().breath)H.mark('breath',true);
+  const D=H.day(),n=IT.filter(i=>D[i[0]]).length;
+  H.$('sc').textContent=n+'/'+IT.length;H.ring(H.$('arc'),n/IT.length);
+  H.$('sl').textContent=n===IT.length?'✦ სრული დღე':n>=6?'შესანიშნავი დღე':n>=3?'კარგი დასაწყისი':'დღეს';
+  H.$('items').innerHTML=IT.map(i=>`<div class="it ${D[i[0]]?'on':''}" data-k="${i[0]}"><div class="ck">${D[i[0]]?'✓':''}</div>
+    <div class="t"><b>${i[1]}</b><small>${i[2]}</small></div>${i[3]?`<a href="${i[3]}" onclick="event.stopPropagation()">გახსნა →</a>`:''}</div>`).join('');
+  document.querySelectorAll('.it').forEach(el=>el.onclick=()=>{const k=el.dataset.k;H.mark(k,!H.day()[k]);H.ac();if(!H.day()[k])0;else H.tone(600,900,0.15,'sine',0.1);render();});
+  const all=H.get('daily',{});let streak=0;
+  for(let i=0;i<400;i++){const d=new Date();d.setDate(d.getDate()-i);const x=all[H.dayKey(d)]||{};const c=Object.values(x).filter(Boolean).length;
+    if(c>=5)streak++;else if(i>0)break;}
+  H.$('streak').innerHTML=`ზედიზედ დღეები 5+ ჩვევით: <b>${streak}</b>`;
+  let h='';for(let i=27;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const x=all[H.dayKey(d)]||{};const c=Object.values(x).filter(Boolean).length;
+    h+=`<span title="${H.dayKey(d)}: ${c}/${IT.length}" style="background:rgba(95,200,176,${c?0.12+0.8*c/IT.length:0.05})${i===0?';outline:1.5px solid var(--gold)':''}">${d.getDate()}</span>`;}
+  H.$('heat').innerHTML=h;
+}
+render();setInterval(render,60000);
+
+</script>
+</body>
+</html>

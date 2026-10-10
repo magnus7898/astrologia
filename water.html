@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>წყლის ბალანსი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.bottle{position:relative;width:150px;height:240px;margin:6px auto 0;border:2px solid rgba(127,178,240,.5);border-radius:26px 26px 30px 30px;overflow:hidden;background:rgba(127,178,240,.04)}
+.bottle::before{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:56px;height:14px;border:2px solid rgba(127,178,240,.5);border-top:none;border-radius:0 0 8px 8px;background:var(--void)}
+.water{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(60,140,230,.75),rgba(110,190,250,.55));transition:height .6s}
+.water::before{content:'';position:absolute;top:-8px;left:-50%;width:200%;height:16px;background:radial-gradient(ellipse at 25% 100%,rgba(110,190,250,.55) 40%,transparent 41%) 0 0/50% 100% repeat-x;animation:wv 3s linear infinite}
+@keyframes wv{to{transform:translateX(25%)}}
+.bottle .v{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.bottle .v b{font-family:'Cinzel',serif;font-size:28px;font-weight:400}
+.cups{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.cups span{width:22px;height:28px;border:1.5px solid rgba(127,178,240,.5);border-radius:3px 3px 7px 7px;position:relative;overflow:hidden}
+.cups span.f::after{content:'';position:absolute;left:0;right:0;bottom:0;height:80%;background:rgba(80,160,240,.7)}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>წყლის ბალანსი</h1><div class="sub">დღიური ნორმა · ჭიქების მთვლელი · შეხსენება</div></header>
+  <div class="grid2">
+    <div class="card">
+      <h2>💧 დღეს</h2>
+      <div class="bottle"><div class="water" id="wat"></div><div class="v"><b id="ml">0</b><small id="of"></small></div></div>
+      <div class="cups" id="cups"></div>
+      <div class="btns"><button class="btn" id="add">+ ჭიქა</button><button class="btn ghost" id="undo">↶ გაუქმება</button></div>
+      <div class="row" style="justify-content:center;margin-top:12px">
+        <div class="field" style="max-width:160px"><label class="l">ჭიქის ზომა</label><select id="cup"><option value="200">200 მლ</option><option value="250" selected>250 მლ</option><option value="300">300 მლ</option><option value="330">330 მლ</option><option value="500">500 მლ (ბოთლი)</option></select></div>
+      </div>
+      <div class="ok" id="msg" style="display:none"></div>
+    </div>
+    <div class="card">
+      <h2>⚖ შენი ნორმა</h2>
+      <div class="row">
+        <div class="field"><label class="l">წონა (კგ)</label><input type="number" id="kg" value="70" min="30" max="200"></div>
+        <div class="field"><label class="l">ვარჯიში დღეს (წთ)</label><input type="number" id="ex" value="0" min="0" max="300"></div>
+      </div>
+      <div class="opts" style="justify-content:flex-start"><label><input type="checkbox" id="hot"> ცხელა / ძალიან ვოფლიანობ</label></div>
+      <div class="ok" id="goalTxt"></div>
+      <h2 style="margin-top:18px">⏰ შეხსენება</h2>
+      <div class="row">
+        <div class="field"><label class="l">ყოველ</label><select id="every"><option value="0">გამორთული</option><option value="45">45 წთ</option><option value="60" selected>1 სთ</option><option value="90">1.5 სთ</option><option value="120">2 სთ</option></select></div>
+        <div class="field"><label class="l">დან</label><input type="time" id="from" value="08:00"></div>
+        <div class="field"><label class="l">მდე</label><input type="time" id="to" value="21:00"></div>
+      </div>
+      <div class="opts"><label><input type="checkbox" id="oSnd" checked> ხმა</label><label><input type="checkbox" id="oVib" checked> ვიბრაცია</label><label><input type="checkbox" id="oNot"> შეტყობინება ფონზე</label></div>
+      <div class="txt" id="nextR" style="text-align:center;font-size:12px;color:var(--dim);margin-top:8px"></div>
+    </div>
+  </div>
+  <div class="card"><h2>📅 ბოლო 7 დღე</h2><div class="week" id="week"></div></div>
+  <div class="card"><h2>✦ კარგი იცოდე</h2><div class="tips">
+    <div class="tip"><i>🥤</i>ნორმა მიახლოებითია — დაახლოებით 30–35 მლ ყოველ კილოგრამზე, პლუს ~350 მლ ყოველ 30 წუთ ვარჯიშზე და მეტი სიცხეში. ჩაი, რძე, სუპი, ხილი და ბოსტნეულიც ითვლება.</div>
+    <div class="tip"><i>🟡</i>საუკეთესო მაჩვენებელი — ღია ჩალისფერი შარდი. მუქი ფერი წყლის ნაკლებობაზე მიუთითებს.</div>
+    <div class="tip"><i>🌅</i>დილით, გაღვიძებისთანავე ერთი ჭიქა წყალი ღამის დანაკარგს ავსებს.</div>
+  </div>
+  <div class="warn">⚠ გულის ან თირკმლის დაავადების დროს სითხის რაოდენობა ექიმმა უნდა განსაზღვროს. ძალიან ბევრი წყალი მოკლე დროში (რამდენიმე ლიტრი საათში) საშიშია.</div></div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+H.opts();
+const st=H.get('water',{kg:70,cup:250,every:60,from:'08:00',to:'21:00',log:{}});
+['kg','cup','every','from','to'].forEach(k=>{if(st[k]!=null)H.$(k).value=st[k];});
+function goal(){const kg=+H.$('kg').value||70,ex=+H.$('ex').value||0;return Math.round((kg*33+ex/30*350+(H.$('hot').checked?500:0))/50)*50;}
+function today(){return st.log[H.dayKey()]||[];}
+function save(){['kg','every','from','to'].forEach(k=>st[k]=H.$(k).value);st.cup=+H.$('cup').value;
+  const ks=Object.keys(st.log).sort();while(ks.length>40)delete st.log[ks.shift()];H.set('water',st);}
+function render(){
+  const g=goal(),L=today(),ml=L.reduce((a,b)=>a+b,0),cup=+H.$('cup').value;
+  H.$('ml').textContent=ml+' მლ';H.$('of').textContent='/ '+g+' მლ';
+  H.$('wat').style.height=Math.min(100,ml/g*100)+'%';
+  const n=Math.ceil(g/cup),done=L.length;
+  H.$('cups').innerHTML=Array.from({length:Math.max(n,done)},(_,i)=>`<span class="${i<done?'f':''}"></span>`).join('');
+  H.$('goalTxt').innerHTML=`დღიური ნორმა: <b>${(g/1000).toFixed(2).replace('.',',')} ლიტრი</b> ≈ ${n} ჭიქა (${cup} მლ).`;
+  const m=H.$('msg');if(ml>=g){m.style.display='';m.innerHTML='✦ დღის ნორმა შესრულებულია!';}else m.style.display='none';
+  H.mark('water',ml>=g);
+  /* week */
+  const days=['კვ','ორ','სა','ოთ','ხუ','პა','შა'];let h='';
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const x=(st.log[H.dayKey(d)]||[]).reduce((a,b)=>a+b,0);
+    h+=`<div><b><i style="height:${Math.min(100,x/g*100)}%"></i></b>${days[d.getDay()]}<br>${x?(x/1000).toFixed(1):'–'}</div>`;}
+  H.$('week').innerHTML=h;save();nextTxt();
+}
+H.$('add').onclick=()=>{H.ac();const k=H.dayKey();(st.log[k]=st.log[k]||[]).push(+H.$('cup').value);H.tone(600,900,0.18,'sine',0.12);st.last=Date.now();render();};
+H.$('undo').onclick=()=>{const L=today();if(L.length){L.pop();render();}};
+['kg','ex','cup','every','from','to'].forEach(k=>H.$(k).addEventListener('input',render));H.$('hot').onchange=render;
+/* reminders */
+function inWindow(d){const m=d.getHours()*60+d.getMinutes(),[a1,a2]=H.$('from').value.split(':').map(Number),[b1,b2]=H.$('to').value.split(':').map(Number);return m>=a1*60+a2&&m<=b1*60+b2;}
+function nextTxt(){const e=+H.$('every').value;if(!e){H.$('nextR').textContent='';return;}
+  const nx=new Date((st.last||Date.now())+e*60000);H.$('nextR').textContent='შემდეგი შეხსენება ≈ '+H.hm(nx<new Date()?new Date():nx)+' (გვერდი გახსნილი უნდა იყოს)';}
+setInterval(()=>{const e=+H.$('every').value;if(!e)return;const now=new Date();if(!inWindow(now))return;
+  if(today().reduce((a,b)=>a+b,0)>=goal())return;
+  if(Date.now()-(st.lastRem||st.last||0)>=e*60000&&Date.now()-(st.last||0)>=e*60000){st.lastRem=Date.now();save();
+    H.bell(660,0.14);setTimeout(()=>H.bell(880,0.12),300);H.vib([120,80,120]);H.notify('💧 წყლის დრო','დალიე ერთი ჭიქა წყალი');nextTxt();}},20000);
+render();
+
+</script>
+</body>
+</html>

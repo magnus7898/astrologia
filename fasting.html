@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ინტერვალური შიმშილი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.stages{display:grid;gap:6px}
+.stg{display:flex;gap:10px;align-items:center;padding:8px 12px;border-radius:9px;background:rgba(255,255,255,.025);font-size:13px;line-height:1.55;color:var(--dim)}
+.stg b{min-width:46px;font-family:'Cinzel',serif;color:var(--gold);font-weight:400}
+.stg.on{color:var(--txt);background:rgba(95,200,176,.08)}
+.hist{font-size:12.5px;line-height:2;color:var(--dim)}
+.hist b{color:var(--txt);font-weight:400}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>ინტერვალური შიმშილი</h1><div class="sub">12:12 · 14:10 · 16:8 · 18:6 · ტაიმერი და ისტორია</div></header>
+  <div class="grid2">
+    <div class="card">
+      <div style="text-align:center"><div class="seg" id="proto"></div></div>
+      <div class="ringw"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="2.5"/>
+        <circle id="arc" cx="50" cy="50" r="46" fill="none" stroke="#5fc8b0" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="c"><div class="mid" id="lab">შიმშილი არ დაწყებულა</div><div class="big" id="el">0:00</div><div class="mid" id="rem"></div></div></div>
+      <div class="row" style="justify-content:center;margin-top:10px"><div class="field" style="max-width:240px"><label class="l">დაწყების დრო</label><input type="datetime-local" id="startAt"></div></div>
+      <div class="btns"><button class="btn" id="go">▶ შიმშილის დაწყება</button><button class="btn ghost" id="end">🍽 დასრულება</button></div>
+      <div class="opts"><label><input type="checkbox" id="oSnd" checked> ხმა</label><label><input type="checkbox" id="oNot"> შეტყობინება ფონზე</label></div>
+    </div>
+    <div class="card"><h2>⏳ რა ხდება ორგანიზმში (მიახლოებით)</h2><div class="stages" id="stages"></div>
+      <div class="txt" style="font-size:11.5px;color:var(--dim);margin-top:8px">საათები ინდივიდუალურია და დამოკიდებულია ბოლო კვებაზე, აქტივობასა და მეტაბოლიზმზე.</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card"><h2>📅 ისტორია</h2><div class="hist" id="hist"></div></div>
+    <div class="card"><h2>✦ რჩევები</h2><div class="tips">
+      <div class="tip"><i>💧</i>შიმშილის დროს დალიე წყალი, უშაქრო ჩაი ან შავი ყავა.</div>
+      <div class="tip"><i>🥗</i>კვების ფანჯარაში — ცილა, ბოსტნეული, სრული მარცვლეული; შიმშილი „ყველაფრის ჭამის“ უფლებას არ იძლევა.</div>
+      <div class="tip"><i>🌙</i>ყველაზე ადვილია ღამის ძილის გარშემო: მაგ. ბოლო კვება 20:00, პირველი — 12:00 (16:8).</div>
+      <div class="tip"><i>📈</i>დაიწყე 12:12-ით და თანდათან გადადი 14:10-ზე, შემდეგ 16:8-ზე.</div>
+    </div></div>
+  </div>
+  <div class="warn">⚠ არ არის რეკომენდებული ორსულებისთვის, მეძუძური დედებისთვის, 18 წლამდე პირებისთვის, დიაბეტით (განსაკუთრებით ინსულინზე) ან კვებითი დარღვევით დაავადებულთათვის. ქრონიკული დაავადების ან მუდმივი მედიკამენტების დროს — მხოლოდ ექიმთან შეთანხმებით.</div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+H.opts();
+const PROTO=[[12,'12:12'],[14,'14:10'],[16,'16:8'],[18,'18:6'],[20,'20:4']];
+const STG=[[0,'საკვები ითვისება, სისხლში შაქარი და ინსულინი მატულობს'],[4,'ინსულინი კლებულობს, ორგანიზმი დაგროვილ გლიკოგენს იყენებს'],
+  [12,'გლიკოგენის მარაგი კლებულობს, მატულობს ცხიმების წვა'],[16,'კეტოზის საწყისი ეტაპი — ცხიმი ენერგიის მთავარი წყარო ხდება'],
+  [18,'კეტონური სხეულები მატულობს; ბევრს ფოკუსის გაუმჯობესება ახასიათებს'],[24,'აუტოფაგიის (უჯრედული „დასუფთავების“) პროცესები ძლიერდება — ადამიანებში ზუსტი დრო ჯერ კიდევ კვლევის საგანია']];
+const st=H.get('fast',{h:16,start:0,hist:[]});
+H.$('proto').innerHTML=PROTO.map(p=>`<button data-h="${p[0]}">${p[1]}</button>`).join('');
+const arc=H.$('arc');
+function local(d){const z=new Date(d.getTime()-d.getTimezoneOffset()*60000);return z.toISOString().slice(0,16);}
+function protoOn(){document.querySelectorAll('#proto button').forEach(b=>b.classList.toggle('on',+b.dataset.h===st.h));}
+document.querySelectorAll('#proto button').forEach(b=>b.onclick=()=>{st.h=+b.dataset.h;H.set('fast',st);protoOn();tick();});
+H.$('startAt').value=local(new Date());
+H.$('startAt').onchange=()=>{if(st.start){const t=new Date(H.$('startAt').value).getTime();if(t&&t<=Date.now()){st.start=t;st.notified=false;H.set('fast',st);tick();}}};
+function tick(){
+  const goal=st.h*3600;
+  if(!st.start){H.$('lab').textContent='შიმშილი არ დაწყებულა';H.$('el').textContent='0:00';H.$('rem').textContent=`მიზანი: ${st.h} სთ`;H.ring(arc,0);
+    H.$('go').style.display='';stages(-1);return;}
+  H.$('go').style.display='none';
+  const el=(Date.now()-st.start)/1000;
+  H.$('el').textContent=H.mmss(el);
+  if(el<goal){H.$('lab').textContent='შიმშილი';H.$('rem').textContent='დარჩა '+H.dur(goal-el)+' · '+H.hm(new Date(st.start+goal*1000))+'-მდე';}
+  else{H.$('lab').textContent='✓ მიზანი შესრულდა';H.$('rem').textContent='კვების ფანჯარა ღიაა · '+(24-st.h)+' სთ';
+    if(!st.notified){st.notified=true;H.set('fast',st);H.chime();H.notify('✓ შიმშილის მიზანი შესრულდა',st.h+' საათი — კვების ფანჯარა ღიაა');}}
+  H.ring(arc,el/goal);stages(el/3600);H.$('startAt').value=local(new Date(st.start));
+}
+function stages(h){H.$('stages').innerHTML=STG.map((s,i)=>{const on=h>=s[0]&&(i===STG.length-1||h<STG[i+1][0]);
+  return `<div class="stg ${on?'on':''}"><b>${s[0]} სთ</b>${s[1]}</div>`;}).join('');}
+function hist(){const L=st.hist.slice(-10).reverse();
+  H.$('hist').innerHTML=L.length?L.map(x=>`${new Date(x.s).toLocaleDateString('ka-GE')} · <b>${H.dur(x.d)}</b> ${x.d>=x.g*3600?'✓':'· მიზანი '+x.g+' სთ'}`).join('<br>'):'ჯერ არცერთი შიმშილი არ დასრულებულა.';
+  const last=st.hist[st.hist.length-1];H.mark('fast',!!(last&&H.dayKey(new Date(last.e))===H.dayKey()&&last.d>=last.g*3600));}
+H.$('go').onclick=()=>{H.ac();const t=new Date(H.$('startAt').value).getTime();st.start=(t&&t<=Date.now())?t:Date.now();st.notified=false;H.set('fast',st);H.bell(392,0.14);tick();};
+H.$('end').onclick=()=>{if(!st.start)return;const d=(Date.now()-st.start)/1000;st.hist.push({s:st.start,e:Date.now(),d,g:st.h});
+  while(st.hist.length>60)st.hist.shift();st.start=0;H.set('fast',st);H.$('startAt').value=local(new Date());tick();hist();};
+protoOn();tick();hist();setInterval(tick,1000);
+
+</script>
+</body>
+</html>

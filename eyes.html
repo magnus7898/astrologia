@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>თვალის დასვენება 20-20-20 · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="health.css">
+<style>.phase{font-size:18px;text-align:center;margin-top:6px;min-height:28px}
+body.rest .ringw circle#arc{stroke:#7f9cf0}</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <header><div class="eyebrow">ჯანმრთელობა</div><h1>თვალის დასვენება</h1><div class="sub">20-20-20 · ყოველ 20 წუთში 20 წამი შორს</div></header>
+  <div class="grid2">
+    <div class="card">
+      <div class="ringw"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="2.5"/>
+        <circle id="arc" cx="50" cy="50" r="46" fill="none" stroke="#5fc8b0" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <div class="c"><div style="font-size:40px" id="ico">👁</div><div class="big" id="cd">20:00</div></div></div>
+      <div class="phase" id="ph">ჩართე და იმუშავე მშვიდად</div>
+      <div class="btns"><button class="btn" id="go">▶ ჩართვა</button><button class="btn ghost" id="now">👀 დასვენება ახლა</button></div>
+      <div class="opts"><label><input type="checkbox" id="oSnd" checked> ხმა</label><label><input type="checkbox" id="oVib" checked> ვიბრაცია</label><label><input type="checkbox" id="oNot"> შეტყობინება ფონზე</label></div>
+      <div class="ok" id="cnt"></div>
+    </div>
+    <div class="card"><h2>👁 წესი</h2><div class="tips">
+      <div class="tip"><i>⏱</i><b>20 წუთი</b>&nbsp;ეკრანთან მუშაობა →</div>
+      <div class="tip"><i>🔭</i><b>20 წამი</b>&nbsp;გაიხედე <b>&nbsp;6 მეტრზე (20 ფუტი) ან უფრო შორს</b>&nbsp;— ფანჯარაში, ოთახის ბოლოს.</div>
+      <div class="tip"><i>😌</i>დასვენებისას რამდენჯერმე ნელა დაახამხამე — ეკრანთან ხამხამი თითქმის ორჯერ იშვიათდება და თვალი შრება.</div>
+    </div>
+    <h2 style="margin-top:16px">✦ დამატებით</h2><div class="tips">
+      <div class="tip"><i>🖥</i>ეკრანი — მკლავის მანძილზე (50–70 სმ), ზედა კიდე თვალის დონეზე ან ოდნავ დაბლა.</div>
+      <div class="tip"><i>💡</i>ეკრანის სიკაშკაშე ოთახის განათებას შეუსაბამე; ფანჯარა ეკრანის გვერდით იყოს და არა უკან.</div>
+      <div class="tip"><i>🤲</i>„პალმინგი“: გაითბე ხელისგულები და 30 წამით დაიფარე დახუჭული თვალები.</div>
+    </div></div>
+  </div>
+  <div class="warn">⚠ თუ თვალის დაღლილობა, თავის ტკივილი ან მხედველობის დაბინდვა მუდმივია, მიმართე ოფთალმოლოგს — შესაძლოა სათვალე ან სხვა მკურნალობა იყოს საჭირო.</div>
+  <div class="note">ეს ინსტრუმენტი ზოგადი კეთილდღეობისთვისაა და ექიმის კონსულტაციას არ ცვლის. მონაცემები მხოლოდ ამ მოწყობილობაზე ინახება.</div>
+</div>
+<script src="health.js"></script>
+<script>
+H.opts();
+const WORK=20*60,REST=20;
+const st=H.get('eyes',{on:false,t0:0,log:{}});
+const arc=H.$('arc');let rest=null;
+function cnt(){const n=st.log[H.dayKey()]||0;H.$('cnt').innerHTML=`დღეს დასვენებები: <b>${n}</b> · რვასაათიან სამუშაო დღეზე ≈ 24`;H.mark('eyes',n>=6);}
+function startRest(){rest={t0:Date.now(),last:-1};document.body.classList.add('rest');H.bell(523,0.15);setTimeout(()=>H.bell(784,0.12),250);H.vib([150,80,150]);
+  H.notify('👁 თვალის დასვენება','20 წამი გაიხედე 6 მეტრზე შორს');}
+function tick(){
+  if(rest){const left=REST-(Date.now()-rest.t0)/1000;
+    if(left<=0){rest=null;document.body.classList.remove('rest');H.chime();const k=H.dayKey();st.log[k]=(st.log[k]||0)+1;st.t0=Date.now();H.set('eyes',st);cnt();}
+    else{H.$('ico').textContent='🔭';H.$('cd').textContent=Math.ceil(left);H.$('ph').textContent='გაიხედე შორს… და ნელა დაახამხამე';H.ring(arc,left/REST);return;}}
+  H.$('ico').textContent='👁';
+  if(!st.on){H.$('cd').textContent='20:00';H.$('ph').textContent='ჩართე და იმუშავე მშვიდად';H.$('go').textContent='▶ ჩართვა';H.ring(arc,1);return;}
+  H.$('go').textContent='⏸ გამორთვა';
+  const left=WORK-(Date.now()-st.t0)/1000;
+  if(left<=0){startRest();return;}
+  H.$('cd').textContent=H.mmss(left);H.$('ph').textContent='მუშაობის დრო';H.ring(arc,left/WORK);
+}
+H.$('go').onclick=()=>{H.ac();st.on=!st.on;st.t0=Date.now();H.set('eyes',st);tick();};
+H.$('now').onclick=()=>{H.ac();startRest();tick();};
+setInterval(tick,250);tick();cnt();
+
+</script>
+</body>
+</html>
