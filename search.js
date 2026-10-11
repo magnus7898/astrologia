@@ -1,4 +1,3 @@
-
 /* search.js — „ძებნა“: when were / will be planets in given signs (3000 BC – 9999 AD).
    Self-injecting add-on for astro.html (load after returns.js).
    Ephemeris (browser-side): JPL long-span Keplerian elements + Fourier/secular corrections in
@@ -359,5 +358,5 @@ function openChart(jd){
 }
 function boot(){try{inject();}catch(e){console.warn('search.js',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window._search={signOpts,parseS,signLbl,BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
+window._search={helio,chironHelio,KEP,signOpts,parseS,signLbl,BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
 })();
