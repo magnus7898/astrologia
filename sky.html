@@ -4,57 +4,80 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ცის რუკა</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;600&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="skydata.js"></script>
 <script src="constellations.js"></script>
 <style>
-:root{--bg:#03040a;--acc:#7c9ad0;--acc-l:#a8c4ea;--txt:#e6ecf8;--dim:rgba(180,196,224,.55)}
+:root{--bg:#04030a;--acc:#c9a84c;--acc-l:#e8d5a0;--txt:#e9e2d0;--dim:rgba(155,168,184,.65);--card:rgba(10,8,22,.78);--brd:rgba(201,168,76,.2)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
-  min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 40px}
-.hero{text-align:center;padding:22px 20px 10px}
-.hero h1{font-family:'Cinzel',serif;font-size:clamp(17px,3.4vw,26px);letter-spacing:4px;
-  background:linear-gradient(160deg,#dce8ff,#a8c4ea 40%,#4a6a9a);
+body{background:radial-gradient(ellipse 700px 500px at 20% 10%,rgba(100,50,200,.10),transparent 60%),
+  radial-gradient(ellipse 600px 500px at 85% 75%,rgba(25,155,220,.07),transparent 60%),var(--bg);
+  color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding:0 0 50px}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 14px}
+.back{display:inline-block;margin-top:22px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--acc);opacity:.75;
+  text-decoration:none;border:1px solid rgba(201,168,76,.25);border-radius:3px;padding:7px 12px}
+.back:hover{opacity:1}
+.hero{text-align:center;padding:18px 20px 18px}
+.hero .eye{font-family:'Cinzel',serif;font-size:9px;letter-spacing:7px;color:var(--acc);opacity:.5;margin-bottom:10px}
+.hero h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5vw,42px);letter-spacing:2px;
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--acc) 35%,#9a7028 60%,var(--acc-l) 80%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:11px;color:var(--dim);margin-top:5px;letter-spacing:1px}
-.wrap{width:100%;max-width:1080px;padding:0 12px}
-.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;background:rgba(10,14,26,.8);
-  border:1px solid rgba(124,154,208,.22);border-radius:12px;padding:12px 14px;margin-bottom:12px}
-.f{display:flex;flex-direction:column;gap:3px}
-label{font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--acc-l);opacity:.7;font-family:'Cinzel',serif}
-input,select{background:rgba(6,8,18,.85);border:1px solid rgba(124,154,208,.3);border-radius:7px;
-  color:var(--txt);padding:7px 9px;font-size:12px;font-family:'Noto Sans Georgian',sans-serif}
-input:focus,select:focus{outline:none;border-color:var(--acc-l)}
-.w70{width:70px}.w54{width:54px}.w130{width:130px}
-button{background:rgba(6,8,18,.85);border:1px solid rgba(124,154,208,.35);color:var(--acc-l);
-  border-radius:7px;padding:7px 12px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px}
-button:hover{border-color:var(--acc-l);background:rgba(30,44,74,.8)}
-button.on{background:linear-gradient(135deg,#3a5a8a,#7c9ad0);color:#08101c;font-weight:600;border-color:#a8c4ea}
-.tog{display:flex;flex-wrap:wrap;gap:6px}
-#sky{display:block;width:100%;height:auto;border-radius:14px;
-  border:1px solid rgba(124,154,208,.25);background:#03040a;cursor:crosshair;touch-action:none}
-.info{margin-top:10px;background:rgba(10,14,26,.85);border:1px solid rgba(124,154,208,.22);
-  border-radius:11px;padding:12px 15px;font-size:12px;line-height:1.9;min-height:56px}
-.info b{color:var(--acc-l)}
+.hero p{font-family:'IM Fell English','Noto Sans Georgian',serif;font-style:italic;font-size:13px;color:var(--dim);margin-top:6px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;background:var(--card);
+  border:1px solid var(--brd);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.f{display:flex;flex-direction:column;gap:4px}
+label{font-size:9px;letter-spacing:2px;color:var(--acc);opacity:.8;font-family:'Cinzel',serif}
+input,select{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.25);border-radius:9px;color-scheme:dark;
+  color:var(--txt);padding:8px 10px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif}
+input:focus,select:focus{outline:none;border-color:var(--acc)}
+.w70{width:80px}.w54{width:54px}.w130{width:140px}
+button{background:rgba(10,8,22,.7);border:1px solid rgba(201,168,76,.3);color:var(--acc-l);
+  border-radius:20px;padding:8px 13px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;transition:all .2s}
+button:hover{border-color:var(--acc);background:rgba(201,168,76,.1)}
+button.on{background:linear-gradient(135deg,var(--acc-l),var(--acc));color:#160f04;font-weight:600;border-color:transparent}
+.tog{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.main{display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start}
+@media(max-width:900px){.main{grid-template-columns:1fr}}
+.skyw{position:relative}
+#sky{display:block;width:100%;height:auto;border-radius:16px;
+  box-shadow:0 0 0 1px rgba(201,168,76,.25),0 0 60px rgba(100,80,200,.12);background:#03040a;cursor:crosshair;touch-action:none}
+.zoom{position:absolute;right:6px;bottom:6px;display:flex;flex-direction:column;gap:6px}
+.zoom button{width:38px;height:38px;padding:0;font-size:18px;border-radius:50%}
+.side{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:14px 16px}
+.card h3{font-family:'Cinzel',serif;font-weight:400;font-size:10px;letter-spacing:3px;color:var(--acc);margin-bottom:10px}
+.vis{display:grid;gap:4px;font-size:12.5px}
+.vis div{display:grid;grid-template-columns:22px 1fr auto;gap:6px;align-items:center;padding:4px 6px;border-radius:7px;cursor:pointer}
+.vis div:hover{background:rgba(201,168,76,.08)}
+.vis div.dn{opacity:.4}
+.vis i{font-style:normal;font-family:serif;font-size:15px;text-align:center}
+.vis small{color:var(--dim);font-size:11px;white-space:nowrap}
+.info{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:14px 16px;font-size:12.5px;line-height:1.9;min-height:60px}
+.info b{color:var(--acc-l);font-weight:500}
 .k{color:var(--dim);font-size:11px}
+.tw{font-size:13px;line-height:1.8}
+.tw b{color:var(--acc-l);font-weight:500}
 .err{background:rgba(200,40,40,.15);border:1px solid rgba(220,60,60,.4);border-radius:9px;
   color:#f88;font-size:12px;padding:10px 13px;margin-bottom:10px}
-.note{font-size:9.5px;color:rgba(180,196,224,.4);line-height:1.7;margin-top:9px}
+.note{font-size:10px;color:var(--dim);line-height:1.7;margin-top:12px;text-align:center}
 </style>
 </head>
 <body>
-<div class="hero">
-  <h1>ცის რუკა</h1>
-  <p id="sub">ცოცხალი ვარსკვლავიერი ცა · ჰორიზონტიდან ზენიტამდე</p>
-</div>
 <div class="wrap">
+  <a class="back" href="index.html">← მთავარი</a>
+  <div class="hero">
+    <div class="eye">ვარსკვლავიერი ცა</div>
+    <h1>ცის რუკა</h1>
+    <p id="sub">ცოცხალი ვარსკვლავიერი ცა · ჰორიზონტიდან ზენიტამდე</p>
+  </div>
   <div id="err"></div>
   <div class="bar">
     <div class="f"><label>ქალაქი</label><input id="city" class="w130" placeholder="თბილისი..." autocomplete="off"></div>
+    <div class="f"><label>&nbsp;</label><button id="geo" title="ჩემი მდებარეობა">📍 ჩემი ადგილი</button></div>
     <div class="f"><label>განედი</label><input id="lat" class="w70" type="number" step="0.001" value="41.715"></div>
     <div class="f"><label>გრძედი</label><input id="lon" class="w70" type="number" step="0.001" value="44.827"></div>
     <div class="f"><label>თარიღი</label><input id="date" type="date"></div>
-    <div class="f"><label>დრო (UT)</label><input id="time" type="time" step="60"></div>
+    <div class="f"><label id="tlab">დრო</label><input id="time" type="time" step="60"></div>
     <div class="f"><label>&nbsp;</label><button id="live" class="on">● ცოცხალი</button></div>
     <div class="f"><label>&nbsp;</label><button id="mh">−1სთ</button></div>
     <div class="f"><label>&nbsp;</label><button id="ph">+1სთ</button></div>
@@ -68,15 +91,22 @@ button.on{background:linear-gradient(135deg,#3a5a8a,#7c9ad0);color:#08101c;font-
     <button id="tGrid">ბადე</button>
     <button id="tEcl" class="on">ეკლიპტიკა</button>
     <button id="tEq">ცის ეკვატორი</button>
-    <button id="rst">↻ ზუმის გასუფთავება</button>
+    <button id="rst">↻ ზუმი</button>
     <div class="f" style="margin-left:auto"><label>ზღვრული სიდიდე</label>
       <select id="mag" class="w70">
         <option value="3.5">3.5</option><option value="4.5">4.5</option>
         <option value="5.5" selected>5.5</option><option value="6.5">6.5</option>
       </select></div>
   </div>
-  <canvas id="sky" width="1000" height="1000"></canvas>
-  <div class="info" id="info">დააწკაპუნე ობიექტს — გამოჩნდება მისი მონაცემები.</div>
+  <div class="main">
+    <div class="skyw"><canvas id="sky" width="1000" height="1000"></canvas>
+      <div class="zoom"><button id="zin">+</button><button id="zout">−</button></div></div>
+    <div class="side">
+      <div class="card"><h3>☀ ცა ახლა</h3><div class="tw" id="tw"></div></div>
+      <div class="card"><h3>🪐 მნათობები</h3><div class="vis" id="vis"></div></div>
+      <div class="info" id="info">დააწკაპუნე ობიექტს — გამოჩნდება მისი მონაცემები.</div>
+    </div>
+  </div>
   <div class="note" id="note"></div>
 </div>
 
@@ -237,21 +267,26 @@ const PLANETS=[
 const AU=1.495979e8;
 const $=function(i){return document.getElementById(i);};
 const cv=$('sky'),ctx=cv.getContext('2d');
-let ST={live:true,jd:0,lat:41.715,lon:44.827,zoom:1,px:0,py:0,
+let ST={live:true,jd:0,lat:41.715,lon:44.827,tz:'Asia/Tbilisi',zoom:1,px:0,py:0,
         line:true,name:true,star:true,grid:false,ecl:true,eq:false,mag:5.5,sel:null};
 let objs=[];                       /* drawn objects, for click identification */
 
 const jdNow=()=>Date.now()/86400000+2440587.5;
+/* wall time in the place's time zone (Intl) */
+function tzParts(ms,tz){const f=new Intl.DateTimeFormat('en-GB',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const o={};f.formatToParts(new Date(ms)).forEach(p=>{if(p.type!=='literal')o[p.type]=+p.value;});if(o.hour===24)o.hour=0;return o;}
+function tzToUTC(y,mo,d,h,mi,tz){let g=Date.UTC(y,mo-1,d,h,mi);for(let i=0;i<3;i++){const p=tzParts(g,tz);g-=Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute)-Date.UTC(y,mo-1,d,h,mi);}return g;}
+const p2=n=>String(n).padStart(2,'0');
 function jdFromInputs(){
   const d=$('date').value,t=$('time').value||'00:00';
   if(!d)return jdNow();
   const [y,m,dd]=d.split('-').map(Number),[hh,mm]=t.split(':').map(Number);
-  return Date.UTC(y,m-1,dd,hh,mm,0)/86400000+2440587.5;
+  return tzToUTC(y,m,dd,hh,mm,ST.tz)/86400000+2440587.5;
 }
 function setInputs(jd){
-  const ms=(jd-2440587.5)*86400000,dt=new Date(ms);
-  $('date').value=dt.toISOString().slice(0,10);
-  $('time').value=dt.toISOString().slice(11,16);
+  const p=tzParts((jd-2440587.5)*86400000,ST.tz);
+  $('date').value=p.year+'-'+p2(p.month)+'-'+p2(p.day);
+  $('time').value=p2(p.hour)+':'+p2(p.minute);
 }
 /* ── projection: stereographic fisheye, zenith centre, N up, E left ── */
 function proj(alt,az){
@@ -354,7 +389,7 @@ function draw(){
   }
   /* constellation lines */
   if(ST.line&&typeof SKY_LINES!=='undefined'){
-    ctx.strokeStyle='rgba(140,175,225,.30)';ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(201,168,76,.30)';ctx.lineWidth=1;
     const seen={};
     for(const e of SKY_LINES){
       const abbr=e[0],seg=e[1];
@@ -371,7 +406,7 @@ function draw(){
       if(ST.name&&n>1&&!seen[abbr]){
         seen[abbr]=1;
         const ka=(typeof IAU_KA!=='undefined'&&IAU_KA[abbr])?IAU_KA[abbr]:abbr;
-        ctx.fillStyle='rgba(150,185,235,.55)';
+        ctx.fillStyle='rgba(232,213,160,.55)';
         ctx.font='500 '+Math.round(11*Math.min(1.7,ST.zoom))+'px Cinzel, serif';
         ctx.textAlign='center';ctx.fillText(ka,sx/n,sy/n);
       }
@@ -404,7 +439,7 @@ function draw(){
   }
   /* moon with phase */
   const mo=bodyRaDec('moon',null,jd),mh=eq2h(mo.ra,mo.dec,jd,ST.lat,ST.lon);
-  let phase=nrm(mo.elon-sun.lon);
+  let phase=nrm(mo.elon-sun.elon);
   if(mh.alt>-2){
     const p=proj(mh.alt,mh.az),rr=11;
     ctx.save();
@@ -426,7 +461,7 @@ function draw(){
       alt:mh.alt,az:mh.az,d:mo.d,phase:phase,illum:k});
   }
   /* planets */
-  ctx.font='600 11px Cinzel, serif';ctx.textAlign='left';
+  ctx.font='600 13px Noto Sans Georgian, sans-serif';ctx.textAlign='left';
   for(const pl of PLANETS){
     const q=bodyRaDec('planet',pl[1],jd),h=eq2h(q.ra,q.dec,jd,ST.lat,ST.lon);
     if(h.alt<-1)continue;
@@ -441,19 +476,19 @@ function draw(){
   ctx.restore();
 
   /* horizon + cardinals */
-  ctx.strokeStyle='rgba(168,196,234,.75)';ctx.lineWidth=2;
+  ctx.strokeStyle='rgba(201,168,76,.8)';ctx.lineWidth=2;
   ctx.beginPath();ctx.arc(W/2,H/2,R,0,7);ctx.stroke();
-  const card=[['N',0],['NE',45],['E',90],['SE',135],['S',180],['SW',225],['W',270],['NW',315]];
+  const card=[['ჩ',0],['ჩა',45],['ა',90],['სა',135],['ს',180],['სდ',225],['დ',270],['ჩდ',315]];
   ctx.font='600 15px Cinzel, serif';ctx.textAlign='center';ctx.textBaseline='middle';
   for(const [t,az] of card){
     const a=az*D2R,rr=R+1;
     const x=W/2-rr*Math.sin(a),y=H/2-rr*Math.cos(a);
     const ox=W/2-(rr+16)*Math.sin(a),oy=H/2-(rr+16)*Math.cos(a);
-    ctx.strokeStyle='rgba(168,196,234,.6)';ctx.lineWidth=t.length===1?2:1;
+    ctx.strokeStyle='rgba(201,168,76,.7)';ctx.lineWidth=t.length===1?2:1;
     ctx.beginPath();ctx.moveTo(x,y);
     ctx.lineTo(W/2-(rr-9)*Math.sin(a),H/2-(rr-9)*Math.cos(a));ctx.stroke();
-    ctx.fillStyle=t.length===1?'rgba(215,232,255,.95)':'rgba(168,196,234,.55)';
-    ctx.font=(t.length===1?'600 15px':'400 10px')+' Cinzel, serif';
+    ctx.fillStyle=t.length===1?'rgba(240,220,160,.95)':'rgba(201,168,76,.6)';
+    ctx.font=(t.length===1?'600 17px':'400 11px')+' Noto Sans Georgian, sans-serif';
     ctx.fillText(t,ox,oy);
   }
   /* selection ring */
@@ -462,14 +497,31 @@ function draw(){
     ctx.beginPath();ctx.arc(ST.sel.x,ST.sel.y,ST.sel.r+5,0,7);ctx.stroke();
   }
   /* header */
-  const dt=new Date((jd-2440587.5)*86400000);
-  $('sub').textContent=dt.toISOString().slice(0,16).replace('T',' ')+' UT · '+
-    ST.lat.toFixed(3)+'°, '+ST.lon.toFixed(3)+'° · მზე '+sunH.alt.toFixed(1)+'°';
+  const lp=tzParts((jd-2440587.5)*86400000,ST.tz);
+  $('sub').textContent=p2(lp.day)+'.'+p2(lp.month)+'.'+lp.year+' '+p2(lp.hour)+':'+p2(lp.minute)+' ('+ST.tz+') · '+
+    ST.lat.toFixed(3)+'°, '+ST.lon.toFixed(3)+'°';
+  side(jd,sun,sunH,mo,mh,phase);
   const ill=(1-Math.cos(phase*D2R))/2;
-  $('note').innerHTML='მთვარის ფაზა '+phase.toFixed(0)+'° · განათებული '+(ill*100).toFixed(0)+
-    '% · LST '+(sunH.lst/15).toFixed(2)+'ს · ვარსკვლავები m ≤ '+ST.mag+
-    ' · პროექცია: სტერეოგრაფიული (ზენიტი ცენტრში, ჩრდილოეთი ზემოთ, აღმოსავლეთი მარცხნივ)'+
+  $('note').innerHTML='ვარსკვლავები m ≤ '+ST.mag+
+    ' · პროექცია: სტერეოგრაფიული (ზენიტი ცენტრში, ჩრდილოეთი ზემოთ, აღმოსავლეთი მარცხნივ — როგორც ცას ქვემოდან უყურებ)'+
     ' · სიზუსტე: პლანეტები &lt;5′, მზე/მთვარე &lt;1′ (შედარებული astropy-სთან)';
+}
+/* ── side panels: sky state & bodies ── */
+const DIR=['ჩრდ.','ჩრდ.-აღმ.','აღმ.','სამხ.-აღმ.','სამხ.','სამხ.-დას.','დას.','ჩრდ.-დას.'];
+const dirOf=az=>DIR[Math.round(az/45)%8];
+function phaseName(p){return p<10||p>350?'🌑 ახალი მთვარე':p<80?'🌒 მზარდი ნამგალი':p<100?'🌓 პირველი მეოთხედი':p<170?'🌔 მზარდი მთვარე':
+  p<190?'🌕 სავსე მთვარე':p<260?'🌖 კლებადი მთვარე':p<280?'🌗 ბოლო მეოთხედი':'🌘 კლებადი ნამგალი';}
+function twilight(a){return a>0?'☀ დღე':a>-6?'🌇 სამოქალაქო ბინდი':a>-12?'🌆 სანავიგაციო ბინდი':a>-18?'🌌 ასტრონომიული ბინდი':'🌃 სრული ღამე';}
+function side(jd,sun,sunH,mo,mh,phase){
+  const ill=(1-Math.cos(phase*D2R))/2;
+  $('tw').innerHTML='<b>'+twilight(sunH.alt)+'</b> · მზე '+sunH.alt.toFixed(1)+'°<br>'+phaseName(phase)+' · განათებული <b>'+Math.round(ill*100)+'%</b><br>'+
+    '<span class="k">ვარსკვლავური დრო (LST): '+(sunH.lst/15).toFixed(2)+' სთ</span>';
+  const rows=[['☉','მზე',sunH,sun],['☽','მთვარე',mh,mo]];
+  for(const pl of PLANETS){const q=bodyRaDec('planet',pl[1],jd);rows.push([pl[2],pl[0],eq2h(q.ra,q.dec,jd,ST.lat,ST.lon),q]);}
+  $('vis').innerHTML=rows.map(r=>'<div class="'+(r[2].alt<0?'dn':'')+'" data-n="'+r[1]+'"><i>'+r[0]+'</i><span>'+r[1]+'</span><small>'+
+    (r[2].alt<0?'ჰორიზონტს ქვემოთ':r[2].alt.toFixed(0)+'° · '+dirOf(r[2].az))+'</small></div>').join('');
+  document.querySelectorAll('#vis div').forEach(d=>d.onclick=()=>{const o=objs.find(x=>x.ka===d.dataset.n);
+    if(o){const rc=cv.getBoundingClientRect();cv.dispatchEvent(new MouseEvent('click',{clientX:rc.left+o.x*rc.width/cv.width,clientY:rc.top+o.y*rc.height/cv.height}));}});
 }
 /* ── interaction ── */
 function pick(mx,my){
@@ -514,6 +566,13 @@ function tog(id,key){$(id).onclick=function(){ST[key]=!ST[key];
 tog('tLine','line');tog('tName','name');tog('tStar','star');
 tog('tGrid','grid');tog('tEcl','ecl');tog('tEq','eq');
 $('rst').onclick=function(){ST.zoom=1;ST.px=0;ST.py=0;draw();};
+function zoomBy(f){const z=Math.max(1,Math.min(9,ST.zoom*f));f=z/ST.zoom;ST.zoom=z;ST.px*=f;ST.py*=f;draw();}
+$('zin').onclick=()=>zoomBy(1.3);$('zout').onclick=()=>zoomBy(1/1.3);
+$('geo').onclick=function(){if(!navigator.geolocation)return;
+  navigator.geolocation.getCurrentPosition(function(p){ST.lat=p.coords.latitude;ST.lon=p.coords.longitude;
+    $('lat').value=ST.lat.toFixed(3);$('lon').value=ST.lon.toFixed(3);
+    try{ST.tz=Intl.DateTimeFormat().resolvedOptions().timeZone||ST.tz;}catch(e){}
+    $('city').value='📍 ჩემი მდებარეობა';draw();},function(){},{timeout:8000});};
 $('mag').onchange=function(){ST.mag=parseFloat($('mag').value);draw();};
 function stopLive(){ST.live=false;$('live').className='';}
 $('live').onclick=function(){ST.live=!ST.live;$('live').className=ST.live?'on':'';
@@ -534,7 +593,7 @@ $('city').addEventListener('input',function(){
       body:JSON.stringify({city:q})}).then(r=>r.json()).then(function(d){
         if(d.error)return;
         $('lat').value=(+d.lat).toFixed(3);$('lon').value=(+d.lon).toFixed(3);
-        ST.lat=+d.lat;ST.lon=+d.lon;draw();
+        ST.lat=+d.lat;ST.lon=+d.lon;if(d.tz_name)ST.tz=d.tz_name;if(!ST.live)ST.jd=jdFromInputs();draw();
       }).catch(function(){});
   },600);
 });
@@ -544,7 +603,6 @@ $('city').addEventListener('input',function(){
     $('err').innerHTML='<div class="err">⚠ skydata.js ვერ ჩაიტვირთა — ვარსკვლავები არ გამოჩნდება. '+
       'დარწმუნდით, რომ skydata.js იმავე საქაღალდეშია.</div>';
   ST.jd=jdNow();setInputs(ST.jd);
-  const n=navigator.geolocation;
   draw();
   setInterval(function(){if(ST.live)draw();},1000);
 })();
