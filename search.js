@@ -1,3 +1,4 @@
+
 /* search.js — „ძებნა“: when were / will be planets in given signs (3000 BC – 9999 AD).
    Self-injecting add-on for astro.html (load after returns.js).
    Ephemeris (browser-side): JPL long-span Keplerian elements + Fourier/secular corrections in
