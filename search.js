@@ -106,6 +106,7 @@ function mfix(k,T){if(T<=10)return 0;const x=(T-45)/35,R=D2R,
   const A={moon:[Mp,2*D-Mp,2*D,2*Mp,M,2*F,D],node:[2*D-2*F,M,2*F,Mp],lilith:[2*Mp-2*F,4*Mp-4*F,Mp-F,2*D-2*F,2*D-Mp,M]}[k];
   let s=0;for(const t of MFIX[k]){const xp=t[2]?x**t[2]:1;s+=t[3]*xp*(t[0]===0?1:t[0]===1?Math.cos(A[t[1]]):Math.sin(A[t[1]]));}return s/60;}
 const nut=T=>{const O=(125.04452-1934.136261*T)*D2R,Ls=(280.4665+36000.7698*T)*D2R,Lm=(218.3165+481267.8813*T)*D2R;return(-17.20*Math.sin(O)-1.32*Math.sin(2*Ls)-0.23*Math.sin(2*Lm)+0.21*Math.sin(2*O))/3600;};
+let _eT=NaN,_eV=null;const earthAt=T=>{if(T!==_eT){_eT=T;_eV=helio('earth',T);}return _eV;};   /* same moment, many bodies */
 function lon(body,jdUT){
   const jd=jdUT+deltaT(jdUT)/86400,T=(jd-2451545)/36525;
   if(body==='moon')return norm(moonLon(T)+mfix('moon',T)+nut(T));
@@ -113,10 +114,10 @@ function lon(body,jdUT){
   if(body==='lilith'){const tn=T/30,A=(2*(134.9633964+477198.8675055*T)-2*(93.2720950+483202.0175233*T))*D2R;   /* mean apogee + SE correction */
     return norm(263.3532465+4069.0137287*T-0.0103200*T*T-T*T*T/80053+T*T*T*T/18999000+(0.025-0.189*tn-0.223*tn*tn-0.2*tn*tn*tn+1.853*Math.cos(A)+6.369*Math.sin(A))/60+mfix('lilith',T)+nut(T));}
   if(body==='selena'){const t=(jdUT-2451545)/36525;return norm(257282.21477+5143.5419820*t+5.2096e-5*t*t);}  /* White Moon (SE body 56) */
-  if(body==='chiron'){const e=helio('earth',T),p=chironHelio(jd);if(!p)return NaN;
+  if(body==='chiron'){const e=earthAt(T),p=chironHelio(jd);if(!p)return NaN;
     const lt=Math.hypot(p[0]-e[0],p[1]-e[1],p[2]-e[2])*0.0057755,p2=chironHelio(jd-lt);
     return norm(precVec([p2[0]-e[0],p2[1]-e[1],p2[2]-e[2]],T)+nut(T));}
-  const e=helio('earth',T);let v;
+  const e=earthAt(T);let v;
   if(body==='sun')v=[-e[0],-e[1],-e[2]];
   else{const p=helio0(body,T),lt=Math.hypot(p[0]-e[0],p[1]-e[1],p[2]-e[2])*0.0057755,p2=helio(body,T-lt/36525);v=[p2[0]-e[0],p2[1]-e[1],p2[2]-e[2]];}
   return norm(precVec(v,T)-(body==='sun'?0.0057:0)+nut(T));
@@ -129,7 +130,7 @@ const SIGNS=['ვერძი','კურო','ტყუპები','კირ
 const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
 const CAN_RX=new Set(['mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto','chiron']);
 /* scan step (days) — shorter than the shortest possible stay in a sign; slowest bodies are scanned first */
-const STEP={moon:1,mercury:0.5,venus:1,mars:1,sun:2,jupiter:2,saturn:2,uranus:5,neptune:8,pluto:8,chiron:3,node:10,snode:10,lilith:6,selena:10};
+const STEP={moon:1,mercury:0.5,venus:1,mars:1,sun:10,jupiter:2,saturn:2,uranus:5,neptune:8,pluto:8,chiron:3,node:10,snode:10,lilith:6,selena:10};
 const ORDER=['pluto','neptune','uranus','chiron','selena','node','snode','lilith','saturn','jupiter','mars','sun','venus','mercury','moon'];
 const Y_MIN=-3000,Y_MAX=9999,CH_Y0=700,CH_Y1=4650;   /* Chiron: Swiss Ephemeris range */
 const sfx=(n,x)=>(n.endsWith('ი')?n.slice(0,-1):n)+x;
@@ -348,5 +349,5 @@ function openChart(jd){
 }
 function boot(){try{inject();}catch(e){console.warn('search.js',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window._search={lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
+window._search={BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
 })();
