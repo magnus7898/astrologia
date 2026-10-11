@@ -17,11 +17,13 @@ const sfx=(n,x)=>(n.endsWith('ი')?n.slice(0,-1):n)+x;
 
 /* ── time zones: UTC instant ⇄ local wall time in an IANA zone ── */
 function parts(ms,tz){
+  if(window._anc&&ms<-12219292800000)return _anc.jdToLocal(ms/864e5+2440587.5,tz||'UTC');   /* before 15.10.1582: Julian calendar, BC years negative */
   const f=new Intl.DateTimeFormat('en-GB',{timeZone:tz||'UTC',hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
   const o={};f.formatToParts(new Date(ms)).forEach(p=>{if(p.type!=='literal')o[p.type]=+p.value;});
   if(o.hour===24)o.hour=0;return o;
 }
 function toUTC(y,mo,d,h,mi,s,tz){            /* local wall time → UTC ms */
+  if(window._anc&&_anc.isHistYMD(y,mo,d))return (_anc.localToJD(y,mo,d,h,mi,s,tz)-2440587.5)*864e5;
   let g=Date.UTC(y,mo-1,d,h,mi,s||0);
   for(let i=0;i<3;i++){const p=parts(g,tz);const asUTC=Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second);g-= (asUTC-Date.UTC(y,mo-1,d,h,mi,s||0));}
   return g;
@@ -29,7 +31,8 @@ function toUTC(y,mo,d,h,mi,s,tz){            /* local wall time → UTC ms */
 const jdOf=ms=>ms/864e5+2440587.5;
 function req(ms,loc){const p=parts(ms,loc.tz_name);
   return{year:p.year,month:p.month,day:p.day,hour:p.hour,minute:p.minute,second:p.second,lat:loc.lat,lon:loc.lon,tz_name:loc.tz_name,time_unknown:false};}
-const fmtLocal=(ms,tz)=>{const p=parts(ms,tz);return `${pad(p.day)}.${pad(p.month)}.${p.year} ${pad(p.hour)}:${pad(p.minute)}`;};
+const yr=y=>y<0?`${-y} ძვ.წ.`:y;                       /* −340 → 340 ძვ.წ. */
+const fmtLocal=(ms,tz)=>{const p=parts(ms,tz);return `${pad(p.day)}.${pad(p.month)}.${yr(p.year)} ${pad(p.hour)}:${pad(p.minute)}`;};
 
 /* ── quick ephemeris for first guesses ── */
 function sunLon(jd){const T=(jd-2451545)/36525,M=(357.52911+35999.05029*T)*D2R,L0=280.46646+36000.76983*T;
@@ -121,7 +124,7 @@ function inject(){
     <div class="person-label person-b-label">🌙 ლუნარი</div>
     <div class="rt-note">ლუნარი — რუკა იმ ზუსტ მომენტზე, როცა მთვარე ბრუნდება თავის ნატალურ გრძედზე (≈ ყოველ 27,3 დღეში). აჩვენებს თვის თემებს: ლუნარის ასცენდენტი, სახლები და ასპექტები.</div>
     <div class="form-grid-2">
-      <div class="field"><label>ლუნარი ამ თარიღიდან</label><input type="date" id="lr-from" style="color-scheme:dark"></div>
+      <div class="field"><label>ლუნარი ამ თარიღიდან (დღე · თვე · წელი)</label><div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:6px"><input type="number" id="lr-from-d" min="1" max="31" placeholder="დღე"><input type="number" id="lr-from-m" min="1" max="12" placeholder="თვე"><input type="number" id="lr-from-y" placeholder="წელი" title="ძვ.წ. — მინუსით: −356 = ძვ.წ. 356"></div></div>
       ${placeBlock('lr','სად იმყოფებით (ქალაქი)')}
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:4px"><input type="checkbox" id="lu-compare" style="accent-color:#C9A24C;width:14px;height:14px"><label for="lu-compare" style="font-size:11px;letter-spacing:1px">ნატალურთან შედარება</label></div>
@@ -131,15 +134,19 @@ function inject(){
     <div class="person-sep"></div>
     <div class="person-label person-b-label">📅 დღე</div>
     <div class="form-grid-2">
-      <div class="field"><label>თარიღი</label><input type="date" id="dp-date" style="color-scheme:dark"></div>
+      <div class="field"><label>თარიღი (დღე · თვე · წელი)</label><div style="display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:6px"><input type="number" id="dp-date-d" min="1" max="31" placeholder="დღე"><input type="number" id="dp-date-m" min="1" max="12" placeholder="თვე"><input type="number" id="dp-date-y" placeholder="წელი" title="ძვ.წ. — მინუსით: −356 = ძვ.წ. 356"></div></div>
       ${placeBlock('dq','სად იმყოფებით (დროის სარტყელი)')}
     </div>
     <button class="gen-btn" onclick="generate()" style="margin-top:8px">✦ დღის პროგნოზი ✦</button>`;
   const anchor=$('form-relocation')||null;
   card.insertBefore(lu,anchor);card.insertBefore(dp,anchor);
-  $('lr-from').value=todayISO();$('dp-date').value=todayISO();
+  setDMY('lr-from');setDMY('dp-date');
   [lu,dp].forEach(s=>s.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyNatal(b.dataset.copy)));
 }
+/* day · month · year fields (BC years negative) */
+function setDMY(p,y,m,d){const t=new Date();$(p+'-d').value=d||t.getDate();$(p+'-m').value=m||t.getMonth()+1;$(p+'-y').value=y||t.getFullYear();}
+function getDMY(p){const t=new Date(),v=(k,def)=>{const x=parseInt($(p+'-'+k).value,10);return isFinite(x)&&x!==0?x:def;};
+  return[v('y',t.getFullYear()),Math.min(12,Math.max(1,v('m',t.getMonth()+1))),Math.min(31,Math.max(1,v('d',t.getDate())))];}
 function copyNatal(p){
   for(const k of NAT_FIELDS){const a=$('n-'+k),b=$(p+'-'+k);if(a&&b)b.value=a.value;}
   const a=$('n-tz-display'),b=$(p+'-tz-display');if(a&&b)b.textContent=a.textContent;
@@ -172,11 +179,11 @@ async function runSolar(){
   const guess=quickNext('მზე',target,birthday-3*864e5);
   const r=await exact('მზე',target,guess,loc,t=>btnBusy(true,t));
   const dS=r.chart;dS._timeUnknown=false;
-  const lbl=`სოლარი ${srYear}`;
+  const lbl=`სოლარი ${yr(srYear)}`;
   if($('so-compare')&&$('so-compare').checked)
     showDoubleChart(dN,dS,'ნატალური',lbl,lbl,calcCrossAspects({...dN.planets,...(dN._aspPlanets||{})},{...dS.planets,...(dS._aspPlanets||{})}));
   else showSingleChart(dS,lbl,false);
-  card(`<h3>☀ სოლარი ${srYear} — ზუსტი მომენტი</h3>
+  card(`<h3>☀ სოლარი ${yr(srYear)} — ზუსტი მომენტი</h3>
     <div class="big">${fmtLocal(r.ms,loc.tz_name)}</div>
     <div class="sm">${loc.tz_name} · მზე ბრუნდება ნატალურ ${fmtDeg(target)} ${sfx(SIGN_KA[Math.floor(target/30)],'ზე')} (სიზუსტე ${Math.abs(r.err*3600).toFixed(1)}″) · UTC ${fmtLocal(r.ms,'UTC')}</div>
     <div class="sm" style="margin-top:6px">სოლარი იხსნება ზუსტად იმ მომენტზე, როცა მზე ნატალურ გრძედს უბრუნდება — ეს დაბადების დღეს ± 1 დღით შეიძლება იყოს და საათიც სხვაა.</div>`);
@@ -189,7 +196,7 @@ async function runLunar(pickMs){
   const loc=place('lr',natal);
   const dN=await fetchChart(natal);
   const target=+dN.planets['მთვარე'].degree;
-  const [y,m,d]=($('lr-from').value||todayISO()).split('-').map(Number);
+  const [y,m,d]=getDMY('lr-from');
   const from=toUTC(y,m,d,0,0,0,loc.tz_name);
   const g0=pickMs||quickNext('მთვარე',target,from);
   const r=await exact('მთვარე',target,g0,loc,t=>btnBusy(true,t));
@@ -257,7 +264,7 @@ async function runDaily(){
   const natal=getPersonData('dp');
   if(!natal.lat||!natal.lon){showError('შეიყვანეთ დაბადების ქალაქი');return;}
   const loc=place('dq',natal);
-  const [y,m,d]=($('dp-date').value||todayISO()).split('-').map(Number);
+  const [y,m,d]=getDMY('dp-date');
   const t0=toUTC(y,m,d,0,0,0,loc.tz_name),t1=t0+864e5,tm=t0+432e5;
   const [dN,a0,aM,a1]=await Promise.all([fetchChart(natal),fetchChart(req(t0,loc)),fetchChart(req(tm,loc)),fetchChart(req(t1,loc))]);
   const N={};for(const k of Object.keys(TP))if(dN.planets[k])N[k]=+dN.planets[k].degree;
@@ -292,7 +299,7 @@ async function runDaily(){
   const el=norm(ml-(+aM.planets['მზე'].degree));const ph=[...PHASE].reverse().find(p=>el>=p[0]-22.5)||PHASE[0];
   const phase=el>=337.5?PHASE[0]:ph;
   /* wheel: natal inside, transits outside */
-  const lbl=`დღიური პროგნოზი · ${pad(d)}.${pad(m)}.${y}`;
+  const lbl=`დღიური პროგნოზი · ${pad(d)}.${pad(m)}.${yr(y)}`;
   showDoubleChart(dN,aM,'ნატალური','ტრანზიტი '+pad(d)+'.'+pad(m),lbl,calcCrossAspects({...dN.planets,...(dN._aspPlanets||{})},{...aM.planets,...(aM._aspPlanets||{})}));
   const ord=hits.sort((x,y)=>(x.exact||9e15)-(y.exact||9e15)||(W[y.tp]-W[x.tp]));
   const aspHTML=ord.length?ord.map(h=>{const col=h.a[4]>0?'#7fb2f0':h.a[4]<0?'#f07a7a':'#f0c060';
