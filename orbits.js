@@ -44,7 +44,7 @@ const CSS=`
 
 /* ── state ── */
 const S={jd:0,speed:30.44,dir:1,play:true,view:'helio',focus:'all',scale:'pow',zoom:1,panX:0,panY:0,trails:true,sight:true,
-  birth:null,orbits:null,orbT:null,hist:{},dl:[],dT:null,acc:null,accKey:'',keep:true,dance:{on:false,a:'earth',b:'venus'},last:0,W:800,H:800,dpr:1,stars:null,bg:null,bgKey:'',fit:null};
+  birth:null,orbits:null,orbT:null,hist:{},dl:[],dT:null,acc:null,accKey:'',keep:true,nodes:false,dance:{on:false,a:'earth',b:'venus'},last:0,W:800,H:800,dpr:1,stars:null,bg:null,bgKey:'',fit:null};
 
 /* ── ephemeris helpers ── */
 function hv(k,jdUT){const jd=jdUT+X.deltaT(jdUT)/86400,T=(jd-2451545)/36525;
@@ -80,7 +80,7 @@ function buildOrbits(jd){const o={};
 /* ── static layer: stars, zodiac ring, orbits — cached ── */
 function stars(){const a=[];let s=7;const R=()=>{s=(s*16807)%2147483647;return s/2147483647;};for(let i=0;i<460;i++)a.push([R(),R(),R()*1.3+0.2,0.25+0.6*R()]);S.stars=a;}
 function bgLayer(){
-  const pr=precDeg(S.jd),key=[S.W,S.H,S.dpr,S.zoom.toFixed(3),S.panX|0,S.panY|0,S.scale,S.view,S.focus,S.dance.on,S.dance.a,S.dance.b,Math.round(pr*4),S.orbT].join('|');
+  const pr=precDeg(S.jd),key=[S.W,S.H,S.dpr,S.zoom.toFixed(3),S.panX|0,S.panY|0,S.scale,S.view,S.focus,S.dance.on,S.dance.a,S.dance.b,S.nodes,Math.round(pr*4),S.orbT].join('|');
   if(S.bg&&S.bgKey===key)return S.bg;
   const c=S.bg||document.createElement('canvas');c.width=S.W*S.dpr;c.height=S.H*S.dpr;
   const g=c.getContext('2d');g.setTransform(S.dpr,0,0,S.dpr,0,0);const W=S.W,H=S.H,cx=W/2+S.panX,cy=H/2+S.panY,Rz=ringR();
@@ -98,6 +98,14 @@ function bgLayer(){
   if(S.view==='helio'&&S.orbits){for(const [k,,,col] of PL){if(!visible(k))continue;const pts=S.orbits[k];if(!pts||pts.length<2)continue;
     g.beginPath();pts.forEach((v,i)=>{const [x,y]=toXY(v);i?g.lineTo(x,y):g.moveTo(x,y);});
     g.strokeStyle=col+(S.focus==='all'?'60':'90');g.lineWidth=S.focus==='all'?1.1:1.6;g.shadowColor=col;g.shadowBlur=8;g.stroke();g.shadowBlur=0;}}
+  /* planetary nodes: line of nodes, ☊ filled / ☋ hollow, where each orbit crosses the ecliptic */
+  if(S.nodes&&S.view==='helio'&&window._pnodes){const NN=window._pnodes.planetNodes(S.orbT||S.jd);
+    for(const k in NN){if(!visible(k))continue;const col=PK[k][3],[x1,y1]=toXY(NN[k].N),[x2,y2]=toXY(NN[k].S);
+      g.setLineDash([2,5]);g.strokeStyle=col+'70';g.lineWidth=1;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.setLineDash([]);
+      g.fillStyle=col;g.beginPath();g.arc(x1,y1,4,0,7);g.fill();
+      g.strokeStyle=col;g.lineWidth=1.4;g.beginPath();g.arc(x2,y2,4,0,7);g.stroke();
+      g.font='11px serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle=col;
+      g.fillText('☊\uFE0E',x1+(x1-cx)*0.04+0.1,y1+(y1-cy)*0.04-9);g.fillText('☋\uFE0E',x2+(x2-cx)*0.04,y2+(y2-cy)*0.04-9);}}
   S.bg=c;S.bgKey=key;return c;
 }
 
@@ -288,7 +296,7 @@ function inject(){
      <span style="width:10px"></span>
      <span style="font-size:11px;color:rgba(200,180,140,.75)">მასშტაბი:</span>
      <button type="button" class="ob-btn on" data-sc="pow">ყველა</button><button type="button" class="ob-btn" data-sc="inner">შიდა</button><button type="button" class="ob-btn" data-sc="lin">რეალური</button>
-     <button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button>
+     <button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button><button type="button" class="ob-btn" id="ob-nd" title="სად კვეთს თითო პლანეტის ორბიტა ეკლიპტიკას">☊ კვანძები</button>
    </div>
    <div class="ob-bar">
      <span style="font-size:11px;color:rgba(200,180,140,.75)">კვალი:</span>
@@ -332,6 +340,8 @@ function inject(){
   $('ob-da').onchange=e=>{S.dance.a=e.target.value;resetTrails();S.bgKey='';};
   $('ob-db').onchange=e=>{S.dance.b=e.target.value;resetTrails();S.bgKey='';};
   $('ob-sl').onclick=e=>{S.sight=!S.sight;e.target.classList.toggle('on',S.sight);};
+  $('ob-nd').onclick=e=>{S.nodes=!S.nodes;e.target.classList.toggle('on',S.nodes);
+    if(S.nodes&&S.view!=='helio'){const h=sec.querySelector('[data-vw=helio]');if(h)h.click();}};
   /* zoom / pan / hover */
   const cv=$('ob-cv');let drag=null,pinch=null;
   cv.addEventListener('wheel',e=>{e.preventDefault();S.zoom=Math.max(0.4,Math.min(40,S.zoom*(e.deltaY<0?1.15:1/1.15)));},{passive:false});
