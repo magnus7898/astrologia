@@ -319,6 +319,7 @@ function prenatalSyzygy(jd){
 }
 /* local wall time in a zone → UT Julian day */
 function utJD(q){
+  if(window._anc&&_anc.isHist(q))return _anc.utJD(q);   /* BC / Julian-calendar dates */
   const y=+q.year,m=+q.month,d=+q.day,h=+(q.hour||0),mi=+(q.minute||0),se=+(q.second||0),tz=q.tz_name||'UTC';
   const g=Date.UTC(y,m-1,d,h,mi,se);
   const off=ms=>{const p={};new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',
