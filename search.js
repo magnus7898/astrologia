@@ -118,8 +118,15 @@ const Y_MIN=-3000,Y_MAX=9999;
 const sfx=(n,x)=>(n.endsWith('ი')?n.slice(0,-1):n)+x;
 const MAXC=BODIES.length;
 
+/* aspects: angle, name, glyph */
+const ASPECTS=[[0,'შეერთება','☌'],[30,'ნახევარსექსტილი','⚺'],[45,'ნახევარკვადრატი','∠'],[60,'სექსტილი','⚹'],[72,'კვინტილი','Q'],
+  [90,'კვადრატი','□'],[120,'ტრინი','△'],[135,'სესკვიკვადრატი','⚼'],[150,'კვინკონსი','⚻'],[180,'ოპოზიცია','☍']];
+/* max daily motion (°/day) — sets the scan step for aspects so no orb window is skipped */
+const VMAX={moon:15.4,mercury:2.2,venus:1.3,sun:1.02,mars:0.8,jupiter:0.25,saturn:0.13,uranus:0.07,neptune:0.04,pluto:0.04,node:0.06,snode:0.06,lilith:0.12,selena:0.15};
+const sepOf=(c,jd)=>Math.abs(norm(lon(c.a,jd)-lon(c.b,jd)+180)-180);
 /* one condition at jd */
 function test(c,jd){
+  if(c.t==='asp')return Math.abs(sepOf(c,jd)-c.ang)<=c.orb;
   const L=lon(c.b,jd);
   if(Math.floor(L/30)!==c.s)return false;
   if(c.rx){const d=norm(lon(c.b,jd+0.1)-lon(c.b,jd-0.1)+180)-180;if(d>=0)return false;}
@@ -128,10 +135,11 @@ function test(c,jd){
 function ok(conds,jd){return conds.every(c=>test(c,jd));}
 /* scan: each condition only inside the windows left by the previous (slower) ones → intersection */
 async function scan(conds,jd0,jd1,progress,cancelled){
-  const cs=[...conds].sort((a,b)=>ORDER.indexOf(a.b)-ORDER.indexOf(b.b));
+  const rank=c=>c.t==='asp'?Math.max(ORDER.indexOf(c.a),ORDER.indexOf(c.b))+0.5:ORDER.indexOf(c.b);
+  const cs=[...conds].sort((a,b)=>rank(a)-rank(b));
   let wins=[[jd0,jd1]];let tick=performance.now();
   for(let ci=0;ci<cs.length;ci++){
-    const c=cs[ci],step=STEP[c.b]||1,next=[],tot=wins.reduce((a,w)=>a+w[1]-w[0],0)||1;let done=0;
+    const c=cs[ci],step=c.t==='asp'?Math.min(STEP[c.a]||1,STEP[c.b]||1,1.8*c.orb/(VMAX[c.a]+VMAX[c.b])):(STEP[c.b]||1),next=[],tot=wins.reduce((a,w)=>a+w[1]-w[0],0)||1;let done=0;
     for(const [a,b] of wins){
       let t=a,prev=test(c,a),start=prev?a:null;
       while(t<b){
@@ -148,6 +156,14 @@ async function scan(conds,jd0,jd1,progress,cancelled){
   return wins.map(w=>[w[0],w[1],w[0]<=jd0+1e-6,w[1]>=jd1-1e-6]);
 }
 
+/* moment of the exact aspect inside [a,b] (smallest |separation − angle|) */
+function exactIn(c,a,b){
+  const f=t=>Math.abs(sepOf(c,t)-c.ang),N=24;let bi=0,bv=1e9;
+  for(let i=0;i<=N;i++){const v=f(a+(b-a)*i/N);if(v<bv){bv=v;bi=i;}}
+  let lo=a+(b-a)*Math.max(0,bi-1)/N,hi=a+(b-a)*Math.min(N,bi+1)/N;
+  for(let k=0;k<50;k++){const m1=lo+(hi-lo)/3,m2=hi-(hi-lo)/3;if(f(m1)<f(m2))hi=m2;else lo=m1;}
+  const t=(lo+hi)/2;return{jd:t,dev:f(t)};
+}
 /* ── calendar: Julian before 15.10.1582, Gregorian after; astronomical years (0 = 1 BC) ── */
 function cal2jd(y,m,d,greg){if(greg==null)greg=(y*10000+m*100+d)>=15821015;if(m<=2){y--;m+=12;}
   const A=Math.floor(y/100),B=greg?2-A+Math.floor(A/4):0;return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5;}
@@ -172,6 +188,10 @@ function dur(d){if(d<2)return Math.round(d*24)+' სთ';if(d<60)return Math.rou
 /* ── UI ── */
 const CSS=`
 .sr-row{display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;align-items:end;margin-bottom:8px}
+.sr-row.sr-asp{grid-template-columns:1fr 1fr 1fr 74px auto}
+@media(max-width:560px){.sr-row.sr-asp{grid-template-columns:1fr 1fr}.sr-row.sr-asp .sr-x{justify-self:end}}
+.sr-adds{display:flex;gap:8px;flex-wrap:wrap}
+.sr-it .ex{color:#F0D48A;font-size:11px}
 .sr-row .rx{display:flex;align-items:center;gap:5px;font-size:11px;padding-bottom:9px;white-space:nowrap}
 .sr-x{background:none;border:1px solid rgba(201,162,76,.3);color:#E8C97A;border-radius:50%;width:30px;height:30px;cursor:pointer;margin-bottom:3px}
 .sr-add{background:rgba(201,162,76,.1);border:1px dashed rgba(201,162,76,.45);color:#E8C97A;border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit}
@@ -198,6 +218,15 @@ function rowHTML(b){
     <label class="rx"><input type="checkbox" class="sr-rx" style="accent-color:#C9A24C"> ℞</label>
     <button type="button" class="sr-x" title="წაშლა">×</button></div>`;
 }
+function aspRowHTML(a,ang,b){
+  const sel=(cls,v)=>`<select class="${cls}">${BODIES.map(x=>`<option value="${x[0]}"${x[0]===v?' selected':''}>${x[2]} ${x[1]}</option>`).join('')}</select>`;
+  return `<div class="sr-row sr-asp">
+    <div class="field"><label>პირველი პლანეტა</label>${sel('sr-a',a)}</div>
+    <div class="field"><label>ასპექტი</label><select class="sr-ang">${ASPECTS.map(x=>`<option value="${x[0]}"${x[0]===ang?' selected':''}>${x[2]} ${x[1]} ${x[0]}°</option>`).join('')}</select></div>
+    <div class="field"><label>მეორე პლანეტა</label>${sel('sr-b2',b)}</div>
+    <div class="field"><label>ორბი °</label><input type="number" class="sr-orb" value="1" min="0.1" max="10" step="0.5"></div>
+    <button type="button" class="sr-x" title="წაშლა">×</button></div>`;
+}
 function inject(){
   const bar=document.querySelector('.tab-bar'),card=document.querySelector('.form-card');
   if(!bar||!card||$('form-search'))return;
@@ -210,9 +239,9 @@ function inject(){
   sec.innerHTML=`
     <div class="person-label">🔎 ძებნა — როდის იყო / იქნება</div>
     <div style="font-size:11px;color:rgba(200,180,140,.7);line-height:1.6;margin:-2px 0 12px">
-      აირჩიე ერთი ან რამდენიმე პლანეტა ნიშანში (${MAXC}-მდე) — ვიპოვი ყველა პერიოდს, როცა <b>ყველა პირობა ერთად</b> სრულდება. ℞ — მხოლოდ რეტროგრადულ მოძრაობაში.</div>
+      დაამატე პირობები (${MAXC}-მდე): <b>პლანეტა ნიშანში</b> და/ან <b>ასპექტი ორ პლანეტას შორის</b> (ორბით) — ვიპოვი ყველა პერიოდს, როცა <b>ყველა პირობა ერთად</b> სრულდება, ასპექტისთვის — ზუსტ მომენტსაც. ℞ — მხოლოდ რეტროგრადულ მოძრაობაში.</div>
     <div id="sr-rows">${rowHTML('jupiter')}</div>
-    <button type="button" class="sr-add" id="sr-add">+ პირობის დამატება</button>
+    <div class="sr-adds"><button type="button" class="sr-add" id="sr-add">+ პლანეტა ნიშანში</button><button type="button" class="sr-add" id="sr-add-asp">+ ასპექტი</button></div>
     <div class="form-grid-2" style="margin-top:12px">
       <div class="field"><label>წლიდან</label><input type="number" id="sr-y0" value="${y-100}" min="${Y_MIN}" max="${Y_MAX}"></div>
       <div class="field"><label>წლამდე</label><input type="number" id="sr-y1" value="${y+100}" min="${Y_MIN}" max="${Y_MAX}"></div>
@@ -223,16 +252,19 @@ function inject(){
     <div class="sr-bar" id="sr-bar"><i></i></div>
     <div id="sr-out"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
-  const rows=$('sr-rows'),add=$('sr-add');
-  const upd=()=>{add.disabled=rows.children.length>=MAXC;add.textContent=`+ პირობის დამატება (${rows.children.length}/${MAXC})`;};
+  const rows=$('sr-rows'),add=$('sr-add'),addA=$('sr-add-asp');
+  const upd=()=>{const n=rows.children.length,full=n>=MAXC;add.disabled=addA.disabled=full;
+    add.textContent=`+ პლანეტა ნიშანში`;addA.textContent=`+ ასპექტი`;add.title=addA.title=`${n}/${MAXC}`;};
   const wire=()=>{rows.querySelectorAll('.sr-row').forEach(r=>{
     r.querySelector('.sr-x').onclick=()=>{if(rows.children.length>1){r.remove();upd();}};
+    if(r.classList.contains('sr-asp'))return;
     const sel=r.querySelector('.sr-b'),rx=r.querySelector('.sr-rx');
     sel.onchange=()=>{rx.disabled=!CAN_RX.has(sel.value);if(rx.disabled)rx.checked=false;};sel.onchange();});upd();};
   add.onclick=()=>{if(rows.children.length>=MAXC)return;
     const used=new Set([...rows.querySelectorAll('.sr-b')].map(s=>s.value));
     const nb=(['saturn','mars','sun','venus','mercury','moon','uranus','neptune','pluto','node','lilith','snode','selena','jupiter'].find(x=>!used.has(x)))||'sun';
     rows.insertAdjacentHTML('beforeend',rowHTML(nb));wire();};
+  addA.onclick=()=>{if(rows.children.length>=MAXC)return;rows.insertAdjacentHTML('beforeend',aspRowHTML('jupiter',0,'saturn'));wire();};
   sec.querySelectorAll('#sr-pre button').forEach(x=>x.onclick=()=>{const [a,c]=x.dataset.r.split(',');$('sr-y0').value=a;$('sr-y1').value=c;});
   wire();
   $('sr-go').onclick=run;
@@ -240,7 +272,13 @@ function inject(){
 let running=false,cancel=false;
 async function run(){
   if(running){cancel=true;return;}
-  const conds=[...document.querySelectorAll('#sr-rows .sr-row')].map(r=>({b:r.querySelector('.sr-b').value,s:+r.querySelector('.sr-s').value,rx:r.querySelector('.sr-rx').checked}));
+  const conds=[...document.querySelectorAll('#sr-rows .sr-row')].map(r=>r.classList.contains('sr-asp')
+    ?{t:'asp',a:r.querySelector('.sr-a').value,b:r.querySelector('.sr-b2').value,ang:+r.querySelector('.sr-ang').value,
+      orb:Math.max(0.1,Math.min(10,parseFloat(r.querySelector('.sr-orb').value)||1))}
+    :{t:'sign',b:r.querySelector('.sr-b').value,s:+r.querySelector('.sr-s').value,rx:r.querySelector('.sr-rx').checked});
+  const bad=conds.find(c=>c.t==='asp'&&(c.a===c.b||[c.a,c.b].sort().join()==='node,snode'));
+  if(bad){$('sr-out').innerHTML='<div class="sr-sum">ასპექტისთვის აირჩიე ორი სხვადასხვა პლანეტა.</div>';return;}
+  const asps=conds.filter(c=>c.t==='asp');
   const clamp=v=>Math.max(Y_MIN,Math.min(Y_MAX,Math.round(v)));
   let y0=clamp(+$('sr-y0').value||1900),y1=clamp(+$('sr-y1').value||2100);if(y1<y0)[y0,y1]=[y1,y0];
   $('sr-y0').value=y0;$('sr-y1').value=y1;
@@ -256,7 +294,12 @@ async function run(){
   if(!res){if(cancel)out.innerHTML='<div class="sr-sum">ძებნა შეჩერდა.</div>';return;}
   res.sort((p,q)=>p[0]-q[0]);
   const now=jdOfMs(Date.now());
-  const label=conds.map(c=>{const B=BODIES.find(x=>x[0]===c.b);return `${B[2]} ${B[1]} ${sfx(SIGNS[c.s],'ში')}${c.rx?' ℞':''}`;}).join(' + ');
+  const BN=k=>{const B=BODIES.find(x=>x[0]===k);return `${B[2]} ${B[1]}`;},AS=g=>ASPECTS.find(x=>x[0]===g);
+  const label=conds.map(c=>c.t==='asp'?`${BN(c.a)} ${AS(c.ang)[2]} ${BN(c.b)} <span style="font-weight:400;opacity:.75">(${AS(c.ang)[1]}, ორბი ${c.orb}°)</span>`
+    :`${BN(c.b)} ${sfx(SIGNS[c.s],'ში')}${c.rx?' ℞':''}`).join(' + ');
+  const fmtOrb=d=>`${Math.floor(d)}°${pad(Math.round((d%1)*60)%60)}′`;
+  const exInfo=r=>asps.map(c=>{const e=exactIn(c,r[0],r[1]);r._ex=r._ex||e.jd;
+    return `<div class="ex">${AS(c.ang)[2]} ${BODIES.find(x=>x[0]===c.a)[2]}${BODIES.find(x=>x[0]===c.b)[2]} ${e.dev<1/60?'ზუსტი':'უახლოესი'}: ${fmt(e.jd,true)}${e.dev<1/60?'':' (ორბი '+fmtOrb(e.dev)+')'}</div>`;}).join('');
   if(!res.length){out.innerHTML=`<div class="sr-sum"><b>${label}</b><br>${span}: ამ პერიოდში ასეთი კომბინაცია არ ყოფილა და არ იქნება.</div>`;return;}
   const nextI=res.findIndex(r=>r[0]>now);
   const total=res.reduce((a,r)=>a+(r[1]-r[0]),0),LIM=3000;
@@ -267,9 +310,10 @@ async function run(){
     <br><span style="font-size:11px">დრო — ${tz}${y0<1850?' (ძველ თარიღებზე — ადგილობრივი მზის დრო)':''}. ${a0<1583?'1582 წლამდე — იულიუსის კალენდარი. ':''}სიზუსტე: ჩვეულებრივ ± წუთები–საათები; ნელ პლანეტებზე, ძვ.წ. ათასწლეულებსა და შორეულ მომავალში — ± რამდენიმე დღემდე (5000 წლის შემდეგ დედამიწის ბრუნვის შენელება (ΔT) თავადაა გაურკვეველი). ზუსტი მომენტისთვის გახსენი „რუკა →“.</span></div>
     <div class="sr-list">${shown.map(r=>{const i=res.indexOf(r),isNow=r[0]<=now&&now<=r[1],past=r[1]<now;
       const tag=isNow?['ახლა','#5fc8b0']:past?['წარსული','rgba(196,176,148,.6)']:['მომავალი','#C9A24C'];
+      const ex=exInfo(r);
       return `<div class="sr-it ${isNow?'now':i===nextI?'next':''}"><span class="sr-tag" style="color:${tag[1]};border-color:${tag[1]}">${tag[0]}</span>
-        <div>${r[2]?'… ':''}${fmt(r[0],true)} — ${fmt(r[1],true)}${r[3]?' …':''}<div class="d">${dur(r[1]-r[0])}${r[2]||r[3]?' (დიაპაზონის კიდეზე)':''}</div></div>
-        <button type="button" class="sr-go" data-jd="${(r[0]+r[1])/2}">რუკა →</button></div>`;}).join('')}</div>`;
+        <div>${r[2]?'… ':''}${fmt(r[0],true)} — ${fmt(r[1],true)}${r[3]?' …':''}<div class="d">${dur(r[1]-r[0])}${r[2]||r[3]?' (დიაპაზონის კიდეზე)':''}</div>${ex}</div>
+        <button type="button" class="sr-go" data-jd="${r._ex||(r[0]+r[1])/2}">რუკა →</button></div>`;}).join('')}</div>`;
   out.querySelectorAll('.sr-go').forEach(b=>b.onclick=()=>openChart(+b.dataset.jd));
   const ne=out.querySelector('.sr-it.now')||out.querySelector('.sr-it.next');if(ne)ne.scrollIntoView({block:'nearest'});
 }
@@ -283,5 +327,5 @@ function openChart(jd){
 }
 function boot(){try{inject();}catch(e){console.warn('search.js',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window._search={lon,scan,ok,cal2jd,jd2cal,deltaT};
+window._search={lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
 })();
