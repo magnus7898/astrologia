@@ -59,6 +59,8 @@ function helio0(k,T){
 /* J2000 ecliptic → mean ecliptic & equinox of date. Pole of the ecliptic of date (nx,ny) and
    general precession residual fitted to Swiss Ephemeris (Vondrák 2011) — <0.5″, 3000 BC–10000 AD */
 const PREC={"a": {"nx": [-1.263373047e-06, -3.045167194e-05, 0.0009641837341, -0.0005733874241, -2.292717328e-05], "ny": [7.475062877e-06, -8.155708657e-05, -9.518954738e-05, 0.007251147901, -0.004618033556], "p": [-0.0001015181716, 0.0002804907389, -0.0003160346012, 0.0001213760764, -4.538944999e-06], "c0": -20, "sc": 31}, "b": {"nx": [-1.142546951e-05, -6.483539927e-05, 0.001015909531, 0.003528443788, 0.0027165571], "ny": [-1.179932873e-05, -0.0001188947155, -0.0007227351969, 0.006863146401, 0.009498943928], "p": [-0.0001848934921, -0.0008728521643, -0.001604425829, -0.001404928962, -0.0005042769571], "c0": 45, "sc": 36}};
+/* pole of the mean ecliptic of date, in J2000 ecliptic coordinates */
+function poleOfDate(t){const S=PREC[t>10?'b':'a'],x=(t-S.c0)/S.sc,pv=c=>c.reduce((a,k)=>a*x+k,0);const nx=pv(S.nx),ny=pv(S.ny);return [nx,ny,Math.sqrt(Math.max(0,1-nx*nx-ny*ny))];}
 function precVec(v,t){
   const S=PREC[t>10?'b':'a'],x=(t-S.c0)/S.sc,pv=c=>c.reduce((a,k)=>a*x+k,0);
   const nx=pv(S.nx),ny=pv(S.ny),eta=Math.asin(Math.min(1,Math.hypot(nx,ny))),Pi=Math.atan2(nx,-ny),p=(5029.0966*t+1.11113*t*t)/3600*D2R+pv(S.p);
@@ -358,5 +360,5 @@ function openChart(jd){
 }
 function boot(){try{inject();}catch(e){console.warn('search.js',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window._search={helio,helio0,chironHelio,KEP,signOpts,parseS,signLbl,BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
+window._search={poleOfDate,precVec,helio,helio0,chironHelio,KEP,signOpts,parseS,signLbl,BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
 })();
