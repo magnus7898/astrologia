@@ -848,6 +848,10 @@ function calcComposite(d1,d2){
 // ── PROGRESSION CALCULATION ──
 // Secondary progression: natal date + (years_elapsed) days
 function progressedDate(natal,target){
+  const A=window._anc;
+  if(A&&(A.isHistYMD(natal.year,natal.month,natal.day)||A.isHistYMD(target.year,target.month,target.day))){   /* BC / Julian dates */
+    const J=q=>A.cal2jd(A.yAstro(+q.year),+q.month,+q.day,!A.isHistYMD(q.year,q.month,q.day)),jn=J(natal),jt=J(target);
+    const c=A.jd2cal(jn+(jt-jn)/365.25);return{year:A.yHist(c.y),month:c.m,day:c.d};}
   const n=new Date(natal.year,natal.month-1,natal.day);
   const t=new Date(target.year,target.month-1,target.day);
   const yearsElapsed=(t-n)/(365.25*24*3600*1000);
@@ -1765,7 +1769,7 @@ async function generate(){
       if(!bLat||!bLon){showError('შეიყვანეთ დაბადების ქალაქი');return;}
       if(!newLat||!newLon){showError('შეიყვანეთ ახალი ქალაქი');return;}
       const natal={year:+document.getElementById('rl-year').value,month:+document.getElementById('rl-month').value,day:+document.getElementById('rl-day').value,hour:+document.getElementById('rl-hour').value,minute:+document.getElementById('rl-minute').value,second:+(document.getElementById('rl-second')?.value||0),lat:bLat,lon:bLon,tz_name:bTz,time_unknown:false};
-      const relData={...natal,lat:newLat,lon:newLon,tz_name:newTz};
+      const relData={...natal,lat:newLat,lon:newLon};   /* same moment (birth clock + birth zone), new place */
       if(document.getElementById('rl-compare')?.checked){
         const[dNatal,dReloc]=await Promise.all([fetchChart(natal),fetchChart(relData)]);
         showDoubleChart(dNatal,dReloc,'ნატალური','რელოკაცია','რელოკაცია',calcCrossAspects({...dNatal.planets,...(dNatal._aspPlanets||{})},{...dReloc.planets,...(dReloc._aspPlanets||{})}));
@@ -3315,6 +3319,7 @@ setToday('pd');
 });
 </script>
 
+  <script src="ancient.js"></script>
   <script src="futurelife.js"></script>
   <script src="orbs.js"></script>
   <script src="trutine.js"></script>
