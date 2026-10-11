@@ -315,11 +315,12 @@ function bodyRaDec(kind,key,jd){
   return{ra:q.ra,dec:q.dec,elon:e.lon,d:e.d};
 }
 function skyColor(sunAlt){
-  if(sunAlt>0)   return['#7fb0e8','#bcd8f5'];
-  if(sunAlt>-6)  return['#2a4a7a','#6a86b8'];
-  if(sunAlt>-12) return['#16294a','#2c4470'];
-  if(sunAlt>-18) return['#0a1228','#141f3c'];
-  return['#03040a','#070a16'];
+  /* soft, muted blues — a dimmed sky so labels and stars stay readable by day too */
+  if(sunAlt>0)   return['#3a5683','#22365a'];
+  if(sunAlt>-6)  return['#2a4069','#1a2a4a'];
+  if(sunAlt>-12) return['#18284a','#111d38'];
+  if(sunAlt>-18) return['#0d1630','#0a1126'];
+  return['#070a18','#04050d'];
 }
 function draw(){
   const jd=ST.live?jdNow():ST.jd;
@@ -329,9 +330,9 @@ function draw(){
   const sun=bodyRaDec('sun',null,jd),sunH=eq2h(sun.ra,sun.dec,jd,ST.lat,ST.lon);
   const cols=skyColor(sunH.alt);
   /* bright sky (sun up): dark labels on a light halo; night: light labels on a dark halo */
-  const DAY=sunH.alt>-0.8;
-  const halo=(txt,x,y,fill)=>{ctx.save();ctx.lineJoin='round';ctx.lineWidth=3.5;
-    ctx.strokeStyle=DAY?'rgba(235,244,255,.75)':'rgba(4,3,10,.75)';ctx.strokeText(txt,x,y);ctx.fillStyle=fill;ctx.fillText(txt,x,y);ctx.restore();};
+  const DAY=false;   /* the sky is always dark enough for light labels */
+  const halo=(txt,x,y,fill)=>{ctx.save();ctx.lineJoin='round';ctx.lineWidth=3;
+    ctx.strokeStyle=DAY?'rgba(235,244,255,.75)':'rgba(6,8,20,.55)';ctx.strokeText(txt,x,y);ctx.fillStyle=fill;ctx.fillText(txt,x,y);ctx.restore();};
   ctx.clearRect(0,0,W,H);
   const g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,R);
   g.addColorStop(0,cols[0]);g.addColorStop(1,cols[1]);
