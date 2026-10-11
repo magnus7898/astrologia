@@ -266,7 +266,7 @@ async function run(){
 function openChart(jd){
   const g=jd2cal(jd,true),lat=+(($('n-lat')||{}).value)||41.7151,lng=+(($('n-lon')||{}).value)||44.8271;
   (async()=>{try{
-    const d=await fetchChart({year:g.y,month:g.m,day:g.d,hour:g.h,minute:g.mi,second:0,lat,lon:lng,tz_name:'UTC',time_unknown:false});
+    const d=await fetchChart({year:g.y,month:g.m,day:g.d,hour:g.h,minute:g.mi,second:0,lat,lon:lng,tz_name:'UTC',time_unknown:false,_raw:true});
     d._timeUnknown=false;showSingleChart(d,`🔎 ${fmt(jd,true)}`,false);
   }catch(e){showError(e.message);}})();
 }
