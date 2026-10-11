@@ -328,6 +328,10 @@ function draw(){
   objs=[];
   const sun=bodyRaDec('sun',null,jd),sunH=eq2h(sun.ra,sun.dec,jd,ST.lat,ST.lon);
   const cols=skyColor(sunH.alt);
+  /* bright sky (sun up): dark labels on a light halo; night: light labels on a dark halo */
+  const DAY=sunH.alt>-0.8;
+  const halo=(txt,x,y,fill)=>{ctx.save();ctx.lineJoin='round';ctx.lineWidth=3.5;
+    ctx.strokeStyle=DAY?'rgba(235,244,255,.75)':'rgba(4,3,10,.75)';ctx.strokeText(txt,x,y);ctx.fillStyle=fill;ctx.fillText(txt,x,y);ctx.restore();};
   ctx.clearRect(0,0,W,H);
   const g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,R);
   g.addColorStop(0,cols[0]);g.addColorStop(1,cols[1]);
@@ -379,17 +383,17 @@ function draw(){
       const p=proj(h.alt,h.az);
       const rad=Math.max(.6,(ST.mag+0.6-s[2])*0.85)*Math.min(2.2,ST.zoom);
       const al=Math.min(1,.35+(ST.mag-s[2])*0.22);
-      ctx.fillStyle='rgba(255,255,255,'+al.toFixed(2)+')';
+      ctx.fillStyle=(DAY?'rgba(25,45,95,':'rgba(255,255,255,')+al.toFixed(2)+')';
       ctx.beginPath();ctx.arc(p.x,p.y,rad,0,7);ctx.fill();
       if(s[2]<1.9){
-        ctx.fillStyle='rgba(190,215,255,.20)';
+        ctx.fillStyle=DAY?'rgba(25,45,95,.12)':'rgba(190,215,255,.20)';
         ctx.beginPath();ctx.arc(p.x,p.y,rad*2.6,0,7);ctx.fill();
       }
     }
   }
   /* constellation lines */
   if(ST.line&&typeof SKY_LINES!=='undefined'){
-    ctx.strokeStyle='rgba(201,168,76,.30)';ctx.lineWidth=1;
+    ctx.strokeStyle=DAY?'rgba(30,50,110,.45)':'rgba(201,168,76,.30)';ctx.lineWidth=DAY?1.2:1;
     const seen={};
     for(const e of SKY_LINES){
       const abbr=e[0],seg=e[1];
@@ -408,7 +412,7 @@ function draw(){
         const ka=(typeof IAU_KA!=='undefined'&&IAU_KA[abbr])?IAU_KA[abbr]:abbr;
         ctx.fillStyle='rgba(232,213,160,.55)';
         ctx.font='500 '+Math.round(11*Math.min(1.7,ST.zoom))+'px Cinzel, serif';
-        ctx.textAlign='center';ctx.fillText(ka,sx/n,sy/n);
+        ctx.textAlign='center';halo(ka,sx/n,sy/n,DAY?'rgba(20,32,80,.9)':'rgba(232,213,160,.62)');
       }
     }
   }
@@ -422,7 +426,7 @@ function draw(){
       if(h.alt<2)continue;
       const p=proj(h.alt,h.az);
       ctx.fillStyle='rgba(215,232,255,.72)';
-      ctx.fillText(nm[0],p.x+6,p.y-5);
+      halo(nm[0],p.x+6,p.y-5,DAY?'rgba(15,28,70,.95)':'rgba(215,232,255,.8)');
       objs.push({x:p.x,y:p.y,r:9,type:'star',ka:nm[0],en:nm[1],ra:q.ra,dec:q.dec,alt:h.alt,az:h.az});
     }
   }
@@ -469,7 +473,7 @@ function draw(){
     ctx.fillStyle='rgba(255,255,255,.16)';
     ctx.beginPath();ctx.arc(p.x,p.y,rad*2.3,0,7);ctx.fill();
     ctx.fillStyle=pl[3];ctx.beginPath();ctx.arc(p.x,p.y,rad,0,7);ctx.fill();
-    ctx.fillStyle=pl[3];ctx.fillText(pl[2]+' '+pl[0],p.x+rad+4,p.y-4);
+    halo(pl[2]+' '+pl[0],p.x+rad+4,p.y-4,DAY?'#4a1d00':pl[3]);
     objs.push({x:p.x,y:p.y,r:rad+9,type:'planet',ka:pl[0],en:pl[1],ra:q.ra,dec:q.dec,
       alt:h.alt,az:h.az,d:q.d});
   }
