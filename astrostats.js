@@ -19,6 +19,7 @@ const MAJOR=[0,60,90,120,180];
 const sfx=(n,x)=>(n.endsWith('ი')?n.slice(0,-1):n)+x;
 
 const CSS=`
+#form-astats #as-rows .as-row:first-child{border-left:2px solid #C9A24C;padding-left:8px}
 #form-astats .as-row{display:grid;grid-template-columns:1fr 1fr auto auto;gap:8px;align-items:end;margin-bottom:8px}
 #form-astats .as-row.as-asp{grid-template-columns:1fr 1fr 1fr 74px auto}
 @media(max-width:560px){#form-astats .as-row.as-asp{grid-template-columns:1fr 1fr}}
@@ -56,7 +57,7 @@ const CSS=`
 /* ── form rows ── */
 const optB=v=>X.BODIES.map(x=>`<option value="${x[0]}"${x[0]===v?' selected':''}>${x[2]} ${x[1]}</option>`).join('');
 const signRow=(b,s)=>`<div class="as-row"><div class="field"><label>პლანეტა / წერტილი</label><select class="as-b">${optB(b)}</select></div>
-  <div class="field"><label>ნიშანი</label><select class="as-s">${X.SIGNS.map((n,j)=>`<option value="${j}"${j===s?' selected':''}>${X.ZS[j]}︎ ${n}</option>`).join('')}</select></div>
+  <div class="field"><label>ნიშანი</label><select class="as-s">${X.signOpts(s)}</select></div>
   <label class="rx"><input type="checkbox" class="as-rx" style="accent-color:#C9A24C"> ℞</label><button type="button" class="as-x" title="წაშლა">×</button></div>`;
 const aspRow=(a,g,b)=>`<div class="as-row as-asp"><div class="field"><label>პირველი</label><select class="as-a">${optB(a)}</select></div>
   <div class="field"><label>ასპექტი</label><select class="as-g">${X.ASPECTS.map(x=>`<option value="${x[0]}"${x[0]===g?' selected':''}>${x[2]} ${x[1]} ${x[0]}°</option>`).join('')}</select></div>
@@ -78,6 +79,7 @@ function inject(){
       დაამატე პირობა (მაგ. <b>☉ მზე ლომში</b>) — დავთვლი, ამ დროს რომელ ნიშნებში არიან დანარჩენი პლანეტები, რა ასპექტები ქმნიან, რა კომბინაციები და ელემენტებია ყველაზე ხშირი
       და რამდენად ხშირად <b>ჩვეულებრივზე</b> (×). პირობის გარეშე — მთელი ეპოქის საერთო სტატისტიკა.</div>
     <div id="as-rows">${signRow('sun',4)}</div>
+    <div class="as-hint" style="margin:-2px 0 8px">პირველი მწკრივი — <b>მთავარი პირობა</b> (სტატისტიკა მის დროში ითვლება); დანარჩენი — <b>დამატებითი</b>: ვაჩვენებ, მთავარი პირობის დროის რამდენ %-ში სრულდება თითოეული და ყველა ერთად.</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="as-add" id="as-add">+ პლანეტა ნიშანში</button><button type="button" class="as-add" id="as-add-asp">+ ასპექტი</button><button type="button" class="as-add" id="as-clear">პირობების გარეშე</button></div>
     <div class="form-grid-2" style="margin-top:12px">
       <div class="field"><label>წლიდან</label><input type="number" id="as-y0" value="-3000" min="-3000" max="9999"></div>
@@ -108,7 +110,7 @@ function newAcc(){
   for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){if((B[i]==='node'&&B[j]==='snode'))continue;P.push([i,j]);}
   return{B,P,N:0,nb:new Float64Array(n),sign:new Float64Array(n*12),rx:new Float64Array(n),
     pairSign:new Float64Array(P.length*144),asp:new Float64Array(P.length*MAJOR.length),pairN:new Float64Array(P.length),
-    el:new Float64Array(5),mo:new Float64Array(4),elCnt:new Float64Array(4*11)};
+    el:new Float64Array(5),mo:new Float64Array(4),elCnt:new Float64Array(4*11),jds:[]};
 }
 function sampleInto(acc,jd,orb){
   const {B,P}=acc,L=new Array(B.length);
@@ -127,7 +129,7 @@ function sampleInto(acc,jd,orb){
   for(let k=0;k<4;k++)acc.elCnt[k*11+e[k]]++;
   const me=Math.max(...e),ei=e.indexOf(me);acc.el[e.filter(x=>x===me).length>1?4:ei]++;
   const mm=Math.max(...m),mi=m.indexOf(mm);acc.mo[m.filter(x=>x===mm).length>1?3:mi]++;
-  acc.N++;
+  acc.N++;acc.jds.push(jd);
 }
 async function sampleWindows(wins,N,orb,seed,prog,cancelled){
   const tot=wins.reduce((a,w)=>a+w[1]-w[0],0),cum=[];let c=0;for(const w of wins){c+=w[1]-w[0];cum.push(c);}
@@ -148,12 +150,14 @@ async function rejection(conds,jd0,jd1,N,orb,seed,prog,cancelled){
   return acc.N>=N?{acc,share:acc.N/tr}:{acc:null};
 }
 /* ── run ── */
-let running=false,cancel=false,BASE={},LAST=null;
+let running=false,cancel=false,BASE={},MAINC={},LAST=null;
+const subCount=(acc,subs)=>{const one=subs.map(()=>0);let all=0;for(const jd of acc.jds){let ok=true;subs.forEach((c,i)=>{if(X.ok([c],jd))one[i]++;else ok=false;});if(ok)all++;}return{one,all,n:acc.jds.length};};
 async function run(){
   if(running){cancel=true;return;}
   const conds=[...document.querySelectorAll('#as-rows .as-row')].map(r=>r.classList.contains('as-asp')
     ?{t:'asp',a:r.querySelector('.as-a').value,b:r.querySelector('.as-b2').value,ang:+r.querySelector('.as-g').value,orb:Math.max(0.5,Math.min(10,parseFloat(r.querySelector('.as-o').value)||3))}
-    :{t:'sign',b:r.querySelector('.as-b').value,s:+r.querySelector('.as-s').value,rx:r.querySelector('.as-rx').checked});
+    :{t:'sign',b:r.querySelector('.as-b').value,s:X.parseS(r.querySelector('.as-s').value),rx:r.querySelector('.as-rx').checked});
+  const main=conds.slice(0,1),subs=conds.slice(1);   /* first row = main condition, the rest are measured inside it */
   if(conds.some(c=>c.t==='asp'&&c.a===c.b)){$('as-out').innerHTML='<div class="as-sum">ასპექტისთვის აირჩიე ორი სხვადასხვა პლანეტა.</div>';return;}
   const cl=v=>Math.max(-3000,Math.min(9999,Math.round(+v)));
   let y0=cl($('as-y0').value),y1=cl($('as-y1').value);if(y1<y0)[y0,y1]=[y1,y0];$('as-y0').value=y0;$('as-y1').value=y1;
@@ -166,20 +170,25 @@ async function run(){
   const P=(a,b)=>f=>{bar.firstChild.style.width=((a+(b-a)*f)*100).toFixed(0)+'%';};
   const t0=performance.now();let wins=[[jd0,jd1]],res=null,base=null,shareR=null;
   try{
-    const hasC=conds.length>0,bk=[y0,y1,N,orb].join('|');
+    const hasC=main.length>0,bk=[y0,y1,N,orb].join('|'),mk=JSON.stringify(main)+'|'+bk;
     let rj=null;
-    if(hasC){rj=await rejection(conds,jd0,jd1,N,orb,4242,P(0,.5),()=>cancel);if(!rj)throw 0;}
+    if(MAINC[mk]){({res,shareR,wins}=MAINC[mk]);}
+    else{
+    if(hasC){rj=await rejection(main,jd0,jd1,N,orb,4242,P(0,.5),()=>cancel);if(!rj)throw 0;}
     if(rj&&rj.acc){res=rj.acc;shareR=rj.share;}
     else{
-      if(hasC){wins=await X.scan(conds,jd0,jd1,P(0,.3),()=>cancel);if(!wins)throw 0;}
+      if(hasC){wins=await X.scan(main,jd0,jd1,P(0,.3),()=>cancel);if(!wins)throw 0;}
       if(hasC&&!wins.length){out.innerHTML='<div class="as-sum">ამ დიაპაზონში ასეთი პირობა არცერთხელ არ სრულდება.</div>';throw 1;}
       res=await sampleWindows(wins.map(w=>[w[0],w[1]]),N,orb,12345,P(hasC?.3:0,hasC?.65:1),()=>cancel);if(!res)throw 0;}
-    if(hasC){base=BASE[bk]||await sampleWindows([[jd0,jd1]],N,orb,777,P(.65,1),()=>cancel);if(!base)throw 0;BASE[bk]=base;}
+    MAINC[mk]={res,shareR,wins};}
+    if(subs.length&&!hasC){}
+    if(hasC||subs.length){base=BASE[bk]||await sampleWindows([[jd0,jd1]],N,orb,777,P(.65,1),()=>cancel);if(!base)throw 0;BASE[bk]=base;}
   }catch(e){running=false;btn.textContent='📊 დათვლა ✦';bar.style.display='none';if(e===0)out.innerHTML='<div class="as-sum">დათვლა შეჩერდა.</div>';else if(e!==1)out.innerHTML='<div class="as-sum">შეცდომა: '+(e&&e.message||e)+'</div>';return;}
   running=false;btn.textContent='📊 დათვლა ✦';bar.style.display='none';
   const share=shareR!=null?shareR:wins.reduce((a,w)=>a+w[1]-w[0],0)/(jd1-jd0);
-  LAST={conds,y0,y1,N,orb,res,base,share,approx:shareR!=null,periods:wins.length,sec:(performance.now()-t0)/1000,pa:null,pb:null,focus:''};
-  const fixed=new Set(conds.filter(c=>c.t==='sign').map(c=>c.b)),free=X.BODIES.map(b=>b[0]).filter(b=>!fixed.has(b));
+  const sub=subs.length?{own:subCount(res,subs),base:base?subCount(base,subs):null}:null;
+  LAST={conds:main,subs,sub,y0,y1,N,orb,res,base:main.length?base:null,share,approx:shareR!=null,periods:wins.length,sec:(performance.now()-t0)/1000,pa:null,pb:null,focus:''};
+  const fixed=new Set(main.filter(c=>c.t==='sign'&&typeof c.s==='number').map(c=>c.b)),free=X.BODIES.map(b=>b[0]).filter(b=>!fixed.has(b));
   LAST.fixed=fixed;LAST.pa=free[0]||'sun';LAST.pb=free[1]||'moon';
   render();
 }
@@ -193,8 +202,18 @@ function heatColor(v,l){ /* v: share 0..1, l: lift or null */
     return t>=0?`rgba(201,162,76,${(0.08+0.75*t).toFixed(2)})`:`rgba(90,120,200,${(0.08+0.55*-t).toFixed(2)})`;}
   return `rgba(201,162,76,${Math.min(0.85,0.05+v*2.2).toFixed(2)})`;}
 function label(c){const n=k=>{const b=BG(k);return b[2]+' '+b[1];};
-  return c.t==='asp'?`${n(c.a)} ${X.ASPECTS.find(x=>x[0]===c.ang)[2]} ${n(c.b)} (ორბი ${c.orb}°)`:`${n(c.b)} ${sfx(X.SIGNS[c.s],'ში')}${c.rx?' ℞':''}`;}
+  return c.t==='asp'?`${n(c.a)} ${X.ASPECTS.find(x=>x[0]===c.ang)[2]} ${n(c.b)} (ორბი ${c.orb}°)`:`${n(c.b)} ${X.signLbl(c.s)}${c.rx?' ℞':''}`;}
 
+function subCard(S){
+  if(!S.sub)return '';const o=S.sub.own,b=S.sub.base,mn=S.conds.length?S.conds.map(label).join(' + '):'მთელ დიაპაზონში';
+  const row=(lab,k,bk)=>{const p=k/o.n,q=b?bk/b.n:null;
+    return `<div class="as-li" style="grid-template-columns:minmax(150px,1.3fr) 1fr 190px"><span class="k">${lab}</span><span class="t"><i style="width:${Math.min(100,p*100).toFixed(1)}%;background:rgba(95,200,176,.55)"></i></span><span class="n"><b style="color:#F0D48A">${pc(p)}</b>${q!=null&&S.conds.length?` · საერთოდ ${pc(q)} ${lift(p,q)}`:''}</span></div>`;};
+  return `<div class="as-card"><h4>დამატებითი პირობები — როცა ${mn}</h4>
+    <div class="as-list">${S.subs.map((c,i)=>row(label(c),o.one[i],b&&b.one[i])).join('')}
+    ${S.subs.length>1?row('<b>ყველა ერთად</b>',o.all,b&&b.all):''}</div>
+    <div class="as-hint">პროცენტი — მთავარი პირობის დროის რა ნაწილში სრულდება ეს${S.conds.length?'; „საერთოდ“ — მთელ დიაპაზონში, მთავარი პირობის გარეშე':''}.
+    ${S.conds.length?`მთავარი + დამატებითი ერთად სრულდება მთელი დროის ≈${pc(S.share*(S.subs.length>1?o.all:o.one[0])/o.n,2)}-ში.`:''}</div></div>`;
+}
 function render(){
   const S=LAST,out=$('as-out');if(!S)return;
   const A=S.res,Bs=S.base,B=A.B,yL=y=>y<0?`ძვ.წ. ${-y}`:(S.y0<0?`ახ.წ. ${y}`:String(y));
@@ -212,7 +231,7 @@ function render(){
   const asp=[];for(let k=0;k<A.P.length;k++){const n=A.pairN[k];if(!n)continue;for(let g=0;g<MAJOR.length;g++){const v=A.asp[k*MAJOR.length+g];if(!v)continue;
     const p=v/n,bn=Bs?Bs.pairN[k]:0,q=bn?Bs.asp[k*MAJOR.length+g]/bn:null;asp.push({k,g,p,q,l:q?p/q:0});}}
   const focus=S.focus,AF=asp.filter(o=>!focus||A.B[A.P[o.k][0]]===focus||A.B[A.P[o.k][1]]===focus);
-  const byP=[...AF].sort((x,y)=>y.p-x.p).slice(0,24),byL=Bs?[...AF].filter(o=>o.q&&o.p>0.01).sort((x,y)=>y.l-x.l).slice(0,16):[];
+  const byP=[...AF].sort((x,y)=>y.p-x.p).slice(0,24),byL=Bs?[...AF].filter(o=>o.q&&o.p>0.01&&o.l>=1.2).sort((x,y)=>y.l-x.l).slice(0,16):[];   /* only real differences */
   const aspRow=o=>{const [i,j]=A.P[o.k],ag=X.ASPECTS.find(x=>x[0]===MAJOR[o.g]);
     return `<div class="as-li"><span class="k">${X.BODIES[i][2]} ${ag[2]} ${X.BODIES[j][2]} <span style="opacity:.6">${ag[1]}</span></span><span class="t"><i style="width:${Math.min(100,o.p*100*2.2).toFixed(1)}%;background:rgba(201,162,76,.55)"></i></span><span class="n">${pc(o.p)} ${o.q!=null?lift(o.p,o.q):''}</span></div>`;};
   /* pair grid */
@@ -236,6 +255,7 @@ function render(){
   out.innerHTML=`
    <div class="as-card"><div class="as-sum"><b>${cond}</b><br>${yL(S.y0)} – ${yL(S.y1)}${S.conds.length?` · პირობა სრულდება დროის ${S.approx?'≈':''}<b>${pc(S.share,2)}</b>-ში${S.approx?'':` (${S.periods.toLocaleString()} პერიოდი)`}`:''}
      · ${A.N.toLocaleString()} მომენტი · ${S.sec.toFixed(1)} წმ${Bs?'<br><span style="font-size:11px">×N — რამდენჯერ უფრო ხშირად (მწვანე) ან იშვიათად (წითელი), ვიდრე მთელ დიაპაზონში ჩვეულებრივ.</span>':''}</div></div>
+   ${subCard(S)}
    <div class="as-card"><h4>ნიშნები — სად არის თითო პლანეტა (%)</h4>${h}
      <div class="as-hint">რიცხვი — დროის % ამ ნიშანში; ოქროსფერი — ხშირი, ლურჯი — იშვიათი${Bs?' ჩვეულებრივთან შედარებით':''}. უჯრაზე დაჭერა მას პირობად დაამატებს.</div></div>
    <div class="as-card"><h4>ორი პლანეტის კომბინაცია (ნიშანი × ნიშანი)</h4>
