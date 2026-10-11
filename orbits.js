@@ -44,7 +44,7 @@ const CSS=`
 
 /* ── state ── */
 const S={jd:0,speed:30.44,dir:1,play:true,view:'helio',focus:'all',scale:'pow',zoom:1,panX:0,panY:0,trails:true,sight:true,
-  birth:null,orbits:null,orbT:null,trail:{},head:{},last:0,W:800,H:800,dpr:1,stars:null,bg:null,bgKey:'',fit:null};
+  birth:null,orbits:null,orbT:null,hist:{},dl:[],dT:null,acc:null,accKey:'',keep:true,dance:{on:false,a:'earth',b:'venus'},last:0,W:800,H:800,dpr:1,stars:null,bg:null,bgKey:'',fit:null};
 
 /* ── ephemeris helpers ── */
 function hv(k,jdUT){const jd=jdUT+X.deltaT(jdUT)/86400,T=(jd-2451545)/36525;
@@ -55,16 +55,18 @@ function vv(k,jd,E){if(S.view==='helio')return hv(k,jd);
   if(k==='sun'){const e=E||hv('earth',jd);return [-e[0],-e[1],-e[2]];}
   const p=hv(k,jd),e=E||hv('earth',jd);return p?[p[0]-e[0],p[1]-e[1],p[2]-e[2]]:null;}
 const precDeg=jd=>{const t=(jd-2451545)/36525;return (5029.0966*t+1.11113*t*t)/3600;};
-const visible=k=>S.focus==='all'||k===S.focus||k==='earth'||(S.view==='geo'&&k==='sun');
+const visible=k=>(S.focus==='all'&&!(S.dance&&S.dance.on))||k===S.focus||k==='earth'||(S.view==='geo'&&k==='sun')||(S.dance&&S.dance.on&&(k===S.dance.a||k===S.dance.b));
 
 /* ── screen mapping ── */
+function aph(k){if(k==='sun'||k==='earth'&&S.view==='geo')return 1;const a=(X.KEP[k]||[PER[k]**(2/3)])[0]||1,e=k==='chiron'?0.38:(X.KEP[k]||[0,0.05])[1];return a*(1+e);}
 function maxR(){ /* outer radius (AU) that should fit the ring */
+  if(S.dance.on&&S.focus==='all'){const m=Math.max(aph(S.dance.a),aph(S.dance.b));return S.view==='helio'?m*1.08:(m+1)*1.06;}
   if(S.focus!=='all'){const a=(X.KEP[S.focus]||[PER[S.focus]**(2/3)])[0]||1,e=S.focus==='chiron'?0.38:(X.KEP[S.focus]||[0,0.05])[1];
     return S.view==='helio'?a*(1+e)*1.08:(a*(1+e)+1)*1.06;}
   if(S.scale==='inner')return S.view==='helio'?5.6:6.6;
   return 42;}
 function radial(r){const R=Math.min(S.W,S.H)*0.43*S.zoom,M=maxR();
-  if(S.focus!=='all'||S.scale==='lin'||S.scale==='inner')return R*r/M;
+  if(S.focus!=='all'||S.dance.on||S.scale==='lin'||S.scale==='inner')return R*r/M;
   return R*Math.pow(r/M,0.42);}
 function toXY(v){const r=Math.hypot(v[0],v[1]),f=r?radial(r)/r:0;return [S.W/2+S.panX+v[0]*f,S.H/2+S.panY-v[1]*f];}
 const ringR=()=>Math.min(S.W,S.H)*0.47;
@@ -78,7 +80,7 @@ function buildOrbits(jd){const o={};
 /* ── static layer: stars, zodiac ring, orbits — cached ── */
 function stars(){const a=[];let s=7;const R=()=>{s=(s*16807)%2147483647;return s/2147483647;};for(let i=0;i<460;i++)a.push([R(),R(),R()*1.3+0.2,0.25+0.6*R()]);S.stars=a;}
 function bgLayer(){
-  const pr=precDeg(S.jd),key=[S.W,S.H,S.dpr,S.zoom.toFixed(3),S.panX|0,S.panY|0,S.scale,S.view,S.focus,Math.round(pr*4),S.orbT].join('|');
+  const pr=precDeg(S.jd),key=[S.W,S.H,S.dpr,S.zoom.toFixed(3),S.panX|0,S.panY|0,S.scale,S.view,S.focus,S.dance.on,S.dance.a,S.dance.b,Math.round(pr*4),S.orbT].join('|');
   if(S.bg&&S.bgKey===key)return S.bg;
   const c=S.bg||document.createElement('canvas');c.width=S.W*S.dpr;c.height=S.H*S.dpr;
   const g=c.getContext('2d');g.setTransform(S.dpr,0,0,S.dpr,0,0);const W=S.W,H=S.H,cx=W/2+S.panX,cy=H/2+S.panY,Rz=ringR();
@@ -99,29 +101,80 @@ function bgLayer(){
   S.bg=c;S.bgKey=key;return c;
 }
 
-/* ── trails: time window per body, pre-filled from the ephemeris ── */
+/* ── trails ──────────────────────────────────────────────────────────────
+   Points are generated in TIME (not per frame) between the last point and now,
+   so fast speeds still give smooth curves. Fast Kepler positions are used for
+   the trail (visually identical); the planets themselves use the full ephemeris.
+   „რჩება“ mode: every new piece is painted once onto an accumulation layer
+   (additive glow) — nothing is erased, patterns build up. */
+function fv(k,jd){return k==='chiron'?X.chironHelio(jd):X.helio0(k,(jd-2451545)/36525);}
+function fvv(k,jd){if(S.view==='helio')return k==='sun'?[0,0,0]:fv(k,jd);
+  if(k==='earth')return [0,0,0];const e=fv('earth',jd);if(k==='sun')return [-e[0],-e[1],0];
+  const p=fv(k,jd);return p?[p[0]-e[0],p[1]-e[1],0]:null;}
+function baseStep(k){const P=(k==='sun'?1:PER[k])*365.25;return S.view==='helio'?P/540:Math.min(P,365.25)/720;}
+const TCOL=k=>k==='sun'?'#ffd257':PK[k][3];
+function trailKeys(){const ks=[];for(const [k] of PL){if(!visible(k))continue;if(S.view==='geo'&&k==='earth')continue;ks.push(k);}if(S.view==='geo')ks.push('sun');return ks;}
 function trailSpan(k){
   if(S.view==='helio')return Math.max(25,Math.min(PER[k]*365.25*(S.focus==='all'?0.18:0.9),3650*3));
   if(S.focus!=='all')return k===S.focus?(k==='venus'?8*365.25:k==='mercury'?365.25*1.2:Math.max(2.2*365.25,SYN[k]*365.25*(k==='mars'?3.2:4))):365.25;
   return k==='mercury'||k==='venus'||k==='mars'?400:365.25;}
-const NPTS=k=>S.view==='geo'&&S.focus===k?1400:S.focus===k?700:260;
-function fillTrail(k){const span=trailSpan(k),n=NPTS(k),t=[];
-  for(let i=n;i>=0;i--){const jd=S.jd-S.dir*span*i/n,v=vv(k,jd);if(v)t.push([jd,v]);}
-  S.trail[k]=t;}
-function resetTrails(){S.trail={};S.head={};}
-function stepTrail(k,v){
-  let t=S.trail[k];if(!t){fillTrail(k);t=S.trail[k];}
-  const span=trailSpan(k),n=NPTS(k),last=t[t.length-1];
-  if(!last||Math.abs(S.jd-last[0])>=span/n)t.push([S.jd,v]);   /* fixed points, evenly spaced in time */
-  while(t.length>2&&Math.abs(S.jd-t[0][0])>span)t.shift();
-  S.head[k]=v;                                                   /* live end, drawn but not stored */
+function resetTrails(){S.hist={};S.dl=[];S.dT=null;S.accKey='';}
+function prefill(k){const h={t:[],x:[],y:[]},span=trailSpan(k),st=Math.max(baseStep(k),span/6000),n=Math.ceil(span/st);
+  for(let i=n;i>=0;i--){const t=S.jd-S.dir*span*i/n,v=fvv(k,t);if(v){h.t.push(t);h.x.push(v[0]);h.y.push(v[1]);}}
+  return h;}
+/* accumulation layer */
+function accLayer(){
+  const key=[S.W,S.H,S.dpr,S.zoom.toFixed(3),S.panX|0,S.panY|0,S.scale,S.view,S.focus,S.dance.on,S.dance.a,S.dance.b].join('|');
+  if(!S.acc){S.acc=document.createElement('canvas');}
+  if(S.accKey!==key){const c=S.acc;c.width=S.W*S.dpr;c.height=S.H*S.dpr;S.accKey=key;
+    const g=c.getContext('2d');g.setTransform(S.dpr,0,0,S.dpr,0,0);
+    if(S.keep)for(const k in S.hist)strokeHist(g,k,S.hist[k],0);
+    drawDance(g,0);}
+  return S.acc;}
+function strokeHist(g,k,h,from){const n=h.t.length;if(n-from<2)return;
+  /* normal blending: overlapping laps converge to the planet's colour instead of burning to white;
+     butt caps — no bright beads where the per-frame pieces meet */
+  g.globalCompositeOperation='source-over';g.lineCap='butt';g.lineJoin='round';
+  g.strokeStyle=TCOL(k);g.globalAlpha=S.focus===k?0.6:0.45;g.lineWidth=S.focus===k?1.4:1.1;
+  g.beginPath();for(let i=from;i<n;i++){const [x,y]=toXY([h.x[i],h.y[i]]);i===from?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
+  g.globalAlpha=1;g.globalCompositeOperation='source-over';}
+function drawDance(g,from){const L=S.dl||[];if(L.length<=from)return;
+  g.globalCompositeOperation='lighter';g.strokeStyle='rgba(232,201,122,.13)';g.lineWidth=0.8;g.beginPath();
+  for(let i=from;i<L.length;i+=4){const [x1,y1]=toXY([L[i],L[i+1]]),[x2,y2]=toXY([L[i+2],L[i+3]]);g.moveTo(x1,y1);g.lineTo(x2,y2);}
+  g.stroke();g.globalCompositeOperation='source-over';}
+/* advance every trail to the current moment */
+function advance(){
+  if(!S.trails&&!S.dance.on)return;
+  const ks=S.trails?trailKeys():[],budget=Math.max(120,Math.floor(6000/Math.max(1,ks.length)));
+  const ga=accLayer().getContext('2d');ga.setTransform(S.dpr,0,0,S.dpr,0,0);
+  for(const k of ks){
+    let h=S.hist[k];if(!h){h=S.hist[k]=prefill(k);if(S.keep)strokeHist(ga,k,h,0);continue;}
+    const t0=h.t[h.t.length-1],d=S.jd-t0,st=baseStep(k);let n=Math.floor(Math.abs(d)/st);if(!n)continue;
+    if(n>budget)n=budget;const step=d/n,from=h.t.length-1;
+    for(let i=1;i<=n;i++){const t=t0+step*i,v=fvv(k,t);if(!v)continue;h.t.push(t);h.x.push(v[0]);h.y.push(v[1]);}
+    if(S.keep){strokeHist(ga,k,h,from);
+      if(h.t.length>240000){h.t.splice(0,40000);h.x.splice(0,40000);h.y.splice(0,40000);}}
+    else{const span=trailSpan(k);let cut=0;while(cut<h.t.length-2&&Math.abs(S.jd-h.t[cut])>span)cut++;if(cut>200||cut>h.t.length/4){h.t.splice(0,cut);h.x.splice(0,cut);h.y.splice(0,cut);}}
+  }
+  /* geometry: lines between two bodies at a regular time step */
+  if(S.dance.on){const A=S.dance.a,B=S.dance.b;if(A!==B){
+    const every=Math.min(A==='sun'?365.25:PER[A]*365.25,B==='sun'?365.25:PER[B]*365.25)/40;
+    if(S.dT==null)S.dT=S.jd;const d=S.jd-S.dT;let n=Math.floor(Math.abs(d)/every);
+    if(n){n=Math.min(n,800);const step=Math.sign(d)*every,from=S.dl.length;
+      for(let i=1;i<=n;i++){const t=S.dT+step*i,p=fvv(A,t),q=fvv(B,t);if(p&&q)S.dl.push(p[0],p[1],q[0],q[1]);}
+      S.dT+=step*n;drawDance(ga,from);}}}
 }
-function drawTrail(g,k,col){const t0=S.trail[k];if(!t0||t0.length<2)return;const t=S.head[k]?t0.concat([[S.jd,S.head[k]]]):t0;
-  const n=t.length,CH=8;g.lineCap='round';g.lineJoin='round';
-  for(let c=0;c<CH;c++){const a=Math.floor(c*(n-1)/CH),b=Math.floor((c+1)*(n-1)/CH);if(b<=a)continue;
-    g.beginPath();for(let i=a;i<=b;i++){const [x,y]=toXY(t[i][1]);i===a?g.moveTo(x,y):g.lineTo(x,y);}
-    g.strokeStyle=col;g.globalAlpha=0.08+0.8*((c+1)/CH)**1.6;g.lineWidth=S.focus===k?2:1.6;g.stroke();}
+/* fading tail (when „რჩება“ is off) */
+function drawFade(g,k,cur){const h=S.hist[k];if(!h||h.t.length<2)return;
+  const span=trailSpan(k);let a0=0;while(a0<h.t.length-2&&Math.abs(S.jd-h.t[a0])>span)a0++;
+  const n=h.t.length-a0,CH=8;g.lineCap='round';g.lineJoin='round';
+  for(let c=0;c<CH;c++){const a=a0+Math.floor(c*(n-1)/CH),b=a0+Math.floor((c+1)*(n-1)/CH);if(b<=a)continue;
+    g.beginPath();for(let i=a;i<=b;i++){const [x,y]=toXY([h.x[i],h.y[i]]);i===a?g.moveTo(x,y):g.lineTo(x,y);}
+    if(c===CH-1&&cur){const [x,y]=toXY(cur);g.lineTo(x,y);}
+    g.strokeStyle=TCOL(k);g.globalAlpha=0.08+0.8*((c+1)/CH)**1.6;g.lineWidth=S.focus===k?2:1.6;g.stroke();}
   g.globalAlpha=1;}
+function drawHead(g,k,cur){const h=S.hist[k];if(!h||!h.t.length||!cur)return;const i=h.t.length-1,[x1,y1]=toXY([h.x[i],h.y[i]]),[x2,y2]=toXY(cur);
+  g.strokeStyle=TCOL(k);g.globalAlpha=0.7;g.lineWidth=1.3;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.globalAlpha=1;}
 
 /* ── frame ── */
 function draw(){
@@ -133,8 +186,9 @@ function draw(){
   const E=hv('earth',S.jd),now={};
   const keys=[...PL.map(p=>p[0]),...(S.view==='geo'?['sun']:[])];
   for(const k of keys){if(!visible(k))continue;const v=vv(k,S.jd,E);if(v)now[k]=v;}
-  if(S.trails){for(const k in now){if(S.view==='helio'?false:k==='earth')continue;stepTrail(k,now[k]);
-      drawTrail(g,k,k==='sun'?'#ffd257':PK[k][3]);}}
+  advance();
+  if(S.keep||S.dance.on){g.setTransform(1,0,0,1,0,0);g.drawImage(accLayer(),0,0);g.setTransform(S.dpr,0,0,S.dpr,0,0);}
+  if(S.trails){for(const k of trailKeys()){if(!now[k])continue;S.keep?drawHead(g,k,now[k]):drawFade(g,k,now[k]);}}
   /* centre body */
   const cg=(r,c0,c1)=>{const gr=g.createRadialGradient(cx,cy,0,cx,cy,r);gr.addColorStop(0,c0);gr.addColorStop(.3,c1);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,r,0,7);g.fill();};
   if(S.view==='helio')cg(26,'#fff6d0','#ffd257');else cg(16,'#e4f2ff','#58a8f0');
@@ -234,7 +288,16 @@ function inject(){
      <span style="width:10px"></span>
      <span style="font-size:11px;color:rgba(200,180,140,.75)">მასშტაბი:</span>
      <button type="button" class="ob-btn on" data-sc="pow">ყველა</button><button type="button" class="ob-btn" data-sc="inner">შიდა</button><button type="button" class="ob-btn" data-sc="lin">რეალური</button>
-     <button type="button" class="ob-btn on" id="ob-tr">კვალი</button><button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button>
+     <button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button>
+   </div>
+   <div class="ob-bar">
+     <span style="font-size:11px;color:rgba(200,180,140,.75)">კვალი:</span>
+     <button type="button" class="ob-btn on" data-tm="keep">რჩება (გეომეტრია)</button><button type="button" class="ob-btn" data-tm="fade">ქრება</button><button type="button" class="ob-btn" data-tm="off">გამორთ.</button>
+     <button type="button" class="ob-btn" id="ob-clr">🧹 გასუფთავება</button>
+     <span style="width:10px"></span>
+     <button type="button" class="ob-btn" id="ob-dance">✦ ორი პლანეტის ხაზები</button>
+     <select id="ob-da" style="max-width:130px">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select>
+     <select id="ob-db" style="max-width:130px">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select>
    </div>
    <div class="ob-pl" id="ob-pl"><button data-f="all" class="on">✦ ყველა პლანეტა</button>${PL.filter(p=>p[0]!=='earth').map(p=>`<button data-f="${p[0]}" style="color:${p[3]}">${p[2]}︎ ${p[1]}</button>`).join('')}</div>
    <div id="ob-wrap"><canvas id="ob-cv"></canvas><div id="ob-hud"></div><div id="ob-tip"></div>
@@ -244,7 +307,7 @@ function inject(){
   stars();S.jd=Date.now()/864e5+2440587.5;
   const view0=()=>{S.zoom=1;S.panX=S.panY=0;resetTrails();S.bgKey='';};
   $('ob-play').onclick=()=>{S.play=!S.play;syncBtns();};
-  $('ob-rev').onclick=()=>{S.dir=-S.dir;S.play=true;resetTrails();syncBtns();};
+  $('ob-rev').onclick=()=>{S.dir=-S.dir;S.play=true;syncBtns();};
   $('ob-now').onclick=()=>{S.jd=Date.now()/864e5+2440587.5;resetTrails();};
   $('ob-speed').onchange=e=>{S.speed=+e.target.value;};
   $('ob-goto').onclick=()=>{const v=id=>+$(id).value;const y=v('ob-y');if(!y)return;
@@ -253,7 +316,7 @@ function inject(){
     S.jd=Math.max(X.cal2jd(-2999,1,1),Math.min(X.cal2jd(10000,1,1),jd));resetTrails();S.play=false;syncBtns();};
   $('ob-birth').onclick=()=>{const jd=natalJD();if(jd==null){$('ob-binfo').textContent='ნატალურ ფორმაში შეიყვანე დაბადების თარიღი.';return;}
     setBirth(jd);S.jd=jd;resetTrails();S.play=false;syncBtns();};
-  sec.querySelectorAll('[data-sc]').forEach(x=>x.onclick=()=>{S.scale=x.dataset.sc;view0();sec.querySelectorAll('[data-sc]').forEach(y=>y.classList.toggle('on',y===x));});
+  sec.querySelectorAll('[data-sc]').forEach(x=>x.onclick=()=>{S.scale=x.dataset.sc;S.zoom=1;S.panX=S.panY=0;S.bgKey='';S.accKey='';sec.querySelectorAll('[data-sc]').forEach(y=>y.classList.toggle('on',y===x));});
   sec.querySelectorAll('[data-vw]').forEach(x=>x.onclick=()=>{S.view=x.dataset.vw;view0();sec.querySelectorAll('[data-vw]').forEach(y=>y.classList.toggle('on',y===x));
     /* geocentric loops look best a little faster */
     if(S.view==='geo'&&S.speed<7){S.speed=7;$('ob-speed').value='7';}});
@@ -261,7 +324,13 @@ function inject(){
     /* a speed that suits the planet */
     if(S.focus!=='all'){const sp=S.view==='geo'?(S.focus==='mercury'?7:S.focus==='venus'?30.44:30.44):(PER[S.focus]<1?7:PER[S.focus]<3?30.44:PER[S.focus]<40?365.25:3652.5);
       S.speed=sp;$('ob-speed').value=String(sp);}});
-  $('ob-tr').onclick=e=>{S.trails=!S.trails;resetTrails();e.target.classList.toggle('on',S.trails);};
+  sec.querySelectorAll('[data-tm]').forEach(x=>x.onclick=()=>{const m=x.dataset.tm;S.trails=m!=='off';S.keep=m==='keep';resetTrails();
+    sec.querySelectorAll('[data-tm]').forEach(y=>y.classList.toggle('on',y===x));});
+  $('ob-clr').onclick=()=>{resetTrails();};
+  $('ob-dance').onclick=e=>{S.dance.on=!S.dance.on;resetTrails();S.bgKey='';e.target.classList.toggle('on',S.dance.on);
+    if(S.dance.on&&S.speed<7){S.speed=7;$('ob-speed').value='7';}};
+  $('ob-da').onchange=e=>{S.dance.a=e.target.value;resetTrails();S.bgKey='';};
+  $('ob-db').onchange=e=>{S.dance.b=e.target.value;resetTrails();S.bgKey='';};
   $('ob-sl').onclick=e=>{S.sight=!S.sight;e.target.classList.toggle('on',S.sight);};
   /* zoom / pan / hover */
   const cv=$('ob-cv');let drag=null,pinch=null;
