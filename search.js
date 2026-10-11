@@ -133,6 +133,13 @@ const CAN_RX=new Set(['mercury','venus','mars','jupiter','saturn','uranus','nept
 const STEP={moon:1,mercury:0.5,venus:1,mars:1,sun:10,jupiter:2,saturn:2,uranus:5,neptune:8,pluto:8,chiron:3,node:10,snode:10,lilith:6,selena:10};
 const ORDER=['pluto','neptune','uranus','chiron','selena','node','snode','lilith','saturn','jupiter','mars','sun','venus','mercury','moon'];
 const Y_MIN=-3000,Y_MAX=9999,CH_Y0=700,CH_Y1=4650;   /* Chiron: Swiss Ephemeris range */
+/* sign select: 12 signs + element / modality groups */
+const ELEM=['ცეცხლის','მიწის','ჰაერის','წყლის'],ELEM_I=['🔥','⛰','🌬','💧'],MODA=['კარდინალურ','ფიქსირებულ','მუტაბელურ'];
+const signOpts=sel=>SIGNS.map((s,j)=>`<option value="${j}"${String(sel)===String(j)?' selected':''}>${ZS[j]}︎ ${s}</option>`).join('')
+  +`<optgroup label="ელემენტი">${ELEM.map((n,k)=>`<option value="e${k}"${sel==='e'+k?' selected':''}>${ELEM_I[k]} ${n} ნიშანში</option>`).join('')}</optgroup>`
+  +`<optgroup label="მოდალობა">${MODA.map((n,k)=>`<option value="m${k}"${sel==='m'+k?' selected':''}>${n} ნიშანში</option>`).join('')}</optgroup>`;
+const parseS=v=>/^[em]\d$/.test(v)?v:+v;
+const signLbl=s=>typeof s==='string'?(s[0]==='e'?ELEM[+s[1]]+' ნიშანში':MODA[+s[1]]+' ნიშანში'):sfx(SIGNS[s],'ში');
 const sfx=(n,x)=>(n.endsWith('ი')?n.slice(0,-1):n)+x;
 const MAXC=BODIES.length;
 
@@ -146,7 +153,9 @@ const sepOf=(c,jd)=>Math.abs(norm(lon(c.a,jd)-lon(c.b,jd)+180)-180);
 function test(c,jd){
   if(c.t==='asp')return Math.abs(sepOf(c,jd)-c.ang)<=c.orb;
   const L=lon(c.b,jd);
-  if(Math.floor(L/30)!==c.s)return false;
+  const si=Math.floor(L/30);
+  if(typeof c.s==='string'){const k=+c.s.slice(1);if(c.s[0]==='e'?si%4!==k:si%3!==k)return false;}   /* element e0-3 / modality m0-2 */
+  else if(si!==c.s)return false;
   if(c.rx){const d=norm(lon(c.b,jd+0.1)-lon(c.b,jd-0.1)+180)-180;if(d>=0)return false;}
   return true;
 }
@@ -232,7 +241,7 @@ const CSS=`
 function rowHTML(b){
   return `<div class="sr-row">
     <div class="field"><label>პლანეტა / წერტილი</label><select class="sr-b">${BODIES.map(x=>`<option value="${x[0]}"${x[0]===b?' selected':''}>${x[2]} ${x[1]}</option>`).join('')}</select></div>
-    <div class="field"><label>ნიშანი</label><select class="sr-s">${SIGNS.map((s,j)=>`<option value="${j}">${ZS[j]}︎ ${s}</option>`).join('')}</select></div>
+    <div class="field"><label>ნიშანი</label><select class="sr-s">${signOpts()}</select></div>
     <label class="rx"><input type="checkbox" class="sr-rx" style="accent-color:#C9A24C"> ℞</label>
     <button type="button" class="sr-x" title="წაშლა">×</button></div>`;
 }
@@ -293,7 +302,7 @@ async function run(){
   const conds=[...document.querySelectorAll('#sr-rows .sr-row')].map(r=>r.classList.contains('sr-asp')
     ?{t:'asp',a:r.querySelector('.sr-a').value,b:r.querySelector('.sr-b2').value,ang:+r.querySelector('.sr-ang').value,
       orb:Math.max(0.1,Math.min(10,parseFloat(r.querySelector('.sr-orb').value)||1))}
-    :{t:'sign',b:r.querySelector('.sr-b').value,s:+r.querySelector('.sr-s').value,rx:r.querySelector('.sr-rx').checked});
+    :{t:'sign',b:r.querySelector('.sr-b').value,s:parseS(r.querySelector('.sr-s').value),rx:r.querySelector('.sr-rx').checked});
   const bad=conds.find(c=>c.t==='asp'&&(c.a===c.b||[c.a,c.b].sort().join()==='node,snode'));
   if(bad){$('sr-out').innerHTML='<div class="sr-sum">ასპექტისთვის აირჩიე ორი სხვადასხვა პლანეტა.</div>';return;}
   const asps=conds.filter(c=>c.t==='asp');
@@ -318,7 +327,7 @@ async function run(){
   const now=jdOfMs(Date.now());
   const BN=k=>{const B=BODIES.find(x=>x[0]===k);return `${B[2]} ${B[1]}`;},AS=g=>ASPECTS.find(x=>x[0]===g);
   const label=conds.map(c=>c.t==='asp'?`${BN(c.a)} ${AS(c.ang)[2]} ${BN(c.b)} <span style="font-weight:400;opacity:.75">(${AS(c.ang)[1]}, ორბი ${c.orb}°)</span>`
-    :`${BN(c.b)} ${sfx(SIGNS[c.s],'ში')}${c.rx?' ℞':''}`).join(' + ');
+    :`${BN(c.b)} ${signLbl(c.s)}${c.rx?' ℞':''}`).join(' + ');
   const fmtOrb=d=>`${Math.floor(d)}°${pad(Math.round((d%1)*60)%60)}′`;
   const exInfo=r=>asps.map(c=>{const e=exactIn(c,r[0],r[1]);r._ex=r._ex||e.jd;
     return `<div class="ex">${AS(c.ang)[2]} ${BODIES.find(x=>x[0]===c.a)[2]}${BODIES.find(x=>x[0]===c.b)[2]} ${e.dev<1/60?'ზუსტი':'უახლოესი'}: ${fmt(e.jd,true)}${e.dev<1/60?'':' (ორბი '+fmtOrb(e.dev)+')'}</div>`;}).join('');
@@ -349,5 +358,5 @@ function openChart(jd){
 }
 function boot(){try{inject();}catch(e){console.warn('search.js',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window._search={BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
+window._search={signOpts,parseS,signLbl,BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
 })();
