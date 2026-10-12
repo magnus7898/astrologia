@@ -81,6 +81,8 @@ body.pp-alt .page>*:not(.page-header):not(#pp-nav):not(.pp-panel){display:none!i
 .pp-prog i{display:block;height:100%;background:var(--gold);width:0}
 .pp-chart svg{width:100%;height:auto;display:block;min-width:520px}
 .pp-cond{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.pp-ctag{font-size:8.5px;letter-spacing:1px;color:#7fcfe8;border:1px solid rgba(127,207,232,.45);border-radius:6px;padding:0 4px;margin-left:4px;vertical-align:middle}
+.pp-cm{color:#7fcfe8}
 .pp-cond .tag{font-size:10px;color:var(--muted);font-family:'Cinzel',serif;letter-spacing:1px;width:70px;text-align:right}
 @media(max-width:600px){.pp-mini.big{width:170px}.pp-in.date{width:130px}.pp-cond .tag{width:auto}}
 `;
@@ -274,7 +276,7 @@ function initStats(){
   </div>
   <div id="ps-out"></div>`;
   const pre=$('ps-pre');pre.onchange=()=>{if(!pre.value)return;const[a,b]=pre.value.split('-');$('ps-y0').value=a;$('ps-y1').value=b;pre.value='';};
-  $('ps-add').onclick=()=>{if(conds.length>=4)return;conds.push({t:'d',d:2,op:'=',k:0});drawConds();};
+  $('ps-add').onclick=()=>{conds.push({t:'d',d:2,op:'=',k:0});drawConds();};
   $('ps-run').onclick=runStats;
   drawConds();
 }
@@ -286,12 +288,12 @@ function drawConds(){
       LINE_KEYS.map((k,j)=>`<option value="l${j}"${c.t==='l'&&c.d===j?' selected':''}>ხაზი ${COMPOUND[k].label} · ${COMPOUND[k].name}</option>`).join('')+
       `<option value="e"${c.t==='e'?' selected':''}>ცარიელი უჯრების რაოდენობა</option></select>`;
     const osel=`<select class="pp-sel" data-i="${i}" data-f="op">`+['=','≥','≤'].map(o=>`<option${o===c.op?' selected':''}>${o}</option>`).join('')+`</select>`;
-    return `<div class="pp-cond"><span class="tag">${i?'და':'მთავარი'}</span>${tsel}${osel}<input class="pp-in k" type="number" min="0" max="15" value="${c.k}" data-i="${i}" data-f="k"><span class="pp-x" data-x="${i}">×</span></div>`;
+    return `<div class="pp-cond"><span class="tag">${i?'და':'მთავარი'}</span>${tsel}${osel}<input class="pp-in k" type="number" min="0" value="${c.k}" data-i="${i}" data-f="k"><span class="pp-x" data-x="${i}">×</span></div>`;
   }).join('');
   box.querySelectorAll('[data-f]').forEach(el=>el.onchange=()=>{
     const c=conds[+el.dataset.i],f=el.dataset.f;
     if(f==='t'){const v=el.value;if(v==='e'){c.t='e';c.d=0;}else{c.t=v[0];c.d=+v.slice(1);}}
-    else if(f==='op')c.op=el.value;else c.k=Math.max(0,Math.min(15,+el.value||0));
+    else if(f==='op')c.op=el.value;else c.k=Math.max(0,Math.round(+el.value)||0);
   });
   box.querySelectorAll('[data-x]').forEach(el=>el.onclick=()=>{conds.splice(+el.dataset.x,1);drawConds();});
 }
@@ -307,13 +309,13 @@ function runStats(){
   const S={y0,y1,mode,conds:CS,has,N:0,NC:0,
     HB:new Float64Array(10*KM),HC:new Float64Array(10*KM),SB:new Float64Array(10),SC:new Float64Array(10),
     LB:new Float64Array(8*LM),LC:new Float64Array(8*LM),EB:new Float64Array(10),EC:new Float64Array(10),
-    YN:new Float64Array(y1-y0+1),YE:new Float64Array((y1-y0+1)*10),YS:new Float64Array((y1-y0+1)*10),SQ:new Map(),KM,LM};
+    YN:new Float64Array(y1-y0+1),YE:new Float64Array((y1-y0+1)*10),YS:new Float64Array((y1-y0+1)*10),BN:new Float64Array(y1-y0+1),BE:new Float64Array((y1-y0+1)*10),BS:new Float64Array((y1-y0+1)*10),SQ:new Map(),KM,LM};
   const lt=new Int16Array(8);
   const test=(c,empt)=>{for(const q of CS){const v=q.t==='d'?c[q.d]:q.t==='l'?lt[q.d]:empt;
     if(q.op==='='?v!==q.k:q.op==='≥'?v<q.k:v>q.k)return false;}return true;};
   const fn=(c,y)=>{
-    S.N++;let empt=0;
-    for(let d=1;d<10;d++){const k=c[d];S.HB[d*KM+(k<KM?k:KM-1)]++;S.SB[d]+=k;if(!k)empt++;}
+    S.N++;let empt=0;const bi=y-y0;S.BN[bi]++;
+    for(let d=1;d<10;d++){const k=c[d];S.HB[d*KM+(k<KM?k:KM-1)]++;S.SB[d]+=k;S.BS[bi*10+d]+=k;if(!k){empt++;S.BE[bi*10+d]++;}}
     S.EB[empt]++;
     for(let l=0;l<8;l++){const g=LINE_DIG[l];const t=c[g[0]]+c[g[1]]+c[g[2]];lt[l]=t;S.LB[l*LM+(t<LM?t:LM-1)]++;}
     if(has&&!test(c,empt))return;
@@ -343,6 +345,16 @@ function liftTag(c,b){
   return r>1?`<span class="pp-lift pp-up">↑${r>=10?r.toFixed(0):r.toFixed(1)}×</span>`:`<span class="pp-lift pp-dn">↓${r<0.01?'0':r.toFixed(2)}×</span>`;
 }
 function heat(p,max,col){const a=max?Math.min(.55,p/max*.55):0;return `background:${col.replace(/[\d.]+\)$/,a.toFixed(3)+')')}`;}
+
+/* rows that a condition is set on: show the WHOLE-range share (inside the condition it's trivially 100/0) */
+const condRow=(t,i)=>{const L=lastStats.conds.filter(q=>q.t===t&&(t==='e'||q.d===i));return L.length?L:null;};
+const condOK=(L,v)=>L.every(q=>q.op==='='?v===q.k:q.op==='≥'?v>=q.k:v<=q.k);
+function condCell(L,k,plus,pb,ol){
+  let m=condOK(L,k);if(plus&&!m)for(let j=k+1;j<64&&!m;j++)m=condOK(L,j);
+  const st=m?'background:rgba(127,207,232,.16);color:#7fcfe8;box-shadow:inset 0 0 0 1px rgba(127,207,232,.55)':'color:rgba(232,226,213,.35)';
+  return `<td style="${st}${ol}">${pb?fp(pb):'<span style="opacity:.3">0</span>'}</td>`;
+}
+const CR_NOTE='<div class="pp-note" style="margin-top:8px"><span style="color:#7fcfe8">ცისფერი</span> — პირობის სტრიქონი: აქ ნაჩვენებია <b>რეალური % მთელ დიაპაზონში</b> (პირობის შიგნით ის ყოველთვის 100% იქნებოდა). ჩარჩოიანი უჯრა — რასაც პირობა ირჩევს, მკრთალი — დანარჩენი. სხვა სტრიქონები — % პირობის შიგნით.</div>';
 function renderStats(){
   const S=lastStats,out=$('ps-out'),N=S.N,NC=S.NC,KM=S.KM,LM=S.LM;
   const P=parseDate($('birth').value);let mine=null;
@@ -361,18 +373,22 @@ function renderStats(){
   h+=`<div class="pp-card"><div class="pp-h">ენერგიების რაოდენობა უჯრებში</div>
     <div class="pp-note" style="margin-bottom:10px">რამდენ % დღეს აქვს მოცემული ციფრი 0, 1, 2 … ჯერ. <b>0</b> — ცარიელი უჯრა. დააჭირე სტრიქონს — ქვემოთ გრაფიკი შეიცვლება.</div>
     <div class="pp-scroll"><table class="pp-tbl"><tr><th style="text-align:left">უჯრა</th>${[...Array(KS)].map((_,k)=>`<th>${k===0?'0 · ცარ.':k===KS-1?k+'+':k}</th>`).join('')}<th>საშ.</th>${mine?'<th>შენ</th>':''}</tr>`;
+  let anyCR=false;
   for(let d=1;d<10;d++){
-    h+=`<tr class="click${d===chartDigit?' sel':''}" data-d="${d}"><td class="l" style="color:${COLORS[d]}">${d} · ${LABELS[d]}</td>`;
+    const cr=condRow('d',d);if(cr)anyCR=true;
+    h+=`<tr class="click${d===chartDigit?' sel':''}" data-d="${d}"><td class="l" style="color:${COLORS[d]}">${d} · ${LABELS[d]}${cr?' <span class="pp-ctag">პირობა</span>':''}</td>`;
     for(let k=0;k<KS;k++){
       let c=0,b=0;if(k<KS-1){c=S.HC[d*KM+k];b=S.HB[d*KM+k];}else for(let j=k;j<KM;j++){c+=S.HC[d*KM+j];b+=S.HB[d*KM+j];}
       const pc=pct(c,NC),pb=pct(b,N);
       const isMine=mine&&(k<KS-1?mine.c[d]===k:mine.c[d]>=k);
-      h+=`<td style="${heat(pc,maxP,COLORS[d])}${isMine?';outline:1px solid rgba(155,127,232,.9);outline-offset:-2px':''}">${c?fp(pc):'<span style="opacity:.25">0</span>'}${liftTag(pc,pb)}</td>`;
+      const ol=isMine?';outline:1px solid rgba(155,127,232,.9);outline-offset:-2px':'';
+      if(cr){h+=condCell(cr,k,k===KS-1,pb,ol);continue;}
+      h+=`<td style="${heat(pc,maxP,COLORS[d])}${ol}">${c?fp(pc):'<span style="opacity:.25">0</span>'}${liftTag(pc,pb)}</td>`;
     }
     const mc=S.SC[d]/NC,mb=S.SB[d]/N;
-    h+=`<td>${mc.toFixed(2)}${liftTag(mc,mb)}</td>${mine?`<td style="color:rgba(155,127,232,.95)">${mine.c[d]}</td>`:''}</tr>`;
+    h+=`<td>${cr?`<span class="pp-cm">${mb.toFixed(2)}</span>`:mc.toFixed(2)+liftTag(mc,mb)}</td>${mine?`<td style="color:rgba(155,127,232,.95)">${mine.c[d]}</td>`:''}</tr>`;
   }
-  h+=`</table></div>${mine?'<div class="pp-note" style="margin-top:8px">ვიოლეტისფერი ჩარჩო — შენი რაოდენობა.</div>':''}</div>`;
+  h+=`</table></div>${mine?'<div class="pp-note" style="margin-top:8px">ვიოლეტისფერი ჩარჩო — შენი რაოდენობა.</div>':''}${anyCR?CR_NOTE:''}</div>`;
   /* per-year chart */
   h+=`<div class="pp-card"><div class="pp-row" style="justify-content:space-between;margin-bottom:8px">
      <div class="pp-h" style="margin:0">დინამიკა წლების მიხედვით</div>
@@ -381,7 +397,7 @@ function renderStats(){
      <div class="pp-scroll pp-chart" id="ps-chart"></div>
      <div class="pp-note" id="ps-chn" style="margin-top:6px"></div></div>`;
   /* lines */
-  const LS=13;let maxL=0;
+  const LS=13;let maxL=0,anyLR=false;
   for(let l=0;l<8;l++)for(let t=0;t<LS;t++){let v=0;if(t<LS-1)v=S.LC[l*LM+t];else for(let j=t;j<LM;j++)v+=S.LC[l*LM+j];maxL=Math.max(maxL,pct(v,NC));}
   h+=`<div class="pp-card"><div class="pp-h">ხაზები (სტრიქონები, სვეტები, დიაგონალები)</div>
     <div class="pp-note" style="margin-bottom:10px">ხაზის ჯამი = მისი სამი უჯრის ციფრების რაოდენობა. რამდენ % დღეს რა ჯამი აქვს.</div>
@@ -389,19 +405,25 @@ function renderStats(){
   for(let l=0;l<8;l++){
     const k=LINE_KEYS[l];let sc=0,sb=0;
     for(let t=0;t<LM;t++){sc+=t*S.LC[l*LM+t];sb+=t*S.LB[l*LM+t];}
-    h+=`<tr><td class="l">${COMPOUND[k].name} <span style="opacity:.45;font-size:10px">${COMPOUND[k].label}</span></td>`;
+    const cr=condRow('l',l);if(cr)anyLR=true;
+    h+=`<tr><td class="l">${COMPOUND[k].name} <span style="opacity:.45;font-size:10px">${COMPOUND[k].label}</span>${cr?' <span class="pp-ctag">პირობა</span>':''}</td>`;
     for(let t=0;t<LS;t++){let c=0,b=0;if(t<LS-1){c=S.LC[l*LM+t];b=S.LB[l*LM+t];}else for(let j=t;j<LM;j++){c+=S.LC[l*LM+j];b+=S.LB[l*LM+j];}
+      if(cr){h+=condCell(cr,t,t===LS-1,pct(b,N),'');continue;}
       const pc=pct(c,NC);h+=`<td style="${heat(pc,maxL,'rgba(200,169,110,.9)')}">${c?fp(pc):'<span style="opacity:.2">·</span>'}${liftTag(pc,pct(b,N))}</td>`;}
-    h+=`<td>${(sc/NC).toFixed(2)}${liftTag(sc/NC,sb/N)}</td></tr>`;
+    h+=`<td>${cr?`<span class="pp-cm">${(sb/N).toFixed(2)}</span>`:(sc/NC).toFixed(2)+liftTag(sc/NC,sb/N)}</td></tr>`;
   }
-  h+=`</table></div></div>`;
+  h+=`</table></div>${anyLR?CR_NOTE:''}</div>`;
   /* empty cells count */
-  let maxE=0;for(let e=0;e<10;e++)maxE=Math.max(maxE,pct(S.EC[e],NC));
+  const er=condRow('e',0);const EA=er?S.EB:S.EC,EN=er?N:NC;
+  let maxE=0;for(let e=0;e<10;e++)maxE=Math.max(maxE,pct(EA[e],EN));
   const myE=mine?DIG.filter(d=>!mine.c[d]).length:-1;
   h+=`<div class="pp-card"><div class="pp-h">ცარიელი უჯრების რაოდენობა კვადრატში</div>`+
-    [...Array(10)].map((_,e)=>{const pc=pct(S.EC[e],NC);if(!S.EC[e]&&!S.EB[e])return '';
+    [...Array(10)].map((_,e)=>{const pc=pct(EA[e],EN);if(!S.EC[e]&&!S.EB[e])return '';
+      if(er){const m=condOK(er,e);return `<div class="pp-row" style="justify-content:flex-start;flex-wrap:nowrap;margin:4px 0;${m?'':'opacity:.4'}"><span style="width:118px;font-size:12px;${e===myE?'color:rgba(155,127,232,.95)':''}">${e} ცარიელი${e===myE?' ← შენ':''}</span>
+      <div class="pp-bar" style="flex:1;margin:0"><i style="width:${maxE?pc/maxE*100:0}%;background:${m?'rgba(127,207,232,.85)':'rgba(232,226,213,.25)'}"></i></div><span style="width:86px;text-align:right;font-size:12px;${m?'color:#7fcfe8':''}">${fp(pc)}%</span></div>`;}
       return `<div class="pp-row" style="justify-content:flex-start;flex-wrap:nowrap;margin:4px 0"><span style="width:118px;font-size:12px;${e===myE?'color:rgba(155,127,232,.95)':''}">${e} ცარიელი${e===myE?' ← შენ':''}</span>
       <div class="pp-bar" style="flex:1;margin:0"><i style="width:${maxE?pc/maxE*100:0}%;background:rgba(200,169,110,.7)"></i></div><span style="width:86px;text-align:right;font-size:12px">${fp(pc)}%${liftTag(pc,pct(S.EB[e],N)).replace('pp-lift','pp-lift" style="display:inline;margin-left:4px')}</span></div>`;}).join('')+`</div>`;
+  if(er)h=h.replace(/<\/div>$/,CR_NOTE+'</div>');
   /* top squares */
   const arr=[...S.SQ.entries()].sort((a,b)=>b[1]-a[1]);
   const once=arr.filter(e=>e[1]===1).length;
@@ -424,8 +446,8 @@ function renderStats(){
 function drawChart(){
   const S=lastStats,d=chartDigit,span=S.y1-S.y0+1;
   const B=Math.max(1,Math.ceil(span/500)),nb=Math.ceil(span/B);
-  const pts=[];
-  for(let b=0;b<nb;b++){let n=0,v=0;for(let i=b*B;i<Math.min(span,(b+1)*B);i++){n+=S.YN[i];v+=chartKind==='empty'?S.YE[i*10+d]:S.YS[i*10+d];}
+  const pts=[],whole=!!(S.has&&condRow('d',d)),YN=whole?S.BN:S.YN,YE=whole?S.BE:S.YE,YS=whole?S.BS:S.YS;
+  for(let b=0;b<nb;b++){let n=0,v=0;for(let i=b*B;i<Math.min(span,(b+1)*B);i++){n+=YN[i];v+=chartKind==='empty'?YE[i*10+d]:YS[i*10+d];}
     pts.push(n?(chartKind==='empty'?v/n*100:v/n):null);}
   const vals=pts.filter(v=>v!==null);
   const W=720,H=240,L=44,R=12,T=14,Bm=30,iw=W-L-R,ih=H-T-Bm;
@@ -441,11 +463,11 @@ function drawChart(){
   /* XX/XXI boundary */
   if(S.y0<2000&&S.y1>=2000){const i=(2000-S.y0)/B;if(i<=nb-1)s+=`<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T+ih}" stroke="rgba(155,127,232,.35)" stroke-dasharray="3 4"/><text x="${x(i)+4}" y="${T+9}" font-size="8.5" fill="rgba(155,127,232,.7)">2000</text>`;}
   let path='',pen=false;pts.forEach((v,i)=>{if(v===null){pen=false;return;}path+=(pen?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1);pen=true;});
-  const col=COLORS[d];
+  const col=whole?'#7fcfe8':COLORS[d];
   s+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="${nb>200?1.2:1.8}" stroke-linejoin="round"/>`;
   if(nb<=60)pts.forEach((v,i)=>{if(v!==null)s+=`<circle cx="${x(i)}" cy="${y(v)}" r="2.4" fill="#06050f" stroke="${col}"/>`;});
   $('ps-chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${s}</svg>`;
-  $('ps-chn').innerHTML=`${d} · ${LABELS[d]} — ${chartKind==='empty'?'რამდენ % დღეს არის ეს უჯრა ცარიელი':'ციფრის საშუალო რაოდენობა'}${B>1?` · ყოველი წერტილი = ${B} წელი`:' · ყოველი წერტილი = 1 წელი'}${lastStats.has?' · მხოლოდ პირობის დღეები':''}.`;
+  $('ps-chn').innerHTML=`${d} · ${LABELS[d]} — ${chartKind==='empty'?'რამდენ % დღეს არის ეს უჯრა ცარიელი':'ციფრის საშუალო რაოდენობა'}${B>1?` · ყოველი წერტილი = ${B} წელი`:' · ყოველი წერტილი = 1 წელი'}${whole?' · <span style="color:#7fcfe8">პირობის ციფრი — ნაჩვენებია მთელი დიაპაზონი</span>':lastStats.has?' · მხოლოდ პირობის დღეები':''}.`;
 }
 
 /* ═══════════ COMPATIBILITY ═══════════ */
