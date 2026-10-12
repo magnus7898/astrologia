@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ტაროს დაბადების კარტები</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.tcard{width:132px;height:210px;border-radius:12px;border:1px solid rgba(200,169,110,.45);position:relative;overflow:hidden;
+  background:linear-gradient(170deg,rgba(60,35,120,.45),rgba(10,9,26,.9) 60%),radial-gradient(circle at 50% 30%,rgba(200,169,110,.18),transparent 60%);
+  box-shadow:0 10px 30px rgba(0,0,0,.5),inset 0 0 0 5px rgba(6,5,15,.6),inset 0 0 0 6px rgba(200,169,110,.25);
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:16px 8px 14px;text-align:center}
+.tcard .rn{font-family:'Cinzel',serif;font-size:13px;letter-spacing:3px;color:var(--gold)}
+.tcard .sy{font-family:'Cormorant Garamond',serif;font-size:58px;line-height:1;color:rgba(232,226,213,.9);text-shadow:0 0 30px rgba(200,169,110,.4)}
+.tcard .nm{font-size:12px;color:var(--text);line-height:1.3}
+.tcard.sm{width:96px;height:152px;padding:10px 6px}
+.tcard.sm .sy{font-size:38px}.tcard.sm .nm{font-size:10.5px}.tcard.sm .rn{font-size:10px}
+.trow{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:flex-end}
+.tl{text-align:center;font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--muted);margin-top:8px;text-transform:uppercase}
+.calc{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--muted);text-align:center;margin:14px 0 0}
+.calc b{color:var(--gold);font-weight:400}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">ტარო</div>
+  <h1 class="page-title">დაბადების <em>კარტები</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<p class="lead">მერი გრირის მეთოდი: თვე + დღე + წელი → ციფრების ჯამი, სანამ 22-ს არ ჩამოსცდება. პირველი რიცხვი — <b>პიროვნების კარტა</b>, ერთნიშნა ფესვი — <b>სულის კარტა</b>. იგივე წესით ითვლება <b>წლის კარტა</b> ყოველი წლისთვის. ნუმერაცია MAGNUS-ის სტანდარტით: 8 — სამართლიანობა, 11 — ძალა.</p>
+<div class="card">
+  <div class="row">
+    <input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10">
+    <input class="in date" id="d2" placeholder="პარტნიორი (არასავალდ.)" maxlength="10" style="width:200px;font-size:12px">
+    <button class="btn" id="go">გამოთვლა</button>
+  </div>
+  <div class="err" id="err"></div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+const ROM=['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI','0'];
+const SYM=['○','☿','☾','♀','♈','♉','♊','♋','⚖','♍','♃','♌','♆','♏','♐','♑','♂','♒','♓','☉','♇','♄','○'];
+/* [name, keyword, as birth card, as year card] */
+const A=[null,
+ ['მაგი','ნება და ოსტატობა','შემოქმედი და ინიციატორი. შენ ხარ ის, ვინც იდეას რეალობად აქცევს — სიტყვით, ხელით, ნებით. ამოცანა: ძალა გამოიყენო პატიოსნად და არა მანიპულაციისთვის.','დაწყების წელი: ახალი პროექტები, უნარების გამოვლენა, ინიციატივა შენს ხელშია.'],
+ ['ქურუმი ქალი','ინტუიცია და საიდუმლო','შინაგანი ცოდნის მცველი. ხედავ იმას, რაც დაფარულია; სიჩუმეში პოულობ პასუხებს. ამოცანა: ენდო შინაგან ხმას და ცოდნა გაუზიარო სხვებს.','შინაგანი წელი: სწავლა, ინტუიცია, სიზმრები, მოთმინება — ყველაფერი ჯერ არ ჩანს.'],
+ ['იმპერატრიცა','სიუხვე და შემოქმედება','სიცოცხლის, სილამაზისა და ნაყოფიერების ენერგია. ზრდი, ამრავლებ, ქმნი სიმყუდროვეს. ამოცანა: ზრუნვა ისე, რომ საკუთარი თავი არ დაკარგო.','ნაყოფიერი წელი: შემოქმედება, ოჯახი, სიუხვე, სილამაზე, შესაძლოა ბავშვი ან ახალი „შვილი“-პროექტი.'],
+ ['იმპერატორი','სტრუქტურა და ძალაუფლება','მშენებელი და ლიდერი. ქმნი წესრიგს, საზღვრებს და სისტემებს. ამოცანა: ავტორიტეტი, რომელიც იცავს, და არა მხოლოდ აკონტროლებს.','სტრუქტურის წელი: კარიერა, პასუხისმგებლობა, საფუძვლის აშენება, ლიდერობა.'],
+ ['იეროფანტი','ტრადიცია და სწავლება','მასწავლებელი და ცოდნის გადამცემი. ეძებ აზრს, წესებს, სულიერ სისტემას. ამოცანა: იპოვო საკუთარი ჭეშმარიტება და არა მხოლოდ მიღებული.','სწავლის წელი: განათლება, მენტორი, ინსტიტუტები, ტრადიციები, ქორწინება.'],
+ ['შეყვარებულები','არჩევანი და კავშირი','სიყვარულისა და არჩევანის ენერგია. ცხოვრება ურთიერთობებში ვლინდება; ფასეულობები მნიშვნელოვანია. ამოცანა: არჩევანი გულით და პასუხისმგებლობით.','ურთიერთობის წელი: სიყვარული, პარტნიორობა, მნიშვნელოვანი არჩევანი.'],
+ ['ეტლი','მოძრაობა და გამარჯვება','მიზნისკენ მიმავალი მეომარი. ნება, დისციპლინა, წინსვლა. ამოცანა: საპირისპირო ძალების მართვა ერთი მიმართულებით.','წინსვლის წელი: მოგზაურობა, გადაადგილება, გამარჯვება, კონტროლი.'],
+ ['სამართლიანობა','წონასწორობა და პასუხისმგებლობა','სიმართლის და წონასწორობის ადამიანი. მიზეზ-შედეგი, პატიოსნება, სამართალი. ამოცანა: ობიექტურობა საკუთარ თავთანაც.','შედეგების წელი: კანონი, ხელშეკრულებები, ბალანსი, რასაც დათესე — იმას მოიმკი.'],
+ ['განდეგილი','სიბრძნე და მარტოობა','მაძიებელი და ბრძენი. სიღრმე, ანალიზი, შინაგანი სინათლე. ამოცანა: მარტოობიდან დაბრუნება და სინათლის სხვებისთვის ჩვენება.','შინაგანი ძიების წელი: მარტოობა, ფიქრი, სწავლა, ერთი ციკლის დასრულება.'],
+ ['ბედის ბორბალი','ციკლები და ბედი','ცვლილებების ადამიანი — ცხოვრება მოულოდნელ შემობრუნებებშია. ამოცანა: დაინახო ციკლი და ჩაერთო მასში და არ ებრძოლო.','შემობრუნების წელი: ცვლილება, იღბალი, ახალი ციკლი.'],
+ ['ძალა','შინაგანი ძალა და გამბედაობა','რბილი ძალა, რომელიც ვნებებს და შიშებს იმორჩილებს. ამოცანა: სიძლიერე სიყვარულით და არა ძალადობით.','გამბედაობის წელი: ჯანმრთელობა, ენერგია, ვნების მართვა, თავდაჯერება.'],
+ ['ჩამოკიდებული','მსხვერპლი და ახალი ხედვა','ხედავ სამყაროს სხვა კუთხით. დათმობა, მოლოდინი, სულიერი გარდატეხა. ამოცანა: გაუშვა კონტროლი.','პაუზის წელი: მოლოდინი, ხედვის შეცვლა, დათმობა, სულიერი გამოცდილება.'],
+ ['სიკვდილი','გარდაქმნა','ღრმა ტრანსფორმაციის ადამიანი — ძველის სიკვდილი და ახლის დაბადება ცხოვრების რიტმია. ამოცანა: არ შეეჭიდო იმას, რაც მთავრდება.','დასრულების წელი: ძველის გაშვება, დიდი ცვლილებები, განახლება.'],
+ ['ზომიერება','ჰარმონია და ალქიმია','შერწყმის ოსტატი — აერთიანებ დაპირისპირებულს, კურნავ, აწონასწორებ. ამოცანა: ზომიერება ყველაფერში.','აღდგენის წელი: მკურნალობა, ბალანსი, მოთმინება, ნაზი ზრდა.'],
+ ['ეშმაკი','ვნება და მიჯაჭვულობა','ძლიერი მიწიერი ენერგია, ვნება, მატერიალური ძალა. ამოცანა: დაინახო საკუთარი ჯაჭვები და თავისუფლად აირჩიო.','ცდუნების წელი: ვნება, ფული, დამოკიდებულებების გამოვლენა და გათავისუფლება.'],
+ ['კოშკი','გარღვევა','ცხოვრება მოულოდნელ გარღვევებს მოაქვს — ყალბი სტრუქტურები ინგრევა. ამოცანა: ჭეშმარიტების მიღება და ახალ საძირკველზე აშენება.','შოკის წელი: ნგრევა, გამოცხადება, გათავისუფლება, ახალი საფუძველი.'],
+ ['ვარსკვლავი','იმედი და შთაგონება','სინათლის და იმედის ადამიანი — შთააგონებ სხვებს, გაქვს ხედვა. ამოცანა: ენდო სამყაროს და იყო გახსნილი.','იმედის წელი: შთაგონება, განკურნება, ახალი პერსპექტივები.'],
+ ['მთვარე','წარმოსახვა და ილუზია','ღრმა ქვეცნობიერი, ფანტაზია, მისტიკა. ამოცანა: შიშებს თვალი გაუსწორო და ინტუიცია ილუზიისგან გაარჩიო.','გაურკვევლობის წელი: სიზმრები, შემოქმედება, შიშები, ფარული ფაქტები.'],
+ ['მზე','სიხარული და წარმატება','ნათელი, თბილი, ბავშვურად გულწრფელი ადამიანი. ამოცანა: ანათო ისე, რომ სხვებს არ დაჩრდილო.','წარმატების წელი: სიხარული, აღიარება, ბავშვები, ენერგია.'],
+ ['სამსჯავრო','გაღვიძება და მოწოდება','მოწოდების ადამიანი — გესმის „ზარი“, რომელიც მისიისკენ გიხმობს. ამოცანა: წარსულის გადაფასება და აღორძინება.','გაღვიძების წელი: გადაწყვეტილება, მოწოდება, წარსულის დახურვა.'],
+ ['სამყარო','მთლიანობა და დასრულება','ციკლის დამასრულებელი, მსოფლიოს მოქალაქე. ამოცანა: მთლიანობის შეგრძნება და მისი სხვებისთვის გაზიარება.','დასრულების წელი: მიღწევა, მოგზაურობა, ციკლის დახურვა.'],
+ ['სულელი','თავისუფლება და ახალი გზა','მარადიული მოგზაური — სპონტანური, ღია, უშიშარი. ამოცანა: ნდობა გზისადმი და ბავშვური სიცოცხლისუნარიანობა.','ნახტომის წელი: ახალი თავგადასავალი, რისკი, თავისუფლება.']];
+A[0]=A[22];
+const red22=n=>{while(n>22)n=dsum(n);return n;};
+function constellation(total){
+  const p=red22(total);const chain=[p];let n=p;while(n>9){n=dsum(n);chain.push(n);}
+  return chain; /* [personality, (hidden), soul] */
+}
+function tcard(n,sm){const a=A[n];return `<div class="tcard${sm?' sm':''}"><div class="rn">${ROM[n]}</div><div class="sy">${SYM[n]}</div><div class="nm">${a[0]}</div></div>`;}
+maskDate($('d1'));maskDate($('d2'));
+['d1','d2'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')run();}));
+$('go').onclick=run;
+function run(){
+  const P=parseDate($('d1').value),Bv=$('d2').value.trim(),Q=Bv?parseDate(Bv):null;$('err').textContent='';
+  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  if(Bv&&!Q){$('err').textContent='პარტნიორის თარიღი არასწორია.';return;}
+  const tot=P.m+P.d+P.y,ch=constellation(tot);
+  const labels=ch.length===1?['პიროვნება და სული']:ch.length===2?['პიროვნება','სული']:['პიროვნება','ფარული მასწავლებელი','სული'];
+  let h=`<div class="card"><div class="trow">${ch.map((n,i)=>`<div>${tcard(n)}<div class="tl">${labels[i]}</div></div>`).join('')}</div>
+    <div class="calc">${P.m} + ${P.d} + ${P.y} = <b>${tot}</b> → ${(()=>{let s=[],n=tot;while(n>22){n=dsum(n);s.push(n);}return s.join(' → ')||tot;})()}${ch.length>1?' → '+ch.slice(1).join(' → '):''}</div></div>`;
+  ch.forEach((n,i)=>{h+=`<div class="card"><div class="h">${labels[i]} · ${ROM[n]} ${A[n][0]}</div><div class="txt"><b>${A[n][1]}.</b> ${A[n][2]}</div></div>`;});
+  if(ch.length===1)h+=`<div class="card note">როცა ჯამი ერთნიშნაა, პიროვნებისა და სულის კარტა ერთია — ენერგია განსაკუთრებით სუფთად და ძლიერად ვლინდება.</div>`;
+  /* year cards */
+  const now=new Date(),Y=now.getFullYear();let rows='';
+  for(let y=Y-2;y<=Y+9;y++){const n=red22(P.m+P.d+y);rows+=`<tr class="${y===Y?'now':''}"><td>${y}</td><td>${ROM[n]} · ${A[n][0]}</td><td class="note" style="color:rgba(232,226,213,.65)">${A[n][3]}</td></tr>`;}
+  h+=`<div class="card"><div class="h">წლის კარტები</div><div class="note" style="margin-bottom:8px">თვე + დღე + კონკრეტული წელი. წელი მოქმედებს დაბადების დღიდან შემდეგ დაბადების დღემდე.</div>
+    <div class="scroll"><table class="tbl"><tr><th>წელი</th><th>კარტა</th><th>თემა</th></tr>${rows}</table></div></div>`;
+  if(Q){const t2=Q.m+Q.d+Q.y,c2=constellation(t2),rel=red22(tot+t2),relS=constellation(rel);
+    h+=`<div class="card"><div class="h">ურთიერთობის კარტა</div>
+      <div class="trow">${[[ch[0],'შენ'],[c2[0],'პარტნიორი'],[rel,'წყვილი']].map(([n,l])=>`<div>${tcard(n,1)}<div class="tl">${l}</div></div>`).join('')}</div>
+      <div class="calc">${tot} + ${t2} = <b>${tot+t2}</b> → ${rel}${relS.length>1?' → '+relS.slice(1).join(' → '):''}</div>
+      <div class="txt" style="margin-top:12px"><b>${A[rel][0]}</b> — ${A[rel][1]}. ${A[rel][2].split('. ')[0]}. ${ch[ch.length-1]===c2[c2.length-1]?'<br><b>ორივეს ერთი სულის კარტა აქვს</b> — ღრმა სულიერი ნათესაობა.':''}</div></div>`;}
+  h+=`<div class="card note"><b>კონსტელაციები:</b> 1/10/19 · 2/11/20 · 3/12/21 · 4/13/22 · 5/14 · 6/15 · 7/16 · 8/17 · 9/18 — ერთი სულის კარტის ენერგია სხვადასხვა „ოქტავაზე“.</div>`;
+  $('out').innerHTML=h;
+}
+</script>
+</body>
+</html>
