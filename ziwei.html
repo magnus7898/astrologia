@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ძი ვეი დოუ შუ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/iztro@2.6.1/dist/iztro.min.js"></script>
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.zw{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(150px,auto));gap:5px;min-width:640px}
+.pc{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:8px;padding:6px 7px;font-size:11px;position:relative;display:flex;flex-direction:column}
+.pc.life{border-color:rgba(200,169,110,.65);box-shadow:inset 0 0 18px rgba(200,169,110,.08)}
+.pc.dec{background:rgba(155,127,232,.08)}
+.pc.yr{outline:1px dashed rgba(127,207,232,.7);outline-offset:-3px}
+.pc .pn{font-size:11.5px;color:var(--gold)}
+.pc .gz{position:absolute;top:6px;right:7px;font-family:'Noto Serif SC',serif;font-size:12px;color:var(--muted)}
+.pc .mj{margin-top:4px;line-height:1.5}
+.pc .mj div{font-size:12px;color:var(--text)}
+.pc .mj small{color:var(--muted);font-size:9.5px}
+.mut{display:inline-block;font-size:9px;border-radius:4px;padding:0 4px;margin-left:3px;color:#06050f;font-weight:500}
+.pc .mn{font-size:10px;color:rgba(232,226,213,.55);margin-top:4px;line-height:1.45}
+.pc .ft{margin-top:auto;font-size:9.5px;color:var(--muted);padding-top:4px}
+.cen{grid-row:2/4;grid-column:2/4;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;
+  background:radial-gradient(circle,rgba(155,127,232,.1),transparent 70%);border:1px solid var(--border);border-radius:10px;padding:10px}
+.form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
+.form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
+.form2 .in,.form2 .sel{width:100%}
+.rel{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}.rel:last-child{border-bottom:0}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">ჩინური ასტროლოგია · 紫微斗數</div>
+  <h1 class="page-title">ძი ვეი <em>· იისფერი ვარსკვლავი</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<p class="lead">12 სასახლე და ~100 ვარსკვლავი, განლაგებული მთვარის კალენდრის თარიღითა და საათით. 14 <b>მთავარი ვარსკვლავი</b> ძი ვეის (იმპერატორის) ირგვლივ ლაგდება; ოთხი <b>ტრანსფორმაცია</b> (ლუ, ციუან, კე, ძი) დაბადების წლის ღეროდან მოდის. 10-წლიანი პერიოდები სასახლიდან სასახლეზე გადადის.</p>
+<div class="card">
+  <div class="form2">
+    <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
+    <div><label>დრო (საჭიროა)</label><input class="in time" id="t1" placeholder="HH:MM" maxlength="5"></div>
+    <div><label>სქესი</label><select class="sel" id="s1"><option value="男">მამრობითი</option><option value="女">მდედრობითი</option></select></div>
+    <div><label>UTC±</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
+    <div><label>გრძედი °E (არასავალდ.)</label><input class="in" id="lon1" placeholder="მაგ. 44.8" style="text-align:center"></div>
+  </div>
+  <div class="row" style="margin-top:16px"><button class="btn" id="go">გამოთვლა</button></div>
+  <div class="err" id="err"></div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+/* ── Chinese calendar data (Georgian) ── */
+const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥';
+const GAN_KA=['ძია','ი','ბინ','დინ','ვუ','ძი','გენ','სინ','ჟენ','გუი'];
+const ZHI_KA=['ძი','ჩოუ','ინ','მაო','ჩენ','ს','ვუ','ვეი','შენ','იოუ','სიუ','ხაი'];
+const ANIMAL=['ვირთხა','ხარი','ვეფხვი','კურდღელი','დრაკონი','გველი','ცხენი','თხა','მაიმუნი','მამალი','ძაღლი','ღორი'];
+const ANIMAL_EMO=['🐀','🐂','🐅','🐇','🐉','🐍','🐎','🐐','🐒','🐓','🐕','🐖'];
+const EL=['ხე','ცეცხლი','მიწა','ლითონი','წყალი'];
+const EL_COL=['#7fcf8f','#e86b6b','#d9b36a','#d8dde6','#6fa8e8'];
+const EL_ICO=['🌳','🔥','⛰️','⚙️','💧'];
+const ganEl=i=>Math.floor(i/2), ganYang=i=>i%2===0;
+const ZHI_EL=[4,2,0,0,2,1,1,2,3,3,2,4];
+const gi=c=>GAN.indexOf(c), zi=c=>ZHI.indexOf(c);
+const elOfChar=c=>{const g=gi(c);if(g>=0)return ganEl(g);const z=zi(c);return z>=0?ZHI_EL[z]:-1;};
+/* generating: wood→fire→earth→metal→water→wood ; controlling: wood→earth→water→fire→metal→wood */
+const gen=e=>(e+1)%5, ctl=e=>(e+2)%5;
+function elRel(a,b){/* relation of b to a */ if(a===b)return'same';if(gen(b)===a)return'mother';if(gen(a)===b)return'child';if(ctl(a)===b)return'wealth';return'enemy';}
+const SHISHEN={'比肩':['თანასწორი','მეგობრები, თანატოლები, დამოუკიდებლობა'],'劫财':['სიმდიდრის მძარცველი','კონკურენცია, რისკი, გაბედულება'],
+ '食神':['გემრიელი ღმერთი','შემოქმედება, სიამოვნება, ნიჭის რბილი გამოხატვა'],'伤官':['დამაზიანებელი ოფიცერი','მეამბოხე ნიჭი, ორიგინალობა, კრიტიკა'],
+ '偏财':['არაპირდაპირი სიმდიდრე','მოულოდნელი შემოსავალი, ბიზნესი, გულუხვობა'],'正财':['პირდაპირი სიმდიდრე','სტაბილური შემოსავალი, ქონება, პრაქტიკულობა'],
+ '七杀':['შვიდი მკვლელი','ზეწოლა, ძალაუფლება, გამოწვევა, მეომარი'],'正官':['პირდაპირი ოფიცერი','წესრიგი, სტატუსი, პასუხისმგებლობა, კანონი'],
+ '偏印':['არაპირდაპირი რესურსი','ინტუიცია, უჩვეულო ცოდნა, მისტიკა'],'正印':['პირდაპირი რესურსი','მფარველობა, განათლება, დედა, მხარდაჭერა'],'日主':['დღის ოსტატი','შენ თვითონ']};
+const NAYIN={'海中金':'ზღვის სიღრმის ოქრო','炉中火':'ქურის ცეცხლი','大林木':'დიდი ტყის ხე','路旁土':'გზისპირა მიწა','剑锋金':'ხმლის პირის ლითონი','山头火':'მთის მწვერვალის ცეცხლი','涧下水':'ხევის წყალი','城头土':'ციხე-კედლის მიწა','白蜡金':'თეთრი ცვილის ლითონი','杨柳木':'ტირიფის ხე','泉中水':'წყაროს წყალი','屋上土':'სახურავის მიწა','霹雳火':'ელვის ცეცხლი','松柏木':'ფიჭვის ხე','长流水':'დიდი მდინარე','沙中金':'ქვიშის ოქრო','砂中金':'ქვიშის ოქრო','山下火':'მთის ძირის ცეცხლი','平地木':'ველის ხე','壁上土':'კედლის მიწა','金箔金':'ოქროს ფურცელი','覆灯火':'ლამპრის ცეცხლი','天河水':'ციური მდინარე','大驿土':'დიდი გზის მიწა','钗钏金':'სამკაულის ოქრო','桑柘木':'თუთის ხე','大溪水':'დიდი ნაკადულის წყალი','沙中土':'ქვიშის მიწა','天上火':'ციური ცეცხლი','石榴木':'ბროწეულის ხე','大海水':'დიდი ზღვის წყალი'};
+const nayinEl=s=>{const c=s.slice(-1);return {'金':3,'火':1,'木':0,'土':2,'水':4}[c];};
+const HARM=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]], CLASH=[[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]];
+const TRINE=[[8,0,4],[2,6,10],[5,9,1],[11,3,7]];
+const STEMCOMB=[[0,5],[1,6],[2,7],[3,8],[4,9]];
+const pairIn=(L,a,b)=>L.some(p=>(p[0]===a&&p[1]===b)||(p[0]===b&&p[1]===a));
+const sameTrine=(a,b)=>a!==b&&TRINE.some(t=>t.includes(a)&&t.includes(b));
+function branchRel(a,b){if(a===b)return['იგივე ნიშანი','ერთნაირი ბუნება, მსგავსი რიტმი.','#c8a96e'];
+  if(pairIn(HARM,a,b))return['ექვსი ჰარმონია (六合)','ბუნებრივი მიზიდულობა და თანხმობა.','#7fcf8f'];
+  if(sameTrine(a,b))return['სამი ჰარმონია (三合)','საერთო ელემენტი და მიზნები — ძლიერი ალიანსი.','#7fcf8f'];
+  if(pairIn(CLASH,a,b))return['შეჯახება (冲)','საპირისპირო ძალები — დაძაბულობა, ცვლილება, ვნება.','#e86b6b'];
+  return['ნეიტრალური','პირდაპირი კავშირი არ არის.','rgba(232,226,213,.5)'];}
+/* true-solar-time equation of time (minutes) */
+function eot(y,m,d){const N=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;const B=2*Math.PI*(N-81)/365;return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);}
+/* add minutes to a civil date-time (proleptic Gregorian via UTC Date with full year) */
+function addMin(y,m,d,h,mi,add){const t=new Date(0);t.setUTCFullYear(y,m-1,d);t.setUTCHours(h,mi,0,0);t.setTime(t.getTime()+add*6e4);return{y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate(),h:t.getUTCHours(),mi:t.getUTCMinutes()};}
+
+const PAL={'命宫':'სიცოცხლე','兄弟':'და-ძმები','夫妻':'მეუღლე','子女':'შვილები','财帛':'სიმდიდრე','疾厄':'ჯანმრთელობა','迁移':'მოგზაურობა','仆役':'მეგობრები','交友':'მეგობრები','官禄':'კარიერა','田宅':'სახლი, ქონება','福德':'სულიერი სიმშვიდე','父母':'მშობლები'};
+const PAL_T={'命宫':'პიროვნება, ბუნება, ცხოვრების მთავარი თემა','兄弟':'და-ძმები, თანამშრომლები','夫妻':'ქორწინება, პარტნიორობა','子女':'შვილები, შემოქმედება, მოსწავლეები','财帛':'ფული, შემოსავალი','疾厄':'სხეული, ჯანმრთელობა','迁移':'გარე სამყარო, მოგზაურობა, საზოგადოება','仆役':'მეგობრები, ხელქვეითები','交友':'მეგობრები, ხელქვეითები','官禄':'კარიერა, სტატუსი','田宅':'სახლი, უძრავი ქონება, ოჯახის ფესვები','福德':'ბედნიერება, სულიერი ცხოვრება, გემოვნება','父母':'მშობლები, უფროსები, დოკუმენტები'};
+const MAJ={'紫微':['ძი ვეი','იმპერატორი','ლიდერობა, ღირსება, პასუხისმგებლობა, სხვების მართვის ნიჭი.'],'天机':['ტიან ძი','სტრატეგი','გონება, დაგეგმვა, ცვალებადობა, მრჩევლის ნიჭი.'],'太阳':['ტაი იან','მზე','გაცემა, საზოგადოებრივი აქტივობა, ენერგია, მამაკაცური პრინციპი.'],'武曲':['ვუ ცუ','გენერალი','გადამწყვეტობა, ფული, დისციპლინა, პრაქტიკულობა.'],'天同':['ტიან ტუნ','ბავშვი','ჰარმონია, სიამოვნება, კომფორტი, კეთილი ბუნება.'],'廉贞':['ლიან ჩჟენ','ვნება','ამბიცია, ხიბლი, პოლიტიკა, ტრანსფორმაცია.'],'天府':['ტიან ფუ','საგანძური','სტაბილურობა, დაგროვება, კონსერვატიზმი, რესურსები.'],'太阴':['ტაი ინ','მთვარე','სინაზე, ქონება, ინტუიცია, ქალური პრინციპი.'],'贪狼':['ტან ლან','მგელი','სურვილები, ხელოვნება, ურთიერთობები, მრავალმხრივობა.'],'巨门':['ძიუ მენ','დიდი კარი','სიტყვა, ანალიზი, ეჭვი, დებატი.'],'天相':['ტიან სიან','მინისტრი','სამართლიანობა, მომსახურება, დახვეწილობა, მხარდაჭერა.'],'天梁':['ტიან ლიან','მფარველი','სიბრძნე, დაცვა, მედიცინა, უფროსის როლი.'],'七杀':['ცი შა','მეომარი','გაბედულება, დამოუკიდებლობა, მოქმედება, რისკი.'],'破军':['პო ძიუნ','პიონერი','ცვლილება, ძველის ნგრევა, ინოვაცია.']};
+const MIN={'文昌':'ვენ ჩან · ლიტერატურა','文曲':'ვენ ცუ · ხელოვნება','左辅':'ძუო ფუ · მხარდამჭერი','右弼':'იოუ ბი · დამხმარე','天魁':'ტიან კუი · მფარველი','天钺':'ტიან იუე · მფარველი','禄存':'ლუ ცუნ · კეთილდღეობა','天马':'ტიან მა · მოძრაობა','擎羊':'ცინ იან · დანა','陀罗':'ტუო ლუო · შეფერხება','火星':'ხუო სინ · ცეცხლი','铃星':'ლინ სინ · ზარი','地空':'დი კუნ · სიცარიელე','地劫':'დი ძიე · დანაკარგი'};
+const LUCKY=new Set(['文昌','文曲','左辅','右弼','天魁','天钺','禄存','天马']);
+const BR={'庙':'უძლიერესი','旺':'ძლიერი','得':'კარგი','利':'ხელსაყრელი','平':'საშუალო','不':'სუსტი','陷':'დაცემული'};
+const MUT={'禄':['ლუ','კეთილდღეობა','#7fcf8f'],'权':['ციუან','ძალაუფლება','#e8c95a'],'科':['კე','აღიარება','#6fa8e8'],'忌':['ძი','დაბრკოლება','#e86b6b']};
+const POS={'巳':[1,1],'午':[1,2],'未':[1,3],'申':[1,4],'辰':[2,1],'酉':[2,4],'卯':[3,1],'戌':[3,4],'寅':[4,1],'丑':[4,2],'子':[4,3],'亥':[4,4]};
+const starName=n=>MAJ[n]?MAJ[n][0]:MIN[n]?MIN[n].split(' · ')[0]:n;
+const fiveCls=s=>{const e={'水':4,'木':0,'金':3,'土':2,'火':1}[s[0]];const n={'二':2,'三':3,'四':4,'五':5,'六':6}[s[1]];return `${EL[e]} · ${n}`;};
+['d1'].forEach(i=>maskDate($(i)));['t1'].forEach(i=>maskTime($(i)));
+$('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
+function run(){
+  $('err').textContent='';
+  const P=parseDate($('d1').value),T=parseTime($('t1').value);
+  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  if(!T){$('err').textContent='ძი ვეისთვის დაბადების საათი აუცილებელია (HH:MM).';return;}
+  if(typeof iztro==='undefined'){$('err').textContent='ბიბლიოთეკა ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი.';return;}
+  const tz=parseFloat($('tz1').value)||0,lonS=$('lon1').value.trim(),lon=lonS===''?null:parseFloat(lonS);
+  let L={y:P.y,m:P.m,d:P.d,h:T.h,mi:T.mi};
+  if(lon!==null&&!isNaN(lon))L=addMin(P.y,P.m,P.d,T.h,T.mi,-tz*60+lon*4+eot(P.y,P.m,P.d));
+  const ti=L.h<1?0:L.h>=23?12:Math.floor((L.h+1)/2);
+  let a;try{a=iztro.astro.bySolar(`${L.y}-${L.m}-${L.d}`,ti,$('s1').value,true,'zh-CN');}catch(e){$('err').textContent='გამოთვლა ვერ მოხერხდა: '+e.message;return;}
+  let hs=null;try{hs=a.horoscope(new Date());}catch(e){}
+  const decI=hs?hs.decadal.index:-1,yrI=hs?hs.yearly.index:-1;
+  let cells='';
+  a.palaces.forEach((p,i)=>{const [r,c]=POS[p.earthlyBranch];
+    const mj=p.majorStars.map(s=>`<div>${MAJ[s.name]?MAJ[s.name][0]:s.name} <small>${s.brightness?BR[s.brightness]||s.brightness:''}</small>${s.mutagen?`<span class="mut" style="background:${MUT[s.mutagen][2]}">${MUT[s.mutagen][0]}</span>`:''}</div>`).join('');
+    const mn=p.minorStars.map(s=>`<span style="color:${LUCKY.has(s.name)?'#9fd8a8':'#e8a0a0'}">${starName(s.name)}${s.mutagen?`<span class="mut" style="background:${MUT[s.mutagen][2]}">${MUT[s.mutagen][0]}</span>`:''}</span>`).join(' · ');
+    cells+=`<div class="pc${p.name==='命宫'?' life':''}${i===decI?' dec':''}${i===yrI?' yr':''}" style="grid-row:${r};grid-column:${c}">
+      <div class="pn">${PAL[p.name]||p.name}${p.isBodyPalace?' <span style="color:var(--vio)">· სხეული</span>':''}</div><div class="gz">${p.heavenlyStem}${p.earthlyBranch}</div>
+      <div class="mj">${mj||'<small>მთავარი ვარსკვლავი არ არის</small>'}</div><div class="mn">${mn}</div>
+      <div class="ft">${p.decadal.range[0]}–${p.decadal.range[1]} წ.</div></div>`;});
+  const life=a.palaces.find(p=>p.name==='命宫'),opp=a.palaces.find(p=>p.name==='迁移');
+  const lifeStars=life.majorStars.length?life.majorStars:opp.majorStars;
+  const center=`<div class="cen"><div class="note">${fmtD(P)} · ${String(T.h).padStart(2,'0')}:${String(T.mi).padStart(2,'0')}</div>
+    <div style="font-family:'Noto Serif SC',serif;font-size:15px;color:var(--muted)">${a.chineseDate}</div>
+    <div class="note">მთვარის თარიღი: ${a.lunarDate}</div>
+    <div class="kv" style="width:100%;margin-top:6px"><div><div class="k">ელემენტის ბიურო</div><div class="v" style="font-size:18px">${fiveCls(a.fiveElementsClass)}</div></div>
+    <div><div class="k">სულის ვარსკვლავი</div><div class="v" style="font-size:16px">${starName(a.soul)}</div></div>
+    <div><div class="k">სხეულის ვარსკვლავი</div><div class="v" style="font-size:16px">${starName(a.body)}</div></div></div></div>`;
+  let h=`<div class="card"><div class="scroll"><div class="zw">${cells}${center}</div></div>
+    <div class="note" style="margin-top:10px"><span style="color:var(--gold)">ოქროსფერი ჩარჩო</span> — სიცოცხლის სასახლე · <span style="color:var(--vio)">იისფერი ფონი</span> — მიმდინარე 10-წლიანი პერიოდი · <span style="color:#7fcfe8">წყვეტილი</span> — მიმდინარე წელი · <span style="color:#9fd8a8">მწვანე</span> — ხელშემწყობი, <span style="color:#e8a0a0">წითელი</span> — რთული ვარსკვლავები.</div></div>`;
+  h+=`<div class="card"><div class="h">სიცოცხლის სასახლე ${life.majorStars.length?'':'(ცარიელია — იკითხება მოპირდაპირე, მოგზაურობის სასახლიდან)'}</div>`+
+    lifeStars.map(s=>{const m=MAJ[s.name];return `<div class="rel"><b style="color:var(--gold)">${m[0]} — ${m[1]}</b> <span class="note">(${BR[s.brightness]||'—'})</span><div class="txt">${m[2]}</div></div>`;}).join('')+`</div>`;
+  /* four transformations */
+  const muts=[];a.palaces.forEach(p=>[...p.majorStars,...p.minorStars].forEach(s=>{if(s.mutagen)muts.push([s.mutagen,s.name,p.name]);}));
+  const order='禄权科忌';muts.sort((x,y)=>order.indexOf(x[0])-order.indexOf(y[0]));
+  h+=`<div class="card"><div class="h">ოთხი ტრანსფორმაცია (四化)</div>`+muts.map(m=>`<div class="rel"><b style="color:${MUT[m[0]][2]}">${MUT[m[0]][0]} · ${MUT[m[0]][1]}</b> — ${starName(m[1])} „${PAL[m[2]]}“ სასახლეში <div class="note">${PAL_T[m[2]]}</div></div>`).join('')+`</div>`;
+  h+=`<div class="card"><div class="h">12 სასახლე</div><div class="scroll"><table class="tbl"><tr><th>სასახლე</th><th>თემა</th><th>მთავარი ვარსკვლავები</th><th>პერიოდი</th></tr>`+
+    a.palaces.map((p,i)=>`<tr class="${i===decI?'now':''}"><td>${PAL[p.name]}</td><td class="note">${PAL_T[p.name]}</td><td>${p.majorStars.map(s=>MAJ[s.name]?MAJ[s.name][0]+' ('+MAJ[s.name][1]+')':s.name).join(', ')||'—'}</td><td>${p.decadal.range.join('–')}</td></tr>`).join('')+`</table></div></div>`;
+  h+=`<div class="card note">გამოთვლა: <b>iztro</b> (MIT) — ძი ვეი დოუ შუს ღია ბიბლიოთეკა. საათი გადაიყვანება შიჩენში (2-საათიანი მონაკვეთი); გრძედის მითითებისას — ჭეშმარიტი მზის დროით. ასაკი ჩინური წესით (虚岁).</div>`;
+  $('out').innerHTML=h;
+}
+</script>
+</body>
+</html>
