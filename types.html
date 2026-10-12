@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>პიროვნების ტიპები</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.q{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.q .qt{font-size:13.5px;line-height:1.6;margin-bottom:8px}
+.q .qt span{color:var(--muted);font-size:11px;margin-right:6px}
+.lik{display:flex;gap:6px;flex-wrap:wrap}
+.lik label,.opt label{cursor:pointer;border:1px solid var(--border);border-radius:16px;padding:5px 12px;font-size:11.5px;color:var(--muted);transition:all .2s;user-select:none}
+.lik input,.opt input{display:none}
+.lik input:checked+span,.opt input:checked+span{color:var(--gold)}
+.lik label:has(input:checked),.opt label:has(input:checked){border-color:rgba(200,169,110,.6);background:rgba(200,169,110,.08)}
+.opt{display:flex;flex-direction:column;gap:6px}
+.opt label{border-radius:10px;text-align:left}
+.bar{display:flex;align-items:center;gap:10px;margin:5px 0}
+.bar .n{width:170px;font-size:12.5px}
+.bar .b{flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden}
+.bar .b i{display:block;height:100%;border-radius:5px;background:var(--gold)}
+.bar .v{width:44px;text-align:right;font-size:12px;color:var(--muted)}
+.prog{position:sticky;top:0;z-index:5;background:rgba(6,5,15,.92);backdrop-filter:blur(6px);padding:8px 0;margin-bottom:8px;font-size:11px;color:var(--muted);text-align:center}
+.dich{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media(max-width:600px){.bar .n{width:120px}.dich{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">ტიპოლოგიები</div>
+  <h1 class="page-title">პიროვნების <em>ტიპები</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<div class="pills" id="tabs"><div class="pill active" data-v="enn">ენეაგრამა</div><div class="pill" data-v="dosha">აიურვედა · დოშა</div><div class="pill" data-v="soc">სოციონიკა</div></div>
+<div id="panel"></div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+/* ═════ ENNEAGRAM ═════ */
+const ENN_Q=[
+[1,'მაღიზიანებს, როცა რამე არასწორად ან უწესრიგოდ კეთდება.'],[1,'ხშირად ვაკრიტიკებ საკუთარ თავს — შინაგანი ხმა მეუბნება, რა გავაკეთე ცუდად.'],[1,'მნიშვნელოვანია, რომ ყოველთვის სწორად და პატიოსნად მოვიქცე.'],[1,'ძნელად ვისვენებ, სანამ საქმე სრულყოფილად არ დასრულდება.'],
+[2,'ბუნებრივად ვგრძნობ, რა სჭირდებათ სხვებს, და ვეხმარები.'],[2,'მწყინს, როცა ჩემს ზრუნვას არ აფასებენ.'],[2,'ჩემთვის მნიშვნელოვანია, რომ მიყვარდეთ და ვჭირდებოდე.'],[2,'საკუთარ საჭიროებებზე თქმა მიჭირს — სხვებზე ზრუნვა უფრო ადვილია.'],
+[3,'წარმატება და მიღწევები ჩემთვის ძალიან მნიშვნელოვანია.'],[3,'ადვილად ვერგები გარემოს და ვიცი, როგორ წარვადგინო თავი.'],[3,'მიყვარს მიზნების დასახვა და შედეგის დანახვა.'],[3,'წარუმატებლობა ჩემთვის განსაკუთრებით მტკივნეულია.'],
+[4,'ხშირად ვგრძნობ, რომ სხვებისგან განსხვავებული ვარ და ბოლომდე არავის ესმის ჩემი.'],[4,'ღრმა ემოციები, მელანქოლიაც კი, ჩემი ცხოვრების ნაწილია.'],[4,'ავთენტურობა და თვითგამოხატვა ჩემთვის უმთავრესია.'],[4,'ხშირად მენატრება ის, რაც არ მაქვს.'],
+[5,'მირჩევნია ჯერ დავაკვირდე და გავიგო, ვიდრე ჩავერთო.'],[5,'ჩემი დრო, ენერგია და პირადი სივრცე ძალიან მნიშვნელოვანია.'],[5,'ვფიქრობ, რომ ცოდნა და კომპეტენცია უსაფრთხოებას იძლევა.'],[5,'ემოციებს ხშირად მოგვიანებით, მარტო ყოფნისას ვამუშავებ.'],
+[6,'ხშირად ვფიქრობ, რა შეიძლება წავიდეს არასწორად.'],[6,'ერთგულება და სანდოობა ჩემთვის ძალიან მნიშვნელოვანია.'],[6,'გადაწყვეტილების წინ მირჩევნია სხვების აზრიც ვიცოდე.'],[6,'ავტორიტეტების მიმართ ან ზედმეტად ვენდობი, ან ზედმეტად ეჭვიანი ვარ.'],
+[7,'მიყვარს ახალი გამოცდილება, თავგადასავალი და დაგეგმვა.'],[7,'მოწყენილობა და შეზღუდვა ჩემთვის აუტანელია.'],[7,'რთულ ემოციებს ხშირად პოზიტივით ან ახალი გეგმით ვფარავ.'],[7,'ბევრი ინტერესი მაქვს და ზოგჯერ ვერცერთს ვერ ვამთავრებ.'],
+[8,'ძალა და დამოუკიდებლობა ჩემთვის უმთავრესია — არ მიყვარს, როცა მაკონტროლებენ.'],[8,'პირდაპირი ვარ და კონფლიქტის არ მეშინია.'],[8,'სუსტებს ვიცავ და უსამართლობაზე მკვეთრად ვრეაგირებ.'],[8,'ჩემს სისუსტეს იშვიათად ვაჩვენებ.'],
+[9,'კონფლიქტს ვერიდები და მშვიდობა მირჩევნია.'],[9,'ადვილად ვხედავ ყველა მხარის სიმართლეს.'],[9,'ზოგჯერ ჩემს სურვილებს ვივიწყებ და სხვებს მივყვები.'],[9,'მიჭირს დაწყება — „მერე გავაკეთებ“ ხშირი ფრაზაა ჩემთვის.']];
+const ENN=[null,
+ ['რეფორმატორი','სრულყოფილებისკენ მიმავალი, პრინციპული, პასუხისმგებლიანი. შიში — იყოს ცუდი, არასწორი. ზრდა — სიმსუბუქე და მიღება.'],
+ ['დამხმარე','თბილი, მზრუნველი, გულუხვი. შიში — არ იყოს საყვარელი. ზრდა — საკუთარ საჭიროებებზე ზრუნვა.'],
+ ['მიღწევების ადამიანი','ამბიციური, ადაპტირებადი, ეფექტური. შიში — იყოს უღირსი. ზრდა — ავთენტურობა, „ყოფნა“ და არა „კეთება“.'],
+ ['ინდივიდუალისტი','მგრძნობიარე, შემოქმედებითი, ღრმა. შიში — არ ჰქონდეს იდენტობა. ზრდა — დისციპლინა და აწმყოში ყოფნა.'],
+ ['მკვლევარი','დამკვირვებელი, ანალიტიკური, დამოუკიდებელი. შიში — იყოს უსუსური. ზრდა — მოქმედება და ჩართულობა.'],
+ ['ლოიალისტი','ერთგული, პასუხისმგებლიანი, ფრთხილი. შიში — დარჩეს მხარდაჭერის გარეშე. ზრდა — შინაგანი სიმშვიდე და ნდობა.'],
+ ['ენთუზიასტი','მხიარული, სპონტანური, მრავალმხრივი. შიში — ტკივილი და შეზღუდვა. ზრდა — სიღრმე და ფოკუსი.'],
+ ['გამომწვევი','ძლიერი, თავდაჯერებული, მფარველი. შიში — იყოს კონტროლირებული. ზრდა — სინაზე და გულის გახსნა.'],
+ ['მშვიდობისმყოფელი','მშვიდი, მიმღები, ჰარმონიული. შიში — კონფლიქტი და განშორება. ზრდა — საკუთარი ხმა და მოქმედება.']];
+const ARROW={1:[7,4],2:[4,8],3:[6,9],4:[1,2],5:[8,7],6:[9,3],7:[5,1],8:[2,5],9:[3,6]};
+const CENTER={1:'მუცლის (ინსტინქტური)',8:'მუცლის (ინსტინქტური)',9:'მუცლის (ინსტინქტური)',2:'გულის (ემოციური)',3:'გულის (ემოციური)',4:'გულის (ემოციური)',5:'თავის (გონებრივი)',6:'თავის (გონებრივი)',7:'თავის (გონებრივი)'};
+/* ═════ DOSHA ═════ */
+const DOSHA_Q=[
+['სხეულის აგებულება',['გამხდარი, მსუბუქი, ძნელად ვიმატებ წონას','საშუალო, კუნთოვანი','მსხვილი, ძლიერი, ადვილად ვიმატებ წონას']],
+['კანი',['მშრალი, თხელი, ცივი','თბილი, მგრძნობიარე, წითლდება','სქელი, რბილი, ცხიმიანი']],
+['თმა',['მშრალი, თხელი, ხვეული','თხელი, ადრე ჭაღარავდება ან ცვივა','სქელი, ხშირი, ბრწყინვალე']],
+['მადა',['არარეგულარული — ხან დიდი, ხან არ მაქვს','ძლიერი — შიმშილი მაღიზიანებს','სტაბილური, შემიძლია ჭამა გამოვტოვო']],
+['საჭმლის მონელება',['არასტაბილური, გაბერვა','სწრაფი, ზოგჯერ გულძმარვა','ნელი, სიმძიმე ჭამის შემდეგ']],
+['ტემპერატურა',['ხშირად მცივა, მიყვარს სითბო','ხშირად მცხელა, მიყვარს სიგრილე','ვეგუები, მაგრამ ნესტი არ მიყვარს']],
+['ძილი',['მსუბუქი, ადვილად ვიღვიძებ','საშუალო, მაგრამ ღრმა','ღრმა და ხანგრძლივი, ძნელად ვიღვიძებ']],
+['მეტყველება',['სწრაფი, ბევრს ვლაპარაკობ','ზუსტი, მკვეთრი, დამაჯერებელი','ნელი, მშვიდი, მელოდიური']],
+['გონება',['სწრაფი, კრეატიული, მოუსვენარი','ფოკუსირებული, ანალიტიკური, კრიტიკული','მშვიდი, სტაბილური, მეთოდური']],
+['მეხსიერება',['სწრაფად ვისწავლი, სწრაფად ვივიწყებ','ზუსტი და მკაფიო','ნელა ვისწავლი, მაგრამ დიდხანს მახსოვს']],
+['სტრესის დროს',['შფოთვა, შიში, ნერვიულობა','გაღიზიანება, ბრაზი','ჩაკეტვა, აპათია, ჭამა']],
+['ენერგია',['ტალღისებური — აფეთქებები და დაღლა','მაღალი, მიზანმიმართული','სტაბილური, გამძლე, ნელა იწყება']],
+['გადაადგილება',['სწრაფი, მსუბუქი ნაბიჯი','გადამწყვეტი, მიზნიანი','ნელი, მშვიდი, მყარი']],
+['ფინანსები',['ადვილად ვხარჯავ, იმპულსურად','გეგმით ვხარჯავ, ძვირფასზე','ვზოგავ, ძნელად ვხარჯავ']],
+['ემოციური ბუნება',['ენთუზიასტი, მაგრამ მერყევი','ვნებიანი, ამბიციური','მზრუნველი, ერთგული, მომთმენი']]];
+const DOSHA=[['ვატა','ჰაერი + ეთერი','#9fb7d8','მოძრაობა, კრეატიულობა, სისწრაფე. დისბალანსში — შფოთვა, უძილობა, სიმშრალე. ბალანსი: თბილი, მოხარშული საკვები, რეჟიმი, სითბო, ზეთოვანი მასაჟი, სიმშვიდე.'],
+ ['პიტა','ცეცხლი + წყალი','#e86b6b','გარდაქმნა, ინტელექტი, ლიდერობა. დისბალანსში — ბრაზი, ანთება, გულძმარვა. ბალანსი: გამაგრილებელი საკვები, ზომიერება, ბუნება, კონკურენციის შემცირება.'],
+ ['კაფა','მიწა + წყალი','#7fcf8f','სტაბილურობა, სიყვარული, გამძლეობა. დისბალანსში — ინერცია, წონის მატება, ჩაკეტილობა. ბალანსი: მსუბუქი, ცხარე საკვები, აქტიური მოძრაობა, სიახლეები.']];
+/* ═════ SOCIONICS ═════ */
+const SOC_Q=[
+['EI','ენერგიას ვიღებ ხალხთან ურთიერთობით','ენერგიას ვიღებ მარტო ყოფნით'],
+['EI','ჯერ ვმოქმედებ, მერე ვფიქრობ','ჯერ ვფიქრობ, მერე ვმოქმედებ'],
+['EI','მიყვარს ბევრი სხვადასხვა ნაცნობი','მირჩევნია რამდენიმე ახლო მეგობარი'],
+['EI','ინიციატივას ადვილად ვიჩენ ახალ გარემოში','ახალ გარემოში ჯერ ვაკვირდები'],
+['EI','ჩემი ინტერესები ფართოა','ჩემი ინტერესები ღრმაა'],
+['NS','მაინტერესებს შესაძლებლობები და იდეები','მაინტერესებს რეალური ფაქტები და დეტალები'],
+['NS','ვამჩნევ ფარულ კავშირებს და ტენდენციებს','ვამჩნევ ფიზიკურ დეტალებს, ფერს, ფაქტურას'],
+['NS','ხშირად ვფიქრობ მომავალზე','ვცხოვრობ აწმყოთი'],
+['NS','მიყვარს თეორია და აბსტრაქცია','მიყვარს პრაქტიკა და კონკრეტული შედეგი'],
+['NS','ინსტრუქციას ხშირად ვერ ვკითხულობ — ვხვდები','ინსტრუქციას ნაბიჯ-ნაბიჯ მივყვები'],
+['TF','გადაწყვეტილებას ლოგიკით ვიღებ','გადაწყვეტილებას გრძნობით და ურთიერთობებით ვიღებ'],
+['TF','სიმართლე უფრო მნიშვნელოვანია, ვიდრე ტაქტი','ტაქტი და ჰარმონია უფრო მნიშვნელოვანია'],
+['TF','კამათში არგუმენტებს ვაფასებ','კამათში ადამიანის გრძნობებს ვაფასებ'],
+['TF','ადვილად ვხედავ სისტემის შეცდომას','ადვილად ვგრძნობ ადამიანის განწყობას'],
+['TF','მაქებენ როგორც ჭკვიანს და ობიექტურს','მაქებენ როგორც თბილს და გულისხმიერს'],
+['JP','მიყვარს გეგმა და წესრიგი','მიყვარს იმპროვიზაცია და თავისუფლება'],
+['JP','საქმეს ვამთავრებ ვადამდე','ბოლო წუთზე ვმუშაობ საუკეთესოდ'],
+['JP','გადაწყვეტილებას სწრაფად ვიღებ და არ ვცვლი','ვარიანტებს ბოლომდე ღიად ვტოვებ'],
+['JP','ჩემი დღე სტრუქტურირებულია','ჩემი დღე სიტუაციის მიხედვით იცვლება'],
+['JP','ცვლილებები მაღიზიანებს','ცვლილებები მახალისებს']];
+const SOC={ENTp:['ILE','დონ კიხოტი','იდეების გენერატორი, მკვლევარი, ინოვატორი'],ISFp:['SEI','დიუმა','კომფორტის, გემოვნებისა და ჰარმონიის ოსტატი'],ESFj:['ESE','ჰიუგო','ემოციური ენთუზიასტი, ზეიმის სული'],INTj:['LII','რობესპიერი','ანალიტიკოსი, სისტემების და პრინციპების ადამიანი'],
+ ENFj:['EIE','ჰამლეტი','მენტორი, ემოციური დრამატურგი, ორატორი'],ISTj:['LSI','მაქსიმ გორკი','ინსპექტორი, წესრიგის და დისციპლინის მცველი'],ESTp:['SLE','ჟუკოვი','მარშალი, ნების და ძალის ადამიანი'],INFp:['IEI','ესენინი','ლირიკოსი, დროისა და განწყობის მგრძნობი'],
+ ESFp:['SEE','ნაპოლეონი','პოლიტიკოსი, გავლენის და ხიბლის ოსტატი'],INTp:['ILI','ბალზაკი','კრიტიკოსი, მომავლის წინასწარმჭვრეტელი'],ENTj:['LIE','ჯეკ ლონდონი','მეწარმე, ეფექტურობის და პროგრესის ადამიანი'],ISFj:['ESI','დრაიზერი','მცველი, ეთიკური პრინციპების ერთგული'],
+ ESTj:['LSE','შტირლიცი','ადმინისტრატორი, პრაქტიკული ორგანიზატორი'],INFj:['EII','დოსტოევსკი','ჰუმანისტი, მორალისა და თანაგრძნობის ადამიანი'],ENFp:['IEE','ჰაქსლი','მრჩეველი, ადამიანების პოტენციალის დამნახველი'],ISTp:['SLI','გაბენი','ოსტატი, კომფორტისა და ეფექტურობის პრაქტიკოსი']};
+const QUADRA={ILE:'ალფა',SEI:'ალფა',ESE:'ალფა',LII:'ალფა',EIE:'ბეტა',LSI:'ბეტა',SLE:'ბეტა',IEI:'ბეტა',SEE:'გამა',ILI:'გამა',LIE:'გამა',ESI:'გამა',LSE:'დელტა',EII:'დელტა',IEE:'დელტა',SLI:'დელტა'};
+const QUADRA_T={'ალფა':'იდეები, თამაში, დემოკრატიულობა, სიმსუბუქე','ბეტა':'იერარქია, ერთობა, ემოციური მობილიზაცია, მისია','გამა':'შედეგი, დამოუკიდებლობა, პირადი პასუხისმგებლობა','დელტა':'შრომა, ოჯახი, ზრდა, სტაბილური განვითარება'};
+const DUAL={ILE:'SEI',SEI:'ILE',ESE:'LII',LII:'ESE',EIE:'LSI',LSI:'EIE',SLE:'IEI',IEI:'SLE',SEE:'ILI',ILI:'SEE',LIE:'ESI',ESI:'LIE',LSE:'EII',EII:'LSE',IEE:'SLI',SLI:'IEE'};
+const CONFLICT={ILE:'ESI',ESI:'ILE',SEI:'LIE',LIE:'SEI',ESE:'ILI',ILI:'ESE',LII:'SEE',SEE:'LII',EIE:'SLI',SLI:'EIE',LSI:'IEE',IEE:'LSI',SLE:'EII',EII:'SLE',IEI:'LSE',LSE:'IEI'};
+const byCode=c=>Object.entries(SOC).find(([k,v])=>v[0]===c);
+
+/* ═════ UI ═════ */
+let TAB='enn';
+document.querySelectorAll('#tabs .pill').forEach(p=>p.onclick=()=>{TAB=p.dataset.v;document.querySelectorAll('#tabs .pill').forEach(x=>x.classList.toggle('active',x===p));build();});
+const LIK=['საერთოდ არა','უფრო არა','ნეიტრალური','უფრო კი','ზუსტად'];
+let ORDER=[];
+function shuffle(n){const a=[...Array(n).keys()];for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function build(){
+  $('out').innerHTML='';let h='';
+  if(TAB==='enn'){ORDER=shuffle(ENN_Q.length);
+    h=`<p class="lead"><b>ენეაგრამა</b> — 9 ტიპი, თითოეული ერთი ძირითადი მოტივაციითა და შიშით. 36 დებულება: შეაფასე, რამდენად გეხება (უპასუხე ისე, როგორიც <b>რეალურად</b> ხარ და არა როგორიც გინდა იყო).</p>
+    <div class="card"><div class="prog" id="prog"></div>`+ORDER.map((qi,i)=>`<div class="q"><div class="qt"><span>${i+1}.</span>${ENN_Q[qi][1]}</div><div class="lik">${LIK.map((l,v)=>`<label><input type="radio" name="q${qi}" value="${v}"><span>${l}</span></label>`).join('')}</div></div>`).join('')+
+    `<div class="row" style="margin-top:16px"><button class="btn" id="go">შედეგი</button></div><div class="err" id="err"></div></div>`;}
+  if(TAB==='dosha'){h=`<p class="lead"><b>აიურვედა</b> — სამი დოშა (ბიოენერგია): ვატა, პიტა, კაფა. დაბადებიდან მოცემული შეფარდება — <b>პრაკრიტი</b>. აირჩიე ვარიანტი, რომელიც <b>მთელი ცხოვრების</b> განმავლობაში ყველაზე მეტად გახასიათებს (და არა მხოლოდ ახლა).</p>
+    <div class="card"><div class="prog" id="prog"></div>`+DOSHA_Q.map((q,qi)=>`<div class="q"><div class="qt"><span>${qi+1}.</span>${q[0]}</div><div class="opt">${q[1].map((o,v)=>`<label><input type="radio" name="q${qi}" value="${v}"><span>${o}</span></label>`).join('')}</div></div>`).join('')+
+    `<div class="row" style="margin-top:16px"><button class="btn" id="go">შედეგი</button></div><div class="err" id="err"></div></div>`;}
+  if(TAB==='soc'){ORDER=shuffle(SOC_Q.length);
+    h=`<p class="lead"><b>სოციონიკა</b> (აუშრა აუგუსტინავიჩიუტე, იუნგის ტიპების საფუძველზე) — 16 ტიპი და მათ შორის ურთიერთობები. ყოველ წყვილში აირჩიე, რომელი უფრო გგავს.</p>
+    <div class="card"><div class="prog" id="prog"></div>`+ORDER.map((qi,i)=>`<div class="q"><div class="qt"><span>${i+1}.</span></div><div class="dich opt">${[1,2].map(v=>`<label><input type="radio" name="q${qi}" value="${v-1}"><span>${SOC_Q[qi][v]}</span></label>`).join('')}</div></div>`).join('')+
+    `<div class="row" style="margin-top:16px"><button class="btn" id="go">შედეგი</button></div><div class="err" id="err"></div></div>`;}
+  $('panel').innerHTML=h;
+  const total=TAB==='enn'?ENN_Q.length:TAB==='dosha'?DOSHA_Q.length:SOC_Q.length;
+  const upd=()=>{const n=document.querySelectorAll('#panel input:checked').length;$('prog').textContent=`პასუხი ${n} / ${total}`;};upd();
+  document.querySelectorAll('#panel input').forEach(i=>i.onchange=upd);
+  $('go').onclick=()=>{const n=document.querySelectorAll('#panel input:checked').length;if(n<total){$('err').textContent=`უპასუხე ყველა კითხვას (${total-n} დარჩა).`;return;}$('err').textContent='';
+    ({enn:resEnn,dosha:resDosha,soc:resSoc})[TAB]();$('out').scrollIntoView({behavior:'smooth'});};
+}
+const val=qi=>+document.querySelector(`#panel input[name=q${qi}]:checked`).value;
+function bars(items){const mx=Math.max(...items.map(i=>i[1]));return items.map(i=>`<div class="bar"><span class="n" style="${i[2]?'color:'+i[2]:''}">${i[0]}</span><div class="b"><i style="width:${mx?i[1]/mx*100:0}%;${i[2]?'background:'+i[2]:''}"></i></div><span class="v">${i[3]||Math.round(i[1])}</span></div>`).join('');}
+function resEnn(){
+  const S=Array(10).fill(0);ENN_Q.forEach((q,qi)=>S[q[0]]+=val(qi));
+  const rank=[1,2,3,4,5,6,7,8,9].sort((a,b)=>S[b]-S[a]),t=rank[0];
+  const wl=t===1?9:t-1,wr=t===9?1:t+1,w=S[wl]>=S[wr]?wl:wr;
+  const tri=[[8,9,1],[2,3,4],[5,6,7]].map(g=>g.sort((a,b)=>S[b]-S[a])[0]).sort((a,b)=>S[b]-S[a]);
+  $('out').innerHTML=`<div class="card" style="text-align:center"><div class="big">${t}w${w}</div><div class="sub">${ENN[t][0]} · ფრთა ${w} (${ENN[w][0]})</div></div>
+   <div class="card"><div class="h">ტიპი ${t} · ${ENN[t][0]}</div><div class="txt">${ENN[t][1]}</div>
+    <div class="txt" style="margin-top:10px">ცენტრი: <b>${CENTER[t]}</b> · ზრდის მიმართულება → <b>${ARROW[t][0]} (${ENN[ARROW[t][0]][0]})</b> · სტრესის მიმართულება → <b>${ARROW[t][1]} (${ENN[ARROW[t][1]][0]})</b></div>
+    <div class="txt" style="margin-top:10px">ტრიტიპი: <b>${tri.join('-')}</b> — ყოველი ცენტრის წამყვანი ტიპი.</div></div>
+   <div class="card"><div class="h">ქულები</div>${bars(rank.map(k=>[`${k} · ${ENN[k][0]}`,S[k],k===t?'#c8a96e':null,S[k]+'/16']))}
+    <div class="note" style="margin-top:8px">თუ ორი ტიპი ახლოსაა, წაიკითხე ორივე აღწერა — ენეაგრამაში საბოლოო ტიპს ადამიანი თავად ამოიცნობს მოტივაციის მიხედვით.</div></div>`;
+}
+function resDosha(){
+  const S=[0,0,0];DOSHA_Q.forEach((q,qi)=>S[val(qi)]++);const tot=S.reduce((a,b)=>a+b,0),pct=S.map(s=>s/tot*100);
+  const r=[0,1,2].sort((a,b)=>S[b]-S[a]);const dual=pct[r[0]]-pct[r[1]]<15;
+  const name=Math.max(...pct)-Math.min(...pct)<12?'ტრიდოშა (სამა)':dual?`${DOSHA[r[0]][0]}-${DOSHA[r[1]][0]}`:DOSHA[r[0]][0];
+  $('out').innerHTML=`<div class="card" style="text-align:center"><div class="big">${name}</div><div class="sub">${r.map(i=>`${DOSHA[i][0]} ${Math.round(pct[i])}%`).join(' · ')}</div></div>
+   <div class="card">${bars(r.map(i=>[`${DOSHA[i][0]} · ${DOSHA[i][1]}`,pct[i],DOSHA[i][2],Math.round(pct[i])+'%']))}</div>
+   ${r.slice(0,dual?2:1).map(i=>`<div class="card"><div class="h" style="color:${DOSHA[i][2]}">${DOSHA[i][0]}</div><div class="txt">${DOSHA[i][3]}</div></div>`).join('')}
+   <div class="card note">ეს ტრადიციული აიურვედული თვითშეფასებაა და არა სამედიცინო დიაგნოზი.</div>`;
+}
+function resSoc(){
+  const S={EI:0,NS:0,TF:0,JP:0},C={EI:0,NS:0,TF:0,JP:0};SOC_Q.forEach((q,qi)=>{C[q[0]]++;if(val(qi)===0)S[q[0]]++;});
+  const L=(k,a,b)=>S[k]/C[k]>=0.5?a:b;
+  const code=L('EI','E','I')+L('NS','N','S')+L('TF','T','F')+L('JP','j','p');
+  const T=SOC[code],q=QUADRA[T[0]],du=byCode(DUAL[T[0]]),co=byCode(CONFLICT[T[0]]);
+  const dim=[['EI','ექსტრავერსია','ინტროვერსია'],['NS','ინტუიცია','სენსორიკა'],['TF','ლოგიკა','ეთიკა'],['JP','რაციონალობა','ირაციონალობა']];
+  $('out').innerHTML=`<div class="card" style="text-align:center"><div class="big">${T[0]}</div><div class="sub">${T[1]} · ${code}</div><div class="txt" style="margin-top:8px">${T[2]}</div></div>
+   <div class="card"><div class="h">ოთხი ნიშანი</div>${dim.map(d=>{const p=S[d[0]]/C[d[0]]*100;return `<div class="bar"><span class="n">${d[1]}</span><div class="b"><i style="width:${p}%"></i></div><span class="v" style="width:120px;text-align:left">${Math.round(p)}% ${p>=50?'':'→ '+d[2]}</span></div>`;}).join('')}</div>
+   <div class="card"><div class="kv">
+    <div><div class="k">კვადრა</div><div class="v">${q}</div><div class="t">${QUADRA_T[q]}</div></div>
+    <div><div class="k">დუალი (საუკეთესო პარტნიორი)</div><div class="v">${du[1][0]}</div><div class="t">${du[1][1]} — სრული ურთიერთშევსება</div></div>
+    <div><div class="k">კონფლიქტი</div><div class="v" style="color:#e86b6b">${co[1][0]}</div><div class="t">${co[1][1]} — ყველაზე რთული ურთიერთობა</div></div></div></div>
+   <div class="card"><div class="h">შეთავსება სხვა ტიპთან</div><div class="row"><select class="sel" id="pt">${Object.values(SOC).map(v=>`<option value="${v[0]}">${v[0]} · ${v[1]}</option>`).join('')}</select></div><div class="txt" id="ptr" style="margin-top:10px;text-align:center"></div></div>`;
+  const rel=()=>{const p=$('pt').value,me=T[0];let r;
+    if(p===me)r='იდენტური — ერთმანეთს კარგად ესმით, მაგრამ ერთნაირ სისუსტეებს ვერ ავსებთ.';
+    else if(DUAL[me]===p)r='<b style="color:#7fcf8f">დუალობა</b> — ფსიქოლოგიურად ყველაზე კომფორტული, ურთიერთშემავსებელი კავშირი.';
+    else if(CONFLICT[me]===p)r='<b style="color:#e86b6b">კონფლიქტი</b> — ყველაზე დამღლელი; ერთის ძლიერი მხარე მეორის ყველაზე სუსტზე „ურტყამს“.';
+    else if(QUADRA[p]===QUADRA[me])r='<b style="color:#c8a96e">ერთი კვადრა</b> — საერთო ფასეულობები, კომფორტული გარემო.';
+    else r='სხვა კვადრა — განსხვავებული ფასეულობები; ურთიერთობა მოითხოვს ერთმანეთის ენის სწავლას.';
+    $('ptr').innerHTML=r;};
+  $('pt').onchange=rel;$('pt').value=DUAL[T[0]];rel();
+}
+build();
+</script>
+</body>
+</html>
