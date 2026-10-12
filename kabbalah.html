@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>კაბალა · სიცოცხლის ხე</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Serif+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.treewrap{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:18px;align-items:start}
+@media(max-width:760px){.treewrap{grid-template-columns:1fr}}
+.treewrap svg{width:100%;height:auto;display:block}
+.sinfo{font-size:12.5px;line-height:1.7}
+.sinfo .t{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold)}
+.sinfo .he{font-family:'Noto Serif Hebrew',serif;font-size:22px;color:var(--muted)}
+.form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
+.form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
+.form2 .in{width:100%}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">კაბალა · עץ החיים</div>
+  <h1 class="page-title">სიცოცხლის <em>ხე</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<p class="lead">10 სეფირა (+ ფარული დაათი) და 22 გზა, რომლებიც ებრაული ანბანის ასოებს, ტაროს მთავარ არკანებს და ზოდიაქოს ნიშნებს შეესაბამება (ოქროს განთიადის სისტემა). შენი ხე ნათდება: <b>სეფირები</b> — მათი პლანეტის ძალით შენს რუკაში, <b>გზები</b> — პლანეტების ნიშნებით, <b>ნუმეროლოგია</b> — ცხოვრების გზის რიცხვით და ტაროს დაბადების კარტით.</p>
+<div class="card">
+  <div class="form2">
+    <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
+    <div><label>დრო (არასავალდ.)</label><input class="in time" id="t1" placeholder="HH:MM" maxlength="5"></div>
+    <div><label>UTC±</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
+  </div>
+  <div class="row" style="margin-top:14px"><button class="btn" id="go">გამოთვლა</button></div>
+  <div class="err" id="err"></div>
+</div>
+<div id="out"></div>
+</div>
+<script src="search.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+const SEPH=[
+ {id:1,n:'კეთერი',he:'כתר',m:'გვირგვინი',p:'neptune',x:200,y:42,c:'#f2efe6',t:'წყარო, სუფთა ყოფიერება, ერთიანობა ღმერთთან. აქ ჯერ არაფერია გაყოფილი.'},
+ {id:2,n:'ხოხმა',he:'חכמה',m:'სიბრძნე',p:'uranus',x:330,y:118,c:'#9fb7d8',t:'პირველი იმპულსი, ინტუიციური ელვა, მამრობითი შემოქმედებითი ძალა.'},
+ {id:3,n:'ბინა',he:'בינה',m:'გაგება',p:'saturn',x:70,y:118,c:'#6b6b80',t:'ფორმის მიმცემი, დედობრივი წიაღი, სტრუქტურა და დრო.'},
+ {id:0,n:'დაათი',he:'דעת',m:'ცოდნა',p:'pluto',x:200,y:192,c:'#7a6ab8',t:'ფარული სეფირა — უფსკრულის ზღვარი; ცოდნა, რომელიც გარდაქმნის.'},
+ {id:4,n:'ხესედი',he:'חסד',m:'წყალობა',p:'jupiter',x:330,y:262,c:'#6fa8e8',t:'გულუხვობა, სიყვარული, გაფართოება, უპირობო გაცემა.'},
+ {id:5,n:'გევურა',he:'גבורה',m:'სიმკაცრე',p:'mars',x:70,y:262,c:'#e86b6b',t:'სამართალი, საზღვრები, ძალა, რომელიც ზედმეტს ჭრის.'},
+ {id:6,n:'ტიფერეთი',he:'תפארת',m:'მშვენიერება',p:'sun',x:200,y:330,c:'#e8c95a',t:'ჰარმონიის გული, „მე“-ს ცენტრი, წონასწორობა წყალობასა და სიმკაცრეს შორის.'},
+ {id:7,n:'ნეცახი',he:'נצח',m:'გამარჯვება',p:'venus',x:330,y:410,c:'#7fcf8f',t:'გრძნობები, ხელოვნება, სიყვარული, გამძლეობა.'},
+ {id:8,n:'ჰოდი',he:'הוד',m:'დიდება',p:'mercury',x:70,y:410,c:'#e8a06a',t:'გონება, ენა, მაგია, სისტემები და სიმბოლოები.'},
+ {id:9,n:'იესოდი',he:'יסוד',m:'საფუძველი',p:'moon',x:200,y:490,c:'#b8a4f0',t:'ქვეცნობიერი, სიზმრები, ასტრალური სამყარო, გამოვლინების კარიბჭე.'},
+ {id:10,n:'მალხუთი',he:'מלכות',m:'სამეფო',p:'earth',x:200,y:578,c:'#b08a5a',t:'ფიზიკური სამყარო, სხეული, დედამიწა — სადაც ყველაფერი გამოვლინდება.'}];
+const S_ID=Object.fromEntries(SEPH.map(s=>[s.id,s]));
+/* 22 paths: [no, from, to, hebrew, letter name, arcanum(MAGNUS numbering), attribution type, attribution] */
+const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+const SIGN=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const PATHS=[[11,1,2,'א','ალეფ',0,'el','ჰაერი'],[12,1,3,'ב','ბეთ',1,'pl','mercury'],[13,1,6,'ג','გიმელ',2,'pl','moon'],[14,2,3,'ד','დალეთ',3,'pl','venus'],[15,2,6,'ה','ჰე',4,'zs',0],[16,2,4,'ו','ვავ',5,'zs',1],
+ [17,3,6,'ז','ზაინ',6,'zs',2],[18,3,5,'ח','ხეთ',7,'zs',3],[19,4,5,'ט','ტეთ',11,'zs',4],[20,4,6,'י','იოდ',9,'zs',5],[21,4,7,'כ','კაფ',10,'pl','jupiter'],[22,5,6,'ל','ლამედ',8,'zs',6],
+ [23,5,8,'מ','მემ',12,'el','წყალი'],[24,6,7,'נ','ნუნ',13,'zs',7],[25,6,9,'ס','სამეხ',14,'zs',8],[26,6,8,'ע','აინ',15,'zs',9],[27,7,8,'פ','პე',16,'pl','mars'],[28,7,9,'צ','ცადე',17,'zs',10],
+ [29,7,10,'ק','კოფ',18,'zs',11],[30,8,9,'ר','რეშ',19,'pl','sun'],[31,8,10,'ש','შინ',20,'el','ცეცხლი'],[32,9,10,'ת','თავ',21,'pl','saturn']];
+const ARC=['სულელი','მაგი','ქურუმი ქალი','იმპერატრიცა','იმპერატორი','იეროფანტი','შეყვარებულები','ეტლი','სამართლიანობა','განდეგილი','ბედის ბორბალი','ძალა','ჩამოკიდებული','სიკვდილი','ზომიერება','ეშმაკი','კოშკი','ვარსკვლავი','მთვარე','მზე','სამსჯავრო','სამყარო'];
+const PL={sun:['მზე','☉'],moon:['მთვარე','☽'],mercury:['მერკური','☿'],venus:['ვენერა','♀'],mars:['მარსი','♂'],jupiter:['იუპიტერი','♃'],saturn:['სატურნი','♄'],uranus:['ურანი','♅'],neptune:['ნეპტუნი','♆'],pluto:['პლუტონი','♇'],earth:['დედამიწა','⊕']};
+const PLANETS=['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'];
+const DOM={sun:[4],moon:[3],mercury:[2,5],venus:[1,6],mars:[0,7],jupiter:[8,11],saturn:[9,10]},EXA={sun:0,moon:1,mercury:5,venus:11,mars:9,jupiter:3,saturn:6};
+function dignity(p,s){if(!DOM[p])return[0,'—'];if(DOM[p].includes(s))return[5,'სახლი'];if(EXA[p]===s)return[4,'ამაღლება'];if(DOM[p].some(d=>(d+6)%12===s))return[-5,'დევნილობა'];if((EXA[p]+6)%12===s)return[-4,'დაცემა'];return[0,'ნეიტრალური'];}
+const red22=n=>{while(n>22)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const lifePath=P=>{let n=String(P.d)+String(P.m)+String(P.y);n=dsum(+n);while(n>9&&n!==11&&n!==22)n=dsum(n);return n;};
+maskDate($('d1'));maskTime($('t1'));
+$('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
+let ST=null,SELS=6;
+function run(){
+  $('err').textContent='';const P=parseDate($('d1').value),T=parseTime($('t1').value);
+  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  if(T===undefined){$('err').textContent='დრო ფორმატით HH:MM.';return;}
+  if(!window._search){$('err').textContent='search.js ვერ ჩაიტვირთა.';return;}
+  const S=window._search,tz=parseFloat($('tz1').value)||0,h=T?T.h+T.mi/60:12,jd=S.cal2jd(P.y,P.m,P.d+(h-tz)/24,true);
+  const pos={};PLANETS.forEach(p=>{const l=S.lon(p,jd);pos[p]={l,s:Math.floor(l/30),d:l%30};});
+  const lp=lifePath(P),bc=red22(P.m+P.d+P.y),bcArc=bc===22?0:bc;
+  /* path activation */
+  const act={};PATHS.forEach(pa=>{let w=0,why=[];
+    if(pa[6]==='zs'){PLANETS.forEach(p=>{if(pos[p].s===pa[7]){w+=(p==='sun'||p==='moon')?2:1;why.push(PL[p][1]+' '+PL[p][0]);}});}
+    if(pa[6]==='pl'){w+=1;why.push(PL[pa[7]][1]+' პლანეტის გზა');}
+    if(pa[5]===bcArc){w+=2;why.push('დაბადების კარტა');}
+    act[pa[0]]={w,why};});
+  ST={P,T,pos,lp,bc,bcArc,act};draw();
+}
+function draw(){
+  const {pos,lp,bcArc,act}=ST;
+  const lpSeph=lp===11||lp===22?(lp===11?2:4):lp;
+  let svg='';
+  PATHS.forEach(pa=>{const a=S_ID[pa[1]],b=S_ID[pa[2]],w=act[pa[0]].w;
+    svg+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${w?'rgba(200,169,110,'+Math.min(.95,.3+w*.18)+')':'rgba(255,255,255,.09)'}" stroke-width="${w?2+Math.min(4,w):1.5}"/>`;
+    const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;svg+=`<text x="${mx}" y="${my+4}" text-anchor="middle" font-family="Noto Serif Hebrew,serif" font-size="12" fill="${w?'#e8d29a':'rgba(232,226,213,.35)'}" style="paint-order:stroke" stroke="#06050f" stroke-width="4">${pa[3]}</text>`;});
+  SEPH.forEach(s=>{const p=s.p==='earth'?null:pos[s.p];const dg=p?dignity(s.p,p.s)[0]:0;const r=s.id===0?20:27;
+    const glow=s.id===lpSeph?'#9b7fe8':null;
+    svg+=`<g style="cursor:pointer" data-s="${s.id}">${glow?`<circle cx="${s.x}" cy="${s.y}" r="${r+7}" fill="none" stroke="${glow}" stroke-width="2" stroke-dasharray="4 3"/>`:''}
+      <circle cx="${s.x}" cy="${s.y}" r="${r}" fill="${s.c}${s.id===0?'22':'33'}" stroke="${s.c}" stroke-width="${s.id===SELS?3:1.5}" ${s.id===0?'stroke-dasharray="3 3"':''} style="filter:drop-shadow(0 0 ${6+Math.max(0,dg)*3}px ${s.c})"/>
+      <text x="${s.x}" y="${s.y-2}" text-anchor="middle" font-size="16" fill="#fff">${PL[s.p][1]}</text>
+      <text x="${s.x}" y="${s.y+13}" text-anchor="middle" font-size="9" fill="rgba(232,226,213,.85)">${p?ZS[p.s]+Math.floor(p.d)+'°':''}</text>
+      <text x="${s.x}" y="${s.y+r+13}" text-anchor="middle" font-size="10.5" fill="rgba(232,226,213,.75)">${s.n}</text></g>`;});
+  const s=S_ID[SELS],p=s.p==='earth'?null:pos[s.p],dg=p?dignity(s.p,p.s):null;
+  const paths=PATHS.filter(pa=>pa[1]===SELS||pa[2]===SELS);
+  let h=`<div class="card"><div class="treewrap"><svg viewBox="0 0 400 620">${svg}</svg>
+    <div class="sinfo"><div class="t">${s.id?s.id+'. ':''}${s.n} <span class="he">${s.he}</span></div><div class="note">${s.m} · ${PL[s.p][1]} ${PL[s.p][0]}</div>
+      <div class="txt" style="margin-top:8px">${s.t}</div>
+      ${p?`<div class="txt" style="margin-top:8px">შენს რუკაში: <b>${PL[s.p][0]} ${SIGN[p.s]}ში ${p.d.toFixed(1)}°</b>${dg&&dg[1]!=='—'?` · ${dg[1]}`:''}${dg&&dg[0]>0?' — სეფირა ძლიერად ანათებს.':dg&&dg[0]<0?' — სეფირის ენერგია დაბრკოლებულია, საჭიროებს ცნობიერ მუშაობას.':''}</div>`:'<div class="txt" style="margin-top:8px">მალხუთი — შენი სხეული და ფიზიკური ცხოვრება; აქ ყველა ზემოთა ენერგია ხორციელდება.</div>'}
+      ${s.id===(lp===11?2:lp===22?4:lp)?`<div class="txt" style="margin-top:8px;color:#b8a4f0">✦ შენი ცხოვრების გზის რიცხვი ${lp} — ამ სეფირის თემა შენი ცხოვრების მთავარი გაკვეთილია.</div>`:''}
+      <div class="note" style="margin-top:10px">დაკავშირებული გზები: ${paths.map(pa=>`${pa[0]} ${pa[3]} (${ARC[pa[5]]})`).join(' · ')}</div>
+      <div class="note" style="margin-top:12px">დააჭირე სეფირას ხეზე.</div></div></div>
+    <div class="note" style="margin-top:10px">გზის სისქე — რამდენი პლანეტა ააქტიურებს მას (ნიშნით ან თავად პლანეტით). <span style="color:#9b7fe8">წყვეტილი იისფერი რგოლი</span> — ცხოვრების გზის რიცხვის (${lp}) სეფირა.</div></div>`;
+  const ap=PATHS.filter(pa=>act[pa[0]].w>0).sort((a,b)=>act[b[0]].w-act[a[0]].w);
+  h+=`<div class="card"><div class="h">აქტიური გზები</div><div class="scroll"><table class="tbl"><tr><th>გზა</th><th>ასო</th><th>არკანი</th><th>მიმართება</th><th>რატომ</th></tr>`+
+    ap.map(pa=>`<tr><td>${pa[0]} · ${S_ID[pa[1]].n} → ${S_ID[pa[2]].n}</td><td style="font-family:'Noto Serif Hebrew',serif;font-size:16px">${pa[3]} <span class="note">${pa[4]}</span></td><td>${pa[5]===bcArc?'<b style="color:var(--gold)">':''}${ARC[pa[5]]}${pa[5]===bcArc?'</b>':''}</td><td>${pa[6]==='zs'?ZS[pa[7]]+' '+SIGN[pa[7]]:pa[6]==='pl'?PL[pa[7]][1]+' '+PL[pa[7]][0]:pa[7]}</td><td class="note">${act[pa[0]].why.join(', ')}</td></tr>`).join('')+`</table></div></div>
+  <div class="card"><div class="kv">
+    <div><div class="k">ცხოვრების გზა</div><div class="v">${lp}</div><div class="t">→ ${S_ID[lp===11?2:lp===22?4:lp].n}${lp>9?' (მაგისტრალური რიცხვი)':''}</div></div>
+    <div><div class="k">დაბადების კარტა</div><div class="v">${ST.bc}</div><div class="t">${ARC[bcArc]} → გზა ${PATHS.find(pa=>pa[5]===bcArc)[0]} (${PATHS.find(pa=>pa[5]===bcArc)[3]})</div></div>
+    <div><div class="k">ყველაზე ძლიერი სეფირა</div><div class="v" style="font-size:20px">${(()=>{let best=null,bv=-9;SEPH.forEach(x=>{if(x.p==='earth'||!DOM[x.p])return;const v=dignity(x.p,pos[x.p].s)[0];if(v>bv){bv=v;best=x;}});return best&&bv>0?best.n:'—';})()}</div><div class="t">პლანეტის ღირსებით</div></div></div></div>
+  <div class="card note">პლანეტები — MAGNUS-ის ეფემერიდა (search.js). შესაბამისობები: ოქროს განთიადის ორდენი (XIX ს.); ხოხმა/კეთერი/დაათი — თანამედროვე მიმართება ურანთან, ნეპტუნთან და პლუტონთან. არკანები MAGNUS-ის ნუმერაციით (8 — სამართლიანობა → ლამედი/სასწორი, 11 — ძალა → ტეთი/ლომი). ${ST.T?'':'დრო უცნობია — აღებულია შუადღე (მთვარე ±7°).'}</div>`;
+  $('out').innerHTML=h;
+  document.querySelectorAll('[data-s]').forEach(g=>g.onclick=()=>{SELS=+g.dataset.s;draw();});
+}
+</script>
+</body>
+</html>
