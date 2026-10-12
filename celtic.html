@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>კელტური ხეების ჰოროსკოპი</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Sans+Ogham&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.tree{text-align:center}
+.tree .ic{font-size:64px;line-height:1.1;filter:drop-shadow(0 0 18px rgba(127,207,143,.35))}
+.tree .og{font-family:'Noto Sans Ogham',serif;font-size:44px;color:#7fcf8f;line-height:1.1}
+.tree .nm{font-family:'Cormorant Garamond',serif;font-size:34px;color:var(--gold);margin-top:6px}
+.tree .lt{font-size:11px;color:var(--muted);letter-spacing:1px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:640px){.two{grid-template-columns:1fr}}
+.tbl td.og{font-family:'Noto Sans Ogham',serif;color:#7fcf8f;font-size:18px}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">კელტური ტრადიცია</div>
+  <h1 class="page-title">ხეების <em>ჰოროსკოპი</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<p class="lead">ორი სისტემა: <b>ხეების ჰოროსკოპი</b> (21 ხე, ყოველს — ორი პერიოდი წელიწადში, ბუნიობა-მზებუდობის ოთხი განსაკუთრებული ხე) და <b>ოღამის მთვარის კალენდარი</b> (13 თვე × 28 დღე, ოღამის ანბანის ასოების მიხედვით). ორივე XX საუკუნეში ჩამოყალიბდა — პირველი ფრანგულ ეზოთერიკაში, მეორე რობერტ გრეივსის „თეთრ ქალღმერთში“ (1948) — და არა ძველ დრუიდულ წყაროებში.</p>
+<div class="card">
+  <div class="row">
+    <input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10">
+    <input class="in date" id="d2" placeholder="პარტნიორი (არასავალდ.)" maxlength="10" style="width:200px;font-size:12px">
+    <button class="btn" id="go">გამოთვლა</button>
+  </div>
+  <div class="err" id="err"></div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+/* [name, emoji, ranges [[m1,d1,m2,d2],...], text] */
+const TREES=[
+ ['ვაშლი','🍎',[[12,23,1,1],[6,25,7,4]],'სიყვარულის ხე: მომხიბვლელი, თბილი, ფლირტისკენ მიდრეკილი; ცხოვრობს აწმყოთი და უხვად გასცემს.'],
+ ['სოჭი','🌲',[[1,2,1,11],[7,5,7,14]],'იდუმალი და ამაყი: დახვეწილი გემოვნება, მაღალი მოთხოვნები, რთულ პირობებში ყვავის.'],
+ ['თელა','🌳',[[1,12,1,24],[7,15,7,25]],'კეთილშობილი და მშვიდი: პასუხისმგებლიანი, გულუხვი, ლიდერობს შეუმჩნევლად.'],
+ ['კვიპაროსი','🌲',[[1,25,2,3],[7,26,8,4]],'ძლიერი და ერთგული: ადაპტირებადი, უბრალო ცხოვრების მოყვარული, სიყვარულში — მუდმივი.'],
+ ['ვერხვი','🌿',[[2,4,2,8],[5,1,5,14],[8,5,8,13]],'მგრძნობიარე და გამბედავი: ესთეტი, ეჭვიანი გონების და ღრმა ერთგულების მქონე.'],
+ ['კედარი','🌲',[[2,9,2,18],[8,14,8,23]],'იშვიათი სილამაზე და თავდაჯერება: ეგუება ყველაფერს, უყვარს კომფორტი, სწრაფი გადაწყვეტილებები.'],
+ ['ფიჭვი','🌲',[[2,19,2,29],[8,24,9,2]],'მიზანდასახული და გემოვნებიანი: ორგანიზატორი, კომფორტის შემქმნელი, სიყვარულში — ვნებიანი.'],
+ ['ტირიფი','🌿',[[3,1,3,10],[9,3,9,12]],'მელანქოლიური სილამაზე: ინტუიცია, ოცნება, ხელოვნება; უყვარს მოგზაურობა და სიმშვიდე.'],
+ ['ცაცხვი','🌳',[[3,11,3,20],[9,13,9,22]],'რბილი და დამყოლი: ჰარმონიის მაძიებელი, ადვილად ეგუება, თუმცა ეჭვებს შეუძლია შეაჩეროს.'],
+ ['მუხა','🌳',[[3,21,3,21]],'გაზაფხულის ბუნიობის ხე: ძალა, გამბედაობა, დამოუკიდებლობა; ბუნებრივი მფარველი.'],
+ ['თხილი','🌰',[[3,22,3,31],[9,24,10,3]],'ჭკვიანი და მომხიბვლელი: ანალიტიკური გონება, იუმორი, ლოგიკა — დიდი გავლენის უნარი.'],
+ ['ცირცელი','🍒',[[4,1,4,10],[10,4,10,13]],'დახვეწილი და მგრძნობიარე: მხიარული, ხელოვანი, ეგოისტურიც და თავგანწირულიც ერთად.'],
+ ['ნეკერჩხალი','🍁',[[4,11,4,20],[10,14,10,23]],'ორიგინალური და ცნობისმოყვარე: ფანტაზიით სავსე, ახალს ეძებს, ინდივიდუალისტი.'],
+ ['კაკალი','🌰',[[4,21,4,30],[10,24,11,11]],'ვნებიანი და შეუპოვარი: სტრატეგი, მოულოდნელი, ზოგჯერ კომპრომისის გარეშე.'],
+ ['წაბლი','🌰',[[5,15,5,24],[11,12,11,21]],'სამართლიანობის მოყვარე: მოუსვენარი, დიპლომატიური ნიჭის გარეშე, მაგრამ უდიდესი გულით.'],
+ ['იფანი','🌳',[[5,25,6,3],[11,22,12,1]],'არაჩვეულებრივად მიმზიდველი: ამბიციური, ინტუიციური, ბედს თავად წერს.'],
+ ['რცხილა','🌳',[[6,4,6,13],[12,2,12,11]],'დისციპლინირებული და გემოვნებიანი: წესრიგი, მოვალეობა, აღიარების სურვილი.'],
+ ['ლეღვი','🌿',[[6,14,6,23],[12,12,12,21]],'მგრძნობიარე და ძლიერი: ოჯახის ერთგული, პრაქტიკული, თუმცა დამოუკიდებლობა სჭირდება.'],
+ ['არყი','🌳',[[6,24,6,24]],'ზაფხულის მზებუდობის ხე: შთაგონება, ელეგანტურობა, სიმშვიდე; სიცოცხლის და ბუნების სიყვარული.'],
+ ['ზეთისხილი','🫒',[[9,23,9,23]],'შემოდგომის ბუნიობის ხე: სიბრძნე, სამართლიანობა, სიმშვიდე; სხვებს მზესავით ათბობს.'],
+ ['წიფელი','🌳',[[12,22,12,22]],'ზამთრის მზებუდობის ხე: შემოქმედებითი, ორგანიზებული, ცხოვრებას გეგმავს და ბოლომდე მიჰყავს.']];
+const OGHAM=[['არყი','ᚁ','ბეით',12,24,1,20,'დასაწყისი, განწმენდა, ახალი ციკლი — მომავლისკენ მიმავალი მეგზური.'],
+ ['ცირცელი','ᚂ','ლუის',1,21,2,17,'დაცვა, ინტუიცია, შთაგონება — ხე, რომელიც ბოროტისგან იცავს.'],
+ ['იფანი','ᚅ','ნიონ',2,18,3,17,'კავშირი სამყაროებს შორის, ცოდნა, შემოქმედებითი ძალა.'],
+ ['მურყანი','ᚃ','ფეარნ',3,18,4,14,'გამბედაობა, მფარველობა, გადაწყვეტილების ძალა — მეომრის ხე.'],
+ ['ტირიფი','ᚄ','საილე',4,15,5,12,'მთვარე, ემოცია, ინტუიცია, წყალი — ქალური საიდუმლო ძალა.'],
+ ['კუნელი','ᚆ','უათ',5,13,6,9,'სიწმინდე, მოთმინება, სიყვარული და სიამოვნების კარიბჭე.'],
+ ['მუხა','ᚇ','დუირ',6,10,7,7,'ძალა, სტაბილურობა, ლიდერობა — „კარი“ (duir = კარი).'],
+ ['ჭყორი','ᚈ','ტინე',7,8,8,4,'მეომრის ბალანსი, სიმართლე, ძალა — ზამთრის მეფე.'],
+ ['თხილი','ᚉ','კოლ',8,5,9,1,'სიბრძნე, შთაგონება, პოეზია — ცოდნის ხე.'],
+ ['ვაზი','ᚋ','მუინ',9,2,9,29,'მოსავალი, ემოციური სიღრმე, წინასწარმეტყველება.'],
+ ['სურო','ᚌ','გორტ',9,30,10,27,'გამძლეობა, ზრდა სპირალურად, სულიერი ძიება.'],
+ ['ლერწამი','ᚍ','ნგეტალ',10,28,11,24,'მიმართულება, მოქმედება, ფარული ცოდნის გამოტანა სინათლეზე.'],
+ ['დიდგულა','ᚏ','რუის',11,25,12,22,'დასრულება და განახლება, ტრანსფორმაცია, ციკლის დახურვა.']];
+const MN=['','იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+const v=(m,d)=>m*100+d;
+const inR=(m,d,r)=>{const a=v(r[0],r[1]),b=v(r[2],r[3]),x=v(m,d);return a<=b?(x>=a&&x<=b):(x>=a||x<=b);};
+const treeOf=(m,d)=>TREES.findIndex(t=>t[2].some(r=>inR(m,d,r)));
+const oghamOf=(m,d)=>{if(m===12&&d===23)return -1;return OGHAM.findIndex(o=>inR(m,d,[o[3],o[4],o[5],o[6]]));};
+const rng=r=>r[0]===r[2]&&r[1]===r[3]?`${r[1]} ${MN[r[0]]}`:`${r[1]} ${MN[r[0]]} – ${r[3]} ${MN[r[2]]}`;
+maskDate($('d1'));maskDate($('d2'));
+['d1','d2'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')run();}));
+$('go').onclick=run;
+function block(P,who){
+  const ti=treeOf(P.m,P.d),T=TREES[ti],oi=oghamOf(P.m,P.d);
+  const O=oi>=0?OGHAM[oi]:null;
+  return `<div class="card"><div class="h">${who} · ${fmtD(P)}</div><div class="two">
+    <div class="tree"><div class="lt">ხეების ჰოროსკოპი</div><div class="ic">${T[1]}</div><div class="nm">${T[0]}</div>
+      <div class="lt">${T[2].map(rng).join(' · ')}</div><div class="txt" style="margin-top:10px;text-align:left">${T[3]}</div></div>
+    <div class="tree"><div class="lt">ოღამის მთვარის კალენდარი</div>${O?`<div class="og">${O[1]}</div><div class="nm">${O[0]}</div>
+      <div class="lt">ოღამი: ${O[2]} · ${O[4]} ${MN[O[3]]} – ${O[6]} ${MN[O[5]]}</div><div class="txt" style="margin-top:10px;text-align:left">${O[7]}</div>`
+      :`<div class="og">᚛᚜</div><div class="nm">უსახელო დღე</div><div class="txt" style="margin-top:10px;text-align:left">23 დეკემბერი ოღამის წელიწადში არცერთ თვეს არ ეკუთვნის — „დღე წლისა და წლის შორის“, დროის მიღმა.</div>`}</div>
+  </div></div>`;
+}
+function run(){
+  const P=parseDate($('d1').value),Bv=$('d2').value.trim(),Q=Bv?parseDate(Bv):null;$('err').textContent='';
+  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  if(Bv&&!Q){$('err').textContent='პარტნიორის თარიღი არასწორია.';return;}
+  let h=block(P,'შენ');
+  if(Q){h+=block(Q,'პარტნიორი');
+    const a=treeOf(P.m,P.d),b=treeOf(Q.m,Q.d),oa=oghamOf(P.m,P.d),ob=oghamOf(Q.m,Q.d);
+    h+=`<div class="card"><div class="h">წყვილი</div><div class="txt">${a===b?'ერთი და იგივე ხე — ძალიან მსგავსი ბუნება: ერთმანეთს კარგად ესმით, მაგრამ ერთნაირ სისუსტეებსაც იზიარებთ.':`<b>${TREES[a][0]}</b> და <b>${TREES[b][0]}</b> — ორი განსხვავებული ხე ერთ ტყეში: ერთი მეორის ჩრდილსა და სინათლეს ავსებს.`}
+      ${oa>=0&&ob>=0?(Math.abs(oa-ob)===6||Math.abs(oa-ob)===7?' ოღამის კალენდარში თითქმის საპირისპირო თვეებში დაიბადეთ — ზაფხული და ზამთარი ერთ წყვილში.':oa===ob?' ოღამის კალენდარშიც ერთ თვეში ხართ.':''):''}</div></div>`;}
+  const ti=treeOf(P.m,P.d),oi=oghamOf(P.m,P.d);
+  h+=`<div class="card"><div class="h">21 ხე</div><div class="scroll"><table class="tbl"><tr><th></th><th>ხე</th><th>პერიოდები</th></tr>${TREES.map((t,i)=>`<tr class="${i===ti?'now':''}"><td>${t[1]}</td><td>${t[0]}</td><td class="note">${t[2].map(rng).join(' · ')}</td></tr>`).join('')}</table></div></div>
+  <div class="card"><div class="h">ოღამის 13 თვე</div><div class="scroll"><table class="tbl"><tr><th></th><th>ხე</th><th>ოღამი</th><th>პერიოდი</th></tr>${OGHAM.map((o,i)=>`<tr class="${i===oi?'now':''}"><td class="og">${o[1]}</td><td>${o[0]}</td><td>${o[2]}</td><td class="note">${o[4]} ${MN[o[3]]} – ${o[6]} ${MN[o[5]]}</td></tr>`).join('')}</table></div>
+  <div class="note" style="margin-top:8px">29 თებერვალი ხეების ჰოროსკოპში ფიჭვს ეკუთვნის.</div></div>`;
+  $('out').innerHTML=h;
+}
+</script>
+</body>
+</html>
