@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>გენის გასაღებები</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.seq{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.sph{width:150px;border:1px solid var(--border);border-radius:50%;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px;
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 22%,transparent),rgba(255,255,255,.015) 70%);border-color:color-mix(in srgb,var(--c) 45%,transparent);cursor:pointer;transition:transform .2s}
+.sph:hover{transform:translateY(-3px)}
+.sph .sn{font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.sph .gk{font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1.05;color:var(--text)}
+.sph .gk small{font-size:16px;color:var(--muted)}
+.sph .gf{font-size:11.5px;color:var(--c)}
+.sph .pl{font-size:9.5px;color:var(--muted);margin-top:2px}
+.spec{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.spec>div{border-radius:10px;padding:10px;text-align:center;border:1px solid var(--border)}
+.spec .k{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--muted)}
+.spec .v{font-family:'Cormorant Garamond',serif;font-size:22px}
+.form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
+.form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
+.form2 .in{width:100%}
+@media(max-width:600px){.spec{grid-template-columns:1fr}.sph{width:128px}.sph .gk{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">64 გასაღები · ოქროს გზა</div>
+  <h1 class="page-title">გენის <em>გასაღებები</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<p class="lead">რიჩარდ რადის სისტემა (Gene Keys), ადამიანის დიზაინის კარიბჭეებზე დაფუძნებული: ყოველ გასაღებს სამი სიხშირე აქვს — <b>ჩრდილი → ნიჭი → სიდჰი</b>. „ოქროს გზა“ შედგება სამი თანმიმდევრობისგან: <b>აქტივაცია</b> (მიზანი), <b>ვენერა</b> (ურთიერთობები), <b>მარგალიტი</b> (კეთილდღეობა). „პიროვნება“ — დაბადების მომენტი, „დიზაინი“ — როცა მზე 88°-ით უკან იყო (≈ 88 დღით ადრე).</p>
+<div class="card">
+  <div class="form2">
+    <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
+    <div><label>დრო</label><input class="in time" id="t1" placeholder="HH:MM" maxlength="5"></div>
+    <div><label>UTC±</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
+  </div>
+  <div class="row" style="margin-top:14px"><button class="btn" id="go">გამოთვლა</button></div>
+  <div class="err" id="err"></div>
+</div>
+<div id="out"></div>
+</div>
+<script src="search.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+const ORDER=[41,19,13,49,30,55,37,63,22,36,25,17,21,51,42,3,27,24,2,23,8,20,16,35,45,12,15,52,39,53,62,56,31,33,7,4,29,59,40,64,47,6,46,18,48,57,32,50,28,44,1,43,14,34,9,5,26,11,10,58,38,54,61,60];
+const GK=[null,['ენტროპია','სიახლე','სილამაზე'],['დისლოკაცია','ორიენტაცია','ერთიანობა'],['ქაოსი','ინოვაცია','უმანკოება'],['შეუწყნარებლობა','გაგება','პატიება'],['მოუთმენლობა','მოთმინება','უდროობა'],['კონფლიქტი','დიპლომატია','მშვიდობა'],['გაყოფა','წინამძღოლობა','სათნოება'],['უფერულობა','სტილი','დახვეწილობა'],['ინერცია','მიზანსწრაფვა','უძლეველობა'],['თვითმოხიბვლა','ბუნებრიობა','ყოფიერება'],
+['ბუნდოვანება','იდეალიზმი','სინათლე'],['ამაოება','გარჩევა','სიწმინდე'],['უთანხმოება','შეცნობა','თანაგრძნობა'],['კომპრომისი','კომპეტენცია','უხვობა'],['მოსაწყენობა','მაგნეტიზმი','აყვავება'],['გულგრილობა','მრავალმხრივობა','ოსტატობა'],['მოსაზრება','შორსმჭვრეტელობა','ყოვლისმცოდნეობა'],['განსჯა','მთლიანობა','სრულყოფილება'],['თანადამოკიდებულება','მგრძნობელობა','მსხვერპლი'],['ზედაპირულობა','თავდაჯერება','ყოფნა'],
+['კონტროლი','ავტორიტეტი','სიმამაცე'],['უპატიობა','კეთილგანწყობა','მადლი'],['სირთულე','სიმარტივე','კვინტესენცია'],['დამოკიდებულება','გამოგონება','სიჩუმე'],['შეზღუდულობა','მიღება','უნივერსალური სიყვარული'],['სიამაყე','ოსტატური ხელოვნება','უხილაობა'],['ეგოიზმი','ალტრუიზმი','თავდავიწყება'],['უმიზნობა','სისავსე','უკვდავება'],['ნახევარგულიანობა','ერთგულება','თავდადება'],['სურვილი','სიმსუბუქე','აღტაცება'],
+['ქედმაღლობა','ლიდერობა','თავმდაბლობა'],['მარცხი','შენარჩუნება','თაყვანისცემა'],['დავიწყება','გაცნობიერება','გამოცხადება'],['ძალადობა','სიძლიერე','დიდებულება'],['შიმშილი','თავგადასავალი','უსაზღვროება'],['მღელვარება','ჰუმანურობა','თანალმობა'],['სისუსტე','თანასწორობა','სინაზე'],['ბრძოლა','შეუპოვრობა','ღირსება'],['პროვოკაცია','დინამიზმი','გათავისუფლება'],['გამოფიტვა','გადაწყვეტილება','ღვთიური ნება'],
+['ფანტაზია','წინათგრძნობა','ემანაცია'],['მოლოდინი','დისტანცირება','ზეიმი'],['სიყრუე','ჩაწვდომა','ეპიფანია'],['ჩარევა','გუნდურობა','სინარქია'],['დომინირება','სინერგია','ზიარება'],['სერიოზულობა','სიამოვნება','ექსტაზი'],['ჩაგვრა','ტრანსმუტაცია','ფერისცვალება'],['არასრულფასოვნება','მარიფათი','სიბრძნე'],['რეაქცია','რევოლუცია','ხელახალი დაბადება'],['კორუფცია','წონასწორობა','ჰარმონია'],
+['აჟიტაცია','ინიციატივა','გამოღვიძება'],['სტრესი','თავშეკავება','სიმშვიდე'],['მოუმწიფებლობა','გაფართოება','ზესიუხვე'],['სიხარბე','მისწრაფება','ამაღლება'],['მსხვერპლობა','თავისუფლება','თავისუფლება'],['გაფანტულობა','გამდიდრება','თრობა'],['შფოთვა','ინტუიცია','სიცხადე'],['უკმაყოფილება','სიცოცხლისუნარიანობა','ნეტარება'],['არაპატიოსნება','სიახლოვე','გამჭვირვალობა'],['შეზღუდვა','რეალიზმი','სამართალი'],
+['ფსიქოზი','შთაგონება','სიწმინდე'],['ინტელექტი','სიზუსტე','უნაკლობა'],['ეჭვი','კვლევა','ჭეშმარიტება'],['დაბნეულობა','წარმოსახვა','განათება']];
+const LINE=[null,'ფუნდამენტი — ღრმა საფუძველი, კვლევა, უსაფრთხოების საჭიროება','ბუნებრიობა — თანდაყოლილი ნიჭი, რომელიც სხვები ამჩნევენ','ექსპერიმენტი — ცდა-შეცდომით სწავლა, მოქნილობა','ურთიერთობა — ქსელი, მეგობრობა, გავლენა ახლობლებზე','პროექცია — უნივერსალური გადაწყვეტა, სხვების მოლოდინი','მაგალითი — ცხოვრების სიბრძნე, ხედვა მაღლიდან'];
+const SPH={
+ lw:['ცხოვრების საქმე','აქტივაცია','პიროვნების მზე','#e8c95a','რა გაჩუქა სამყარომ — შენი ძირითადი გამოხატვა, საქმე, რომელიც შენ ხარ.'],
+ ev:['ევოლუცია','აქტივაცია','პიროვნების დედამიწა','#c8a96e','მთავარი გამოწვევა, რომლის გადალახვაც გზრდის.'],
+ ra:['ბრწყინვა','აქტივაცია','დიზაინის მზე','#e8a06a','ჯანმრთელობა და შინაგანი სინათლე; როგორ ბრწყინავ, როცა ცენტრში ხარ.'],
+ pu:['მიზანი','აქტივაცია','დიზაინის დედამიწა','#d9b36a','ღრმა საფუძველი — სადაც ბოლოს ყველაზე დამამშვიდებელ აზრს პოულობ.'],
+ at:['მიზიდულობა','ვენერა','დიზაინის მთვარე','#e88ab0','ვის და რას იზიდავ ცხოვრებაში — ურთიერთობების კარიბჭე.'],
+ iq:['IQ · გონება','ვენერა','პიროვნების ვენერა','#d08ad8','გონებრივი ნიმუშები, რომლებიც ბავშვობაში ჩამოყალიბდა.'],
+ eq:['EQ · ემოცია','ვენერა','პიროვნების მარსი','#e86b6b','ემოციური ნიმუშები — როგორ გრძნობ და რეაგირებ.'],
+ sq:['SQ · სული','ვენერა','დიზაინის ვენერა','#9b7fe8','სულიერი ინტელექტი — სიყვარულის ყველაზე ღრმა ფორმა.'],
+ co:['ბირთვი','ვენერა','დიზაინის მარსი','#b05a7a','ბირთვული ჭრილობა — და მასში დამალული უდიდესი საჩუქარი.'],
+ vo:['მოწოდება','მარგალიტი','დიზაინის მარსი','#6fa8e8','სამუშაოს ხასიათი, რომელიც გაცოცხლებს.'],
+ cu:['კულტურა','მარგალიტი','დიზაინის იუპიტერი','#6fcfc0','როგორ მუშაობ ჯგუფში და რა კულტურას ქმნი.'],
+ pe:['მარგალიტი','მარგალიტი','პიროვნების იუპიტერი','#e8e2d5','კეთილდღეობის წყარო — სიმარტივე, რომელიც სხვებს ემსახურება.']};
+const SEQS=[['აქტივაციის თანმიმდევრობა',['lw','ev','ra','pu']],['ვენერას თანმიმდევრობა',['at','iq','eq','sq','co']],['მარგალიტის თანმიმდევრობა',['vo','cu','pe']]];
+const norm=x=>((x%360)+360)%360;
+function gateOf(lon){const o=norm(lon-302),i=Math.floor(o/5.625);return{g:ORDER[i],l:Math.floor((o-i*5.625)/0.9375)+1};}
+function designJD(jd){const S=window._search,t=norm(S.lon('sun',jd)-88);let j=jd-89;for(let k=0;k<8;k++){let f=norm(S.lon('sun',j)-t);if(f>180)f-=360;j-=f/0.98565;}return j;}
+maskDate($('d1'));maskTime($('t1'));
+$('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
+let SEL='lw',R=null;
+function run(){
+  $('err').textContent='';const P=parseDate($('d1').value),T=parseTime($('t1').value);
+  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  if(T===undefined){$('err').textContent='დრო ფორმატით HH:MM.';return;}
+  if(!window._search){$('err').textContent='search.js ვერ ჩაიტვირთა (ეფემერიდა).';return;}
+  const S=window._search,tz=parseFloat($('tz1').value)||0,h=T?T.h+T.mi/60:12;
+  const jp=S.cal2jd(P.y,P.m,P.d+(h-tz)/24,true),jd=designJD(jp);
+  const pos=(j,b)=>b==='earth'?norm(S.lon('sun',j)+180):S.lon(b,j);
+  const map={lw:[jp,'sun'],ev:[jp,'earth'],ra:[jd,'sun'],pu:[jd,'earth'],at:[jd,'moon'],iq:[jp,'venus'],eq:[jp,'mars'],sq:[jd,'venus'],co:[jd,'mars'],vo:[jd,'mars'],cu:[jd,'jupiter'],pe:[jp,'jupiter']};
+  R={};for(const k in map){const [j,b]=map[k];R[k]=gateOf(pos(j,b));}
+  R._unknown=!T;
+  const dg=S.jd2cal(jd,true);R._design=`${String(dg.d).padStart(2,'0')}.${String(dg.m).padStart(2,'0')}.${dg.y}`;
+  draw();
+}
+function draw(){
+  let h='';
+  SEQS.forEach(([t,ks])=>{h+=`<div class="card"><div class="h">${t}</div><div class="seq">`+ks.map(k=>{const s=SPH[k],r=R[k];
+    return `<div class="sph" style="--c:${s[3]}" data-k="${k}"><div class="sn">${s[0]}</div><div class="gk">${r.g}<small>.${r.l}</small></div><div class="gf">${GK[r.g][1]}</div><div class="pl">${s[2]}</div></div>`;}).join('')+`</div></div>`;});
+  const s=SPH[SEL],r=R[SEL];
+  h=`<div class="card" id="detail"><div class="h">${s[0]} · ${s[1]} · ${s[2]}</div>
+    <div class="big" style="font-size:40px">გასაღები ${r.g}.${r.l}</div>
+    <div class="spec"><div style="background:rgba(232,107,107,.06)"><div class="k">ჩრდილი</div><div class="v" style="color:#e88">${GK[r.g][0]}</div></div>
+      <div style="background:rgba(200,169,110,.08)"><div class="k">ნიჭი</div><div class="v" style="color:var(--gold)">${GK[r.g][1]}</div></div>
+      <div style="background:rgba(155,127,232,.08)"><div class="k">სიდჰი</div><div class="v" style="color:#b8a4f0">${GK[r.g][2]}</div></div></div>
+    <div class="txt" style="margin-top:12px">${s[4]}</div>
+    <div class="txt" style="margin-top:8px"><b>ხაზი ${r.l}</b> — ${LINE[r.l]}.</div>
+    <div class="note" style="margin-top:10px">ჩრდილი — შიშზე დაფუძნებული რეაქცია; ნიჭი — იგივე ენერგია, როცა მას ცნობიერად უყურებ; სიდჰი — მისი უმაღლესი, ტრანსცენდენტური ფორმა. HD-ში ეს არის კარიბჭე ${r.g}, ხაზი ${r.l}.</div></div>`+h;
+  h+=`<div class="card note">დიზაინის მომენტი: <b>${R._design}</b> (მზე 88° უკან). ${R._unknown?'<b>დრო უცნობია</b> — აღებულია შუადღე; მთვარის (მიზიდულობა) გასაღები შეიძლება იყოს არაზუსტი. ':''}პლანეტები — MAGNUS-ის ეფემერიდა (search.js), კარიბჭის ბორბალი: 41-ე კარიბჭე იწყება 2° მერწყულზე. სახელები — რიჩარდ რადის ტერმინების ქართული თარგმანი; ორიგინალი ტექსტები ავტორის საკუთრებაა.</div>`;
+  $('out').innerHTML=h;
+  document.querySelectorAll('.sph').forEach(e=>e.onclick=()=>{SEL=e.dataset.k;draw();$('detail').scrollIntoView({behavior:'smooth',block:'start'});});
+}
+</script>
+</body>
+</html>
