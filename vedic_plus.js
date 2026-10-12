@@ -243,39 +243,51 @@ function guna(M,F){  /* M = groom moon sidereal, F = bride */
   return R;
 }
 const mangal=d=>{const h=d.planets.Mars.house,hm=(d.planets.Mars.sign_idx-d.planets.Moon.sign_idx+12)%12+1,B=[1,2,4,7,8,12];return{lag:B.includes(h),moon:B.includes(hm),h,hm};};
+/* one person's input block (p = 'a' | 'b') */
+function personHTML(p,title,v){return `<div class="vp-card" style="margin:0"><h3>${title}</h3>
+  <div class="vp-row"><div class="field" style="flex:1 1 140px"><label>სახელი</label><input id="cp${p}-name" value="${v.name||''}" style="max-width:none"></div>
+    <div class="field"><label>სქესი</label><select id="cp${p}-sex"><option value="m"${v.sex==='m'?' selected':''}>კაცი</option><option value="f"${v.sex==='f'?' selected':''}>ქალი</option></select></div></div>
+  <div class="vp-row"><div class="field"><label>დღე</label><input type="number" id="cp${p}-d" value="${v.d}" style="width:62px"></div><div class="field"><label>თვე</label><input type="number" id="cp${p}-m" value="${v.m}" style="width:62px"></div>
+    <div class="field"><label>წელი</label><input type="number" id="cp${p}-y" value="${v.y}" style="width:84px"></div><div class="field"><label>სთ</label><input type="number" id="cp${p}-h" value="${v.h}" style="width:58px"></div>
+    <div class="field"><label>წთ</label><input type="number" id="cp${p}-mi" value="${v.mi}" style="width:58px"></div></div>
+  <div class="vp-row"><div class="field" style="flex:1 1 100%"><label>ქალაქი</label><input id="cp${p}-city" value="${v.city||''}" placeholder="თბილისი, Delhi…" style="max-width:none"></div></div>
+  <div class="vp-row"><div class="field"><label>განედი</label><input type="number" id="cp${p}-lat" value="${v.lat}" style="width:90px"></div><div class="field"><label>გრძედი</label><input type="number" id="cp${p}-lon" value="${v.lon}" style="width:90px"></div>
+    <div class="field"><label>სარტყელი</label><input id="cp${p}-tz" value="${v.tz}" style="width:130px"></div></div>
+  <div id="cp${p}-hint" class="vp-note"></div></div>`;}
+function wireCity(p){let tmr=null;$(`cp${p}-city`).oninput=()=>{clearTimeout(tmr);tmr=setTimeout(async()=>{const c=$(`cp${p}-city`).value.trim();if(c.length<2)return;
+  try{const r=await fetch(`${BACKEND}/geocode`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city:c})});const g=await r.json();
+    if(g.lat!=null){$(`cp${p}-lat`).value=g.lat;$(`cp${p}-lon`).value=g.lon;$(`cp${p}-tz`).value=g.tz_name;$(`cp${p}-hint`).textContent='📍 '+(g.display||c)+' · '+g.tz_name;}}catch(e){}},600);};}
+const readP=p=>{const v=id=>$(`cp${p}-${id}`).value;return{name:v('name')||(p==='a'?'პირველი':'მეორე'),sex:v('sex'),
+  body:{year:+v('y'),month:+v('m'),day:+v('d'),hour:+v('h')||0,minute:+v('mi')||0,second:0,lat:+v('lat'),lon:+v('lon'),tz_name:v('tz')||'UTC'}};};
 function renderCompat(){
-  const d=natal(),o=$('vp-out');if(!d)return needNatal();
+  const o=$('vp-out'),f=id=>(($(id)||{}).value);
+  /* person 1 pre-filled from the main form (if filled), person 2 empty */
+  const A={name:f('name')||'',sex:'m',d:f('day')||1,m:f('month')||1,y:f('year')||1990,h:f('hour')||12,mi:f('minute')||0,city:f('city')||'',lat:f('lat')||41.7151,lon:f('lon')||44.8271,tz:f('tz_name')||'Asia/Tbilisi'};
+  const B={name:'',sex:'f',d:1,m:1,y:1992,h:12,mi:0,city:'',lat:A.lat,lon:A.lon,tz:A.tz};
   o.innerHTML=`<div class="vp-card"><h3>შეთავსება — აშტაკუტა (36 გუნა)</h3>
-    <div class="vp-sum" style="margin-bottom:8px">პირველი პიროვნება — ზემოთ ფორმიდან (<b>${($('name')||{}).value||'ნატალი'}</b>). მეორე:</div>
-    <div class="vp-row"><div class="field"><label>პირველი არის</label><select id="cp-role"><option value="m">კაცი</option><option value="f">ქალი</option></select></div>
-      <div class="field"><label>სახელი</label><input id="cp-name" placeholder="მეორე"></div>
-      <div class="field"><label>დღე</label><input type="number" id="cp-d" value="1"></div><div class="field"><label>თვე</label><input type="number" id="cp-m" value="1"></div>
-      <div class="field"><label>წელი</label><input type="number" id="cp-y" value="1992"></div><div class="field"><label>სთ</label><input type="number" id="cp-h" value="12"></div>
-      <div class="field"><label>წთ</label><input type="number" id="cp-mi" value="0"></div></div>
-    <div class="vp-row"><div class="field" style="min-width:220px"><label>ქალაქი</label><input id="cp-city" placeholder="თბილისი, Delhi…" style="max-width:240px"></div>
-      <div class="field"><label>განედი</label><input type="number" id="cp-lat" value="${d.lat}"></div><div class="field"><label>გრძედი</label><input type="number" id="cp-lon" value="${d.lon}"></div>
-      <div class="field"><label>სარტყელი</label><input id="cp-tz" value="${d.tz_name||formTZ()}"></div><button class="vp-btn" id="cp-go">✦ შეთავსება</button></div>
-    <div id="cp-hint" class="vp-note"></div></div><div id="cp-out"></div>`;
-  let tmr=null;$('cp-city').oninput=()=>{clearTimeout(tmr);tmr=setTimeout(async()=>{const c=$('cp-city').value.trim();if(c.length<2)return;
-    try{const r=await fetch(`${BACKEND}/geocode`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city:c})});const g=await r.json();
-      if(g.lat!=null){$('cp-lat').value=g.lat;$('cp-lon').value=g.lon;$('cp-tz').value=g.tz_name;$('cp-hint').textContent='📍 '+(g.display||c)+' · '+g.tz_name;}}catch(e){}},600);};
+    <div class="vp-note" style="margin:0 0 10px">შეიყვანე ორივე ადამიანის დაბადების მონაცემები. პირველი ავტომატურად ივსება ზედა ფორმიდან. სქესი საჭიროა — ვარნა, ტარა და განა მამაკაცისა და ქალის მიხედვით ითვლება.</div>
+    <div class="vp-grid2">${personHTML('a','👤 პირველი',A)}${personHTML('b','👤 მეორე',B)}</div>
+    <div style="text-align:center;margin-top:12px"><button class="vp-btn" id="cp-go" style="padding:10px 28px;font-size:13px">✦ შეთავსების გამოთვლა ✦</button></div></div><div id="cp-out"></div>`;
+  wireCity('a');wireCity('b');
   $('cp-go').onclick=async()=>{const out=$('cp-out');out.innerHTML='<div class="vp-card">⏳</div>';
-    try{const v=id=>+$(id).value;
-      const P=await vedicAt({year:v('cp-y'),month:v('cp-m'),day:v('cp-d'),hour:v('cp-h'),minute:v('cp-mi'),second:0,lat:v('cp-lat'),lon:v('cp-lon'),tz_name:$('cp-tz').value||'UTC'});
-      const firstM=$('cp-role').value==='m',M=firstM?d:P,F=firstM?P:d,nm1=($('name')||{}).value||'პირველი',nm2=$('cp-name').value||'მეორე';
+    try{const pa=readP('a'),pb=readP('b');
+      if(pa.sex===pb.sex){out.innerHTML='<div class="vp-card vp-sum">აშტაკუტა კაცისა და ქალისთვის ითვლება — აირჩიე სხვადასხვა სქესი.</div>';return;}
+      const [da,db]=await Promise.all([vedicAt(pa.body),vedicAt(pb.body)]);
+      const firstM=pa.sex==='m',M=firstM?da:db,F=firstM?db:da,nm1=pa.name,nm2=pb.name,man=firstM?nm1:nm2;
       const R=guna(M.planets.Moon.sidereal,F.planets.Moon.sidereal),tot=R.reduce((a,r)=>a+r[2],0);
       const verdict=tot<18?['არარეკომენდებული (18-ზე ნაკლები)','#e8907a']:tot<25?['საშუალო','#e8c97a']:tot<33?['კარგი','#7fd8a8']:['შესანიშნავი','#7fd8a8'];
-      const md=[[nm1,mangal(d)],[nm2,mangal(P)]],nkA=nakOf(d.planets.Moon.sidereal),nkB=nakOf(P.planets.Moon.sidereal);
+      const md=[[nm1,mangal(da)],[nm2,mangal(db)]],nkA=nakOf(da.planets.Moon.sidereal),nkB=nakOf(db.planets.Moon.sidereal);
       out.innerHTML=`<div class="vp-card"><div class="vp-big">${tot.toFixed(1).replace('.0','')} / 36</div>
         <div class="vp-bar" style="margin:8px 0"><i style="width:${(tot/36*100).toFixed(0)}%"></i></div>
         <div style="text-align:center;color:${verdict[1]}">${verdict[0]}</div>
-        <div class="vp-note" style="text-align:center">მთვარე: ${nm1} — ${nkA.name} (${RASHI[Math.floor(d.planets.Moon.sidereal/30)]}) · ${nm2} — ${nkB.name} (${RASHI[Math.floor(P.planets.Moon.sidereal/30)]}) · კაცი: ${firstM?nm1:nm2}</div></div>
-        <div class="vp-card"><table><tr><th>კუტა</th><th>ქულა</th><th>კაცი / ქალი</th><th>რას ზომავს</th></tr>
+        <div class="vp-note" style="text-align:center">მთვარე: ${nm1} — ${nkA.name}, ${RASHI[Math.floor(da.planets.Moon.sidereal/30)]} · ${nm2} — ${nkB.name}, ${RASHI[Math.floor(db.planets.Moon.sidereal/30)]}</div></div>
+        <div class="vp-card"><table><tr><th>კუტა</th><th>ქულა</th><th>${man} (კ) / ${firstM?nm2:nm1} (ქ)</th><th>რას ზომავს</th></tr>
         ${R.map(r=>`<tr><td>${r[0]}</td><td><b style="color:${r[2]>=r[1]*0.75?'#7fd8a8':r[2]===0?'#e8907a':'#e8c97a'}">${r[2]}</b> / ${r[1]}</td><td>${r[3]}</td><td class="vp-note" style="margin:0">${r[4]}</td></tr>`).join('')}</table>
         ${R[7][2]===0?'<div class="vp-note" style="color:#e8907a">⚠ ნადი დოშა — ერთი ნადი (ტრადიციით ყველაზე მძიმე).</div>':''}
         ${R[6][2]===0?'<div class="vp-note" style="color:#e8907a">⚠ ბჰაკუტ დოშა.</div>':''}</div>
         <div class="vp-card"><h3>მანგალა დოშა (კუჯა დოშა)</h3>${md.map(([n,m])=>`<div class="vp-sum">${n}: მარსი ლაგნიდან ${m.h}-ე, მთვარიდან ${m.hm}-ე ბჰავაში — ${m.lag||m.moon?'<b style="color:#e8907a">მანგლიკი</b>'+(m.lag&&m.moon?' (ორივედან)':m.lag?' (ლაგნიდან)':' (მთვარიდან)'):'არ არის'}</div>`).join('')}
         <div class="vp-note">მანგალა დოშა — მარსი 1, 2, 4, 7, 8, 12 ბჰავაში. ტრადიციით ორივე მანგლიკი ერთმანეთს „აბალანსებს“.</div></div>`;
+      out.scrollIntoView({behavior:'smooth',block:'start'});
     }catch(e){out.innerHTML='<div class="vp-card">შეცდომა: '+e.message+'</div>';}};
 }
 
