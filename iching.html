@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ი-ძინი · ჰექსაგრამა</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.hexes{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+.hx{text-align:center;width:190px}
+.hx .num{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--muted);margin-top:8px}
+.hx .cn{font-family:'Noto Serif SC',serif;font-size:22px;color:var(--gold)}
+.hx .ka{font-size:14px;color:var(--text);line-height:1.35}
+.hx .tg{font-size:11px;color:var(--muted);margin-top:3px}
+.hx .rl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--vio);text-transform:uppercase;margin-bottom:8px}
+.coins{display:flex;gap:10px;justify-content:center;margin:10px 0;min-height:52px}
+.coin{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif SC',serif;font-size:15px;
+  background:radial-gradient(circle at 35% 30%,#e8d29a,#a8853f 70%);color:#3a2a0a;box-shadow:0 4px 14px rgba(0,0,0,.5);animation:flip .5s ease}
+.coin.t{background:radial-gradient(circle at 35% 30%,#b9b2a2,#6b6555 70%);color:#222}
+@keyframes flip{0%{transform:rotateY(0) scale(.6);opacity:0}100%{transform:rotateY(720deg) scale(1);opacity:1}}
+.in.q{width:100%;max-width:520px;text-align:left}
+.lines{font-size:12.5px;line-height:1.8}
+.form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
+.form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
+.form2 .in,.form2 .sel{width:100%}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">ცვლილებების წიგნი · 易經</div>
+  <h1 class="page-title">ი-ძინი <em>· ჰექსაგრამა</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<div class="pills" id="mode"><div class="pill active" data-v="birth">დაბადების ჰექსაგრამა</div><div class="pill" data-v="coin">კითხვა · მონეტები</div></div>
+
+<div id="m-birth">
+<p class="lead"><b>მეი ხუა ი შუ</b> (梅花易數, „ქლიავის ყვავილის რიცხვები“, შაო იუნი, XI ს.): ზედა ტრიგრამა = (წლის შტო + მთვარის თვე + მთვარის დღე) mod 8, ქვედა = (იგივე + საათის შტო) mod 8, მოძრავი ხაზი = ჯამი mod 6. ჰექსაგრამის ნომერი ემთხვევა ადამიანის დიზაინის კარიბჭის ნომერს.</p>
+<div class="card">
+  <div class="form2">
+    <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
+    <div><label>დრო</label><input class="in time" id="t1" placeholder="HH:MM" maxlength="5"></div>
+    <div><label>UTC±</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
+    <div><label>გრძედი °E (არასავალდ.)</label><input class="in" id="lon1" placeholder="მაგ. 44.8" style="text-align:center"></div>
+  </div>
+  <div class="row" style="margin-top:14px"><button class="btn" id="go">გამოთვლა</button></div>
+  <div class="err" id="err"></div>
+</div>
+</div>
+
+<div id="m-coin" class="hidden">
+<p class="lead">ჩაიფიქრე კითხვა და ექვსჯერ „ააგდე“ სამი მონეტა: „იან“ მხარე (陽) = 3, „ინ“ მხარე (陰) = 2. ჯამი 6 — მოძრავი ინ, 7 — იან, 8 — ინ, 9 — მოძრავი იან. ხაზები შენდება ქვემოდან ზემოთ. შემთხვევითობა — ბრაუზერის კრიპტოგრაფიული გენერატორი.</p>
+<div class="card" style="text-align:center">
+  <input class="in q" id="q" placeholder="შენი კითხვა (არასავალდებულო)">
+  <div class="coins" id="coins"></div>
+  <div class="row"><button class="btn" id="toss">აგდება (0/6)</button><button class="btn" id="reset" style="opacity:.7">თავიდან</button></div>
+  <div id="castLines" class="note" style="margin-top:10px"></div>
+</div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+/* ── Chinese calendar data (Georgian) ── */
+const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥';
+const GAN_KA=['ძია','ი','ბინ','დინ','ვუ','ძი','გენ','სინ','ჟენ','გუი'];
+const ZHI_KA=['ძი','ჩოუ','ინ','მაო','ჩენ','ს','ვუ','ვეი','შენ','იოუ','სიუ','ხაი'];
+const ANIMAL=['ვირთხა','ხარი','ვეფხვი','კურდღელი','დრაკონი','გველი','ცხენი','თხა','მაიმუნი','მამალი','ძაღლი','ღორი'];
+const ANIMAL_EMO=['🐀','🐂','🐅','🐇','🐉','🐍','🐎','🐐','🐒','🐓','🐕','🐖'];
+const EL=['ხე','ცეცხლი','მიწა','ლითონი','წყალი'];
+const EL_COL=['#7fcf8f','#e86b6b','#d9b36a','#d8dde6','#6fa8e8'];
+const EL_ICO=['🌳','🔥','⛰️','⚙️','💧'];
+const ganEl=i=>Math.floor(i/2), ganYang=i=>i%2===0;
+const ZHI_EL=[4,2,0,0,2,1,1,2,3,3,2,4];
+const gi=c=>GAN.indexOf(c), zi=c=>ZHI.indexOf(c);
+const elOfChar=c=>{const g=gi(c);if(g>=0)return ganEl(g);const z=zi(c);return z>=0?ZHI_EL[z]:-1;};
+/* generating: wood→fire→earth→metal→water→wood ; controlling: wood→earth→water→fire→metal→wood */
+const gen=e=>(e+1)%5, ctl=e=>(e+2)%5;
+function elRel(a,b){/* relation of b to a */ if(a===b)return'same';if(gen(b)===a)return'mother';if(gen(a)===b)return'child';if(ctl(a)===b)return'wealth';return'enemy';}
+const SHISHEN={'比肩':['თანასწორი','მეგობრები, თანატოლები, დამოუკიდებლობა'],'劫财':['სიმდიდრის მძარცველი','კონკურენცია, რისკი, გაბედულება'],
+ '食神':['გემრიელი ღმერთი','შემოქმედება, სიამოვნება, ნიჭის რბილი გამოხატვა'],'伤官':['დამაზიანებელი ოფიცერი','მეამბოხე ნიჭი, ორიგინალობა, კრიტიკა'],
+ '偏财':['არაპირდაპირი სიმდიდრე','მოულოდნელი შემოსავალი, ბიზნესი, გულუხვობა'],'正财':['პირდაპირი სიმდიდრე','სტაბილური შემოსავალი, ქონება, პრაქტიკულობა'],
+ '七杀':['შვიდი მკვლელი','ზეწოლა, ძალაუფლება, გამოწვევა, მეომარი'],'正官':['პირდაპირი ოფიცერი','წესრიგი, სტატუსი, პასუხისმგებლობა, კანონი'],
+ '偏印':['არაპირდაპირი რესურსი','ინტუიცია, უჩვეულო ცოდნა, მისტიკა'],'正印':['პირდაპირი რესურსი','მფარველობა, განათლება, დედა, მხარდაჭერა'],'日主':['დღის ოსტატი','შენ თვითონ']};
+const NAYIN={'海中金':'ზღვის სიღრმის ოქრო','炉中火':'ქურის ცეცხლი','大林木':'დიდი ტყის ხე','路旁土':'გზისპირა მიწა','剑锋金':'ხმლის პირის ლითონი','山头火':'მთის მწვერვალის ცეცხლი','涧下水':'ხევის წყალი','城头土':'ციხე-კედლის მიწა','白蜡金':'თეთრი ცვილის ლითონი','杨柳木':'ტირიფის ხე','泉中水':'წყაროს წყალი','屋上土':'სახურავის მიწა','霹雳火':'ელვის ცეცხლი','松柏木':'ფიჭვის ხე','长流水':'დიდი მდინარე','沙中金':'ქვიშის ოქრო','砂中金':'ქვიშის ოქრო','山下火':'მთის ძირის ცეცხლი','平地木':'ველის ხე','壁上土':'კედლის მიწა','金箔金':'ოქროს ფურცელი','覆灯火':'ლამპრის ცეცხლი','天河水':'ციური მდინარე','大驿土':'დიდი გზის მიწა','钗钏金':'სამკაულის ოქრო','桑柘木':'თუთის ხე','大溪水':'დიდი ნაკადულის წყალი','沙中土':'ქვიშის მიწა','天上火':'ციური ცეცხლი','石榴木':'ბროწეულის ხე','大海水':'დიდი ზღვის წყალი'};
+const nayinEl=s=>{const c=s.slice(-1);return {'金':3,'火':1,'木':0,'土':2,'水':4}[c];};
+const HARM=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]], CLASH=[[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]];
+const TRINE=[[8,0,4],[2,6,10],[5,9,1],[11,3,7]];
+const STEMCOMB=[[0,5],[1,6],[2,7],[3,8],[4,9]];
+const pairIn=(L,a,b)=>L.some(p=>(p[0]===a&&p[1]===b)||(p[0]===b&&p[1]===a));
+const sameTrine=(a,b)=>a!==b&&TRINE.some(t=>t.includes(a)&&t.includes(b));
+function branchRel(a,b){if(a===b)return['იგივე ნიშანი','ერთნაირი ბუნება, მსგავსი რიტმი.','#c8a96e'];
+  if(pairIn(HARM,a,b))return['ექვსი ჰარმონია (六合)','ბუნებრივი მიზიდულობა და თანხმობა.','#7fcf8f'];
+  if(sameTrine(a,b))return['სამი ჰარმონია (三合)','საერთო ელემენტი და მიზნები — ძლიერი ალიანსი.','#7fcf8f'];
+  if(pairIn(CLASH,a,b))return['შეჯახება (冲)','საპირისპირო ძალები — დაძაბულობა, ცვლილება, ვნება.','#e86b6b'];
+  return['ნეიტრალური','პირდაპირი კავშირი არ არის.','rgba(232,226,213,.5)'];}
+/* true-solar-time equation of time (minutes) */
+function eot(y,m,d){const N=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;const B=2*Math.PI*(N-81)/365;return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);}
+/* add minutes to a civil date-time (proleptic Gregorian via UTC Date with full year) */
+function addMin(y,m,d,h,mi,add){const t=new Date(0);t.setUTCFullYear(y,m-1,d);t.setUTCHours(h,mi,0,0);t.setTime(t.getTime()+add*6e4);return{y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate(),h:t.getUTCHours(),mi:t.getUTCMinutes()};}
+
+/* trigrams, Xiantian numbering 1..8; bits bottom→top */
+const TRI={1:['乾','ცა','☰',[1,1,1],'შემოქმედება, ძალა'],2:['兑','ტბა','☱',[1,1,0],'სიხარული'],3:['离','ცეცხლი','☲',[1,0,1],'სინათლე, სიცხადე'],4:['震','ჭექა','☳',[1,0,0],'აღძვრა, მოძრაობა'],
+ 5:['巽','ქარი','☴',[0,1,1],'შეღწევა, სინაზე'],6:['坎','წყალი','☵',[0,1,0],'საფრთხე, სიღრმე'],7:['艮','მთა','☶',[0,0,1],'გაჩერება, სიმშვიდე'],8:['坤','მიწა','☷',[0,0,0],'მიმღებლობა']};
+/* King Wen numbers: rows upper, cols lower in order 乾震坎艮坤巽离兑 */
+const KW_ORDER=[1,4,6,7,8,5,3,2];
+const KW=[[1,25,6,33,12,44,13,10],[34,51,40,62,16,32,55,54],[5,3,29,39,8,48,63,60],[26,27,4,52,23,18,22,41],[11,24,7,15,2,46,36,19],[9,42,59,53,20,57,37,61],[14,21,64,56,35,50,30,38],[43,17,47,31,45,28,49,58]];
+const triOfBits=b=>+Object.keys(TRI).find(k=>TRI[k][3].join()===b.join());
+const kwOf=(up,lo)=>KW[KW_ORDER.indexOf(up)][KW_ORDER.indexOf(lo)];
+const linesOf=n=>{for(const u of KW_ORDER)for(const l of KW_ORDER)if(kwOf(u,l)===n)return[...TRI[l][3],...TRI[u][3]];};
+const kwFromLines=L=>kwOf(triOfBits(L.slice(3)),triOfBits(L.slice(0,3)));
+const HEX=[null,
+['乾','შემოქმედი','სუფთა იან ძალა: შეუჩერებელი შემოქმედება, ლიდერობა, მუდმივობა.'],['坤','მიმღები','სუფთა ინ: მიმღებლობა, მიყოლა, ნაყოფიერი ერთგულება.'],
+['屯','საწყისი სიძნელე','დასაწყისის ქაოსი; მოთმინება და დამხმარეების მოძებნა.'],['蒙','ახალგაზრდული სიბრიყვე','სწავლის დრო: მასწავლებელს ეძიე, თავმდაბლად იკითხე.'],
+['需','მოლოდინი','ძალა იცდის — ნუ იჩქარებ, დრო მოვა.'],['訟','დავა','კონფლიქტი: ნუ მიიყვან ბოლომდე, მოძებნე შუამავალი.'],
+['師','ჯარი','ორგანიზებული ძალა და დისციპლინა გამოცდილი ხელმძღვანელით.'],['比','ერთიანობა','შეერთება, ალიანსი; იპოვე შენი წრე.'],
+['小畜','პატარის მომთვინიერებელი ძალა','მცირე შეზღუდვა; რბილი გავლენა და მოთმინება.'],['履','სიარული','ფრთხილი ნაბიჯი ვეფხვის კუდზე: ზრდილობა და სიფრთხილე.'],
+['泰','მშვიდობა','ცა და მიწა ერთიანდება — აყვავება, ჰარმონია.'],['否','შეჩერება','სტაგნაცია; შიგნით ჩაიხედე და დაელოდე.'],
+['同人','ადამიანთა ერთობა','საერთო მიზანი აერთიანებს ხალხს.'],['大有','დიდი ქონება','სიუხვე და წარმატება — გაუზიარე სხვებს.'],
+['謙','თავმდაბლობა','თავმდაბლობა ყველაფერს წარმატებით ამთავრებს.'],['豫','ენთუზიაზმი','აღფრთოვანება, შთაგონება, მზადყოფნა.'],
+['隨','მიყოლა','მოქნილი მიყოლა იმისა, რაც სწორია.'],['蠱','გაფუჭებულის გამოსწორება','ძველი შეცდომების გამოსწორება, მემკვიდრეობითი პრობლემები.'],
+['臨','მოახლოება','დიდი ძალა მოდის — გამოიყენე კარგი დრო.'],['觀','ჭვრეტა','დააკვირდი, იყავი მაგალითი.'],
+['噬嗑','გაკბეჩა','დაბრკოლების გადალახვა გადამწყვეტი ნაბიჯით, სამართალი.'],['賁','მშვენიერება','ფორმა და სილამაზე — მაგრამ არსი უფრო მნიშვნელოვანია.'],
+['剝','დაშლა','ძველი ირღვევა; ნუ იმოქმედებ, დაელოდე.'],['復','დაბრუნება','შემობრუნება, სინათლის დაბრუნება, ახალი დასაწყისი.'],
+['無妄','უმანკოება','უანგარო, სპონტანური ქმედება; ნუ დაგეგმავ ზედმეტად.'],['大畜','დიდის მომთვინიერებელი ძალა','ძალის დაგროვება და შეკავება — დიდი საქმისთვის.'],
+['頤','კვება','რით იკვებები — სხეულით და სულით; ზომიერება.'],['大過','დიდის სიჭარბე','გადატვირთვა; საჭიროა გაბედული ცვლილება.'],
+['坎','უფსკრული','საფრთხე ორმაგდება; ერთგულება საკუთარი გულისადმი.'],['離','ცეცხლი','სიცხადე, მიჯაჭვულობა სინათლეზე; ურთიერთდამოკიდებულება.'],
+['咸','ზემოქმედება','მიზიდულობა, სიყვარული, ურთიერთგავლენა.'],['恆','მუდმივობა','ხანგრძლივობა, ერთგულება, სტაბილური გზა.'],
+['遯','უკანდახევა','დროული უკანდახევა ძალას ინახავს.'],['大壯','დიდის ძალა','დიდი ძალა — გამოიყენე სამართლიანად.'],
+['晉','წინსვლა','სწრაფი წინსვლა, აღიარება, მზე ამოდის.'],['明夷','სინათლის დაბნელება','რთულ დროს სინათლე შიგნით შეინახე.'],
+['家人','ოჯახი','ოჯახის წესრიგი; თითოეულს თავისი როლი.'],['睽','დაპირისპირება','განსხვავებები; მცირე საქმეებში მაინც შესაძლებელია თანხმობა.'],
+['蹇','დაბრკოლება','გზა ჩაკეტილია — მოიხედე, შეცვალე მიმართულება.'],['解','გათავისუფლება','დაძაბულობის მოხსნა, პატიება, ახალი სუნთქვა.'],
+['損','შემცირება','შეამცირე ზედმეტი — უბრალოება აძლიერებს.'],['益','გაზრდა','მატება, დახმარება, დიდი შესაძლებლობები.'],
+['夬','გარღვევა','გადამწყვეტი გამოცხადება, ჭეშმარიტების თქმა.'],['姤','შეხვედრა','მოულოდნელი შეხვედრა; ფრთხილად ძლიერ ცდუნებასთან.'],
+['萃','შეკრება','ადამიანების შეკრება საერთო ცენტრის ირგვლივ.'],['升','აღმასვლა','ნელი, სტაბილური ზრდა მაღლა.'],
+['困','გამოფიტვა','შეზღუდვა და დაღლა; შინაგანი სიმტკიცე გადაარჩენს.'],['井','ჭა','ამოუწურავი წყარო; საერთო სიკეთე და ღრმა ფესვები.'],
+['革','რევოლუცია','დიდი ცვლილება სწორ დროს.'],['鼎','ქვაბი','გარდაქმნა, კულტურა, სულიერი საზრდო.'],
+['震','ჭექა','შოკი და გამოღვიძება; შიშის შემდეგ — სიცილი.'],['艮','მთა','სიმშვიდე, გაჩერება, მედიტაცია.'],
+['漸','თანდათანობითი განვითარება','ნელი, ბუნებრივი პროგრესი, როგორც ხე მთაზე.'],['歸妹','დაქორწინებული ქალიშვილი','დამოკიდებული მდგომარეობა; შენი ადგილის გაცნობიერება.'],
+['豐','სიუხვე','პიკი, სისავსე — ისიამოვნე, სანამ გრძელდება.'],['旅','მოგზაური','უცხოობა, მოძრაობა; თავმდაბლობა გზაში.'],
+['巽','ნაზი','შეღწევა ქარივით — მუდმივი, რბილი გავლენა.'],['兌','მხიარულება','სიხარული, გულწრფელი საუბარი.'],
+['渙','გაფანტვა','დაძაბულობის გაფანტვა; ერთიანობის აღდგენა.'],['節','შეზღუდვა','ზომა და საზღვრები — მაგრამ ზედმეტის გარეშე.'],
+['中孚','შინაგანი სიმართლე','გულწრფელობა, რომელიც ყველაზე ჯიუტსაც არწმუნებს.'],['小過','პატარის სიჭარბე','მცირე ნაბიჯები, სიფრთხილე დეტალებში.'],
+['既濟','დასრულების შემდეგ','მიღწეულია — ახლა შეინარჩუნე წესრიგი.'],['未濟','დასრულებამდე','გარდამავალი მომენტი; ბოლო ნაბიჯი სიფრთხილეს ითხოვს.']];
+const LINE_POS=['პირველი (ქვედა)','მეორე','მესამე','მეოთხე','მეხუთე','მეექვსე (ზედა)'];
+function hexSVG(L,moving,w){w=w||120;const lh=11,gap=9,H=6*lh+5*gap;let s='';
+  for(let i=0;i<6;i++){const y=H-(i+1)*lh-i*gap,mv=moving&&moving.includes(i),c=mv?'#e8c95a':'#c8a96e';
+    if(L[i])s+=`<rect x="0" y="${y}" width="${w}" height="${lh}" rx="2" fill="${c}"/>`;
+    else s+=`<rect x="0" y="${y}" width="${w*0.42}" height="${lh}" rx="2" fill="${c}"/><rect x="${w*0.58}" y="${y}" width="${w*0.42}" height="${lh}" rx="2" fill="${c}"/>`;
+    if(mv)s+=`<circle cx="${w+12}" cy="${y+lh/2}" r="4" fill="none" stroke="#e8c95a" stroke-width="1.6"/>`;}
+  return `<svg width="${w+20}" height="${H}" viewBox="0 0 ${w+20} ${H}">${s}</svg>`;}
+function hexCard(n,L,role,moving){const u=triOfBits(L.slice(3)),l=triOfBits(L.slice(0,3));
+  return `<div class="hx"><div class="rl">${role}</div>${hexSVG(L,moving)}<div class="num">№ ${n}</div><div class="cn">${HEX[n][0]}</div><div class="ka">${HEX[n][1]}</div>
+    <div class="tg">${TRI[u][2]} ${TRI[u][1]} ზემოთ · ${TRI[l][2]} ${TRI[l][1]} ქვემოთ</div></div>`;}
+function reading(L,moving,title){
+  const n=kwFromLines(L),nuc=[L[1],L[2],L[3],L[2],L[3],L[4]],nn=kwFromLines(nuc);
+  let h=`<div class="card"><div class="h">${title}</div><div class="hexes">${hexCard(n,L,'ძირითადი',moving)}`;
+  let cn=null;
+  if(moving.length){const C=L.map((b,i)=>moving.includes(i)?1-b:b);cn=kwFromLines(C);h+=hexCard(cn,C,'შედეგი (შეცვლილი)',[]);}
+  h+=hexCard(nn,nuc,'შინაგანი (ბირთვი)',[])+`</div></div>
+  <div class="card"><div class="h">№ ${n} · ${HEX[n][1]}</div><div class="txt">${HEX[n][2]}</div>
+    ${moving.length?`<div class="txt" style="margin-top:10px">მოძრავი ${moving.length>1?'ხაზები':'ხაზი'}: <b>${moving.map(i=>LINE_POS[i]).join(', ')}</b> — სიტუაციის აქტიური წერტილი${moving.length>1?'ები':''}, საიდანაც იწყება ცვლილება.</div>
+    <div class="txt" style="margin-top:10px">შედეგი — <b>№ ${cn} ${HEX[cn][1]}</b>: ${HEX[cn][2]}</div>`:'<div class="note" style="margin-top:10px">მოძრავი ხაზი არ არის — სიტუაცია სტაბილურია.</div>'}
+    <div class="txt" style="margin-top:10px">შინაგანი ჰექსაგრამა — <b>№ ${nn} ${HEX[nn][1]}</b>: ფარული პროცესი, რომელიც ზედაპირის მიღმა მიმდინარეობს.</div>
+    <div class="note" style="margin-top:10px">ადამიანის დიზაინში ეს ჰექსაგრამა არის <b>კარიბჭე ${n}</b>.</div></div>`;
+  return h;}
+/* ── mode ── */
+document.querySelectorAll('#mode .pill').forEach(p=>p.onclick=()=>{document.querySelectorAll('#mode .pill').forEach(x=>x.classList.toggle('active',x===p));
+  $('m-birth').classList.toggle('hidden',p.dataset.v!=='birth');$('m-coin').classList.toggle('hidden',p.dataset.v!=='coin');$('out').innerHTML='';});
+maskDate($('d1'));maskTime($('t1'));
+$('go').onclick=runBirth;document.querySelectorAll('#m-birth .in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')runBirth();}));
+function runBirth(){
+  $('err').textContent='';
+  const P=parseDate($('d1').value),T=parseTime($('t1').value);
+  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  if(!T){$('err').textContent='საჭიროა დაბადების საათი (HH:MM).';return;}
+  if(typeof Solar==='undefined'){$('err').textContent='კალენდრის ბიბლიოთეკა ვერ ჩაიტვირთა.';return;}
+  const tz=parseFloat($('tz1').value)||0,lonS=$('lon1').value.trim(),lon=lonS===''?null:parseFloat(lonS);
+  let L={y:P.y,m:P.m,d:P.d,h:T.h,mi:T.mi};
+  if(lon!==null&&!isNaN(lon))L=addMin(P.y,P.m,P.d,T.h,T.mi,-tz*60+lon*4+eot(P.y,P.m,P.d));
+  const lu=Solar.fromYmdHms(L.y,L.m,L.d,L.h,L.mi,0).getLunar();
+  const yz=zi(lu.getYearZhi())+1,mo=Math.abs(lu.getMonth()),dy=lu.getDay(),hz=Math.floor(((L.h+1)%24)/2)+1;
+  const s1=yz+mo+dy,s2=s1+hz,up=s1%8||8,lo=s2%8||8,mv=(s2%6||6)-1;
+  const lines=[...TRI[lo][3],...TRI[up][3]];
+  $('out').innerHTML=`<div class="card note" style="text-align:center">მთვარის თარიღი: <b>${lu.getYearInGanZhi()} წელი (${ANIMAL[yz-1]}, ${yz})</b> · თვე <b>${mo}</b>${lu.getMonth()<0?' (ნაკიანი)':''} · დღე <b>${dy}</b> · საათი <b>${ZHI[hz-1]} ${ZHI_KA[hz-1]} (${hz})</b><br>
+    ზედა: ${yz}+${mo}+${dy} = ${s1} → mod 8 = <b>${up} ${TRI[up][1]}</b> · ქვედა: ${s1}+${hz} = ${s2} → mod 8 = <b>${lo} ${TRI[lo][1]}</b> · მოძრავი ხაზი: ${s2} mod 6 = <b>${mv+1}</b></div>`+
+    reading(lines,[mv],'დაბადების ჰექსაგრამა');
+}
+/* ── coins ── */
+let cast=[];
+const rnd=()=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]/4294967296;};
+$('toss').onclick=()=>{if(cast.length>=6)return;
+  const c=[0,1,2].map(()=>rnd()<.5?3:2),s=c[0]+c[1]+c[2];cast.push(s);
+  $('coins').innerHTML=c.map(v=>`<div class="coin${v===2?' t':''}">${v===3?'陽':'陰'}</div>`).join('');
+  $('toss').textContent=`აგდება (${cast.length}/6)`;
+  $('castLines').innerHTML=cast.map((v,i)=>`${LINE_POS[i]}: ${v} — ${{6:'მოძრავი ინ ⚋→⚊',7:'იან ⚊',8:'ინ ⚋',9:'მოძრავი იან ⚊→⚋'}[v]}`).join('<br>');
+  if(cast.length===6){const L=cast.map(v=>v%2),mv=cast.map((v,i)=>v===6||v===9?i:-1).filter(i=>i>=0);const q=$('q').value.trim();
+    $('out').innerHTML=reading(L,mv,q?'კითხვა: „'+esc(q)+'“':'პასუხი');}
+};
+$('reset').onclick=()=>{cast=[];$('coins').innerHTML='';$('castLines').innerHTML='';$('toss').textContent='აგდება (0/6)';$('out').innerHTML='';};
+</script>
+</body>
+</html>
