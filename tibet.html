@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ტიბეტური ასტროლოგია</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.mewa{display:grid;grid-template-columns:repeat(3,64px);gap:5px;justify-content:center;margin:8px auto}
+.mewa div{height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:26px;border:1px solid var(--border)}
+.mewa div.me{outline:2px solid var(--gold);outline-offset:2px}
+.force{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px}
+.force:last-child{border-bottom:0}
+.force .hd{font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.chip{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;border:1px solid}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">ტიბეტური ასტროლოგია · ནག་རྩིས</div>
+  <h1 class="page-title">ელემენტები <em>· მევა · ხუთი ძალა</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<p class="lead">ტიბეტური „ელემენტების ასტროლოგია“ (ნაგ-ცი) ჩინურიდან მოდის: 12 ცხოველი × 5 ელემენტი (ხე, ცეცხლი, მიწა, <b>რკინა</b>, წყალი), 60-წლიანი ციკლი (რაბჯუნგი). <b>მევა</b> — ლო შუს 9 რიცხვი-ფერი. <b>ხუთი ბუნებრივი ძალა</b> — სიცოცხლე (სოგ), სული (ლა), სხეული (ლუ), ძალაუფლება (ვანგთანგი) და ქარის ცხენი (ლუნგთა) — ყოველწლიურად ფასდება წლის ელემენტთან მიმართებით.</p>
+<div class="card">
+  <div class="row"><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"><input class="in" id="yr" placeholder="პროგნოზის წელი" style="width:150px;text-align:center"><button class="btn" id="go">გამოთვლა</button></div>
+  <div class="err" id="err"></div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+/* ── Chinese calendar data (Georgian) ── */
+const GAN='甲乙丙丁戊己庚辛壬癸',ZHI='子丑寅卯辰巳午未申酉戌亥';
+const GAN_KA=['ძია','ი','ბინ','დინ','ვუ','ძი','გენ','სინ','ჟენ','გუი'];
+const ZHI_KA=['ძი','ჩოუ','ინ','მაო','ჩენ','ს','ვუ','ვეი','შენ','იოუ','სიუ','ხაი'];
+const ANIMAL=['ვირთხა','ხარი','ვეფხვი','კურდღელი','დრაკონი','გველი','ცხენი','თხა','მაიმუნი','მამალი','ძაღლი','ღორი'];
+const ANIMAL_EMO=['🐀','🐂','🐅','🐇','🐉','🐍','🐎','🐐','🐒','🐓','🐕','🐖'];
+const EL=['ხე','ცეცხლი','მიწა','ლითონი','წყალი'];
+const EL_COL=['#7fcf8f','#e86b6b','#d9b36a','#d8dde6','#6fa8e8'];
+const EL_ICO=['🌳','🔥','⛰️','⚙️','💧'];
+const ganEl=i=>Math.floor(i/2), ganYang=i=>i%2===0;
+const ZHI_EL=[4,2,0,0,2,1,1,2,3,3,2,4];
+const gi=c=>GAN.indexOf(c), zi=c=>ZHI.indexOf(c);
+const elOfChar=c=>{const g=gi(c);if(g>=0)return ganEl(g);const z=zi(c);return z>=0?ZHI_EL[z]:-1;};
+/* generating: wood→fire→earth→metal→water→wood ; controlling: wood→earth→water→fire→metal→wood */
+const gen=e=>(e+1)%5, ctl=e=>(e+2)%5;
+function elRel(a,b){/* relation of b to a */ if(a===b)return'same';if(gen(b)===a)return'mother';if(gen(a)===b)return'child';if(ctl(a)===b)return'wealth';return'enemy';}
+const SHISHEN={'比肩':['თანასწორი','მეგობრები, თანატოლები, დამოუკიდებლობა'],'劫财':['სიმდიდრის მძარცველი','კონკურენცია, რისკი, გაბედულება'],
+ '食神':['გემრიელი ღმერთი','შემოქმედება, სიამოვნება, ნიჭის რბილი გამოხატვა'],'伤官':['დამაზიანებელი ოფიცერი','მეამბოხე ნიჭი, ორიგინალობა, კრიტიკა'],
+ '偏财':['არაპირდაპირი სიმდიდრე','მოულოდნელი შემოსავალი, ბიზნესი, გულუხვობა'],'正财':['პირდაპირი სიმდიდრე','სტაბილური შემოსავალი, ქონება, პრაქტიკულობა'],
+ '七杀':['შვიდი მკვლელი','ზეწოლა, ძალაუფლება, გამოწვევა, მეომარი'],'正官':['პირდაპირი ოფიცერი','წესრიგი, სტატუსი, პასუხისმგებლობა, კანონი'],
+ '偏印':['არაპირდაპირი რესურსი','ინტუიცია, უჩვეულო ცოდნა, მისტიკა'],'正印':['პირდაპირი რესურსი','მფარველობა, განათლება, დედა, მხარდაჭერა'],'日主':['დღის ოსტატი','შენ თვითონ']};
+const NAYIN={'海中金':'ზღვის სიღრმის ოქრო','炉中火':'ქურის ცეცხლი','大林木':'დიდი ტყის ხე','路旁土':'გზისპირა მიწა','剑锋金':'ხმლის პირის ლითონი','山头火':'მთის მწვერვალის ცეცხლი','涧下水':'ხევის წყალი','城头土':'ციხე-კედლის მიწა','白蜡金':'თეთრი ცვილის ლითონი','杨柳木':'ტირიფის ხე','泉中水':'წყაროს წყალი','屋上土':'სახურავის მიწა','霹雳火':'ელვის ცეცხლი','松柏木':'ფიჭვის ხე','长流水':'დიდი მდინარე','沙中金':'ქვიშის ოქრო','砂中金':'ქვიშის ოქრო','山下火':'მთის ძირის ცეცხლი','平地木':'ველის ხე','壁上土':'კედლის მიწა','金箔金':'ოქროს ფურცელი','覆灯火':'ლამპრის ცეცხლი','天河水':'ციური მდინარე','大驿土':'დიდი გზის მიწა','钗钏金':'სამკაულის ოქრო','桑柘木':'თუთის ხე','大溪水':'დიდი ნაკადულის წყალი','沙中土':'ქვიშის მიწა','天上火':'ციური ცეცხლი','石榴木':'ბროწეულის ხე','大海水':'დიდი ზღვის წყალი'};
+const nayinEl=s=>{const c=s.slice(-1);return {'金':3,'火':1,'木':0,'土':2,'水':4}[c];};
+const HARM=[[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]], CLASH=[[0,6],[1,7],[2,8],[3,9],[4,10],[5,11]];
+const TRINE=[[8,0,4],[2,6,10],[5,9,1],[11,3,7]];
+const STEMCOMB=[[0,5],[1,6],[2,7],[3,8],[4,9]];
+const pairIn=(L,a,b)=>L.some(p=>(p[0]===a&&p[1]===b)||(p[0]===b&&p[1]===a));
+const sameTrine=(a,b)=>a!==b&&TRINE.some(t=>t.includes(a)&&t.includes(b));
+function branchRel(a,b){if(a===b)return['იგივე ნიშანი','ერთნაირი ბუნება, მსგავსი რიტმი.','#c8a96e'];
+  if(pairIn(HARM,a,b))return['ექვსი ჰარმონია (六合)','ბუნებრივი მიზიდულობა და თანხმობა.','#7fcf8f'];
+  if(sameTrine(a,b))return['სამი ჰარმონია (三合)','საერთო ელემენტი და მიზნები — ძლიერი ალიანსი.','#7fcf8f'];
+  if(pairIn(CLASH,a,b))return['შეჯახება (冲)','საპირისპირო ძალები — დაძაბულობა, ცვლილება, ვნება.','#e86b6b'];
+  return['ნეიტრალური','პირდაპირი კავშირი არ არის.','rgba(232,226,213,.5)'];}
+/* true-solar-time equation of time (minutes) */
+function eot(y,m,d){const N=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;const B=2*Math.PI*(N-81)/365;return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);}
+/* add minutes to a civil date-time (proleptic Gregorian via UTC Date with full year) */
+function addMin(y,m,d,h,mi,add){const t=new Date(0);t.setUTCFullYear(y,m-1,d);t.setUTCHours(h,mi,0,0);t.setTime(t.getTime()+add*6e4);return{y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate(),h:t.getUTCHours(),mi:t.getUTCMinutes()};}
+
+const TEL=['ხე','ცეცხლი','მიწა','რკინა','წყალი'];
+const MEWA={1:['თეთრი','#e8e2d5',3],2:['შავი','#3a3a44',4],3:['ლურჯი','#4a78c8',4],4:['მწვანე','#5fae6f',0],5:['ყვითელი','#e8c95a',2],6:['თეთრი','#e8e2d5',3],7:['წითელი','#e05a5a',1],8:['თეთრი','#e8e2d5',3],9:['მუქი წითელი','#8e2a3a',1]};
+const MEWA_T={1:'სიწმინდე, მშვიდი გონება, სულიერი მიდრეკილება.',2:'ღრმა, მგრძნობიარე ბუნება; ძალა დაფარულია.',3:'მოძრავი, ინტუიციური, მოგზაური გონება.',4:'ზრდა, მოთმინება, მკურნალის ნიჭი.',5:'ცენტრი, სტაბილურობა, ბუნებრივი ავტორიტეტი.',6:'კეთილშობილება, პასუხისმგებლობა, სუფთა ზრახვები.',7:'ენერგია, ვნება, ცეცხლოვანი ხასიათი.',8:'სიმშვიდე, სიუხვე, კეთილდღეობა.',9:'ძლიერი ნება, ლიდერობა, მაგიური ძალა.'};
+const LO=[4,9,2,3,5,7,8,1,6];
+const mewaOf=y=>{const r=((11-(y%9))%9+9)%9;return r===0?9:r;};
+const LUNGTA=[0,4,3,1,0,4,3,1,0,4,3,1];
+const forces=(gz,ny)=>{const g=gi(gz[0]),z=zi(gz[1]);const sok=ZHI_EL[z];
+  return [['სოგ · სიცოცხლის ძალა','ფიზიკური სიცოცხლისუნარიანობა, ხანგრძლივობა',sok],['ლა · სული','სულიერი ენერგია, შინაგანი დაცვა',(sok+4)%5],
+   ['ლუ · სხეული','ჯანმრთელობა, სხეულის ძალა',nayinEl(ny)],['ვანგთანგი · ძალაუფლება','ავტორიტეტი, გავლენა, წარმატება',ganEl(g)],['ლუნგთა · ქარის ცხენი','იღბალი, ბედი, შესაძლებლობები',LUNGTA[z]]];};
+function yrel(natal,year){if(gen(year)===natal)return['დედა — შესანიშნავი','#7fcf8f'];if(year===natal)return['მეგობარი — კარგი','#9fd8a8'];
+  if(ctl(natal)===year)return['შვილობილი — კარგი','#9fd8a8'];if(gen(natal)===year)return['შვილი — სუსტდება','#e8c95a'];return['მტერი — საფრთხე','#e86b6b'];}
+const WD=[['კვირა',1],['ორშაბათი',4],['სამშაბათი',1],['ოთხშაბათი',4],['ხუთშაბათი',0],['პარასკევი',3],['შაბათი',2]];
+const daysOf=e=>WD.filter(w=>w[1]===e).map(w=>w[0]).join(' / ');
+maskDate($('d1'));$('yr').value=new Date().getFullYear();
+$('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
+function yearInfo(y){/* lunar year starting at (approx.) Losar of Gregorian year y */
+  const L=Lunar.fromYmd(y,1,1);const gz=L.getYearInGanZhi(),ny=L.getYearNaYin?L.getYearNaYin():null;return{gz,ny,losar:L.getSolar()};}
+function run(){
+  $('err').textContent='';const P=parseDate($('d1').value);
+  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  if(typeof Solar==='undefined'){$('err').textContent='კალენდრის ბიბლიოთეკა ვერ ჩაიტვირთა.';return;}
+  const lu=Solar.fromYmd(P.y,P.m,P.d).getLunar(),ly=lu.getYear();
+  const gz=lu.getYearInGanZhi(),g=gi(gz[0]),z=zi(gz[1]),ny=lu.getYearNaYin?lu.getYearNaYin():Lunar.fromYmd(ly,1,1).getYearNaYin();
+  const los=Lunar.fromYmd(ly,1,1).getSolar();
+  const mw=mewaOf(ly),M=MEWA[mw];
+  const F=forces(gz,ny);
+  const Y=+$('yr').value||new Date().getFullYear(),YI=yearInfo(Y),YF=forces(YI.gz,Lunar.fromYmd(Y,1,1).getYearNaYin()),ymw=mewaOf(Y);
+  let h=`<div class="card" style="text-align:center"><div style="font-size:60px">${ANIMAL_EMO[z]}</div>
+    <div class="big" style="font-size:38px">${TEL[ganEl(g)]}-${ANIMAL[z]}</div>
+    <div class="sub">${ganYang(g)?'მამრობითი (იან)':'მდედრობითი (ინ)'} წელი · ${gz} · ლოსარი ≈ ${los.getDay()}.${String(los.getMonth()).padStart(2,'0')}.${los.getYear()}</div>
+    ${Math.abs((Date.UTC(2000,P.m-1,P.d)-Date.UTC(2000,los.getMonth()-1,los.getDay()))/864e5)<40?'<div class="note" style="margin-top:8px">დაბადება ლოსართან ახლოსაა: ლოსარი ითვლება ჩინური ახალი წლით, ტიბეტური ფუგპა კალენდარი ზოგ წელს ერთი თვით განსხვავდება — გადაამოწმე ტიბეტურ ალმანახში.</div>':''}</div>
+  <div class="card"><div class="h">დაბადების მევა</div>
+    <div class="mewa">${LO.map(n=>`<div class="${n===mw?'me':''}" style="background:${MEWA[n][1]}22;color:${MEWA[n][1]==='#3a3a44'?'#aaa':MEWA[n][1]}">${n}</div>`).join('')}</div>
+    <div class="txt" style="text-align:center;margin-top:8px"><b style="color:${M[1]==='#3a3a44'?'#aaa':M[1]}">${mw} ${M[0]}</b> · ელემენტი: ${TEL[M[2]]} — ${MEWA_T[mw]}</div>
+    <div class="note" style="text-align:center;margin-top:6px">${Y} წლის მევა: <b>${ymw} ${MEWA[ymw][0]}</b></div></div>
+  <div class="card"><div class="h">ხუთი ძალა · ${Y} წელი (${TEL[ganEl(gi(YI.gz[0]))]}-${ANIMAL[zi(YI.gz[1])]})</div>
+    <div class="force"><span class="hd">ძალა</span><span class="hd">შენი</span><span class="hd">წლის</span><span class="hd">${Y}</span></div>`+
+    F.map((f,i)=>{const r=yrel(f[2],YF[i][2]);return `<div class="force"><span><b>${f[0]}</b><br><span class="note">${f[1]}</span></span>
+      <span><span class="chip" style="color:${EL_COL[f[2]]};border-color:${EL_COL[f[2]]}55">${TEL[f[2]]}</span></span>
+      <span><span class="chip" style="color:${EL_COL[YF[i][2]]};border-color:${EL_COL[YF[i][2]]}55">${TEL[YF[i][2]]}</span></span>
+      <span style="color:${r[1]}">${r[0]}</span></div>`;}).join('')+
+    `<div class="note" style="margin-top:10px"><b>დედა</b> — წლის ელემენტი შენსას კვებავს; <b>მეგობარი</b> — იგივე ელემენტი; <b>შვილობილი</b> — შენი ელემენტი წლისას აკონტროლებს; <b>შვილი</b> — შენი ენერგია წელს „კვებავს“ და სუსტდება; <b>მტერი</b> — წლის ელემენტი შენსას აკონტროლებს. სუსტ ძალებს აძლიერებენ ლოცვის დროშებით (ლუნგთა), რიტუალებით და შესაბამისი ფერით.</div></div>`;
+  /* days */
+  const sok=F[0][2],la=F[1][2],obs=(sok+3)%5;
+  h+=`<div class="card"><div class="h">კვირის დღეები</div><div class="kv">
+    <div><div class="k">სიცოცხლის დღე</div><div class="v" style="font-size:17px">${daysOf(sok)}</div><div class="t">${TEL[sok]} — ძალის დღე, დასაწყებად კარგი</div></div>
+    <div><div class="k">სულის დღე</div><div class="v" style="font-size:17px">${daysOf(la)}</div><div class="t">${TEL[la]} — მხარდაჭერის დღე</div></div>
+    <div><div class="k">დაბრკოლების დღე</div><div class="v" style="font-size:17px;color:#e86b6b">${daysOf(obs)}</div><div class="t">${TEL[obs]} — ახლის დაწყებას ერიდე</div></div></div>
+    <div class="note" style="margin-top:8px">დღეების ელემენტები: კვირა/სამშაბათი — ცეცხლი, ორშაბათი/ოთხშაბათი — წყალი, ხუთშაბათი — ხე, პარასკევი — რკინა, შაბათი — მიწა.</div></div>`;
+  /* obstacle years */
+  const cur=new Date().getFullYear();let rows='';
+  for(let k=0;k<=9;k++){const yy=ly+12*k;if(yy<cur-12||yy>cur+40)continue;rows+=`<tr class="${yy===cur?'now':''}"><td>${yy}</td><td>${12*k+1}</td><td>ლო-კეგი — საკუთარი ცხოველის წელი</td></tr>`;
+    const dz=ly+6+12*k;if(dz>=cur-12&&dz<=cur+40)rows+=`<tr class="${dz===cur?'now':''}"><td>${dz}</td><td>${12*k+7}</td><td>დუნ-ძურ — მოპირდაპირე ცხოველის (${ANIMAL[(z+6)%12]}) წელი</td></tr>`;}
+  h+=`<div class="card"><div class="h">დაბრკოლების წლები</div><div class="scroll"><table class="tbl"><tr><th>წელი</th><th>ასაკი (ტიბ.)</th><th>ტიპი</th></tr>${rows}</table></div>
+    <div class="note" style="margin-top:8px">ტიბეტური ასაკი ითვლება დაბადებიდან 1-ით. ამ წლებში რეკომენდებულია მეტი სიფრთხილე და დამცავი პრაქტიკები.</div></div>`;
+  $('out').innerHTML=h;
+}
+</script>
+</body>
+</html>
