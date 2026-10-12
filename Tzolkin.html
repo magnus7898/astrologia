@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>მაიას ცოლკინი</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+.page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
+.page-header{text-align:center;margin-bottom:40px}
+.eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
+.ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
+.ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6}
+.lead{font-size:12.5px;color:var(--muted);text-align:center;line-height:1.85;max-width:620px;margin:0 auto 26px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+.h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.8}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
+.in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
+.in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
+.in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
+.pill:hover{color:var(--text)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
+.scroll{overflow-x:auto}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
+.kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.txt b{color:var(--text);font-weight:500}
+.big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
+.sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
+.hidden{display:none!important}
+.err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
+@media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
+
+.seal{display:inline-flex;flex-direction:column;align-items:center;gap:6px;text-align:center;width:150px}
+.seal .disc{width:84px;height:84px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:2px solid var(--c);background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 28%,transparent),color-mix(in srgb,var(--c) 6%,transparent));
+  box-shadow:0 0 26px color-mix(in srgb,var(--c) 30%,transparent)}
+.seal.sm .disc{width:62px;height:62px}
+.seal .disc .kn{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);line-height:1}
+.seal.sm .disc .kn{font-size:17px}
+.seal .disc svg{margin-top:4px}
+.seal .nm{font-size:12px;color:var(--text);line-height:1.35}
+.seal .rl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.cross{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;justify-items:center;align-items:center;max-width:480px;margin:0 auto}
+.grid260{display:grid;grid-template-columns:auto repeat(13,1fr);gap:2px;font-size:9.5px;min-width:520px}
+.grid260 div{height:20px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:rgba(232,226,213,.55)}
+.grid260 .lab{justify-content:flex-end;padding-right:6px;font-size:9px;color:var(--muted);white-space:nowrap}
+.grid260 .g{background:rgba(255,255,255,.035)}
+.grid260 .gap{background:rgba(127,207,143,.16);color:rgba(232,226,213,.8)}
+.grid260 .me{outline:2px solid var(--gold);color:#fff;font-weight:500}
+.grid260 .pt{outline:2px solid var(--vio);color:#fff}
+.grid260 .td{box-shadow:inset 0 0 0 1px rgba(127,207,232,.9)}
+.rel{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.rel:last-child{border-bottom:0}
+.rel b{color:var(--gold);font-weight:500}
+@media(max-width:600px){.seal{width:112px}.seal.sm{width:100px}.seal .nm{font-size:11px}.cross{gap:4px}.seal.sm .disc{width:54px;height:54px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="page-header">
+  <div class="eyebrow">მაიას კალენდარი</div>
+  <h1 class="page-title">ცოლკინი <em>· კინი</em></h1>
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
+</header>
+<p class="lead">260-დღიანი წმინდა ციკლი: 20 მზის ნიშანი × 13 ტონი. <b>დრიმსპელი</b> — ხოსე არგუელესის თანამედროვე სისტემა (1987), ფართოდ გავრცელებული; <b>ტრადიციული</b> — მაიას რეალური, დღემდე უწყვეტი დღეთა ათვლა (GMT კორელაცია 584283). ეს ორი სისტემა <b>სხვადასხვა</b> დღეს აძლევს ერთსა და იმავე თარიღს.</p>
+
+<div class="card">
+  <div class="row" style="margin-bottom:12px">
+    <input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10">
+    <input class="in date" id="d2" placeholder="პარტნიორი (არასავალდ.)" maxlength="10" style="width:200px;font-size:12px">
+    <button class="btn" id="go">გამოთვლა</button>
+  </div>
+  <div class="pills" style="margin:0" id="sys">
+    <div class="pill active" data-v="ds">დრიმსპელი</div><div class="pill" data-v="tr">ტრადიციული მაია</div>
+  </div>
+  <div class="err" id="err"></div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+/* Gregorian (proleptic) → Julian Day Number */
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function parseDate(v,ymin,ymax){
+  v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
+  const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
+  return{d,m:mo,y,dd:String(d).padStart(2,'0'),mm:String(mo).padStart(2,'0'),yyyy:String(y).padStart(4,'0')};
+}
+function parseTime(v){v=(v||'').trim();if(!v)return null;const m=v.match(/^(\d{1,2})[:.](\d{2})$/);if(!m)return undefined;const h=+m[1],mi=+m[2];if(h>23||mi>59)return undefined;return{h,mi};}
+function maskDate(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});}
+function maskTime(inp){inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+':'+v.slice(2,4);e.target.value=v;});}
+const fmtD=p=>p.dd+'/'+p.mm+'/'+p.yyyy;
+const root9=n=>{n=Math.abs(n);while(n>9)n=String(n).split('').reduce((a,b)=>a+ +b,0);return n;};
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+
+const COL=[{n:'წითელი',h:'#e86b6b',m:'იწყებს'},{n:'თეთრი',h:'#e8e2d5',m:'წმენდს'},{n:'ლურჯი',h:'#6fa8e8',m:'გარდაქმნის'},{n:'ყვითელი',h:'#e8c95a',m:'ამწიფებს'}];
+/* seal 1..20 (20 = მზე) */
+const SEAL=[null,
+ ['დრაკონი','კვებავს','დაბადება','არსებობა','დასაწყისის ენერგია: ზრუნვა, მფარველობა, ძლიერი ფესვები. ადამიანი, რომელიც სხვებს ამარაგებს და ახალს აჩენს.'],
+ ['ქარი','ურთიერთობს','სული','სუნთქვა','სიტყვისა და სუნთქვის ძალა: კომუნიკაცია, შთაგონება, იდეების გადაცემა.'],
+ ['ღამე','ოცნებობს','სიუხვე','ინტუიცია','შინაგანი სამყარო, სიზმრები და ინტუიცია; სიუხვე იწყება შიგნიდან.'],
+ ['თესლი','მიზანს ისახავს','აყვავება','ცნობიერება','პოტენციალი, რომელიც სწორ დროს იფურჩქნება; მიზანდასახულობა და ზრდა.'],
+ ['გველი','გადარჩება','სასიცოცხლო ძალა','ინსტინქტი','სხეულის სიბრძნე, ვნება და ინსტინქტი; ენერგია, რომელიც კრიზისიდან გამოჰყავს.'],
+ ['სამყაროთა დამაკავშირებელი','აწონასწორებს','სიკვდილი','შესაძლებლობა','ძველის გაშვება და ახლის კარის გაღება; შუამავალი ადამიანებსა და სამყაროებს შორის.'],
+ ['ხელი','იცის','შესრულება','განკურნება','გამოცდილებით მიღებული ცოდნა; დასრულება, განკურნება, პრაქტიკული ოსტატობა.'],
+ ['ვარსკვლავი','ალამაზებს','ელეგანტურობა','ხელოვნება','ჰარმონიისა და სილამაზის გრძნობა; ხელოვნება, ესთეტიკა, ნიჭი.'],
+ ['მთვარე','წმენდს','საყოველთაო წყალი','დინება','ემოციური სიღრმე და განწმენდა; ცხოვრების დინებისთვის თავის მინდობა.'],
+ ['ძაღლი','უყვარს','გული','ერთგულება','უპირობო სიყვარული და ერთგულება; გული, რომელიც ოჯახსა და მეგობრებს აერთიანებს.'],
+ ['მაიმუნი','თამაშობს','მაგია','ილუზია','იუმორი, სპონტანურობა და შინაგანი ბავშვი; ცხოვრების თამაშად აღქმა.'],
+ ['ადამიანი','გავლენას ახდენს','სიბრძნე','თავისუფალი ნება','თავისუფალი ნება და სიბრძნე; არჩევანის ძალა, რომელიც სხვებზეც მოქმედებს.'],
+ ['ცის მოგზაური','იკვლევს','სივრცე','სიფხიზლე','მოგზაური და მკვლევარი; საზღვრების გაფართოება და ახალი სივრცეები.'],
+ ['ჯადოქარი','აჯადოებს','უდროობა','მიმღებლობა','დროის მიღმა ყოფნა და მიმღებლობა; მაგია, რომელიც გულის სიწმინდიდან მოდის.'],
+ ['არწივი','ქმნის','ხედვა','გონება','მაღლიდან ხედვა და სტრატეგია; მომავლის დანახვა და შექმნა.'],
+ ['მეომარი','კითხულობს','ინტელექტი','უშიშრობა','უშიშარი შემეცნება; კითხვები, რომლებიც სიმართლეს აჩენს.'],
+ ['დედამიწა','ვითარდება','ნავიგაცია','სინქრონულობა','სინქრონულობის ნიშნების კითხვა; განვითარება ბუნებასთან ერთ რიტმში.'],
+ ['სარკე','ირეკლავს','უსასრულობა','წესრიგი','სიმართლის სარკე; ილუზიების მოჭრა და შინაგანი წესრიგი.'],
+ ['ქარიშხალი','აკატალიზებს','თვითგანახლება','ენერგია','გარდაქმნის ქარიშხალი; კრიზისი, რომელიც ახალ ენერგიას ბადებს.'],
+ ['მზე','ანათებს','საყოველთაო ცეცხლი','სიცოცხლე','სინათლე და განმანათლებლობა; სიცოცხლე, რომელიც ყველას ათბობს.']];
+const TONE=[null,
+ ['მაგნიტური','მიზანი','რა არის ჩემი მიზანი?','აერთიანებს · იზიდავს'],
+ ['მთვარის','გამოწვევა','რა მაბრკოლებს?','აპოლარიზებს · ასტაბილურებს'],
+ ['ელექტრული','მსახურება','როგორ ვემსახურო საუკეთესოდ?','ააქტიურებს · აკავშირებს'],
+ ['თვითმყოფადი','ფორმა','რა ფორმა მივცე ჩემს მსახურებას?','განსაზღვრავს · ზომავს'],
+ ['ობერტონული','ბრწყინვა','როგორ გავძლიერდე საუკეთესოდ?','აძლიერებს · წარმართავს'],
+ ['რიტმული','თანასწორობა','როგორ დავამყარო წონასწორობა?','აწესრიგებს · აწონასწორებს'],
+ ['რეზონანსული','შეთანხმება','როგორ შევუთანხმდე სხვებს?','ატარებს · შთააგონებს'],
+ ['გალაქტიკური','მთლიანობა','ვცხოვრობ კი ჩემი რწმენით?','აჰარმონიებს · მოდელირებს'],
+ ['მზის','განზრახვა','როგორ მივაღწიო მიზანს?','პულსირებს · ახორციელებს'],
+ ['პლანეტარული','გამოვლინება','როგორ გავაკეთო ეს სრულყოფილად?','სრულყოფს · აწარმოებს'],
+ ['სპექტრული','გათავისუფლება','როგორ გავუშვა და გავთავისუფლდე?','ხსნის · ათავისუფლებს'],
+ ['კრისტალური','თანამშრომლობა','როგორ მივუძღვნა ჩემი თავი ყველაფერს, რაც ცოცხალია?','უძღვნის · აზოგადებს'],
+ ['კოსმიური','ყოფნა','როგორ გავაფართოვო სიხარული და სიყვარული?','უძლებს · სცდება']];
+const FAM=['პოლარული','კარდინალური','ცენტრალური','სიგნალური','კარიბჭის'];
+const FAMT=['იღებს — გალაქტიკური ინფორმაციის მიმღები','იწყებს — ახალი ციკლების წამომწყები','ატარებს — ენერგიის გამტარი, ცენტრი','ავრცელებს — სიგნალის გადამცემი','ხსნის — კარიბჭე სამყაროთა შორის'];
+const CASTLE=[['წითელი აღმოსავლეთის სასახლე — შემობრუნების','#e86b6b'],['თეთრი ჩრდილოეთის სასახლე — გადაკვეთის','#e8e2d5'],['ლურჯი დასავლეთის სასახლე — წვის','#6fa8e8'],['ყვითელი სამხრეთის სასახლე — გაცემის','#e8c95a'],['მწვანე ცენტრალური სასახლე — მომხიბვლელობის','#6fcf8f']];
+const GAP=new Set([1,20,22,39,43,50,51,58,64,69,72,77,85,88,93,96,106,107,108,109,110,111,112,113,114,115,146,147,148,149,150,151,152,153,154,155,165,168,173,176,184,189,192,197,203,210,211,218,222,239,241,260]);
+const MOONS=['ღამურას','მორიელის','ირმის','ბუს','ფარშევანგის','ხვლიკის','მაიმუნის','ქორის','იაგუარის','ძაღლის','გველის','კურდღლის','კუს'];
+/* traditional */
+const TR=[['იმიშ','Imix','ნიანგი / წყლის შროშანი','პირველადი წყლები, დედობრივი დასაწყისი, ნაყოფიერება.'],
+ ['იკ’','Ik’','ქარი','სუნთქვა, სული, სიცოცხლის ნაპერწკალი; კომუნიკაცია.'],
+ ['აკ’ბ’ალ','Ak’b’al','ღამე / სახლი','სიბნელე, სახლი, საიდუმლო, წინაპართა სამყარო.'],
+ ['კ’ან','K’an','სიმინდი / ბადე','თესლი, სიმწიფე, მოსავალი, სიუხვე.'],
+ ['ჩიკჩან','Chikchan','გველი','სასიცოცხლო ძალა, სხეული, ვნება, ინსტინქტი.'],
+ ['კიმი','Kimi','სიკვდილი','გარდაქმნა, წინაპრები, ციკლის დასრულება.'],
+ ['მანიკ’','Manik’','ირემი','ნადირობა, ხელი, მკურნალობა, მფარველობა.'],
+ ['ლამატ','Lamat','ვენერა / კურდღელი','ვარსკვლავი, ნაყოფიერება, სიმრავლე, ჰარმონია.'],
+ ['მულუკ','Muluk','წყალი / ნეფრიტი','წვიმა, ემოცია, განწმენდა, ძვირფასი.'],
+ ['ოკ','Ok','ძაღლი','ერთგულება, მეგზური, სამართალი, გული.'],
+ ['ჩუვენ','Chuwen','მაიმუნი','ხელოსანი, შემოქმედი, ხელოვნება, თამაში.'],
+ ['ებ','Eb','გზა / კბილი','ცხოვრების გზა, ბედი, ადამიანი, სიმდიდრე.'],
+ ['ბ’ენ','B’en','ლერწამი','ზრდა, სახლი, ოჯახი, სიმაღლისკენ სწრაფვა.'],
+ ['იშ','Ix','იაგუარი','ღამის ძალა, მაგია, ჯუნგლის სიბრძნე, შამანი.'],
+ ['მენ','Men','არწივი','ხედვა, ამაღლება, ბრძენი მოხუცი.'],
+ ['კიბ','Kib','ბუ / სანთელი','წინაპრები, სიბრძნე, სინდისი, შენდობა.'],
+ ['კაბ’ან','Kab’an','დედამიწა / მოძრაობა','ძვრა, აზროვნება, სინქრონულობა, ცოდნა.'],
+ ['ეც’ნაბ','Etz’nab','კაჟი / დანა','მჭრელი სიცხადე, ჭეშმარიტება, გადაწყვეტილება.'],
+ ['კავაკ','Kawak','ქარიშხალი','წვიმა, ჭექა, განახლება, ოჯახი.'],
+ ['აჰავ','Ajaw','მბრძანებელი / მზე','მზე, სრულყოფა, წინაპრები, სულიერი ხელმძღვანელი.']];
+const HAAB=['პოპ','ვო’','სიპ','სოც’','სეკ','შულ','იაშკ’ინ','მოლ','ჩ’ენ','იაშ','საკ’','კეჰ','მაკ','კ’ანკ’ინ','მუვან','პაშ','კ’აიაბ','კუმკ’უ','ვაიებ’'];
+const GLORD=['','G1','G2','G3','G4','G5','G6','G7','G8','G9'];
+
+/* ── Dreamspell ── Feb 29 = same kin as Feb 28 (0.0 Hunab Ku) */
+const CUM=[0,31,59,90,120,151,181,212,243,273,304,334];
+const nidx=(y,m,d)=>y*365+CUM[m-1]+Math.min(d,m===2?28:31)-1;
+const REF=nidx(1987,7,26);
+const mod=(a,n)=>((a%n)+n)%n;
+const kinOf=(y,m,d)=>mod(33+nidx(y,m,d)-REF,260)+1;
+const sealOf=k=>(k-1)%20+1, toneOf=k=>(k-1)%13+1;
+const kinST=(s,t)=>{for(let k=1;k<=260;k++)if(sealOf(k)===s&&toneOf(k)===t)return k;};
+const colOf=s=>(s-1)%4;
+const w20=n=>mod(n-1,20)+1;
+const analog=s=>w20(19-s), antipode=s=>w20(s+10), occult=s=>21-s;
+const guide=(s,t)=>w20(s+[8,0,12,4,16][t%5]);
+const kinName=k=>{const s=sealOf(k),t=toneOf(k);return `${COL[colOf(s)].n} ${TONE[t][0]} ${SEAL[s][0]}`;};
+function thirteenMoon(y,m,d){
+  const Y=(m>7||(m===7&&d>=26))?y:y-1;const off=nidx(y,m,d)-nidx(Y,7,26);
+  if(m===2&&d===29)return '0.0 ჰუნაბ კუ (29 თებერვალი — დროის გარეთ)';
+  if(off===364)return 'დღე დროის გარეთ (25 ივლისი)';
+  return `${MOONS[Math.floor(off/28)]} ${TONE[Math.floor(off/28)+1][0]} მთვარე, დღე ${off%28+1}`;
+}
+/* Maya dot-and-bar numeral */
+function dotbar(n,col,w){w=w||40;const bars=Math.floor(n/5),dots=n%5;let s='',y=4;const H=6+bars*7+(dots?8:0);
+  if(dots){const gap=w/(dots+1);for(let i=0;i<dots;i++)s+=`<circle cx="${gap*(i+1)}" cy="${y+2}" r="2.4" fill="${col}"/>`;y+=9;}
+  for(let b=0;b<bars;b++){s+=`<rect x="3" y="${y}" width="${w-6}" height="4" rx="2" fill="${col}"/>`;y+=7;}
+  return `<svg width="${w}" height="${H}" viewBox="0 0 ${w} ${H}">${s}</svg>`;}
+function sealCard(k,role,sm){const s=sealOf(k),t=toneOf(k),c=COL[colOf(s)].h;
+  return `<div class="seal${sm?' sm':''}" style="--c:${c}">${role?`<div class="rl">${role}</div>`:''}<div class="disc"><div class="kn">${k}</div>${dotbar(t,c,sm?30:38)}</div><div class="nm">${kinName(k)}</div></div>`;}
+
+/* ── Traditional ── */
+function trad(J){const d=J-584283;
+  const num=mod(d+3,13)+1,sign=mod(d+19,20),h=mod(d+348,365);
+  let r=d;const lc=[];for(const u of [144000,7200,360,20,1]){lc.push(Math.floor(r/u));r=mod(r,u);}
+  return{num,sign,hm:Math.floor(h/20),hd:h%20,lc,g:mod(d+8,9)+1};}
+
+let SYS='ds';
+document.querySelectorAll('#sys .pill').forEach(p=>p.onclick=()=>{SYS=p.dataset.v;document.querySelectorAll('#sys .pill').forEach(x=>x.classList.toggle('active',x===p));run();});
+maskDate($('d1'));maskDate($('d2'));
+['d1','d2'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')run();}));
+$('go').onclick=run;
+
+function grid(me,pt,td){
+  let h='<div class="grid260"><div class="lab"></div>'+[...Array(13)].map((_,c)=>`<div class="lab" style="justify-content:center">${c+1}</div>`).join('');
+  for(let s=1;s<=20;s++){h+=`<div class="lab" style="color:${COL[colOf(s)].h}">${SEAL[s][0].split(' ')[0]}</div>`;
+    for(let c=0;c<13;c++){const k=c*20+s;h+=`<div class="${GAP.has(k)?'gap':'g'}${k===me?' me':''}${k===pt?' pt':''}${k===td?' td':''}" title="${k} · ${kinName(k)}">${k}</div>`;}}
+  return h+'</div>';
+}
+function run(){
+  const A=parseDate($('d1').value),Bv=$('d2').value.trim(),B=Bv?parseDate(Bv):null;
+  $('err').textContent='';
+  if(!A){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY (წელი 1–9999).';return;}
+  if(Bv&&!B){$('err').textContent='პარტნიორის თარიღი არასწორია.';return;}
+  $('out').innerHTML=SYS==='ds'?dreamspell(A,B):traditional(A,B);
+}
+function dreamspell(A,B){
+  const k=kinOf(A.y,A.m,A.d),s=sealOf(k),t=toneOf(k),c=COL[colOf(s)];
+  const now=new Date(),tk=kinOf(now.getFullYear(),now.getMonth()+1,now.getDate());
+  const kG=kinST(guide(s,t),t),kA=kinST(analog(s),t),kN=kinST(antipode(s),t),kO=261-k;
+  const ws=k-(t-1),wsS=sealOf(ws);
+  const castle=Math.floor((k-1)/52);
+  const fam=(s%5);
+  let h=`<div class="card" style="text-align:center">
+    ${sealCard(k)}
+    <div class="big" style="font-size:34px;margin-top:6px">კინი ${k}</div>
+    <div class="sub">${A.dd}/${A.mm}/${A.yyyy} · ${thirteenMoon(A.y,A.m,A.d)}</div>
+    ${GAP.has(k)?'<div class="note" style="margin-top:8px;color:#7fcf8f">✦ გალაქტიკური აქტივაციის პორტალი (GAP) — 52 განსაკუთრებული დღიდან ერთ-ერთი</div>':''}
+  </div>
+  <div class="card"><div class="h">შენი ბეჭედი და ტონი</div>
+    <div class="txt"><b style="color:${c.h}">${SEAL[s][0]}</b> — ${SEAL[s][4]}<br>
+    <span class="note">მოქმედება: <b>${SEAL[s][1]}</b> · ძალა: <b>${SEAL[s][2]}</b> · არსი: <b>${SEAL[s][3]}</b></span></div>
+    <div class="txt" style="margin-top:12px"><b>ტონი ${t} · ${TONE[t][0]}</b> — ${TONE[t][1]}. კითხვა: „${TONE[t][2]}“ <span class="note">(${TONE[t][3]})</span></div>
+    <div class="txt" style="margin-top:12px"><b style="color:${c.h}">${c.n} ფერი</b> — ${c.m}.</div>
+  </div>
+  <div class="card"><div class="h">ბედის ორაკული</div>
+    <div class="cross">
+      <div></div>${sealCard(kG,'მეგზური',1)}<div></div>
+      ${sealCard(kN,'ანტიპოდი',1)}${sealCard(k,'ბედი',1)}${sealCard(kA,'ანალოგი',1)}
+      <div></div>${sealCard(kO,'ფარული',1)}<div></div>
+    </div>
+    <div class="note" style="margin-top:14px"><b>მეგზური</b> — უმაღლესი წინამძღოლი, იგივე ფერის ბეჭედი. <b>ანალოგი</b> — მხარდამჭერი, მეგობრული ძალა. <b>ანტიპოდი</b> — გამოწვევა, რომელიც აძლიერებს. <b>ფარული</b> — ქვეცნობიერი რესურსი, მოულოდნელი დახმარება (კინების ჯამი = 261, ტონების ჯამი = 14).</div>
+  </div>
+  <div class="card"><div class="kv">
+    <div><div class="k">ტალღა (ვეივსპელი)</div><div class="v" style="font-size:18px;color:${COL[colOf(wsS)].h}">${SEAL[wsS][0]}</div><div class="t">კინი ${ws}–${ws+12} · შენი ადგილი: ${t}/13</div></div>
+    <div><div class="k">სასახლე</div><div class="v" style="font-size:16px;color:${CASTLE[castle][1]}">${castle+1}</div><div class="t">${CASTLE[castle][0]}</div></div>
+    <div><div class="k">დედამიწის ოჯახი</div><div class="v" style="font-size:18px">${FAM[fam]}</div><div class="t">${FAMT[fam]}</div></div>
+    <div><div class="k">დღევანდელი კინი</div><div class="v" style="font-size:22px">${tk}</div><div class="t">${kinName(tk)}</div></div>
+  </div></div>`;
+  /* yearly kins */
+  const Y=now.getFullYear();let rows='';
+  for(let y=Y-3;y<=Y+9;y++){if(y<A.y)continue;const yk=mod(k-1+105*(y-A.y),260)+1;
+    rows+=`<tr class="${y===Y?'now':''}"><td>${y}</td><td>${y-A.y}</td><td>${yk}</td><td style="color:${COL[colOf(sealOf(yk))].h}">${kinName(yk)}</td></tr>`;}
+  h+=`<div class="card"><div class="h">წლიური კინები (დაბადების დღიდან დაბადების დღემდე)</div>
+    <div class="scroll"><table class="tbl"><tr><th>წელი</th><th>ასაკი</th><th>კინი</th><th>წლის ენერგია</th></tr>${rows}</table></div>
+    <div class="note" style="margin-top:8px">ყოველ წელს დაბადების კინს ემატება 105 (365 − 260).</div></div>`;
+  if(B)h+=compat(k,kinOf(B.y,B.m,B.d),A,B);
+  h+=`<div class="card"><div class="h">ცოლკინის მატრიცა 13 × 20</div><div class="scroll">${grid(k,B?kinOf(B.y,B.m,B.d):0,tk)}</div>
+    <div class="note" style="margin-top:8px"><span style="color:var(--gold)">ოქროსფერი</span> — შენ${B?', <span style="color:var(--vio)">იისფერი</span> — პარტნიორი':''}, <span style="color:#7fcfe8">ცისფერი ჩარჩო</span> — დღეს, <span style="color:#7fcf8f">მწვანე</span> — 52 GAP პორტალი.</div></div>
+  <div class="card note">დრიმსპელში 29 თებერვალს ცალკე კინი არ აქვს (0.0 ჰუნაბ კუ) — იღებს 28 თებერვლის კინს. ათვლის წერტილი: 26.07.1987 = კინი 34. შემოწმება: 21.12.2012 = კინი 207, 26.07.2013 = კინი 164.</div>`;
+  return h;
+}
+function compat(k1,k2,A,B){
+  const s1=sealOf(k1),s2=sealOf(k2),t1=toneOf(k1),t2=toneOf(k2);
+  const R=[];
+  if(s1===s2)R.push(['იგივე ბეჭედი','ერთნაირი ბუნება — ერთმანეთს სიტყვების გარეშე ესმით, მაგრამ ერთნაირ ხაფანგებშიც ვარდებიან.']);
+  if(analog(s1)===s2)R.push(['ანალოგი','ყველაზე მხარდამჭერი კავშირი — ერთმანეთის ძალას აძლიერებთ, ბუნებრივი მეგობრობა.']);
+  if(antipode(s1)===s2)R.push(['ანტიპოდი','დაპირისპირებული ძალები — დაძაბულობა, რომელიც ზრდას აიძულებს; ბევრს ასწავლით ერთმანეთს.']);
+  if(occult(s1)===s2)R.push(['ფარული','ღრმა, მისტიკური კავშირი — ერთმანეთის ფარული რესურსი ხართ.']);
+  if(guide(s1,t1)===s2)R.push(['მეგზური',`${B?'პარტნიორი':''} შენთვის მეგზურის ბეჭედს ატარებს — მისგან ბევრს სწავლობ.`]);
+  if(guide(s2,t2)===s1)R.push(['მეგზური (პირიქით)','შენ მისი მეგზურის ბეჭედს ატარებ — შენ ხარ მისი მასწავლებელი.']);
+  if(colOf(s1)===colOf(s2)&&s1!==s2)R.push(['ერთი ფერის კლანი','ერთნაირი ფუნქცია სამყაროში ('+COL[colOf(s1)].m+') — საერთო რიტმი.']);
+  if(s1%5===s2%5&&s1!==s2)R.push(['ერთი დედამიწის ოჯახი',`ორივე ${FAM[s1%5]} ოჯახიდან — საერთო მისია.`]);
+  if(t1===t2)R.push(['ერთი ტონი','ერთნაირი ცხოვრებისეული კითხვა: „'+TONE[t1][2]+'“']);
+  if(t1+t2===14)R.push(['ფარული ტონები','ტონების ჯამი 14 — ერთმანეთის შეუგნებელ მხარეს ავსებთ.']);
+  if(Math.floor((k1-1)/13)===Math.floor((k2-1)/13))R.push(['ერთი ტალღა','ერთ ვეივსპელში დაიბადეთ — საერთო ცხოვრებისეული თემა.']);
+  if(!R.length)R.push(['ნეიტრალური','პირდაპირი ბეჭდის კავშირი არ არის — ურთიერთობა შენდება საერთო კინის ენერგიაზე (ქვემოთ).']);
+  const ck=mod(k1+k2-1,260)+1;
+  return `<div class="card"><div class="h">შეთავსება · ${fmtD(A)} + ${fmtD(B)}</div>
+    <div class="row" style="gap:26px;margin-bottom:12px">${sealCard(k1,'შენ',1)}${sealCard(k2,'პარტნიორი',1)}${sealCard(ck,'წყვილის კინი',1)}</div>
+    ${R.map(r=>`<div class="rel"><b>${r[0]}</b> — <span class="txt">${r[1]}</span></div>`).join('')}
+    <div class="rel"><b>წყვილის კინი ${ck}</b> — <span class="txt">${kinName(ck)}: ${SEAL[sealOf(ck)][4]} ურთიერთობის მიზანი — ${TONE[toneOf(ck)][1]}.</span></div>
+    <div class="note" style="margin-top:8px">წყვილის კინი = ორი კინის ჯამი (260-ზე მეტის შემთხვევაში −260).</div></div>`;
+}
+function traditional(A,B){
+  const J=jdn(A.y,A.m,A.d),T=trad(J);
+  const now=new Date(),TT=trad(jdn(now.getFullYear(),now.getMonth()+1,now.getDate()));
+  const tr=TR[T.sign];
+  let h=`<div class="card" style="text-align:center">
+    <div class="big">${T.num} ${tr[0]}</div><div class="sub">${tr[1]} · ${tr[2]}</div>
+    <div class="note" style="margin-top:10px">${HAAB[T.hm]==='ვაიებ’'?'':''}ჰააბ: <b>${T.hd} ${HAAB[T.hm]}</b> · გრძელი ათვლა: <b>${T.lc.join('.')}</b> · ღამის მბრძანებელი: <b>${GLORD[T.g]}</b></div>
+  </div>
+  <div class="card"><div class="h">დღის ნიშანი (ნავალი)</div>
+    <div class="txt"><b>${tr[0]} — ${tr[2]}</b>. ${tr[3]}</div>
+    <div class="txt" style="margin-top:10px"><b>რიცხვი ${T.num}</b> — ${T.num<=3?'დაბალი რიცხვები (1–3): ნაზი, ახალგაზრდა ენერგია, რომელიც ჯერ ძალას აგროვებს.':T.num<=9?'შუა რიცხვები (4–9): დაბალანსებული, სტაბილური ენერგია — ყველაზე ჰარმონიული.':'მაღალი რიცხვები (10–13): ძლიერი, ინტენსიური ენერგია — დიდი ძალა, რომელსაც კონტროლი სჭირდება.'}</div>
+    <div class="note" style="margin-top:12px">ტრადიციულ კიჩეურ და იუკატეკურ პრაქტიკაში დღის ნიშანი (ნავალი) ადამიანის სულიერი მფარველია; რიცხვი — მისი ძალის ინტენსივობა. ${GLORD[T.g]} — ცხრა „ღამის მბრძანებლიდან“ ერთ-ერთი, რომლებიც რიგრიგობით „მართავენ“ ღამეს.</div></div>
+  <div class="card"><div class="kv">
+    <div><div class="k">დღეს</div><div class="v" style="font-size:22px">${TT.num} ${TR[TT.sign][0]}</div><div class="t">${TT.hd} ${HAAB[TT.hm]}</div></div>
+    <div><div class="k">გრძელი ათვლა დღეს</div><div class="v" style="font-size:20px">${TT.lc.join('.')}</div></div>
+    <div><div class="k">კალენდარული წრე</div><div class="v" style="font-size:20px">52 წელი</div><div class="t">ცოლკინისა და ჰააბის ერთად დაბრუნება</div></div>
+  </div></div>`;
+  if(B){const T2=trad(jdn(B.y,B.m,B.d));const ds=mod(T2.sign-T.sign,20),dn=mod(T2.num-T.num,13);
+    h+=`<div class="card"><div class="h">შეთავსება</div>
+      <div class="txt">შენ: <b>${T.num} ${tr[0]}</b> (${tr[2]}) · პარტნიორი: <b>${T2.num} ${TR[T2.sign][0]}</b> (${TR[T2.sign][2]})</div>
+      <div class="txt" style="margin-top:8px">${T.sign===T2.sign?'ერთი და იგივე ნავალი — ღრმა სულიერი ნათესაობა.':ds%5===0?'ნიშნები ერთ „ჯგუფშია“ (5 დღის ინტერვალით) — ერთნაირი მიმართულება და საერთო წელიწადის მატარებლის ოჯახი.':ds===10?'ნიშნები ზუსტად საპირისპიროა ციკლში — ერთმანეთის შემავსებელი, მაგრამ გამოწვევით.':'ნიშნები განსხვავებულ ძალებს ატარებს — ურთიერთობა ერთმანეთისგან სწავლაზეა აგებული.'}
+      ${dn===0?' რიცხვებიც ემთხვევა — ერთნაირი ინტენსივობა.':''}</div></div>`;}
+  h+=`<div class="card note">GMT კორელაცია 584283: 21.12.2012 = 13.0.0.0.0, 4 აჰავ 3 კ’ანკ’ინ. თარიღები გრიგორიანული (პროლეპტიკური) კალენდრით.</div>`;
+  return h;
+}
+</script>
+</body>
+</html>
