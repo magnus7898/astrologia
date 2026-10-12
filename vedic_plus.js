@@ -265,7 +265,7 @@ function renderCompat(){
   const A={name:f('name')||'',sex:'m',d:f('day')||1,m:f('month')||1,y:f('year')||1990,h:f('hour')||12,mi:f('minute')||0,city:f('city')||'',lat:f('lat')||41.7151,lon:f('lon')||44.8271,tz:f('tz_name')||'Asia/Tbilisi'};
   const B={name:'',sex:'f',d:1,m:1,y:1992,h:12,mi:0,city:'',lat:A.lat,lon:A.lon,tz:A.tz};
   o.innerHTML=`<div class="vp-card"><h3>შეთავსება — აშტაკუტა (36 გუნა)</h3>
-    <div class="vp-note" style="margin:0 0 10px">შეიყვანე ორივე ადამიანის დაბადების მონაცემები. პირველი ავტომატურად ივსება ზედა ფორმიდან. სქესი საჭიროა — ვარნა, ტარა და განა მამაკაცისა და ქალის მიხედვით ითვლება.</div>
+    <div class="vp-note" style="margin:0 0 10px">შეიყვანე ორივე ადამიანის დაბადების მონაცემები (პირველი ივსება ნატალის ფორმიდან, თუ უკვე შეავსე). სქესი საჭიროა — ვარნა, ტარა და განა მამაკაცისა და ქალის მიხედვით ითვლება.</div>
     <div class="vp-grid2">${personHTML('a','👤 პირველი',A)}${personHTML('b','👤 მეორე',B)}</div>
     <div style="text-align:center;margin-top:12px"><button class="vp-btn" id="cp-go" style="padding:10px 28px;font-size:13px">✦ შეთავსების გამოთვლა ✦</button></div></div><div id="cp-out"></div>`;
   wireCity('a');wireCity('b');
@@ -347,7 +347,9 @@ const RENDER={dasha:renderDasha,panch:renderPanch,gochara:renderGochara,varsha:r
 let TAB='natal';
 function needNatal(){$('vp-out').innerHTML=`<div class="vp-card vp-sum">ამისთვის საჭიროა ნატალური რუკა — შეავსე ფორმა და დააჭირე <b>„ვედური რუქის გენერაცია“</b>.</div>`;}
 function setTab(t){TAB=t;document.querySelectorAll('#vp-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
-  const ca=$('chart-area'),o=$('vp-out');
+  const ca=$('chart-area'),o=$('vp-out'),fc=document.querySelector('.form-card');
+  /* compatibility and search have their own inputs — the natal form would be a confusing extra one */
+  if(fc)fc.style.display=(t==='compat'||t==='search')?'none':'';
   if(t==='natal'){o.style.display='none';if(ca&&natal())ca.style.display='block';return;}
   if(ca)ca.style.display='none';o.style.display='block';try{RENDER[t]();}catch(e){o.innerHTML='<div class="vp-card">შეცდომა: '+e.message+'</div>';console.warn(e);}
   o.scrollIntoView({behavior:'smooth',block:'start'});}
