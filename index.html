@@ -684,6 +684,16 @@
       <div class="card-sub">Memory Grid · 3×3 → 10×10</div>
     </a>
 
+    <a class="card c-name" href="logic.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><rect x="21" y="5" width="6" height="6"/><path d="M8 21l3 6H5z"/><path d="M24 20v8M20 24h8" opacity=".55"/><path d="M12 8h7M8 12v6M12 24h6" opacity=".4"/></svg>
+      </div>
+      <div class="card-title">ლოგიკა</div>
+      <div class="card-sub">Logic · Sequences · Matrices</div>
+    </a>
+
     <a class="card c-name" href="meditation.html">
       <div class="card-glow"></div>
       <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
@@ -867,7 +877,7 @@
     {key:'compat',title:'შეთავსება',sub:'Zodiac Compatibility',css:'c-astro',art:'compat.html',
      members:['compat.html'],label:{}},
     {key:'health',title:'ჯანმრთელობა',sub:'Breathing · Sleep · Memory · Meditation…',css:'c-name',art:'breath.html',
-     members:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','cold.html','fasting.html','rhythm.html'],label:{},always:true},
+     members:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html'],label:{},always:true},
     {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
   ];
@@ -971,7 +981,7 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','cold.html','fasting.html','rhythm.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       grid.innerHTML='';
       grid.appendChild(frag);
       applyGroups();                                  /* regroup the API order */
