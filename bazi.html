@@ -56,8 +56,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
 @media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
 
-.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.pl{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:12px;padding:12px 6px;text-align:center}
+.pillars{display:grid;gap:10px}
+.pl{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:12px;padding:12px 6px;text-align:center;overflow:hidden}
 .pl.dm{border-color:rgba(200,169,110,.55);box-shadow:0 0 22px rgba(200,169,110,.12)}
 .pl .ph{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
 .pl .ss{font-size:10.5px;color:rgba(232,226,213,.6);min-height:16px;margin-top:6px}
@@ -65,46 +65,60 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .pl .kn{font-size:11px;color:rgba(232,226,213,.7)}
 .pl .hid{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 .pl .hid span{font-size:10px;border:1px solid var(--border);border-radius:6px;padding:2px 5px}
-.pl .ny{font-size:10px;color:var(--muted);margin-top:8px;line-height:1.4}
+.pl .ny,.pl .st{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4}
+.pl .st{color:#b8a4f0}
+.pl .ksh{margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+.pl .ksh span{font-size:9px;border-radius:5px;padding:1px 4px;background:rgba(200,169,110,.12);color:#e8d29a}
 .elbar{display:flex;align-items:center;gap:10px;margin:6px 0}
 .elbar .n{width:92px;font-size:12.5px}
 .elbar .b{flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden}
 .elbar .b i{display:block;height:100%;border-radius:5px}
 .elbar .v{width:46px;text-align:right;font-size:12px;color:var(--muted)}
 .lucks{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
-.lk{min-width:74px;border:1px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center;font-size:10.5px;color:var(--muted)}
+.lk{min-width:78px;border:1px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center;font-size:10.5px;color:var(--muted);cursor:pointer}
 .lk .c{font-family:'Noto Serif SC',serif;font-size:22px;line-height:1.3}
 .lk.now{border-color:rgba(200,169,110,.6);background:rgba(200,169,110,.07)}
+.lk.sel{outline:1px solid var(--vio)}
 .form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
 .form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
 .form2 .in,.form2 .sel{width:100%}
 .rel{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}.rel:last-child{border-bottom:0}
-@media(max-width:600px){.pl .ch{font-size:30px}.pillars{gap:5px}.pl{padding:10px 2px;overflow:hidden}.pl .hid span{font-size:9px;padding:1px 3px}.pl .kn,.pl .ss,.pl .ny{font-size:9.5px}}
+.tag{display:inline-block;font-size:10.5px;border-radius:8px;padding:1px 7px;margin:2px 3px 2px 0;border:1px solid}
+.wheel svg{width:100%;max-width:420px;display:block;margin:0 auto}
+.cond{display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.cond .tg{font-size:10px;color:var(--muted);font-family:'Cinzel',serif;width:66px;text-align:right}
+.hm td.c{text-align:center}
+.lift{display:block;font-size:9.5px}.up{color:#7fcf7f}.dn{color:#e87f7f}
+.progb{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-top:10px}.progb i{display:block;height:100%;background:var(--gold);width:0}
+@media(max-width:600px){.pl .ch{font-size:30px}.pillars{gap:5px}.pl{padding:10px 2px}.pl .hid span{font-size:9px;padding:1px 3px}.pl .kn,.pl .ss,.pl .ny,.pl .st{font-size:9.5px}.cond .tg{width:auto}}
 </style>
 </head>
 <body>
 <div class="page">
 <header class="page-header">
-  <div class="eyebrow">ჩინური მეტაფიზიკა · 八字</div>
+  <div class="eyebrow">ჩინური მეტაფიზიკა · 八字 · 四柱命理</div>
   <h1 class="page-title">ბაძი <em>· ბედის ოთხი სვეტი</em></h1>
   <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
 </header>
-<p class="lead">დაბადების წელი, თვე, დღე და საათი — თითოეული ერთი <b>ციური ღერო</b> (10) და ერთი <b>მიწიერი შტო</b> (12). ცენტრშია <b>დღის ოსტატი</b> — შენი არსი; დანარჩენი მასთან მიმართებით იკითხება. თვეები იცვლება მზის 24 ტერმინით (ჯიეჩი), წელი — ლიჩუნით (≈4 თებერვალი). კორეული <b>საჯუ</b> იგივე სისტემაა.</p>
-<div class="card">
+<div class="pills" id="tabs">
+  <div class="pill active" data-v="chart">რუკა</div><div class="pill" data-v="inter">ურთიერთქმედებები</div><div class="pill" data-v="stars">ვარსკვლავები</div>
+  <div class="pill" data-v="luck">იღბალი · წლები</div><div class="pill" data-v="read">ინტერპრეტაცია</div><div class="pill" data-v="compat">შეთავსება</div><div class="pill" data-v="stats">სტატისტიკა</div>
+</div>
+<div class="card" id="form">
   <div class="form2">
     <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
     <div><label>დრო (არასავალდ.)</label><input class="in time" id="t1" placeholder="HH:MM" maxlength="5"></div>
     <div><label>სქესი</label><select class="sel" id="s1"><option value="1">მამრობითი</option><option value="0">მდედრობითი</option></select></div>
-    <div><label>სასაათო სარტყელი (UTC±)</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
+    <div><label>UTC±</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
     <div><label>გრძედი °E (ჭეშმარ. მზის დრო)</label><input class="in" id="lon1" placeholder="მაგ. 44.8" style="text-align:center"></div>
     <div><label>დღის ცვლა</label><select class="sel" id="sect"><option value="1">23:00 (ადრეული ვირთხა)</option><option value="2">00:00 (შუაღამე)</option></select></div>
   </div>
-  <div class="note" style="margin:14px 0 6px;text-align:center">პარტნიორი (შეთავსებისთვის, არასავალდებულო)</div>
+  <div id="pform" class="hidden"><div class="note" style="margin:14px 0 6px;text-align:center">პარტნიორი</div>
   <div class="form2">
     <div><label>თარიღი</label><input class="in date" id="d2" placeholder="DD/MM/YYYY" maxlength="10"></div>
     <div><label>დრო</label><input class="in time" id="t2" placeholder="HH:MM" maxlength="5"></div>
     <div><label>სქესი</label><select class="sel" id="s2"><option value="0">მდედრობითი</option><option value="1">მამრობითი</option></select></div>
-  </div>
+  </div></div>
   <div class="row" style="margin-top:16px"><button class="btn" id="go">გამოთვლა</button></div>
   <div class="err" id="err"></div>
 </div>
@@ -113,10 +127,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+/* calendar convention (MAGNUS): Julian before 15.10.1582, Gregorian after */
+const isLeap=y=>y<1582?y%4===0:(y%4===0&&y%100!==0)||y%400===0;
 const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
 /* Gregorian (proleptic) → Julian Day Number */
-function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function jdn(y,m,d){if(y*10000+m*100+d<15821015){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-32083;}const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
 function parseDate(v,ymin,ymax){
   v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
   const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
@@ -167,12 +182,93 @@ function eot(y,m,d){const N=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5
 /* add minutes to a civil date-time (proleptic Gregorian via UTC Date with full year) */
 function addMin(y,m,d,h,mi,add){const t=new Date(0);t.setUTCFullYear(y,m-1,d);t.setUTCHours(h,mi,0,0);t.setTime(t.getTime()+add*6e4);return{y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate(),h:t.getUTCHours(),mi:t.getUTCMinutes()};}
 
-const DM_TXT=['დიდი ხე — პირდაპირი, პრინციპული, მფარველი; იზრდება მაღლა და სხვებს ჩრდილს აძლევს.','ყვავილი, ლიანა — მოქნილი, დიპლომატიური, ადაპტირებადი; რბილი ძალით აღწევს მიზანს.','მზე — გულუხვი, ნათელი, ენთუზიასტი; ყველას ათბობს და ყურადღების ცენტრშია.','სანთელი — თბილი, ინტუიციური, ფოკუსირებული; შინაგანი სინათლე სიბნელეშიც ანათებს.','მთა — სტაბილური, საიმედო, მშვიდი; მყარი საყრდენი სხვებისთვის.','ბაღის მიწა — მზრუნველი, ნაყოფიერი, პრაქტიკული; ზრდის და კვებავს.','ხმალი, მადანი — მკაცრი, სამართლიანი, გადამწყვეტი; ბუნებით მეომარი.','ძვირფასი ქვა — დახვეწილი, მგრძნობიარე, პერფექციონისტი; ბრწყინავს დამუშავების შემდეგ.','ოკეანე — თავისუფალი, ჭკვიანი, მოძრავი; დიდი მასშტაბით ფიქრობს.','წვიმა, ნამი — ინტუიციური, ნაზი, ფანტაზიით სავსე; ღრმა და შეუმჩნევლად ძლიერი.'];
-const EL_LACK=['ხე: ზრდა, მოთმინება, გეგმა — მწვანე ფერი, მცენარეები, აღმოსავლეთი.','ცეცხლი: ენთუზიაზმი, სიხარული, ხილვადობა — წითელი, სინათლე, სამხრეთი.','მიწა: სტაბილურობა, ნდობა, რუტინა — ყვითელი/ყავისფერი, ცენტრი.','ლითონი: სტრუქტურა, დისციპლინა, საზღვრები — თეთრი/ოქროსფერი, დასავლეთი.','წყალი: სიბრძნე, მოქნილობა, ინტუიცია — შავი/ლურჯი, ჩრდილოეთი.'];
+/* fast numeric BaZi (statistics): low-precision Sun (Meeus) for jieqi; day pillar from JDN */
+const BZF=(function(){
+  const D=Math.PI/180;
+  function jdn(y,m,d){if(y*10000+m*100+d<15821015){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-32083;}const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+  function sunLon(jd){const T=(jd-2451545)/36525,M=(357.52911+35999.05029*T-0.0001537*T*T)*D;
+    const L0=280.46646+36000.76983*T+0.0003032*T*T,C=(1.914602-0.004817*T-0.000014*T*T)*Math.sin(M)+(0.019993-0.000101*T)*Math.sin(2*M)+0.000289*Math.sin(3*M);
+    const O=(125.04-1934.136*T)*D;let l=L0+C-0.00569-0.00478*Math.sin(O);
+    /* precession beyond the series: none needed (L0 is tropical of date) */
+    return ((l%360)+360)%360;}
+  /* pillars as indices 0..59; tzHours: local clock offset; Beijing (UTC+8) used for jieqi like lunar-javascript */
+  function pillars(y,m,d,h,mi,sect){
+    const J=jdn(y,m,d);const u=(y-1820)/100,dT=(y>1955&&y<2100)?(y<2005?50+0.6*(y-1955):64+0.4*(y-2005)):-20+32*u*u;const jd=J-0.5+(h+mi/60-8)/24+dT/86400;   /* Beijing local → UT → TT */
+    const L=sunLon(jd);
+    let Y=y;if(m<=2&&L>=270&&L<315)Y=y-1;else if(m===12&&false)Y=y;
+    const ys=((Y-4)%10+10)%10,yb=((Y-4)%12+12)%12;
+    const k=Math.floor((((L-315)%360)+360)%360/30);     /* 0 = 寅 month */
+    const mb=(2+k)%12,ms=((ys%5)*2+2+k)%10;
+    let dJ=J;if(sect===1&&h>=23)dJ+=1;
+    const di=((dJ+49)%60+60)%60;const ds=di%10,db=di%12;
+    const hb=Math.floor(((h+1)%24)/2),hs=((ds%5)*2+hb)%10;
+    const ix=(s,b)=>{for(let i=0;i<60;i++)if(i%10===s&&i%12===b)return i;};
+    return [ix(ys,yb),ix(ms,mb),di,ix(hs,hb)];
+  }
+  return{jdn,sunLon,pillars};
+})();
+
+
+/* ════════ DATA ════════ */
+const HIDE=[['癸'],['己','癸','辛'],['甲','丙','戊'],['乙'],['戊','乙','癸'],['丙','庚','戊'],['丁','己'],['己','丁','乙'],['庚','壬','戊'],['辛'],['戊','辛','丁'],['壬','甲']];
+const NY30=['海中金','炉中火','大林木','路旁土','剑锋金','山头火','涧下水','城头土','白蜡金','杨柳木','泉中水','屋上土','霹雳火','松柏木','长流水','沙中金','山下火','平地木','壁上土','金箔金','覆灯火','天河水','大驿土','钗钏金','桑柘木','大溪水','沙中土','天上火','石榴木','大海水'];
+const STAGE=['长生','沐浴','冠带','临官','帝旺','衰','病','死','墓','绝','胎','养'];
+const STAGE_KA=['დაბადება','განბანვა','ქუდის დახურვა','თანამდებობა','იმპერატორის პიკი','დაქვეითება','ავადმყოფობა','სიკვდილი','საფლავი','გაქრობა','ჩასახვა','გამოზრდა'];
+const STAGE_T=['ახალი ძალის დაბადება, იმედი, ზრდის დასაწყისი.','სიახლე და მოუმწიფებლობა, ცდუნებები, ვნება.','ფორმირება, განათლება, სტატუსის მოპოვება.','სრული ძალა, დამოუკიდებლობა, კარიერა.','პიკი — მაქსიმალური ძალა, მაგრამ ზედმეტი სიჯიუტეც.','ძალა იკლებს — გამოცდილება ჩნდება.','სისუსტე, რეფლექსია, სიფრთხილე.','გაჩერება, დასრულება, შინაგანი გარდაქმნა.','შენახვა, დაგროვება, საგანძური — ფარული რესურსი.','სრული სიცარიელე — ახლიდან დაწყების წერტილი.','ჩანასახი, ახალი იდეის გაჩენა.','მოვლა-გაზრდა, მხარდაჭერით განვითარება.'];
+const CS_START=[11,6,2,9,2,9,5,0,8,3]; /* 长生 branch per stem */
+const stageOf=(g,z)=>{const s=CS_START[g];return g%2===0?((z-s)%12+12)%12:((s-z)%12+12)%12;};
+const LIUHE={'0,1':2,'2,11':0,'3,10':1,'4,9':3,'5,8':4,'6,7':1};
+const SANHE=[[8,0,4,4],[2,6,10,1],[5,9,1,3],[11,3,7,0]];
+const SANHUI=[[2,3,4,0],[5,6,7,1],[8,9,10,3],[11,0,1,4]];
+const XING3=[[2,5,8,'უმადურობის დასჯა (寅巳申)'],[1,10,7,'ძალადობის დასჯა (丑戌未)']];
+const SELFX=[4,6,9,11];
+const HAI=[[0,7],[1,6],[2,5],[3,4],[8,11],[9,10]],PO=[[0,9],[6,3],[4,1],[10,7],[2,11],[5,8]];
+const GANHE={'0,5':2,'1,6':3,'2,7':4,'3,8':0,'4,9':1},GANCHONG=[[0,6],[1,7],[2,8],[3,9]];
+const pkey=(a,b)=>a<b?a+','+b:b+','+a;
+const SS_TXT={'比肩':'დამოუკიდებლობა, თანატოლები, საკუთარი ძალის რწმენა. ჭარბად — სიჯიუტე, კონკურენცია ფულზე; ზომიერად — მეგობრული მხარდაჭერა.','劫财':'გაბედული რისკი, ენერგიული ბრძოლა, სოციალური ხიბლი. ჭარბად — ფინანსური დანაკარგი, იმპულსურობა; ზომიერად — მეწარმის ნიჭი.',
+ '食神':'ბუნებრივი ნიჭი, გემოვნება, სიამოვნება, შემოქმედების რბილი გამოხატვა. ჭარბად — სიზარმაცე; ზომიერად — ბედნიერება და ჯანმრთელობა.','伤官':'ბრწყინვალე, მეამბოხე ნიჭი, ორატორობა, წესების გამოწვევა. ჭარბად — კონფლიქტი ავტორიტეტებთან; ზომიერად — ორიგინალური შემოქმედი.',
+ '偏财':'მოულოდნელი ფული, ბიზნესი, გულუხვობა, სოციალურობა. მამაკაცისთვის — საყვარელი/შეყვარებული ქალი, მამა.','正财':'სტაბილური შემოსავალი, შრომით მოპოვებული ქონება, პრაქტიკულობა. მამაკაცისთვის — ცოლი.',
+ '七杀':'ძალა ზეწოლის ქვეშ, გამოწვევები, ამბიცია, სამხედრო სული. ქალისთვის — მეუღლე ან ძლიერი პარტნიორი. დაბალანსებული — დიდი ლიდერი.','正官':'წესრიგი, სტატუსი, ღირსება, კანონის პატივისცემა, კარიერა ორგანიზაციაში. ქალისთვის — ქმარი.',
+ '偏印':'უჩვეულო ცოდნა, ინტუიცია, მისტიკა, ალტერნატიული განათლება. ჭარბად — იზოლაცია, ეჭვიანობა.','正印':'მფარველობა, განათლება, დედა, დიპლომები, მხარდაჭერა და სიკეთე. ჭარბად — დამოკიდებულება სხვებზე.'};
+const DM_LONG=[
+ 'იან ხე — მაღალი, სწორი ხე. ბუნებით პრინციპული, პირდაპირი, მფარველი; იზრდება მაღლა და ცდილობს ყველაფერი სწორად გააკეთოს. ძლიერი მხარე — მიზანდასახულობა, ღირსება, ლიდერობა; სუსტი — სიჯიუტე, მოქნილობის ნაკლებობა. ჭირდება წყალი (ცოდნა, მხარდაჭერა) და ცეცხლი (გამოხატვა); ლითონი აჭრის და აყალიბებს.',
+ 'ინ ხე — ყვავილი, ბალახი, ლიანა. მოქნილი, დიპლომატიური, ადაპტირებადი, ესთეტი; იცის როგორ „შემოიხვიოს“ მიზანს. ძლიერი მხარე — სოციალური ალღო, მომთმენი ზრდა; სუსტი — დამოკიდებულება გარემოზე. საჭიროა მზე (იან ცეცხლი) და ზომიერი წყალი.',
+ 'იან ცეცხლი — მზე. გულუხვი, ოპტიმისტი, ენერგიული, ყველას ათბობს; ბუნებრივად ყურადღების ცენტრშია. ძლიერი მხარე — ენთუზიაზმი, გულწრფელობა; სუსტი — ზედმეტი პირდაპირობა, მოუთმენლობა. წყალი (იან წყალი) მზეს ასახავს და ახმოვანებს.',
+ 'ინ ცეცხლი — სანთელი, ვარსკვლავი. თბილი, ინტუიციური, ფოკუსირებული, ზრუნვით სავსე; ანათებს იქ, სადაც სიბნელეა. ძლიერი მხარე — სიღრმე, დეტალების გრძნობა; სუსტი — მერყევი განწყობა. ხე (საწვავი) მისთვის აუცილებელია.',
+ 'იან მიწა — მთა. სტაბილური, საიმედო, მშვიდი, კონსერვატიული; სხვებისთვის საყრდენია. ძლიერი მხარე — ნდობა, მოთმინება; სუსტი — ნელი ცვლილება, სიჯიუტე. ცეცხლი ათბობს, წყალი აცოცხლებს, ხე აძლევს სიცოცხლეს.',
+ 'ინ მიწა — ბაღის, ნაყოფიერი მიწა. მზრუნველი, პრაქტიკული, მოქნილი, ბევრი ნიჭით; კვებავს ყველაფერს, რაც მასში ირგვება. ძლიერი მხარე — მრავალფეროვნება, მომსახურება; სუსტი — ზედმეტი ფიქრი, ეჭვი.',
+ 'იან ლითონი — ხმალი, მადანი. მკაცრი, სამართლიანი, გადამწყვეტი, მეომრის სული; უყვარს გამოწვევა. ძლიერი მხარე — სიმამაცე, ერთგულება; სუსტი — უხეშობა. ცეცხლი მას „აწრთობს“ — წნეხი აძლიერებს.',
+ 'ინ ლითონი — ძვირფასი ქვა, სამკაული. დახვეწილი, მგრძნობიარე, პერფექციონისტი, ღირსების გრძნობით; ბრწყინავს დამუშავების შემდეგ. ძლიერი მხარე — ესთეტიკა, სიზუსტე; სუსტი — მგრძნობელობა კრიტიკაზე. წყალი მას რეცხავს და აბრწყინებს.',
+ 'იან წყალი — ოკეანე, დიდი მდინარე. თავისუფალი, ჭკვიანი, მოძრავი, ფართო ხედვით; ვერ ისვენებს ერთ ადგილას. ძლიერი მხარე — სტრატეგია, ადაპტაცია; სუსტი — მოუსვენრობა, დაუდგრომლობა. მიწა (კალაპოტი) მას მიმართულებას აძლევს.',
+ 'ინ წყალი — წვიმა, ნამი, ნისლი. ინტუიციური, ნაზი, ფანტაზიით სავსე, ღრმა; შეუმჩნევლად ჟონავს ყველგან. ძლიერი მხარე — ემპათია, წარმოსახვა; სუსტი — განწყობის ცვალებადობა, გაურკვევლობა.'];
+const EL_MORE=['ხე ჭარბად: სიჯიუტე, მოუთმენლობა, გეგმების სიმრავლე — ბალანსი: ლითონი (სტრუქტურა) და ცეცხლი (რეალიზაცია).','ცეცხლი ჭარბად: იმპულსურობა, გამოფიტვა, ზედმეტი ემოცია — ბალანსი: წყალი (სიმშვიდე), მიწა (დამიწება).','მიწა ჭარბად: ინერცია, ზედმეტი წუხილი, კონსერვატიზმი — ბალანსი: ხე (ზრდა), ლითონი (გამოხატვა).','ლითონი ჭარბად: სიმკაცრე, კრიტიკულობა, მარტოობა — ბალანსი: ცეცხლი (სითბო), წყალი (ნაკადი).','წყალი ჭარბად: შიშები, გაფანტულობა, ცვალებადობა — ბალანსი: მიწა (საზღვრები), ხე (მიმართულება).'];
+const SEASON=b=>[2,3].includes(b)?0:[5,6].includes(b)?1:[8,9].includes(b)?3:[11,0].includes(b)?4:2; /* 辰未戌丑 earth months */
+/* ════════ SHEN SHA ════════ */
+const NOBLE=[[1,7],[0,8],[11,9],[11,9],[1,7],[0,8],[1,7],[2,6],[5,3],[5,3]];
+const WENCH=[5,6,8,9,8,9,11,0,2,3];
+const LU=[2,3,5,6,5,6,8,9,11,0];
+const YANGREN=[3,4,6,7,6,7,9,10,0,1];
+const trineOf=b=>SANHE.findIndex(t=>t.slice(0,3).includes(b));
+const PEACH=[9,3,6,0],HORSE=[2,8,11,5],CANOPY=[4,10,1,7],GENERAL=[0,6,9,3];
+const SS_STAR={noble:['天乙贵人','ციური კეთილშობილი','ყველაზე ხელსაყრელი ვარსკვლავი: გავლენიანი მფარველები, დახმარება კრიზისში, „ანგელოზი მცველი“.'],
+ wen:['文昌','ლიტერატურის ვარსკვლავი','ინტელექტი, სწავლის ნიჭი, გამოცდებში წარმატება, წერა.'],lu:['禄神','კეთილდღეობის ვარსკვლავი','სტაბილური შემოსავალი, საკუთარი ძალით მოპოვებული სიმდიდრე.'],
+ yr:['羊刃','ვერძის დანა','ჭარბი ძალა, გაბედულება, მაგრამ იმპულსურობა და ტრავმის რისკი; სამხედრო/ქირურგიული ნიჭი.'],peach:['桃花','ატმის ყვავილი','მომხიბვლელობა, რომანტიკა, პოპულარობა; ჭარბად — სასიყვარულო გართულებები.'],
+ horse:['驿马','მოგზაური ცხენი','მოძრაობა, მოგზაურობა, ემიგრაცია, ცვლილებები სამსახურში.'],canopy:['华盖','ციური ტილო','ხელოვნება, მისტიკა, ფილოსოფია, მარტოობის სიყვარული — სულიერი ნიჭი.'],
+ general:['将星','გენერლის ვარსკვლავი','ლიდერობა, ავტორიტეტი, ორგანიზატორის ნიჭი.'],void:['空亡','სიცარიელე','ამ შტოს თემები „ცარიელია“ — ძალისხმევა ნაკლებ შედეგს იძლევა, ან სულიერ სფეროში გადადის.'],
+ hong:['红鸾','წითელი ფენიქსი','სიყვარული, ქორწინება, სასიხარულო მოვლენები.'],xi:['天喜','ციური სიხარული','ზეიმი, ბავშვის დაბადება, კარგი ამბები.'],kuigang:['魁罡','კუი განი','ძლიერი, უკომპრომისო ხასიათი, ლიდერობა; ექსტრემალური ბედი — დიდი წარმატება ან დიდი გამოწვევა.']};
+/* ════════ helpers ════════ */
+const gz60=(g,z)=>{for(let i=0;i<60;i++)if(i%10===g&&i%12===z)return i;};
+const nayinOf=(g,z)=>NY30[Math.floor(gz60(g,z)/2)];
 function shishen(dm,g){const a=ganEl(dm),b=ganEl(g),sp=ganYang(dm)===ganYang(g);
   if(a===b)return sp?'比肩':'劫财';if(gen(a)===b)return sp?'食神':'伤官';if(ctl(a)===b)return sp?'偏财':'正财';if(ctl(b)===a)return sp?'七杀':'正官';return sp?'偏印':'正印';}
+const GZ=(g,z)=>`<span style="color:${EL_COL[ganEl(g)]}">${GAN[g]}</span><span style="color:${EL_COL[ZHI_EL[z]]}">${ZHI[z]}</span>`;
+let TAB='chart',C=null,C2=null,LUCKSEL=null;
+document.querySelectorAll('#tabs .pill').forEach(p=>p.onclick=()=>{TAB=p.dataset.v;document.querySelectorAll('#tabs .pill').forEach(x=>x.classList.toggle('active',x===p));
+  $('pform').classList.toggle('hidden',TAB!=='compat');$('form').classList.toggle('hidden',TAB==='stats');render();});
 ['d1','d2'].forEach(i=>maskDate($(i)));['t1','t2'].forEach(i=>maskTime($(i)));
-$('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
+$('go').onclick=run;document.querySelectorAll('#form .in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
+
+/* ════════ CHART ════════ */
 function chart(P,T,sex){
   const tz=parseFloat($('tz1').value)||0,lonS=$('lon1').value.trim(),lon=lonS===''?null:parseFloat(lonS),sect=+$('sect').value;
   const h=T?T.h:12,mi=T?T.mi:0;
@@ -181,84 +277,279 @@ function chart(P,T,sex){
   if(T&&lon!==null&&!isNaN(lon))loc=addMin(P.y,P.m,P.d,h,mi,-tz*60+lon*4+eot(P.y,P.m,P.d));
   const eB=Solar.fromYmdHms(bj.y,bj.m,bj.d,bj.h,bj.mi,0).getLunar().getEightChar();eB.setSect(sect);
   const eL=Solar.fromYmdHms(loc.y,loc.m,loc.d,loc.h,loc.mi,0).getLunar().getEightChar();eL.setSect(sect);
-  const pil=[
-    {k:'წელი',g:eB.getYearGan(),z:eB.getYearZhi(),hid:eB.getYearHideGan(),ny:eB.getYearNaYin()},
-    {k:'თვე',g:eB.getMonthGan(),z:eB.getMonthZhi(),hid:eB.getMonthHideGan(),ny:eB.getMonthNaYin()},
-    {k:'დღე',g:eL.getDayGan(),z:eL.getDayZhi(),hid:eL.getDayHideGan(),ny:eL.getDayNaYin()}];
-  if(T)pil.push({k:'საათი',g:eL.getTimeGan(),z:eL.getTimeZhi(),hid:eL.getTimeHideGan(),ny:eL.getTimeNaYin()});
-  const dm=gi(pil[2].g);
-  /* element weights: visible stems 1, hidden stems 1 / .5 / .3 */
-  const W=[0,0,0,0,0];
-  pil.forEach(p=>{W[ganEl(gi(p.g))]+=1;p.hid.forEach((c,i)=>W[ganEl(gi(c))]+=[1,.5,.3][i]);});
-  const tot=W.reduce((a,b)=>a+b,0),dmE=ganEl(dm);
-  const sup=W[dmE]+W[(dmE+4)%5],strong=sup/tot>=0.45;
+  const raw=[['წელი',eB.getYearGan(),eB.getYearZhi()],['თვე',eB.getMonthGan(),eB.getMonthZhi()],['დღე',eL.getDayGan(),eL.getDayZhi()]];
+  if(T)raw.push(['საათი',eL.getTimeGan(),eL.getTimeZhi()]);
+  const pil=raw.map(([k,g,z])=>({k,g:gi(g),z:zi(z)}));
   let yun=null;try{yun=eB.getYun(sex,sect);}catch(e){}
-  return{P,T,pil,dm,W,tot,strong,sup,yun,loc,lon,tz};
+  return analyse({P,T,sex,pil,yun,loc,lon,tz});
 }
-function pillarHTML(c){
-  const order=[...c.pil].reverse(); /* traditional: hour · day · month · year */
-  return `<div class="pillars" style="grid-template-columns:repeat(${order.length},minmax(0,1fr))">`+order.map(p=>{
-    const g=gi(p.g),z=zi(p.z),isDM=p.k==='დღე';
-    const ss=isDM?'日主':shishen(c.dm,g);
+function analyse(c){
+  const pil=c.pil,dm=pil[2].g,dmE=ganEl(dm);
+  /* element weights: stems 1, hidden 1/.5/.3, month branch ×2 */
+  const W=[0,0,0,0,0];
+  pil.forEach((p,i)=>{if(i!==2)W[ganEl(p.g)]+=1;else W[ganEl(p.g)]+=1;HIDE[p.z].forEach((h,j)=>W[ganEl(gi(h))]+=[1,.5,.3][j]*(i===1?2:1));});
+  const tot=W.reduce((a,b)=>a+b,0);
+  const sup=W[dmE]+W[(dmE+4)%5]-1; /* exclude the day master itself */
+  const ratio=sup/(tot-1);
+  const deLing=[dmE,(dmE+4)%5].includes(ZHI_EL[pil[1].z]);
+  const strength=ratio>=0.6?'ძალიან ძლიერი':ratio>=0.48?'ძლიერი':ratio>=0.36?'დაბალანსებული':ratio>=0.2?'სუსტი':'ძალიან სუსტი (შესაძლო „მიმყოლი“ სტრუქტურა)';
+  const strong=ratio>=0.48;
+  const fav=strong?[gen(dmE),ctl(dmE),(dmE+3)%5]:[(dmE+4)%5,dmE];
+  const unfav=[0,1,2,3,4].filter(e=>!fav.includes(e));
+  const season=SEASON(pil[1].z);
+  const climate=[5,6,7].includes(pil[1].z)?4:[11,0,1].includes(pil[1].z)?1:-1;
+  /* structure: month branch main qi ten god (transparent hidden stem preferred) */
+  const mh=HIDE[pil[1].z].map(gi);const stems=pil.filter((p,i)=>i!==2).map(p=>p.g);
+  let sg=mh.find(x=>stems.includes(x));if(sg==null)sg=mh[0];
+  let struct=shishen(dm,sg);if(struct==='比肩')struct='建禄';if(struct==='劫财')struct='羊刃';
+  return Object.assign(c,{dm,dmE,W,tot,ratio,strength,strong,fav,unfav,deLing,season,climate,struct});
+}
+function stars(c){
+  const pil=c.pil,dm=c.dm,yb=pil[0].z,db=pil[2].z,res=pil.map(()=>[]);
+  const add=(i,k)=>{if(!res[i].includes(k))res[i].push(k);};
+  pil.forEach((p,i)=>{
+    if(NOBLE[dm].includes(p.z)||NOBLE[pil[0].g].includes(p.z))add(i,'noble');
+    if(WENCH[dm]===p.z)add(i,'wen');if(LU[dm]===p.z)add(i,'lu');if(YANGREN[dm]===p.z&&dm%2===0)add(i,'yr');
+    for(const base of [yb,db]){const t=trineOf(base);if(t<0)continue;if(PEACH[t]===p.z)add(i,'peach');if(HORSE[t]===p.z)add(i,'horse');if(CANOPY[t]===p.z)add(i,'canopy');if(GENERAL[t]===p.z&&i!==2)add(i,'general');}
+    if((((3-yb)%12)+12)%12===p.z)add(i,'hong');if((((9-yb)%12)+12)%12===p.z)add(i,'xi');
+  });
+  const di=gz60(pil[2].g,pil[2].z),xs=di-di%10,vb=[(xs+10)%12,(xs+11)%12];
+  pil.forEach((p,i)=>{if(i!==2&&vb.includes(p.z))add(i,'void');});
+  if(['庚辰','庚戌','壬辰','戊戌'].includes(GAN[pil[2].g]+ZHI[pil[2].z]))add(2,'kuigang');
+  return{res,vb};
+}
+function interactions(A,B,labelsA,labelsB){
+  /* A,B arrays of {g,z}; if B null → within A */
+  const out=[];const same=!B;B=B||A;labelsB=labelsB||labelsA;
+  for(let i=0;i<A.length;i++)for(let j=same?i+1:0;j<B.length;j++){
+    const a=A[i],b=B[j],la=labelsA[i],lb=labelsB[j];
+    const gk=pkey(a.g,b.g),zk=pkey(a.z,b.z);
+    if(GANHE[gk]!=null)out.push(['ok',`${la} ${GAN[a.g]} + ${lb} ${GAN[b.g]}`,`ღეროების შერწყმა (合) → ${EL[GANHE[gk]]}`,'კავშირი, მიზიდულობა; ორი ენერგია ერთ მიზანს ემსახურება.']);
+    if(pairIn(GANCHONG,a.g,b.g))out.push(['bad',`${la} ${GAN[a.g]} ↔ ${lb} ${GAN[b.g]}`,'ღეროების შეჯახება (冲)','აზრთა სხვადასხვაობა, გარე დაპირისპირება.']);
+    if(LIUHE[zk]!=null)out.push(['ok',`${la} ${ZHI[a.z]} + ${lb} ${ZHI[b.z]}`,`ექვსი ჰარმონია (六合) → ${EL[LIUHE[zk]]}`,'ფარული თანხმობა, დახმარება, კავშირი.']);
+    if(pairIn(CLASH,a.z,b.z))out.push(['bad',`${la} ${ZHI[a.z]} ↔ ${lb} ${ZHI[b.z]}`,'შეჯახება (冲)','ცვლილება, მოძრაობა, კონფლიქტი, განშორება ან გადაადგილება.']);
+    if(pairIn(HAI,a.z,b.z))out.push(['warn',`${la} ${ZHI[a.z]} × ${lb} ${ZHI[b.z]}`,'ზიანი (害)','ფარული უკმაყოფილება, ნდობის ნაკლებობა.']);
+    if(pairIn(PO,a.z,b.z))out.push(['warn',`${la} ${ZHI[a.z]} × ${lb} ${ZHI[b.z]}`,'ნგრევა (破)','შეფერხება, დაწყებულის რღვევა.']);
+    if(pairIn([[0,3]],a.z,b.z))out.push(['warn',`${la} ${ZHI[a.z]} × ${lb} ${ZHI[b.z]}`,'უზრდელობის დასჯა (子卯刑)','უხეშობა, ურთიერთობების დაძაბვა.']);
+    if(a.z===b.z&&SELFX.includes(a.z))out.push(['warn',`${la} ${ZHI[a.z]} = ${lb} ${ZHI[b.z]}`,'თვითდასჯა (自刑)','საკუთარ თავთან ბრძოლა, ზედმეტი თვითკრიტიკა.']);
+  }
+  /* trios within the combined set */
+  const all=same?A.map((x,i)=>[x.z,labelsA[i],1]):[...A.map((x,i)=>[x.z,labelsA[i],1]),...B.map((x,i)=>[x.z,labelsB[i],0])];
+  const has=z=>all.filter(x=>x[0]===z).sort((u,v)=>v[2]-u[2]);
+  const usesA=p=>same||p.some(x=>x.length&&x[0][2]===1);
+  for(const t of SANHE){const p=t.slice(0,3).map(has);const n=p.filter(x=>x.length).length;if(!usesA(p))continue;
+    if(n===3)out.push(['ok',p.map(x=>x[0][1]+' '+ZHI[x[0][0]]).join(' + '),`სამი ჰარმონია (三合) → ${EL[t[3]]}`,'ძლიერი ალიანსი — ელემენტი მძლავრად ძლიერდება.']);
+    else if(n===2&&p[1].length)out.push(['ok',p.filter(x=>x.length).map(x=>x[0][1]+' '+ZHI[x[0][0]]).join(' + '),`ნახევარი სამი ჰარმონია → ${EL[t[3]]}`,'ნაწილობრივი ალიანსი.']);}
+  for(const t of SANHUI){const p=t.slice(0,3).map(has);if(p.every(x=>x.length)&&usesA(p))out.push(['ok',p.map(x=>x[0][1]+' '+ZHI[x[0][0]]).join(' + '),`მიმართულების ერთობა (三会) → ${EL[t[3]]}`,'სეზონის სრული ძალა — ძალიან ძლიერი ელემენტი.']);}
+  for(const t of XING3){const p=t.slice(0,3).map(has);const n=p.filter(x=>x.length).length;if(n>=2&&usesA(p))out.push(['bad',p.filter(x=>x.length).map(x=>x[0][1]+' '+ZHI[x[0][0]]).join(' + '),t[3]+(n===3?'':' (ნაწილობრივი)'),'დაძაბულობა, სამართლებრივი/ჯანმრთელობის გამოწვევები, ურთიერთობის სიმძიმე.']);}
+  return out;
+}
+const RELCOL={ok:'#7fcf8f',bad:'#e86b6b',warn:'#e8c95a'};
+function pillarHTML(c,ST){
+  const order=c.pil.map((p,i)=>[p,i]).reverse();
+  return `<div class="pillars" style="grid-template-columns:repeat(${order.length},minmax(0,1fr))">`+order.map(([p,i])=>{
+    const isDM=i===2,ss=isDM?'日主':shishen(c.dm,p.g),st=stageOf(c.dm,p.z);
     return `<div class="pl${isDM?' dm':''}"><div class="ph">${p.k}</div><div class="ss">${SHISHEN[ss][0]}</div>
-      <div class="ch" style="color:${EL_COL[ganEl(g)]}">${p.g}</div><div class="kn">${GAN_KA[g]} · ${ganYang(g)?'+':'−'}${EL[ganEl(g)]}</div>
-      <div class="ch" style="color:${EL_COL[ZHI_EL[z]]};margin-top:6px">${p.z}</div><div class="kn">${ANIMAL_EMO[z]} ${ANIMAL[z]} · ${EL[ZHI_EL[z]]}</div>
-      <div class="hid">${p.hid.map(h=>`<span style="color:${EL_COL[ganEl(gi(h))]}" title="${SHISHEN[shishen(c.dm,gi(h))][0]}">${h} ${SHISHEN[shishen(c.dm,gi(h))][0].split(' ')[0]}</span>`).join('')}</div>
-      <div class="ny">${NAYIN[p.ny]||p.ny}<br><span style="opacity:.6">${p.ny}</span></div></div>`;}).join('')+`</div>`;
+      <div class="ch" style="color:${EL_COL[ganEl(p.g)]}">${GAN[p.g]}</div><div class="kn">${GAN_KA[p.g]} · ${ganYang(p.g)?'+':'−'}${EL[ganEl(p.g)]}</div>
+      <div class="ch" style="color:${EL_COL[ZHI_EL[p.z]]};margin-top:6px">${ZHI[p.z]}</div><div class="kn">${ANIMAL_EMO[p.z]} ${ANIMAL[p.z]}</div>
+      <div class="hid">${HIDE[p.z].map(h=>{const g=gi(h);return `<span style="color:${EL_COL[ganEl(g)]}">${h} ${SHISHEN[shishen(c.dm,g)][0].split(' ')[0]}</span>`;}).join('')}</div>
+      <div class="st">${STAGE[st]} ${STAGE_KA[st]}</div>
+      <div class="ny">${NAYIN[nayinOf(p.g,p.z)]}</div>
+      ${ST?`<div class="ksh">${ST.res[i].map(k=>`<span title="${SS_STAR[k][2]}">${SS_STAR[k][1]}</span>`).join('')}</div>`:''}</div>`;}).join('')+`</div>`;
 }
 function run(){
   $('err').textContent='';
+  if(typeof Solar==='undefined'){$('err').textContent='კალენდრის ბიბლიოთეკა ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი.';return;}
   const P=parseDate($('d1').value),T=parseTime($('t1').value);
   if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
   if(T===undefined){$('err').textContent='დრო ფორმატით HH:MM.';return;}
-  if(typeof Solar==='undefined'){$('err').textContent='კალენდრის ბიბლიოთეკა ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი.';return;}
-  const c=chart(P,T,+$('s1').value);
-  const dmE=ganEl(c.dm);
-  let h=`<div class="card">${pillarHTML(c)}
-    <div class="note" style="text-align:center;margin-top:12px">${fmtD(P)}${T?' · '+String(T.h).padStart(2,'0')+':'+String(T.mi).padStart(2,'0'):' · დრო უცნობია (საათის სვეტი არ ითვლება)'}${T&&c.lon!==null&&!isNaN(c.lon)?` · ჭეშმარიტი მზის დრო: ${String(c.loc.h).padStart(2,'0')}:${String(c.loc.mi).padStart(2,'0')}`:''} · წელი/თვე — ჯიეჩის ზუსტი მომენტით</div></div>
-  <div class="card"><div class="h">დღის ოსტატი · ${GAN[c.dm]} ${GAN_KA[c.dm]}</div>
-    <div class="txt"><b style="color:${EL_COL[dmE]}">${ganYang(c.dm)?'იან':'ინ'} ${EL[dmE]}</b> — ${DM_TXT[c.dm]}</div>
-    <div class="txt" style="margin-top:10px">ძალა: <b>${c.strong?'ძლიერი':'სუსტი'}</b> (მხარდაჭერა ${Math.round(c.sup/c.tot*100)}%). ${c.strong?`ხელსაყრელი ელემენტები — ის, რაც ენერგიას გამოხატავს და მიმართავს: <b>${EL[gen(dmE)]}</b>, <b>${EL[ctl(dmE)]}</b>, <b>${EL[(dmE+3)%5]}</b>.`:`ხელსაყრელი ელემენტები — ის, რაც კვებავს და ამაგრებს: <b>${EL[(dmE+4)%5]}</b> და <b>${EL[dmE]}</b>.`}</div></div>
+  C=chart(P,T,+$('s1').value);C2=null;
+  if(TAB==='compat'){const Q=parseDate($('d2').value),T2=parseTime($('t2').value);
+    if(!Q||T2===undefined){$('err').textContent='პარტნიორის თარიღი/დრო არასწორია.';}else C2=chart(Q,T2,+$('s2').value);}
+  LUCKSEL=null;render();
+}
+function render(){
+  if(TAB==='stats'){statsUI();return;}
+  if(!C){$('out').innerHTML='';return;}
+  const f={chart:viewChart,inter:viewInter,stars:viewStars,luck:viewLuck,read:viewRead,compat:viewCompat}[TAB];
+  $('out').innerHTML=f(C)+`<div class="card note">გამოთვლა: <b>lunar-javascript</b> (6tail, MIT) — ჯიეჩი ასტრონომიულად. წელი/თვე — დაბადების ზუსტ მომენტზე (UTC+8 გადაყვანით), დღე/საათი — ადგილობრივი ან ჭეშმარიტი მზის დროით. 1582 წლამდე თარიღები — იულიუსის კალენდრით.</div>`;
+  bindLuck();
+}
+function head(c){return `<div class="note" style="text-align:center;margin-top:12px">${fmtD(c.P)}${c.T?' · '+String(c.T.h).padStart(2,'0')+':'+String(c.T.mi).padStart(2,'0'):' · დრო უცნობია'}${c.T&&c.lon!==null&&!isNaN(c.lon)?` · ჭეშმარ. მზის დრო ${String(c.loc.h).padStart(2,'0')}:${String(c.loc.mi).padStart(2,'0')}`:''}</div>`;}
+function viewChart(c){
+  const ST=stars(c);
+  let h=`<div class="card">${pillarHTML(c,ST)}${head(c)}</div>
+  <div class="card"><div class="kv">
+    <div><div class="k">დღის ოსტატი</div><div class="v" style="color:${EL_COL[c.dmE]}">${GAN[c.dm]} ${GAN_KA[c.dm]}</div><div class="t">${ganYang(c.dm)?'იან':'ინ'} ${EL[c.dmE]}</div></div>
+    <div><div class="k">ძალა</div><div class="v" style="font-size:19px">${c.strength}</div><div class="t">მხარდაჭერა ${Math.round(c.ratio*100)}%${c.deLing?' · სეზონი ეხმარება (得令)':''}</div></div>
+    <div><div class="k">სტრუქტურა (格局)</div><div class="v" style="font-size:19px">${c.struct}格</div><div class="t">${STRUCT_KA(c.struct)}</div></div>
+    <div><div class="k">ხელსაყრელი ელემენტები</div><div class="v" style="font-size:18px">${c.fav.map(e=>`<span style="color:${EL_COL[e]}">${EL[e]}</span>`).join(' · ')}</div><div class="t">${c.climate>=0?`კლიმატი: საჭიროა ${EL[c.climate]} (调候)`:''}</div></div>
+  </div></div>
   <div class="card"><div class="h">ხუთი ელემენტის ბალანსი</div>`+
     c.W.map((w,i)=>`<div class="elbar"><span class="n" style="color:${EL_COL[i]}">${EL_ICO[i]} ${EL[i]}</span><div class="b"><i style="width:${w/Math.max(...c.W)*100}%;background:${EL_COL[i]}"></i></div><span class="v">${Math.round(w/c.tot*100)}%</span></div>`).join('')+
-    (c.W.some(w=>w===0)?`<div class="note" style="margin-top:10px"><b>აკლია:</b> ${c.W.map((w,i)=>w===0?EL_LACK[i]:'').filter(Boolean).join('<br>')}</div>`:'')+
-    `<div class="note" style="margin-top:8px">ხილული ღერო = 1, დაფარული ღეროები შტოში = 1 / 0.5 / 0.3.</div></div>`;
-  /* ten gods summary */
-  const cnt={};c.pil.forEach(p=>{if(p.k!=='დღე'){const s=shishen(c.dm,gi(p.g));cnt[s]=(cnt[s]||0)+1;}p.hid.forEach((x,i)=>{const s=shishen(c.dm,gi(x));cnt[s]=(cnt[s]||0)+(i?0.5:1);});});
-  h+=`<div class="card"><div class="h">ათი ღმერთი (十神)</div><div class="scroll"><table class="tbl"><tr><th>ღმერთი</th><th>წონა</th><th>მნიშვნელობა</th></tr>`+
-    Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<tr><td>${k} · ${SHISHEN[k][0]}</td><td>${v}</td><td class="note">${SHISHEN[k][1]}</td></tr>`).join('')+`</table></div></div>`;
-  /* luck pillars */
-  if(c.yun){const dy=c.yun.getDaYun(11),Y=new Date().getFullYear();let cur=null;
-    h+=`<div class="card"><div class="h">10-წლიანი იღბლის სვეტები (大运)</div>
-      <div class="note" style="margin-bottom:10px">პირველი სვეტი იწყება ${c.yun.getStartYear()} წლის, ${c.yun.getStartMonth()} თვისა და ${c.yun.getStartDay()} დღის ასაკში · მიმართულება: ${c.yun.isForward()?'წინ':'უკან'}. სვეტებზე ასაკი ჩინური წესით (虚岁 — დაბადებისას 1 წელი).</div><div class="lucks">`+
-      dy.slice(1).map(d=>{const now=Y>=d.getStartYear()&&Y<=d.getEndYear();if(now)cur=d;const gz=d.getGanZhi();
-        return `<div class="lk${now?' now':''}"><div class="c"><span style="color:${EL_COL[elOfChar(gz[0])]}">${gz[0]}</span><span style="color:${EL_COL[elOfChar(gz[1])]}">${gz[1]}</span></div>${d.getStartAge()}–${d.getEndAge()} წ.<br>${d.getStartYear()}<br><span style="color:rgba(232,226,213,.6)">${SHISHEN[shishen(c.dm,gi(gz[0]))][0].split(' ')[0]}</span></div>`;}).join('')+`</div>`;
-    if(cur){h+=`<div class="note" style="margin:12px 0 6px">მიმდინარე სვეტის წლები (流年):</div><div class="lucks">`+cur.getLiuNian().map(l=>{const gz=l.getGanZhi();return `<div class="lk${l.getYear()===Y?' now':''}"><div class="c" style="font-size:18px"><span style="color:${EL_COL[elOfChar(gz[0])]}">${gz[0]}</span><span style="color:${EL_COL[elOfChar(gz[1])]}">${gz[1]}</span></div>${l.getYear()}<br>${ANIMAL[zi(gz[1])]}</div>`;}).join('')+`</div>`;}
-    h+=`</div>`;}
-  /* partner */
-  const Bv=$('d2').value.trim();
-  if(Bv){const Q=parseDate(Bv),T2=parseTime($('t2').value);
-    if(!Q||T2===undefined){$('err').textContent='პარტნიორის თარიღი/დრო არასწორია.';}
-    else{const c2=chart(Q,T2,+$('s2').value);h+=compat(c,c2);}}
-  h+=`<div class="card note">გამოთვლა: <b>lunar-javascript</b> (6tail, MIT) — ასტრონომიული ჯიეჩი და იღბლის სვეტები. წელი და თვე ითვლება დაბადების ზუსტ მომენტზე (ჩინური სტანდარტით UTC+8 გადაყვანით), დღე და საათი — ადგილობრივი (ან ჭეშმარიტი მზის) დროით.</div>`;
-  $('out').innerHTML=h;
+    `<div class="wheel" style="margin-top:12px">${elWheel(c)}</div>
+    <div class="note" style="margin-top:8px">ღერო = 1, დაფარული ღეროები 1 / 0.5 / 0.3, თვის შტო ორმაგი წონით (სეზონის ძალა). ისრები: მწვანე — კვება (生), წითელი — კონტროლი (克).</div></div>`;
+  return h;
 }
-function compat(a,b){
-  const g1=a.dm,g2=b.dm,e1=ganEl(g1),e2=ganEl(g2),R=[];
-  const rel=elRel(e1,e2);
-  const relT={same:'ერთი ელემენტი — ერთმანეთს კარგად ესმით, მაგრამ შეიძლება კონკურენცია გაჩნდეს.',mother:'პარტნიორის ელემენტი შენსას კვებავს — ის შენი მხარდამჭერია.',child:'შენი ელემენტი პარტნიორისას კვებავს — შენ ხარ მისი მფარველი, მაგრამ ენერგიას ხარჯავ.',wealth:'შენი ელემენტი პარტნიორისას აკონტროლებს — კლასიკურად ხელსაყრელი კავშირი (კაცისთვის — „ცოლის ვარსკვლავი“).',enemy:'პარტნიორის ელემენტი შენსას აკონტროლებს — ზეწოლა ან სტრუქტურა (ქალისთვის — „ქმრის ვარსკვლავი“).'}[rel];
-  R.push(['დღის ოსტატები',`${GAN[g1]} ${EL[e1]} ↔ ${GAN[g2]} ${EL[e2]}: ${relT}`,'#c8a96e']);
-  if(pairIn(STEMCOMB,g1,g2))R.push(['ღეროების შერწყმა (天干合)','დღის ოსტატები ერთმანეთს „ერწყმის“ — ერთ-ერთი ყველაზე ძლიერი მიზიდულობის ნიშანი.','#7fcf8f']);
-  const yz=[zi(a.pil[0].z),zi(b.pil[0].z)],dz=[zi(a.pil[2].z),zi(b.pil[2].z)];
-  const ry=branchRel(...yz),rd=branchRel(...dz);
-  R.push([`წლის ნიშნები · ${ANIMAL[yz[0]]} ↔ ${ANIMAL[yz[1]]}`,ry[0]+' — '+ry[1],ry[2]]);
-  R.push([`დღის შტოები (მეუღლის სასახლე) · ${a.pil[2].z} ↔ ${b.pil[2].z}`,rd[0]+' — '+rd[1],rd[2]]);
-  const lackA=a.W.map((w,i)=>w/a.tot<0.1?i:-1).filter(i=>i>=0),giveB=lackA.filter(i=>b.W[i]/b.tot>=0.22);
-  const lackB=b.W.map((w,i)=>w/b.tot<0.1?i:-1).filter(i=>i>=0),giveA=lackB.filter(i=>a.W[i]/a.tot>=0.22);
-  if(giveB.length||giveA.length)R.push(['ელემენტების შევსება',(giveB.length?`პარტნიორი გაძლევს: <b>${giveB.map(i=>EL[i]).join(', ')}</b>. `:'')+(giveA.length?`შენ აძლევ: <b>${giveA.map(i=>EL[i]).join(', ')}</b>.`:''),'#7fcf8f']);
-  return `<div class="card"><div class="h">შეთავსება · ${fmtD(b.P)}</div>${pillarHTML(b)}<div style="margin-top:14px">`+
-    R.map(r=>`<div class="rel"><b style="color:${r[2]}">${r[0]}</b><div class="txt">${r[1]}</div></div>`).join('')+`</div></div>`;
+function elWheel(c){const R=130,cx=200,cy=170,pos=[0,1,2,3,4].map(i=>{const a=(-90+i*72)*Math.PI/180;return[cx+R*Math.cos(a),cy+R*Math.sin(a)];});
+  let s='';const mx=Math.max(...c.W);
+  for(let i=0;i<5;i++){const a=pos[i],b=pos[(i+1)%5],d=pos[(i+2)%5];
+    s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="rgba(127,207,143,.35)" stroke-width="1.5" marker-end="url(#ag)"/>`;
+    s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${d[0]}" y2="${d[1]}" stroke="rgba(232,107,107,.22)" stroke-width="1" stroke-dasharray="4 4"/>`;}
+  pos.forEach((p,i)=>{const r=18+30*c.W[i]/mx;s+=`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="${EL_COL[i]}22" stroke="${EL_COL[i]}" stroke-width="${i===c.dmE?3:1.5}"/><text x="${p[0]}" y="${p[1]+4}" text-anchor="middle" font-size="12" fill="#fff">${EL[i]}</text><text x="${p[0]}" y="${p[1]+18}" text-anchor="middle" font-size="10" fill="rgba(232,226,213,.7)">${Math.round(c.W[i]/c.tot*100)}%</text>`;});
+  return `<svg viewBox="0 0 400 340"><defs><marker id="ag" markerWidth="8" markerHeight="8" refX="40" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="rgba(127,207,143,.6)"/></marker></defs>${s}</svg>`;}
+const STRUCT_KA=s=>({'正官':'პირდაპირი ოფიცრის — წესრიგი, კარიერა','七杀':'შვიდი მკვლელის — ბრძოლა, ძალა','正财':'პირდაპირი სიმდიდრის — სტაბილური ფული','偏财':'არაპირდაპირი სიმდიდრის — ბიზნესი','正印':'პირდაპირი რესურსის — ცოდნა, მფარველობა','偏印':'არაპირდაპირი რესურსის — უჩვეულო ნიჭი','食神':'გემრიელი ღმერთის — შემოქმედება','伤官':'დამაზიანებელი ოფიცრის — ბრწყინვალე ნიჭი','建禄':'თვის კეთილდღეობის — საკუთარი ძალა','羊刃':'ვერძის დანის — ჭარბი ძალა'}[s]||'');
+function viewInter(c){
+  const L=c.pil.map(p=>p.k);const I=interactions(c.pil,null,L);
+  return `<div class="card">${pillarHTML(c)}</div><div class="card"><div class="h">ღეროებისა და შტოების ურთიერთქმედება</div>`+
+    (I.length?I.map(r=>`<div class="rel"><b style="color:${RELCOL[r[0]]}">${r[2]}</b> · <span class="note">${r[1]}</span><div class="txt">${r[3]}</div></div>`).join(''):'<div class="txt">რუკაში შეჯახება ან შერწყმა არ არის — ენერგია სტაბილურია.</div>')+
+    `<div class="note" style="margin-top:10px">სვეტების მნიშვნელობა: <b>წელი</b> — წინაპრები, ბავშვობა (0–15); <b>თვე</b> — მშობლები, კარიერა (16–30); <b>დღე</b> — შენ და მეუღლე (31–45); <b>საათი</b> — შვილები, სიბერე (46+). შეჯახება კონკრეტულ სვეტებს შორის ამ სფეროებს ეხება.</div></div>`;
+}
+function viewStars(c){
+  const ST=stars(c);const L=c.pil.map(p=>p.k);
+  let rows='';c.pil.forEach((p,i)=>ST.res[i].forEach(k=>rows+=`<div class="rel"><b style="color:var(--gold)">${SS_STAR[k][0]} · ${SS_STAR[k][1]}</b> <span class="note">— ${L[i]}ს სვეტში (${ZHI[p.z]})</span><div class="txt">${SS_STAR[k][2]}</div></div>`));
+  const stg=c.pil.map((p,i)=>{const s=stageOf(c.dm,p.z);return `<tr><td>${p.k}</td><td>${ZHI[p.z]} ${ANIMAL[p.z]}</td><td>${STAGE[s]} · ${STAGE_KA[s]}</td><td class="note">${STAGE_T[s]}</td></tr>`;}).join('');
+  return `<div class="card">${pillarHTML(c,ST)}</div><div class="card"><div class="h">სიმბოლური ვარსკვლავები (神煞)</div>${rows||'<div class="txt">განსაკუთრებული ვარსკვლავები არ არის.</div>'}
+    <div class="note" style="margin-top:8px">სიცარიელის (空亡) შტოები ამ დღის სვეტისთვის: <b>${ST.vb.map(b=>ZHI[b]+' '+ANIMAL[b]).join(', ')}</b>.</div></div>
+    <div class="card"><div class="h">12 სასიცოცხლო სტადია (十二长生) — დღის ოსტატი ყოველ შტოში</div><div class="scroll"><table class="tbl"><tr><th>სვეტი</th><th>შტო</th><th>სტადია</th><th>მნიშვნელობა</th></tr>${stg}</table></div></div>`;
+}
+function viewLuck(c){
+  if(!c.yun)return '<div class="card txt">იღბლის სვეტები ვერ გამოითვალა.</div>';
+  const dy=c.yun.getDaYun(11),Y=new Date().getFullYear();let cur=null;
+  const L=c.pil.map(p=>p.k);
+  let h=`<div class="card"><div class="h">10-წლიანი იღბლის სვეტები (大运)</div>
+    <div class="note" style="margin-bottom:10px">დაწყება: ${c.yun.getStartYear()} წ. ${c.yun.getStartMonth()} თვე ${c.yun.getStartDay()} დღე · მიმართულება: ${c.yun.isForward()?'წინ':'უკან'} · ასაკი ჩინური წესით (虚岁). დააჭირე სვეტს დეტალებისთვის.</div><div class="lucks">`+
+    dy.slice(1).map((d,i)=>{const now=Y>=d.getStartYear()&&Y<=d.getEndYear();if(now)cur=i+1;const gz=d.getGanZhi(),g=gi(gz[0]),z=zi(gz[1]);
+      return `<div class="lk${now?' now':''}${LUCKSEL===i+1?' sel':''}" data-l="${i+1}"><div class="c">${GZ(g,z)}</div>${d.getStartAge()}–${d.getEndAge()}<br>${d.getStartYear()}<br><span style="color:${c.fav.includes(ganEl(g))?'#7fcf8f':'#e8a0a0'}">${SHISHEN[shishen(c.dm,g)][0].split(' ')[0]}</span></div>`;}).join('')+`</div></div>`;
+  const sel=LUCKSEL||cur||1,d=dy[sel],gz=d.getGanZhi(),g=gi(gz[0]),z=zi(gz[1]);
+  const I=interactions([{g,z}],c.pil,['სვეტი'],L);
+  const good=(c.fav.includes(ganEl(g))?1:0)+(c.fav.includes(ZHI_EL[z])?1:0);
+  h+=`<div class="card"><div class="h">სვეტი ${d.getStartYear()}–${d.getEndYear()} · ${GAN[g]}${ZHI[z]}</div>
+    <div class="txt">ღერო <b style="color:${EL_COL[ganEl(g)]}">${GAN[g]} ${EL[ganEl(g)]}</b> — ${SHISHEN[shishen(c.dm,g)][0]}: ${SS_TXT[shishen(c.dm,g)]||''}</div>
+    <div class="txt" style="margin-top:6px">შტო <b style="color:${EL_COL[ZHI_EL[z]]}">${ZHI[z]} ${ANIMAL[z]}</b> — სტადია: ${STAGE_KA[stageOf(c.dm,z)]}. ${STAGE_T[stageOf(c.dm,z)]}</div>
+    <div class="txt" style="margin-top:6px">შეფასება: <b style="color:${good===2?'#7fcf8f':good===1?'#e8c95a':'#e86b6b'}">${good===2?'ხელსაყრელი ათწლეული':good===1?'შერეული':'გამოწვევების ათწლეული'}</b> (ხელსაყრელი ელემენტების მიხედვით).</div>
+    ${I.length?`<div class="note" style="margin-top:8px">ურთიერთქმედება ნატალურ რუკასთან:</div>`+I.map(r=>`<div class="rel"><b style="color:${RELCOL[r[0]]}">${r[2]}</b> · <span class="note">${r[1]}</span></div>`).join(''):''}</div>`;
+  /* annual pillars */
+  const ln=d.getLiuNian(10);
+  h+=`<div class="card"><div class="h">წლიური სვეტები (流年)</div><div class="scroll"><table class="tbl"><tr><th>წელი</th><th>სვეტი</th><th>ღმერთი</th><th>ურთიერთქმედება</th></tr>`+
+    ln.map(l=>{const gz=l.getGanZhi(),g=gi(gz[0]),z=zi(gz[1]);const I2=interactions([{g,z}],c.pil,['წელი'],L).filter(r=>r[0]!=='ok'||/შერწყმა|ჰარმონია/.test(r[2]));
+      return `<tr class="${l.getYear()===Y?'now':''}"><td>${l.getYear()}</td><td style="font-family:'Noto Serif SC',serif;font-size:16px">${GZ(g,z)} <span class="note">${ANIMAL[z]}</span></td><td style="color:${c.fav.includes(ganEl(g))?'#7fcf8f':'#e8a0a0'}">${SHISHEN[shishen(c.dm,g)][0]}</td><td class="note">${I2.slice(0,3).map(r=>`<span style="color:${RELCOL[r[0]]}">${r[2].split(' (')[0]}</span> ${r[1].split(' ').pop()}`).join('<br>')}</td></tr>`;}).join('')+`</table></div></div>`;
+  /* monthly pillars of current year */
+  let mrows='';for(let m=1;m<=12;m++){const lu=Solar.fromYmd(Y,m,20).getLunar();const gz=lu.getMonthInGanZhiExact(),g=gi(gz[0]),z=zi(gz[1]);
+    mrows+=`<tr class="${m===new Date().getMonth()+1?'now':''}"><td>${m}</td><td style="font-family:'Noto Serif SC',serif;font-size:15px">${GZ(g,z)}</td><td style="color:${c.fav.includes(ganEl(g))?'#7fcf8f':'#e8a0a0'}">${SHISHEN[shishen(c.dm,g)][0]}</td><td class="note">${interactions([{g,z}],c.pil,['თვე'],L).filter(r=>r[0]==='bad').map(r=>r[2].split(' (')[0]+' '+r[1].split(' ').pop()).join(', ')}</td></tr>`;}
+  h+=`<div class="card"><div class="h">${Y} წლის თვეები (流月)</div><div class="note" style="margin-bottom:6px">თვე იცვლება ჯიეჩით (~4–8 რიცხვი); ნაჩვენებია თვის 20 რიცხვის სვეტი.</div><div class="scroll"><table class="tbl"><tr><th>თვე</th><th>სვეტი</th><th>ღმერთი</th><th>შეჯახებები</th></tr>${mrows}</table></div></div>`;
+  return h;
+}
+function bindLuck(){document.querySelectorAll('.lk[data-l]').forEach(e=>e.onclick=()=>{LUCKSEL=+e.dataset.l;render();});}
+function viewRead(c){
+  const cnt={};c.pil.forEach((p,i)=>{if(i!==2){const s=shishen(c.dm,p.g);cnt[s]=(cnt[s]||0)+1;}HIDE[p.z].forEach((x,j)=>{const s=shishen(c.dm,gi(x));cnt[s]=(cnt[s]||0)+(j?0.5:1);});});
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+  const pct=c.W.map(w=>w/c.tot);const over=pct.map((p,i)=>p>0.32?i:-1).filter(i=>i>=0),lack=pct.map((p,i)=>p<0.06?i:-1).filter(i=>i>=0);
+  return `<div class="card"><div class="h">დღის ოსტატი · ${GAN[c.dm]} ${GAN_KA[c.dm]}</div><div class="txt">${DM_LONG[c.dm]}</div>
+    <div class="txt" style="margin-top:10px">ძალა: <b>${c.strength}</b>. ${c.strong?'ძლიერ ოსტატს სჭირდება გამოსავალი — შემოქმედება, ფული, პასუხისმგებლობა (ხელსაყრელია ის, რაც ენერგიას ხარჯავს).':'სუსტ ოსტატს სჭირდება მხარდაჭერა — სწავლა, მენტორები, მოკავშირეები (ხელსაყრელია ის, რაც კვებავს და ამაგრებს).'}</div></div>
+  <div class="card"><div class="h">სტრუქტურა · ${c.struct}格</div><div class="txt">${STRUCT_KA(c.struct)}. სტრუქტურა თვის შტოდან იკითხება — ის აჩვენებს ცხოვრების მთავარ „სცენას“: სად ვლინდება ადამიანი ყველაზე ბუნებრივად.</div></div>
+  <div class="card"><div class="h">ძლიერი ღმერთები შენს რუკაში</div>${top.slice(0,4).map(([k,v])=>`<div class="rel"><b style="color:var(--gold)">${k} · ${SHISHEN[k][0]}</b> <span class="note">(წონა ${v})</span><div class="txt">${SS_TXT[k]||SHISHEN[k][1]}</div></div>`).join('')}
+    ${['正官','七杀','正财','偏财','正印','偏印','食神','伤官'].filter(k=>!cnt[k]).length?`<div class="note" style="margin-top:8px">არ ჩანს: ${['正官','七杀','正财','偏财','正印','偏印','食神','伤官'].filter(k=>!cnt[k]).map(k=>SHISHEN[k][0]).join(', ')} — ეს თემები ცხოვრებაში უფრო იღბლის სვეტებით და წლებით შემოდის.</div>`:''}</div>
+  <div class="card"><div class="h">ელემენტების ჭარბი და ნაკლები</div>
+    ${over.map(i=>`<div class="rel"><b style="color:${EL_COL[i]}">${EL[i]} — ${Math.round(pct[i]*100)}%</b><div class="txt">${EL_MORE[i]}</div></div>`).join('')}
+    ${lack.map(i=>`<div class="rel"><b style="color:${EL_COL[i]}">${EL[i]} — ${Math.round(pct[i]*100)}% (აკლია)</b><div class="txt">${EL_LACK[i]}</div></div>`).join('')}
+    ${!over.length&&!lack.length?'<div class="txt">ელემენტები შედარებით თანაბრადაა განაწილებული — მოქნილი, ადაპტირებადი რუკა.</div>':''}</div>
+  <div class="card"><div class="h">სვეტები და ცხოვრების სფეროები</div>${c.pil.map((p,i)=>`<div class="rel"><b>${p.k} · ${GAN[p.g]}${ZHI[p.z]}</b><div class="txt">${['წინაპრები, საზოგადოება, ბავშვობა: ','მშობლები, კარიერის გარემო, ახალგაზრდობა: ','შენ და მეუღლის სასახლე, შუა ასაკი: ','შვილები, მოსწავლეები, სიბერე: '][i]}${SHISHEN[i===2?'日主':shishen(c.dm,p.g)][0]} ღეროში, ${ANIMAL[p.z]} (${STAGE_KA[stageOf(c.dm,p.z)]}) შტოში.</div></div>`).join('')}</div>`;
+}
+const EL_LACK=['ხე: ზრდა, მოთმინება, გეგმა — მწვანე ფერი, მცენარეები, აღმოსავლეთი.','ცეცხლი: ენთუზიაზმი, სიხარული, ხილვადობა — წითელი, სინათლე, სამხრეთი.','მიწა: სტაბილურობა, ნდობა, რუტინა — ყვითელი/ყავისფერი, ცენტრი.','ლითონი: სტრუქტურა, დისციპლინა, საზღვრები — თეთრი/ოქროსფერი, დასავლეთი.','წყალი: სიბრძნე, მოქნილობა, ინტუიცია — შავი/ლურჯი, ჩრდილოეთი.'];
+function viewCompat(a){
+  if(!C2)return `<div class="card txt" style="text-align:center">შეიყვანე პარტნიორის მონაცემები ზემოთ და დააჭირე „გამოთვლა“.</div>`;
+  const b=C2;const R=[];let score=50;
+  const rel=elRel(a.dmE,b.dmE);
+  const relT={same:'ერთი ელემენტი — ერთმანეთს კარგად ესმით, მაგრამ შეიძლება კონკურენცია გაჩნდეს.',mother:'პარტნიორის ელემენტი შენსას კვებავს — ის შენი მხარდამჭერია.',child:'შენი ელემენტი პარტნიორისას კვებავს — შენ მისი მფარველი ხარ.',wealth:'შენი ელემენტი პარტნიორისას აკონტროლებს — კაცისთვის კლასიკური „ცოლის ვარსკვლავი“.',enemy:'პარტნიორის ელემენტი შენსას აკონტროლებს — ქალისთვის კლასიკური „ქმრის ვარსკვლავი“.'}[rel];
+  score+={same:4,mother:8,child:5,wealth:6,enemy:2}[rel];
+  R.push(['ok','დღის ოსტატები',`${GAN[a.dm]} ${EL[a.dmE]} ↔ ${GAN[b.dm]} ${EL[b.dmE]}: ${relT}`]);
+  if(GANHE[pkey(a.dm,b.dm)]!=null){score+=12;R.push(['ok','დღის ოსტატების შერწყმა (天干合)','ერთ-ერთი ყველაზე ძლიერი მიზიდულობის ნიშანი — „ბედით დაკავშირებული“ წყვილი.']);}
+  const sp=branchRel(a.pil[2].z,b.pil[2].z);R.push([sp[2]==='#e86b6b'?'bad':'ok',`მეუღლის სასახლეები · ${ZHI[a.pil[2].z]} ↔ ${ZHI[b.pil[2].z]}`,sp[0]+' — '+sp[1]]);
+  score+=sp[2]==='#7fcf8f'?10:sp[2]==='#e86b6b'?-12:0;
+  const yr=branchRel(a.pil[0].z,b.pil[0].z);R.push([yr[2]==='#e86b6b'?'bad':'ok',`წლის ნიშნები · ${ANIMAL[a.pil[0].z]} ↔ ${ANIMAL[b.pil[0].z]}`,yr[0]+' — '+yr[1]]);
+  score+=yr[2]==='#7fcf8f'?6:yr[2]==='#e86b6b'?-6:0;
+  const giveB=a.fav.filter(e=>b.W[e]/b.tot>=0.22),giveA=b.fav.filter(e=>a.W[e]/a.tot>=0.22);
+  score+=giveB.length*5+giveA.length*5;
+  R.push([giveB.length&&giveA.length?'ok':'warn','ხელსაყრელი ელემენტების გაცვლა',`${giveB.length?`პარტნიორი გაძლევს შენთვის საჭირო ელემენტს: <b>${giveB.map(e=>EL[e]).join(', ')}</b>. `:'პარტნიორის რუკაში შენი ხელსაყრელი ელემენტები სუსტია. '}${giveA.length?`შენ აძლევ: <b>${giveA.map(e=>EL[e]).join(', ')}</b>.`:'შენს რუკაში მისი ხელსაყრელი ელემენტები სუსტია.'}`]);
+  /* spouse star */
+  const spouseStars=a.sex?['正财','偏财']:['正官','七杀'];
+  const bAsSpouse=spouseStars.includes(shishen(a.dm,b.dm));
+  if(bAsSpouse){score+=6;R.push(['ok','მეუღლის ვარსკვლავი',`პარტნიორის დღის ოსტატი შენთვის არის „${SHISHEN[shishen(a.dm,b.dm)][0]}“ — ტრადიციულად მეუღლის ვარსკვლავი.`]);}
+  const pa=stars(a).res.flat(),pb=stars(b).res.flat();if(pa.includes('peach')&&pb.includes('peach'))R.push(['ok','ორივეს აქვს ატმის ყვავილი','ძლიერი რომანტიკული მიზიდულობა.']);
+  const X=interactions(a.pil,b.pil,a.pil.map(p=>'შენი '+p.k),b.pil.map(p=>'მისი '+p.k));
+  score+=X.filter(r=>r[0]==='ok').length*2-X.filter(r=>r[0]==='bad').length*3;
+  score=Math.max(5,Math.min(98,Math.round(score)));
+  const col=score>=75?'#7fcf8f':score>=55?'#c8a96e':'#e86b6b';
+  return `<div class="card"><div class="note" style="text-align:center;margin-bottom:6px">შენ</div>${pillarHTML(a)}<div class="note" style="text-align:center;margin:12px 0 6px">პარტნიორი</div>${pillarHTML(b)}</div>
+   <div class="card" style="text-align:center"><div class="big" style="color:${col}">${score}%</div><div class="sub">${score>=75?'ძალიან ხელსაყრელი':score>=55?'კარგი, მუშაობით':'რთული, მაგრამ გამზრდელი'}</div></div>
+   <div class="card"><div class="h">ძირითადი ფაქტორები</div>${R.map(r=>`<div class="rel"><b style="color:${RELCOL[r[0]]}">${r[1]}</b><div class="txt">${r[2]}</div></div>`).join('')}</div>
+   <div class="card"><div class="h">სვეტებს შორის ურთიერთქმედება (${X.length})</div>${X.map(r=>`<div class="rel"><b style="color:${RELCOL[r[0]]}">${r[2]}</b> · <span class="note">${r[1]}</span></div>`).join('')||'<div class="txt">პირდაპირი ურთიერთქმედება არ არის.</div>'}</div>`;
+}
+
+/* ════════ STATISTICS (fast engine, random sampling) ════════ */
+let SC=[];
+const SC_TYPES=[['dm','დღის ოსტატი',GAN.split('').map((c,i)=>[i,c+' '+GAN_KA[i]+' ('+(ganYang(i)?'+':'−')+EL[ganEl(i)]+')'])],
+ ['ya','წლის ცხოველი',ZHI.split('').map((c,i)=>[i,ANIMAL[i]])],['mz','თვის შტო',ZHI.split('').map((c,i)=>[i,c+' '+ANIMAL[i]])],
+ ['lack','აკლია ელემენტი',EL.map((e,i)=>[i,e])],['top','წამყვანი ელემენტი',EL.map((e,i)=>[i,e])],
+ ['str','დღის ოსტატის ძალა',[[0,'სუსტი'],[1,'დაბალანსებული'],[2,'ძლიერი']]],['clash','რუკაში შეჯახება',[[1,'არის'],[0,'არ არის']]],
+ ['struct','სტრუქტურა',['正官','七杀','正财','偏财','正印','偏印','食神','伤官','建禄','羊刃'].map(k=>[k,k+' '+(SHISHEN[k]?SHISHEN[k][0]:k==='建禄'?'კეთილდღეობა':'ვერძის დანა')])]];
+function fastFeat(ix){
+  const pil=ix.map(i=>({g:i%10,z:i%12}));const c=analyse({pil});
+  const lack=c.W.map((w,i)=>w/c.tot<0.04?1:0);const top=c.W.indexOf(Math.max(...c.W));
+  let clash=0;for(let i=0;i<4;i++)for(let j=i+1;j<4;j++)if(pairIn(CLASH,pil[i].z,pil[j].z))clash=1;
+  return{dm:c.dm,ya:pil[0].z,mz:pil[1].z,lack,top,str:c.ratio>=0.48?2:c.ratio>=0.36?1:0,clash,struct:c.struct,W:c.W.map(w=>w/c.tot)};
+}
+const featVal=(f,t,v)=>t==='lack'?f.lack[v]===1:String(f[t])===String(v);
+function statsUI(){
+  if(!$('st-run')){$('out').innerHTML=`<div class="card"><div class="h" style="text-align:center">სტატისტიკა · შემთხვევითი ნიმუში</div>
+    <div class="row" style="margin-bottom:10px"><span class="note">წლები</span><input class="in" id="st-y0" value="1" style="width:80px;text-align:center"><span class="note">—</span><input class="in" id="st-y1" value="9999" style="width:80px;text-align:center">
+    <select class="sel" id="st-n"><option value="50000">50 000 მომენტი</option><option value="200000" selected>200 000</option><option value="500000">500 000</option></select></div>
+    <div id="st-conds"></div><div class="row"><span class="btn" id="st-add" style="padding:6px 12px;font-size:9.5px">+ პირობა</span><span class="btn" id="st-run">გამოთვლა</span></div>
+    <div class="progb" id="st-pb" style="display:none"><i></i></div>
+    <div class="note" style="text-align:center;margin-top:10px">ყოველი მომენტი — შემთხვევითი თარიღი და საათი არჩეულ დიაპაზონში. პირველი პირობა მთავარია, დანარჩენი „და“-თი ემატება. პირობის სტრიქონი აჩვენებს <span style="color:#7fcfe8">რეალურ % მთელ ნიმუშში</span>; დანარჩენი — % პირობის შიგნით და ↑↓ ცვლილება.</div></div><div id="st-out"></div>`;
+    $('st-add').onclick=()=>{SC.push({t:'dm',v:0});drawSC();};$('st-run').onclick=runStats;drawSC();}
+}
+function drawSC(){$('st-conds').innerHTML=SC.map((c,i)=>`<div class="cond"><span class="tg">${i?'და':'მთავარი'}</span><select class="sel" data-i="${i}" data-f="t">${SC_TYPES.map(t=>`<option value="${t[0]}"${t[0]===c.t?' selected':''}>${t[1]}</option>`).join('')}</select>
+  <select class="sel" data-i="${i}" data-f="v">${SC_TYPES.find(t=>t[0]===c.t)[2].map(o=>`<option value="${o[0]}"${String(o[0])===String(c.v)?' selected':''}>${o[1]}</option>`).join('')}</select><span class="note" style="cursor:pointer;font-size:16px" data-x="${i}">×</span></div>`).join('');
+  $('st-conds').querySelectorAll('select').forEach(s=>s.onchange=()=>{const c=SC[+s.dataset.i];if(s.dataset.f==='t'){c.t=s.value;c.v=SC_TYPES.find(t=>t[0]===c.t)[2][0][0];drawSC();}else c.v=s.value;});
+  $('st-conds').querySelectorAll('[data-x]').forEach(x=>x.onclick=()=>{SC.splice(+x.dataset.x,1);drawSC();});}
+function runStats(){
+  let y0=Math.max(1,Math.round(+$('st-y0').value)||1),y1=Math.min(9999,Math.round(+$('st-y1').value)||9999);if(y0>y1)[y0,y1]=[y1,y0];
+  const N=+$('st-n').value,conds=SC.map(c=>({...c}));
+  const B={},Cn={};SC_TYPES.forEach(t=>{B[t[0]]={};Cn[t[0]]={};});let n=0,nc=0;const Wb=[0,0,0,0,0],Wc=[0,0,0,0,0];
+  const rnd=Math.random,pb=$('st-pb');pb.style.display='block';let done=0;const CH=10000;
+  (function step(){
+    for(let k=0;k<CH&&done<N;k++,done++){
+      const y=y0+Math.floor(rnd()*(y1-y0+1)),m=1+Math.floor(rnd()*12),d=1+Math.floor(rnd()*dimOf(y,m)),h=Math.floor(rnd()*24),mi=Math.floor(rnd()*60);
+      const f=fastFeat(BZF.pillars(y,m,d,h,mi,1));n++;
+      for(const t of SC_TYPES){const k2=t[0];if(k2==='lack'){f.lack.forEach((v,i)=>{if(v)B.lack[i]=(B.lack[i]||0)+1;});}else B[k2][f[k2]]=(B[k2][f[k2]]||0)+1;}
+      f.W.forEach((w,i)=>Wb[i]+=w);
+      if(conds.every(c=>featVal(f,c.t,c.v))){nc++;for(const t of SC_TYPES){const k2=t[0];if(k2==='lack'){f.lack.forEach((v,i)=>{if(v)Cn.lack[i]=(Cn.lack[i]||0)+1;});}else Cn[k2][f[k2]]=(Cn[k2][f[k2]]||0)+1;}f.W.forEach((w,i)=>Wc[i]+=w);}
+    }
+    pb.firstChild.style.width=(done/N*100)+'%';
+    if(done<N){setTimeout(step,0);return;}
+    pb.style.display='none';showStats({n,nc,B,Cn,Wb,Wc,conds,y0,y1});
+  })();
+}
+function showStats(S){
+  const has=S.conds.length>0,NN=has?S.nc:S.n,CC=has?S.Cn:S.B;
+  const lift=(c,b)=>{if(!has||!b)return '';const r=c/b;if(Math.abs(r-1)<0.08)return '<span class="lift" style="opacity:.4">≈</span>';return r>1?`<span class="lift up">↑${r.toFixed(1)}×</span>`:`<span class="lift dn">↓${r.toFixed(2)}×</span>`;};
+  const fp=p=>p>=10?p.toFixed(1):p>=1?p.toFixed(2):p>0?p.toFixed(3):'0';
+  let h=`<div class="card"><div class="kv"><div><div class="k">დიაპაზონი</div><div class="v" style="font-size:22px">${S.y0}–${S.y1}</div></div><div><div class="k">ნიმუში</div><div class="v" style="font-size:22px">${S.n.toLocaleString('en-US')}</div></div>
+    ${has?`<div><div class="k">პირობას აკმაყოფილებს</div><div class="v" style="font-size:22px">${fp(S.nc/S.n*100)}%</div><div class="t">${S.conds.map(c=>{const t=SC_TYPES.find(x=>x[0]===c.t);return t[1]+': '+t[2].find(o=>String(o[0])===String(c.v))[1];}).join(' · ')}</div></div>`:''}</div></div>`;
+  if(has&&!S.nc){$('st-out').innerHTML=h+'<div class="card txt">ამ პირობებით შემთხვევა არ მოიძებნა.</div>';return;}
+  for(const t of SC_TYPES){const condRow=has&&S.conds.some(c=>c.t===t[0]);
+    const rows=t[2].map(o=>{const k=o[0];const b=(S.B[t[0]][k]||0)/S.n*100,c=(CC[t[0]][k]||0)/NN*100;
+      const sel=condRow&&S.conds.some(cc=>cc.t===t[0]&&String(cc.v)===String(k));
+      const v=condRow?b:c;return {o,v,b,c,sel};});
+    const mx=Math.max(...rows.map(r=>r.v));
+    h+=`<div class="card"><div class="h">${t[1]}${condRow?' <span style="color:#7fcfe8">· პირობა — მთელი ნიმუში</span>':''}</div>`+rows.map(r=>`<div class="elbar"><span class="n" style="width:170px;${r.sel?'color:#7fcfe8':''}">${r.o[1]}</span><div class="b"><i style="width:${mx?r.v/mx*100:0}%;background:${condRow?(r.sel?'#7fcfe8':'rgba(232,226,213,.25)'):'var(--gold)'}"></i></div><span class="v" style="width:74px">${fp(r.v)}%${condRow?'':lift(r.c,r.b)}</span></div>`).join('')+`</div>`;}
+  const Wv=(has?S.Wc:S.Wb).map(w=>w/NN*100);
+  h+=`<div class="card"><div class="h">ელემენტების საშუალო წილი</div>${Wv.map((w,i)=>`<div class="elbar"><span class="n" style="color:${EL_COL[i]}">${EL[i]}</span><div class="b"><i style="width:${w/Math.max(...Wv)*100}%;background:${EL_COL[i]}"></i></div><span class="v" style="width:74px">${w.toFixed(1)}%${lift(w,S.Wb[i]/S.n*100)}</span></div>`).join('')}</div>
+   <div class="card note">სწრაფი ძრავა: დღის სვეტი — იულიუსის დღის რიცხვით, თვე/წელი — მზის გრძედით (მეუსი + ΔT), შედარებულია lunar-javascript-თან: 1–9999 წლებში თვის სვეტის დამთხვევა ≥99.7%, დანარჩენი — 100%. „აკლია“ = ელემენტის წილი &lt;4%; ძალა: სუსტი &lt;36%, ძლიერი ≥48% მხარდაჭერა.</div>`;
+  $('st-out').innerHTML=h;
 }
 </script>
 </body>
-</html>bazi
+</html>
