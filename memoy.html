@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>მეხსიერების ბადე · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(120,70,200,.13),transparent 60%),var(--void);color:var(--ink);
+  font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
+.page{max-width:760px;margin:0 auto;padding:28px 16px 60px}
+header{text-align:center;margin-bottom:18px;position:relative}
+.back{position:absolute;left:0;top:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.75;text-decoration:none;
+  border:1px solid var(--border);border-radius:3px;padding:6px 11px}
+.back:hover{opacity:1;border-color:var(--border-h)}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5vw,38px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px;margin-top:2px}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.hud div{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 6px;text-align:center}
+.hud b{display:block;font-family:'Cinzel',serif;font-size:20px;color:var(--gold-lt);font-weight:400;line-height:1.2}
+.hud span{font-size:10px;color:var(--ink-dim);letter-spacing:.5px}
+.tbar{height:5px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:12px}
+.tbar i{display:block;height:100%;background:linear-gradient(90deg,#9a7028,var(--gold-lt));width:100%;transition:width .2s linear}
+.tbar.low i{background:linear-gradient(90deg,#a03a30,var(--bad))}
+.msg{text-align:center;font-size:13.5px;color:var(--ink-mid);min-height:24px;margin-bottom:10px}
+.msg b{color:var(--gold-lt);font-weight:400}
+.stage{position:relative;width:min(100%,560px);aspect-ratio:1;margin:0 auto}
+.board{position:absolute;inset:0;display:grid;gap:var(--g,6px);padding:var(--g,6px);background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  touch-action:manipulation;user-select:none}
+.board.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.cell{position:relative;border-radius:var(--r,8px);background:var(--raised);border:1px solid rgba(201,168,76,.10);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,transform .1s}
+.board.input .cell:hover{border-color:var(--border-h)}
+.board.input .cell:active{transform:scale(.94)}
+.cell .o{position:absolute;inset:14%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--fs,26px);
+  color:#120c02;background:radial-gradient(circle at 35% 30%,#fff6d8,var(--gold) 55%,#7a5a1e);box-shadow:0 0 calc(var(--fs,26px)*.7) rgba(236,213,154,.55);
+  transform:scale(0)}
+.cell.show .o{transform:scale(1);transition:transform .22s cubic-bezier(.3,1.6,.5,1)}
+.cell.hit{background:rgba(95,207,138,.16);border-color:rgba(95,207,138,.6)}
+.cell.hit .o{transform:scale(.82);background:radial-gradient(circle at 35% 30%,#e9fff0,var(--ok) 55%,#2a7a4a);box-shadow:0 0 14px rgba(95,207,138,.5)}
+.cell.miss{background:rgba(226,104,92,.2);border-color:var(--bad)}
+.cell.miss::after{content:'✕';color:var(--bad);font-size:var(--fs,26px)}
+.cell.lost .o{transform:scale(.7);opacity:.55}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;
+  background:rgba(8,6,18,.92);border:1px solid var(--border-h);border-radius:12px;backdrop-filter:blur(3px);z-index:3;overflow:auto;justify-content:safe center}
+.overlay[hidden]{display:none}
+.overlay h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
+.overlay p{font-size:13px;color:var(--ink-mid);max-width:420px}
+.big{font-family:'Cinzel',serif;font-size:52px;color:var(--gold-lt);line-height:1}
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:11px 22px;font-family:'Cinzel',serif;
+  font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:none;color:var(--gold);border:1px solid var(--border-h);font-weight:400}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.seg button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:5px 12px;font:inherit;font-size:12px;cursor:pointer}
+.seg button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:420px}
+.stats div{border:1px solid var(--border);border-radius:8px;padding:7px 4px}
+.stats b{display:block;font-family:'Cinzel',serif;font-size:18px;color:var(--gold-lt);font-weight:400}
+.stats span{font-size:10px;color:var(--ink-dim)}
+.rec{color:var(--ok);font-size:13px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:16px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.panel p,.panel li{font-size:12.5px;color:var(--ink-mid)}
+.panel ul{padding-left:18px}
+.hist{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:6px}
+.hist i{flex:1;max-width:26px;background:linear-gradient(0deg,#7a5a1e,var(--gold));border-radius:3px 3px 0 0;position:relative;min-height:3px}
+.hist i span{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--ink-dim);font-style:normal}
+.lv{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.lv span{font-size:10.5px;border:1px solid var(--border);border-radius:10px;padding:1px 7px;color:var(--ink-dim)}
+.lv span.on{border-color:var(--gold);color:var(--gold-lt)}
+.opts{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:12px;color:var(--ink-mid)}
+.opts label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.opts input{accent-color:var(--gold)}
+@media(max-width:600px){.overlay{gap:8px;padding:12px}.overlay p{font-size:11.5px}.stats{gap:5px}.stats div{padding:4px 2px}.big{font-size:36px}.overlay .btn{padding:9px 18px}.stats b{font-size:15px}.overlay h2{font-size:17px}.back{position:static;display:inline-block;margin-bottom:10px}.hud b{font-size:17px}.big{font-size:42px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <h1>მეხსიერების ბადე</h1>
+  <div class="sub">ვიზუალურ-სივრცითი მეხსიერება · 3×3 → 10×10 · ერთი წუთი</div>
+</header>
+
+<div class="hud">
+  <div><b id="h-time">60</b><span>წამი</span></div>
+  <div><b id="h-score">0</b><span>ქულა</span></div>
+  <div><b id="h-grid">3×3</b><span>ბადე</span></div>
+  <div><b id="h-obj">3</b><span>ობიექტი</span></div>
+</div>
+<div class="tbar" id="tbar"><i id="tfill"></i></div>
+<div class="msg" id="msg">დაიმახსოვრე, სად გამოჩნდება ობიექტები, და მერე მონიშნე ის უჯრები.</div>
+
+<div class="stage">
+  <div class="board" id="board"></div>
+  <div class="overlay" id="ov"></div>
+</div>
+
+<div class="opts">
+  <label><input type="checkbox" id="o-snd" checked> ხმა</label>
+  <label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label>
+</div>
+
+<div class="panel">
+  <h3>✦ როგორ ვითამაშოთ</h3>
+  <ul>
+    <li>ბადეზე რამდენიმე წამით ჩნდება ოქროს ობიექტები, მერე ქრება.</li>
+    <li>მონიშნე ყველა უჯრა, სადაც ობიექტი იყო — თანმიმდევრობას მნიშვნელობა არ აქვს.</li>
+    <li>სწორი რაუნდი → ობიექტი ემატება; როცა ბადე „ივსება“, ბადე იზრდება: 3×3 → 4×4 → … → 10×10.</li>
+    <li>შეცდომა → რაუნდი მთავრდება, აჩვენებს დარჩენილ ადგილებს და ერთი საფეხურით უკან გადადის.</li>
+    <li>ქულა = სწორი უჯრა × საფეხური, + ბონუსი უშეცდომო რაუნდზე. დრო: 60 წამი (ჩვენების დროს ტაიმერი ჩერდება).</li>
+  </ul>
+  <div class="lv" id="lvmap"></div>
+</div>
+
+<div class="panel">
+  <h3>✦ შენი შედეგები</h3>
+  <div id="best" style="font-size:12.5px;color:var(--ink-mid)"></div>
+  <div class="hist" id="hist"></div>
+</div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+/* ── levels: grid size n, objects m. Each grid holds two-three steps, then grows. ── */
+const LEVELS=[];
+[[3,[3,4]],[4,[4,5,6]],[5,[6,7,8]],[6,[8,9,10]],[7,[10,11,12]],[8,[12,13,14]],[9,[14,15,16]],[10,[16,17,18,19,20,22,24]]]
+  .forEach(([n,ms])=>ms.forEach(m=>LEVELS.push({n,m})));
+const GLYPH=['☉','☽','☿','♀','♂','♃','♄','♅','♆','♇','✦','✧'];
+const TIME=60;
+const S={mode:'time',lv:0,score:0,left:TIME,running:false,phase:'idle',targets:new Set(),hits:new Set(),
+  rounds:0,perfect:0,taps:0,good:0,maxLv:0,timer:null,last:0};
+const store={get(k,d){try{const v=localStorage.getItem('magnus_mem_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('magnus_mem_'+k,JSON.stringify(v));}catch(e){}}};
+
+/* ── sound & vibration ── */
+let AC=null;
+function tone(f,d=.09,type='sine',v=.12){if(!$('o-snd').checked)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d);}catch(e){}}
+const vib=p=>{if($('o-vib').checked&&navigator.vibrate)try{navigator.vibrate(p);}catch(e){}};
+
+/* ── board ── */
+function build(n){
+  const B=$('board');B.style.gridTemplateColumns=`repeat(${n},1fr)`;B.style.gridTemplateRows=`repeat(${n},1fr)`;
+  const W=B.clientWidth||400,gap=n<=5?6:n<=7?5:4,cell=(W-gap*(n+1))/n;
+  B.style.setProperty('--g',gap+'px');B.style.setProperty('--r',Math.max(4,cell*.16)+'px');B.style.setProperty('--fs',Math.max(11,cell*.42)+'px');
+  B.innerHTML='';for(let i=0;i<n*n;i++){const c=document.createElement('div');c.className='cell';c.dataset.i=i;
+    c.innerHTML=`<div class="o">${GLYPH[Math.floor(Math.random()*GLYPH.length)]}︎</div>`;
+    c.addEventListener('pointerdown',e=>{e.preventDefault();tap(i);});B.appendChild(c);}
+}
+const cells=()=>$('board').children;
+function hud(){
+  const L=LEVELS[S.lv];$('h-score').textContent=S.score;$('h-grid').textContent=`${L.n}×${L.n}`;$('h-obj').textContent=L.m;
+  if(S.mode==='time'){$('h-time').textContent=Math.ceil(S.left);$('tfill').style.width=(S.left/TIME*100)+'%';$('tbar').classList.toggle('low',S.left<=10);}
+  else{$('h-time').textContent='∞';$('tfill').style.width='100%';}
+  $('lvmap').innerHTML='საფეხურები: '+LEVELS.map((l,i)=>`<span class="${i===S.lv?'on':''}">${l.n}×${l.n}·${l.m}</span>`).join('');
+}
+/* ── timer runs only while the player is recalling ── */
+function startClock(){stopClock();S.last=performance.now();S.timer=setInterval(()=>{const t=performance.now();
+  if(S.phase==='input'&&S.mode==='time'){S.left-=Math.min(.25,(t-S.last)/1000);if(S.left<=0){S.left=0;hud();finish();return;}}S.last=t;hud();},100);}
+function stopClock(){clearInterval(S.timer);S.timer=null;}
+
+function round(){
+  if(!S.running)return;
+  const L=LEVELS[S.lv];build(L.n);
+  const all=[...Array(L.n*L.n).keys()];for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
+  S.targets=new Set(all.slice(0,L.m));S.hits=new Set();S.phase='show';
+  $('board').classList.remove('input');hud();
+  const show=Math.min(3200,900+L.m*110);
+  $('msg').innerHTML=`დაიმახსოვრე — <b>${L.m}</b> ობიექტი`;
+  setTimeout(()=>{if(!S.running)return;S.targets.forEach(i=>cells()[i].classList.add('show'));tone(660,.07);},250);
+  setTimeout(()=>{if(!S.running)return;S.targets.forEach(i=>cells()[i].classList.remove('show'));
+    S.phase='input';S.last=performance.now();$('board').classList.add('input');
+    $('msg').innerHTML=`მონიშნე <b>${L.m}</b> უჯრა`;},250+show);
+}
+function tap(i){
+  if(S.phase!=='input')return;const c=cells()[i];if(c.classList.contains('hit'))return;
+  S.taps++;
+  if(S.targets.has(i)){
+    S.hits.add(i);S.good++;c.classList.add('hit','show');S.score+=10+S.lv*2;tone(520+S.hits.size*40,.06,'triangle');vib(12);
+    $('msg').innerHTML=`<b>${S.hits.size}</b> / ${S.targets.size}`;hud();
+    if(S.hits.size===S.targets.size){S.phase='wait';S.rounds++;S.perfect++;const bonus=20+S.lv*10;S.score+=bonus;
+      $('msg').innerHTML=`✔ სწორია! +${bonus} ბონუსი`;tone(880,.12,'triangle');setTimeout(()=>tone(1175,.15,'triangle'),110);
+      S.lv=Math.min(LEVELS.length-1,S.lv+1);S.maxLv=Math.max(S.maxLv,S.lv);hud();setTimeout(round,650);}
+  }else{
+    S.phase='wait';S.rounds++;c.classList.add('miss');$('board').classList.add('shake');tone(180,.25,'sawtooth',.08);vib([60,40,60]);
+    S.targets.forEach(t=>{if(!S.hits.has(t))cells()[t].classList.add('show','lost');});
+    $('msg').innerHTML=`✕ შეცდომა — დარჩენილი ადგილები ნაჩვენებია`;
+    if(S.mode==='lives'){S.lives--;$('h-time').textContent='♥'.repeat(Math.max(0,S.lives));}
+    S.lv=Math.max(0,S.lv-1);
+    setTimeout(()=>{$('board').classList.remove('shake');if(S.mode==='lives'&&S.lives<=0){finish();return;}round();},1200);
+  }
+}
+function start(){
+  S.running=true;S.score=0;S.left=TIME;S.rounds=0;S.perfect=0;S.taps=0;S.good=0;
+  S.lv=Math.max(0,Math.min(LEVELS.length-1,+($('ov').dataset.startLv||0)));S.maxLv=S.lv;S.lives=3;
+  $('ov').hidden=true;hud();if(S.mode==='lives')$('h-time').textContent='♥♥♥';
+  startClock();round();
+}
+function finish(){
+  if(!S.running)return;S.running=false;S.phase='idle';stopClock();$('board').classList.remove('input');
+  const L=LEVELS[S.maxLv],acc=S.taps?Math.round(S.good/S.taps*100):0;
+  const key=S.mode==='time'?'best':'best_l',best=store.get(key,{score:0,lv:0});
+  const rec=S.score>best.score;if(rec)store.set(key,{score:S.score,lv:S.maxLv,d:Date.now()});
+  if(S.mode==='time'){const h=store.get('hist',[]);h.push({s:S.score,lv:S.maxLv,d:Date.now()});store.set('hist',h.slice(-20));}
+  tone(523,.15);setTimeout(()=>tone(659,.15),150);setTimeout(()=>tone(784,.25),300);
+  overlay(`<h2>${S.mode==='time'?'დრო ამოიწურა':'სიცოცხლეები ამოიწურა'}</h2><div class="big">${S.score}</div>
+    ${rec?'<div class="rec">✦ ახალი რეკორდი!</div>':`<div style="font-size:12px;color:var(--ink-dim)">რეკორდი: ${best.score}</div>`}
+    <div class="stats"><div><b>${L.n}×${L.n}</b><span>მაქს. ბადე</span></div><div><b>${L.m}</b><span>მაქს. ობიექტი</span></div><div><b>${acc}%</b><span>სიზუსტე</span></div>
+      <div><b>${S.rounds}</b><span>რაუნდი</span></div><div><b>${S.perfect}</b><span>უშეცდომო</span></div><div><b>${S.good}</b><span>სწორი უჯრა</span></div></div>
+    <p>${verdict(L)}</p>
+    <div class="row"><button class="btn" id="b-again">↻ თავიდან</button></div>`);
+  $('b-again').onclick=()=>menu();
+  renderBest();
+}
+function verdict(L){
+  if(L.m<=4)return 'კარგი დასაწყისია. რეგულარული ვარჯიშით 2–3 კვირაში ბადე შესამჩნევად გაიზრდება.';
+  if(L.m<=7)return 'საშუალო დონე — მოკლევადიანი ვიზუალური მეხსიერება ჩვეულებრივ 4–7 ობიექტს იტევს.';
+  if(L.m<=10)return 'ძალიან კარგი — საშუალოზე მეტ ობიექტს იმახსოვრებ. სცადე ყურადღება მთლიან ფიგურაზე, არა ცალკეულ წერტილებზე.';
+  return 'შესანიშნავი შედეგი! ამდენი ობიექტი მხოლოდ „ნიმუშების“ დამახსოვრებით გამოდის — შენ უკვე ამას აკეთებ.';
+}
+function overlay(html){const o=$('ov');o.innerHTML=html;o.hidden=false;}
+function menu(){
+  S.running=false;stopClock();const best=store.get('best',{score:0,lv:0});
+  const startOpts=[0,...[4,7,10,13,16].filter(i=>i<=best.lv)];
+  overlay(`<h2>მეხსიერების ბადე</h2><p>ობიექტები გამოჩნდება და გაქრება — მონიშნე, სად იყვნენ. ყოველ სწორ რაუნდზე სირთულე იზრდება 10×10-მდე.</p>
+    <div class="seg row" id="s-mode"><button data-m="time" class="${S.mode==='time'?'on':''}">⏱ 1 წუთი</button><button data-m="lives" class="${S.mode==='lives'?'on':''}">♥ 3 სიცოცხლე</button></div>
+    <div class="seg row" id="s-lv">${startOpts.map(i=>`<button data-l="${i}" class="${i===0?'on':''}">დაწყება: ${LEVELS[i].n}×${LEVELS[i].n}</button>`).join('')}</div>
+    <button class="btn" id="b-start">▶ დაწყება</button>`);
+  $('ov').dataset.startLv=0;
+  $('s-mode').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.mode=b.dataset.m;$('s-mode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
+  $('s-lv').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('ov').dataset.startLv=b.dataset.l;$('s-lv').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
+  $('b-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}start();};
+  S.lv=0;S.score=0;S.left=TIME;build(3);hud();$('msg').innerHTML='დაიმახსოვრე, სად გამოჩნდება ობიექტები, და მერე მონიშნე ის უჯრები.';
+}
+function renderBest(){
+  const b=store.get('best',{score:0,lv:0}),bl=store.get('best_l',{score:0,lv:0}),h=store.get('hist',[]);
+  $('best').innerHTML=`რეკორდი (1 წუთი): <b style="color:var(--gold-lt)">${b.score}</b>${b.score?` · ${LEVELS[b.lv].n}×${LEVELS[b.lv].n}, ${LEVELS[b.lv].m} ობიექტი`:''}`+
+    (bl.score?` &nbsp;·&nbsp; 3 სიცოცხლე: <b style="color:var(--gold-lt)">${bl.score}</b>`:'')+(h.length?' &nbsp;·&nbsp; ბოლო თამაშები:':' &nbsp;·&nbsp; ჯერ არ გითამაშია.');
+  const mx=Math.max(1,...h.map(x=>x.s));
+  $('hist').innerHTML=h.map(x=>`<i style="height:${Math.max(3,x.s/mx*100)}%" title="${new Date(x.d).toLocaleDateString('ka-GE')} — ${x.s}"><span>${x.s}</span></i>`).join('');
+}
+let _rz;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{const B=$('board');const n=Math.round(Math.sqrt(B.children.length));
+  const W=B.clientWidth,gap=parseFloat(getComputedStyle(B).getPropertyValue('--g'))||6,cell=(W-gap*(n+1))/n;
+  B.style.setProperty('--fs',Math.max(11,cell*.42)+'px');},150);});
+menu();renderBest();
+window._mem={S,LEVELS};
+</script>
+</body>
+</html>
