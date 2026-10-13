@@ -77,6 +77,17 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 .opts{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:12px;color:var(--ink-mid)}
 .opts label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .opts input{accent-color:var(--gold)}
+.music .mrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.music select,.music input[type=text],.opts select{background:rgba(10,8,24,.8);border:1px solid rgba(201,168,76,.25);border-radius:6px;color:var(--ink);padding:6px 9px;font:inherit;font-size:12.5px}
+.music select{flex:1 1 220px;min-width:0}.music input[type=text]{flex:1 1 220px;min-width:0}
+.music input[type=range]{accent-color:var(--gold);width:110px}
+.mb{background:none;border:1px solid var(--border-h);color:var(--gold-lt);border-radius:6px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.mb:hover{background:rgba(201,168,76,.1)}
+.mauto{font-size:12px;color:var(--ink-mid);display:flex;gap:6px;align-items:center;cursor:pointer}.mauto input{accent-color:var(--gold)}
+.mplayer{margin-top:10px;width:220px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#000}
+.mplayer iframe{width:100%;height:100%;display:block}
+.mnote{font-size:11px;color:var(--ink-dim);margin-top:6px}
+.opts select{padding:3px 6px;font-size:12px}
 @media(max-width:600px){.overlay{gap:8px;padding:12px}.overlay p{font-size:11.5px}.stats{gap:5px}.stats div{padding:4px 2px}.big{font-size:36px}.overlay .btn{padding:9px 18px}.stats b{font-size:15px}.overlay h2{font-size:17px}.back{position:static;display:inline-block;margin-bottom:10px}.hud b{font-size:17px}.big{font-size:42px}}
 </style>
 </head>
@@ -105,6 +116,24 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 <div class="opts">
   <label><input type="checkbox" id="o-snd" checked> ხმა</label>
   <label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label>
+  <label>ჩვენება <select id="o-spd"><option value="fast">სწრაფი</option><option value="mid">საშუალო</option><option value="slow">ნელი</option></select></label>
+</div>
+
+<div class="panel music">
+  <h3>🎵 ენერგიული მუსიკა · YouTube</h3>
+  <div class="mrow">
+    <select id="m-pre"></select>
+    <button class="mb" id="m-play" title="დაკვრა / პაუზა">▶</button>
+    <button class="mb" id="m-next" title="შემდეგი">⏭</button>
+    <input type="range" id="m-vol" min="0" max="100" value="45" title="ხმა">
+  </div>
+  <div class="mrow">
+    <input type="text" id="m-url" placeholder="ან ჩასვი შენი YouTube ბმული (ვიდეო ან playlist)">
+    <button class="mb" id="m-add">ჩართვა</button>
+  </div>
+  <label class="mauto"><input type="checkbox" id="m-auto" checked> თამაშის დაწყებისას მუსიკა ავტომატურად ჩაირთოს</label>
+  <div class="mplayer"><div id="yt"></div></div>
+  <div class="mnote" id="m-note">მუსიკა YouTube-იდან იკვრება; თუ ვიდეოს ავტორს ჩაშენება აკრძალული აქვს, ავტომატურად შემდეგზე გადავა.</div>
 </div>
 
 <div class="panel">
@@ -114,7 +143,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
     <li>მონიშნე ყველა უჯრა, სადაც ობიექტი იყო — თანმიმდევრობას მნიშვნელობა არ აქვს.</li>
     <li>სწორი რაუნდი → ობიექტი ემატება; როცა ბადე „ივსება“, ბადე იზრდება: 3×3 → 4×4 → … → 10×10.</li>
     <li>შეცდომა → რაუნდი მთავრდება, აჩვენებს დარჩენილ ადგილებს და ერთი საფეხურით უკან გადადის.</li>
-    <li>ქულა = სწორი უჯრა × საფეხური, + ბონუსი უშეცდომო რაუნდზე. დრო: 60 წამი (ჩვენების დროს ტაიმერი ჩერდება).</li>
+    <li>ქულა = სწორი უჯრა × საფეხური, + ბონუსი უშეცდომო რაუნდზე. დრო: 60 წამი — ტაიმერი მთელი თამაშის განმავლობაში მიდის, ჩვენების დროსაც.</li>
   </ul>
   <div class="lv" id="lvmap"></div>
 </div>
@@ -135,6 +164,7 @@ const LEVELS=[];
   .forEach(([n,ms])=>ms.forEach(m=>LEVELS.push({n,m})));
 const GLYPH=['☉','☽','☿','♀','♂','♃','♄','♅','♆','♇','✦','✧'];
 const TIME=60;
+const SPEED={fast:1,mid:1.45,slow:2};
 const S={mode:'time',lv:0,score:0,left:TIME,running:false,phase:'idle',targets:new Set(),hits:new Set(),
   rounds:0,perfect:0,taps:0,good:0,maxLv:0,timer:null,last:0};
 const store={get(k,d){try{const v=localStorage.getItem('magnus_mem_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
@@ -165,7 +195,7 @@ function hud(){
 }
 /* ── timer runs only while the player is recalling ── */
 function startClock(){stopClock();S.last=performance.now();S.timer=setInterval(()=>{const t=performance.now();
-  if(S.phase==='input'&&S.mode==='time'){S.left-=Math.min(.25,(t-S.last)/1000);if(S.left<=0){S.left=0;hud();finish();return;}}S.last=t;hud();},100);}
+  if(S.running&&S.mode==='time'){S.left-=Math.min(.25,(t-S.last)/1000);if(S.left<=0){S.left=0;hud();finish();return;}}S.last=t;hud();},100);}
 function stopClock(){clearInterval(S.timer);S.timer=null;}
 
 function round(){
@@ -174,12 +204,12 @@ function round(){
   const all=[...Array(L.n*L.n).keys()];for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
   S.targets=new Set(all.slice(0,L.m));S.hits=new Set();S.phase='show';
   $('board').classList.remove('input');hud();
-  const show=Math.min(3200,900+L.m*110);
+  const show=Math.round(Math.min(2000,450+L.m*65)*SPEED[$('o-spd').value]);
   $('msg').innerHTML=`დაიმახსოვრე — <b>${L.m}</b> ობიექტი`;
-  setTimeout(()=>{if(!S.running)return;S.targets.forEach(i=>cells()[i].classList.add('show'));tone(660,.07);},250);
+  setTimeout(()=>{if(!S.running)return;S.targets.forEach(i=>cells()[i].classList.add('show'));tone(660,.07);},150);
   setTimeout(()=>{if(!S.running)return;S.targets.forEach(i=>cells()[i].classList.remove('show'));
     S.phase='input';S.last=performance.now();$('board').classList.add('input');
-    $('msg').innerHTML=`მონიშნე <b>${L.m}</b> უჯრა`;},250+show);
+    $('msg').innerHTML=`მონიშნე <b>${L.m}</b> უჯრა`;},150+show);
 }
 function tap(i){
   if(S.phase!=='input')return;const c=cells()[i];if(c.classList.contains('hit'))return;
@@ -189,14 +219,14 @@ function tap(i){
     $('msg').innerHTML=`<b>${S.hits.size}</b> / ${S.targets.size}`;hud();
     if(S.hits.size===S.targets.size){S.phase='wait';S.rounds++;S.perfect++;const bonus=20+S.lv*10;S.score+=bonus;
       $('msg').innerHTML=`✔ სწორია! +${bonus} ბონუსი`;tone(880,.12,'triangle');setTimeout(()=>tone(1175,.15,'triangle'),110);
-      S.lv=Math.min(LEVELS.length-1,S.lv+1);S.maxLv=Math.max(S.maxLv,S.lv);hud();setTimeout(round,650);}
+      S.lv=Math.min(LEVELS.length-1,S.lv+1);S.maxLv=Math.max(S.maxLv,S.lv);hud();setTimeout(round,400);}
   }else{
     S.phase='wait';S.rounds++;c.classList.add('miss');$('board').classList.add('shake');tone(180,.25,'sawtooth',.08);vib([60,40,60]);
     S.targets.forEach(t=>{if(!S.hits.has(t))cells()[t].classList.add('show','lost');});
     $('msg').innerHTML=`✕ შეცდომა — დარჩენილი ადგილები ნაჩვენებია`;
     if(S.mode==='lives'){S.lives--;$('h-time').textContent='♥'.repeat(Math.max(0,S.lives));}
     S.lv=Math.max(0,S.lv-1);
-    setTimeout(()=>{$('board').classList.remove('shake');if(S.mode==='lives'&&S.lives<=0){finish();return;}round();},1200);
+    setTimeout(()=>{$('board').classList.remove('shake');if(S.mode==='lives'&&S.lives<=0){finish();return;}round();},850);
   }
 }
 function start(){
@@ -251,6 +281,49 @@ function renderBest(){
 let _rz;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{const B=$('board');const n=Math.round(Math.sqrt(B.children.length));
   const W=B.clientWidth,gap=parseFloat(getComputedStyle(B).getPropertyValue('--g'))||6,cell=(W-gap*(n+1))/n;
   B.style.setProperty('--fs',Math.max(11,cell*.42)+'px');},150);});
+/* ── music: YouTube IFrame API ── */
+const PRESETS=[
+ ['NCS Gaming Music Mix — Best of EDM','l3IMwf8w8rU'],
+ ['Best of NCS Popular Songs — Electro House','NKOvofFnB4E'],
+ ['Gaming Music Mix — NCS & Electro Dance','PJMo2qY9uBI'],
+ ['NCS Female Vocal Music Mix','eKg26ESKzfc'],
+ ['Nightcore Gaming Mix — NCS','XV4UF4bUoXw'],
+];
+const M={yt:null,ready:false,idx:0,list:[],playing:false,pending:false};
+function parseYT(u){u=(u||'').trim();if(!u)return null;
+  const pl=u.match(/[?&]list=([\w-]+)/);const v=u.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/)||u.match(/^([\w-]{11})$/);
+  return v||pl?{v:v?v[1]:null,list:pl?pl[1]:null}:null;}
+function mLoad(){M.list=PRESETS.map(p=>({t:p[0],v:p[1]}));
+  const own=store.get('music',[]);own.forEach(o=>M.list.push(o));
+  $('m-pre').innerHTML=M.list.map((x,i)=>`<option value="${i}">${x.own?'★ ':''}${x.t}</option>`).join('');
+  M.idx=Math.min(store.get('music_i',0),M.list.length-1);$('m-pre').value=M.idx;$('m-vol').value=store.get('music_vol',45);
+  $('m-auto').checked=store.get('music_auto',true);}
+function ytInit(){if(window.YT&&YT.Player){mkPlayer();return;}
+  const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';t.onerror=()=>{$('m-note').textContent='YouTube ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი.';};document.head.appendChild(t);
+  window.onYouTubeIframeAPIReady=mkPlayer;}
+function mkPlayer(){const x=M.list[M.idx];
+  M.yt=new YT.Player('yt',{width:220,height:124,videoId:x.v||undefined,playerVars:{playsinline:1,rel:0,modestbranding:1,...(x.list?{listType:'playlist',list:x.list}:{})},
+    events:{onReady:()=>{M.ready=true;M.yt.setVolume(+$('m-vol').value);if(M.pending){M.pending=false;M.yt.playVideo();}},
+      onStateChange:e=>{M.playing=e.data===1;$('m-play').textContent=M.playing?'⏸':'▶';if(e.data===0&&!M.list[M.idx].list)mNext(true);},
+      onError:()=>{$('m-note').textContent=`„${M.list[M.idx].t}“ ჩაშენებით არ იკვრება — გადავდივარ შემდეგზე.`;setTimeout(()=>mNext(true),800);}}});}
+function mCue(play){const x=M.list[M.idx];store.set('music_i',M.idx);$('m-pre').value=M.idx;
+  if(!M.ready){M.pending=play;if(!M.yt)ytInit();return;}
+  if(x.list){play?M.yt.loadPlaylist({listType:'playlist',list:x.list,index:0}):M.yt.cuePlaylist({listType:'playlist',list:x.list});}
+  else{play?M.yt.loadVideoById(x.v):M.yt.cueVideoById(x.v);}}
+function mPlay(){if(!M.yt){M.pending=true;ytInit();return;}if(!M.ready){M.pending=true;return;}
+  if(M.playing)M.yt.pauseVideo();else M.yt.playVideo();}
+function mNext(play){M.idx=(M.idx+1)%M.list.length;mCue(play!==false);}
+mLoad();
+$('m-play').onclick=mPlay;$('m-next').onclick=()=>mNext(true);
+$('m-pre').onchange=e=>{M.idx=+e.target.value;mCue(true);};
+$('m-vol').oninput=e=>{store.set('music_vol',+e.target.value);if(M.ready)M.yt.setVolume(+e.target.value);};
+$('m-auto').onchange=e=>store.set('music_auto',e.target.checked);
+$('m-add').onclick=()=>{const r=parseYT($('m-url').value);if(!r){$('m-note').textContent='ბმული ვერ ამოვიცანი — ჩასვი youtube.com/watch?v=… ან youtu.be/… ან playlist-ის ბმული.';return;}
+  const own=store.get('music',[]);const item={t:(r.list?'Playlist ':'ვიდეო ')+(r.v||r.list),v:r.v,list:r.list,own:true};own.push(item);store.set('music',own.slice(-10));
+  mLoad();M.idx=M.list.length-1;$('m-url').value='';mCue(true);};
+ytInit();
+const _start=start;start=function(){if($('m-auto').checked&&!M.playing){if(M.ready)M.yt.playVideo();else M.pending=true;}return _start.apply(this,arguments);};
+window._music=M;
 menu();renderBest();
 window._mem={S,LEVELS};
 </script>
