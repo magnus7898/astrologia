@@ -79,6 +79,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
     <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
     <div><label>დრო (არასავალდ.)</label><input class="in time" id="t1" placeholder="HH:MM" maxlength="5"></div>
     <div><label>UTC±</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
+    <div><label>სახელი (ქართ. ან ებრ.)</label><input class="in" id="nm" placeholder="არასავალდ."></div>
   </div>
   <div class="row" style="margin-top:14px"><button class="btn" id="go">გამოთვლა</button></div>
   <div class="err" id="err"></div>
@@ -89,10 +90,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+/* calendar convention (MAGNUS): Julian before 15.10.1582, Gregorian after */
+const isLeap=y=>y<1582?y%4===0:(y%4===0&&y%100!==0)||y%400===0;
 const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
 /* Gregorian (proleptic) → Julian Day Number */
-function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function jdn(y,m,d){if(y*10000+m*100+d<15821015){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-32083;}const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
 function parseDate(v,ymin,ymax){
   v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
   const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
@@ -135,12 +137,19 @@ const lifePath=P=>{let n=String(P.d)+String(P.m)+String(P.y);n=dsum(+n);while(n>
 maskDate($('d1'));maskTime($('t1'));
 $('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
 let ST=null,SELS=6;
+const PATH_T={11:'ალეფი · სულელი — სუფთა პოტენციალი, სუნთქვა, უშიშარი ნახტომი უცნობში.',12:'ბეთი · მაგი — ნება და სიტყვა, აზრის ფორმაში ჩასხმა; „სახლი“, სადაც ღმერთი ცხოვრობს.',13:'გიმელი · ქურუმი ქალი — უფსკრულის გავლა, ინტუიცია, დაფარული ცოდნა; გზა პირდაპირ გულამდე.',14:'დალეთი · იმპერატრიცა — კარი, სიყვარული და ნაყოფიერება, სიბრძნისა და გაგების შეუღლება.',15:'ჰე · იმპერატორი — ხედვა, ფანჯარა, სტრუქტურის შემქმნელი ძალა.',16:'ვავი · იეროფანტი — ლურსმანი, კავშირი ზეციურსა და მიწიერს შორის; ტრადიცია, სწავლება.',17:'ზაინი · შეყვარებულები — მახვილი და არჩევანი, დაპირისპირებულის გაერთიანება.',18:'ხეთი · ეტლი — ღობე და დაცვა, ნების ეტლი, რომელიც გადაჰყავს ზღვარზე.',19:'ტეთი · ძალა — გველი, ვნების რბილი მოთვინიერება, ცხოველური ძალის სინათლე.',20:'იოდი · განდეგილი — ხელი, ღვთიური ნაპერწკალი, მარტოობაში მოპოვებული სინათლე.',21:'კაფი · ბედის ბორბალი — ხელისგული, ციკლები და ბედი, ზრდის ბორბალი.',22:'ლამედი · სამართლიანობა — მწყემსის კვერთხი, წონასწორობა, კარმული სამართალი.',23:'მემი · ჩამოკიდებული — წყალი, თავის გაწირვა, ხედვის შემობრუნება.',24:'ნუნი · სიკვდილი — თევზი, ღრმა გარდაქმნა, ძველის დაშლა ახლისთვის.',25:'სამეხი · ზომიერება — საყრდენი, ალქიმია, ცეცხლისა და წყლის შერწყმა; „ისრის გზა“.',26:'აინი · ეშმაკი — თვალი, მატერიაში ჩაკეტილი სინათლე, სიცილი ილუზიაზე.',27:'პე · კოშკი — პირი, ნგრევის სიტყვა, მოულოდნელი განთავისუფლება.',28:'ცადე · ვარსკვლავი — სათევზაო კაკალი, იმედი, მედიტაცია, ზეციური წყალი.',29:'კოფი · მთვარე — თავის ზურგი, ქვეცნობიერი, სიზმრები და შიშების გავლა.',30:'რეში · მზე — თავი, ინტელექტის სინათლე, ბავშვური სიხარული.',31:'შინი · სამსჯავრო — კბილი/ცეცხლი, სულის გამოღვიძება, სულიწმიდის ცეცხლი.',32:'თავი · სამყარო — ნიშანი, ბოლო გზა მატერიიდან ზემოთ; ჯვარი, მთლიანობა, მედიტაციის კარიბჭე.'};
+const GEO_VAL={'ა':1,'ბ':2,'გ':3,'დ':4,'ე':5,'ვ':6,'ზ':7,'ჱ':8,'თ':9,'ი':10,'კ':20,'ლ':30,'მ':40,'ნ':50,'ჲ':60,'ო':70,'პ':80,'ჟ':90,'რ':100,'ს':200,'ტ':300,'უ':400,'ჳ':400,'ფ':500,'ქ':600,'ღ':700,'ყ':800,'შ':900,'ჩ':1000,'ც':2000,'ძ':3000,'წ':4000,'ჭ':5000,'ხ':6000,'ჴ':7000,'ჯ':8000,'ჰ':9000,'ჵ':10000};
+const HEB_VAL={'א':1,'ב':2,'ג':3,'ד':4,'ה':5,'ו':6,'ז':7,'ח':8,'ט':9,'י':10,'כ':20,'ך':20,'ל':30,'מ':40,'ם':40,'נ':50,'ן':50,'ס':60,'ע':70,'פ':80,'ף':80,'צ':90,'ץ':90,'ק':100,'ר':200,'ש':300,'ת':400};
+const HEB_LET=['א','ב','ג','ד','ה','ו','ז','ח','ט','י','כ','ל','מ','נ','ס','ע','פ','צ','ק','ר','ש','ת'];
+function gematria(n){let v=0,used=0;for(const c of n){if(GEO_VAL[c]){v+=GEO_VAL[c];used=1;}else if(HEB_VAL[c]){v+=HEB_VAL[c];used=2;}}return{v,used};}
+const red10=n=>{while(n>10)n=dsum(n);return n;};
+const PILLARS=[['წყალობის სვეტი (მარჯვენა)',[2,4,7],'#6fa8e8','გაფართოება, სიყვარული, იმპულსი'],['სიმკაცრის სვეტი (მარცხენა)',[3,5,8],'#e86b6b','ფორმა, საზღვრები, დისციპლინა'],['წონასწორობის სვეტი (შუა)',[1,6,9,10],'#e8c95a','ცნობიერება, ჰარმონია, ინტეგრაცია']];
 function run(){
   $('err').textContent='';const P=parseDate($('d1').value),T=parseTime($('t1').value);
   if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
   if(T===undefined){$('err').textContent='დრო ფორმატით HH:MM.';return;}
   if(!window._search){$('err').textContent='search.js ვერ ჩაიტვირთა.';return;}
-  const S=window._search,tz=parseFloat($('tz1').value)||0,h=T?T.h+T.mi/60:12,jd=S.cal2jd(P.y,P.m,P.d+(h-tz)/24,true);
+  const S=window._search,tz=parseFloat($('tz1').value)||0,h=T?T.h+T.mi/60:12,jd=S.cal2jd(P.y,P.m,P.d+(h-tz)/24);
   const pos={};PLANETS.forEach(p=>{const l=S.lon(p,jd);pos[p]={l,s:Math.floor(l/30),d:l%30};});
   const lp=lifePath(P),bc=red22(P.m+P.d+P.y),bcArc=bc===22?0:bc;
   /* path activation */
@@ -182,6 +191,17 @@ function draw(){
     <div><div class="k">ცხოვრების გზა</div><div class="v">${lp}</div><div class="t">→ ${S_ID[lp===11?2:lp===22?4:lp].n}${lp>9?' (მაგისტრალური რიცხვი)':''}</div></div>
     <div><div class="k">დაბადების კარტა</div><div class="v">${ST.bc}</div><div class="t">${ARC[bcArc]} → გზა ${PATHS.find(pa=>pa[5]===bcArc)[0]} (${PATHS.find(pa=>pa[5]===bcArc)[3]})</div></div>
     <div><div class="k">ყველაზე ძლიერი სეფირა</div><div class="v" style="font-size:20px">${(()=>{let best=null,bv=-9;SEPH.forEach(x=>{if(x.p==='earth'||!DOM[x.p])return;const v=dignity(x.p,pos[x.p].s)[0];if(v>bv){bv=v;best=x;}});return best&&bv>0?best.n:'—';})()}</div><div class="t">პლანეტის ღირსებით</div></div></div></div>
+  <div class="card"><div class="h">სამი სვეტის ბალანსი</div>${(()=>{const sc={};SEPH.forEach(x=>{let v=3;if(x.p!=='earth'&&pos[x.p]){v+=dignity(x.p,pos[x.p].s)[0]*0.6;}PATHS.filter(pa=>pa[1]===x.id||pa[2]===x.id).forEach(pa=>v+=act[pa[0]].w*0.5);sc[x.id]=Math.max(0.5,v);});
+      const tot=PILLARS.map(pl=>pl[1].reduce((a,i)=>a+sc[i],0)/pl[1].length);const mx=Math.max(...tot);
+      return PILLARS.map((pl,i)=>`<div style="display:flex;align-items:center;gap:10px;margin:6px 0"><span style="width:210px;font-size:12.5px;color:${pl[2]}">${pl[0]}</span><div style="flex:1;height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden"><i style="display:block;height:100%;width:${tot[i]/mx*100}%;background:${pl[2]}"></i></div><span class="note" style="width:60px;text-align:right">${tot[i].toFixed(1)}</span></div>`).join('')+
+      `<div class="txt" style="margin-top:8px">${tot[0]>tot[1]*1.15?'წყალობის სვეტი ჭარბობს — გულუხვობა და იმპულსი ძლიერია; საჭიროა საზღვრები (გევურა).':tot[1]>tot[0]*1.15?'სიმკაცრის სვეტი ჭარბობს — დისციპლინა და კრიტიკულობა ძლიერია; საჭიროა სინაზე (ხესედი).':'მარჯვენა და მარცხენა სვეტები დაბალანსებულია — შუა გზა ღიაა.'}</div>`;})()}
+    <div class="note" style="margin-top:6px">სეფირის წონა = პლანეტის ღირსება + მასთან დაკავშირებული აქტიური გზები.</div></div>
+  ${(()=>{const nm=$('nm').value.trim();if(!nm)return '';const g=gematria(nm);if(!g.v)return '<div class="card note">სახელში ქართული ან ებრაული ასოები ვერ ვიპოვე.</div>';let r22=g.v;while(r22>22)r22=dsum(r22);const pa=PATHS[r22-1],s10=red10(g.v);
+    return `<div class="card"><div class="h">სახელის გემატრია · ${esc(nm)}</div><div class="kv"><div><div class="k">${g.used===1?'ქართული ანბანი':'ებრაული'}</div><div class="v">${g.v}</div></div><div><div class="k">ასო / გზა</div><div class="v" style="font-family:'Noto Serif Hebrew',serif">${HEB_LET[r22-1]}</div><div class="t">${r22} → გზა ${pa[0]} · ${ARC[pa[5]]}</div></div><div><div class="k">სეფირა</div><div class="v" style="font-size:20px">${S_ID[s10].n}</div><div class="t">${s10}</div></div></div>
+      <div class="txt" style="margin-top:10px">${PATH_T[pa[0]]}</div><div class="note" style="margin-top:6px">ქართული ასოების რიცხვითი მნიშვნელობა — ძველი ქართული ანბანური რიცხვები (ა=1 … ჵ=10000); ებრაული — მისპარ ჰეხრეხი.</div></div>`;})()}
+  <div class="card"><div class="h">ახლანდელი წელი</div>${(()=>{const Y=new Date().getFullYear(),py=root9(ST.P.d+ST.P.m+dsum(Y)),yc=red22(ST.P.m+ST.P.d+Y),ya=yc===22?0:yc,pa=PATHS.find(x=>x[5]===ya);
+    return `<div class="txt">პირადი წელი <b>${py}</b> → სეფირა <b>${S_ID[py].n}</b> (${S_ID[py].m}): ${S_ID[py].t}</div><div class="txt" style="margin-top:6px">წლის კარტა <b>${ARC[ya]}</b> → გზა ${pa[0]} (${pa[3]}): ${PATH_T[pa[0]]}</div>`;})()}</div>
+  <div class="card"><div class="h">22 გზა</div><div class="scroll"><table class="tbl"><tr><th>გზა</th><th>ასო</th><th>მნიშვნელობა</th></tr>${PATHS.map(pa=>`<tr class="${act[pa[0]].w?'now':''}"><td>${pa[0]}<br><span class="note">${S_ID[pa[1]].n} → ${S_ID[pa[2]].n}</span></td><td style="font-family:'Noto Serif Hebrew',serif;font-size:18px">${pa[3]}</td><td class="note" style="color:rgba(232,226,213,.7)">${PATH_T[pa[0]]}</td></tr>`).join('')}</table></div></div>
   <div class="card note">პლანეტები — MAGNUS-ის ეფემერიდა (search.js). შესაბამისობები: ოქროს განთიადის ორდენი (XIX ს.); ხოხმა/კეთერი/დაათი — თანამედროვე მიმართება ურანთან, ნეპტუნთან და პლუტონთან. არკანები MAGNUS-ის ნუმერაციით (8 — სამართლიანობა → ლამედი/სასწორი, 11 — ძალა → ტეთი/ლომი). ${ST.T?'':'დრო უცნობია — აღებულია შუადღე (მთვარე ±7°).'}</div>`;
   $('out').innerHTML=h;
   document.querySelectorAll('[data-s]').forEach(g=>g.onclick=()=>{SELS=+g.dataset.s;draw();});
