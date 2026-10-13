@@ -80,7 +80,7 @@ const FCK={
  s4:{t:'4 სეზონი',n:'4',d:'ოთხი არკანი ოთხ ასტრონომიულ სეზონზე (ბუნიობიდან მზებუდობამდე), დაწყებული იმ სეზონიდან, რომელშიც ათვლის დღე ხვდება.'},
  m12:{t:'12 თვე',n:'12',d:'თორმეტი არკანი — თითო თვეზე. 1 იანვრიდან ათვლისას კალენდარული თვეებია, სხვა დღიდან — იმ დღიდან ერთ თვემდე.'},
  w52:{t:'52 კვირა',n:'52',d:'ორმოცდათორმეტი არკანი — თითო კვირაზე, ათვლის დღიდან. ბოლო კვირა წლის დარჩენილ დღეებსაც მოიცავს.'},
- y365:{t:'365 დღე',n:'365',d:'სრული წლის პროგნოზი: თითო არკანი წლის ყოველ დღეზე (ნაკიან წელს — 366), კალენდრის სახით.'},
+ y365:{t:'365 დღე',n:'365',d:'სრული წელი ხუთ ფენად: წლის არკანი, 4 სეზონის, 12 თვის, 52 კვირის და 365 დღის არკანი (ნაკიან წელს — 366). კალენდარი დაყოფილია სეზონებად, თვეებად და კვირებად.'},
 };
 for(const k in FCK)NEW.push({id:k,g:'პროგნოზი',t:'წლის პროგნოზი · '+FCK[k].t,d:FCK[k].d,fc:k,
   p:Array.from({length:+FCK[k].n},()=>['','',1,1])});
@@ -135,6 +135,25 @@ body.fc-on .ask,body.fc-on .table-wrap,body.fc-on #reading{display:none!importan
 .fc-d.el-fire{background:rgba(226,104,60,.16);color:#f3b49a}.fc-d.el-water{background:rgba(74,144,217,.16);color:#a9cdf2}
 .fc-d.el-air{background:rgba(201,194,160,.12);color:#e4dfc6}.fc-d.el-earth{background:rgba(95,174,110,.15);color:#a8dcb2}
 .fc-d.el-major{background:rgba(167,123,219,.22);color:#dcc6f7}
+.fc-sec{font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;color:var(--gold);margin:6px 0 8px;opacity:.9}
+.fc-layers{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 6px}
+.fc-seg{margin-bottom:20px}
+.fc-seg-h{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;padding:8px 2px;border-bottom:1px solid var(--border);margin-bottom:10px}
+.fc-seg-h>b{font-family:'Cinzel',serif;font-weight:400;font-size:15px;letter-spacing:2px;color:var(--gold-lt)}
+.fc-seg-h>span{font-size:11.5px;color:var(--ink-dim)}
+.fc-mo h5 .t{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--gold)}
+.fc-mo h5{align-items:center;gap:6px;flex-wrap:wrap}
+.fc-chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;padding:2px 8px;border-radius:11px;cursor:pointer;border:1px solid rgba(255,255,255,.12);letter-spacing:0;font-family:'Noto Serif Georgian',serif;color:var(--ink)}
+.fc-chip b{font-family:'Cinzel',serif;font-weight:400;display:inline-flex;align-items:center;gap:1px}
+.fc-chip b svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.8}
+.fc-chip.now{border-color:var(--gold)}
+.fc-chip.el-fire{background:rgba(226,104,60,.18)}.fc-chip.el-water{background:rgba(74,144,217,.18)}.fc-chip.el-air{background:rgba(201,194,160,.14)}
+.fc-chip.el-earth{background:rgba(95,174,110,.17)}.fc-chip.el-major{background:rgba(167,123,219,.24)}
+.fc-wk8{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
+.fc-wk8 .h{font-size:9px;color:var(--ink-dim);text-align:center}
+.fc-d.fc-w{border:1px solid rgba(201,168,76,.55)}
+.fc-d.fc-w i{color:var(--gold)}
+.fc-zl{margin-top:10px;font-size:11.5px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .fc-legend{font-size:11px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:12px;margin:-6px 0 14px}
 .fc-legend span::before{content:'';display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;background:var(--c)}
 .fc-top{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
@@ -180,11 +199,28 @@ function periods(kind,start){
 const R=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n;};
 function deal(n,pool,useRev){const out=[];while(out.length<n){const d=pool.slice();for(let i=d.length-1;i>0;i--){const j=R(i+1);[d[i],d[j]]=[d[j],d[i]];}
   for(const c of d){if(out.length>=n)break;out.push({c,rev:useRev&&R(2)===1});}}return out;}
-const FC={kind:null,start:null,deck:'full',rev:true,ctx:null,cards:null,P:[],zi:-1};
+const FC={kind:null,start:null,deck:'full',rev:true,ctx:null,cards:null,Y:null,P:[],zi:-1,zl:'x'};
 const KEY=()=>`magnus_tarot_fc_${FC.kind}_${iso(FC.start)}_${FC.deck}`;
-function load(){try{const v=JSON.parse(localStorage.getItem(KEY())||'null');if(!v||!Array.isArray(v.cards))return null;
-  const cs=v.cards.map(x=>({c:DECK.find(c=>c.id===x.id),rev:!!x.rev}));return cs.every(x=>x.c)&&cs.length===FC.P.length?cs:null;}catch(e){return null;}}
-function save(){try{localStorage.setItem(KEY(),JSON.stringify({cards:FC.cards.map(x=>({id:x.c.id,rev:x.rev})),t:Date.now()}));}catch(e){}}
+const LAYERS=['y','s','m','w','d'];
+const LN={y:'წლის არკანი',s:'სეზონის არკანი',m:'თვის არკანი',w:'კვირის არკანი',d:'დღის არკანი'};
+const toCards=a=>{const cs=(a||[]).map(x=>({c:DECK.find(c=>c.id===x.id),rev:!!x.rev}));return cs.every(x=>x.c)?cs:null;};
+const fromCards=a=>a.map(x=>({id:x.c.id,rev:x.rev}));
+/* the year is cut four ways; each day belongs to one season, one month and one week */
+function yearMap(){
+  const S=seasonStarts(FC.start.getFullYear()),M=periods('m12',FC.start),W=periods('w52',FC.start);
+  const sOf=d=>{let t=3;for(const [b,i] of S){if(dn(b)<=dn(d))t=i;else break;}return t;};
+  const map=FC.P.map((p,i)=>({s:sOf(p.a),m:M.findIndex(q=>dn(q.a)<=dn(p.a)&&dn(p.a)<=dn(q.b)),w:Math.min(51,Math.floor(i/7)),row:Math.floor(i/7)}));
+  const segs=[];map.forEach((x,i)=>{const g=segs[segs.length-1];if(g&&g.s===x.s)g.b=i;else segs.push({s:x.s,a:i,b:i});});
+  const order=[...new Set(segs.map(g=>g.s))];
+  FC.YM={map,segs,order,M,W,
+    sRange:t=>segs.filter(g=>g.s===t).map(g=>`${fmt(FC.P[g.a].a)} – ${fmt(FC.P[g.b].a)}`).join(' და ')};
+}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY())||'null');if(!v)return null;
+  if(FC.kind==='y365'){if(!v.layers)return null;const L={};for(const k of LAYERS){L[k]=toCards(v.layers[k]);if(!L[k])return null;}
+    if(L.d.length!==FC.P.length||L.s.length!==FC.YM.order.length)return null;FC.Y=L;return L.d;}
+  if(!Array.isArray(v.cards))return null;const cs=toCards(v.cards);return cs&&cs.length===FC.P.length?cs:null;}catch(e){return null;}}
+function save(){try{const o=FC.kind==='y365'?{layers:Object.fromEntries(LAYERS.map(k=>[k,fromCards(FC.Y[k])]))}:{cards:fromCards(FC.cards)};
+  o.t=Date.now();localStorage.setItem(KEY(),JSON.stringify(o));}catch(e){}}
 try{const s=JSON.parse(localStorage.getItem('magnus_tarot_fc_opts')||'null');if(s){FC.deck=s.deck||'full';FC.rev=s.rev!==false;FC.ctx=s.ctx||null;if(s.start)FC.start=new Date(s.start+'T12:00');}}catch(e){}
 const saveOpts=()=>{try{localStorage.setItem('magnus_tarot_fc_opts',JSON.stringify({deck:FC.deck,rev:FC.rev,ctx:FC.ctx,start:iso(FC.start)}));}catch(e){}};
 
@@ -198,6 +234,55 @@ const short=c=>c.major?ROMAN[c.n]:`${RANK_SHORT[c.rank]}${svgIcon(c.suit)}`;
 function host(){let h=$('fc');if(h)return h;h=document.createElement('div');h.id='fc';
   const tw=document.querySelector('.table-wrap');tw.parentNode.insertBefore(h,tw);return h;}
 function nowIdx(){const t=dn(new Date());return FC.P.findIndex(p=>dn(p.a)<=t&&t<=dn(p.b));}
+const WD=['კვირა','ორშაბათი','სამშაბათი','ოთხშაბათი','ხუთშაბათი','პარასკევი','შაბათი'],WDS=['კვ','ორ','სა','ოთ','ხუ','პა','შა'];
+const rng=(a,b)=>Array.from({length:b-a+1},(_,k)=>a+k);
+function item(l,i){
+  if(l==='x'){const p=FC.P[i];return{...FC.cards[i],t:p.lab+(p.sub?' · '+p.sub:'')+(p.mean?' — '+p.mean:''),n:FC.cards.length};}
+  const Y=FC.Y,YM=FC.YM,N=FC.P.length;
+  if(l==='y')return{...Y.y[0],t:`წლის არკანი · ${fmtY(FC.P[0].a)} – ${fmtY(FC.P[N-1].a)}`,n:1};
+  if(l==='s'){const t=YM.order[i];return{...Y.s[i],t:`${SEAS[t]} · ${YM.sRange(t)} — ${SEAS_M[t]}`,n:YM.order.length};}
+  if(l==='m'){const p=YM.M[i];return{...Y.m[i],t:'თვე · '+p.lab+(p.sub?' · '+p.sub:''),n:12};}
+  if(l==='w'){const p=YM.W[i];return{...Y.w[i],t:`${p.lab} · ${p.sub}`,n:52};}
+  const p=FC.P[i];return{...Y.d[i],t:fmtY(p.a)+' · '+WD[p.a.getDay()],n:N};
+}
+const rvTag=rev=>rev?' <span style="color:#e58c8c;font-size:12px">შებრუნებული</span>':'';
+function cell(l,i,lab,w,now){const it=item(l,i);
+  return `<div class="fc-cell${now?' now':''}" data-zl="${l}" data-z="${i}"><div class="pl">${lab}</div>${face(it.c,it.rev,w)}<div class="cn">${cname(it.c)}${it.rev?' ↓':''}</div></div>`;}
+function chip(l,i,now){const it=item(l,i);return `<span class="fc-chip el-${it.c.el}${now?' now':''}" data-zl="${l}" data-z="${i}"><b>${short(it.c)}</b>${it.rev?'↓':''} ${cname(it.c)}</span>`;}
+function yearView(ni){
+  const YM=FC.YM,N=FC.P.length,x=ni>=0?YM.map[ni]:null,sNow=x?YM.order.indexOf(x.s):-1;
+  let h='';
+  if(x){const L=[['y',0],['s',sNow],['m',x.m],['w',x.w],['d',ni]],dc=FC.Y.d[ni];
+    h+=`<div class="fc-now" style="grid-template-columns:1fr"><div class="lb">ახლა · დღეს, ${fmtY(FC.P[ni].a)} — დროის ხუთი ფენა</div>
+      <div class="fc-layers">${L.map(([l,i])=>cell(l,i,`<b>${LN[l]}</b>`,NARROW?56:80,false)).join('')}</div>
+      <div><div class="nm">დღის არკანი: ${cname(dc.c)}${rvTag(dc.rev)}</div><div class="tags" style="font-size:11px;color:var(--ink-dim);margin-bottom:6px">${cardTags(dc.c)}</div>${richText(dc.c,dc.rev,spCtx())}</div></div>`;}
+  const gw=w=>`grid-template-columns:repeat(auto-fill,minmax(${w+14}px,1fr))`;
+  h+=`<div class="fc-sec">წელი და 4 სეზონი</div><div class="fc-grid" style="${gw(NARROW?78:108)}">`+
+    cell('y',0,`<b>წელი</b>${fmt(FC.P[0].a)} – ${fmt(FC.P[N-1].a)}`,NARROW?78:108,false)+
+    YM.order.map((t,k)=>cell('s',k,`<b>${SEAS[t]}</b>${YM.sRange(t)}`,NARROW?78:108,k===sNow)).join('')+'</div>';
+  h+=`<div class="fc-sec">12 თვე</div><div class="fc-grid" style="${gw(NARROW?62:84)}">`+
+    YM.M.map((p,i)=>cell('m',i,`<b>${p.lab}</b>${p.sub||''}`,NARROW?62:84,x&&x.m===i)).join('')+'</div>';
+  h+=`<div class="fc-sec">კალენდარი — სეზონი → თვე → კვირა → დღე</div>
+    <div class="fc-legend">${['fire','water','air','earth','major'].map(k=>`<span style="--c:${ELC[k]}">${ELN[k]}</span>`).join('')}<span style="--c:transparent"><b style="color:#e58c8c;font-weight:400">↓</b> შებრუნებული</span><span style="--c:transparent"><b style="color:var(--gold);font-weight:400">კ</b> — კვირის არკანი (რიგის დასაწყისში)</span></div>`;
+  const head='<div class="h"></div>'+rng(0,6).map(k=>`<div class="h">${WDS[(FC.start.getDay()+k)%7]}</div>`).join('');
+  for(const g of YM.segs){const k=YM.order.indexOf(g.s),days=rng(g.a,g.b);
+    h+=`<div class="fc-seg"><div class="fc-seg-h"><b>${SEAS[g.s]}</b><span>${fmt(FC.P[g.a].a)} – ${fmt(FC.P[g.b].a)}</span>${chip('s',k,k===sNow)}</div><div class="fc-cal">`;
+    for(const mi of [...new Set(days.map(i=>YM.map[i].m))]){
+      const md=days.filter(i=>YM.map[i].m===mi),d0=FC.P[md[0]].a;
+      h+=`<div class="fc-mo"><h5><span class="t">${MON[d0.getMonth()]} ${d0.getFullYear()}</span>${chip('m',mi,x&&x.m===mi)}</h5><div class="fc-wk8">${head}`;
+      for(const r of [...new Set(md.map(i=>YM.map[i].row))]){const w=Math.min(51,r),it=FC.Y.w[w];
+        h+=`<div class="fc-d fc-w el-${it.c.el}${it.rev?' rv':''}${x&&x.w===w?' now':''}" data-zl="w" data-z="${w}" title="კვირა ${w+1} — ${cname(it.c).replace(/"/g,'')}"><i>კ${w+1}</i><b>${short(it.c)}</b></div>`;
+        for(let c=0;c<7;c++){const i=md.find(j=>YM.map[j].row===r&&j%7===c);
+          if(i==null){h+='<div></div>';continue;}const {c:cd,rev}=FC.Y.d[i];
+          h+=`<div class="fc-d el-${cd.el}${rev?' rv':''}${i===ni?' now':''}" data-zl="d" data-z="${i}" title="${fmtY(FC.P[i].a)} — ${cname(cd).replace(/"/g,'')}${rev?' (შებრ.)':''}"><i>${FC.P[i].a.getDate()}</i><b>${short(cd)}</b></div>`;}
+      }
+      h+='</div></div>';}
+    h+='</div></div>';}
+  return h;
+}
+function listL(l){const n=item(l,0).n;
+  return rng(0,n-1).map(i=>{const it=item(l,i);return `<div class="ri" data-zl="${l}" data-z="${i}"><div class="no">${l==='y'?'✦':i+1}</div><div><div class="pos">${it.t}</div>
+    <div class="nm">${cname(it.c)}${it.rev?'<span class="rv">შებრუნებული</span>':''}</div><div class="tags">${cardTags(it.c)}</div>${richText(it.c,it.rev,spCtx())}</div></div>`;}).join('');}
 function render(){
   const H=host(),K=FCK[FC.kind],cards=FC.cards,N=FC.P.length;
   const end=FC.P[N-1].b;
@@ -208,32 +293,23 @@ function render(){
     <label>წაკითხვა <select id="fc-ctx">${[['','ზოგადი'],['l','სიყვარული'],['w','საქმე და ფინანსები'],['h','ენერგია და ჯანმრთელობა'],['s','სულიერი გზა']].map(([v,t])=>`<option value="${v}"${(FC.ctx||'')===v?' selected':''}>${t}</option>`).join('')}</select></label>
     <label><input type="checkbox" id="fc-rev"${FC.rev?' checked':''}> შებრუნებული</label>
     <button class="btn" id="fc-draw">${cards?'↻ ახლიდან გაშლა':'✦ აურიე და გაშალე'}</button>
-    <div class="fc-info">პერიოდი: ${fmtY(FC.start)} – ${fmtY(end)} · ${N} ${FC.kind==='y365'?'დღე':'არკანი'}${cards?' · შენახულია ამ ბრაუზერში — გადატვირთვისას იგივე დარჩება':''}</div></div>`;
+    <div class="fc-info">პერიოდი: ${fmtY(FC.start)} – ${fmtY(end)} · ${FC.kind==='y365'?`${1+FC.YM.order.length+12+52+N} არკანი: წელი 1, სეზონი ${FC.YM.order.length}, თვე 12, კვირა 52, დღე ${N}`:N+' არკანი'}${cards?' · შენახულია ამ ბრაუზერში — გადატვირთვისას იგივე დარჩება':''}</div></div>`;
   if(!cards){H.innerHTML=h+`<div class="reading"><div class="note" style="margin:0">აირჩიე ათვლის დღე და დააჭირე „აურიე და გაშალე“. ${N>(FC.deck==='major'?22:78)?`ბარათები ${Math.ceil(N/(FC.deck==='major'?22:78))} არეული კოლოდიდან მოდის — ყოველ ${FC.deck==='major'?22:78}-ში გამეორება არ არის.`:''}</div></div>`;bind();return;}
   const ni=nowIdx();
-  if(ni>=0){const {c,rev}=cards[ni],p=FC.P[ni];
-    h+=`<div class="fc-now"><div style="cursor:pointer" data-z="${ni}">${face(c,rev,NARROW?150:130)}</div><div>
+  if(FC.kind==='y365'){$('fb-n').innerHTML=`${1+FC.YM.order.length+12+52+N}<small>არკანი</small>`;h+=yearView(ni);}
+  else if(ni>=0){const {c,rev}=cards[ni],p=FC.P[ni];
+    h+=`<div class="fc-now"><div style="cursor:pointer" data-zl="x" data-z="${ni}">${face(c,rev,NARROW?150:130)}</div><div>
       <div class="lb">ახლა · ${FC.kind==='y365'?'დღეს, '+fmtY(p.a):p.lab+(p.sub?' · '+p.sub:'')}</div>
       <div class="nm">${cname(c)}${rev?' <span style="color:#e58c8c;font-size:12px">შებრუნებული</span>':''}</div>
       <div class="tags" style="font-size:11px;color:var(--ink-dim);margin-bottom:6px">${cardTags(c)}</div>${richText(c,rev,spCtx())}</div></div>`;}
-  if(FC.kind==='y365')h+=calendar(ni);
-  else{
+  if(FC.kind!=='y365'){
     const w=FC.kind==='s4'?(NARROW?140:170):FC.kind==='m12'?(NARROW?92:120):(NARROW?62:78);
     const cols=FC.kind==='s4'?(NARROW?2:4):FC.kind==='m12'?(NARROW?3:6):(NARROW?4:'auto-fill');
     h+=`<div class="fc-grid" style="grid-template-columns:${cols==='auto-fill'?`repeat(auto-fill,minmax(${w+14}px,1fr))`:`repeat(${cols},${w+14}px)`}">${cards.map(({c,rev},i)=>{const p=FC.P[i];
-      return `<div class="fc-cell${i===ni?' now':''}" data-z="${i}"><div class="pl"><b>${p.lab}</b>${p.sub||''}</div>${face(c,rev,w)}<div class="cn">${cname(c)}${rev?' ↓':''}</div></div>`;}).join('')}</div>`;
+      return `<div class="fc-cell${i===ni?' now':''}" data-zl="x" data-z="${i}"><div class="pl"><b>${p.lab}</b>${p.sub||''}</div>${face(c,rev,w)}<div class="cn">${cname(c)}${rev?' ↓':''}</div></div>`;}).join('')}</div>`;
   }
-  h+=`<div class="reading">${summary()}${FC.kind==='s4'||FC.kind==='m12'?list():FC.kind==='w52'?`<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--gold);font-size:12.5px">ყველა კვირის განმარტება</summary>${list()}</details>`:''}</div>`;
+  h+=`<div class="reading">${summary()}${FC.kind==='s4'||FC.kind==='m12'?list():FC.kind==='w52'?`<details style="margin-top:12px"><summary style="cursor:pointer;color:var(--gold);font-size:12.5px">ყველა კვირის განმარტება</summary>${list()}</details>`:FC.kind==='y365'?[['y','წლის არკანი'],['s','სეზონების არკანები'],['m','თვეების არკანები'],['w','კვირების არკანები']].map(([l,t],k)=>`<details style="margin-top:12px"${k<2?' open':''}><summary style="cursor:pointer;color:var(--gold);font-size:12.5px">${t}</summary>${listL(l)}</details>`).join(''):''}</div>`;
   H.innerHTML=h;bind();
-}
-function calendar(ni){
-  const by=new Map();FC.P.forEach((p,i)=>{const k=p.a.getFullYear()*12+p.a.getMonth();if(!by.has(k))by.set(k,[]);by.get(k).push(i);});
-  let h=`<div class="fc-legend">${['fire','water','air','earth','major'].map(k=>`<span style="--c:${ELC[k]}">${ELN[k]}</span>`).join('')}<span style="--c:transparent"><b style="color:#e58c8c;font-weight:400">↓</b> შებრუნებული</span></div><div class="fc-cal">`;
-  for(const [k,idx] of by){const y=Math.floor(k/12),m=k%12,first=FC.P[idx[0]].a,lead=(first.getDay()+6)%7;
-    const maj=idx.filter(i=>FC.cards[i].c.major).length;
-    h+=`<div class="fc-mo"><h5>${MON[m]} ${y}<span>დიდი არკანი: ${maj}</span></h5><div class="fc-wk">${['ორ','სა','ოთ','ხუ','პა','შა','კვ'].map(x=>`<div class="h">${x}</div>`).join('')}${'<div></div>'.repeat(lead)}`+
-      idx.map(i=>{const {c,rev}=FC.cards[i];return `<div class="fc-d el-${c.el}${rev?' rv':''}${i===ni?' now':''}" data-z="${i}" title="${fmtY(FC.P[i].a)} — ${cname(c).replace(/"/g,'')}${rev?' (შებრ.)':''}"><i>${FC.P[i].a.getDate()}</i><b>${short(c)}</b></div>`;}).join('')+`</div></div>`;}
-  return h+'</div>';
 }
 function summary(){
   const cards=FC.cards,N=cards.length;
@@ -254,28 +330,31 @@ function summary(){
 }
 function list(){
   return FC.cards.map(({c,rev},i)=>{const p=FC.P[i];
-    return `<div class="ri" data-z="${i}"><div class="no">${i+1}</div><div><div class="pos">${p.lab}${p.sub?' · '+p.sub:''}${p.mean?' — '+p.mean:''}</div>
+    return `<div class="ri" data-zl="x" data-z="${i}"><div class="no">${i+1}</div><div><div class="pos">${p.lab}${p.sub?' · '+p.sub:''}${p.mean?' — '+p.mean:''}</div>
       <div class="nm">${cname(c)}${rev?'<span class="rv">შებრუნებული</span>':''}</div><div class="tags">${cardTags(c)}</div>${richText(c,rev,spCtx())}</div></div>`;}).join('');
 }
-function zoom(i){
-  const Z=$('zoom');if(!Z)return;FC.zi=i;const {c,rev}=FC.cards[i],p=FC.P[i];
+function zoom(i,l){
+  const Z=$('zoom');if(!Z)return;l=l||'x';FC.zi=i;FC.zl=l;const it=item(l,i),{c,rev}=it;
+  let ctx='';
+  if(l==='d'&&FC.YM){const x=FC.YM.map[i];ctx=`<div class="fc-zl">ამ დღის ფენები: ${chip('y',0)}${chip('s',FC.YM.order.indexOf(x.s))}${chip('m',x.m)}${chip('w',x.w)}</div>`;}
   $('zoom-in').innerHTML=`<button class="zoom-x" type="button" aria-label="დახურვა">✕</button>
     <div class="zoom-card">${faceHTML(c,rev)}</div>
-    <div><div class="pos">${FC.kind==='y365'?fmtY(p.a)+' · '+['კვირა','ორშაბათი','სამშაბათი','ოთხშაბათი','ხუთშაბათი','პარასკევი','შაბათი'][p.a.getDay()]:p.lab+(p.sub?' · '+p.sub:'')}</div>
-      <div class="nm">${cname(c)}${rev?' <span style="color:#e58c8c;font-size:12px">შებრუნებული</span>':''}</div>
+    <div><div class="pos">${l!=='x'&&FC.kind==='y365'?LN[l]+' · ':''}${it.t}</div>
+      <div class="nm">${cname(c)}${rvTag(rev)}</div>
       <div class="tags" style="font-size:11px;color:var(--ink-dim);margin-bottom:6px">${cardTags(c)}</div>
-      ${richText(c,rev,spCtx())}
+      ${richText(c,rev,spCtx())}${ctx}
       <div class="zoom-nav"><button type="button" data-d="-1">← წინა</button><button type="button" data-d="1">შემდეგი →</button></div></div>`;
   Z.hidden=false;
   Z.querySelector('.zoom-x').onclick=()=>{closeZoom();FC.zi=-1;};
-  Z.querySelectorAll('.zoom-nav button').forEach(b=>b.onclick=()=>zoom((FC.zi+ +b.dataset.d+FC.cards.length)%FC.cards.length));
+  Z.querySelectorAll('.zoom-nav button').forEach(b=>b.onclick=()=>zoom((FC.zi+ +b.dataset.d+it.n)%it.n,l));
+  Z.querySelectorAll('.fc-zl [data-z]').forEach(b=>b.onclick=()=>zoom(+b.dataset.z,b.dataset.zl));
 }
 document.addEventListener('keydown',e=>{if(FC.zi<0||!document.body.classList.contains('fc-on')||$('zoom').hidden)return;
-  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.stopImmediatePropagation();zoom((FC.zi+(e.key==='ArrowRight'?1:-1)+FC.cards.length)%FC.cards.length);}},true);
+  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.stopImmediatePropagation();const n=item(FC.zl,0).n;zoom((FC.zi+(e.key==='ArrowRight'?1:-1)+n)%n,FC.zl);}},true);
 function bind(){
   const H=$('fc');
-  H.querySelectorAll('[data-z]').forEach(el=>el.onclick=()=>zoom(+el.dataset.z));
-  const restart=()=>{FC.P=periods(FC.kind,FC.start);FC.cards=load();saveOpts();render();};
+  H.querySelectorAll('[data-z]').forEach(el=>el.onclick=e=>{e.stopPropagation();zoom(+el.dataset.z,el.dataset.zl);});
+  const restart=()=>{FC.P=periods(FC.kind,FC.start);if(FC.kind==='y365')yearMap();FC.Y=null;FC.cards=load();saveOpts();render();};
   $('fc-start').onchange=e=>{if(!e.target.value)return;FC.start=new Date(e.target.value+'T12:00');restart();};
   H.querySelectorAll('.fc-q').forEach(b=>b.onclick=()=>{const t=new Date();FC.start=b.dataset.q==='jan'?day(t.getFullYear(),0,1):day(t.getFullYear(),t.getMonth(),t.getDate());restart();});
   $('fc-deck').onchange=e=>{FC.deck=e.target.value;restart();};
@@ -284,12 +363,13 @@ function bind(){
   $('fc-draw').onclick=()=>{
     if(FC.cards&&!confirm('ახალი გაშლა შეცვლის შენახულ პროგნოზს ამ პერიოდზე. გავაგრძელო?'))return;
     const pool=FC.deck==='major'?DECK.filter(c=>c.major):DECK;
-    FC.cards=deal(FC.P.length,pool,FC.rev);save();render();
-    setTimeout(()=>{const n=$('fc').querySelector('.fc-now,.fc-grid,.fc-cal');n&&n.scrollIntoView({behavior:'smooth',block:'start'});},60);};
+    if(FC.kind==='y365'){FC.Y={y:deal(1,pool,FC.rev),s:deal(FC.YM.order.length,pool,FC.rev),m:deal(12,pool,FC.rev),w:deal(52,pool,FC.rev),d:deal(FC.P.length,pool,FC.rev)};FC.cards=FC.Y.d;}
+    else FC.cards=deal(FC.P.length,pool,FC.rev);save();render();
+    setTimeout(()=>{const n=$('fc').querySelector('.fc-now,.fc-sec,.fc-grid');n&&n.scrollIntoView({behavior:'smooth',block:'start'});},60);};
 }
 function openFC(sp){
   FC.kind=sp.fc;if(!FC.start){const t=new Date();FC.start=day(t.getFullYear(),0,1);}
-  FC.P=periods(FC.kind,FC.start);FC.cards=load();FC.zi=-1;
+  FC.P=periods(FC.kind,FC.start);FC.Y=null;if(FC.kind==='y365')yearMap();FC.cards=load();FC.zi=-1;
   document.body.classList.add('fc-on');render();
 }
 
