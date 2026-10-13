@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ლოგიკა · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(70,120,200,.13),transparent 60%),var(--void);color:var(--ink);
+  font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
+.page{max-width:760px;margin:0 auto;padding:28px 16px 60px}
+header{text-align:center;margin-bottom:18px;position:relative}
+.back{position:absolute;left:0;top:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.75;text-decoration:none;
+  border:1px solid var(--border);border-radius:3px;padding:6px 11px}
+.back:hover{opacity:1;border-color:var(--border-h)}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5vw,38px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px;margin-top:2px}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.hud div{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 6px;text-align:center}
+.hud b{display:block;font-family:'Cinzel',serif;font-size:20px;color:var(--gold-lt);font-weight:400;line-height:1.2}
+.hud span{font-size:10px;color:var(--ink-dim);letter-spacing:.5px}
+.tbar{height:5px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:12px}
+.tbar i{display:block;height:100%;background:linear-gradient(90deg,#9a7028,var(--gold-lt));width:100%;transition:width .2s linear}
+.tbar.low i{background:linear-gradient(90deg,#a03a30,var(--bad))}
+.stage{position:relative;min-height:440px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 16px;display:flex;flex-direction:column;gap:14px}
+.stage.ok{box-shadow:0 0 0 2px var(--ok) inset}.stage.bad{box-shadow:0 0 0 2px var(--bad) inset;animation:shake .3s}
+@keyframes shake{25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+.qt{font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;color:var(--gold);text-align:center}
+.qh{text-align:center;font-size:14px;color:var(--ink-mid)}
+.q{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;flex:1}
+.seq{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.seq span{min-width:54px;padding:10px 8px;text-align:center;border:1px solid var(--border);border-radius:8px;background:var(--raised);font-family:'Cinzel',serif;font-size:22px;color:var(--ink)}
+.seq span.qm{color:var(--gold-lt);border-color:var(--gold);border-style:dashed}
+.eqs{display:flex;flex-direction:column;gap:8px;align-items:center;font-size:24px;font-family:'Cinzel',serif}
+.eqs div{display:flex;gap:8px;align-items:center}
+.eqs .s{display:inline-flex;width:38px;height:38px;border-radius:50%;align-items:center;justify-content:center;font-size:21px;color:#120c02;
+  background:radial-gradient(circle at 35% 30%,#fff6d8,var(--gold) 55%,#7a5a1e)}
+.eqs .ask{color:var(--gold-lt);margin-top:6px}
+.mx{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:min(100%,330px)}
+.mx div,.opt-svg{aspect-ratio:1;background:var(--raised);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.mx div.qm{border:1px dashed var(--gold);color:var(--gold-lt);font-size:30px;font-family:'Cinzel',serif}
+.mx svg,.opt-svg svg,.odd svg{width:88%;height:88%}
+.opts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.opts button{background:var(--raised);border:1px solid var(--border-h);color:var(--ink);border-radius:10px;padding:12px 6px;font-family:'Cinzel',serif;font-size:20px;cursor:pointer;
+  min-height:58px;display:flex;align-items:center;justify-content:center;transition:transform .08s,background .15s}
+.opts button:hover{background:rgba(201,168,76,.1)}.opts button:active{transform:scale(.95)}
+.opts button.right{background:rgba(95,207,138,.22);border-color:var(--ok)}.opts button.wrong{background:rgba(226,104,92,.22);border-color:var(--bad)}
+.opts button .opt-svg{width:100%;border:none;background:none}
+.oddg{display:grid;gap:8px;width:min(100%,460px)}
+.odd{aspect-ratio:1;background:var(--raised);border:1px solid var(--border-h);border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.odd:hover{background:rgba(201,168,76,.1)}.odd.right{background:rgba(95,207,138,.22);border-color:var(--ok)}.odd.wrong{background:rgba(226,104,92,.22);border-color:var(--bad)}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:12px;text-align:center;padding:20px;overflow:auto;
+  background:#0b0918;border-radius:12px;z-index:3}
+.overlay[hidden]{display:none}
+.overlay h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
+.overlay p{font-size:13px;color:var(--ink-mid);max-width:440px}
+.big{font-family:'Cinzel',serif;font-size:52px;color:var(--gold-lt);line-height:1}
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:11px 22px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.seg button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:5px 12px;font:inherit;font-size:12px;cursor:pointer}
+.seg button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:440px}
+.stats div{border:1px solid var(--border);border-radius:8px;padding:7px 4px}
+.stats b{display:block;font-family:'Cinzel',serif;font-size:18px;color:var(--gold-lt);font-weight:400}
+.stats span{font-size:10px;color:var(--ink-dim)}
+.prof{width:100%;max-width:440px;text-align:left}
+.prof .pr{display:grid;grid-template-columns:110px 1fr 54px;gap:8px;align-items:center;font-size:12px;color:var(--ink-mid);margin:4px 0}
+.prof .pr i{display:block;height:7px;border-radius:4px;background:rgba(255,255,255,.07);overflow:hidden}
+.prof .pr i u{display:block;height:100%;background:linear-gradient(90deg,#9a7028,var(--gold-lt))}
+.rec{color:var(--ok);font-size:13px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:16px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.panel li{font-size:12.5px;color:var(--ink-mid)}.panel ul{padding-left:18px}
+.hist{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:16px}
+.hist i{flex:1;max-width:26px;background:linear-gradient(0deg,#7a5a1e,var(--gold));border-radius:3px 3px 0 0;position:relative;min-height:3px}
+.hist i span{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--ink-dim);font-style:normal}
+.optsrow{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:12px;color:var(--ink-mid)}
+.optsrow label{display:flex;gap:6px;align-items:center;cursor:pointer}.optsrow input{accent-color:var(--gold)}
+.music .mrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.music select,.music input[type=text],.opts select{background:rgba(10,8,24,.8);border:1px solid rgba(201,168,76,.25);border-radius:6px;color:var(--ink);padding:6px 9px;font:inherit;font-size:12.5px}
+.music select{flex:1 1 220px;min-width:0}.music input[type=text]{flex:1 1 220px;min-width:0}
+.music input[type=range]{accent-color:var(--gold);width:110px}
+.mb{background:none;border:1px solid var(--border-h);color:var(--gold-lt);border-radius:6px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.mb:hover{background:rgba(201,168,76,.1)}
+.mauto{font-size:12px;color:var(--ink-mid);display:flex;gap:6px;align-items:center;cursor:pointer}.mauto input{accent-color:var(--gold)}
+.mplayer{margin-top:10px;width:220px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#000}
+.mplayer iframe{width:100%;height:100%;display:block}
+.mnote{font-size:11px;color:var(--ink-dim);margin-top:6px}
+.opts select{padding:3px 6px;font-size:12px}
+
+@media(max-width:600px){.back{position:static;display:inline-block;margin-bottom:10px}.hud b{font-size:17px}.big{font-size:38px}
+  .seq span{min-width:44px;font-size:18px;padding:8px 6px}.opts button{font-size:17px;min-height:52px}.eqs{font-size:20px}.eqs .s{width:32px;height:32px;font-size:18px}
+  .overlay{gap:8px;padding:12px}.overlay p{font-size:11.5px}.stats{gap:5px}.stats b{font-size:15px}.prof .pr{grid-template-columns:90px 1fr 44px;font-size:11px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
+  <h1>ლოგიკა</h1>
+  <div class="sub">მიმდევრობები · განტოლებები · მატრიცები · ზედმეტი · ერთი წუთი</div>
+</header>
+<div class="hud">
+  <div><b id="h-time">60</b><span>წამი</span></div>
+  <div><b id="h-score">0</b><span>ქულა</span></div>
+  <div><b id="h-lv">1</b><span>დონე</span></div>
+  <div><b id="h-streak">0</b><span>სერია</span></div>
+</div>
+<div class="tbar" id="tbar"><i id="tfill"></i></div>
+<div class="stage" id="stage">
+  <div class="qt" id="qt"></div>
+  <div class="qh" id="qh"></div>
+  <div class="q" id="q"></div>
+  <div class="opts" id="opts"></div>
+  <div class="overlay" id="ov"></div>
+</div>
+<div class="optsrow">
+  <label><input type="checkbox" id="o-snd" checked> ხმა</label>
+  <label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label>
+</div>
+<div class="panel music">
+  <h3>🎵 ენერგიული მუსიკა · YouTube</h3>
+  <div class="mrow">
+    <select id="m-pre"></select>
+    <button class="mb" id="m-play" title="დაკვრა / პაუზა">▶</button>
+    <button class="mb" id="m-next" title="შემდეგი">⏭</button>
+    <input type="range" id="m-vol" min="0" max="100" value="45" title="ხმა">
+  </div>
+  <div class="mrow">
+    <input type="text" id="m-url" placeholder="ან ჩასვი შენი YouTube ბმული (ვიდეო ან playlist)">
+    <button class="mb" id="m-add">ჩართვა</button>
+  </div>
+  <label class="mauto"><input type="checkbox" id="m-auto" checked> თამაშის დაწყებისას მუსიკა ავტომატურად ჩაირთოს</label>
+  <div class="mplayer"><div id="yt"></div></div>
+  <div class="mnote" id="m-note">მუსიკა YouTube-იდან იკვრება; თუ ვიდეოს ავტორს ჩაშენება აკრძალული აქვს, ავტომატურად შემდეგზე გადავა.</div>
+</div>
+
+<div class="panel">
+  <h3>✦ ოთხი ტიპის ამოცანა</h3>
+  <ul>
+    <li><b>რიცხვითი მიმდევრობა</b> — იპოვე წესი და შემდეგი რიცხვი.</li>
+    <li><b>სიმბოლოების განტოლებები</b> — თითო ნიშანი ერთ რიცხვს ნიშნავს; გამოთვალე კითხვა.</li>
+    <li><b>მატრიცა 3×3</b> — რიგებსა და სვეტებში ფორმა, რაოდენობა და ფერი წესით იცვლება; რომელი ავსებს ცარიელ უჯრას?</li>
+    <li><b>ზედმეტი</b> — ყველა ფიგურას ერთი საერთო წესი აქვს, ერთის გარდა. იპოვე ის.</li>
+  </ul>
+  <ul style="margin-top:8px">
+    <li>ორი სწორი პასუხი ზედიზედ → დონე იზრდება (მაქს. 12); შეცდომა → დონე ეცემა.</li>
+    <li>ქულა = 10 + დონე × 5 სწორ პასუხზე, + სერიის ბონუსი. ტაიმერი 60 წამი, მუდმივად მიდის.</li>
+  </ul>
+  <div id="best" style="font-size:12.5px;color:var(--ink-mid);margin-top:10px"></div>
+  <div class="hist" id="hist"></div>
+</div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const TIME=60,MAXLV=12;
+const store={get(k,d){try{const v=localStorage.getItem('magnus_logic_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('magnus_logic_'+k,JSON.stringify(v));}catch(e){}}};
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+let AC=null;
+function tone(f,d=.09,type='sine',v=.12){if(!$('o-snd').checked)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d);}catch(e){}}
+const vib=p=>{if($('o-vib').checked&&navigator.vibrate)try{navigator.vibrate(p);}catch(e){}};
+
+/* ════════ generators — each returns {type,title,hint,html,options:[{html,val}],answer} ════════ */
+function numOpts(ans,cands){const set=new Set([ans]);for(const c of cands){if(set.size>=4)break;if(Number.isFinite(c)&&c!==ans)set.add(c);}
+  let k=1;while(set.size<4){set.add(ans+(k%2?k:-k)*(1+Math.floor(k/2)));k++;}return shuf([...set]).map(v=>({html:String(v),val:v}));}
+function genSeq(L){
+  const rules=[];
+  const ar=()=>{const a=ri(1,20),d=ri(2,L<3?6:15)*(L>2&&Math.random()<.3?-1:1);const s=[...Array(6)].map((_,i)=>a+d*i+(d<0?60:0));return [s,'ყოველ ნაბიჯზე ერთი და იგივე რიცხვი ემატება ან აკლდება',[s[5]+1,s[5]-1,s[4]+2*(s[4]-s[3])]];};
+  const geo=()=>{const a=ri(1,4),r=ri(2,3);const s=[...Array(6)].map((_,i)=>a*r**i);return [s,'ყოველი წინას ერთსა და იმავე რიცხვზე მრავლდება',[s[4]+ (s[4]-s[3])*2,s[5]+a,s[5]-r]];};
+  const alt=()=>{const a=ri(2,20),p=ri(2,9),q=-ri(1,5);const s=[a];for(let i=1;i<7;i++)s.push(s[i-1]+(i%2?p:q));return [s,`მონაცვლეობით +${p} და ${q}`,[s[6]+p,s[6]-q*2,s[5]+p]];};
+  const inc=()=>{const a=ri(1,10),d=ri(1,3);const s=[a];for(let i=1;i<6;i++)s.push(s[i-1]+d+i-1);return [s,'სხვაობა ყოველ ნაბიჯზე 1-ით იზრდება',[s[5]+d+3,s[5]+d+5,2*s[4]-s[3]]];};
+  const sq=()=>{const o=ri(0,5),k=ri(0,3);const s=[...Array(6)].map((_,i)=>(i+1+o)**2+k);return [s,'კვადრატები (n²)'+(k?` + ${k}`:''),[s[5]+2*(s[5]-s[4])-s[4]+s[3],(7+o)**2+k+1,(7+o)**2+k-2]];};
+  const fib=()=>{const a=ri(1,5),b=ri(1,6);const s=[a,b];for(let i=2;i<7;i++)s.push(s[i-1]+s[i-2]);return [s,'ყოველი წევრი = წინა ორის ჯამი',[s[6]+1,s[5]*2,s[6]-s[4]]];};
+  const lin=()=>{const a=ri(1,5),m=2,c=pick([1,-1,2]);const s=[a];for(let i=1;i<6;i++)s.push(s[i-1]*m+c);return [s,`ყოველი = წინა × ${m} ${c>0?'+':'−'} ${Math.abs(c)}`,[s[5]*2,s[5]*2+c+2,s[5]+s[4]]];};
+  const two=()=>{const a=ri(1,9),d=ri(2,5),b=ri(20,40),e=-ri(1,4);const s=[];for(let i=0;i<7;i++)s.push(i%2?b+e*Math.floor(i/2):a+d*(i/2));return [s,'ორი მიმდევრობა ერთმანეთში: ლუწ და კენტ ადგილებზე',[s[5]+e,s[6]+d+1,s[6]-d]];};
+  const cube=()=>{const o=ri(0,2);const s=[...Array(5)].map((_,i)=>(i+1+o)**3);return [s,'კუბები (n³)',[(6+o)**3+1,s[4]*2,(6+o)**2*(5+o)]];};
+  const dbl=()=>{const a=ri(1,9),d=ri(1,3);const s=[a];let k=d;for(let i=1;i<6;i++){s.push(s[i-1]+k);k*=2;}return [s,'სხვაობა ყოველ ნაბიჯზე ორმაგდება',[s[5]+k/2,s[5]+k+2,2*s[5]-s[4]]];};
+  if(L<=2)rules.push(ar,ar,alt);else if(L<=4)rules.push(ar,geo,alt,inc);else if(L<=6)rules.push(geo,inc,sq,two,lin);else if(L<=9)rules.push(sq,fib,lin,two,dbl,inc);else rules.push(fib,cube,dbl,lin,two,sq);
+  const [s,why,c]=pick(rules)();const show=s.slice(0,s.length-1),ans=s[s.length-1];
+  return {type:'seq',title:'რიცხვითი მიმდევრობა',hint:'რომელი რიცხვი მოდის შემდეგ?',
+    html:`<div class="seq">${show.map(v=>`<span>${v}</span>`).join('')}<span class="qm">?</span></div>`,options:numOpts(ans,c),answer:ans,why};
+}
+const SYM=['☉','☽','♀','♂','♃','♄'];
+function genEq(L){
+  const n=L<=3?2:L<=7?3:4,sy=shuf(SYM).slice(0,n).map(x=>x+'︎'),max=L<=3?9:L<=7?15:20;
+  const v=sy.map(()=>ri(1,max));const S=i=>`<span class="s">${sy[i]}</span>`;const lines=[];
+  lines.push(`${S(0)}+${S(0)}=${2*v[0]}`);
+  if(L>=6&&Math.random()<.5)lines[0]=`${S(0)}×${S(0)}=${v[0]*v[0]}`;
+  for(let i=1;i<n;i++){const op=L>=8&&Math.random()<.4?'×':Math.random()<.25&&v[i]<v[i-1]?'−':'+';
+    const r=op==='+'?v[i-1]+v[i]:op==='−'?v[i-1]-v[i]:v[i-1]*v[i];lines.push(`${S(i-1)}${op}${S(i)}=${r}`);}
+  let ask,ans;
+  if(n===2||L<=2){ask=S(n-1);ans=v[n-1];}
+  else{const k=pick(['sum','last','mix']);
+    if(k==='sum'){ask=sy.map((_,i)=>S(i)).join('+');ans=v.reduce((a,b)=>a+b,0);}
+    else if(k==='last'){ask=S(n-1);ans=v[n-1];}
+    else{ask=`${S(n-1)}×${S(0)}−${S(1)}`;ans=v[n-1]*v[0]-v[1];}}
+  return {type:'eq',title:'სიმბოლოების განტოლებები',hint:'თითო ნიშანი ერთ რიცხვს ნიშნავს',
+    html:`<div class="eqs">${lines.map(l=>`<div>${l}</div>`).join('')}<div class="ask">${ask} = ?</div></div>`,
+    options:numOpts(ans,[ans+v[0],ans-v[0],ans+1,ans-2,ans*2]),answer:ans,why:'ჯერ პირველი ნიშნის მნიშვნელობა, მერე ჯაჭვურად დანარჩენების'};
+}
+/* shapes */
+const COL=['#e8c95a','#5fb0e8','#e2685c','#6fcf8a'];
+const SHP={
+  circle:(x,y,r,c,f)=>`<circle cx="${x}" cy="${y}" r="${r}" ${f?`fill="${c}"`:`fill="none" stroke="${c}" stroke-width="2.4"`}/>`,
+  square:(x,y,r,c,f)=>`<rect x="${x-r*.88}" y="${y-r*.88}" width="${r*1.76}" height="${r*1.76}" rx="2" ${f?`fill="${c}"`:`fill="none" stroke="${c}" stroke-width="2.4"`}/>`,
+  tri:(x,y,r,c,f)=>`<path d="M${x} ${y-r}L${x+r*.95} ${y+r*.75}L${x-r*.95} ${y+r*.75}Z" ${f?`fill="${c}"`:`fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"`}/>`,
+  diamond:(x,y,r,c,f)=>`<path d="M${x} ${y-r}L${x+r*.8} ${y}L${x} ${y+r}L${x-r*.8} ${y}Z" ${f?`fill="${c}"`:`fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"`}/>`,
+  hex:(x,y,r,c,f)=>{const p=[...Array(6)].map((_,i)=>`${x+r*Math.cos(Math.PI/3*i)} ${y+r*Math.sin(Math.PI/3*i)}`).join('L');return `<path d="M${p}Z" ${f?`fill="${c}"`:`fill="none" stroke="${c}" stroke-width="2.4"`}/>`;},
+  star:(x,y,r,c,f)=>{const p=[...Array(10)].map((_,i)=>{const a=-Math.PI/2+Math.PI/5*i,rr=i%2?r*.45:r;return `${x+rr*Math.cos(a)} ${y+rr*Math.sin(a)}`;}).join('L');return `<path d="M${p}Z" ${f?`fill="${c}"`:`fill="none" stroke="${c}" stroke-width="2.2" stroke-linejoin="round"`}/>`;},
+};
+const SKEYS=Object.keys(SHP);
+const POS={1:[[50,50]],2:[[30,50],[70,50]],3:[[50,28],[28,70],[72,70]],4:[[30,30],[70,30],[30,70],[70,70]]};
+function fig({s,n=1,c=0,f=1,rot=0}){const r=n===1?30:n===2?17:15;
+  return `<svg viewBox="0 0 100 100"><g transform="rotate(${rot} 50 50)">${POS[n].map(([x,y])=>SHP[s](x,y,r,COL[c],f)).join('')}</g></svg>`;}
+const same=(a,b)=>a.s===b.s&&a.n===b.n&&a.c===b.c&&a.f===b.f;
+function genMx(L){
+  const shapes=shuf(SKEYS).slice(0,3),cols=shuf([0,1,2,3]).slice(0,3),perm=Math.random()<.5?[0,1,2]:[0,2,1];
+  const vary=L<=2?['s']:L<=4?['s','n']:L<=7?['s','n','c']:['s','n','c','f'];
+  const rs={s:pick(['latin','row']),n:pick(['col','latin','rowinc']),c:pick(['row','latin2']),f:pick(['col','row'])};
+  if(vary.length===1)rs.s='latin';
+  const cell=(r,c)=>({
+    s:vary.includes('s')?shapes[rs.s==='latin'?(r+c)%3:(rs.s==='row'?(c+r*0)%3:r)]:shapes[0],
+    n:vary.includes('n')?(rs.n==='col'?c+1:rs.n==='rowinc'?r+1:((perm[r]+c)%3)+1):1,
+    c:vary.includes('c')?cols[rs.c==='row'?r:(r*2+c)%3]:cols[0],
+    f:vary.includes('f')?(rs.f==='col'?(c%2):(r%2)):1});
+  const grid=[];for(let r=0;r<3;r++)for(let c=0;c<3;c++)grid.push(cell(r,c));
+  const ans=grid[8];const opts=[ans];
+  const alts=[{...ans,s:pick(shapes.filter(x=>x!==ans.s))},{...ans,n:ans.n%3+1},{...ans,c:pick(cols.filter(x=>x!==ans.c))},{...ans,f:1-ans.f},{...ans,s:pick(SKEYS.filter(x=>x!==ans.s)),n:(ans.n+1)%3+1}];
+  for(const a of shuf(alts)){if(opts.length>=4)break;if(!opts.some(o=>same(o,a)))opts.push(a);}
+  const o=shuf(opts);
+  return {type:'mx',title:'მატრიცა 3×3',hint:'რომელი ავსებს ცარიელ უჯრას?',
+    html:`<div class="mx">${grid.map((g,i)=>i===8?'<div class="qm">?</div>':`<div>${fig(g)}</div>`).join('')}</div>`,
+    options:o.map((x,i)=>({html:`<div class="opt-svg">${fig(x)}</div>`,val:i})),answer:o.findIndex(x=>x===ans),why:'შეამოწმე თითო თვისება ცალკე: ფორმა, რაოდენობა, ფერი, შევსება'};
+}
+function genOdd(L){
+  const k=L<=3?4:L<=7?5:6,props=['s','c','f','n'];
+  const rule=pick(L<=2?['s','c']:props),noise=shuf(props.filter(p=>p!==rule)).slice(0,L<=2?0:L<=5?1:L<=8?2:3);
+  const base={s:pick(SKEYS),c:ri(0,3),f:ri(0,1),n:ri(1,3)};
+  const alt=p=>p==='s'?pick(SKEYS.filter(x=>x!==base.s)):p==='c'?pick([0,1,2,3].filter(x=>x!==base.c)):p==='f'?1-base.f:pick([1,2,3].filter(x=>x!==base.n));
+  const vals=p=>p==='s'?SKEYS:p==='c'?[0,1,2,3]:p==='f'?[0,1]:[1,2,3];
+  const items=[];for(let i=0;i<k;i++)items.push({...base});
+  /* noise: two values, each on at least two figures — so no figure stands out by a noise property */
+  noise.forEach(p=>{const two=shuf(vals(p)).slice(0,2),half=Math.ceil(k/2);shuf([...Array(k).keys()]).forEach((idx,j)=>items[idx][p]=two[j<half?0:1]);});
+  const oi=ri(0,k-1);items[oi]={...items[oi],[rule]:alt(rule)};
+  const nm={s:'ფორმა',c:'ფერი',f:'შევსება',n:'რაოდენობა'};
+  return {type:'odd',title:'ზედმეტი',hint:'რომელი არ ემორჩილება საერთო წესს?',odd:true,
+    html:`<div class="oddg" style="grid-template-columns:repeat(${k<=4?4:k===5?5:3},1fr)">${items.map((it,i)=>`<button class="odd" data-v="${i}">${fig(it)}</button>`).join('')}</div>`,
+    options:[],answer:oi,why:`საერთო წესი — ${nm[rule]}`};
+}
+const GEN={seq:genSeq,eq:genEq,mx:genMx,odd:genOdd};
+const TNAME={seq:'მიმდევრობა',eq:'განტოლება',mx:'მატრიცა',odd:'ზედმეტი'};
+
+/* ════════ game ════════ */
+const S={mode:'time',running:false,lv:1,score:0,left:TIME,streak:0,best:0,q:null,lock:false,stat:{},timer:null,last:0,maxLv:1,lastType:null};
+function hud(){$('h-score').textContent=S.score;$('h-lv').textContent=S.lv;$('h-streak').textContent=S.streak;
+  if(S.mode==='time'){$('h-time').textContent=Math.ceil(S.left);$('tfill').style.width=(S.left/TIME*100)+'%';$('tbar').classList.toggle('low',S.left<=10);}
+  else{$('h-time').textContent='∞';$('tfill').style.width='100%';}}
+function next(){
+  const types=Object.keys(GEN).filter(t=>t!==S.lastType);const t=pick(types);S.lastType=t;
+  const q=GEN[t](S.lv);S.q=q;S.lock=false;S.t0=performance.now();
+  $('stage').classList.remove('ok','bad');$('qt').textContent=q.title+' · დონე '+S.lv;$('qh').textContent=q.hint;$('q').innerHTML=q.html;
+  $('opts').innerHTML=q.options.map((o,i)=>`<button data-i="${i}">${o.html}</button>`).join('');
+  $('opts').style.display=q.odd?'none':'grid';
+  $('opts').querySelectorAll('button').forEach(b=>b.onclick=()=>answer(q.options[+b.dataset.i].val,b));
+  $('q').querySelectorAll('.odd').forEach(b=>b.onclick=()=>answer(+b.dataset.v,b));
+}
+function answer(v,btn){
+  if(S.lock||!S.running)return;S.lock=true;const q=S.q,ok=v===q.answer;
+  const st=S.stat[q.type]=S.stat[q.type]||{ok:0,n:0};st.n++;
+  if(ok){st.ok++;S.streak++;S.best=Math.max(S.best,S.streak);const gain=10+S.lv*5+Math.min(20,(S.streak-1)*4);S.score+=gain;
+    btn.classList.add('right');$('stage').classList.add('ok');tone(660,.07,'triangle');setTimeout(()=>tone(990,.1,'triangle'),70);vib(15);
+    if(S.streak%2===0)S.lv=Math.min(MAXLV,S.lv+1);S.maxLv=Math.max(S.maxLv,S.lv);$('qh').innerHTML=`✔ +${gain}`;}
+  else{S.streak=0;btn.classList.add('wrong');$('stage').classList.add('bad');tone(180,.22,'sawtooth',.08);vib([50,30,50]);
+    const all=q.odd?$('q').querySelectorAll('.odd'):$('opts').querySelectorAll('button');
+    all.forEach((b,i)=>{if((q.odd?+b.dataset.v:q.options[i].val)===q.answer)b.classList.add('right');});
+    $('qh').innerHTML=`✕ ${q.why}`;S.lv=Math.max(1,S.lv-1);
+    if(S.mode==='lives'){S.lives--;}}
+  hud();
+  setTimeout(()=>{if(!S.running)return;if(S.mode==='lives'&&S.lives<=0){finish();return;}next();},ok?380:1300);
+}
+function start(){
+  S.running=true;S.score=0;S.left=TIME;S.streak=0;S.best=0;S.stat={};S.lives=3;S.lastType=null;
+  S.lv=+($('ov').dataset.lv||1);S.maxLv=S.lv;$('ov').hidden=true;hud();
+  clearInterval(S.timer);S.last=performance.now();
+  S.timer=setInterval(()=>{const t=performance.now();if(S.running&&S.mode==='time'){S.left-=Math.min(.25,(t-S.last)/1000);if(S.left<=0){S.left=0;hud();finish();return;}}
+    S.last=t;if(S.mode==='lives')$('h-time').textContent='♥'.repeat(Math.max(0,S.lives));else hud();},100);
+  next();
+}
+function finish(){
+  if(!S.running)return;S.running=false;clearInterval(S.timer);
+  const tot=Object.values(S.stat).reduce((a,b)=>a+b.n,0),ok=Object.values(S.stat).reduce((a,b)=>a+b.ok,0);
+  const key=S.mode==='time'?'best':'best_l',best=store.get(key,{score:0});const rec=S.score>best.score;
+  if(rec)store.set(key,{score:S.score,lv:S.maxLv,d:Date.now()});
+  if(S.mode==='time'){const h=store.get('hist',[]);h.push({s:S.score,d:Date.now()});store.set('hist',h.slice(-20));
+    const ag=store.get('types',{});for(const t in S.stat){ag[t]=ag[t]||{ok:0,n:0};ag[t].ok+=S.stat[t].ok;ag[t].n+=S.stat[t].n;}store.set('types',ag);}
+  tone(523,.15);setTimeout(()=>tone(659,.15),150);setTimeout(()=>tone(784,.25),300);
+  const prof=Object.keys(GEN).map(t=>{const x=S.stat[t]||{ok:0,n:0};const p=x.n?Math.round(x.ok/x.n*100):0;
+    return `<div class="pr"><span>${TNAME[t]}</span><i><u style="width:${p}%"></u></i><span>${x.ok}/${x.n}</span></div>`;}).join('');
+  overlay(`<h2>${S.mode==='time'?'დრო ამოიწურა':'სიცოცხლეები ამოიწურა'}</h2><div class="big">${S.score}</div>
+    ${rec?'<div class="rec">✦ ახალი რეკორდი!</div>':`<div style="font-size:12px;color:var(--ink-dim)">რეკორდი: ${best.score}</div>`}
+    <div class="stats"><div><b>${S.maxLv}</b><span>მაქს. დონე</span></div><div><b>${tot?Math.round(ok/tot*100):0}%</b><span>სიზუსტე</span></div><div><b>${S.best}</b><span>საუკეთესო სერია</span></div></div>
+    <div class="prof">${prof}</div>
+    <div class="row"><button class="btn" id="b-again">↻ თავიდან</button></div>`);
+  $('b-again').onclick=menu;renderBest();
+}
+function overlay(h){const o=$('ov');o.innerHTML=h;o.hidden=false;}
+function menu(){
+  S.running=false;clearInterval(S.timer);const best=store.get('best',{score:0,lv:1});
+  const lvs=[1,...[4,7,10].filter(l=>l<=(best.lv||1))];
+  overlay(`<h2>ლოგიკა</h2><p>ოთხი ტიპის ამოცანა მონაცვლეობით. რაც უფრო სწორად პასუხობ, მით რთულდება — 12 დონემდე.</p>
+    <div class="seg row" id="s-mode"><button data-m="time" class="${S.mode==='time'?'on':''}">⏱ 1 წუთი</button><button data-m="lives" class="${S.mode==='lives'?'on':''}">♥ 3 სიცოცხლე</button></div>
+    <div class="seg row" id="s-lv">${lvs.map((l,i)=>`<button data-l="${l}" class="${i===0?'on':''}">დაწყება: დონე ${l}</button>`).join('')}</div>
+    <button class="btn" id="b-start">▶ დაწყება</button>`);
+  $('ov').dataset.lv=1;
+  $('s-mode').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.mode=b.dataset.m;$('s-mode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
+  $('s-lv').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('ov').dataset.lv=b.dataset.l;$('s-lv').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
+  $('b-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}start();};
+  S.score=0;S.left=TIME;S.lv=1;S.streak=0;hud();$('qt').textContent='';$('qh').textContent='';$('q').innerHTML='';$('opts').innerHTML='';
+}
+function renderBest(){
+  const b=store.get('best',{score:0}),bl=store.get('best_l',{score:0}),h=store.get('hist',[]),ag=store.get('types',{});
+  const strong=Object.entries(ag).filter(([,x])=>x.n>=5).sort((a,b)=>b[1].ok/b[1].n-a[1].ok/a[1].n);
+  $('best').innerHTML=`რეკორდი (1 წუთი): <b style="color:var(--gold-lt)">${b.score}</b>${b.lv?` · დონე ${b.lv}`:''}`+(bl.score?` · 3 სიცოცხლე: <b style="color:var(--gold-lt)">${bl.score}</b>`:'')+
+    (strong.length>=2?`<br>ძლიერი მხარე: <b style="color:var(--ok)">${TNAME[strong[0][0]]}</b> (${Math.round(strong[0][1].ok/strong[0][1].n*100)}%) · სავარჯიშო: <b style="color:#e8b08a">${TNAME[strong[strong.length-1][0]]}</b> (${Math.round(strong[strong.length-1][1].ok/strong[strong.length-1][1].n*100)}%)`:'');
+  const mx=Math.max(1,...h.map(x=>x.s));
+  $('hist').innerHTML=h.map(x=>`<i style="height:${Math.max(3,x.s/mx*100)}%"><span>${x.s}</span></i>`).join('');
+}
+/* ── music: YouTube IFrame API ── */
+const PRESETS=[
+ ['NCS Gaming Music Mix — Best of EDM','l3IMwf8w8rU'],
+ ['Best of NCS Popular Songs — Electro House','NKOvofFnB4E'],
+ ['Gaming Music Mix — NCS & Electro Dance','PJMo2qY9uBI'],
+ ['NCS Female Vocal Music Mix','eKg26ESKzfc'],
+ ['Nightcore Gaming Mix — NCS','XV4UF4bUoXw'],
+];
+const M={yt:null,ready:false,idx:0,list:[],playing:false,pending:false};
+function parseYT(u){u=(u||'').trim();if(!u)return null;
+  const pl=u.match(/[?&]list=([\w-]+)/);const v=u.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/)||u.match(/^([\w-]{11})$/);
+  return v||pl?{v:v?v[1]:null,list:pl?pl[1]:null}:null;}
+function mLoad(){M.list=PRESETS.map(p=>({t:p[0],v:p[1]}));
+  const own=store.get('music',[]);own.forEach(o=>M.list.push(o));
+  $('m-pre').innerHTML=M.list.map((x,i)=>`<option value="${i}">${x.own?'★ ':''}${x.t}</option>`).join('');
+  M.idx=Math.min(store.get('music_i',0),M.list.length-1);$('m-pre').value=M.idx;$('m-vol').value=store.get('music_vol',45);
+  $('m-auto').checked=store.get('music_auto',true);}
+function ytInit(){if(window.YT&&YT.Player){mkPlayer();return;}
+  const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';t.onerror=()=>{$('m-note').textContent='YouTube ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი.';};document.head.appendChild(t);
+  window.onYouTubeIframeAPIReady=mkPlayer;}
+function mkPlayer(){const x=M.list[M.idx];
+  M.yt=new YT.Player('yt',{width:220,height:124,videoId:x.v||undefined,playerVars:{playsinline:1,rel:0,modestbranding:1,...(x.list?{listType:'playlist',list:x.list}:{})},
+    events:{onReady:()=>{M.ready=true;M.yt.setVolume(+$('m-vol').value);if(M.pending){M.pending=false;M.yt.playVideo();}},
+      onStateChange:e=>{M.playing=e.data===1;$('m-play').textContent=M.playing?'⏸':'▶';if(e.data===0&&!M.list[M.idx].list)mNext(true);},
+      onError:()=>{$('m-note').textContent=`„${M.list[M.idx].t}“ ჩაშენებით არ იკვრება — გადავდივარ შემდეგზე.`;setTimeout(()=>mNext(true),800);}}});}
+function mCue(play){const x=M.list[M.idx];store.set('music_i',M.idx);$('m-pre').value=M.idx;
+  if(!M.ready){M.pending=play;if(!M.yt)ytInit();return;}
+  if(x.list){play?M.yt.loadPlaylist({listType:'playlist',list:x.list,index:0}):M.yt.cuePlaylist({listType:'playlist',list:x.list});}
+  else{play?M.yt.loadVideoById(x.v):M.yt.cueVideoById(x.v);}}
+function mPlay(){if(!M.yt){M.pending=true;ytInit();return;}if(!M.ready){M.pending=true;return;}
+  if(M.playing)M.yt.pauseVideo();else M.yt.playVideo();}
+function mNext(play){M.idx=(M.idx+1)%M.list.length;mCue(play!==false);}
+mLoad();
+$('m-play').onclick=mPlay;$('m-next').onclick=()=>mNext(true);
+$('m-pre').onchange=e=>{M.idx=+e.target.value;mCue(true);};
+$('m-vol').oninput=e=>{store.set('music_vol',+e.target.value);if(M.ready)M.yt.setVolume(+e.target.value);};
+$('m-auto').onchange=e=>store.set('music_auto',e.target.checked);
+$('m-add').onclick=()=>{const r=parseYT($('m-url').value);if(!r){$('m-note').textContent='ბმული ვერ ამოვიცანი — ჩასვი youtube.com/watch?v=… ან youtu.be/… ან playlist-ის ბმული.';return;}
+  const own=store.get('music',[]);const item={t:(r.list?'Playlist ':'ვიდეო ')+(r.v||r.list),v:r.v,list:r.list,own:true};own.push(item);store.set('music',own.slice(-10));
+  mLoad();M.idx=M.list.length-1;$('m-url').value='';mCue(true);};
+ytInit();
+const _start=start;start=function(){if($('m-auto').checked&&!M.playing){if(M.ready)M.yt.playVideo();else M.pending=true;}return _start.apply(this,arguments);};
+window._music=M;
+
+menu();renderBest();
+window._logic={S,GEN};
+</script>
+</body>
+</html>
