@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ტიბეტური ასტროლოგია</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Serif+Tibetan&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
 <style>
 :root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
@@ -56,25 +56,41 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .err{color:#e87f7f;font-size:12px;text-align:center;margin-top:10px}
 @media(max-width:600px){.page{padding:40px 14px 80px}.in.date{width:140px}}
 
+.tib{font-family:'Noto Serif Tibetan',serif;color:var(--muted);font-size:20px}
 .mewa{display:grid;grid-template-columns:repeat(3,64px);gap:5px;justify-content:center;margin:8px auto}
 .mewa div{height:64px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:26px;border:1px solid var(--border)}
 .mewa div.me{outline:2px solid var(--gold);outline-offset:2px}
-.force{display:grid;grid-template-columns:1.3fr 1fr 1fr 1.2fr;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px}
-.force:last-child{border-bottom:0}
-.force .hd{font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
-.chip{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;border:1px solid}
+.mewa div.yr{box-shadow:inset 0 0 0 2px #7fcfe8}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;border:1px solid}
+.rel{padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)}.rel:last-child{border-bottom:0}
+.form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
+.form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
+.form2 .in,.form2 .sel{width:100%}
+.elbar{display:flex;align-items:center;gap:10px;margin:5px 0}.elbar .n{width:150px;font-size:12px}.elbar .b{flex:1;height:9px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden}.elbar .b i{display:block;height:100%;border-radius:5px}.elbar .v{width:60px;text-align:right;font-size:11.5px;color:var(--muted)}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%}
+.pk{display:grid;grid-template-columns:repeat(3,92px);gap:5px;justify-content:center}
+.pk div{height:76px;border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10.5px;color:var(--muted)}
+.pk div b{font-size:24px;color:var(--text);font-weight:400}
+.pk div.me{outline:2px solid var(--gold)}.pk div.ch{box-shadow:inset 0 0 0 2px var(--vio)}
 </style>
 </head>
 <body>
 <div class="page">
 <header class="page-header">
   <div class="eyebrow">ტიბეტური ასტროლოგია · ནག་རྩིས</div>
-  <h1 class="page-title">ელემენტები <em>· მევა · ხუთი ძალა</em></h1>
+  <h1 class="page-title">ელემენტები <em>· მევა · პარხა</em></h1>
   <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
 </header>
-<p class="lead">ტიბეტური „ელემენტების ასტროლოგია“ (ნაგ-ცი) ჩინურიდან მოდის: 12 ცხოველი × 5 ელემენტი (ხე, ცეცხლი, მიწა, <b>რკინა</b>, წყალი), 60-წლიანი ციკლი (რაბჯუნგი). <b>მევა</b> — ლო შუს 9 რიცხვი-ფერი. <b>ხუთი ბუნებრივი ძალა</b> — სიცოცხლე (სოგ), სული (ლა), სხეული (ლუ), ძალაუფლება (ვანგთანგი) და ქარის ცხენი (ლუნგთა) — ყოველწლიურად ფასდება წლის ელემენტთან მიმართებით.</p>
+<div class="pills" id="tabs"><div class="pill active" data-v="natal">ნატალური</div><div class="pill" data-v="years">ხუთი ძალა წლებით</div><div class="pill" data-v="mp">მევა · პარხა</div><div class="pill" data-v="compat">შეთავსება</div><div class="pill" data-v="life">სიცოცხლის სტატისტიკა</div></div>
 <div class="card">
-  <div class="row"><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"><input class="in" id="yr" placeholder="პროგნოზის წელი" style="width:150px;text-align:center"><button class="btn" id="go">გამოთვლა</button></div>
+  <div class="form2">
+    <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
+    <div><label>სქესი</label><select class="sel" id="sx"><option value="m">მამრობითი</option><option value="f">მდედრობითი</option></select></div>
+    <div><label>დედის ასაკი დაბადებისას</label><input class="in" id="ma" placeholder="არასავალდ." style="text-align:center"></div>
+    <div><label>პროგნოზის წელი</label><input class="in" id="yr" style="text-align:center"></div>
+    <div><label>პარტნიორი</label><input class="in date" id="d2" placeholder="DD/MM/YYYY" maxlength="10"></div>
+  </div>
+  <div class="row" style="margin-top:14px"><button class="btn" id="go">გამოთვლა</button></div>
   <div class="err" id="err"></div>
 </div>
 <div id="out"></div>
@@ -82,10 +98,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+/* calendar convention (MAGNUS): Julian before 15.10.1582, Gregorian after */
+const isLeap=y=>y<1582?y%4===0:(y%4===0&&y%100!==0)||y%400===0;
 const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
 /* Gregorian (proleptic) → Julian Day Number */
-function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function jdn(y,m,d){if(y*10000+m*100+d<15821015){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-32083;}const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
 function parseDate(v,ymin,ymax){
   v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
   const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
@@ -137,61 +154,113 @@ function eot(y,m,d){const N=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5
 function addMin(y,m,d,h,mi,add){const t=new Date(0);t.setUTCFullYear(y,m-1,d);t.setUTCHours(h,mi,0,0);t.setTime(t.getTime()+add*6e4);return{y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate(),h:t.getUTCHours(),mi:t.getUTCMinutes()};}
 
 const TEL=['ხე','ცეცხლი','მიწა','რკინა','წყალი'];
+const TEL_TIB=['ཤིང་','མེ་','ས་','ལྕགས་','ཆུ་'];
+const AN_TIB=['བྱི་བ་','གླང་','སྟག་','ཡོས་','འབྲུག་','སྦྲུལ་','རྟ་','ལུག་','སྤྲེལ་','བྱ་','ཁྱི་','ཕག་'];
+const AN_KA=['თაგვი','ხარი','ვეფხვი','კურდღელი','დრაკონი','გველი','ცხენი','ცხვარი','მაიმუნი','ფრინველი','ძაღლი','ღორი'];
+const AN_T=['ჭკვიანი, მოხერხებული, ეკონომიური; კარგად გრძნობს შესაძლებლობას და ინახავს რესურსს. ჩრდილი — შფოთვა და სიხარბე.','შრომისმოყვარე, მომთმენი, სანდო; ნელა, მაგრამ მყარად აშენებს. ჩრდილი — სიჯიუტე.','გაბედული, ვნებიანი, დამოუკიდებელი ლიდერი; უყვარს თავისუფლება. ჩრდილი — იმპულსურობა.','ნაზი, დიპლომატიური, ესთეტი; ჰარმონიას ეძებს. ჩრდილი — კონფლიქტის შიში.','ძლიერი, ქარიზმატული, დიდი ამბიციის; ბედის მოყვარე. ჩრდილი — ამპარტავნება.','ბრძენი, ინტუიციური, იდუმალი; ღრმად ფიქრობს. ჩრდილი — ეჭვიანობა.','ენერგიული, თავისუფლების მოყვარე, მოგზაური; სწრაფი გონებით. ჩრდილი — მოუთმენლობა.','მშვიდი, შემოქმედი, მზრუნველი; ოჯახის და სილამაზის მოყვარე. ჩრდილი — მერყეობა.','გონებამახვილი, მოქნილი, იუმორით სავსე; ყველა ამოცანას ხსნის. ჩრდილი — ცბიერება.','დაკვირვებული, ზუსტი, ამაყი; წესრიგი და სილამაზე უყვარს. ჩრდილი — კრიტიკულობა.','ერთგული, პატიოსანი, სამართლიანი; მფარველი. ჩრდილი — შფოთვა და პესიმიზმი.','გულუხვი, კეთილი, ცხოვრების მოყვარე; გულწრფელი. ჩრდილი — მიმნდობლობა და ჭარბი სიამოვნება.'];
+const TEL_T=['ზრდა, მოქნილობა, სიცოცხლე, თანაგრძნობა.','ვნება, სიცხადე, ენერგია, ტრანსფორმაცია.','სტაბილურობა, ნდობა, ნაყოფიერება, მოთმინება.','სიმტკიცე, სიწმინდე, მკაფიოობა, გადაწყვეტილება.','სიბრძნე, მოქნილობა, სიღრმე, ინტუიცია.'];
 const MEWA={1:['თეთრი','#e8e2d5',3],2:['შავი','#3a3a44',4],3:['ლურჯი','#4a78c8',4],4:['მწვანე','#5fae6f',0],5:['ყვითელი','#e8c95a',2],6:['თეთრი','#e8e2d5',3],7:['წითელი','#e05a5a',1],8:['თეთრი','#e8e2d5',3],9:['მუქი წითელი','#8e2a3a',1]};
-const MEWA_T={1:'სიწმინდე, მშვიდი გონება, სულიერი მიდრეკილება.',2:'ღრმა, მგრძნობიარე ბუნება; ძალა დაფარულია.',3:'მოძრავი, ინტუიციური, მოგზაური გონება.',4:'ზრდა, მოთმინება, მკურნალის ნიჭი.',5:'ცენტრი, სტაბილურობა, ბუნებრივი ავტორიტეტი.',6:'კეთილშობილება, პასუხისმგებლობა, სუფთა ზრახვები.',7:'ენერგია, ვნება, ცეცხლოვანი ხასიათი.',8:'სიმშვიდე, სიუხვე, კეთილდღეობა.',9:'ძლიერი ნება, ლიდერობა, მაგიური ძალა.'};
+const MEWA_T={1:'სიწმინდე, მშვიდი გონება, სულიერი მიდრეკილება, ხანგრძლივი სიცოცხლე.',2:'ღრმა, მგრძნობიარე ბუნება; ძალა დაფარულია, საჭიროა სიფრთხილე ნეგატიურ გავლენებთან.',3:'მოძრავი, ინტუიციური, მოგზაური გონება; ცვლილებების ადამიანი.',4:'ზრდა, მოთმინება, მკურნალის ნიჭი, სიკეთე.',5:'ცენტრი, სტაბილურობა, ბუნებრივი ავტორიტეტი, დიდი პასუხისმგებლობა.',6:'კეთილშობილება, პასუხისმგებლობა, სუფთა ზრახვები, სიმდიდრე.',7:'ენერგია, ვნება, ცეცხლოვანი ხასიათი, ლიდერობა.',8:'სიმშვიდე, სიუხვე, კეთილდღეობა, სულიერი იღბალი.',9:'ძლიერი ნება, მაგიური ძალა, დიდი გავლენა — და დიდი გამოწვევები.'};
 const LO=[4,9,2,3,5,7,8,1,6];
 const mewaOf=y=>{const r=((11-(y%9))%9+9)%9;return r===0?9:r;};
 const LUNGTA=[0,4,3,1,0,4,3,1,0,4,3,1];
-const forces=(gz,ny)=>{const g=gi(gz[0]),z=zi(gz[1]);const sok=ZHI_EL[z];
-  return [['სოგ · სიცოცხლის ძალა','ფიზიკური სიცოცხლისუნარიანობა, ხანგრძლივობა',sok],['ლა · სული','სულიერი ენერგია, შინაგანი დაცვა',(sok+4)%5],
-   ['ლუ · სხეული','ჯანმრთელობა, სხეულის ძალა',nayinEl(ny)],['ვანგთანგი · ძალაუფლება','ავტორიტეტი, გავლენა, წარმატება',ganEl(g)],['ლუნგთა · ქარის ცხენი','იღბალი, ბედი, შესაძლებლობები',LUNGTA[z]]];};
-function yrel(natal,year){if(gen(year)===natal)return['დედა — შესანიშნავი','#7fcf8f'];if(year===natal)return['მეგობარი — კარგი','#9fd8a8'];
-  if(ctl(natal)===year)return['შვილობილი — კარგი','#9fd8a8'];if(gen(natal)===year)return['შვილი — სუსტდება','#e8c95a'];return['მტერი — საფრთხე','#e86b6b'];}
+const FN=[['სოგ · სიცოცხლე','ფიზიკური სიცოცხლისუნარიანობა, ხანგრძლივობა'],['ლა · სული','სულიერი ენერგია, შინაგანი დაცვა'],['ლუ · სხეული','ჯანმრთელობა, სხეულის ძალა'],['ვანგთანგი · ძალაუფლება','ავტორიტეტი, გავლენა, წარმატება'],['ლუნგთა · ქარის ცხენი','იღბალი, ბედი, შესაძლებლობები']];
+function forces(gz,ny){const g=gi(gz[0]),z=zi(gz[1]),sok=ZHI_EL[z];return [sok,(sok+4)%5,nayinEl(ny),ganEl(g),LUNGTA[z]];}
+const REL=[['დედა','შესანიშნავი','#7fcf8f',2],['მეგობარი','კარგი','#9fd8a8',1],['შვილობილი','კარგი','#9fd8a8',1],['შვილი','სუსტდება','#e8c95a',-1],['მტერი','საფრთხე','#e86b6b',-2]];
+function yrel(natal,year){if(gen(year)===natal)return REL[0];if(year===natal)return REL[1];if(ctl(natal)===year)return REL[2];if(gen(natal)===year)return REL[3];return REL[4];}
 const WD=[['კვირა',1],['ორშაბათი',4],['სამშაბათი',1],['ოთხშაბათი',4],['ხუთშაბათი',0],['პარასკევი',3],['შაბათი',2]];
 const daysOf=e=>WD.filter(w=>w[1]===e).map(w=>w[0]).join(' / ');
-maskDate($('d1'));$('yr').value=new Date().getFullYear();
+/* parkha: anticlockwise counting order (tibastro.be) */
+const PK=[['ཁམ','ხამ','☵','წყალი','ჩრდილოეთი'],['ཁེན','ხენ','☰','ცა (რკინა)','ჩრდილო-დასავლეთი'],['དྭ','და','☱','რკინა (ტბა)','დასავლეთი'],['ཁོན','ხიონ','☷','მიწა','სამხრეთ-დასავლეთი'],['ལི','ლი','☲','ცეცხლი','სამხრეთი'],['ཟོན','ძიონ','☴','ქარი (ხე)','სამხრეთ-აღმოსავლეთი'],['ཟིན','ცინ','☳','ჭექა (ხე)','აღმოსავლეთი'],['གིན','ხინ','☶','მთა (მიწა)','ჩრდილო-აღმოსავლეთი']];
+const PK_GRID=[5,4,3,6,-1,2,7,0,1]; /* SE S SW / E · W / NE N NW */
+let TAB='natal',R=null,R2=null;
+document.querySelectorAll('#tabs .pill').forEach(p=>p.onclick=()=>{TAB=p.dataset.v;document.querySelectorAll('#tabs .pill').forEach(x=>x.classList.toggle('active',x===p));draw();});
+maskDate($('d1'));maskDate($('d2'));$('yr').value=new Date().getFullYear();
 $('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
-function yearInfo(y){/* lunar year starting at (approx.) Losar of Gregorian year y */
-  const L=Lunar.fromYmd(y,1,1);const gz=L.getYearInGanZhi(),ny=L.getYearNaYin?L.getYearNaYin():null;return{gz,ny,losar:L.getSolar()};}
+function person(P){
+  const lu=Solar.fromYmd(P.y,P.m,P.d).getLunar(),ly=lu.getYear(),gz=lu.getYearInGanZhi(),g=gi(gz[0]),z=zi(gz[1]);
+  const ny=Lunar.fromYmd(ly,1,1).getYearNaYin();const los=Lunar.fromYmd(ly,1,1).getSolar();
+  return{P,ly,gz,g,z,el:ganEl(g),ny,F:forces(gz,ny),mw:mewaOf(ly),los,rab:Math.floor((ly-1027)/60)+1,ry:((ly-1027)%60+60)%60+1};
+}
+function yearInfo(y){const L=Lunar.fromYmd(y,1,1);const gz=L.getYearInGanZhi();return{gz,F:forces(gz,L.getYearNaYin()),mw:mewaOf(y),z:zi(gz[1]),g:gi(gz[0])};}
 function run(){
-  $('err').textContent='';const P=parseDate($('d1').value);
-  if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  $('err').textContent='';
   if(typeof Solar==='undefined'){$('err').textContent='კალენდრის ბიბლიოთეკა ვერ ჩაიტვირთა.';return;}
-  const lu=Solar.fromYmd(P.y,P.m,P.d).getLunar(),ly=lu.getYear();
-  const gz=lu.getYearInGanZhi(),g=gi(gz[0]),z=zi(gz[1]),ny=lu.getYearNaYin?lu.getYearNaYin():Lunar.fromYmd(ly,1,1).getYearNaYin();
-  const los=Lunar.fromYmd(ly,1,1).getSolar();
-  const mw=mewaOf(ly),M=MEWA[mw];
-  const F=forces(gz,ny);
-  const Y=+$('yr').value||new Date().getFullYear(),YI=yearInfo(Y),YF=forces(YI.gz,Lunar.fromYmd(Y,1,1).getYearNaYin()),ymw=mewaOf(Y);
-  let h=`<div class="card" style="text-align:center"><div style="font-size:60px">${ANIMAL_EMO[z]}</div>
-    <div class="big" style="font-size:38px">${TEL[ganEl(g)]}-${ANIMAL[z]}</div>
-    <div class="sub">${ganYang(g)?'მამრობითი (იან)':'მდედრობითი (ინ)'} წელი · ${gz} · ლოსარი ≈ ${los.getDay()}.${String(los.getMonth()).padStart(2,'0')}.${los.getYear()}</div>
-    ${Math.abs((Date.UTC(2000,P.m-1,P.d)-Date.UTC(2000,los.getMonth()-1,los.getDay()))/864e5)<40?'<div class="note" style="margin-top:8px">დაბადება ლოსართან ახლოსაა: ლოსარი ითვლება ჩინური ახალი წლით, ტიბეტური ფუგპა კალენდარი ზოგ წელს ერთი თვით განსხვავდება — გადაამოწმე ტიბეტურ ალმანახში.</div>':''}</div>
-  <div class="card"><div class="h">დაბადების მევა</div>
-    <div class="mewa">${LO.map(n=>`<div class="${n===mw?'me':''}" style="background:${MEWA[n][1]}22;color:${MEWA[n][1]==='#3a3a44'?'#aaa':MEWA[n][1]}">${n}</div>`).join('')}</div>
-    <div class="txt" style="text-align:center;margin-top:8px"><b style="color:${M[1]==='#3a3a44'?'#aaa':M[1]}">${mw} ${M[0]}</b> · ელემენტი: ${TEL[M[2]]} — ${MEWA_T[mw]}</div>
-    <div class="note" style="text-align:center;margin-top:6px">${Y} წლის მევა: <b>${ymw} ${MEWA[ymw][0]}</b></div></div>
-  <div class="card"><div class="h">ხუთი ძალა · ${Y} წელი (${TEL[ganEl(gi(YI.gz[0]))]}-${ANIMAL[zi(YI.gz[1])]})</div>
-    <div class="force"><span class="hd">ძალა</span><span class="hd">შენი</span><span class="hd">წლის</span><span class="hd">${Y}</span></div>`+
-    F.map((f,i)=>{const r=yrel(f[2],YF[i][2]);return `<div class="force"><span><b>${f[0]}</b><br><span class="note">${f[1]}</span></span>
-      <span><span class="chip" style="color:${EL_COL[f[2]]};border-color:${EL_COL[f[2]]}55">${TEL[f[2]]}</span></span>
-      <span><span class="chip" style="color:${EL_COL[YF[i][2]]};border-color:${EL_COL[YF[i][2]]}55">${TEL[YF[i][2]]}</span></span>
-      <span style="color:${r[1]}">${r[0]}</span></div>`;}).join('')+
-    `<div class="note" style="margin-top:10px"><b>დედა</b> — წლის ელემენტი შენსას კვებავს; <b>მეგობარი</b> — იგივე ელემენტი; <b>შვილობილი</b> — შენი ელემენტი წლისას აკონტროლებს; <b>შვილი</b> — შენი ენერგია წელს „კვებავს“ და სუსტდება; <b>მტერი</b> — წლის ელემენტი შენსას აკონტროლებს. სუსტ ძალებს აძლიერებენ ლოცვის დროშებით (ლუნგთა), რიტუალებით და შესაბამისი ფერით.</div></div>`;
-  /* days */
-  const sok=F[0][2],la=F[1][2],obs=(sok+3)%5;
-  h+=`<div class="card"><div class="h">კვირის დღეები</div><div class="kv">
-    <div><div class="k">სიცოცხლის დღე</div><div class="v" style="font-size:17px">${daysOf(sok)}</div><div class="t">${TEL[sok]} — ძალის დღე, დასაწყებად კარგი</div></div>
-    <div><div class="k">სულის დღე</div><div class="v" style="font-size:17px">${daysOf(la)}</div><div class="t">${TEL[la]} — მხარდაჭერის დღე</div></div>
-    <div><div class="k">დაბრკოლების დღე</div><div class="v" style="font-size:17px;color:#e86b6b">${daysOf(obs)}</div><div class="t">${TEL[obs]} — ახლის დაწყებას ერიდე</div></div></div>
-    <div class="note" style="margin-top:8px">დღეების ელემენტები: კვირა/სამშაბათი — ცეცხლი, ორშაბათი/ოთხშაბათი — წყალი, ხუთშაბათი — ხე, პარასკევი — რკინა, შაბათი — მიწა.</div></div>`;
-  /* obstacle years */
-  const cur=new Date().getFullYear();let rows='';
-  for(let k=0;k<=9;k++){const yy=ly+12*k;if(yy<cur-12||yy>cur+40)continue;rows+=`<tr class="${yy===cur?'now':''}"><td>${yy}</td><td>${12*k+1}</td><td>ლო-კეგი — საკუთარი ცხოველის წელი</td></tr>`;
-    const dz=ly+6+12*k;if(dz>=cur-12&&dz<=cur+40)rows+=`<tr class="${dz===cur?'now':''}"><td>${dz}</td><td>${12*k+7}</td><td>დუნ-ძურ — მოპირდაპირე ცხოველის (${ANIMAL[(z+6)%12]}) წელი</td></tr>`;}
-  h+=`<div class="card"><div class="h">დაბრკოლების წლები</div><div class="scroll"><table class="tbl"><tr><th>წელი</th><th>ასაკი (ტიბ.)</th><th>ტიპი</th></tr>${rows}</table></div>
-    <div class="note" style="margin-top:8px">ტიბეტური ასაკი ითვლება დაბადებიდან 1-ით. ამ წლებში რეკომენდებულია მეტი სიფრთხილე და დამცავი პრაქტიკები.</div></div>`;
-  $('out').innerHTML=h;
+  const P=parseDate($('d1').value);if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
+  R=person(P);R2=null;const Q=$('d2').value.trim();if(Q){const q=parseDate(Q);if(q)R2=person(q);else $('err').textContent='პარტნიორის თარიღი არასწორია.';}
+  draw();
+}
+const nm=r=>`${TEL[r.el]}-${AN_KA[r.z]}`;
+const chip=e=>`<span class="chip" style="color:${EL_COL[e]};border-color:${EL_COL[e]}55">${TEL[e]}</span>`;
+function draw(){if(!R)return;$('out').innerHTML={natal:vNatal,years:vYears,mp:vMP,compat:vCompat,life:vLife}[TAB](R)+`<div class="card note">წლის ცხოველი/ელემენტი ითვლება მთვარის ახალი წლით (ლოსარი ≈ ჩინური ახალი წელი; ფუგპა კალენდარი ზოგ წელს ერთი თვით განსხვავდება). ხუთი ძალა: სოგ — ცხოველის ელემენტი, ლა — მისი „დედა“, ლუ — 60-წლიანი ციკლის (ნაინის) ელემენტი, ვანგთანგი — წლის ელემენტი, ლუნგთა — სამკუთხედის მიხედვით. პარხა — tibastro.be-ს მეთოდებით.</div>`;
+  const Y=$('yr2');if(Y)Y.onchange=()=>{$('yr').value=Y.value;draw();};}
+function vNatal(r){
+  const near=Math.abs((Date.UTC(2000,r.P.m-1,r.P.d)-Date.UTC(2000,r.los.getMonth()-1,r.los.getDay()))/864e5)<40;
+  return `<div class="card" style="text-align:center"><div style="font-size:60px">${ANIMAL_EMO[r.z]}</div><div class="tib">${TEL_TIB[r.el]} ${AN_TIB[r.z]}</div>
+    <div class="big" style="font-size:38px">${nm(r)}</div>
+    <div class="sub">${ganYang(r.g)?'მამრობითი':'მდედრობითი'} წელი · ${r.gz} · ${r.rab}-ე რაბჯუნგის ${r.ry}-ე წელი · ლოსარი ≈ ${r.los.getDay()}.${String(r.los.getMonth()).padStart(2,'0')}.${r.los.getYear()}</div>
+    ${near?'<div class="note" style="margin-top:8px">დაბადება ლოსართან ახლოსაა — გადაამოწმე ტიბეტურ ალმანახში, ხომ არ ეკუთვნის წინა/მომდევნო წელს.</div>':''}</div>
+  <div class="card"><div class="h">ცხოველი · ${AN_KA[r.z]}</div><div class="txt">${AN_T[r.z]}</div>
+    <div class="txt" style="margin-top:8px"><b>${TEL[r.el]}</b> — ${TEL_T[r.el]}</div></div>
+  <div class="card"><div class="h">ხუთი ბუნებრივი ძალა</div>${r.F.map((e,i)=>`<div class="rel"><b>${FN[i][0]}</b> ${chip(e)}<div class="note">${FN[i][1]} — ${TEL_T[e]}</div></div>`).join('')}</div>
+  <div class="card"><div class="h">კვირის დღეები</div><div class="kv">
+    <div><div class="k">სიცოცხლის დღე</div><div class="v" style="font-size:17px">${daysOf(r.F[0])}</div><div class="t">${TEL[r.F[0]]} — დასაწყებად კარგი</div></div>
+    <div><div class="k">სულის დღე</div><div class="v" style="font-size:17px">${daysOf(r.F[1])}</div><div class="t">${TEL[r.F[1]]} — მხარდაჭერა</div></div>
+    <div><div class="k">დაბრკოლების დღე</div><div class="v" style="font-size:17px;color:#e86b6b">${daysOf((r.F[0]+3)%5)}</div><div class="t">${TEL[(r.F[0]+3)%5]} — ერიდე ახლის დაწყებას</div></div></div></div>`;
+}
+function vYears(r){
+  const Y0=+$('yr').value||new Date().getFullYear();let rows='';
+  for(let y=Y0;y<Y0+12;y++){const yi=yearInfo(y);const rels=r.F.map((e,i)=>yrel(e,yi.F[i]));const sc=rels.reduce((a,x)=>a+x[3],0);
+    const obst=yi.z===r.z?'ლო-კეგი':yi.z===(r.z+6)%12?'დუნ-ძური':'';
+    rows+=`<tr class="${y===new Date().getFullYear()?'now':''}"><td>${y}</td><td>${TEL[ganEl(yi.g)]}-${AN_KA[yi.z]}</td>${rels.map(x=>`<td title="${x[0]}"><span class="dot" style="background:${x[2]}"></span></td>`).join('')}<td style="color:${sc>=3?'#7fcf8f':sc<=-2?'#e86b6b':'#c8a96e'}">${sc>0?'+':''}${sc}</td><td style="color:#e86b6b">${obst}</td></tr>`;}
+  const yi=yearInfo(Y0);
+  return `<div class="card"><div class="row" style="margin-bottom:10px"><span class="note">დაწყების წელი</span><input class="in" id="yr2" value="${Y0}" style="width:90px;text-align:center"></div>
+    <div class="h">${Y0} წელი · ${TEL[ganEl(yi.g)]}-${AN_KA[yi.z]}</div>${r.F.map((e,i)=>{const x=yrel(e,yi.F[i]);return `<div class="rel"><b>${FN[i][0]}</b> ${chip(e)} ↔ ${chip(yi.F[i])} <b style="color:${x[2]}">${x[0]} — ${x[1]}</b><div class="note">${i===4?'ლუნგთა სუსტ წელს — დაკიდე ლოცვის დროშები შენი ელემენტის ფერით.':i===0?'სოგი სუსტ წელს — მიაქციე ყურადღება ჯანმრთელობას და დასვენებას.':i===2?'ლუ სუსტ წელს — სხეული მეტ ზრუნვას საჭიროებს.':i===3?'ვანგთანგი სუსტ წელს — ნუ ჩაერთვები ძალაუფლების ბრძოლაში.':'ლა სუსტ წელს — დაცვის პრაქტიკები, სიმშვიდე.'}</div></div>`;}).join('')}</div>
+  <div class="card"><div class="h">12 წელი</div><div class="scroll"><table class="tbl"><tr><th>წელი</th><th>წელი</th>${FN.map(f=>`<th title="${f[0]}">${f[0].split(' · ')[0]}</th>`).join('')}<th>ჯამი</th><th></th></tr>${rows}</table></div>
+    <div class="note" style="margin-top:8px">${REL.map(x=>`<span class="dot" style="background:${x[2]}"></span> ${x[0]} (${x[1]})`).join(' &nbsp; ')}</div></div>`;
+}
+function parkhaIdx(cnt,method){if(method==='zz'){const n=cnt+Math.floor(cnt/11)*3;return ((n-1)%8+8)%8;}return ((cnt-1)%8+8)%8;}
+function vMP(r){
+  const Y=+$('yr').value||new Date().getFullYear(),ymw=mewaOf(Y),M=MEWA[r.mw];
+  const age=Y-r.P.y,cnt=age+1,sx=$('sx').value;
+  const CW=[4,3,2,1,0,7,6,5]; /* clockwise from Li */
+  const chg=sx==='m'?CW[(cnt-1)%8]:((cnt-1)%8);
+  const ma=parseInt($('ma').value,10);const bp=isNaN(ma)?null:parkhaIdx(ma+1,'lin'),bpz=isNaN(ma)?null:parkhaIdx(ma+1,'zz');
+  const cell=(i,cls)=>i<0?`<div style="border:0"></div>`:`<div class="${cls(i)}"><b>${PK[i][2]}</b>${PK[i][1]}<span style="font-size:9px">${PK[i][4]}</span></div>`;
+  let ml='';for(let y=Y-2;y<=Y+9;y++){const m=mewaOf(y);const x=yrel(M[2],MEWA[m][2]);ml+=`<tr class="${y===Y?'now':''}"><td>${y}</td><td style="color:${MEWA[m][1]==='#3a3a44'?'#aaa':MEWA[m][1]}">${m} ${MEWA[m][0]}</td><td>${TEL[MEWA[m][2]]}</td><td style="color:${x[2]}">${x[0]}</td></tr>`;}
+  return `<div class="card"><div class="h">დაბადების მევა · ${r.mw} ${M[0]}</div>
+    <div class="mewa">${LO.map(n=>`<div class="${n===r.mw?'me':''}${n===ymw?' yr':''}" style="background:${MEWA[n][1]}22;color:${MEWA[n][1]==='#3a3a44'?'#aaa':MEWA[n][1]}">${n}</div>`).join('')}</div>
+    <div class="txt" style="text-align:center">${TEL[M[2]]} — ${MEWA_T[r.mw]}</div>
+    <div class="note" style="text-align:center;margin-top:6px"><span style="color:var(--gold)">ოქროსფერი</span> — დაბადების, <span style="color:#7fcfe8">ცისფერი</span> — ${Y} წლის მევა (${ymw} ${MEWA[ymw][0]})</div>
+    <div class="scroll" style="margin-top:10px"><table class="tbl"><tr><th>წელი</th><th>მევა</th><th>ელემენტი</th><th>შენს მევასთან</th></tr>${ml}</table></div></div>
+  <div class="card"><div class="h">პარხა (8 ტრიგრამა)</div>
+    <div class="pk">${PK_GRID.map(i=>cell(i,j=>(j===bp?'me ':'')+(j===chg?'ch':''))).join('')}</div>
+    <div class="txt" style="margin-top:10px">${bp!=null?`დაბადების პარხა (დედის ასაკი ${ma} → ${ma+1}): <b>${PK[bp][1]} ${PK[bp][2]}</b> — ${PK[bp][3]}, ${PK[bp][4]}. <span class="note">(ზიგზაგის მეთოდით: ${PK[bpz][1]} ${PK[bpz][2]})</span>`:'დაბადების პარხისთვის შეიყვანე დედის ასაკი დაბადებისას.'}</div>
+    <div class="txt" style="margin-top:6px">ცვალებადი პარხა ${Y} წელს (ასაკი ${age}, ${sx==='m'?'კაცი — ლიდან საათის ისრით':'ქალი — ხამიდან საათის ისრის საწინააღმდეგოდ'}): <b>${PK[chg][1]} ${PK[chg][2]}</b> — ${PK[chg][3]}, ${PK[chg][4]}. ეს მიმართულება წლის განმავლობაში შენთვის „საკუთარია“.</div>
+    <div class="note" style="margin-top:6px"><span style="color:var(--gold)">ოქროსფერი</span> — დაბადების, <span style="color:var(--vio)">იისფერი</span> — ცვალებადი პარხა.</div></div>`;
+}
+function vCompat(r){
+  if(!R2)return '<div class="card txt" style="text-align:center">შეიყვანე პარტნიორის თარიღი ზემოთ.</div>';
+  const b=R2;let sc=50;const L=[];
+  const tr=x=>[[0,4,8],[1,5,9],[2,6,10],[3,7,11]].findIndex(t=>t.includes(x));
+  if(r.z===b.z){sc+=6;L.push(['ok','ერთი ცხოველი','მსგავსი ბუნება — მარტივი გაგება.']);}
+  else if(tr(r.z)===tr(b.z)){sc+=16;L.push(['ok','ერთი სამკუთხედი','ცხოველები ერთ „ტომში“ არიან — ბუნებრივი მეგობრობა და მხარდაჭერა.']);}
+  else if((r.z+6)%12===b.z){sc-=14;L.push(['bad','მოპირდაპირე ცხოველები (დუნ-ძური)','საპირისპირო ენერგიები — ძლიერი მიზიდულობა, მაგრამ კონფლიქტის რისკი.']);}
+  const W=[2.5,2,2,1.5,1.5];
+  r.F.forEach((e,i)=>{const x=yrel(e,b.F[i]);sc+=x[3]*W[i];L.push([x[3]>0?'ok':x[3]<0?'bad':'warn',`${FN[i][0]}: ${TEL[e]} ↔ ${TEL[b.F[i]]}`,`პარტნიორის ${FN[i][0].split(' · ')[0]} შენთვის — ${x[0]} (${x[1]}).`]);});
+  const mx=yrel(MEWA[r.mw][2],MEWA[b.mw][2]);sc+=mx[3]*2;L.push([mx[3]>0?'ok':mx[3]<0?'bad':'warn',`მევა: ${r.mw} ${MEWA[r.mw][0]} ↔ ${b.mw} ${MEWA[b.mw][0]}`,`${mx[0]} — ${mx[1]}.`]);
+  sc=Math.max(5,Math.min(97,Math.round(sc)));
+  return `<div class="card" style="text-align:center"><div class="big" style="color:${sc>=70?'#7fcf8f':sc>=50?'#c8a96e':'#e86b6b'}">${sc}%</div><div class="sub">${nm(r)} ${ANIMAL_EMO[r.z]} ↔ ${ANIMAL_EMO[b.z]} ${nm(b)}</div></div>
+   <div class="card"><div class="h">ფაქტორები</div>${L.map(x=>`<div class="rel"><b style="color:${x[0]==='ok'?'#7fcf8f':x[0]==='bad'?'#e86b6b':'#e8c95a'}">${x[1]}</b><div class="txt">${x[2]}</div></div>`).join('')}</div>`;
+}
+function vLife(r){
+  const cnt=FN.map(()=>REL.map(()=>0)),yearsSc=[];
+  for(let a=0;a<=90;a++){const y=r.ly+a;const yi=yearInfo(y);let s=0;r.F.forEach((e,i)=>{const x=yrel(e,yi.F[i]);cnt[i][REL.indexOf(x)]++;s+=x[3];});yearsSc.push([y,a,s,yi]);}
+  const cur=new Date().getFullYear();const fut=yearsSc.filter(x=>x[0]>=cur&&x[0]<cur+40);
+  const best=[...fut].sort((a,b)=>b[2]-a[2]).slice(0,6),worst=[...fut].sort((a,b)=>a[2]-b[2]).slice(0,6);
+  return `<div class="card"><div class="h">0–90 წლის ასაკი: ძალების განაწილება</div>`+FN.map((f,i)=>`<div style="margin:10px 0 4px;font-size:12.5px">${f[0]} ${chip(r.F[i])}</div>`+REL.map((x,j)=>`<div class="elbar"><span class="n" style="color:${x[2]}">${x[0]}</span><div class="b"><i style="width:${cnt[i][j]/91*100}%;background:${x[2]}"></i></div><span class="v">${cnt[i][j]} წ.</span></div>`).join('')).join('')+`</div>
+   <div class="card"><div class="h">საუკეთესო წლები (შემდეგი 40 წელი)</div>${best.map(x=>`<div class="rel"><b style="color:#7fcf8f">${x[0]}</b> · ${TEL[ganEl(x[3].g)]}-${AN_KA[x[3].z]} · ასაკი ${x[1]} · ჯამი +${x[2]}</div>`).join('')}</div>
+   <div class="card"><div class="h">ყველაზე რთული წლები</div>${worst.map(x=>`<div class="rel"><b style="color:#e86b6b">${x[0]}</b> · ${TEL[ganEl(x[3].g)]}-${AN_KA[x[3].z]} · ასაკი ${x[1]} · ჯამი ${x[2]}</div>`).join('')}</div>`;
 }
 </script>
 </body>
