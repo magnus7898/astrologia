@@ -96,7 +96,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
     <button class="btn" id="go">გამოთვლა</button>
   </div>
   <div class="pills" style="margin:0" id="sys">
-    <div class="pill active" data-v="ds">დრიმსპელი</div><div class="pill" data-v="tr">ტრადიციული მაია</div>
+    <div class="pill active" data-v="ds">კინი</div><div class="pill" data-v="wave">ტალღა · სასახლე</div><div class="pill" data-v="moon">13 მთვარე</div><div class="pill" data-v="compat">შეთავსება</div><div class="pill" data-v="tr">ტრადიციული მაია</div>
   </div>
   <div class="err" id="err"></div>
 </div>
@@ -105,10 +105,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+/* calendar convention (MAGNUS): Julian before 15.10.1582, Gregorian after */
+const isLeap=y=>y<1582?y%4===0:(y%4===0&&y%100!==0)||y%400===0;
 const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
 /* Gregorian (proleptic) → Julian Day Number */
-function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function jdn(y,m,d){if(y*10000+m*100+d<15821015){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-32083;}const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
 function parseDate(v,ymin,ymax){
   v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
   const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
@@ -237,8 +238,67 @@ function run(){
   $('err').textContent='';
   if(!A){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY (წელი 1–9999).';return;}
   if(Bv&&!B){$('err').textContent='პარტნიორის თარიღი არასწორია.';return;}
-  $('out').innerHTML=SYS==='ds'?dreamspell(A,B):traditional(A,B);
+  LA=A;LB=B;draw();
 }
+let LA=null,LB=null,MY=null;
+function draw(){if(!LA)return;const A=LA,B=LB;
+  $('out').innerHTML=SYS==='ds'?dreamspell(A,null):SYS==='wave'?waveView(A):SYS==='moon'?moonView(A,B):SYS==='compat'?(B?compatView(A,B):'<div class="card txt" style="text-align:center">შეიყვანე პარტნიორის თარიღი ზემოთ.</div>'):traditional(A,B);
+  const my=$('my');if(my)my.onchange=()=>{MY=+my.value||MY;draw();};}
+const CASTLE_T=['დაბადება და ინიციაცია — ცხოვრების გაკვეთილები „დასაწყისის“ თემით: ახალი, პირველი ნაბიჯები.','გადაკვეთა — განწმენდა, გამოცდები, ზღვრების გადალახვა; ძველის დატოვება.','წვა — გარდაქმნა, ტრანსფორმაციის ცეცხლი, ღრმა ცვლილებები.','გაცემა — სიმწიფე, მოსავალი, სხვებისთვის სიბრძნის გადაცემა.','მომხიბვლელობა — სინქრონიზაცია, ჯადოსნური დასრულება, ციკლის მთლიანობა.'];
+const TONE_ROLE=t=>t===1?'კარიბჭე — მიზნის დასახვა':[5,9,13].includes(t)?'კოშკი — ძალის გამოვლინება':t<=4?'განსაზღვრა (1–4)':t<=8?'აქტივაცია (5–8)':'რეალიზაცია (9–13)';
+const PLASMA=[['დალი','გვირგვინი · მიღება'],['სელი','ფესვი · გადინება'],['გამა','შუბლი · სიმშვიდე'],['კალი','საკრალური · კატალიზი'],['ალფა','ყელი · გათავისუფლება'],['ლიმი','მზის წნული · განწმენდა'],['სილიო','გული · განმუხტვა']];
+function waveView(A){
+  const k=kinOf(A.y,A.m,A.d),t=toneOf(k),ws=k-(t-1),wsS=sealOf(ws),castle=Math.floor((k-1)/52);
+  let h=`<div class="card"><div class="h">ტალღა (ვეივსპელი) · ${COL[colOf(wsS)].n} ${SEAL[wsS][0]}ის ტალღა</div>
+    <div class="txt">ტალღა — 13-დღიანი ციკლი, რომლის თემას პირველი, მაგნიტური დღის ბეჭედი განსაზღვრავს: <b>${SEAL[wsS][4]}</b> შენ ხარ ამ ტალღის <b>${t}-ე</b> დღე — ${TONE_ROLE(t)}.</div>
+    <div class="scroll" style="margin-top:12px"><table class="tbl"><tr><th>ტონი</th><th>კინი</th><th>ბეჭედი</th><th>როლი ტალღაში</th></tr>`+
+    [...Array(13)].map((_,i)=>{const kk=ws+i;return `<tr class="${kk===k?'now':''}"><td>${i+1} · ${TONE[i+1][0]}</td><td>${kk}${GAP.has(kk)?' <span style="color:#7fcf8f">✦</span>':''}</td><td style="color:${COL[colOf(sealOf(kk))].h}">${kinName(kk)}</td><td class="note">${TONE[i+1][1]} — ${TONE_ROLE(i+1)}</td></tr>`;}).join('')+`</table></div></div>`;
+  h+=`<div class="card"><div class="h">სასახლე ${castle+1} · ${CASTLE[castle][0]}</div><div class="txt">${CASTLE_T[castle]}</div>
+    <div class="note" style="margin-top:8px">სასახლე = 52 კინი = 4 ტალღა. შენი სასახლის ტალღები: ${[0,1,2,3].map(j=>{const w=castle*52+j*13+1;return `<span style="color:${COL[colOf(sealOf(w))].h}">${SEAL[sealOf(w)][0]}</span>`;}).join(' → ')}</div></div>`;
+  /* harmonic & 52-year cycle */
+  const hm=Math.floor((k-1)/4),hk=[1,2,3,4].map(j=>hm*4+j);
+  const Y=new Date().getFullYear(),age=Y-A.y;
+  h+=`<div class="card"><div class="h">ჰარმონიკი ${hm+1} / 65</div><div class="row" style="gap:18px">${hk.map(x=>sealCard(x,x===k?'შენ':'',1)).join('')}</div>
+    <div class="note" style="margin-top:8px">ჰარმონიკი — ოთხი თანმიმდევრული კინი ოთხი ფერით (წითელი → თეთრი → ლურჯი → ყვითელი): შეყვანა, შენახვა, დამუშავება, გამოტანა. ერთი იდეის ოთხი ფაზა.</div></div>
+  <div class="card"><div class="h">52-წლიანი ციკლი</div><div class="txt">ყოველ დაბადების დღეს კინს ემატება 105. 52 წლის შემდეგ დაბადების დღე კვლავ <b>კინ ${k}</b>-ზე ეცემა — „გალაქტიკური დაბრუნება“. ${age>=52?`შენი პირველი დაბრუნება იყო ${A.y+52} წელს.`:`შენი პირველი დაბრუნება იქნება ${A.y+52} წელს.`} ამჟამად ხარ ციკლის <b>${(age%52)+1}-ე</b> წელში — ${Math.floor((age%52)/13)+1}-ე 13-წლიან სასახლეში (${['წითელი — დაწყება','თეთრი — განწმენდა','ლურჯი — გარდაქმნა','ყვითელი — სიმწიფე'][Math.floor((age%52)/13)]}).</div></div>`;
+  return h;
+}
+function moonView(A,B){
+  const now=new Date(),cy=now.getFullYear(),cm=now.getMonth()+1,cd=now.getDate();
+  const curY=(cm>7||(cm===7&&cd>=26))?cy:cy-1;if(MY==null)MY=curY;const Y=MY;
+  const yk=kinOf(Y,7,26);
+  const bm=(()=>{const off=nidx(2001,A.m,A.d)-nidx(2001,7,26);return mod(off,365);})();
+  const pm=B?mod(nidx(2001,B.m,B.d)-nidx(2001,7,26),365):-1;
+  const tday=mod(nidx(cy,cm,cd)-nidx(curY,7,26),365);
+  let g='<div class="scroll"><table class="tbl" style="font-size:10px;min-width:720px"><tr><th>მთვარე</th>'+[...Array(28)].map((_,i)=>`<th style="text-align:center;padding:4px 1px">${i+1}</th>`).join('')+'</tr>';
+  for(let m=0;m<13;m++){g+=`<tr><td style="white-space:nowrap">${m+1} · ${MOONS[m]}</td>`;
+    for(let d=0;d<28;d++){const off=m*28+d,kk=mod(yk-1+off,260)+1,c=COL[colOf(sealOf(kk))].h;
+      const me=off===bm,pt=off===pm,td=Y===curY&&off===tday;
+      g+=`<td title="${kk} · ${kinName(kk)} · ${PLASMA[d%7][0]}" style="text-align:center;padding:3px 0;color:${c};${GAP.has(kk)?'background:rgba(127,207,143,.13);':''}${me?'outline:2px solid var(--gold);':''}${pt?'outline:2px solid var(--vio);':''}${td?'box-shadow:inset 0 0 0 1px #7fcfe8;':''}">${kk}</td>`;}
+    g+='</tr>';}
+  g+='</table></div>';
+  const bk=mod(yk-1+bm,260)+1;
+  return `<div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><div class="h" style="margin:0">13-მთვარიანი წელი ${Y}–${Y+1}</div><div class="row"><span class="note">წელი (26 ივლისიდან)</span><input class="in" id="my" value="${Y}" style="width:90px;text-align:center"></div></div>
+    <div class="txt">წლის ბეჭედი: <b style="color:${COL[colOf(sealOf(yk))].h}">${kinName(yk)}</b> (კინი ${yk}). შენი დაბადების დღე ამ წელს: <b>კინი ${bk}</b> — ${kinName(bk)}.</div>
+    <div style="margin-top:12px">${g}</div>
+    <div class="note" style="margin-top:8px">13 მთვარე × 28 დღე + „დღე დროის გარეთ“ (25 ივლისი). კვირის დღეები — პლაზმები: ${PLASMA.map(p=>p[0]+' ('+p[1]+')').join(', ')}. <span style="color:var(--gold)">ოქროსფერი</span> — შენი დაბადების დღე${B?', <span style="color:var(--vio)">იისფერი</span> — პარტნიორის':''}, <span style="color:#7fcfe8">ცისფერი</span> — დღეს, <span style="color:#7fcf8f">მწვანე ფონი</span> — GAP.</div></div>`;
+}
+function compatView(A,B){
+  const k1=kinOf(A.y,A.m,A.d),k2=kinOf(B.y,B.m,B.d),s1=sealOf(k1),s2=sealOf(k2),t1=toneOf(k1),t2=toneOf(k2);
+  let sc=50;
+  if(analog(s1)===s2)sc+=20;if(guide(s1,t1)===s2||guide(s2,t2)===s1)sc+=14;if(occult(s1)===s2)sc+=12;if(antipode(s1)===s2)sc-=4;
+  if(s1%5===s2%5&&s1!==s2)sc+=8;if(colOf(s1)===colOf(s2))sc+=5;if(t1+t2===14)sc+=8;if(t1===t2)sc+=4;if(Math.floor((k1-1)/13)===Math.floor((k2-1)/13))sc+=6;if(s1===s2)sc+=6;
+  sc=Math.max(10,Math.min(98,sc));const ck=mod(k1+k2-1,260)+1,cs=sealOf(ck),ct=toneOf(ck);
+  return `<div class="card" style="text-align:center"><div class="big" style="color:${sc>=72?'#7fcf8f':sc>=55?'#c8a96e':'#e86b6b'}">${sc}%</div><div class="sub">ბეჭდებისა და ტონების ჰარმონია</div></div>`+compat(k1,k2,A,B)+
+   `<div class="card"><div class="h">წყვილის კინის ორაკული · ${ck}</div><div class="cross">
+      <div></div>${sealCard(kinST(guide(cs,ct),ct),'მეგზური',1)}<div></div>
+      ${sealCard(kinST(antipode(cs),ct),'ანტიპოდი',1)}${sealCard(ck,'წყვილი',1)}${sealCard(kinST(analog(cs),ct),'ანალოგი',1)}
+      <div></div>${sealCard(261-ck,'ფარული',1)}<div></div></div>
+    <div class="txt" style="margin-top:12px">ურთიერთობის მეგზური — <b>${SEAL[guide(cs,ct)][0]}</b>: ${SEAL[guide(cs,ct)][4]}</div></div>`;
+}
+const TR_POW=['ახალი დასაწყისის ძალა, დედობრივი ზრუნვა','სიტყვის და სუნთქვის ძალა','წინაპრების და სიზმრების ძალა','სიუხვის და ზრდის ძალა','სხეულის და ვნების ძალა','გარდაქმნის და წინაპრებთან კავშირის ძალა','მკურნალობის და ნადირობის ძალა','ჰარმონიის და ნაყოფიერების ძალა','ემოციების და განწმენდის ძალა','ერთგულების და სამართლის ძალა','შემოქმედების და ხელოვნების ძალა','ბედის და გზის ძალა','ოჯახის და ზრდის ძალა','ღამის, მაგიის და ქალური ძალა','ხედვის და ამაღლების ძალა','სიბრძნის და შენდობის ძალა','ცოდნის და სინქრონულობის ძალა','ჭეშმარიტების და გადაწყვეტილების ძალა','განახლების და ოჯახის ძალა','სინათლის და სრულყოფის ძალა'];
+const TR_SHADOW=['ზედმეტი კონტროლი, დამოკიდებულება','უსტაბილობა, ზედმეტი ლაპარაკი','შიში, ჩაკეტილობა','სიხარბე, მატერიალიზმი','ვნებების ტყვეობა','დაუმთავრებელი გლოვა','ზედმეტი პასუხისმგებლობა','ზედმეტი ცდუნებები','ემოციური ქაოსი','ეჭვიანობა, მსხვერპლობა','ქარაფშუტობა','სიჯიუტე, ამპარტავნობა','ზედმეტი ფიქრი','ძალაუფლების ბოროტად გამოყენება','მედიდურობა','დანაშაულის გრძნობა','მოუსვენრობა','მკაცრი განსჯა','ქაოსის შექმნა','ამპარტავნება'];
+const LORD_T=['შიუჰტეკუჰტლი — ცეცხლის ღმერთი: სიცოცხლის ცენტრი, განახლება.','იცტლი — ობსიდიანის დანა: მსხვერპლი, სიცხადე.','პილცინტეკუჰტლი — ახალგაზრდა მზე: ხედვა, ბრწყინვა.','სენტეოტლი — სიმინდი: საზრდო, სიუხვე.','მიქტლანტეკუჰტლი — სიკვდილის ბატონი: დასრულება, გარდაქმნა.','ჩალჩიუჰტლიკუე — წყლის ქალღმერთი: ემოცია, დაბადება.','ტლასოლტეოტლი — განწმენდის ქალღმერთი: ვნება და მისი გათავისუფლება.','ტეპეიოლოტლი — მთის გული (იაგუარი): ძალა, ექო.','ტლალოკი — წვიმის ღმერთი: ნაყოფიერება და ქარიშხალი.'];
 function dreamspell(A,B){
   const k=kinOf(A.y,A.m,A.d),s=sealOf(k),t=toneOf(k),c=COL[colOf(s)];
   const now=new Date(),tk=kinOf(now.getFullYear(),now.getMonth()+1,now.getDate());
@@ -279,7 +339,6 @@ function dreamspell(A,B){
   h+=`<div class="card"><div class="h">წლიური კინები (დაბადების დღიდან დაბადების დღემდე)</div>
     <div class="scroll"><table class="tbl"><tr><th>წელი</th><th>ასაკი</th><th>კინი</th><th>წლის ენერგია</th></tr>${rows}</table></div>
     <div class="note" style="margin-top:8px">ყოველ წელს დაბადების კინს ემატება 105 (365 − 260).</div></div>`;
-  if(B)h+=compat(k,kinOf(B.y,B.m,B.d),A,B);
   h+=`<div class="card"><div class="h">ცოლკინის მატრიცა 13 × 20</div><div class="scroll">${grid(k,B?kinOf(B.y,B.m,B.d):0,tk)}</div>
     <div class="note" style="margin-top:8px"><span style="color:var(--gold)">ოქროსფერი</span> — შენ${B?', <span style="color:var(--vio)">იისფერი</span> — პარტნიორი':''}, <span style="color:#7fcfe8">ცისფერი ჩარჩო</span> — დღეს, <span style="color:#7fcf8f">მწვანე</span> — 52 GAP პორტალი.</div></div>
   <div class="card note">დრიმსპელში 29 თებერვალს ცალკე კინი არ აქვს (0.0 ჰუნაბ კუ) — იღებს 28 თებერვლის კინს. ათვლის წერტილი: 26.07.1987 = კინი 34. შემოწმება: 21.12.2012 = კინი 207, 26.07.2013 = კინი 164.</div>`;
@@ -317,8 +376,14 @@ function traditional(A,B){
   </div>
   <div class="card"><div class="h">დღის ნიშანი (ნავალი)</div>
     <div class="txt"><b>${tr[0]} — ${tr[2]}</b>. ${tr[3]}</div>
+    <div class="txt" style="margin-top:8px">ძალა: <b>${TR_POW[T.sign]}</b> · ჩრდილი: <span style="color:#e8a0a0">${TR_SHADOW[T.sign]}</span></div>
     <div class="txt" style="margin-top:10px"><b>რიცხვი ${T.num}</b> — ${T.num<=3?'დაბალი რიცხვები (1–3): ნაზი, ახალგაზრდა ენერგია, რომელიც ჯერ ძალას აგროვებს.':T.num<=9?'შუა რიცხვები (4–9): დაბალანსებული, სტაბილური ენერგია — ყველაზე ჰარმონიული.':'მაღალი რიცხვები (10–13): ძლიერი, ინტენსიური ენერგია — დიდი ძალა, რომელსაც კონტროლი სჭირდება.'}</div>
     <div class="note" style="margin-top:12px">ტრადიციულ კიჩეურ და იუკატეკურ პრაქტიკაში დღის ნიშანი (ნავალი) ადამიანის სულიერი მფარველია; რიცხვი — მისი ძალის ინტენსივობა. ${GLORD[T.g]} — ცხრა „ღამის მბრძანებლიდან“ ერთ-ერთი, რომლებიც რიგრიგობით „მართავენ“ ღამეს.</div></div>
+  <div class="card"><div class="kv">
+    <div><div class="k">ტრესენა (13-დღიანი)</div><div class="v" style="font-size:20px">${TR[mod(T.sign-(T.num-1),20)][0]}</div><div class="t">${TR[mod(T.sign-(T.num-1),20)][2]} — 13 დღის მფარველი</div></div>
+    <div><div class="k">წლის მატარებელი</div><div class="v" style="font-size:20px">${(()=>{const y0=trad(J-(T.hm*20+T.hd));return y0.num+' '+TR[y0.sign][0];})()}</div><div class="t">ჰააბის წლის (0 პოპ) დღე</div></div>
+    <div><div class="k">ღამის მბრძანებელი</div><div class="v" style="font-size:20px">${GLORD[T.g]}</div><div class="t">${LORD_T[T.g-1]}</div></div>
+  </div></div>
   <div class="card"><div class="kv">
     <div><div class="k">დღეს</div><div class="v" style="font-size:22px">${TT.num} ${TR[TT.sign][0]}</div><div class="t">${TT.hd} ${HAAB[TT.hm]}</div></div>
     <div><div class="k">გრძელი ათვლა დღეს</div><div class="v" style="font-size:20px">${TT.lc.join('.')}</div></div>
@@ -329,7 +394,7 @@ function traditional(A,B){
       <div class="txt">შენ: <b>${T.num} ${tr[0]}</b> (${tr[2]}) · პარტნიორი: <b>${T2.num} ${TR[T2.sign][0]}</b> (${TR[T2.sign][2]})</div>
       <div class="txt" style="margin-top:8px">${T.sign===T2.sign?'ერთი და იგივე ნავალი — ღრმა სულიერი ნათესაობა.':ds%5===0?'ნიშნები ერთ „ჯგუფშია“ (5 დღის ინტერვალით) — ერთნაირი მიმართულება და საერთო წელიწადის მატარებლის ოჯახი.':ds===10?'ნიშნები ზუსტად საპირისპიროა ციკლში — ერთმანეთის შემავსებელი, მაგრამ გამოწვევით.':'ნიშნები განსხვავებულ ძალებს ატარებს — ურთიერთობა ერთმანეთისგან სწავლაზეა აგებული.'}
       ${dn===0?' რიცხვებიც ემთხვევა — ერთნაირი ინტენსივობა.':''}</div></div>`;}
-  h+=`<div class="card note">GMT კორელაცია 584283: 21.12.2012 = 13.0.0.0.0, 4 აჰავ 3 კ’ანკ’ინ. თარიღები გრიგორიანული (პროლეპტიკური) კალენდრით.</div>`;
+  h+=`<div class="card note">GMT კორელაცია 584283: 21.12.2012 = 13.0.0.0.0, 4 აჰავ 3 კ’ანკ’ინ. 1582 წლამდე თარიღები — იულიუსის კალენდრით (ისტორიული წესი).</div>`;
   return h;
 }
 </script>
