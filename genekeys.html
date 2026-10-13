@@ -82,11 +82,14 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
   <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
 </header>
 <p class="lead">რიჩარდ რადის სისტემა (Gene Keys), ადამიანის დიზაინის კარიბჭეებზე დაფუძნებული: ყოველ გასაღებს სამი სიხშირე აქვს — <b>ჩრდილი → ნიჭი → სიდჰი</b>. „ოქროს გზა“ შედგება სამი თანმიმდევრობისგან: <b>აქტივაცია</b> (მიზანი), <b>ვენერა</b> (ურთიერთობები), <b>მარგალიტი</b> (კეთილდღეობა). „პიროვნება“ — დაბადების მომენტი, „დიზაინი“ — როცა მზე 88°-ით უკან იყო (≈ 88 დღით ადრე).</p>
+<div class="pills" id="tabs"><div class="pill active" data-v="prof">პროფილი</div><div class="pill" data-v="all">64 გასაღები</div><div class="pill" data-v="rings">კოდონის რგოლები</div><div class="pill" data-v="compat">შეთავსება</div></div>
 <div class="card">
   <div class="form2">
     <div><label>თარიღი</label><input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10"></div>
     <div><label>დრო</label><input class="in time" id="t1" placeholder="HH:MM" maxlength="5"></div>
     <div><label>UTC±</label><input class="in" id="tz1" value="4" style="text-align:center"></div>
+    <div><label>პარტნიორის თარიღი</label><input class="in date" id="d2" placeholder="DD/MM/YYYY" maxlength="10"></div>
+    <div><label>პარტნიორის დრო</label><input class="in time" id="t2" placeholder="HH:MM" maxlength="5"></div>
   </div>
   <div class="row" style="margin-top:14px"><button class="btn" id="go">გამოთვლა</button></div>
   <div class="err" id="err"></div>
@@ -97,10 +100,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+/* calendar convention (MAGNUS): Julian before 15.10.1582, Gregorian after */
+const isLeap=y=>y<1582?y%4===0:(y%4===0&&y%100!==0)||y%400===0;
 const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
 /* Gregorian (proleptic) → Julian Day Number */
-function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function jdn(y,m,d){if(y*10000+m*100+d<15821015){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-32083;}const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
 function parseDate(v,ymin,ymax){
   v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
   const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
@@ -139,39 +143,152 @@ const SEQS=[['აქტივაციის თანმიმდევრო�
 const norm=x=>((x%360)+360)%360;
 function gateOf(lon){const o=norm(lon-302),i=Math.floor(o/5.625);return{g:ORDER[i],l:Math.floor((o-i*5.625)/0.9375)+1};}
 function designJD(jd){const S=window._search,t=norm(S.lon('sun',jd)-88);let j=jd-89;for(let k=0;k<8;k++){let f=norm(S.lon('sun',j)-t);if(f>180)f-=360;j-=f/0.98565;}return j;}
-maskDate($('d1'));maskTime($('t1'));
+const KT=[null,
+'ენტროპია — ენერგიის დაკარგვა და მოწყენილობა; ნიჭი — სიახლე, ყოველდღიურობაში ახლის დანახვა; სიდჰი — სილამაზე, რომელიც ყველაფერში ვლინდება.',
+'დისლოკაცია — ადგილის ვერპოვნა; ნიჭი — ორიენტაცია, შინაგანი კომპასი; სიდჰი — ერთიანობა, სამყაროსთან ერთად სვლა.',
+'ქაოსი — წესრიგის დაკარგვის შიში; ნიჭი — ინოვაცია, ქაოსიდან ახლის შექმნა; სიდჰი — უმანკოება, ბავშვური სიახლე.',
+'შეუწყნარებლობა — სხვისი შეცდომის მიუღებლობა; ნიჭი — გაგება, ლოგიკური ახსნა; სიდჰი — პატიება, რომელიც ყველაფერს ათავისუფლებს.',
+'მოუთმენლობა — რიტმის დარღვევა; ნიჭი — მოთმინება, ბუნებრივ ციკლებთან ნდობა; სიდჰი — უდროობა.',
+'კონფლიქტი — ემოციური დაძაბულობა; ნიჭი — დიპლომატია, ემოციური ინტელექტი; სიდჰი — მშვიდობა.',
+'გაყოფა — „ჩვენ და ისინი“; ნიჭი — წინამძღოლობა, ადამიანების მიმართვა; სიდჰი — სათნოება.',
+'უფერულობა — სხვების მიბაძვა; ნიჭი — სტილი, საკუთარი თავის გამოხატვა; სიდჰი — დახვეწილობა, უნიკალურობის სრულყოფა.',
+'ინერცია — მცირე საქმეების დაგროვება; ნიჭი — მიზანსწრაფვა, დეტალების ძალა; სიდჰი — უძლეველობა.',
+'თვითმოხიბვლა — საკუთარ თავზე ფიქსაცია; ნიჭი — ბუნებრიობა, საკუთარი თავის სიყვარული; სიდჰი — უბრალოდ ყოფიერება.',
+'ბუნდოვანება — იდეების დაკარგვა; ნიჭი — იდეალიზმი, შთაგონება; სიდჰი — სინათლე.',
+'ამაოება — ყალბი ფასეულობები; ნიჭი — გარჩევა, სიტყვის ძალა; სიდჰი — სიწმინდე.',
+'უთანხმოება — ურთიერთობის რღვევა; ნიჭი — შეცნობა, მოსმენის ხელოვნება; სიდჰი — თანაგრძნობა.',
+'კომპრომისი — საკუთარი ძალის უარყოფა; ნიჭი — კომპეტენცია, რესურსების მართვა; სიდჰი — უხვობა.',
+'მოსაწყენობა — სიცოცხლის რიტმის დაკარგვა; ნიჭი — მაგნეტიზმი, ბუნებრივი მიზიდულობა; სიდჰი — აყვავება.',
+'გულგრილობა — ენთუზიაზმის ნაკლებობა; ნიჭი — მრავალმხრივობა, ოსტატობისკენ სვლა; სიდჰი — ოსტატობა.',
+'მოსაზრება — ხისტი აზრები; ნიჭი — შორსმჭვრეტელობა, სისტემური ხედვა; სიდჰი — ყოვლისმცოდნეობა.',
+'განსჯა — მუდმივი კრიტიკა; ნიჭი — მთლიანობა, გამოსწორების ნიჭი; სიდჰი — სრულყოფილება.',
+'თანადამოკიდებულება — სხვაზე მიჯაჭვულობა; ნიჭი — მგრძნობელობა; სიდჰი — მსხვერპლი, საერთო სიკეთისთვის.',
+'ზედაპირულობა — აწმყოს გამოტოვება; ნიჭი — თავდაჯერება, აქ და ახლა; სიდჰი — ყოფნა.',
+'კონტროლი — შიშიდან მართვა; ნიჭი — ავტორიტეტი, სამართლიანი მართვა; სიდჰი — სიმამაცე.',
+'უპატიობა — ემოციური უპასუხისმგებლობა; ნიჭი — კეთილგანწყობა; სიდჰი — მადლი.',
+'სირთულე — ზედმეტი გართულება; ნიჭი — სიმარტივე, მარტივად ახსნა; სიდჰი — კვინტესენცია.',
+'დამოკიდებულება — წრეზე ტრიალი; ნიჭი — გამოგონება, ახალი გადაწყვეტა; სიდჰი — სიჩუმე.',
+'შეზღუდულობა — დახურული გული; ნიჭი — მიღება; სიდჰი — უნივერსალური სიყვარული.',
+'სიამაყე — თავის გამოჩენა; ნიჭი — ოსტატური ხელოვნება, დარწმუნების უნარი; სიდჰი — უხილაობა.',
+'ეგოიზმი — საკუთარზე ზრუნვა; ნიჭი — ალტრუიზმი, მზრუნველობა; სიდჰი — თავდავიწყება.',
+'უმიზნობა — სიცოცხლის აზრის ძიება; ნიჭი — სისავსე, მთლიანად ცხოვრება; სიდჰი — უკვდავება.',
+'ნახევარგულიანობა — ბოლომდე არ შესვლა; ნიჭი — ერთგულება; სიდჰი — თავდადება.',
+'სურვილი — მუდმივი წყურვილი; ნიჭი — სიმსუბუქე; სიდჰი — აღტაცება.',
+'ქედმაღლობა — ზემოდან ყურება; ნიჭი — ლიდერობა, გავლენა; სიდჰი — თავმდაბლობა.',
+'მარცხი — მარცხის შიში; ნიჭი — შენარჩუნება, ფასეულის დაცვა; სიდჰი — თაყვანისცემა.',
+'დავიწყება — გაკვეთილის დაკარგვა; ნიჭი — გაცნობიერება; სიდჰი — გამოცხადება.',
+'ძალადობა — უხეში ძალა; ნიჭი — სიძლიერე, სიცოცხლის ენერგია; სიდჰი — დიდებულება.',
+'შიმშილი — მუდმივი უკმარისობა; ნიჭი — თავგადასავალი; სიდჰი — უსაზღვროება.',
+'მღელვარება — ემოციური ქაოსი; ნიჭი — ჰუმანურობა; სიდჰი — თანალმობა.',
+'სისუსტე — ემოციური შანტაჟი; ნიჭი — თანასწორობა; სიდჰი — სინაზე.',
+'ბრძოლა — უაზრო ბრძოლა; ნიჭი — შეუპოვრობა, აზრიანი ბრძოლა; სიდჰი — ღირსება.',
+'პროვოკაცია — სხვების გაღიზიანება; ნიჭი — დინამიზმი, ენერგიის გაღვიძება; სიდჰი — გათავისუფლება.',
+'გამოფიტვა — დასვენების უარყოფა; ნიჭი — გადაწყვეტილება, საზღვრები; სიდჰი — ღვთიური ნება.',
+'ფანტაზია — ოცნებაში გაქცევა; ნიჭი — წინათგრძნობა; სიდჰი — ემანაცია, ახალი ციკლის დასაწყისი.',
+'მოლოდინი — შედეგზე მიჯაჭვულობა; ნიჭი — დისტანცირება, ციკლის დასრულება; სიდჰი — ზეიმი.',
+'სიყრუე — ინტუიციის ვერ მოსმენა; ნიჭი — ჩაწვდომა; სიდჰი — ეპიფანია.',
+'ჩარევა — ურთიერთობების დარღვევა; ნიჭი — გუნდურობა, სწორი ადამიანების პოვნა; სიდჰი — სინარქია.',
+'დომინირება — ძალაუფლების დაგროვება; ნიჭი — სინერგია; სიდჰი — ზიარება.',
+'სერიოზულობა — სიცოცხლის სიმძიმე; ნიჭი — სიამოვნება, სხეულში სიხარული; სიდჰი — ექსტაზი.',
+'ჩაგვრა — წარსულის ტვირთი; ნიჭი — ტრანსმუტაცია; სიდჰი — ფერისცვალება.',
+'არასრულფასოვნება — „არ ვიცი საკმარისად“; ნიჭი — მარიფათი, გამომგონებლობა; სიდჰი — სიბრძნე.',
+'რეაქცია — უარყოფის შიში; ნიჭი — რევოლუცია, პრინციპული ცვლილება; სიდჰი — ხელახალი დაბადება.',
+'კორუფცია — ფასეულობების დამახინჯება; ნიჭი — წონასწორობა; სიდჰი — ჰარმონია.',
+'აჟიტაცია — შოკის შიში; ნიჭი — ინიციატივა, გამბედაობა; სიდჰი — გამოღვიძება.',
+'სტრესი — მოუსვენარი ენერგია; ნიჭი — თავშეკავება, სწორ დროს მოქმედება; სიდჰი — სიმშვიდე.',
+'მოუმწიფებლობა — ახლის დაწყების წნეხი; ნიჭი — გაფართოება; სიდჰი — ზესიუხვე.',
+'სიხარბე — მატერიალური ამბიცია; ნიჭი — მისწრაფება; სიდჰი — ამაღლება.',
+'მსხვერპლობა — ბრალის სხვაზე გადატანა; ნიჭი — თავისუფლება; სიდჰი — თავისუფლება (სრული).',
+'გაფანტულობა — სტიმულების დევნა; ნიჭი — გამდიდრება, ისტორიების თხრობა; სიდჰი — თრობა (ღვთიური).',
+'შფოთვა — მომავლის შიში; ნიჭი — ინტუიცია; სიდჰი — სიცხადე.',
+'უკმაყოფილება — სიცოცხლის დაკარგვა; ნიჭი — სიცოცხლისუნარიანობა; სიდჰი — ნეტარება.',
+'არაპატიოსნება — დაცვითი კედლები; ნიჭი — სიახლოვე; სიდჰი — გამჭვირვალობა.',
+'შეზღუდვა — ჩარჩოების შიში; ნიჭი — რეალიზმი; სიდჰი — სამართალი.',
+'ფსიქოზი — „რატომ“-ზე აკვიატება; ნიჭი — შთაგონება; სიდჰი — სიწმინდე.',
+'ინტელექტი — დეტალებში დაკარგვა; ნიჭი — სიზუსტე; სიდჰი — უნაკლობა.',
+'ეჭვი — უსასრულო კითხვები; ნიჭი — კვლევა; სიდჰი — ჭეშმარიტება.',
+'დაბნეულობა — ინფორმაციის ქაოსი; ნიჭი — წარმოსახვა; სიდჰი — განათება.'];
+const RINGS=[['ცეცხლის რგოლი',[1,14],'შემოქმედებითი ძალა და რესურსი — სიცოცხლის ნაპერწკალი.'],['წყლის რგოლი',[2,8],'მიმართულება და ინდივიდუალური სტილი.'],['სიცოცხლისა და სიკვდილის რგოლი',[3,20,23,24,27,42],'ციკლები, ცვლილება, დაბადება და დასრულება.'],['კავშირის რგოლი',[4,7,29,59],'ურთიერთობები, ერთგულება და გაყოფის დაძლევა.'],
+ ['სინათლის რგოლი',[5,9,11,26],'რიტმი, დეტალები და იდეების სინათლე.'],['ალქიმიის რგოლი',[6,40,47,64],'ემოციის და გონების გარდაქმნა.'],['კაცობრიობის რგოლი',[10,17,21,25,38,51],'სიყვარული, ბრძოლა და ადამიანობის გამოცდა.'],['გამოცდების რგოლი',[12,33,56],'სიტყვა და დასრულება — „სტოპ-კოდონები“.'],
+ ['განწმენდის რგოლი',[13,30],'ემპათია და სურვილის განწმენდა.'],['ძიების რგოლი',[15,39,52,53,54,58],'ენერგია, ამბიცია და სიხარულის ძიება.'],['კეთილდღეობის რგოლი',[16,45],'ოსტატობა და საერთო სიუხვე.'],['მატერიის რგოლი',[18,46,48,57],'სხეული, ჯანმრთელობა და სრულყოფა.'],
+ ['გაიას რგოლი',[19,60,61],'დედამიწასთან კავშირი და შთაგონება.'],['ღვთაებრიობის რგოლი',[22,36,37,63],'ოჯახი, ემოციური სიღრმე, მადლი.'],['ილუზიის რგოლი',[28,32],'სიკვდილის შიში და სიცოცხლის აზრი.'],['ბედის რგოლი',[34,43],'სიძლიერე და ჩაწვდომა — ინდივიდუალური ბედი.'],
+ ['დაუბრუნებლობის რგოლი',[31,62],'ლიდერობა და სიზუსტე — გზა, რომლითაც უკან არ ბრუნდები.'],['სასწაულების რგოლი',[35],'თავგადასავალი და უსაზღვროება.'],['წარმოშობის რგოლი',[41],'„სტარტ-კოდონი“ — ყველა ციკლის დასაწყისი.'],['ილუმინატების რგოლი',[44,50],'გუნდური სიბრძნე და ფასეულობების დაცვა.'],['გრიგალის რგოლი',[49,55],'რევოლუცია და თავისუფლება — ახალი ეპოქა.']];
+const ringOf=g=>RINGS.findIndex(r=>r[1].includes(g));
+const partnerOf=g=>ORDER[(ORDER.indexOf(g)+32)%64];
+let TAB='prof',ALLSEL=1,R2=null;
+document.querySelectorAll('#tabs .pill').forEach(p=>p.onclick=()=>{TAB=p.dataset.v;document.querySelectorAll('#tabs .pill').forEach(x=>x.classList.toggle('active',x===p));draw();});
+maskDate($('d1'));maskTime($('t1'));maskDate($('d2'));maskTime($('t2'));
 $('go').onclick=run;document.querySelectorAll('.in').forEach(e=>e.addEventListener('keydown',ev=>{if(ev.key==='Enter')run();}));
 let SEL='lw',R=null;
+function profile(P,T){
+  const S=window._search,tz=parseFloat($('tz1').value)||0,h=T?T.h+T.mi/60:12;
+  const jp=S.cal2jd(P.y,P.m,P.d+(h-tz)/24),jd=designJD(jp);
+  const pos=(j,b)=>b==='earth'?norm(S.lon('sun',j)+180):S.lon(b,j);
+  const map={lw:[jp,'sun'],ev:[jp,'earth'],ra:[jd,'sun'],pu:[jd,'earth'],at:[jd,'moon'],iq:[jp,'venus'],eq:[jp,'mars'],sq:[jd,'venus'],co:[jd,'mars'],vo:[jd,'mars'],cu:[jd,'jupiter'],pe:[jp,'jupiter']};
+  const r={};for(const k in map){const [j,b]=map[k];r[k]=gateOf(pos(j,b));}
+  r._unknown=!T;const dg=S.jd2cal(jd);r._design=`${String(dg.d).padStart(2,'0')}.${String(dg.m).padStart(2,'0')}.${dg.y}`;
+  return r;
+}
 function run(){
   $('err').textContent='';const P=parseDate($('d1').value),T=parseTime($('t1').value);
   if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
   if(T===undefined){$('err').textContent='დრო ფორმატით HH:MM.';return;}
   if(!window._search){$('err').textContent='search.js ვერ ჩაიტვირთა (ეფემერიდა).';return;}
-  const S=window._search,tz=parseFloat($('tz1').value)||0,h=T?T.h+T.mi/60:12;
-  const jp=S.cal2jd(P.y,P.m,P.d+(h-tz)/24,true),jd=designJD(jp);
-  const pos=(j,b)=>b==='earth'?norm(S.lon('sun',j)+180):S.lon(b,j);
-  const map={lw:[jp,'sun'],ev:[jp,'earth'],ra:[jd,'sun'],pu:[jd,'earth'],at:[jd,'moon'],iq:[jp,'venus'],eq:[jp,'mars'],sq:[jd,'venus'],co:[jd,'mars'],vo:[jd,'mars'],cu:[jd,'jupiter'],pe:[jp,'jupiter']};
-  R={};for(const k in map){const [j,b]=map[k];R[k]=gateOf(pos(j,b));}
-  R._unknown=!T;
-  const dg=S.jd2cal(jd,true);R._design=`${String(dg.d).padStart(2,'0')}.${String(dg.m).padStart(2,'0')}.${dg.y}`;
+  R=profile(P,T);R2=null;const Q=$('d2').value.trim();if(Q){const q=parseDate(Q),t2=parseTime($('t2').value);if(q&&t2!==undefined)R2=profile(q,t2);else $('err').textContent='პარტნიორის მონაცემები არასწორია.';}
   draw();
 }
+function keyCard(g,l,title,sub){return `<div class="big" style="font-size:40px">გასაღები ${g}${l?'.'+l:''}</div>
+    <div class="spec"><div style="background:rgba(232,107,107,.06)"><div class="k">ჩრდილი</div><div class="v" style="color:#e88">${GK[g][0]}</div></div>
+      <div style="background:rgba(200,169,110,.08)"><div class="k">ნიჭი</div><div class="v" style="color:var(--gold)">${GK[g][1]}</div></div>
+      <div style="background:rgba(155,127,232,.08)"><div class="k">სიდჰი</div><div class="v" style="color:#b8a4f0">${GK[g][2]}</div></div></div>
+    <div class="txt" style="margin-top:12px">${KT[g]}</div>
+    <div class="note" style="margin-top:8px">კოდონის რგოლი: <b>${RINGS[ringOf(g)][0]}</b> (${RINGS[ringOf(g)][1].join(', ')}) — ${RINGS[ringOf(g)][2]} · პროგრამული პარტნიორი: <b>${partnerOf(g)}</b> (${GK[partnerOf(g)][1]}) · HD კარიბჭე ${g}.</div>`;}
 function draw(){
+  if(TAB==='all'){$('out').innerHTML=allView();bindAll();return;}
+  if(!R){$('out').innerHTML='';return;}
+  $('out').innerHTML=TAB==='rings'?ringsView():TAB==='compat'?compatView():profView();
+  document.querySelectorAll('.sph').forEach(e=>e.onclick=()=>{SEL=e.dataset.k;draw();$('detail').scrollIntoView({behavior:'smooth',block:'start'});});
+}
+function profView(){
   let h='';
   SEQS.forEach(([t,ks])=>{h+=`<div class="card"><div class="h">${t}</div><div class="seq">`+ks.map(k=>{const s=SPH[k],r=R[k];
     return `<div class="sph" style="--c:${s[3]}" data-k="${k}"><div class="sn">${s[0]}</div><div class="gk">${r.g}<small>.${r.l}</small></div><div class="gf">${GK[r.g][1]}</div><div class="pl">${s[2]}</div></div>`;}).join('')+`</div></div>`;});
   const s=SPH[SEL],r=R[SEL];
-  h=`<div class="card" id="detail"><div class="h">${s[0]} · ${s[1]} · ${s[2]}</div>
-    <div class="big" style="font-size:40px">გასაღები ${r.g}.${r.l}</div>
-    <div class="spec"><div style="background:rgba(232,107,107,.06)"><div class="k">ჩრდილი</div><div class="v" style="color:#e88">${GK[r.g][0]}</div></div>
-      <div style="background:rgba(200,169,110,.08)"><div class="k">ნიჭი</div><div class="v" style="color:var(--gold)">${GK[r.g][1]}</div></div>
-      <div style="background:rgba(155,127,232,.08)"><div class="k">სიდჰი</div><div class="v" style="color:#b8a4f0">${GK[r.g][2]}</div></div></div>
+  h=`<div class="card" id="detail"><div class="h">${s[0]} · ${s[1]} · ${s[2]}</div>${keyCard(r.g,r.l)}
     <div class="txt" style="margin-top:12px">${s[4]}</div>
-    <div class="txt" style="margin-top:8px"><b>ხაზი ${r.l}</b> — ${LINE[r.l]}.</div>
-    <div class="note" style="margin-top:10px">ჩრდილი — შიშზე დაფუძნებული რეაქცია; ნიჭი — იგივე ენერგია, როცა მას ცნობიერად უყურებ; სიდჰი — მისი უმაღლესი, ტრანსცენდენტური ფორმა. HD-ში ეს არის კარიბჭე ${r.g}, ხაზი ${r.l}.</div></div>`+h;
-  h+=`<div class="card note">დიზაინის მომენტი: <b>${R._design}</b> (მზე 88° უკან). ${R._unknown?'<b>დრო უცნობია</b> — აღებულია შუადღე; მთვარის (მიზიდულობა) გასაღები შეიძლება იყოს არაზუსტი. ':''}პლანეტები — MAGNUS-ის ეფემერიდა (search.js), კარიბჭის ბორბალი: 41-ე კარიბჭე იწყება 2° მერწყულზე. სახელები — რიჩარდ რადის ტერმინების ქართული თარგმანი; ორიგინალი ტექსტები ავტორის საკუთრებაა.</div>`;
-  $('out').innerHTML=h;
-  document.querySelectorAll('.sph').forEach(e=>e.onclick=()=>{SEL=e.dataset.k;draw();$('detail').scrollIntoView({behavior:'smooth',block:'start'});});
+    <div class="txt" style="margin-top:8px"><b>ხაზი ${r.l}</b> — ${LINE[r.l]}. ამ სფეროში: ${['საფუძველს ეძებს — ჯერ უნდა გაიგოს, მერე იმოქმედოს','ნიჭი თავისით ვლინდება, როცა მას „იძახებენ“','ცდით და შეცდომით სწავლობს — შეცდომა აქ მასწავლებელია','ურთიერთობების ქსელით მოქმედებს — ახლობლებით','სხვები მისგან გადაწყვეტას ელიან — პროექციის ტვირთი და ძალა','ცხოვრების მეორე ნახევარში ხდება მაგალითი სხვებისთვის'][r.l-1]}.</div>
+    <div class="note" style="margin-top:10px">ჩრდილი — შიშზე დაფუძნებული რეაქცია; ნიჭი — იგივე ენერგია ცნობიერ მდგომარეობაში; სიდჰი — უმაღლესი, ტრანსცენდენტური ფორმა.</div></div>`+h;
+  h+=`<div class="card note">დიზაინის მომენტი: <b>${R._design}</b> (მზე 88° უკან). ${R._unknown?'<b>დრო უცნობია</b> — აღებულია შუადღე; მთვარის (მიზიდულობა) გასაღები შეიძლება იყოს არაზუსტი. ':''}პლანეტები — MAGNUS-ის ეფემერიდა (search.js), ბორბალი: 41-ე კარიბჭე იწყება 2° მერწყულზე. სახელები — რიჩარდ რადის ტერმინების ქართული თარგმანი; აღწერები — MAGNUS-ის.</div>`;
+  return h;
+}
+function ringsView(){
+  const mine={};for(const k in SPH){const g=R[k].g;(mine[ringOf(g)]=mine[ringOf(g)]||[]).push([k,g]);}
+  const order=Object.keys(mine).sort((a,b)=>mine[b].length-mine[a].length);
+  return `<div class="card"><div class="h">შენი კოდონის რგოლები</div>`+order.map(i=>`<div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)"><b style="color:var(--gold)">${RINGS[i][0]}</b> <span class="note">(${RINGS[i][1].join(', ')})</span><div class="txt">${RINGS[i][2]}</div><div class="note">შენი სფეროები: ${mine[i].map(([k,g])=>SPH[k][0]+' — '+g).join(' · ')}</div></div>`).join('')+
+    `<div class="note" style="margin-top:10px">კოდონის რგოლი — გასაღებების ჯგუფი, რომელიც ერთ ამინომჟავას შეესაბამება (64 კოდონი → 21 რგოლი). რამდენიმე სფერო ერთ რგოლში — ძლიერი, განმეორებადი თემა შენს ცხოვრებაში.</div></div>
+    <div class="card"><div class="h">21 რგოლი</div><div class="scroll"><table class="tbl"><tr><th>რგოლი</th><th>გასაღებები</th><th>თემა</th></tr>${RINGS.map((r,i)=>`<tr class="${mine[i]?'now':''}"><td>${r[0]}</td><td>${r[1].join(', ')}</td><td class="note">${r[2]}</td></tr>`).join('')}</table></div></div>`;
+}
+function allView(){
+  return `<div class="card" id="detail"><div class="h">გასაღები ${ALLSEL} · ${GK[ALLSEL].join(' → ')}</div>${keyCard(ALLSEL,0)}</div>
+    <div class="card"><div class="h">64 გასაღები</div><div class="scroll"><table class="tbl"><tr><th>#</th><th>ჩრდილი</th><th>ნიჭი</th><th>სიდჰი</th><th>რგოლი</th></tr>${[...Array(64)].map((_,i)=>{const g=i+1;const mineK=R&&Object.keys(SPH).filter(k=>R[k].g===g);
+      return `<tr data-g="${g}" style="cursor:pointer" class="${g===ALLSEL?'now':''}"><td>${g}${mineK&&mineK.length?' <span style="color:var(--gold)">●</span>':''}</td><td style="color:#e88">${GK[g][0]}</td><td style="color:var(--gold)">${GK[g][1]}</td><td style="color:#b8a4f0">${GK[g][2]}</td><td class="note">${RINGS[ringOf(g)][0]}</td></tr>`;}).join('')}</table></div>
+    <div class="note" style="margin-top:8px">● — გასაღები შენს პროფილშია. დააჭირე სტრიქონს.</div></div>`;
+}
+function bindAll(){document.querySelectorAll('tr[data-g]').forEach(t=>t.onclick=()=>{ALLSEL=+t.dataset.g;draw();$('detail').scrollIntoView({behavior:'smooth'});});}
+function compatView(){
+  if(!R2)return '<div class="card txt" style="text-align:center">შეიყვანე პარტნიორის თარიღი და დრო.</div>';
+  const keys=r=>Object.keys(SPH).map(k=>r[k].g);const a=keys(R),b=keys(R2);
+  const shared=[...new Set(a.filter(g=>b.includes(g)))],prog=[...new Set(a.filter(g=>b.includes(partnerOf(g))))];
+  const ra=new Set(a.map(ringOf)),rb=new Set(b.map(ringOf)),sr=[...ra].filter(x=>rb.has(x));
+  let sc=40+shared.length*8+prog.length*7+sr.length*3;
+  const v=k=>R[k].g,w=k=>R2[k].g;
+  const venus=[['at','მიზიდულობა'],['eq','EQ'],['sq','SQ']];
+  sc=Math.min(97,sc);
+  return `<div class="card" style="text-align:center"><div class="big" style="color:${sc>=70?'#7fcf8f':sc>=50?'#c8a96e':'#e86b6b'}">${sc}%</div><div class="sub">გასაღებების რეზონანსი</div></div>
+   <div class="card"><div class="h">საერთო გასაღებები</div><div class="txt">${shared.length?shared.map(g=>`<b>${g}</b> ${GK[g][1]}`).join(' · ')+' — ერთნაირი თემა: ერთმანეთს სარკესავით ირეკლავთ.':'საერთო გასაღები არ არის.'}</div></div>
+   <div class="card"><div class="h">პროგრამული პარტნიორები</div><div class="txt">${prog.length?prog.map(g=>`<b>${g}</b> ↔ <b>${partnerOf(g)}</b> (${GK[g][1]} ↔ ${GK[partnerOf(g)][1]})`).join('<br>')+'<br>— ერთმანეთის საპირისპირო ბოლოს ფლობთ: ერთად ერთი მთლიანობა ხართ.':'პროგრამული პარტნიორობა არ არის.'}</div></div>
+   <div class="card"><div class="h">ვენერას თანმიმდევრობა</div>${venus.map(([k,n])=>`<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)"><b>${n}</b>: შენ ${v(k)} (${GK[v(k)][1]}) · პარტნიორი ${w(k)} (${GK[w(k)][1]})${ringOf(v(k))===ringOf(w(k))?' — <span style="color:#7fcf8f">ერთი რგოლი</span>':''}</div>`).join('')}
+    <div class="note" style="margin-top:8px">საერთო რგოლები: ${sr.map(i=>RINGS[i][0]).join(', ')||'—'}.</div></div>`;
 }
 </script>
 </body>
