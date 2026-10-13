@@ -102,7 +102,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 <header>
   <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
   <h1>ლოგიკა</h1>
-  <div class="sub">მიმდევრობები · განტოლებები · მატრიცები · ზედმეტი · ერთი წუთი</div>
+  <div class="sub">მიმდევრობები · განტოლებები · მატრიცები · ზედმეტი · საათები · ერთი წუთი</div>
 </header>
 <div class="hud">
   <div><b id="h-time">60</b><span>წამი</span></div>
@@ -140,12 +140,13 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 </div>
 
 <div class="panel">
-  <h3>✦ ოთხი ტიპის ამოცანა</h3>
+  <h3>✦ ხუთი ტიპის ამოცანა</h3>
   <ul>
     <li><b>რიცხვითი მიმდევრობა</b> — იპოვე წესი და შემდეგი რიცხვი.</li>
     <li><b>სიმბოლოების განტოლებები</b> — თითო ნიშანი ერთ რიცხვს ნიშნავს; გამოთვალე კითხვა.</li>
     <li><b>მატრიცა 3×3</b> — რიგებსა და სვეტებში ფორმა, რაოდენობა და ფერი წესით იცვლება; რომელი ავსებს ცარიელ უჯრას?</li>
     <li><b>ზედმეტი</b> — ყველა ფიგურას ერთი საერთო წესი აქვს, ერთის გარდა. იპოვე ის.</li>
+    <li><b>საათებს შორის სხვაობა</b> — ორი ისრიანი საათი: რამდენი დრო გავიდა პირველიდან მეორემდე (წინ, 12 საათამდე). დონესთან ერთად: მთელი საათი → ნახევარი → 15 → 5 → 1 წუთი; მაღალ დონეზე ციფრების გარეშე.</li>
   </ul>
   <ul style="margin-top:8px">
     <li>ორი სწორი პასუხი ზედიზედ → დონე იზრდება (მაქს. 12); შეცდომა → დონე ეცემა.</li>
@@ -258,8 +259,33 @@ function genOdd(L){
     html:`<div class="oddg" style="grid-template-columns:repeat(${k<=4?4:k===5?5:3},1fr)">${items.map((it,i)=>`<button class="odd" data-v="${i}">${fig(it)}</button>`).join('')}</div>`,
     options:[],answer:oi,why:`საერთო წესი — ${nm[rule]}`};
 }
-const GEN={seq:genSeq,eq:genEq,mx:genMx,odd:genOdd};
-const TNAME={seq:'მიმდევრობა',eq:'განტოლება',mx:'მატრიცა',odd:'ზედმეტი'};
+/* two clocks — how much time passed from the first to the second (always forward, under 12 h) */
+function clockSVG(h,m,L){
+  const ha=((h%12)+m/60)*30,ma=m*6,R=44,num=L<=8;
+  const ticks=[...Array(12)].map((_,i)=>{const a=i*30*Math.PI/180,r1=i%3?39:36;return `<line x1="${50+r1*Math.sin(a)}" y1="${50-r1*Math.cos(a)}" x2="${50+42*Math.sin(a)}" y2="${50-42*Math.cos(a)}" stroke="rgba(236,213,154,${i%3?.45:.9})" stroke-width="${i%3?1.2:2}"/>`;}).join('');
+  const nums=num?[12,3,6,9].map((n,i)=>{const a=i*90*Math.PI/180;return `<text x="${50+29*Math.sin(a)}" y="${50-29*Math.cos(a)+4}" text-anchor="middle" font-size="11" fill="rgba(236,213,154,.8)" font-family="Cinzel,serif">${n}</text>`;}).join(''):'';
+  const hand=(ang,len,w,c)=>{const a=ang*Math.PI/180;return `<line x1="50" y1="50" x2="${50+len*Math.sin(a)}" y2="${50-len*Math.cos(a)}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;};
+  return `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${R}" fill="#161127" stroke="rgba(201,168,76,.55)" stroke-width="1.5"/>${ticks}${nums}
+    ${hand(ha,22,4,'#ecd59a')}${hand(ma,34,2.4,'#c9a84c')}<circle cx="50" cy="50" r="2.6" fill="#ecd59a"/></svg>`;
+}
+const fmtDur=m=>{const h=Math.floor(m/60),mm=m%60;return h&&mm?`${h} სთ ${mm} წთ`:h?`${h} სთ`:`${mm} წთ`;};
+function genClk(L){
+  const step=L<=2?60:L<=4?30:L<=6?15:L<=9?5:1;
+  const t1=ri(0,(12*60)/step-1)*step;
+  let d;do{d=ri(1,(L<=3?6:11)*60/step)*step;}while(d<=0||d>=720);
+  const t2=(t1+d)%720;
+  const c=new Set([d]);const cand=[d+60,d-60,d+step,d-step,720-d,d+30,d-30,d+15,d-15,d+120,(Math.floor(d/60)+((d%60)?0:1))*60+((60-d%60)%60)];
+  for(const x of shuf(cand)){if(c.size>=4)break;if(x>0&&x<720&&!c.has(x)&&(step>=15?x%5===0:true))c.add(x);}
+  let k=1;while(c.size<4){const x=d+k*step*(k%2?1:-1);if(x>0&&x<720)c.add(x);k++;}
+  const opts=shuf([...c]).map(v=>({html:`<span style="font-family:'Noto Serif Georgian',serif;font-size:15px">${fmtDur(v)}</span>`,val:v}));
+  const hm=t=>`${Math.floor(t/60)||12}:${String(t%60).padStart(2,'0')}`;
+  return {type:'clk',title:'საათებს შორის სხვაობა',hint:L>8?'რამდენი დრო გავიდა? (ციფრების გარეშე)':'რამდენი დრო გავიდა პირველიდან მეორემდე?',
+    html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;width:100%"><div style="width:min(42%,170px)">${clockSVG(Math.floor(t1/60),t1%60,L)}</div>
+      <div style="font-size:26px;color:var(--gold)">→</div><div style="width:min(42%,170px)">${clockSVG(Math.floor(t2/60),t2%60,L)}</div></div>`,
+    options:opts,answer:d,why:`${hm(t1)} → ${hm(t2)} = ${fmtDur(d)}`};
+}
+const GEN={seq:genSeq,eq:genEq,mx:genMx,odd:genOdd,clk:genClk};
+const TNAME={seq:'მიმდევრობა',eq:'განტოლება',mx:'მატრიცა',odd:'ზედმეტი',clk:'საათები'};
 
 /* ════════ game ════════ */
 const S={mode:'time',running:false,lv:1,score:0,left:TIME,streak:0,best:0,q:null,lock:false,stat:{},timer:null,last:0,maxLv:1,lastType:null};
@@ -318,7 +344,7 @@ function overlay(h){const o=$('ov');o.innerHTML=h;o.hidden=false;}
 function menu(){
   S.running=false;clearInterval(S.timer);const best=store.get('best',{score:0,lv:1});
   const lvs=[1,...[4,7,10].filter(l=>l<=(best.lv||1))];
-  overlay(`<h2>ლოგიკა</h2><p>ოთხი ტიპის ამოცანა მონაცვლეობით. რაც უფრო სწორად პასუხობ, მით რთულდება — 12 დონემდე.</p>
+  overlay(`<h2>ლოგიკა</h2><p>ხუთი ტიპის ამოცანა მონაცვლეობით. რაც უფრო სწორად პასუხობ, მით რთულდება — 12 დონემდე.</p>
     <div class="seg row" id="s-mode"><button data-m="time" class="${S.mode==='time'?'on':''}">⏱ 1 წუთი</button><button data-m="lives" class="${S.mode==='lives'?'on':''}">♥ 3 სიცოცხლე</button></div>
     <div class="seg row" id="s-lv">${lvs.map((l,i)=>`<button data-l="${l}" class="${i===0?'on':''}">დაწყება: დონე ${l}</button>`).join('')}</div>
     <button class="btn" id="b-start">▶ დაწყება</button>`);
