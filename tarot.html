@@ -309,7 +309,7 @@ body.focus .page{max-width:1500px}
 </details>
 </div>
 
-<script src="tarot_texts.js"></script>
+<script src="tarot_text.js"></script>
 <script src="tarot_context.js"></script>
 <script>
 'use strict';
@@ -906,5 +906,6 @@ probeImages().then(e=>{if(!e)return;IMG.ext=e;renderEnc();
     if(f&&drawn[i])f.innerHTML=faceHTML(drawn[i].c,drawn[i].rev);});});
 window._tarot={DECK,SPREADS,quintessence,ynOf,analyse,IMG,imgName};
 </script>
+<script src="tarot_spreads.js"></script>
 </body>
 </html>
