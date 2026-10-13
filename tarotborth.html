@@ -78,7 +78,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
   <div class="ornament"><div class="ornament-line"></div><div class="ornament-dot"></div><div class="ornament-line r"></div></div>
 </header>
 <p class="lead">მერი გრირის მეთოდი: თვე + დღე + წელი → ციფრების ჯამი, სანამ 22-ს არ ჩამოსცდება. პირველი რიცხვი — <b>პიროვნების კარტა</b>, ერთნიშნა ფესვი — <b>სულის კარტა</b>. იგივე წესით ითვლება <b>წლის კარტა</b> ყოველი წლისთვის. ნუმერაცია MAGNUS-ის სტანდარტით: 8 — სამართლიანობა, 11 — ძალა.</p>
-<div class="card">
+<div class="pills" id="tabs"><div class="pill active" data-v="cards">კარტები</div><div class="pill" data-v="life">სიცოცხლის რუკა</div><div class="pill" data-v="stats">სტატისტიკა</div></div>
+<div class="card" id="form">
   <div class="row">
     <input class="in date" id="d1" placeholder="DD/MM/YYYY" maxlength="10">
     <input class="in date" id="d2" placeholder="პარტნიორი (არასავალდ.)" maxlength="10" style="width:200px;font-size:12px">
@@ -91,10 +92,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
+/* calendar convention (MAGNUS): Julian before 15.10.1582, Gregorian after */
+const isLeap=y=>y<1582?y%4===0:(y%4===0&&y%100!==0)||y%400===0;
 const dimOf=(y,m)=>[31,isLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
 /* Gregorian (proleptic) → Julian Day Number */
-function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function jdn(y,m,d){if(y*10000+m*100+d<15821015){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-32083;}const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
 function parseDate(v,ymin,ymax){
   v=(v||'').trim();const m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{1,4})$/);if(!m)return null;
   const d=+m[1],mo=+m[2],y=+m[3];if(y<(ymin||1)||y>(ymax||9999)||mo<1||mo>12||d<1||d>dimOf(y,mo))return null;
@@ -134,6 +136,10 @@ const A=[null,
  ['სამყარო','მთლიანობა და დასრულება','ციკლის დამასრულებელი, მსოფლიოს მოქალაქე. ამოცანა: მთლიანობის შეგრძნება და მისი სხვებისთვის გაზიარება.','დასრულების წელი: მიღწევა, მოგზაურობა, ციკლის დახურვა.'],
  ['სულელი','თავისუფლება და ახალი გზა','მარადიული მოგზაური — სპონტანური, ღია, უშიშარი. ამოცანა: ნდობა გზისადმი და ბავშვური სიცოცხლისუნარიანობა.','ნახტომის წელი: ახალი თავგადასავალი, რისკი, თავისუფლება.']];
 A[0]=A[22];
+const GIFT=[null,'ნებისყოფა, ოსტატობა','ინტუიცია, საიდუმლოს ცოდნა','შემოქმედება, ზრუნვა','ორგანიზება, ლიდერობა','სწავლება, რწმენა','სიყვარული, არჩევანის სიცხადე','გამარჯვება, მიზნიანობა','სამართლიანობა, ბალანსი','სიბრძნე, დამოუკიდებლობა','ადაპტაცია, იღბალი','გამბედაობა, სინაზე','ახალი ხედვა, დათმობის ძალა','გარდაქმნა, განახლება','ჰარმონია, მკურნალობა','ვნება, მატერიალური ძალა','ჭეშმარიტება, გათავისუფლება','იმედი, შთაგონება','ფანტაზია, ინტუიცია','სიხარული, წარმატება','მოწოდება, გაღვიძება','მთლიანობა, სრულყოფა','თავისუფლება, სპონტანურობა'];
+const SHADOW=[null,'მანიპულაცია, ტრაბახი','ჩაკეტილობა, საიდუმლოებები','ზედმეტი მზრუნველობა, სიზარმაცე','კონტროლი, სიხისტე','დოგმატიზმი, კონფორმიზმი','გაურკვევლობა, ცდუნება','აგრესია, მოუსვენრობა','განსჯა, სიცივე','იზოლაცია, მიუწვდომლობა','ფატალიზმი, ქაოსი','ბრაზი, ძალადობა ან სისუსტე','მსხვერპლობა, პასიურობა','შიში ცვლილებისა, მიჯაჭვულობა','ზედმეტი ფრთხილობა, უფერულობა','დამოკიდებულება, შიში','ქაოსი, დანგრევა','გულუბრყვილობა, ოცნებაში გაქცევა','ილუზია, შიში','ამპარტავნება, ზედაპირულობა','წარსულის განსჯა','გაყინულობა, დაუსრულებლობა','უპასუხისმგებლობა, ქაოსი'];
+let TAB='cards',LP=null;
+document.querySelectorAll('#tabs .pill').forEach(p=>p.onclick=()=>{TAB=p.dataset.v;document.querySelectorAll('#tabs .pill').forEach(x=>x.classList.toggle('active',x===p));$('form').classList.toggle('hidden',TAB==='stats');if(TAB==='stats')statsUI();else if(LP)run();else $('out').innerHTML='';});
 const red22=n=>{while(n>22)n=dsum(n);return n;};
 function constellation(total){
   const p=red22(total);const chain=[p];let n=p;while(n>9){n=dsum(n);chain.push(n);}
@@ -144,6 +150,7 @@ maskDate($('d1'));maskDate($('d2'));
 ['d1','d2'].forEach(i=>$(i).addEventListener('keydown',e=>{if(e.key==='Enter')run();}));
 $('go').onclick=run;
 function run(){
+  if(TAB==='life'){const P=parseDate($('d1').value);if(!P){$('err').textContent='შეიყვანე თარიღი.';return;}LP=P;$('out').innerHTML=lifeView(P);return;}
   const P=parseDate($('d1').value),Bv=$('d2').value.trim(),Q=Bv?parseDate(Bv):null;$('err').textContent='';
   if(!P){$('err').textContent='შეიყვანე თარიღი ფორმატით DD/MM/YYYY.';return;}
   if(Bv&&!Q){$('err').textContent='პარტნიორის თარიღი არასწორია.';return;}
@@ -151,7 +158,9 @@ function run(){
   const labels=ch.length===1?['პიროვნება და სული']:ch.length===2?['პიროვნება','სული']:['პიროვნება','ფარული მასწავლებელი','სული'];
   let h=`<div class="card"><div class="trow">${ch.map((n,i)=>`<div>${tcard(n)}<div class="tl">${labels[i]}</div></div>`).join('')}</div>
     <div class="calc">${P.m} + ${P.d} + ${P.y} = <b>${tot}</b> → ${(()=>{let s=[],n=tot;while(n>22){n=dsum(n);s.push(n);}return s.join(' → ')||tot;})()}${ch.length>1?' → '+ch.slice(1).join(' → '):''}</div></div>`;
-  ch.forEach((n,i)=>{h+=`<div class="card"><div class="h">${labels[i]} · ${ROM[n]} ${A[n][0]}</div><div class="txt"><b>${A[n][1]}.</b> ${A[n][2]}</div></div>`;});
+  LP=P;ch.forEach((n,i)=>{h+=`<div class="card"><div class="h">${labels[i]} · ${ROM[n]} ${A[n][0]}</div><div class="txt"><b>${A[n][1]}.</b> ${A[n][2]}</div>
+    <div class="txt" style="margin-top:8px">ნიჭი: <b style="color:var(--gold)">${GIFT[n===0?22:n]}</b> · ჩრდილი: <span style="color:#e8a0a0">${SHADOW[n===0?22:n]}</span></div>
+    ${i===1&&ch.length===3?'<div class="note" style="margin-top:6px">ფარული მასწავლებელი (10) — ცხოვრების ციკლები და ბედის შემობრუნებები იქნება შენი მთავარი გაკვეთილი.</div>':''}</div>`;});
   if(ch.length===1)h+=`<div class="card note">როცა ჯამი ერთნიშნაა, პიროვნებისა და სულის კარტა ერთია — ენერგია განსაკუთრებით სუფთად და ძლიერად ვლინდება.</div>`;
   /* year cards */
   const now=new Date(),Y=now.getFullYear();let rows='';
@@ -165,6 +174,39 @@ function run(){
       <div class="txt" style="margin-top:12px"><b>${A[rel][0]}</b> — ${A[rel][1]}. ${A[rel][2].split('. ')[0]}. ${ch[ch.length-1]===c2[c2.length-1]?'<br><b>ორივეს ერთი სულის კარტა აქვს</b> — ღრმა სულიერი ნათესაობა.':''}</div></div>`;}
   h+=`<div class="card note"><b>კონსტელაციები:</b> 1/10/19 · 2/11/20 · 3/12/21 · 4/13/22 · 5/14 · 6/15 · 7/16 · 8/17 · 9/18 — ერთი სულის კარტის ენერგია სხვადასხვა „ოქტავაზე“.</div>`;
   $('out').innerHTML=h;
+}
+function lifeView(P){
+  const ch=constellation(P.m+P.d+P.y),soul=ch[ch.length-1];const W=720,H=300,L=34,R=10,T=14,Bm=30,iw=W-L-R,ih=H-T-Bm;
+  const pts=[];for(let a=0;a<=90;a++){pts.push([a,red22(P.m+P.d+P.y+a)]);}
+  const x=a=>L+iw*a/90,y=n=>T+ih*(1-(n-1)/21);
+  let s='';for(let n=1;n<=22;n+=3)s+=`<line x1="${L}" x2="${W-R}" y1="${y(n)}" y2="${y(n)}" stroke="rgba(255,255,255,.05)"/><text x="${L-6}" y="${y(n)+3}" text-anchor="end" font-size="9" fill="rgba(232,226,213,.4)">${ROM[n]}</text>`;
+  for(let a=0;a<=90;a+=10)s+=`<text x="${x(a)}" y="${H-10}" text-anchor="middle" font-size="9" fill="rgba(232,226,213,.45)">${a}</text>`;
+  s+=`<polyline points="${pts.map(p=>x(p[0])+','+y(p[1])).join(' ')}" fill="none" stroke="rgba(200,169,110,.5)" stroke-width="1.2"/>`;
+  pts.forEach(p=>{const c=constellation(p[1]),sameSoul=c[c.length-1]===soul,isP=p[1]===ch[0];s+=`<circle cx="${x(p[0])}" cy="${y(p[1])}" r="${isP?4.5:sameSoul?3.5:2.2}" fill="${isP?'#c8a96e':sameSoul?'#9b7fe8':'rgba(232,226,213,.4)'}"><title>${P.y+p[0]} · ასაკი ${p[0]} · ${A[p[1]][0]}</title></circle>`;});
+  const age=new Date().getFullYear()-P.y;if(age>=0&&age<=90)s+=`<line x1="${x(age)}" x2="${x(age)}" y1="${T}" y2="${T+ih}" stroke="rgba(127,207,232,.6)" stroke-dasharray="4 4"/>`;
+  const cnt={};pts.forEach(p=>cnt[p[1]]=(cnt[p[1]]||0)+1);
+  const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  return `<div class="card"><div class="h">წლის კარტები 0–90 წლამდე</div><div class="scroll"><svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:560px">${s}</svg></div>
+    <div class="note" style="margin-top:6px"><span style="color:var(--gold)">●</span> — პიროვნების კარტის წლები (ცხოვრების გასაღები წლები), <span style="color:var(--vio)">●</span> — სულის კონსტელაციის წლები, <span style="color:#7fcfe8">┆</span> — დღეს.</div></div>
+   <div class="card"><div class="h">ყველაზე ხშირი წლის კარტები</div>${top.map(([n,c])=>`<div class="txt" style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)"><b>${ROM[n]} ${A[n][0]}</b> — ${c} წელი · ${A[n][3]}</div>`).join('')}
+    <div class="note" style="margin-top:8px">წლის კარტა ყოველ წელს 1-ით იზრდება, სანამ ციფრთა ჯამი არ „გადატყდება“ — ამიტომ ზოგი კარტა ცხოვრებაში ბევრჯერ ბრუნდება, ზოგი — არასდროს.</div></div>`;
+}
+let SC=[];
+function statsUI(){
+  $('out').innerHTML=`<div class="card"><div class="h" style="text-align:center">სტატისტიკა · ყველა დღე</div>
+    <div class="row" style="margin-bottom:10px"><span class="note">წლები</span><input class="in" id="sy0" value="1" style="width:80px;text-align:center"><span class="note">—</span><input class="in" id="sy1" value="9999" style="width:80px;text-align:center">
+    <select class="sel" id="sct"><option value="">პირობის გარეშე</option><option value="p">პიროვნების კარტა =</option><option value="s">სულის კარტა =</option></select>
+    <select class="sel" id="scv">${[...Array(22)].map((_,i)=>`<option value="${i+1}">${ROM[i+1]} ${A[i+1][0]}</option>`).join('')}</select><button class="btn" id="srun">გამოთვლა</button></div>
+    <div class="note" style="text-align:center">ყოველი კალენდარული დღე ერთხელ ითვლება (1582-მდე — იულიუსის კალენდარი). პირობის შემთხვევაში ის რიგი, რომელზეც პირობა დევს, აჩვენებს <span style="color:#7fcfe8">მთელი დიაპაზონის %</span>-ს.</div></div><div id="sout"></div>`;
+  $('srun').onclick=()=>{let y0=Math.max(1,+$('sy0').value||1),y1=Math.min(9999,+$('sy1').value||9999);if(y0>y1)[y0,y1]=[y1,y0];
+    const ct=$('sct').value,cv=+$('scv').value;const Pb=new Float64Array(23),Sb=new Float64Array(23),Pc=new Float64Array(23),Sc=new Float64Array(23);let n=0,nc=0;
+    for(let y=y0;y<=y1;y++)for(let m=1;m<=12;m++){const dm=dimOf(y,m);for(let d=1;d<=dm;d++){const t=m+d+y,p=red22(t);let so=p;while(so>9)so=dsum(so);n++;Pb[p]++;Sb[so]++;
+      if(!ct||(ct==='p'?p===cv:so===cv)){nc++;Pc[p]++;Sc[so]++;}}}
+    const NN=ct?nc:n,fp=x=>x>=10?x.toFixed(1):x>=1?x.toFixed(2):x>0?x.toFixed(3):'0';
+    const block=(title,B,C,key,max)=>{const rows=[];for(let i=1;i<=max;i++){const b=B[i]/n*100,c=C[i]/NN*100,cr=ct===key;rows.push({i,v:cr?b:c,b,c,cr,sel:cr&&i===cv});}const mx=Math.max(...rows.map(r=>r.v));
+      return `<div class="card"><div class="h">${title}${rows[0].cr?' <span style="color:#7fcfe8">· პირობა — მთელი დიაპაზონი</span>':''}</div>`+rows.filter(r=>r.b>0).map(r=>`<div style="display:flex;align-items:center;gap:10px;margin:4px 0"><span style="width:170px;font-size:12px;${r.sel?'color:#7fcfe8':''}">${ROM[r.i]} ${A[r.i][0]}</span><div style="flex:1;height:9px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden"><i style="display:block;height:100%;width:${mx?r.v/mx*100:0}%;background:${r.cr?(r.sel?'#7fcfe8':'rgba(232,226,213,.25)'):'var(--gold)'}"></i></div><span class="note" style="width:90px;text-align:right">${fp(r.v)}%${!r.cr&&ct&&r.b?` <span style="color:${r.c/r.b>1?'#7fcf7f':'#e87f7f'}">${(r.c/r.b).toFixed(1)}×</span>`:''}</span></div>`).join('')+`</div>`;};
+    $('sout').innerHTML=`<div class="card"><div class="kv"><div><div class="k">დღეები</div><div class="v">${n.toLocaleString('en-US')}</div></div>${ct?`<div><div class="k">პირობით</div><div class="v">${fp(nc/n*100)}%</div></div>`:''}</div></div>`+block('პიროვნების კარტა',Pb,Pc,'p',22)+block('სულის კარტა',Sb,Sc,'s',9)+
+      `<div class="card note">რადგან ჯამი თვე+დღე+წელი ძირითადად წლის რიცხვით განისაზღვრება, კარტების განაწილება საუკუნეების მიხედვით მკვეთრად იცვლება — ზოგი კარტა ზოგ ეპოქაში საერთოდ არ გვხვდება.</div>`;};
 }
 </script>
 </body>
