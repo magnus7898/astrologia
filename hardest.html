@@ -79,8 +79,8 @@ canvas{display:block;width:100%;height:100%}
 </div>
 <div class="wrap" id="wrap"><canvas id="cv"></canvas><div class="ov" id="ov"></div></div>
 <div class="pad" id="pad"><button class="u" data-k="u">▲</button><button class="l" data-k="l">◀</button><button class="r" data-k="r">▶</button><button class="d" data-k="d">▼</button></div>
-<div class="bar"><button id="b-levels">☰ დონეები</button><button id="b-restart">↻ დონე თავიდან (R)</button><button id="b-pause">⏸ პაუზა (P)</button></div>
-<div class="optsrow"><label><input type="checkbox" id="o-snd" checked> ხმა</label><label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label></div>
+<div class="bar"><button id="b-levels">☰ დონეები</button><select id="b-jump" style="background:var(--raised);color:var(--gold-lt);border:1px solid var(--border-h);border-radius:6px;padding:6px;font:inherit;font-size:12.5px"></select><button id="b-restart">↻ დონე თავიდან (R)</button><button id="b-pause">⏸ პაუზა (P)</button></div>
+<div class="optsrow"><label><input type="checkbox" id="o-coin" checked> მონეტები სავალდებულოა</label><label><input type="checkbox" id="o-snd" checked> ხმა</label><label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label></div>
 <div class="panel music">
   <h3>🎵 ენერგიული მუსიკა · YouTube</h3>
   <div class="mrow">
@@ -102,22 +102,21 @@ canvas{display:block;width:100%;height:100%}
   <h3>✦ როგორ ვითამაშოთ</h3>
   <ul>
     <li>მართე <b style="color:#e2685c">წითელი კვადრატი</b> — ისრებით ან WASD-ით; ტელეფონზე — ღილაკებით ან თითის გასმით დაფაზე (ჯოისტიკი).</li>
-    <li>მიდი <b style="color:#8fe39a">მწვანე სასტარტო ზონიდან</b> მწვანე ფინიშამდე, ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო.</li>
+    <li>მიდი ღია მწვანე სტარტიდან 🏁 ფინიშამდე (ჭადრაკულად დაფერილი მწვანე ზონა), ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო.</li>
     <li>ყველა დონეზე <b style="color:#f1d34a">ყვითელი მონეტებია</b> — ფინიში 🔒 დაკეტილია, სანამ ყველას არ აკრეფ (მთვლელი ფინიშზე და ზემოთ ჩანს).</li>
     <li>შეხება → თავიდან სტარტიდან, მონეტები ბრუნდება. წერტილები არ ჩერდებიან — დაელოდე სწორ მომენტს.</li>
-    <li>30 დონე, 6 ტიპის: დერეფანი · ტალღები · ორბიტა · გველი · სვეტები · რგოლები — თითო ტიპი 5-ჯერ, სულ უფრო რთულად. თითო დონე ავტომატური ამომხსნელით არის აწეული მაქსიმალურ სირთულემდე, რომელზეც ჯერ კიდევ გასავლელია. ყველა დონე ღიაა.</li>
+    <li>30 დონე: პირველი ნაბიჯი · ზიგზაგი · ჯვარი · დერეფანი · საათი · კიბე · ოთხი ოთახი · ტალღები · დიდი რგოლი · ქანქარები · გვირაბი · ორბიტა · ლაბირინთი · ორი ქარიშხალი · ფანჯრები · გველი · ჭადრაკი · რვიანი · პერიმეტრი · სვეტები · სინუსოიდა · სარკე · კარიბჭეები · რგოლები · ბადე · ბორბალი · ტყუპები · მეტეორები · ციტადელი · ფინალი. 30 სხვადასხვა დონე — თითოეულს თავისი ფორმა, ფერი და მოძრაობის სახე. ყველა დონე შემოწმებულია ამომხსნელით, ადამიანისთვის საკმარისი სიფრთხილის მარაგით. ყველა დონე ღიაა.</li>
   </ul>
   <div id="stats" style="font-size:12.5px;color:var(--ink-mid);margin-top:8px"></div>
 </div>
 </div>
-<script>/* levels.js — 30 levels for "უძნელესი გზა". Shared by the game and the offline solver.
+<script>/* levels.js — 30 different levels for "უძნელესი გზა". Shared by the game and the offline solver.
    Board 25×15 tiles of 32 px. Every motion repeats with period P (8 s): each enemy makes k whole cycles per P. */
 var HG=(function(){
 const W=25,H=15,T=32,P=8;
 function blank(){return [...Array(H)].map(()=>Array(W).fill('#'));}
-function carve(g,x0,y0,x1,y1,ch){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)g[y][x]=ch||'.';}
-const C=(x,y)=>[x+.5,y+.5];                       /* tile centre */
-/* ── generators: d = difficulty (0 … 12, fractional allowed) ── */
+function carve(g,x0,y0,x1,y1,ch){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(g[y]&&x>=0&&x<W)g[y][x]=ch||'.';}
+const C=(x,y)=>[x+.5,y+.5];
 const fl=Math.floor;
 function corridor(d){
   const g=blank(),y0=4,y1=10;carve(g,4,y0,20,y1);carve(g,1,y0,3,y1,'S');carve(g,21,y0,23,y1,'E');
@@ -175,24 +174,217 @@ function rings(d){
   const coins=[C(12,7),C(12,1),C(12,13)].slice(0,d>=2?3:1);
   return {g,E,coins,name:'რგოლები'};
 }
-const GEN=[corridor,waves,orbit,snake,pillars,rings];
-/* tuned difficulty per level (found by the solver: the hardest value ≤ target that is still passable) */
-const DL=/*DL*/[3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5, 5.25, 5.5, 5.75, 6, 6.25, 6.5, 6.75, 7, 7.25, 7.5, 7.75, 8, 8.25, 8.5, 8.75, 9, 9.25, 9.5, 9.75, 10, 10.25]/*DL*/;
-const LEVELS=[];for(let i=0;i<30;i++){const L=GEN[i%6](DL[i]);L.n=i+1;L.d=DL[i];LEVELS.push(L);}
-function make(i,d){const L=GEN[i%6](d);L.n=i+1;L.d=d;return L;}
+
+/* ── 24 new layouts. d = 0 … 6 ── */
+const L_=(a,b,k,ph)=>({t:'line',a,b,k,ph:ph||0});
+const O_=(c,r,k,ph)=>({t:'circ',c,r,k,ph:ph||0});
+const P_=(pts,k,ph)=>({t:'path',pts,k,ph:ph||0});
+const SW=(c,r,amp,k,ph)=>({t:'swing',c,r,amp,k,ph:ph||0});
+const EI=(c,ax,ay,k,ph)=>({t:'eight',c,ax,ay,k,ph:ph||0});
+const SI=(a,b,amp,m,k,ph)=>({t:'sine',a,b,amp,m,k,ph:ph||0});
+function fromAscii(rows){const g=blank();rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(x<W&&y<H)g[y][x]=ch;}));return g;}
+
+function firstStep(d){const g=blank();carve(g,4,5,20,9);carve(g,1,5,3,9,'S');carve(g,21,5,23,9,'E');
+  const E=[],xs=[6,9,12,15,18].concat(d>=3?[7.5,10.5,13.5,16.5]:[]),k=1+fl(d/3);
+  xs.forEach((x,i)=>E.push(L_([x+.5,5.5],[x+.5,9.5],k,(i%2)*.5+(d>=2?i*.09:0))));
+  return {g,E,coins:[C(12,5)].concat(d>=2?[C(12,9)]:[]),name:'პირველი ნაბიჯი'};}
+
+function zigzag(d){const g=blank();
+  carve(g,1,1,9,3);carve(g,7,3,9,7);carve(g,7,5,17,7);carve(g,15,7,17,11);carve(g,15,9,23,11);carve(g,1,1,2,3,'S');carve(g,22,9,23,11,'E');
+  const k=1+fl(d/2),E=[L_([3.5,2],[9.5,2],k,0),L_([7,3.5],[9.9,3.5],k*2,.3),L_([7.5,5.5],[17.5,5.5],k,0),L_([7.5,6.5],[17.5,6.5],k,.5),
+    L_([15.5,7.5],[15.5,11.5],k,0),L_([17.5,7.5],[17.5,11.5],k,.5),L_([15.5,10],[21.5,10],k,.25)];
+  if(d>=2)E.push(L_([12.5,5.5],[12.5,7.5],2*k,.2),L_([20.5,9.5],[20.5,11.5],2*k,.6));
+  if(d>=4)E.push(L_([5.5,1.5],[5.5,3.5],2*k,.4));
+  return {g,E,coins:[C(8,7),C(16,7)].concat(d>=3?[C(23,9)]:[]),name:'ზიგზაგი'};}
+
+function cross(d){const g=blank();carve(g,10,1,14,13);carve(g,1,5,23,9);carve(g,1,5,2,9,'S');carve(g,22,5,23,9,'E');
+  const E=[],s=2+fl(d/2);for(let i=0;i<s;i++)for(let r=1;r<=2.6;r+=.8)E.push(O_([12.5,7.5],r,1,i/s));
+  [5,8,16,19].forEach((x,i)=>E.push(L_([x+.5,5.5],[x+.5,9.5],1+fl(d/3),i%2*.5)));
+  E.push(L_([10.5,3],[14.5,3],2,0),L_([10.5,12],[14.5,12],2,.5));if(d>=3)E.push(L_([10.5,2],[14.5,2],2,.5),L_([10.5,13],[14.5,13],2,0));
+  return {g,E,coins:[C(12,1),C(12,13)],name:'ჯვარი'};}
+
+function clock(d){const g=blank();for(let y=1;y<=13;y++){const r=10-Math.abs(y-7)*1.1;carve(g,Math.round(12-r),y,Math.round(12+r),y);}
+  carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[];for(let r=1;r<=6;r++)E.push(O_([12.5,7.5],r,1,0));for(let r=1;r<=3.5;r+=.8)E.push(O_([12.5,7.5],r,-2,.5));
+  if(d>=2)for(let r=1;r<=6;r++)E.push(O_([12.5,7.5],r,1,.5));
+  if(d>=4)for(let r=1;r<=3.5;r+=.8)E.push(O_([12.5,7.5],r,-2,0));
+  return {g,E,coins:[C(12,1),C(12,13)].concat(d>=1?[C(12,7)]:[]),name:'საათი'};}
+
+function stairs(d){const g=blank();for(let i=0;i<=10;i++)carve(g,1+2*i,1+i,Math.min(23,4+2*i),Math.min(13,3+i));
+  carve(g,1,1,2,3,'S');carve(g,21,11,23,13,'E');
+  const E=[],k=1+fl(d/3);for(let i=2;i<=9;i+=d>=3?1:2){const x=1+2*i+1.5;E.push(L_([x,1+i+.5],[x,3+i+.5],2*k,(i*.17)%1));}
+  if(d>=2)E.push(L_([5.5,4.5],[19.5,11.5],k,0));
+  return {g,E,coins:[C(12,7)].concat(d>=2?[C(18,10)]:[]),name:'კიბე'};}
+
+function rooms4(d){const g=blank();carve(g,1,1,11,6);carve(g,13,1,23,6);carve(g,1,8,11,13);carve(g,13,8,23,13);
+  carve(g,12,3,12,4);carve(g,17,7,18,7);carve(g,12,10,12,11);carve(g,1,1,2,6,'S');carve(g,1,8,2,13,'E');
+  const E=[],n=2+fl(d/2);[[6.5,3.5],[18.5,3.5],[18.5,10.5],[6.5,10.5]].forEach((c,j)=>{for(let i=0;i<n;i++)E.push(O_(c,2,j%2?-1:1,i/n));});
+  E.push(L_([12.5,2.5],[12.5,4.5],2,0),L_([16.5,7.5],[18.5,7.5],2,.5),L_([12.5,9.5],[12.5,11.5],2,.25));
+  if(d>=3)[[6.5,3.5],[18.5,3.5],[18.5,10.5],[6.5,10.5]].forEach(c=>E.push(O_(c,1,2,0)));
+  return {g,E,coins:[C(22,1),C(22,13),C(10,13)],name:'ოთხი ოთახი'};}
+
+function donut(d){const g=blank();carve(g,3,1,21,13);for(let y=5;y<=9;y++)for(let x=7;x<=17;x++)g[y][x]='#';
+  carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const n=3+fl(d/1.5),E=[];const R1=[[3.5,1.5],[21.5,1.5],[21.5,13.5],[3.5,13.5]],R2=[[5.5,3.5],[19.5,3.5],[19.5,11.5],[5.5,11.5]];
+  for(let i=0;i<n;i++){E.push(P_(R1,.5,i/n));E.push(P_(R2,-.5,i/n+.5/n));}
+  return {g,E,coins:[C(12,2),C(12,12)],name:'დიდი რგოლი'};}
+
+function pendulums(d){const g=blank();carve(g,3,1,21,12);carve(g,1,10,2,12,'S');carve(g,22,10,23,12,'E');
+  const E=[],xs=d>=3?[5,8.5,12,15.5,19]:[6,10,14,18];
+  xs.forEach((x,i)=>{for(let r=6;r<=10.5;r+=1.1)E.push(SW([x+.5,1],r,.62,1+fl(d/4),(i%2)*.5));});
+  return {g,E,coins:[C(8,12),C(16,12)].concat(d>=2?[C(12,6)]:[]),name:'ქანქარები'};}
+
+function maze(d){const g=fromAscii([
+ '#########################',
+ '#SS.....#.......#.......#',
+ '#SS.....#.......#.......#',
+ '#####...#...#...#...#...#',
+ '#.......#...#.......#...#',
+ '#.......#...#.......#...#',
+ '#...#########...#####...#',
+ '#...............#.......#',
+ '#...............#.......#',
+ '#######...###...#...#####',
+ '#.........#.........#...#',
+ '#.........#.........#.EE#',
+ '#...#.....#.....#.....EE#',
+ '#...#...........#.......#',
+ '#########################']);
+  const k=1+fl(d/3),E=[L_([5.5,1.5],[5.5,5.5],k,0),L_([1.5,4.5],[7.5,4.5],k,.5),L_([9.5,1.5],[15.5,1.5],k,.2),L_([13.5,4.5],[19.5,4.5],k,.7),
+    L_([21.5,1.5],[21.5,8.5],k,.1),L_([1.5,7.5],[15.5,7.5],k,.4),L_([17.5,7.5],[23.5,7.5],k,.6),L_([1.5,11.5],[9.5,11.5],k,.3),
+    L_([11.5,10.5],[19.5,10.5],k,.8),L_([17.5,12.5],[17.5,13.5],2*k,.2)];
+  if(d>=2)E.push(L_([9.5,9.5],[9.5,13.5],k,.5),L_([12.5,12.5],[15.5,12.5],k,0));
+  if(d>=4)E.push(L_([2.5,12.5],[2.5,13.5],2*k,.4),L_([19.5,13.5],[23.5,13.5],k,.9));
+  return {g,E,coins:[C(23,1),C(1,13)].concat(d>=3?[C(12,9)]:[]),name:'ლაბირინთი'};}
+
+function storms(d){const g=blank();carve(g,2,1,22,13);carve(g,1,6,1,8,'S');carve(g,23,6,23,8,'E');carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],s=3+fl(d/2);for(let i=0;i<s;i++)for(let r=1;r<=4;r++){E.push(O_([7.5,7.5],r,1,i/s));E.push(O_([17.5,7.5],r,-1,i/s));}
+  return {g,E,coins:[C(7,7),C(17,7)].concat(d>=2?[C(12,1),C(12,13)]:[]),name:'ორი ქარიშხალი'};}
+
+function perimeter(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const n=4+d,E=[],R=[[3.5,1.5],[21.5,1.5],[21.5,13.5],[3.5,13.5]];for(let i=0;i<n;i++)E.push(P_(R,.5,i/n));
+  E.push(L_([5.5,7.5],[19.5,7.5],1+fl(d/3),0),L_([12.5,3.5],[12.5,11.5],1+fl(d/3),.25));
+  if(d>=2)E.push(L_([5.5,4.5],[19.5,10.5],1,.5),L_([19.5,4.5],[5.5,10.5],1,0));
+  return {g,E,coins:[C(3,1),C(21,1),C(3,13),C(21,13)].slice(0,2+fl(d/2)),name:'პერიმეტრი'};}
+
+function checker(d){const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],k=1+fl(d/3);for(let x=5;x<=19;x+=(d>=3?2:3))for(let y=3;y<=11;y+=d>=3?2:4){const s=((x+y)%4<2)?1:-1;
+    E.push(P_([[x,y],[x+1,y],[x+1,y+1],[x,y+1]],s*k*2,(x*.07)%1));}
+  return {g,E,coins:[C(12,2),C(12,12)],name:'ჭადრაკი'};}
+
+function tunnel(d){const g=blank();carve(g,1,7,23,7);for(let x=4;x<=20;x+=2)carve(g,x,4,x,10);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],k=1+fl(d/2.5);for(let x=4,i=0;x<=20;x+=2,i++)E.push(L_([x+.5,4.5],[x+.5,10.5],k,(i*(d>=3?.21:.5))%1));
+  return {g,E,coins:[C(8,4),C(16,10)].concat(d>=2?[C(12,4)]:[]),name:'გვირაბი'};}
+
+function spiral(d){const g=fromAscii([
+ '#########################',
+ '#SS.....................#',
+ '#SS.....................#',
+ '######################..#',
+ '#.....................#.#',
+ '#..#################..#.#',
+ '#..#..............#...#.#',
+ '#..#..EE..........#...#.#',
+ '#..#..EE..........#...#.#',
+ '#..#######.########...#.#',
+ '#.....................#.#',
+ '#.....................#.#',
+ '##########################',
+ '#########################',
+ '#########################']);
+  const k=1+fl(d/3),E=[L_([3.5,1.5],[21.5,1.5],k,0),L_([3.5,2.5],[21.5,2.5],k,.5),L_([22.5,1.5],[22.5,11.5],k,.25),L_([21.5,3.5],[21.5,11.5],k,.75),
+    L_([1.5,10.5],[21.5,10.5],k,.1),L_([1.5,11.5],[21.5,11.5],k,.6),L_([1.5,4.5],[1.5,11.5],k,.3),L_([2.5,4.5],[2.5,11.5],k,.8),
+    L_([1.5,4.5],[21.5,4.5],k,.45),L_([19.5,5.5],[19.5,10.5],k,.15),L_([4.5,6.5],[17.5,6.5],k,.55),L_([10.5,7.5],[10.5,9.5],2*k,.35)];
+  if(d>=3)E.push(L_([4.5,8.5],[17.5,8.5],k,.05));
+  return {g,E,coins:[C(22,2),C(1,11)].concat(d>=2?[C(16,7)]:[]),name:'სპირალი'};}
+
+function windows(d){const g=blank();carve(g,3,1,21,2,'S');carve(g,3,3,21,11);carve(g,3,12,21,13,'E');
+  [5,8].forEach(y=>{for(let x=3;x<=21;x++)g[y][x]='#';});
+  [[5,[6,12,18]],[8,[4,9,15,20]]].forEach(([y,gs])=>gs.forEach(x=>{g[y][x]='.';}));
+  const E=[],k=1+fl(d/3);E.push(L_([3.5,4],[21.5,4],k,0),L_([3.5,6.5],[21.5,6.5],k,.5),L_([3.5,7.2],[21.5,7.2],k,0),L_([3.5,10],[21.5,10],k,.3));
+  if(d>=2)E.push(L_([3.5,3.5],[21.5,3.5],k,.5),L_([3.5,9.5],[21.5,9.5],k,.8));
+  if(d>=4)E.push(L_([3.5,4.5],[21.5,4.5],k,.25),L_([3.5,10.5],[21.5,10.5],k,.55));
+  return {g,E,coins:[C(3,6),C(21,7)].concat(d>=3?[C(12,10)]:[]),name:'ფანჯრები'};}
+
+function eights(d){const g=blank();carve(g,2,1,22,13);carve(g,1,6,1,8,'S');carve(g,23,6,23,8,'E');carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],n=3+fl(d/2);for(let i=0;i<n;i++){E.push(EI([12.5,7.5],8,5,.5,i/n));if(d>=2)E.push(EI([12.5,7.5],5,3,-.5,i/n));}
+  if(d>=4)for(let i=0;i<3;i++)E.push(EI([12.5,7.5],8,5.5,-.5,i/3+.1));
+  return {g,E,coins:[C(12,7),C(5,7),C(19,7)],name:'რვიანი'};}
+
+function lattice(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  for(let x=5;x<=19;x+=3)for(let y=3;y<=11;y+=3)g[y][x]='#';
+  const E=[],k=1+fl(d/3);[4,7,10,13,16,19].forEach((x,i)=>{if(x===19&&d<2)return;E.push(L_([x+.5,1.5],[x+.5,13.5],k,(i%2)*.5));});
+  [2,5,8,11].forEach((y,i)=>{if(i%2&&d<3)return;E.push(L_([3.5,y+.5],[21.5,y+.5],k,(i*.3)%1));});
+  return {g,E,coins:[C(12,1),C(12,13),C(3,1)],name:'ბადე'};}
+
+function sine(d){const g=blank();carve(g,4,3,20,11);carve(g,4,1,20,2,'S');carve(g,4,12,20,13,'E');
+  const E=[],m=1+fl(d/3);for(let j=0;j<3;j++)for(let i=0;i<m+1;i++)E.push(SI([4.5,4.5+j*3],[20.5,4.5+j*3],1.1,1.5,d>=4?1:.5,(i/(m+1)+j*.3)%1));
+  if(d>=3)E.push(L_([12.5,3.5],[12.5,11.5],2,0));
+  return {g,E,coins:[C(4,7),C(20,7)],name:'სინუსოიდა'};}
+
+function mirror(d){const g=blank();carve(g,1,1,23,3);carve(g,1,11,23,13);carve(g,11,3,13,11);carve(g,1,1,2,3,'S');carve(g,22,11,23,13,'E');
+  const E=[],k=1+fl(d/3),n=4+d;for(let i=0;i<n;i++){const x=4+i*(16/(n-1));E.push(L_([x+.5,1.5],[x+.5,3.5],2*k,i%2*.5));E.push(L_([24-x-.5,11.5],[24-x-.5,13.5],2*k,i%2*.5));}
+  E.push(L_([11.5,6.5],[13.5,6.5],2*k,0),L_([11.5,8.5],[13.5,8.5],2*k,.5));if(d>=2)E.push(L_([11.5,4.5],[13.5,4.5],2*k,.25),L_([11.5,10.5],[13.5,10.5],2*k,.75));
+  return {g,E,coins:[C(23,1),C(1,13)],name:'სარკე'};}
+
+function gates(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],k=1+fl(d/2.5),walls=[6,10,14,18];walls.forEach((x,i)=>{for(let y=1;y<=13;y++)g[y][x]='#';const door=[3,10,5,9][i];g[door][x]='.';g[door+1][x]='.';
+    E.push(L_([x+.5,door-1.5],[x+.5,door+2.5],2*k,i*.3));if(d>=2)E.push(L_([x-1.5,door+1],[x+2.5,door+1],k,i*.2+.5));});
+  return {g,E,coins:[C(8,13),C(16,1)].concat(d>=3?[C(12,7)]:[]),name:'კარიბჭეები'};}
+
+function wheel(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],s=3+fl(d/2),R=5.4;for(let i=0;i<s;i++)for(let r=1.6;r<=R;r+=1.2)E.push(O_([12.5,7.5],r,1,i/s));
+  const rim=8+d*2;for(let i=0;i<rim;i++)if(i%4!==0)E.push(O_([12.5,7.5],R+.9,1,i/rim));
+  return {g,E,coins:[C(12,7),C(3,1),C(21,13)],name:'ბორბალი'};}
+
+function twins(d){const g=blank();carve(g,1,1,11,13);carve(g,13,1,23,13);carve(g,12,6,12,8);carve(g,1,1,3,2,'S');carve(g,21,12,23,13,'E');
+  const E=[],k=1+fl(d/3);for(let y=4;y<=11;y+=d>=2?1:2)E.push(L_([1.5,y+.5],[11.5,y+.5],k,(y*.17)%1));
+  const s=3+fl(d/2);for(let i=0;i<s;i++)for(let r=1;r<=4.5;r+=1.1)E.push(O_([18,7],r,1,i/s));
+  return {g,E,coins:[C(11,13),C(18,7),C(23,1)],name:'ტყუპები'};}
+
+function meteors(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],n=6+d*2;for(let i=0;i<n;i++){const x=4+((i*7)%17),dir=i%2;
+    E.push(L_([x+.5,1.5],[Math.min(21.5,Math.max(3.5,x+.5+(dir?6:-6))),13.5],1+fl(d/3),(i*.137)%1));}
+  return {g,E,coins:[C(12,1),C(12,13),C(12,7)],name:'მეტეორები'};}
+
+function citadel(d){const g=blank();carve(g,2,1,22,13);for(let y=4;y<=10;y++)for(let x=8;x<=16;x++)g[y][x]='#';carve(g,9,5,15,9);
+  g[7][8]='.';g[7][16]='.';carve(g,1,6,1,8,'S');carve(g,1,6,2,8,'S');carve(g,23,6,23,8,'E');carve(g,22,6,23,8,'E');
+  const E=[],n=6+d;for(let i=0;i<n;i++){E.push(P_([[6.5,2.5],[18.5,2.5],[18.5,12.5],[6.5,12.5]],.5,i/n));}
+  E.push(O_([12,7.5],1.6,2,0),O_([12,7.5],1.6,2,.5));if(d>=3)E.push(O_([13,7.5],1.6,-2,.25));
+  return {g,E,coins:[C(12,7),C(2,1),C(22,13)],name:'ციტადელი'};}
+
+function finale(d){const g=blank();carve(g,1,1,7,13);carve(g,9,1,15,13);carve(g,17,1,23,13);carve(g,8,12,8,13);carve(g,16,1,16,2);
+  carve(g,1,1,3,2,'S');carve(g,21,12,23,13,'E');
+  const E=[],k=1+fl(d/3);for(let y=3;y<=11;y+=2)E.push(L_([1.5,y+.5],[7.5,y+.5],2*k,(y*.13)%1));
+  const s=3+fl(d/3);for(let i=0;i<s;i++)for(let r=1;r<=3;r++)E.push(O_([12.5,7],r,1,i/s));
+  for(let x=17;x<=23;x+=d>=2?1:2)E.push(L_([x+.5,3.5],[x+.5,11.5],k,(x*.19)%1));
+  return {g,E,coins:[C(7,1),C(12,7),C(23,1)],name:'ფინალი'};}
+
+const OLD=(f,b=3,m=1.15)=>d=>f(b+d*m);
+const ORDER=[firstStep,zigzag,cross,OLD(corridor),clock,stairs,rooms4,OLD(waves),donut,pendulums,tunnel,OLD(orbit,0,1.3),maze,storms,windows,
+  OLD(snake),checker,eights,perimeter,OLD(pillars),sine,mirror,gates,OLD(rings,0,1.3),lattice,wheel,twins,meteors,citadel,finale];
+const THEMES=[['#f8f7ff','#e9e7fb','#0b0918'],['#f2fbf4','#dff3e5','#0a140e'],['#fff6ee','#fbe5d3','#160d07'],['#eef7ff','#d9ebfb','#07101a'],
+  ['#fffbe8','#f5ecc4','#141106'],['#fff0f4','#f8dbe4','#170910'],['#f2f2f2','#e0e0e3','#0d0d10'],['#eefcfc','#d4f2f2','#061313'],
+  ['#f6f0ff','#e6dafb','#100a1a'],['#f9fbea','#e8efc9','#10130a']];
+/* tuned difficulty per level (solver-checked, see tune.js) */
+const DL=/*DL*/[0, 0.21, 0.41, 0.62, 0.83, 1.03, 1.24, 0.7, 1.66, 1.86, 2.07, 1.53, 2.48, 1.94, 2.9, 3.1, 3.31, 3.52, 3.72, 3.93, 4.14, 4.34, 4.55, 2.76, 2.97, 5.17, 3.88, 5.59, 5.79, 2.75]/*DL*/;
+function make(i,d){const L=ORDER[i](d);L.n=i+1;L.d=d;L.theme=THEMES[i%THEMES.length];return L;}
+const LEVELS=[];for(let i=0;i<30;i++)LEVELS.push(make(i,DL[i]));
 /* ── motion ── */
 function plen(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=Math.hypot(b[0]-a[0],b[1]-a[1]);}return s;}
 function pos(e,t){
-  let u=((t/P)*Math.abs(e.k)+e.ph)%1;if(u<0)u+=1;
+  let u=((t/P)*Math.abs(e.k)+e.ph)%1;if(u<0)u+=1;const sg=Math.sign(e.k)||1;
   if(e.t==='line'){const s=u<.5?2*u:2-2*u;return [e.a[0]+(e.b[0]-e.a[0])*s,e.a[1]+(e.b[1]-e.a[1])*s];}
-  if(e.t==='circ'){const a=2*Math.PI*u*Math.sign(e.k);return [e.c[0]+e.r*Math.cos(a),e.c[1]+e.r*Math.sin(a)];}
+  if(e.t==='circ'){const a=2*Math.PI*u*sg;return [e.c[0]+e.r*Math.cos(a),e.c[1]+e.r*Math.sin(a)];}
+  if(e.t==='swing'){const a=e.amp*Math.sin(2*Math.PI*u);return [e.c[0]+e.r*Math.sin(a),e.c[1]+e.r*Math.cos(a)];}
+  if(e.t==='eight'){const a=2*Math.PI*u*sg;return [e.c[0]+e.ax*Math.sin(a),e.c[1]+e.ay*Math.sin(2*a)/2];}
+  if(e.t==='sine'){const s=u<.5?2*u:2-2*u;return [e.a[0]+(e.b[0]-e.a[0])*s,e.a[1]+(e.b[1]-e.a[1])*s+e.amp*Math.sin(2*Math.PI*e.m*s)];}
   const pts=e.pts,L=e._L||(e._L=plen(pts));let d=(e.k<0?1-u:u)*L;
   for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length],l=Math.hypot(b[0]-a[0],b[1]-a[1]);
     if(d<=l){const f=l?d/l:0;return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];}d-=l;}
   return pts[0];
 }
-function speed(e){/* px/s */ if(e.t==='line')return Math.hypot(e.b[0]-e.a[0],e.b[1]-e.a[1])*2*Math.abs(e.k)/P*T;
-  if(e.t==='circ')return 2*Math.PI*e.r*Math.abs(e.k)/P*T;return plen(e.pts)*Math.abs(e.k)/P*T;}
+function speed(e){let m=0,p=pos(e,0);for(let i=1;i<=400;i++){const t=i*P/400,q=pos(e,t);m=Math.max(m,Math.hypot(q[0]-p[0],q[1]-p[1])*T/(P/400));p=q;}return m;}
 return {W,H,T,P,LEVELS,make,pos,speed,PLAYER:{half:9,speed:150},ER:8,CR:6};
 })();
 if(typeof module!=='undefined')module.exports=HG;
@@ -217,9 +409,14 @@ const prog=store.get('prog',{unlocked:1,best:{}});
 let bg=null;
 function drawMap(L){
   bg=document.createElement('canvas');bg.width=W*T;bg.height=H*T;const c=bg.getContext('2d');
-  c.fillStyle='#0b0918';c.fillRect(0,0,W*T,H*T);
+  const th=L.theme||['#f8f7ff','#e9e7fb','#0b0918'];c.fillStyle=th[2];c.fillRect(0,0,W*T,H*T);
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const ch=L.g[y][x];if(ch==='#')continue;
-    c.fillStyle=ch==='S'||ch==='E'?'#b6f0b0':((x+y)%2?'#e9e7fb':'#f8f7ff');c.fillRect(x*T,y*T,T,T);}
+    if(ch==='E'){c.fillStyle='#9fe3a6';c.fillRect(x*T,y*T,T,T);c.fillStyle='rgba(20,60,30,.22)';
+      for(let q=0;q<4;q++)for(let r=0;r<4;r++)if((q+r)%2)c.fillRect(x*T+q*8,y*T+r*8,8,8);}
+    else{c.fillStyle=ch==='S'?'#c6f3c0':((x+y)%2?th[1]:th[0]);c.fillRect(x*T,y*T,T,T);}}
+  const lab=(ch,txt)=>{let sx=0,sy=0,n=0;for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(L.g[y][x]===ch){sx+=x;sy+=y;n++;}
+    if(!n)return;c.font='18px sans-serif';c.textAlign='center';c.fillText(txt,(sx/n+.5)*T,(sy/n+.5)*T-6);};
+  lab('E','🏁');
   /* outline of the walkable area */
   c.strokeStyle='#1a1430';c.lineWidth=3;
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){if(L.g[y][x]==='#')continue;const wall=(xx,yy)=>!L.g[yy]||L.g[yy][xx]==null||L.g[yy][xx]==='#';
@@ -228,17 +425,18 @@ function drawMap(L){
 }
 function resize(){const r=$('wrap').getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);}
 window.addEventListener('resize',resize);
+const onFinish=()=>[[-h,-h],[h-.01,-h],[-h,h-.01],[h-.01,h-.01]].some(([dx,dy])=>tileAt(G.px+dx,G.py+dy)==='E');
 const tileAt=(x,y)=>{const tx=Math.floor(x/T),ty=Math.floor(y/T);return (G.L.g[ty]&&G.L.g[ty][tx])||'#';};
 const h=PLAYER.half;
 function blocked(x,y){for(const [dx,dy] of [[-h,-h],[h-.01,-h],[-h,h-.01],[h-.01,h-.01]])if(tileAt(x+dx,y+dy)==='#')return true;return false;}
 function startPos(){let sx=0,sy=0,n=0;for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(G.L.g[y][x]==='S'){sx+=x+.5;sy+=y+.5;n++;}return [sx/n*T,sy/n*T];}
 
 function load(i){
-  G.lv=i;G.L=LEVELS[i];drawMap(G.L);[G.sx,G.sy]=startPos();G.dl=0;G.lt=0;G.won=false;respawn(true);hud();
+  G.banner=2.2;G.parts=null;G.lv=i;G.L=LEVELS[i];drawMap(G.L);[G.sx,G.sy]=startPos();G.dl=0;G.lt=0;G.won=false;respawn(true);hud();
 }
 function respawn(){G.px=G.sx;G.py=G.sy;G.coins=G.L.coins.map(c=>({x:c[0]*T,y:c[1]*T,got:false}));G.got=0;}
 function hud(){$('h-lv').textContent=G.lv+1;$('h-coin').textContent=`${G.got}/${G.coins.length}`;$('h-dl').textContent=G.dl;$('h-dt').textContent=G.dt;$('h-t').textContent=G.lt.toFixed(1);}
-function die(){G.dead=.45;G.dl++;G.dt++;store.set('deaths',G.dt);tone(160,.25,'sawtooth',.09);vib([60,30,60]);hud();}
+function die(){G.parts=[...Array(18)].map((_,i)=>{const a=i/18*6.283+Math.random()*.3,v=60+Math.random()*90;return {x:G.px,y:G.py,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:.6};});G.dead=.45;G.dl++;G.dt++;store.set('deaths',G.dt);tone(160,.25,'sawtooth',.09);vib([60,30,60]);hud();}
 function win(){
   G.won=true;G.run=false;tone(660,.12,'triangle');setTimeout(()=>tone(880,.12,'triangle'),120);setTimeout(()=>tone(1320,.2,'triangle'),240);vib(40);
   const n=G.lv+1,b=prog.best[n];if(!b||G.dl<b.d||(G.dl===b.d&&G.lt<b.t))prog.best[n]={d:G.dl,t:+G.lt.toFixed(1)};
@@ -258,7 +456,7 @@ function frame(ts){
 }
 function update(dt){
   if(G.L&&!G.paused){
-    G.t+=dt;
+    G.t+=dt;if(G.banner>0)G.banner-=dt;if(G.parts)for(const q of G.parts){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vx*=.92;q.vy*=.92;q.l-=dt;}
     if(G.run){G.lt+=dt;
       if(G.dead>0){G.dead-=dt;if(G.dead<=0)respawn();}
       else{
@@ -273,7 +471,8 @@ function update(dt){
           if((nx-c.x)**2+(ny-c.y)**2<CR*CR){c.got=true;G.got++;tone(990,.08,'triangle');vib(10);}}
         for(const e of G.L.E){const [ex,ey]=pos(e,G.t);const X=ex*T,Y=ey*T;const nx=Math.max(G.px-h,Math.min(X,G.px+h)),ny=Math.max(G.py-h,Math.min(Y,G.py+h));
           if((nx-X)**2+(ny-Y)**2<ER*ER){die();break;}}
-        if(!G.dead&&G.got===G.coins.length&&tileAt(G.px,G.py)==='E')win();
+        if(!G.dead&&onFinish()){if(G.got===G.coins.length||!$('o-coin').checked)win();else if(!G.warned){G.warned=true;tone(300,.12,'square',.06);vib(30);}}
+        if(!onFinish())G.warned=false;
       }
       hud();
     }
@@ -286,14 +485,23 @@ function draw(){
   if(G.L&&G.got<G.coins.length){/* finish locked until all coins are collected */
     ctx.fillStyle='rgba(20,15,40,.45)';const ez=[];for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(G.L.g[y][x]==='E'){ctx.fillRect(x*T,y*T,T,T);ez.push([x,y]);}
     if(ez.length){const cx=ez.reduce((a,b)=>a+b[0],0)/ez.length*T+T/2,cy=ez.reduce((a,b)=>a+b[1],0)/ez.length*T+T/2;
-      ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillStyle='#f1d34a';ctx.fillText('🔒 '+G.got+'/'+G.coins.length,cx,cy+5);}}
-  for(const c of G.coins)if(!c.got){ctx.beginPath();ctx.arc(c.x,c.y,CR+1,0,7);ctx.fillStyle='#f1d34a';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle='#1a1430';ctx.stroke();}
+      ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillStyle='#f1d34a';ctx.fillText('🔒'+G.got+'/'+G.coins.length,cx,cy+14);}}
+  const need=G.L&&G.got<G.coins.length&&G.run&&onFinish();
+  for(const c of G.coins)if(!c.got){const pr=1+.12*Math.sin(G.t*6+c.x)+(need?.35*Math.abs(Math.sin(G.t*8)):0);
+    if(need){ctx.setLineDash([6,6]);ctx.strokeStyle='rgba(241,211,74,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(G.px,G.py);ctx.lineTo(c.x,c.y);ctx.stroke();ctx.setLineDash([]);}
+    ctx.beginPath();ctx.arc(c.x,c.y,(CR+1)*pr,0,7);ctx.fillStyle='#f1d34a';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle='#1a1430';ctx.stroke();
+    ctx.beginPath();ctx.arc(c.x-2,c.y-2,1.8,0,7);ctx.fillStyle='#fff8d0';ctx.fill();}
+  if(G.parts)for(const q of G.parts)if(q.l>0){ctx.globalAlpha=Math.max(0,q.l/.6);ctx.fillStyle='#e8313a';ctx.fillRect(q.x-3,q.y-3,6,6);}
+  ctx.globalAlpha=1;
   /* player */
   if(G.dead>0){ctx.globalAlpha=Math.max(0,G.dead/.45);}
   ctx.fillStyle='#e8313a';ctx.fillRect(G.px-h,G.py-h,2*h,2*h);ctx.lineWidth=3;ctx.strokeStyle='#3a0a0e';ctx.strokeRect(G.px-h+1.5,G.py-h+1.5,2*h-3,2*h-3);
   ctx.globalAlpha=1;
   for(const e of G.L?G.L.E:[]){const [ex,ey]=pos(e,G.t);ctx.beginPath();ctx.arc(ex*T,ey*T,ER,0,7);ctx.fillStyle='#2f6bff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#0a0f3a';ctx.stroke();}
-  if(G.L&&G.got<G.coins.length&&tileAt(G.px,G.py)==='E'&&G.run){ctx.font='bold 16px sans-serif';ctx.textAlign='center';
+  if(G.L&&G.banner>0){ctx.globalAlpha=Math.min(1,G.banner);ctx.fillStyle='rgba(10,8,24,.85)';ctx.fillRect(W*T/2-170,H*T/2-34,340,60);
+    ctx.textAlign='center';ctx.fillStyle='#ecd59a';ctx.font='22px Cinzel,serif';ctx.fillText('დონე '+(G.lv+1),W*T/2,H*T/2-6);
+    ctx.font='14px "Noto Serif Georgian",serif';ctx.fillStyle='#b3a68f';ctx.fillText(G.L.name+' · მონეტა: '+G.coins.length,W*T/2,H*T/2+16);ctx.globalAlpha=1;}
+  if(need&&$('o-coin').checked){ctx.font='bold 16px sans-serif';ctx.textAlign='center';
     ctx.fillStyle='rgba(10,8,24,.88)';ctx.fillRect(W*T/2-200,8,400,30);ctx.fillStyle='#f1d34a';ctx.fillText('ჯერ აკრიფე ყველა ყვითელი მონეტა: '+G.got+'/'+G.coins.length,W*T/2,29);}
   if(G.joy&&G.joy.on){const s=1;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(G.joy.ox*s,G.joy.oy*s,34,0,7);ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
     ctx.beginPath();ctx.arc(G.joy.ox*s+Math.max(-34,Math.min(34,G.joy.x)),G.joy.oy*s+Math.max(-34,Math.min(34,G.joy.y)),12,0,7);ctx.fillStyle='#c9a84c';ctx.fill();ctx.globalAlpha=1;}
@@ -318,8 +526,8 @@ $('pad').querySelectorAll('button').forEach(b=>{const k=b.dataset.k;
 /* ── screens ── */
 function overlay(html,bind){const o=$('ov');o.innerHTML=html;o.hidden=false;bind&&bind();}
 function hideOv(){$('ov').hidden=true;}
-function play(i){load(i);hideOv();G.run=true;G.paused=false;$('b-pause').textContent='⏸ პაუზა (P)';}
-function start(){play(Math.min(prog.unlocked-1,29));}
+function play(i){i=Math.max(0,Math.min(29,i|0));$('b-jump').value=i;load(i);hideOv();G.run=true;G.paused=false;$('b-pause').textContent='⏸ პაუზა (P)';}
+function start(){play(G.L?G.lv:Math.min(prog.unlocked-1,29));}
 function restart(){if(!G.L)return;G.dl=0;G.lt=0;respawn();hideOv();G.run=true;G.won=false;G.paused=false;hud();}
 function pause(){if(!G.L||G.won)return;G.paused=!G.paused;$('b-pause').textContent=G.paused?'▶ გაგრძელება (P)':'⏸ პაუზა (P)';
   if(G.paused)overlay(`<h2>პაუზა</h2><div class="bar"><button class="btn" id="o-res">▶ გაგრძელება</button><button class="btn ghost" id="o-lv2">☰ დონეები</button></div>`,
@@ -333,6 +541,9 @@ function levels(){
 }
 function stats(){const done=Object.keys(prog.best).length,dsum=Object.values(prog.best).reduce((a,b)=>a+b.d,0);
   $('stats').innerHTML=`გავლილი დონეები: <b style="color:var(--gold-lt)">${done}/30</b> · საუკეთესო შედეგების ჯამი: ☠ ${dsum} · სულ სიკვდილი: ${G.dt}`;}
+$('b-jump').innerHTML=LEVELS.map((L,i)=>`<option value="${i}">დონე ${i+1} · ${L.name}</option>`).join('');
+$('b-jump').onchange=e=>play(+e.target.value);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&G.run&&!G.paused&&!G.won)pause();});
 $('b-levels').onclick=levels;$('b-restart').onclick=restart;$('b-pause').onclick=pause;
 /* ── music: YouTube IFrame API ── */
 const PRESETS=[
@@ -378,9 +589,9 @@ ytInit();
 const _start=start;start=function(){if($('m-auto').checked&&!M.playing){if(M.ready)M.yt.playVideo();else M.pending=true;}return _start.apply(this,arguments);};
 window._music=M;
 
-resize();load(Math.min(prog.unlocked-1,29));stats();
+resize();const qLv=+(new URLSearchParams(location.search).get('level')||0);load(qLv?Math.min(30,qLv)-1:Math.min(prog.unlocked-1,29));$('b-jump').value=G.lv;stats();
 overlay(`<h2>უძნელესი გზა</h2><p>მიიყვანე წითელი კვადრატი მწვანე ფინიშამდე და არ შეეხო ლურჯ წერტილებს. აკრიფე ყველა ყვითელი მონეტა. 30 დონე.</p>
-  <div class="bar"><button class="btn" id="o-start">▶ დაწყება — დონე ${Math.min(prog.unlocked,30)}</button><button class="btn ghost" id="o-lvs">☰ დონეები</button></div>`,
+  <div class="bar"><button class="btn" id="o-start">▶ დაწყება — დონე ${G.lv+1}</button><button class="btn ghost" id="o-lvs">☰ დონეები</button></div>`,
   ()=>{$('o-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}start();};$('o-lvs').onclick=levels;});
 requestAnimationFrame(frame);
 window._hg={G,prog,play,LEVELS,update,load};
