@@ -103,9 +103,9 @@ canvas{display:block;width:100%;height:100%}
   <ul>
     <li>მართე <b style="color:#e2685c">წითელი კვადრატი</b> — ისრებით ან WASD-ით; ტელეფონზე — ღილაკებით ან თითის გასმით დაფაზე (ჯოისტიკი).</li>
     <li>მიდი <b style="color:#8fe39a">მწვანე სასტარტო ზონიდან</b> მწვანე ფინიშამდე, ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო.</li>
-    <li>თუ დონეზე <b style="color:#f1d34a">ყვითელი მონეტებია</b>, ფინიში მხოლოდ ყველას აკრეფის შემდეგ ითვლება.</li>
+    <li>ყველა დონეზე <b style="color:#f1d34a">ყვითელი მონეტებია</b> — ფინიში 🔒 დაკეტილია, სანამ ყველას არ აკრეფ (მთვლელი ფინიშზე და ზემოთ ჩანს).</li>
     <li>შეხება → თავიდან სტარტიდან, მონეტები ბრუნდება. წერტილები არ ჩერდებიან — დაელოდე სწორ მომენტს.</li>
-    <li>30 დონე, 6 ტიპის: დერეფანი · ტალღები · ორბიტა · გველი · სვეტები · რგოლები — თითო ტიპი 5-ჯერ, სულ უფრო რთულად. ყველა დონე ავტომატურად შემოწმებულია, რომ გავლა შესაძლებელია.</li>
+    <li>30 დონე, 6 ტიპის: დერეფანი · ტალღები · ორბიტა · გველი · სვეტები · რგოლები — თითო ტიპი 5-ჯერ, სულ უფრო რთულად. თითო დონე ავტომატური ამომხსნელით არის აწეული მაქსიმალურ სირთულემდე, რომელზეც ჯერ კიდევ გასავლელია. ყველა დონე ღიაა.</li>
   </ul>
   <div id="stats" style="font-size:12.5px;color:var(--ink-mid);margin-top:8px"></div>
 </div>
@@ -117,62 +117,69 @@ const W=25,H=15,T=32,P=8;
 function blank(){return [...Array(H)].map(()=>Array(W).fill('#'));}
 function carve(g,x0,y0,x1,y1,ch){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)g[y][x]=ch||'.';}
 const C=(x,y)=>[x+.5,y+.5];                       /* tile centre */
-/* ── generators: d = difficulty 0…4 ── */
+/* ── generators: d = difficulty (0 … 12, fractional allowed) ── */
+const fl=Math.floor;
 function corridor(d){
-  const g=blank(),y0=d>=2?4:5,y1=d>=2?10:9;
-  carve(g,4,y0,20,y1);carve(g,1,y0,3,y1,'S');carve(g,21,y0,23,y1,'E');
-  const n=4+d*2,E=[],k=d>=4?3:d>=2?3:2;
-  for(let i=0;i<n;i++){const x=5+i*(15/(n-1))*(n>1?1:0);
-    E.push({t:'line',a:[x+.5,y0+.5],b:[x+.5,y1+.5],k,ph:d<2?(i%2?.5:0):(i*.13)%1});}
-  const coins=[];if(d>=1)coins.push(C(12,y0));if(d>=2)coins.push(C(12,y1));if(d>=3){coins.push(C(8,y1));coins.push(C(16,y0));}
+  const g=blank(),y0=4,y1=10;carve(g,4,y0,20,y1);carve(g,1,y0,3,y1,'S');carve(g,21,y0,23,y1,'E');
+  const n=Math.min(22,Math.round(6+d*1.6)),E=[],k=d>=11?3:2;
+  for(let i=0;i<n;i++){const x=5+i*(15/(n-1));E.push({t:'line',a:[x+.5,y0+.5],b:[x+.5,y1+.5],k,ph:(i*(d>=4?.13:.5))%1});}
+  if(d>=6)E.push({t:'line',a:[4.5,7.5],b:[20.5,7.5],k:1,ph:0});
+  if(d>=8)E.push({t:'line',a:[4.5,5.5],b:[20.5,5.5],k:1,ph:.5},{t:'line',a:[4.5,9.5],b:[20.5,9.5],k:1,ph:.25});
+  const coins=[C(12,y0),C(12,y1),C(8,y1),C(16,y0)].slice(0,Math.min(4,1+fl(d/2)));
   return {g,E,coins,name:'დერეფანი'};
 }
 function waves(d){
   const g=blank();carve(g,4,3,20,11);carve(g,4,1,20,2,'S');carve(g,4,12,20,13,'E');
-  const rows=d<2?[4,6,8,10]:[4,5,6,7,8,9,10],m=1+Math.floor(d/2),k=d>=3?2:1,E=[];
-  rows.forEach((y,j)=>{for(let i=0;i<m;i++){E.push({t:'line',a:[4.5,y+.5],b:[20.5,y+.5],k,ph:(i/m+(j%2?.5:0)+j*.07)%1});}});
-  const coins=[];if(d>=1)coins.push(C(4,7),C(20,7));if(d>=3)coins.push(C(12,7));
+  const rows=[4,5,6,7,8,9,10],m=1+fl(d/3),k=1+fl(d/4),E=[];
+  rows.forEach((y,j)=>{for(let i=0;i<m;i++)E.push({t:'line',a:[4.5,y+.5],b:[20.5,y+.5],k,ph:(i/m+(j%2?.5:0)+j*.07)%1});});
+  const coins=[C(4,7),C(20,7),C(12,7)].slice(0,Math.min(3,1+fl(d/3)));
   return {g,E,coins,name:'ტალღები'};
 }
 function orbit(d){
   const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const s=2+Math.min(d,2),R=3+Math.min(d,2),E=[];
+  const s=Math.min(4,3+fl(d/2)),R=5,E=[];
   for(let i=0;i<s;i++)for(let r=1;r<=R;r++)E.push({t:'circ',c:[12.5,7.5],r,k:1,ph:i/s});
-  if(d>=2)for(let i=0;i<4+(d>=4?2:0);i++)E.push({t:'circ',c:[12.5,7.5],r:R+1.2,k:-1,ph:i/(4+(d>=4?2:0))+.125});
-  if(d>=4)for(let i=0;i<3;i++)E.push({t:'circ',c:[12.5,7.5],r:2.5,k:-1,ph:i/3+.1});
-  const coins=[C(12,7)];if(d>=1)coins.push(C(4,3),C(20,11));if(d>=3)coins.push(C(4,11),C(20,3));
+  const no=4+fl(d/2);for(let i=0;i<no;i++)E.push({t:'circ',c:[12.5,7.5],r:R+1.2,k:d>=9?-2:-1,ph:i/no+.125});
+  if(d>=5){const ni=3+fl((d-5)/3);for(let i=0;i<ni;i++)E.push({t:'circ',c:[12.5,7.5],r:2.5,k:-1,ph:i/ni+.1});}
+  if(d>=6){const kk=1+fl((d-6)/3);E.push({t:'line',a:[3.5,2.5],b:[21.5,2.5],k:kk,ph:0},{t:'line',a:[3.5,12.5],b:[21.5,12.5],k:kk,ph:.5});
+    if(d>=8)E.push({t:'line',a:[3.5,2.5],b:[3.5,12.5],k:kk,ph:.25},{t:'line',a:[21.5,2.5],b:[21.5,12.5],k:kk,ph:.75});}
+  const coins=[C(12,7),C(4,3),C(20,11),C(4,11),C(20,3)].slice(0,Math.min(5,1+fl(d/1.5)));
   return {g,E,coins,name:'ორბიტა'};
 }
 function snake(d){
   const g=blank();
   carve(g,1,2,22,4);carve(g,2,6,22,8);carve(g,2,10,23,12);carve(g,20,5,22,5);carve(g,2,9,4,9);
   carve(g,1,2,3,4,'S');carve(g,21,10,23,12,'E');
-  const E=[],k=2+Math.floor(d/2),per=3+d;
+  const E=[],k=2+fl(d/3),per=Math.min(14,4+fl(d));
   [[2,4,5,19],[6,8,5,19],[10,12,6,19]].forEach(([y0,y1,xa,xb],L)=>{for(let i=0;i<per;i++){const x=xa+i*(xb-xa)/(per-1);
     E.push({t:'line',a:[x+.5,y0+.5],b:[x+.5,y1+.5],k,ph:((i+L)%2)*.5+(d>=3?i*.07:0)});}});
-  if(d>=2)E.push({t:'line',a:[20.5,4.5],b:[22.5,4.5],k:2,ph:0},{t:'line',a:[2.5,9.5],b:[4.5,9.5],k:2,ph:.5});
-  const coins=[];if(d>=1)coins.push(C(22,7));if(d>=2)coins.push(C(2,7));if(d>=4)coins.push(C(12,3));
+  E.push({t:'line',a:[20.5,4.5],b:[22.5,4.5],k:2,ph:0},{t:'line',a:[2.5,9.5],b:[4.5,9.5],k:2,ph:.5});
+  const coins=[C(22,7),C(2,7),C(12,3),C(12,11)].slice(0,Math.min(4,1+fl(d/3)));
   return {g,E,coins,name:'გველი'};
 }
 function pillars(d){
   const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const xs=d<2?[6,12,18]:[5,9,13,17],ys=d<1?[7]:d<3?[4,10]:[4,7,10],E=[],k=1+Math.floor(d/2);
+  const xs=[5,9,13,17],ys=[4,7,10],E=[],k=1+fl(d/3),per=d>=7?3:2;
   xs.forEach((x,i)=>ys.forEach((y,j)=>{g[y][x]='#';
     const pts=[[x-.5,y-.5],[x+1.5,y-.5],[x+1.5,y+1.5],[x-.5,y+1.5]];
-    const n=d>=2?2:1;for(let q=0;q<n;q++)E.push({t:'path',pts,k:(i+j)%2?k:-k,ph:q/n+(i*.1)});}));
-  const coins=[];if(d>=1)coins.push(C(12,2),C(12,12));if(d>=3)coins.push(C(3,2),C(21,12));
+    for(let q=0;q<per;q++)E.push({t:'path',pts,k:(i+j)%2?k:-k,ph:q/per+(i*.1)});}));
+  if(d>=5)E.push({t:'line',a:[3.5,2.5],b:[21.5,2.5],k:1,ph:0},{t:'line',a:[3.5,12.5],b:[21.5,12.5],k:1,ph:.5});
+  const coins=[C(12,2),C(12,12),C(3,2),C(21,12),C(7,7)].slice(0,Math.min(5,2+fl(d/3)));
   return {g,E,coins,name:'სვეტები'};
 }
 function rings(d){
   const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const rr=[2,3.6,5.2].slice(0,1+Math.min(d,2)),E=[];
-  rr.forEach((r,j)=>{const n=4+Math.min(d,3)+j*2;for(let i=0;i<n;i++)E.push({t:'circ',c:[12.5,7.5],r,k:(j%2?-1:1)*(d>=3&&j===0?2:1),ph:i/n});});
-  if(d>=4)for(let i=0;i<5;i++)E.push({t:'circ',c:[12.5,7.5],r:6.4,k:-1,ph:i/5});
-  const coins=[C(12,7)];if(d>=2)coins.push(C(12,1),C(12,13));
+  const rr=[2,3.6,5.2],E=[];
+  rr.forEach((r,j)=>{const n=5+fl(Math.min(d,4.75)*.8)+j*2+(j===1&&d>=8?2:0)+(j===2&&d>=9.5?2:0),sp=1;for(let i=0;i<n;i++)E.push({t:'circ',c:[12.5,7.5],r,k:(j%2?-1:1)*sp,ph:i/n});});
+  if(d>=5){const n=4+fl(d-5);for(let i=0;i<n;i++)E.push({t:'circ',c:[12.5,7.5],r:6.4,k:-1,ph:i/n});}
+  const coins=[C(12,7),C(12,1),C(12,13)].slice(0,d>=2?3:1);
   return {g,E,coins,name:'რგოლები'};
 }
 const GEN=[corridor,waves,orbit,snake,pillars,rings];
-const LEVELS=[];for(let i=0;i<30;i++){const L=GEN[i%6](Math.floor(i/6));L.n=i+1;L.d=Math.floor(i/6);LEVELS.push(L);}
+/* tuned difficulty per level (found by the solver: the hardest value ≤ target that is still passable) */
+const DL=/*DL*/[3, 3.25, 3.5, 3.75, 4, 4.25, 4.5, 4.75, 5, 5.25, 5.5, 5.75, 6, 6.25, 6.5, 6.75, 7, 7.25, 7.5, 7.75, 8, 8.25, 8.5, 8.75, 9, 9.25, 9.5, 9.75, 10, 10.25]/*DL*/;
+const LEVELS=[];for(let i=0;i<30;i++){const L=GEN[i%6](DL[i]);L.n=i+1;L.d=DL[i];LEVELS.push(L);}
+function make(i,d){const L=GEN[i%6](d);L.n=i+1;L.d=d;return L;}
 /* ── motion ── */
 function plen(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=Math.hypot(b[0]-a[0],b[1]-a[1]);}return s;}
 function pos(e,t){
@@ -186,7 +193,7 @@ function pos(e,t){
 }
 function speed(e){/* px/s */ if(e.t==='line')return Math.hypot(e.b[0]-e.a[0],e.b[1]-e.a[1])*2*Math.abs(e.k)/P*T;
   if(e.t==='circ')return 2*Math.PI*e.r*Math.abs(e.k)/P*T;return plen(e.pts)*Math.abs(e.k)/P*T;}
-return {W,H,T,P,LEVELS,pos,speed,PLAYER:{half:9,speed:150},ER:8,CR:6};
+return {W,H,T,P,LEVELS,make,pos,speed,PLAYER:{half:9,speed:150},ER:8,CR:6};
 })();
 if(typeof module!=='undefined')module.exports=HG;
 </script>
@@ -276,13 +283,19 @@ function draw(){
   const sc=cv.width/(W*T);ctx.setTransform(sc,0,0,sc,0,0);
   if(!bg){ctx.fillStyle='#0b0918';ctx.fillRect(0,0,W*T,H*T);return;}
   ctx.drawImage(bg,0,0);
+  if(G.L&&G.got<G.coins.length){/* finish locked until all coins are collected */
+    ctx.fillStyle='rgba(20,15,40,.45)';const ez=[];for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(G.L.g[y][x]==='E'){ctx.fillRect(x*T,y*T,T,T);ez.push([x,y]);}
+    if(ez.length){const cx=ez.reduce((a,b)=>a+b[0],0)/ez.length*T+T/2,cy=ez.reduce((a,b)=>a+b[1],0)/ez.length*T+T/2;
+      ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillStyle='#f1d34a';ctx.fillText('🔒 '+G.got+'/'+G.coins.length,cx,cy+5);}}
   for(const c of G.coins)if(!c.got){ctx.beginPath();ctx.arc(c.x,c.y,CR+1,0,7);ctx.fillStyle='#f1d34a';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle='#1a1430';ctx.stroke();}
   /* player */
   if(G.dead>0){ctx.globalAlpha=Math.max(0,G.dead/.45);}
   ctx.fillStyle='#e8313a';ctx.fillRect(G.px-h,G.py-h,2*h,2*h);ctx.lineWidth=3;ctx.strokeStyle='#3a0a0e';ctx.strokeRect(G.px-h+1.5,G.py-h+1.5,2*h-3,2*h-3);
   ctx.globalAlpha=1;
   for(const e of G.L?G.L.E:[]){const [ex,ey]=pos(e,G.t);ctx.beginPath();ctx.arc(ex*T,ey*T,ER,0,7);ctx.fillStyle='#2f6bff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#0a0f3a';ctx.stroke();}
-  if(G.joy&&G.joy.on){const s=1/sc;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(G.joy.ox*s,G.joy.oy*s,34,0,7);ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
+  if(G.L&&G.got<G.coins.length&&tileAt(G.px,G.py)==='E'&&G.run){ctx.font='bold 16px sans-serif';ctx.textAlign='center';
+    ctx.fillStyle='rgba(10,8,24,.88)';ctx.fillRect(W*T/2-200,8,400,30);ctx.fillStyle='#f1d34a';ctx.fillText('ჯერ აკრიფე ყველა ყვითელი მონეტა: '+G.got+'/'+G.coins.length,W*T/2,29);}
+  if(G.joy&&G.joy.on){const s=1;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(G.joy.ox*s,G.joy.oy*s,34,0,7);ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
     ctx.beginPath();ctx.arc(G.joy.ox*s+Math.max(-34,Math.min(34,G.joy.x)),G.joy.oy*s+Math.max(-34,Math.min(34,G.joy.y)),12,0,7);ctx.fillStyle='#c9a84c';ctx.fill();ctx.globalAlpha=1;}
 }
 /* ── input ── */
@@ -293,21 +306,19 @@ document.addEventListener('keydown',e=>{const k=KM[e.key];if(k){G.keys[k]=true;e
 document.addEventListener('keyup',e=>{const k=KM[e.key];if(k)G.keys[k]=false;});
 window.addEventListener('blur',()=>{G.keys={};});
 const wrap=$('wrap');
-wrap.addEventListener('pointerdown',e=>{if(e.target!==cv)return;const r=cv.getBoundingClientRect();G.joy={on:true,id:e.pointerId,ox:e.clientX-r.left,oy:e.clientY-r.top,x:0,y:0};
-  const sc=cv.width/(W*T)/(window.devicePixelRatio>1?Math.min(2,window.devicePixelRatio):1);G.joy.ox/=1;G.joy.oy/=1;cv.setPointerCapture(e.pointerId);});
+wrap.addEventListener('pointerdown',e=>{if(e.target!==cv)return;const r=cv.getBoundingClientRect(),k=W*T/r.width;
+  G.joy={on:true,id:e.pointerId,ox:(e.clientX-r.left)*k,oy:(e.clientY-r.top)*k,x:0,y:0};cv.setPointerCapture(e.pointerId);});
 wrap.addEventListener('pointermove',e=>{if(!G.joy||!G.joy.on||e.pointerId!==G.joy.id)return;const r=cv.getBoundingClientRect();
-  G.joy.x=(e.clientX-r.left-G.joy.ox)*(W*T/r.width);G.joy.y=(e.clientY-r.top-G.joy.oy)*(W*T/r.width);});
+  const k=W*T/r.width;G.joy.x=(e.clientX-r.left)*k-G.joy.ox;G.joy.y=(e.clientY-r.top)*k-G.joy.oy;});
 const endJoy=e=>{if(G.joy&&e.pointerId===G.joy.id)G.joy.on=false;};
 wrap.addEventListener('pointerup',endJoy);wrap.addEventListener('pointercancel',endJoy);
 $('pad').querySelectorAll('button').forEach(b=>{const k=b.dataset.k;
   b.addEventListener('pointerdown',e=>{e.preventDefault();G.keys[k]=true;b.classList.add('on');b.setPointerCapture(e.pointerId);});
   const up=()=>{G.keys[k]=false;b.classList.remove('on');};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);});
-/* joystick origin is stored in CSS px; convert to board px when drawing */
-const _draw=draw;
 /* ── screens ── */
 function overlay(html,bind){const o=$('ov');o.innerHTML=html;o.hidden=false;bind&&bind();}
 function hideOv(){$('ov').hidden=true;}
-function play(i){if(i>=prog.unlocked)return;load(i);hideOv();G.run=true;G.paused=false;$('b-pause').textContent='⏸ პაუზა (P)';}
+function play(i){load(i);hideOv();G.run=true;G.paused=false;$('b-pause').textContent='⏸ პაუზა (P)';}
 function start(){play(Math.min(prog.unlocked-1,29));}
 function restart(){if(!G.L)return;G.dl=0;G.lt=0;respawn();hideOv();G.run=true;G.won=false;G.paused=false;hud();}
 function pause(){if(!G.L||G.won)return;G.paused=!G.paused;$('b-pause').textContent=G.paused?'▶ გაგრძელება (P)':'⏸ პაუზა (P)';
@@ -315,8 +326,8 @@ function pause(){if(!G.L||G.won)return;G.paused=!G.paused;$('b-pause').textConte
     ()=>{$('o-res').onclick=pause;$('o-lv2').onclick=levels;});else hideOv();}
 function levels(){
   G.run=false;G.paused=false;
-  overlay(`<h2>აირჩიე დონე</h2><p>გაიხსნა ${prog.unlocked} / 30. მწვანე — გავლილი (ქვემოთ — საუკეთესო: სიკვდილი).</p>
-    <div class="lvgrid">${LEVELS.map((L,i)=>{const b=prog.best[i+1];return `<button data-i="${i}" class="${b?'done':''}" ${i>=prog.unlocked?'disabled':''} title="${L.name}">${i+1}${b?`<small>☠${b.d}</small>`:''}</button>`;}).join('')}</div>
+  overlay(`<h2>აირჩიე დონე</h2><p>ყველა დონე ღიაა. მწვანე — გავლილი (ქვემოთ — საუკეთესო შედეგი: სიკვდილი).</p>
+    <div class="lvgrid">${LEVELS.map((L,i)=>{const b=prog.best[i+1];return `<button data-i="${i}" class="${b?'done':''}" title="${L.name}">${i+1}${b?`<small>☠${b.d}</small>`:''}</button>`;}).join('')}</div>
     <button class="btn" id="o-go">▶ თამაში — დონე ${Math.min(prog.unlocked,30)}</button>`,
     ()=>{$('ov').querySelectorAll('.lvgrid button').forEach(b=>b.onclick=()=>play(+b.dataset.i));$('o-go').onclick=start;});
 }
