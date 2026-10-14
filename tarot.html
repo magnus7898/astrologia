@@ -26,6 +26,12 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5v
   background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;
   -webkit-text-fill-color:transparent;background-clip:text}
 .sub{font-size:12px;color:var(--ink-dim);margin-top:4px;letter-spacing:1px}
+.film-link{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-family:'Noto Serif Georgian',serif;font-size:12.5px;
+  letter-spacing:1px;color:var(--gold-lt);text-decoration:none;border:1px solid var(--border-h);border-radius:20px;padding:7px 18px;
+  background:rgba(201,168,76,.06);transition:background .2s,border-color .2s}
+.film-link:hover{background:rgba(201,168,76,.14);border-color:var(--gold)}
+.film-link .pl{font-size:10px;color:var(--gold)}
+@media(max-width:640px){.film-link .fl-sub{display:none}}
 
 /* ── spread picker ── */
 .groups{display:flex;flex-direction:column;gap:14px;margin-bottom:22px}
@@ -269,6 +275,7 @@ body.focus .page{max-width:1500px}
   <a class="back" href="index.html?g=fun">← გასართობი</a>
   <h1>ტარო</h1>
   <div class="sub">78 არკანი · რაიდერ–უეიტის ტრადიცია · ოქროს განთიადის ასტროლოგიური შესაბამისობები</div>
+  <a class="film-link" href="fool_journey.html"><span class="pl">▶</span> სულელის მოგზაურობა<span class="fl-sub"> — 22 დიდი არკანის ფილმი</span></a>
 </header>
 
 <div class="groups" id="groups"></div>
