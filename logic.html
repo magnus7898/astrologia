@@ -146,7 +146,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
     <li><b>სიმბოლოების განტოლებები</b> — თითო ნიშანი ერთ რიცხვს ნიშნავს; გამოთვალე კითხვა.</li>
     <li><b>მატრიცა 3×3</b> — რიგებსა და სვეტებში ფორმა, რაოდენობა და ფერი წესით იცვლება; რომელი ავსებს ცარიელ უჯრას?</li>
     <li><b>ზედმეტი</b> — ყველა ფიგურას ერთი საერთო წესი აქვს, ერთის გარდა. იპოვე ის.</li>
-    <li><b>საათებს შორის სხვაობა</b> — ორი ისრიანი საათი: რამდენი დრო გავიდა პირველიდან მეორემდე (წინ, 12 საათამდე). დონესთან ერთად: მთელი საათი → ნახევარი → 15 → 5 → 1 წუთი; მაღალ დონეზე ციფრების გარეშე.</li>
+    <li><b>საათებს შორის სხვაობა</b> — ორი ისრიანი საათი: რამდენი დრო გავიდა პირველიდან მეორემდე (წინ, 12 საათამდე). დონესთან ერთად: მთელი საათი → ნახევარი → 15 → 5 → 1 წუთი → ციფრების გარეშე → მსგავსი ისრები → შებრუნებული ციფერბლატი → 24 საათი (☀ დილა / ☾ საღამო). „მხოლოდ საათების“ რეჟიმში 20 დონეა.</li>
   </ul>
   <ul style="margin-top:8px">
     <li>ორი სწორი პასუხი ზედიზედ → დონე იზრდება (მაქს. 12); შეცდომა → დონე ეცემა.</li>
@@ -160,7 +160,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
-const TIME=60,MAXLV=12;
+const TIME=60;const maxLv=()=>S.only==='clk'?20:12;
 const store={get(k,d){try{const v=localStorage.getItem('magnus_logic_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
   set(k,v){try{localStorage.setItem('magnus_logic_'+k,JSON.stringify(v));}catch(e){}}};
 const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
@@ -260,40 +260,51 @@ function genOdd(L){
     options:[],answer:oi,why:`საერთო წესი — ${nm[rule]}`};
 }
 /* two clocks — how much time passed from the first to the second (always forward, under 12 h) */
-function clockSVG(h,m,L){
-  const ha=((h%12)+m/60)*30,ma=m*6,R=44,num=L<=8;
-  const ticks=[...Array(12)].map((_,i)=>{const a=i*30*Math.PI/180,r1=i%3?39:36;return `<line x1="${50+r1*Math.sin(a)}" y1="${50-r1*Math.cos(a)}" x2="${50+42*Math.sin(a)}" y2="${50-42*Math.cos(a)}" stroke="rgba(236,213,154,${i%3?.45:.9})" stroke-width="${i%3?1.2:2}"/>`;}).join('');
-  const nums=num?[12,3,6,9].map((n,i)=>{const a=i*90*Math.PI/180;return `<text x="${50+29*Math.sin(a)}" y="${50-29*Math.cos(a)+4}" text-anchor="middle" font-size="11" fill="rgba(236,213,154,.8)" font-family="Cinzel,serif">${n}</text>`;}).join(''):'';
+/* clock difficulty: 1–2 h · 3–4 ½h · 5–6 ¼h · 7–8 5′ · 9–10 5′ no numerals · 11–12 1′ ·
+   13–14 1′, minute ticks only at 12, look-alike hands · 15–16 rotated dial (gold dot = 12) ·
+   17–18 24 h with ☀/☾ (AM/PM) · 19–20 24 h + rotated dial + look-alike hands            */
+function clkCfg(L){return{step:L<=2?60:L<=4?30:L<=6?15:L<=10?5:1,nums:L<=8,ticks:L<=12,same:L>=13&&(L<=14||L>=19),
+  rot:(L>=15&&L<=16)||L>=19,day:L>=17,maxH:L<=3?6:L>=17?23:11};}
+function clockSVG(t,cfg,rot,pm){
+  const h=Math.floor(t/60)%12,m=t%60,ha=(h+m/60)*30,ma=m*6;
+  const ticks=[...Array(12)].map((_,i)=>{if(!cfg.ticks&&i)return '';const a=i*30*Math.PI/180,r1=i%3?39:36;
+    return `<line x1="${50+r1*Math.sin(a)}" y1="${50-r1*Math.cos(a)}" x2="${50+42*Math.sin(a)}" y2="${50-42*Math.cos(a)}" stroke="rgba(236,213,154,${i%3?.45:.9})" stroke-width="${i%3?1.2:2}"/>`;}).join('');
+  const nums=cfg.nums?[12,3,6,9].map((n,i)=>{const a=i*90*Math.PI/180;return `<text x="${50+29*Math.sin(a)}" y="${50-29*Math.cos(a)+4}" text-anchor="middle" font-size="11" fill="rgba(236,213,154,.8)" font-family="Cinzel,serif">${n}</text>`;}).join(''):'';
   const hand=(ang,len,w,c)=>{const a=ang*Math.PI/180;return `<line x1="50" y1="50" x2="${50+len*Math.sin(a)}" y2="${50-len*Math.cos(a)}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;};
-  return `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${R}" fill="#161127" stroke="rgba(201,168,76,.55)" stroke-width="1.5"/>${ticks}${nums}
-    ${hand(ha,22,4,'#ecd59a')}${hand(ma,34,2.4,'#c9a84c')}<circle cx="50" cy="50" r="2.6" fill="#ecd59a"/></svg>`;
+  const hh=cfg.same?hand(ha,27,2.6,'#c9a84c'):hand(ha,22,4,'#ecd59a'),mh=cfg.same?hand(ma,34,2.4,'#c9a84c'):hand(ma,34,2.4,'#c9a84c');
+  const dot=cfg.rot?'<circle cx="50" cy="11" r="3" fill="#ecd59a"/>':'';
+  const lab=cfg.day?`<text x="50" y="98" text-anchor="middle" font-size="9" fill="${pm?'#9fb6e0':'#ecd59a'}" font-family="Noto Serif Georgian,serif">${pm?'☾ PM · საღამო':'☀ AM · დილა'}</text>`:'';
+  return `<svg viewBox="0 0 100 ${cfg.day?102:100}"><g transform="rotate(${rot} 50 50)"><circle cx="50" cy="50" r="44" fill="#161127" stroke="rgba(201,168,76,.55)" stroke-width="1.5"/>${ticks}${nums}${dot}
+    ${hh}${mh}<circle cx="50" cy="50" r="2.6" fill="#ecd59a"/></g>${lab}</svg>`;
 }
 const fmtDur=m=>{const h=Math.floor(m/60),mm=m%60;return h&&mm?`${h} სთ ${mm} წთ`:h?`${h} სთ`:`${mm} წთ`;};
 function genClk(L){
-  const step=L<=2?60:L<=4?30:L<=6?15:L<=9?5:1;
-  const t1=ri(0,(12*60)/step-1)*step;
-  let d;do{d=ri(1,(L<=3?6:11)*60/step)*step;}while(d<=0||d>=720);
-  const t2=(t1+d)%720;
-  const c=new Set([d]);const cand=[d+60,d-60,d+step,d-step,720-d,d+30,d-30,d+15,d-15,d+120,(Math.floor(d/60)+((d%60)?0:1))*60+((60-d%60)%60)];
-  for(const x of shuf(cand)){if(c.size>=4)break;if(x>0&&x<720&&!c.has(x)&&(step>=15?x%5===0:true))c.add(x);}
-  let k=1;while(c.size<4){const x=d+k*step*(k%2?1:-1);if(x>0&&x<720)c.add(x);k++;}
+  const cfg=clkCfg(L),step=cfg.step,span=cfg.day?1440:720;
+  const t1=ri(0,span/step-1)*step;
+  const d=ri(1,(cfg.maxH*60+59)/step|0)*step;
+  const t2=(t1+d)%span;
+  const c=new Set([d]);const cand=[d+60,d-60,d+step,d-step,(cfg.day?1440:720)-d,d+30,d-30,d+15,d-15,d+120,cfg.day?d+720:d+5,cfg.day?d-720:d-5,d+10,d-10];
+  for(const x of shuf(cand)){if(c.size>=4)break;if(x>0&&x<span&&!c.has(x)&&(step>=15?x%5===0:true))c.add(x);}
+  let k=1;while(c.size<4){const x=d+k*step*(k%2?1:-1);if(x>0&&x<span)c.add(x);k++;}
   const opts=shuf([...c]).map(v=>({html:`<span style="font-family:'Noto Serif Georgian',serif;font-size:15px">${fmtDur(v)}</span>`,val:v}));
-  const hm=t=>`${Math.floor(t/60)||12}:${String(t%60).padStart(2,'0')}`;
-  return {type:'clk',title:'საათებს შორის სხვაობა',hint:L>8?'რამდენი დრო გავიდა? (ციფრების გარეშე)':'რამდენი დრო გავიდა პირველიდან მეორემდე?',
-    html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;width:100%"><div style="width:min(42%,170px)">${clockSVG(Math.floor(t1/60),t1%60,L)}</div>
-      <div style="font-size:26px;color:var(--gold)">→</div><div style="width:min(42%,170px)">${clockSVG(Math.floor(t2/60),t2%60,L)}</div></div>`,
+  const hm=t=>cfg.day?`${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`:`${Math.floor(t/60)||12}:${String(t%60).padStart(2,'0')}`;
+  const r1=cfg.rot?ri(1,11)*30:0,r2=cfg.rot?ri(1,11)*30:0;
+  const tags=[!cfg.nums&&'ციფრების გარეშე',cfg.same&&'ისრები მსგავსია — მოკლე = საათი',cfg.rot&&'ციფერბლატი შებრუნებულია — ოქროს წერტილი = 12',cfg.day&&'24 საათი: ☀ დილა / ☾ საღამო'].filter(Boolean);
+  return {type:'clk',title:'საათებს შორის სხვაობა',hint:'რამდენი დრო გავიდა პირველიდან მეორემდე?'+(tags.length?' · '+tags.join(' · '):''),
+    html:`<div style="display:flex;align-items:center;gap:10px;justify-content:center;width:100%"><div style="width:min(42%,170px)">${clockSVG(t1,cfg,r1,t1>=720)}</div>
+      <div style="font-size:26px;color:var(--gold)">→</div><div style="width:min(42%,170px)">${clockSVG(t2,cfg,r2,t2>=720)}</div></div>`,
     options:opts,answer:d,why:`${hm(t1)} → ${hm(t2)} = ${fmtDur(d)}`};
 }
 const GEN={seq:genSeq,eq:genEq,mx:genMx,odd:genOdd,clk:genClk};
 const TNAME={seq:'მიმდევრობა',eq:'განტოლება',mx:'მატრიცა',odd:'ზედმეტი',clk:'საათები'};
 
 /* ════════ game ════════ */
-const S={mode:'time',running:false,lv:1,score:0,left:TIME,streak:0,best:0,q:null,lock:false,stat:{},timer:null,last:0,maxLv:1,lastType:null};
+const S={mode:'time',running:false,lv:1,score:0,left:TIME,streak:0,best:0,q:null,lock:false,stat:{},timer:null,last:0,maxLv:1,lastType:null,only:'all'};
 function hud(){$('h-score').textContent=S.score;$('h-lv').textContent=S.lv;$('h-streak').textContent=S.streak;
   if(S.mode==='time'){$('h-time').textContent=Math.ceil(S.left);$('tfill').style.width=(S.left/TIME*100)+'%';$('tbar').classList.toggle('low',S.left<=10);}
   else{$('h-time').textContent='∞';$('tfill').style.width='100%';}}
 function next(){
-  const types=Object.keys(GEN).filter(t=>t!==S.lastType);const t=pick(types);S.lastType=t;
+  const types=Object.keys(GEN).filter(t=>t!==S.lastType);const t=S.only!=='all'?S.only:pick(types);S.lastType=t;
   const q=GEN[t](S.lv);S.q=q;S.lock=false;S.t0=performance.now();
   $('stage').classList.remove('ok','bad');$('qt').textContent=q.title+' · დონე '+S.lv;$('qh').textContent=q.hint;$('q').innerHTML=q.html;
   $('opts').innerHTML=q.options.map((o,i)=>`<button data-i="${i}">${o.html}</button>`).join('');
@@ -306,7 +317,7 @@ function answer(v,btn){
   const st=S.stat[q.type]=S.stat[q.type]||{ok:0,n:0};st.n++;
   if(ok){st.ok++;S.streak++;S.best=Math.max(S.best,S.streak);const gain=10+S.lv*5+Math.min(20,(S.streak-1)*4);S.score+=gain;
     btn.classList.add('right');$('stage').classList.add('ok');tone(660,.07,'triangle');setTimeout(()=>tone(990,.1,'triangle'),70);vib(15);
-    if(S.streak%2===0)S.lv=Math.min(MAXLV,S.lv+1);S.maxLv=Math.max(S.maxLv,S.lv);$('qh').innerHTML=`✔ +${gain}`;}
+    if(S.only!=='all'||S.streak%2===0)S.lv=Math.min(maxLv(),S.lv+1);S.maxLv=Math.max(S.maxLv,S.lv);$('qh').innerHTML=`✔ +${gain}`;}
   else{S.streak=0;btn.classList.add('wrong');$('stage').classList.add('bad');tone(180,.22,'sawtooth',.08);vib([50,30,50]);
     const all=q.odd?$('q').querySelectorAll('.odd'):$('opts').querySelectorAll('button');
     all.forEach((b,i)=>{if((q.odd?+b.dataset.v:q.options[i].val)===q.answer)b.classList.add('right');});
@@ -326,9 +337,9 @@ function start(){
 function finish(){
   if(!S.running)return;S.running=false;clearInterval(S.timer);
   const tot=Object.values(S.stat).reduce((a,b)=>a+b.n,0),ok=Object.values(S.stat).reduce((a,b)=>a+b.ok,0);
-  const key=S.mode==='time'?'best':'best_l',best=store.get(key,{score:0});const rec=S.score>best.score;
+  const key=(S.mode==='time'?'best':'best_l')+(S.only!=='all'?'_'+S.only:''),best=store.get(key,{score:0});const rec=S.score>best.score;
   if(rec)store.set(key,{score:S.score,lv:S.maxLv,d:Date.now()});
-  if(S.mode==='time'){const h=store.get('hist',[]);h.push({s:S.score,d:Date.now()});store.set('hist',h.slice(-20));
+  if(S.mode==='time'&&S.only==='all'){const h=store.get('hist',[]);h.push({s:S.score,d:Date.now()});store.set('hist',h.slice(-20));
     const ag=store.get('types',{});for(const t in S.stat){ag[t]=ag[t]||{ok:0,n:0};ag[t].ok+=S.stat[t].ok;ag[t].n+=S.stat[t].n;}store.set('types',ag);}
   tone(523,.15);setTimeout(()=>tone(659,.15),150);setTimeout(()=>tone(784,.25),300);
   const prof=Object.keys(GEN).map(t=>{const x=S.stat[t]||{ok:0,n:0};const p=x.n?Math.round(x.ok/x.n*100):0;
@@ -343,12 +354,15 @@ function finish(){
 function overlay(h){const o=$('ov');o.innerHTML=h;o.hidden=false;}
 function menu(){
   S.running=false;clearInterval(S.timer);const best=store.get('best',{score:0,lv:1});
-  const lvs=[1,...[4,7,10].filter(l=>l<=(best.lv||1))];
-  overlay(`<h2>ლოგიკა</h2><p>ხუთი ტიპის ამოცანა მონაცვლეობით. რაც უფრო სწორად პასუხობ, მით რთულდება — 12 დონემდე.</p>
+  const bc=store.get('best_clk',{lv:1}),lvs=[...new Set([1,...[4,7,10].filter(l=>l<=(best.lv||1)),...[9,13,17].filter(l=>l<=(bc.lv||1))])].sort((a,b)=>a-b);
+  const OT=[['all','ყველა ტიპი'],['clk','⏰ მხოლოდ საათები'],['seq','მიმდევრობა'],['eq','განტოლება'],['mx','მატრიცა'],['odd','ზედმეტი']];
+  overlay(`<h2>ლოგიკა</h2><p>ხუთი ტიპის ამოცანა მონაცვლეობით, ან აირჩიე ერთი ტიპი. სწორ პასუხებზე რთულდება — 12 დონემდე, „მხოლოდ საათებში“ ყოველ სწორ პასუხზე დონე იზრდება 20-მდე.</p>
+    <div class="seg row" id="s-only">${OT.map(([k,t])=>`<button data-o="${k}" class="${S.only===k?'on':''}">${t}</button>`).join('')}</div>
     <div class="seg row" id="s-mode"><button data-m="time" class="${S.mode==='time'?'on':''}">⏱ 1 წუთი</button><button data-m="lives" class="${S.mode==='lives'?'on':''}">♥ 3 სიცოცხლე</button></div>
     <div class="seg row" id="s-lv">${lvs.map((l,i)=>`<button data-l="${l}" class="${i===0?'on':''}">დაწყება: დონე ${l}</button>`).join('')}</div>
     <button class="btn" id="b-start">▶ დაწყება</button>`);
   $('ov').dataset.lv=1;
+  $('s-only').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.only=b.dataset.o;$('s-only').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
   $('s-mode').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.mode=b.dataset.m;$('s-mode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
   $('s-lv').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('ov').dataset.lv=b.dataset.l;$('s-lv').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));});
   $('b-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}start();};
