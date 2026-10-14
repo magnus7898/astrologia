@@ -158,25 +158,6 @@ function snake(d){
   const coins=[C(22,7),C(2,7),C(12,3),C(12,11)].slice(0,Math.min(4,1+fl(d/3)));
   return {g,E,coins,name:'გველი'};
 }
-function pillars(d){
-  const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const xs=[5,9,13,17],ys=[4,7,10],E=[],k=1+fl(d/3),per=d>=7?3:2;
-  xs.forEach((x,i)=>ys.forEach((y,j)=>{g[y][x]='#';
-    const pts=[[x-.5,y-.5],[x+1.5,y-.5],[x+1.5,y+1.5],[x-.5,y+1.5]];
-    for(let q=0;q<per;q++)E.push({t:'path',pts,k:(i+j)%2?k:-k,ph:q/per+(i*.1)});}));
-  if(d>=5)E.push({t:'line',a:[3.5,2.5],b:[21.5,2.5],k:1,ph:0},{t:'line',a:[3.5,12.5],b:[21.5,12.5],k:1,ph:.5});
-  const coins=[C(12,2),C(12,12),C(3,2),C(21,12),C(7,7)].slice(0,Math.min(5,2+fl(d/3)));
-  return {g,E,coins,name:'სვეტები'};
-}
-function rings(d){
-  const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const rr=[2,3.6,5.2],E=[];
-  rr.forEach((r,j)=>{const n=5+fl(Math.min(d,4.75)*.8)+j*2+(j===1&&d>=8?2:0)+(j===2&&d>=9.5?2:0),sp=1;for(let i=0;i<n;i++)E.push({t:'circ',c:[12.5,7.5],r,k:(j%2?-1:1)*sp,ph:i/n});});
-  if(d>=5){const n=4+fl(d-5);for(let i=0;i<n;i++)E.push({t:'circ',c:[12.5,7.5],r:6.4,k:-1,ph:i/n});}
-  const coins=[C(12,7),C(12,1),C(12,13)].slice(0,d>=2?3:1);
-  return {g,E,coins,name:'რგოლები'};
-}
-
 /* ── 24 new layouts. d = 0 … 6 ── */
 const L_=(a,b,k,ph)=>({t:'line',a,b,k,ph:ph||0});
 const O_=(c,r,k,ph)=>({t:'circ',c,r,k,ph:ph||0});
@@ -199,128 +180,23 @@ function zigzag(d){const g=blank();
   if(d>=4)E.push(L_([5.5,1.5],[5.5,3.5],2*k,.4));
   return {g,E,coins:[C(8,7),C(16,7)].concat(d>=3?[C(23,9)]:[]),name:'ზიგზაგი'};}
 
-function cross(d){const g=blank();carve(g,10,1,14,13);carve(g,1,5,23,9);carve(g,1,5,2,9,'S');carve(g,22,5,23,9,'E');
-  const E=[],s=2+fl(d/2);for(let i=0;i<s;i++)for(let r=1;r<=2.6;r+=.8)E.push(O_([12.5,7.5],r,1,i/s));
-  [5,8,16,19].forEach((x,i)=>E.push(L_([x+.5,5.5],[x+.5,9.5],1+fl(d/3),i%2*.5)));
-  E.push(L_([10.5,3],[14.5,3],2,0),L_([10.5,12],[14.5,12],2,.5));if(d>=3)E.push(L_([10.5,2],[14.5,2],2,.5),L_([10.5,13],[14.5,13],2,0));
-  return {g,E,coins:[C(12,1),C(12,13)],name:'ჯვარი'};}
-
-function clock(d){const g=blank();for(let y=1;y<=13;y++){const r=10-Math.abs(y-7)*1.1;carve(g,Math.round(12-r),y,Math.round(12+r),y);}
-  carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[];for(let r=1;r<=6;r++)E.push(O_([12.5,7.5],r,1,0));for(let r=1;r<=3.5;r+=.8)E.push(O_([12.5,7.5],r,-2,.5));
-  if(d>=2)for(let r=1;r<=6;r++)E.push(O_([12.5,7.5],r,1,.5));
-  if(d>=4)for(let r=1;r<=3.5;r+=.8)E.push(O_([12.5,7.5],r,-2,0));
-  return {g,E,coins:[C(12,1),C(12,13)].concat(d>=1?[C(12,7)]:[]),name:'საათი'};}
-
-function stairs(d){const g=blank();for(let i=0;i<=10;i++)carve(g,1+2*i,1+i,Math.min(23,4+2*i),Math.min(13,3+i));
-  carve(g,1,1,2,3,'S');carve(g,21,11,23,13,'E');
-  const E=[],k=1+fl(d/3);for(let i=2;i<=9;i+=d>=3?1:2){const x=1+2*i+1.5;E.push(L_([x,1+i+.5],[x,3+i+.5],2*k,(i*.17)%1));}
-  if(d>=2)E.push(L_([5.5,4.5],[19.5,11.5],k,0));
-  return {g,E,coins:[C(12,7)].concat(d>=2?[C(18,10)]:[]),name:'კიბე'};}
-
-function rooms4(d){const g=blank();carve(g,1,1,11,6);carve(g,13,1,23,6);carve(g,1,8,11,13);carve(g,13,8,23,13);
-  carve(g,12,3,12,4);carve(g,17,7,18,7);carve(g,12,10,12,11);carve(g,1,1,2,6,'S');carve(g,1,8,2,13,'E');
-  const E=[],n=2+fl(d/2);[[6.5,3.5],[18.5,3.5],[18.5,10.5],[6.5,10.5]].forEach((c,j)=>{for(let i=0;i<n;i++)E.push(O_(c,2,j%2?-1:1,i/n));});
-  E.push(L_([12.5,2.5],[12.5,4.5],2,0),L_([16.5,7.5],[18.5,7.5],2,.5),L_([12.5,9.5],[12.5,11.5],2,.25));
-  if(d>=3)[[6.5,3.5],[18.5,3.5],[18.5,10.5],[6.5,10.5]].forEach(c=>E.push(O_(c,1,2,0)));
-  return {g,E,coins:[C(22,1),C(22,13),C(10,13)],name:'ოთხი ოთახი'};}
-
-function donut(d){const g=blank();carve(g,3,1,21,13);for(let y=5;y<=9;y++)for(let x=7;x<=17;x++)g[y][x]='#';
-  carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const n=3+fl(d/1.5),E=[];const R1=[[3.5,1.5],[21.5,1.5],[21.5,13.5],[3.5,13.5]],R2=[[5.5,3.5],[19.5,3.5],[19.5,11.5],[5.5,11.5]];
-  for(let i=0;i<n;i++){E.push(P_(R1,.5,i/n));E.push(P_(R2,-.5,i/n+.5/n));}
-  return {g,E,coins:[C(12,2),C(12,12)],name:'დიდი რგოლი'};}
-
-function pendulums(d){const g=blank();carve(g,3,1,21,12);carve(g,1,10,2,12,'S');carve(g,22,10,23,12,'E');
-  const E=[],xs=d>=3?[5,8.5,12,15.5,19]:[6,10,14,18];
-  xs.forEach((x,i)=>{for(let r=6;r<=10.5;r+=1.1)E.push(SW([x+.5,1],r,.62,1+fl(d/4),(i%2)*.5));});
-  return {g,E,coins:[C(8,12),C(16,12)].concat(d>=2?[C(12,6)]:[]),name:'ქანქარები'};}
-
-function maze(d){const g=fromAscii([
- '#########################',
- '#SS.....#.......#.......#',
- '#SS.....#.......#.......#',
- '#####...#...#...#...#...#',
- '#.......#...#.......#...#',
- '#.......#...#.......#...#',
- '#...#########...#####...#',
- '#...............#.......#',
- '#...............#.......#',
- '#######...###...#...#####',
- '#.........#.........#...#',
- '#.........#.........#.EE#',
- '#...#.....#.....#.....EE#',
- '#...#...........#.......#',
- '#########################']);
-  const k=1+fl(d/3),E=[L_([5.5,1.5],[5.5,5.5],k,0),L_([1.5,4.5],[7.5,4.5],k,.5),L_([9.5,1.5],[15.5,1.5],k,.2),L_([13.5,4.5],[19.5,4.5],k,.7),
-    L_([21.5,1.5],[21.5,8.5],k,.1),L_([1.5,7.5],[15.5,7.5],k,.4),L_([17.5,7.5],[23.5,7.5],k,.6),L_([1.5,11.5],[9.5,11.5],k,.3),
-    L_([11.5,10.5],[19.5,10.5],k,.8),L_([17.5,12.5],[17.5,13.5],2*k,.2)];
-  if(d>=2)E.push(L_([9.5,9.5],[9.5,13.5],k,.5),L_([12.5,12.5],[15.5,12.5],k,0));
-  if(d>=4)E.push(L_([2.5,12.5],[2.5,13.5],2*k,.4),L_([19.5,13.5],[23.5,13.5],k,.9));
-  return {g,E,coins:[C(23,1),C(1,13)].concat(d>=3?[C(12,9)]:[]),name:'ლაბირინთი'};}
-
-function storms(d){const g=blank();carve(g,2,1,22,13);carve(g,1,6,1,8,'S');carve(g,23,6,23,8,'E');carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[],s=3+fl(d/2);for(let i=0;i<s;i++)for(let r=1;r<=4;r++){E.push(O_([7.5,7.5],r,1,i/s));E.push(O_([17.5,7.5],r,-1,i/s));}
-  return {g,E,coins:[C(7,7),C(17,7)].concat(d>=2?[C(12,1),C(12,13)]:[]),name:'ორი ქარიშხალი'};}
-
-function perimeter(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const n=4+d,E=[],R=[[3.5,1.5],[21.5,1.5],[21.5,13.5],[3.5,13.5]];for(let i=0;i<n;i++)E.push(P_(R,.5,i/n));
-  E.push(L_([5.5,7.5],[19.5,7.5],1+fl(d/3),0),L_([12.5,3.5],[12.5,11.5],1+fl(d/3),.25));
-  if(d>=2)E.push(L_([5.5,4.5],[19.5,10.5],1,.5),L_([19.5,4.5],[5.5,10.5],1,0));
-  return {g,E,coins:[C(3,1),C(21,1),C(3,13),C(21,13)].slice(0,2+fl(d/2)),name:'პერიმეტრი'};}
-
-function checker(d){const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[],k=1+fl(d/3);for(let x=5;x<=19;x+=(d>=3?2:3))for(let y=3;y<=11;y+=d>=3?2:4){const s=((x+y)%4<2)?1:-1;
-    E.push(P_([[x,y],[x+1,y],[x+1,y+1],[x,y+1]],s*k*2,(x*.07)%1));}
-  return {g,E,coins:[C(12,2),C(12,12)],name:'ჭადრაკი'};}
-
-function tunnel(d){const g=blank();carve(g,1,7,23,7);for(let x=4;x<=20;x+=2)carve(g,x,4,x,10);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[],k=1+fl(d/2.5);for(let x=4,i=0;x<=20;x+=2,i++)E.push(L_([x+.5,4.5],[x+.5,10.5],k,(i*(d>=3?.21:.5))%1));
-  return {g,E,coins:[C(8,4),C(16,10)].concat(d>=2?[C(12,4)]:[]),name:'გვირაბი'};}
-
-function spiral(d){const g=fromAscii([
- '#########################',
- '#SS.....................#',
- '#SS.....................#',
- '######################..#',
- '#.....................#.#',
- '#..#################..#.#',
- '#..#..............#...#.#',
- '#..#..EE..........#...#.#',
- '#..#..EE..........#...#.#',
- '#..#######.########...#.#',
- '#.....................#.#',
- '#.....................#.#',
- '##########################',
- '#########################',
- '#########################']);
-  const k=1+fl(d/3),E=[L_([3.5,1.5],[21.5,1.5],k,0),L_([3.5,2.5],[21.5,2.5],k,.5),L_([22.5,1.5],[22.5,11.5],k,.25),L_([21.5,3.5],[21.5,11.5],k,.75),
-    L_([1.5,10.5],[21.5,10.5],k,.1),L_([1.5,11.5],[21.5,11.5],k,.6),L_([1.5,4.5],[1.5,11.5],k,.3),L_([2.5,4.5],[2.5,11.5],k,.8),
-    L_([1.5,4.5],[21.5,4.5],k,.45),L_([19.5,5.5],[19.5,10.5],k,.15),L_([4.5,6.5],[17.5,6.5],k,.55),L_([10.5,7.5],[10.5,9.5],2*k,.35)];
-  if(d>=3)E.push(L_([4.5,8.5],[17.5,8.5],k,.05));
-  return {g,E,coins:[C(22,2),C(1,11)].concat(d>=2?[C(16,7)]:[]),name:'სპირალი'};}
+function checker(d){const g=blank();carve(g,4,3,20,11);carve(g,1,6,3,8,'S');carve(g,21,6,23,8,'E');
+  const E=[],k=1+fl(d/2),nq=d>=9?2:1;for(let x=5;x<=19;x+=(d>=3?2:3))for(let y=3;y<=11;y+=d>=3?2:4){const s=((x+y)%4<2)?1:-1;
+    for(let q=0;q<nq;q++)E.push(P_([[x,y],[x+1,y],[x+1,y+1],[x,y+1]],s*k*2,(x*.07)%1+q*.5));}
+  E.push(L_([4.5,3.5],[20.5,3.5],.5,0),L_([4.5,11.5],[20.5,11.5],.5,.5));
+  return {g,E,coins:[C(12,3),C(12,11)],name:'ჭადრაკი'};}
 
 function windows(d){const g=blank();carve(g,3,1,21,2,'S');carve(g,3,3,21,11);carve(g,3,12,21,13,'E');
   [5,8].forEach(y=>{for(let x=3;x<=21;x++)g[y][x]='#';});
   [[5,[6,12,18]],[8,[4,9,15,20]]].forEach(([y,gs])=>gs.forEach(x=>{g[y][x]='.';}));
-  const E=[],k=1+fl(d/3);E.push(L_([3.5,4],[21.5,4],k,0),L_([3.5,6.5],[21.5,6.5],k,.5),L_([3.5,7.2],[21.5,7.2],k,0),L_([3.5,10],[21.5,10],k,.3));
-  if(d>=2)E.push(L_([3.5,3.5],[21.5,3.5],k,.5),L_([3.5,9.5],[21.5,9.5],k,.8));
-  if(d>=4)E.push(L_([3.5,4.5],[21.5,4.5],k,.25),L_([3.5,10.5],[21.5,10.5],k,.55));
+  const E=[],k=1+fl(d/5),n=1+fl(d/3);const add=(y,ph)=>{for(let i=0;i<n;i++)E.push(L_([3.5,y],[21.5,y],k,ph+i*.5/n));};
+  add(4,0);add(6.5,.5);add(7.2,0);add(10,.3);
+  if(d>=2){add(3.5,.5);add(9.5,.8);}
+  if(d>=4){add(4.5,.25);add(10.5,.55);}
   return {g,E,coins:[C(3,6),C(21,7)].concat(d>=3?[C(12,10)]:[]),name:'ფანჯრები'};}
 
-function eights(d){const g=blank();carve(g,2,1,22,13);carve(g,1,6,1,8,'S');carve(g,23,6,23,8,'E');carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[],n=3+fl(d/2);for(let i=0;i<n;i++){E.push(EI([12.5,7.5],8,5,.5,i/n));if(d>=2)E.push(EI([12.5,7.5],5,3,-.5,i/n));}
-  if(d>=4)for(let i=0;i<3;i++)E.push(EI([12.5,7.5],8,5.5,-.5,i/3+.1));
-  return {g,E,coins:[C(12,7),C(5,7),C(19,7)],name:'რვიანი'};}
-
-function lattice(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  for(let x=5;x<=19;x+=3)for(let y=3;y<=11;y+=3)g[y][x]='#';
-  const E=[],k=1+fl(d/3);[4,7,10,13,16,19].forEach((x,i)=>{if(x===19&&d<2)return;E.push(L_([x+.5,1.5],[x+.5,13.5],k,(i%2)*.5));});
-  [2,5,8,11].forEach((y,i)=>{if(i%2&&d<3)return;E.push(L_([3.5,y+.5],[21.5,y+.5],k,(i*.3)%1));});
-  return {g,E,coins:[C(12,1),C(12,13),C(3,1)],name:'ბადე'};}
-
 function sine(d){const g=blank();carve(g,4,3,20,11);carve(g,4,1,20,2,'S');carve(g,4,12,20,13,'E');
-  const E=[],m=1+fl(d/3);for(let j=0;j<3;j++)for(let i=0;i<m+1;i++)E.push(SI([4.5,4.5+j*3],[20.5,4.5+j*3],1.1,1.5,d>=4?1:.5,(i/(m+1)+j*.3)%1));
+  const E=[],m=1+fl(d/1.5);for(let j=0;j<4;j++)for(let i=0;i<m+1;i++)E.push(SI([4.5,4+j*2.33],[20.5,4+j*2.33],.95,1.5,KK(d,4,8),(i/(m+1)+j*.3)%1));
   if(d>=3)E.push(L_([12.5,3.5],[12.5,11.5],2,0));
   return {g,E,coins:[C(4,7),C(20,7)],name:'სინუსოიდა'};}
 
@@ -329,48 +205,186 @@ function mirror(d){const g=blank();carve(g,1,1,23,3);carve(g,1,11,23,13);carve(g
   E.push(L_([11.5,6.5],[13.5,6.5],2*k,0),L_([11.5,8.5],[13.5,8.5],2*k,.5));if(d>=2)E.push(L_([11.5,4.5],[13.5,4.5],2*k,.25),L_([11.5,10.5],[13.5,10.5],2*k,.75));
   return {g,E,coins:[C(23,1),C(1,13)],name:'სარკე'};}
 
-function gates(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[],k=1+fl(d/2.5),walls=[6,10,14,18];walls.forEach((x,i)=>{for(let y=1;y<=13;y++)g[y][x]='#';const door=[3,10,5,9][i];g[door][x]='.';g[door+1][x]='.';
-    E.push(L_([x+.5,door-1.5],[x+.5,door+2.5],2*k,i*.3));if(d>=2)E.push(L_([x-1.5,door+1],[x+2.5,door+1],k,i*.2+.5));});
-  return {g,E,coins:[C(8,13),C(16,1)].concat(d>=3?[C(12,7)]:[]),name:'კარიბჭეები'};}
+/* ── v5 layouts: fixed-size dots only, arenas filled edge to edge ── */
+const kq=x=>Math.max(.5,Math.round(x*2)/2);           /* k must be a multiple of ½ so every motion repeats each P */
+const KK=(d,...th)=>.5+.5*th.filter(t=>d>=t).length;
+function prop(E,c,arms,rs,k,ph0){for(let a=0;a<arms;a++)for(const r of rs)E.push(O_(c,r,k,(ph0||0)+a/arms));}
+function carveIf(g,f,ch){for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++)if(f(x+.5,y+.5))g[y][x]=ch||'.';}
 
-function wheel(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[],s=3+fl(d/2),R=5.4;for(let i=0;i<s;i++)for(let r=1.6;r<=R;r+=1.2)E.push(O_([12.5,7.5],r,1,i/s));
-  const rim=8+d*2;for(let i=0;i<rim;i++)if(i%4!==0)E.push(O_([12.5,7.5],R+.9,1,i/rim));
-  return {g,E,coins:[C(12,7),C(3,1),C(21,13)],name:'ბორბალი'};}
+/* 3 · windmills: three spinning bars in a corridor, rails along the edges */
+function windmill(d){const g=blank();carve(g,4,4,20,10);carve(g,1,5,3,9,'S');carve(g,21,5,23,9,'E');
+  const E=[],arms=d<3?2:d<6?3:4,k=KK(d,4,8);
+  [7.5,12.5,17.5].forEach((x,j)=>prop(E,[x,7.5],arms,[1,2,3],j%2?-k:k,j*.13));
+  const nr=1+fl(d/3);for(let i=0;i<nr;i++){E.push(L_([4.5,4.5],[20.5,4.5],.5,i/nr));E.push(L_([4.5,10.5],[20.5,10.5],.5,i/nr+.5/nr));}
+  return {g,E,coins:[C(10,7),C(15,7)].concat(d>=2?[C(12,4)]:[]),name:'წისქვილები'};}
 
-function twins(d){const g=blank();carve(g,1,1,11,13);carve(g,13,1,23,13);carve(g,12,6,12,8);carve(g,1,1,3,2,'S');carve(g,21,12,23,13,'E');
-  const E=[],k=1+fl(d/3);for(let y=4;y<=11;y+=d>=2?1:2)E.push(L_([1.5,y+.5],[11.5,y+.5],k,(y*.17)%1));
-  const s=3+fl(d/2);for(let i=0;i<s;i++)for(let r=1;r<=4.5;r+=1.1)E.push(O_([18,7],r,1,i/s));
-  return {g,E,coins:[C(11,13),C(18,7),C(23,1)],name:'ტყუპები'};}
+/* 5 · clock room: a round hall swept by the hands of a clock */
+function clockRoom(d){const g=blank();carveIf(g,(x,y)=>Math.hypot(x-12.5,y-7.5)<=6.4);carve(g,4,6,6,8);carve(g,18,6,20,8);carve(g,1,6,3,8,'S');carve(g,21,6,23,8,'E');
+  const E=[],k=KK(d,5,8),rs=[1.3,2.3,3.3,4.3,5.3,6.3];
+  prop(E,[12.5,7.5],d>=4?3:2,rs,k,0);
+  prop(E,[12.5,7.5],1,[1.3,2.3,3.3],-2*k,.25);if(d>=2)prop(E,[12.5,7.5],1,[1.3,2.3,3.3],-2*k,.75);
+  E.push(L_([5.5,6.5],[5.5,8.5],1,0),L_([19.5,6.5],[19.5,8.5],1,.5));if(d>=6)E.push(L_([4.5,6.5],[4.5,8.5],1,.5),L_([20.5,6.5],[20.5,8.5],1,0));
+  return {g,E,coins:[C(12,2),C(12,12)].concat(d>=1?[C(12,7)]:[]),name:'საათის დარბაზი'};}
 
-function meteors(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
-  const E=[],n=6+d*2;for(let i=0;i<n;i++){const x=4+((i*7)%17),dir=i%2;
-    E.push(L_([x+.5,1.5],[Math.min(21.5,Math.max(3.5,x+.5+(dir?6:-6))),13.5],1+fl(d/3),(i*.137)%1));}
-  return {g,E,coins:[C(12,1),C(12,13),C(12,7)],name:'მეტეორები'};}
+/* 6 · staircase where every column has its own guard */
+function stairs2(d){const g=blank();for(let i=0;i<=10;i++)carve(g,1+2*i,1+i,Math.min(23,4+2*i),Math.min(13,3+i));
+  carve(g,1,1,2,3,'S');carve(g,21,11,23,13,'E');
+  const E=[],k=KK(d,2,4,6,8),st=d<1?2:1;
+  for(let x=3;x<=20;x+=st){let y0=99,y1=-1;for(let y=0;y<H;y++)if(g[y][x]==='.'){y0=Math.min(y0,y);y1=Math.max(y1,y);}
+    if(y1<0)continue;E.push(L_([x+.5,y0+.5],[x+.5,y1+.5],k,st===2?(x*.17)%1:(fl(x/2)*(d>=5?.31:.12))%1));}
+  if(d>=3)E.push(L_([3.5,2.5],[20.5,11],.5,0));if(d>=5)E.push(L_([3.5,2.5],[20.5,11],.5,.5));if(d>=7)E.push(L_([4.5,1.5],[21.5,10],1,.25));
+  return {g,E,coins:[C(12,7),C(7,5)].concat(d>=2?[C(18,10)]:[]),name:'კიბე'};}
 
-function citadel(d){const g=blank();carve(g,2,1,22,13);for(let y=4;y<=10;y++)for(let x=8;x<=16;x++)g[y][x]='#';carve(g,9,5,15,9);
-  g[7][8]='.';g[7][16]='.';carve(g,1,6,1,8,'S');carve(g,1,6,2,8,'S');carve(g,23,6,23,8,'E');carve(g,22,6,23,8,'E');
-  const E=[],n=6+d;for(let i=0;i<n;i++){E.push(P_([[6.5,2.5],[18.5,2.5],[18.5,12.5],[6.5,12.5]],.5,i/n));}
-  E.push(O_([12,7.5],1.6,2,0),O_([12,7.5],1.6,2,.5));if(d>=3)E.push(O_([13,7.5],1.6,-2,.25));
-  return {g,E,coins:[C(12,7),C(2,1),C(22,13)],name:'ციტადელი'};}
+/* 7 · moving walls with a gap — ride the gap, change walls on the narrow ledges */
+function walls(d){const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],k=KK(d,3,8),segs=[[3.5,8.5,[3,4]],[9.5,14.5,[9,10]],[15.5,20.5,[5,6]]];
+  segs.forEach(([xa,xb,gap],j)=>{const gp=d>=6?[gap[0]]:gap;
+    for(let y=2;y<=12;y++)if(!gp.includes(y))E.push(L_([xa+.5,y+.5],[xb+.5,y+.5],k,j%2?.5:0));
+    if(d>=3){const g2=[14-gap[0],13-gap[0]];for(let y=2;y<=12;y++)if(!g2.includes(y)&&(d>=7||y%2))E.push(L_([xa+.5,y+.5],[xb+.5,y+.5],k,j%2?0:.5));}});
+  [9.5,15.5].forEach((x,i)=>E.push(L_([x,2.5],[x,12.5],.5,i*.5)));
+  return {g,E,coins:[C(6,12),C(12,2)].concat(d>=2?[C(18,12)]:[]),name:'მოძრავი კედლები'};}
 
-function finale(d){const g=blank();carve(g,1,1,7,13);carve(g,9,1,15,13);carve(g,17,1,23,13);carve(g,8,12,8,13);carve(g,16,1,16,2);
+/* 8 · pendulum curtain */
+function pend2(d){const g=blank();carveIf(g,(x,y)=>y>3&&y<10&&x>6.5-y*.479-.6&&x<18.5+y*.479+.6);carve(g,1,7,2,9,'S');carve(g,22,7,23,9,'E');
+  const E=[],k=KK(d,4,8),xs=[6.5,9.5,12.5,15.5,18.5];
+  xs.forEach((x,i)=>{for(let r=3.2;r<=9.2;r+=d>=2?1:1.5)E.push(SW([x,0],r,i%4?.5:.4,k,(i%2)*.5+(d>=3?i*.06:0)));});
+  return {g,E,coins:[C(9,9),C(15,9)].concat(d>=2?[C(12,3)]:[]),name:'ქანქარები'};}
+
+/* 9 · three-lane ring road */
+function ringRoad(d){const g=blank();carve(g,3,1,21,13);for(let y=4;y<=10;y++)for(let x=6;x<=18;x++)g[y][x]='#';
+  carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],n=2+fl(d/1.2),k=KK(d,5);
+  for(let j=0;j<3;j++){const R=[[3.5+j,1.5+j],[21.5-j,1.5+j],[21.5-j,13.5-j],[3.5+j,13.5-j]];for(let i=0;i<n;i++)E.push(P_(R,j%2?-k:k,i/n+j*.17));}
+  const sp=fl(d/2);[[8.5,1],[16.5,1],[12.5,0]].slice(0,Math.min(3,sp)).forEach(([x,t],i)=>{E.push(L_([x,1.5],[x,3.5],1,i*.3));E.push(L_([x,13.5],[x,11.5],1,i*.3+.5));});
+  if(sp>=4)[[4.5],[20.5]].forEach(([x],i)=>E.push(L_([3.5,4.5+i*6],[5.5,4.5+i*6],1,i*.5)));
+  return {g,E,coins:[C(12,2),C(12,12)].concat(d>=3?[C(4,3)]:[]),name:'რგოლური გზა'};}
+
+/* 10 · tunnel with a lift in every shaft */
+function tunnel2(d){const g=blank();carve(g,1,7,23,7);for(let x=4;x<=20;x+=2)carve(g,x,3,x,11);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],k=KK(d,0,4,8);for(let x=4,i=0;x<=20;x+=2,i++){E.push(L_([x+.5,3.5],[x+.5,11.5],k,(i*(d>=2?.19:.5))%1));
+    if(d>=5)E.push(L_([x+.5,3.5],[x+.5,11.5],k,(i*.19+.5)%1));}
+  return {g,E,coins:[C(8,3),C(16,11)].concat(d>=2?[C(12,3)]:[]),name:'გვირაბი'};}
+
+/* 11 · grid of propellers, neighbours turn like gears */
+function propGrid(d){const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],arms=d<3?2:d<6?3:4,k=KK(d,5,8),cx=[5.5,10.2,14.8,19.5],cy=[4.7,10.3];
+  cx.forEach((x,i)=>cy.forEach((y,j)=>prop(E,[x,y],arms,[1,2,2.9],(i+j)%2?-k:k,(i+j)%2?.5/arms:0)));
+  return {g,E,coins:[C(7,7),C(12,7),C(17,7)],name:'პროპელერები'};}
+
+/* 13 · maze with a guard on every passage */
+function maze2(d){const g=blank(),CW=6,CH=3,X0=c=>1+4*c,Y0=r=>2+4*r;let s=11;const rnd=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};
+  const seen=new Set(['0,0']),open=[],st=[[0,0]];
+  while(st.length){const [c,r]=st[st.length-1];const nb=[[1,0],[-1,0],[0,1],[0,-1]].map(([a,b])=>[c+a,r+b]).filter(([a,b])=>a>=0&&b>=0&&a<CW&&b<CH&&!seen.has(a+','+b));
+    if(!nb.length){st.pop();continue;}const [a,b]=nb[fl(rnd()*nb.length)];seen.add(a+','+b);open.push([c,r,a,b]);st.push([a,b]);}
+  for(let c=0;c<CW;c++)for(let r=0;r<CH;r++)carve(g,X0(c),Y0(r),X0(c)+2,Y0(r)+2);
+  open.forEach(([c,r,a,b])=>{if(a!==c)carve(g,X0(Math.min(a,c))+3,Y0(r),X0(Math.min(a,c))+3,Y0(r)+2);else carve(g,X0(c),Y0(Math.min(b,r))+3,X0(c)+2,Y0(Math.min(b,r))+3);});
+  carve(g,X0(0),Y0(0),X0(0)+2,Y0(0)+2,'S');carve(g,X0(CW-1),Y0(CH-1),X0(CW-1)+2,Y0(CH-1)+2,'E');
+  const E=[],k=2*KK(d,3,7),n=d>=8?3:d>=5?2:1,kp=KK(d,2,5,8);
+  for(let c=0;c<CW;c++)for(let r=0;r<CH;r++){if((c===0&&r===0)||(c===CW-1&&r===CH-1))continue;const cc=[X0(c)+1.5,Y0(r)+1.5],dir=(c+r)%2?1:-1;
+    for(let q=0;q<n;q++)E.push(O_(cc,1.05,dir*k,q/n+(c*.17+r*.29)%1));
+}
+  /* passages get a slow crosser */
+  open.forEach(([c,r,a,b],i)=>{if(i%2&&d<2)return;if(a!==c){const x=X0(Math.min(a,c))+3.5;E.push(L_([x,Y0(r)+.5],[x,Y0(r)+2.5],kp,i*.23));}
+    else{const y=Y0(Math.min(b,r))+3.5;E.push(L_([X0(c)+.5,y],[X0(c)+2.5,y],kp,i*.23));}});
+  const deg=(c,r)=>open.filter(o=>(o[0]===c&&o[1]===r)||(o[2]===c&&o[3]===r)).length,de=[];
+  for(let c=0;c<CW;c++)for(let r=0;r<CH;r++)if(deg(c,r)===1&&!(c===0&&r===0)&&!(c===CW-1&&r===CH-1))de.push([c,r]);
+  de.sort((a,b)=>(b[0]+b[1])-(a[0]+a[1]));const coins=de.slice(0,d>=3?3:2).map(([c,r])=>[X0(c)+1.5,Y0(r)+1.5]);
+  return {g,E,coins,name:'ლაბირინთი'};}
+
+/* 14 · two vortices in a figure-eight hall */
+function vortex(d){const g=blank();carveIf(g,(x,y)=>Math.hypot(x-7.5,y-7.5)<=4.9||Math.hypot(x-17.5,y-7.5)<=4.9);carve(g,3,6,22,8);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],arms=d<3?2:d<6?3:4,k=KK(d,5,8);
+  prop(E,[7.5,7.5],arms,[1,2,3,4.1],k,0);prop(E,[17.5,7.5],arms,[1,2,3,4.1],-k,.5/arms);
+  return {g,E,coins:[C(7,7),C(17,7)].concat(d>=2?[C(12,6)]:[]),name:'ორი ქარიშხალი'};}
+
+/* 18 · lemniscate swarm */
+function eights2(d){const g=blank();carveIf(g,(x,y)=>x>3&&x<22&&y>3&&y<12&&!(Math.abs(x-12.5)>6.5&&Math.abs(y-7.5)>3));carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[O_([12.5,7.5],4.3,.5,0),O_([12.5,7.5],4.3,.5,.5)],n=2+fl(d/2.5);
+  [[9,7,.5],[9,3,-.5],[6,8,-.5],[3.5,6,.5],[9,5,.5]].forEach(([ax,ay,k],j)=>{if(j===4&&d<3)return;const n=2+fl((d+j*.5)/2.5);for(let i=0;i<n;i++)E.push(EI([12.5,7.5],ax,ay,d>=6?2*k:k,i/n+j*.13));});
+  return {g,E,coins:[C(12,7),C(5,7),C(19,7)],name:'რვიანები'};}
+
+/* 20 · pillars with orbiting guards and cross traffic */
+function pillars2(d){const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const xs=[5,9,13,17],ys=[4,7,10],E=[],k=KK(d,4,8),per=1+fl(d/3.5),kl=KK(d,3,6,9),nl=1+fl(d/3);
+  xs.forEach((x,i)=>ys.forEach((y,j)=>{g[y][x]='#';const pts=[[x-.5,y-.5],[x+1.5,y-.5],[x+1.5,y+1.5],[x-.5,y+1.5]];
+    for(let q=0;q<per;q++)E.push(P_(pts,(i+j)%2?k:-k,q/per+(i*.1)));}));
+  [3.5,7.5,11.5,15.5,19.5].forEach((x,i)=>{for(let q=0;q<nl;q++)E.push(L_([x,2.5],[x,12.5],kl,i*.2+q*.5/nl));});
+  [2.5,12.5].forEach((y,i)=>E.push(L_([3.5,y],[21.5,y],kl,i*.5)));
+  if(d>=6)[5.5,8.5].forEach((y,i)=>E.push(L_([3.5,y],[21.5,y],.5,i*.5+.25)));
+  return {g,E,coins:[C(12,2),C(12,12),C(7,7)].concat(d>=2?[C(19,4)]:[]),name:'სვეტები'};}
+
+/* 23 · pistons: rods slam shut from above and below */
+function pistons(d){const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],k=2*KK(d,3,6,9);let i=0;
+  for(let x=4.5;x<=20.6;x+=1.6,i++){const ph=(i*(d>=7?.37:d>=4?.09:.14))%1;
+    for(let j=0;j<3;j++){E.push(L_([x,2.5+j],[x,6+j],k,ph));E.push(L_([x,12.5-j],[x,9-j],k,ph));}}
+  return {g,E,coins:[C(8,7),C(16,7)].concat(d>=2?[C(12,7)]:[]),name:'დგუშები'};}
+
+/* 24 · concentric rings in a round hall */
+function rings2(d){const g=blank();carveIf(g,(x,y)=>Math.hypot((x-12.5)*.92,y-7.5)<=6.6);carve(g,1,6,4,8,'S');carve(g,20,6,23,8,'E');carve(g,1,6,3,8,'S');carve(g,21,6,23,8,'E');
+  const rr=[1.6,2.8,4,5.2,6.4],E=[];
+  rr.forEach((r,j)=>{const n=3+fl(d/2)+j,k=(j%2?-1:1)*(d>=8?1:d>=6&&j<2?1:.5);for(let i=0;i<n;i++)E.push(O_([12.5,7.5],r,k,i/n));});
+  return {g,E,coins:[C(12,7),C(12,1),C(12,13)],name:'რგოლები'};}
+
+/* 25 · lattice: a guard in every street */
+function lattice2(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  for(let x=5;x<=19;x+=3)for(let y=3;y<=12;y+=3)g[y][x]='#';
+  const E=[],k=KK(d,4,8),n=1+fl(d/2.5);
+  [4,7,10,13,16,19].forEach((x,i)=>{for(let q=0;q<n;q++)E.push(L_([x,1.5],[x,13.5],k,(i%2)*.5+q/n*.5+i*.07));});
+  [2,5,8,11].forEach((y,i)=>{for(let q=0;q<n;q++)E.push(L_([3.5,y],[21.5,y],k,(i*.3)+q/n*.5));});
+  return {g,E,coins:[C(12,1),C(12,13),C(3,1),C(21,13)],name:'ბადე'};}
+
+/* 26 · conveyor loops */
+function conveyor(d){const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],n=2+fl(d/2.5),k=KK(d,3,6,9);
+  [6.5,12.5,18.5].forEach((cx,i)=>[4.5,10.5].forEach((cy,j)=>{const sq=(r)=>[[cx-r,cy-r],[cx+r,cy-r],[cx+r,cy+r],[cx-r,cy+r]];const dir=(i+j)%2?1:-1;
+    for(let q=0;q<n;q++)E.push(P_(sq(2.5),dir*k,q/n+i*.1));for(let q=0;q<Math.max(1,n-1);q++)E.push(P_(sq(1),-dir*k,q/Math.max(1,n-1)+.25));}));
+  return {g,E,coins:[C(6,4),C(12,10),C(18,4)],name:'კონვეიერი'};}
+
+/* 27 · twins: a staircase of sweepers, then twin spinners */
+function twins2(d){const g=blank();carve(g,1,1,11,13);carveIf(g,(x,y)=>x>13&&(Math.hypot(x-18,y-4)<=4.7||Math.hypot(x-18,y-10.5)<=4.7));carve(g,13,6,14,8);carve(g,12,6,12,8);carve(g,1,1,3,2,'S');carve(g,21,12,23,13,'E');carve(g,22,11,23,13,'E');
+  const E=[L_([4.5,1.5],[11.5,1.5],.5,0),L_([4.5,2.5],[11.5,2.5],.5,.5)],k=KK(d,2,5,8);for(let y=3;y<=13;y++)E.push(L_([1.5,y+.5],[11.5,y+.5],k,(y*(d>=3?.09:.13))%1));
+  const arms=d<3?2:d<6?3:4;prop(E,[18,4],arms,[1,2,3,4],k,0);prop(E,[18,10.5],arms,[1,2,3,4],-k,.5/arms);
+  E.push(L_([12.5,5.5],[12.5,8.5],1,0));
+  return {g,E,coins:[C(11,13),C(18,7),C(18,1)],name:'ტყუპები'};}
+
+/* 28 · billiards: balls bounce on zig-zag tracks */
+function bounce(x0,y0,dx,dy,xa,xb,ya,yb){/* 45° ball in a box: corner points of its closed track */
+  const p=[[x0,y0]];let x=x0,y=y0;for(let n=0;n<64;n++){const tx=dx>0?(xb-x):(x-xa),ty=dy>0?(yb-y):(y-ya),t=Math.min(tx,ty);x+=dx*t;y+=dy*t;
+    if(Math.abs(tx-t)<1e-9)dx=-dx;if(Math.abs(ty-t)<1e-9)dy=-dy;if(Math.abs(x-x0)<1e-6&&Math.abs(y-y0)<1e-6)break;p.push([x,y]);}return p;}
+function billiard(d){const g=blank();carve(g,2,1,22,13);carve(g,1,6,1,8,'S');carve(g,1,6,2,8,'S');carve(g,23,6,23,8,'E');carve(g,22,6,23,8,'E');
+  const E=[],n=1+fl(d/1.5),k=KK(d,0,5,9);
+  [[3,9],[9.5,15.5],[16,22]].forEach(([xa,xb],b)=>{for(let s=0;s<4;s++){if(s===3&&d<2)continue;
+    const tr=b%2?bounce(xb-s*1.5,1.5,-1,1,xa,xb,1.5,13.5):bounce(xa+s*1.5,1.5,1,1,xa,xb,1.5,13.5);for(let i=0;i<n;i++)E.push(P_(tr,k,i/n+s*.3+b*.1));}});
+  return {g,E,coins:[C(9,1),C(16,13),C(12,7)],name:'ბილიარდი'};}
+
+function citadel2(d){const g=blank();carve(g,2,1,22,13);for(let y=4;y<=10;y++)for(let x=7;x<=17;x++)g[y][x]='#';carve(g,8,5,16,9);
+  g[7][7]='.';g[7][17]='.';carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const E=[],n=3+fl(d/1.5),k=KK(d,5,9);
+  [[2.5,1.5,22.5,13.5],[4.5,2.5,20.5,12.5],[5.5,3.5,19.5,11.5]].forEach(([x0,y0,x1,y1],j)=>{const R=[[x0,y0],[x1,y0],[x1,y1],[x0,y1]];for(let i=0;i<n;i++)E.push(P_(R,j%2?-k:k,i/n+j*.1));});
+  [[4,3.5],[21,3.5],[4,11.5],[21,11.5]].forEach(([x,y],i)=>{for(let q=0;q<2;q++)E.push(O_([x,y],1.4,i%2?1:-1,q*.5));});
+  prop(E,[12.5,7.5],d>=3?3:2,[1,2,3,4],k,0);
+  E.push(L_([7.5,6.5],[7.5,8.5],1,0),L_([17.5,6.5],[17.5,8.5],1,.5));
+  return {g,E,coins:[C(12,7),C(2,1),C(22,13),C(9,5)],name:'ციტადელი'};}
+
+/* 30 · finale: sweepers → spinner tower → descending walls */
+function finale2(d){const g=blank();carve(g,1,1,7,13);carve(g,9,1,15,13);carve(g,17,1,23,13);carve(g,8,11,8,13);carve(g,16,1,16,3);
   carve(g,1,1,3,2,'S');carve(g,21,12,23,13,'E');
-  const E=[],k=1+fl(d/3);for(let y=3;y<=11;y+=2)E.push(L_([1.5,y+.5],[7.5,y+.5],2*k,(y*.13)%1));
-  const s=3+fl(d/3);for(let i=0;i<s;i++)for(let r=1;r<=3;r++)E.push(O_([12.5,7],r,1,i/s));
-  for(let x=17;x<=23;x+=d>=2?1:2)E.push(L_([x+.5,3.5],[x+.5,11.5],k,(x*.19)%1));
-  return {g,E,coins:[C(7,1),C(12,7),C(23,1)],name:'ფინალი'};}
+  const E=[L_([4.5,1.5],[7.5,1.5],1,0),L_([4.5,2.5],[7.5,2.5],1,.5)],k=KK(d,0,4,8);for(let y=3;y<=13;y++)E.push(L_([1.5,y+.5],[7.5,y+.5],k,(y*.11)%1));
+  const arms=d<5?3:4;[[12.5,3.2,1],[12.5,7.2,-1],[12.5,11.2,1]].forEach(([x,y,s],i)=>prop(E,[x,y],arms,[1,2,2.9],s*KK(d,6,9),i*.17));
+  for(let x=17;x<=23;x++)if(x!==20)E.push(L_([x+.5,1.5],[x+.5,11.5],KK(d,6,9),0));
+  for(let x=17;x<=23;x++)if(x!==18&&x!==22)E.push(L_([x+.5,11.5],[x+.5,1.5],KK(d,6,9),.25));
+  return {g,E,coins:[C(7,1),C(12,7),C(23,1),C(17,13)],name:'ფინალი'};}
 
 const OLD=(f,b=3,m=1.15)=>d=>f(b+d*m);
-const ORDER=[firstStep,zigzag,cross,OLD(corridor),clock,stairs,rooms4,OLD(waves),donut,pendulums,tunnel,OLD(orbit,0,1.3),maze,storms,windows,
-  OLD(snake),checker,eights,perimeter,OLD(pillars),sine,mirror,gates,OLD(rings,0,1.3),lattice,wheel,twins,meteors,citadel,finale];
+const ORDER=[firstStep,zigzag,windmill,OLD(corridor),clockRoom,stairs2,walls,pend2,ringRoad,tunnel2,propGrid,OLD(orbit,0,1.3),maze2,vortex,windows,
+  OLD(snake),checker,eights2,OLD(waves),pillars2,sine,mirror,pistons,rings2,lattice2,conveyor,twins2,billiard,citadel2,finale2];
 const THEMES=[['#f8f7ff','#e9e7fb','#0b0918'],['#f7f8ff','#e6e9fb','#0a0b18'],['#faf7ff','#ece6fb','#0d0918'],['#f6f8fd','#e4e8f6','#090c16']];
 /* tuned difficulty per level (solver-checked, see tune.js) */
-const DL=/*DL*/[1.5, 1.72, 1.94, 2.16, 2.38, 2.6, 2.82, 3.04, 3.26, 3.48, 3.7, 1.42, 2.64, 3.86, 2.58, 4.8, 5.02, 5.24, 5.46, 5.68, 5.9, 6.12, 6.34, 2.56, 2.78, 7, 3.72, 5.94, 7.66, 5.88]/*DL*/;
-const DLS={normal:DL,hard:/*DLH*/[3, 3.32, 3.64, 3.96, 4.28, 4.6, 4.92, 4.24, 5.56, 3.88, 6.2, 6.52, 2.84, 3.66, 5.98, 7.8, 8.12, 8.44, 5.76, 9.08, 9.4, 9.72, 9.54, 2.86, 5.68, 7.5, 5.82, 5.64, 11.96, 8.78]/*DLH*/,extreme:/*DLX*/[4, 4.35, 4.7, 4.05, 5.4, 5.75, 6.1, 3.95, 6.8, 3.65, 7.5, 6.85, 2.7, 3.55, 5.9, 9.25, 9.6, 9.95, 5.8, 10.65, 11, 11.35, 9.7, 2.55, 5.9, 7.75, 5.6, 5.95, 13.8, 8.65]/*DLX*/};
+const DL=/*DL*/[1.5, 1.72, 6, 2.16, 5, 5, 6, 0, 5, 0, 6, 1.42, 5, 3, 6, 4.8, 6, 6.5, 3.04, 9, 9, 9, 0, 6, 8, 7.5, 7.5, 6, 8.5, 2]/*DL*/;
+const DLS={normal:DL,hard:/*DLH*/[3, 3.32, 6, 3.96, 5, 6, 6, 0, 7.5, 4, 6, 6.52, 8, 3, 6, 7.8, 8, 6.5, 4.24, 10, 10, 9.5, 4, 6, 8, 9.5, 7.5, 7, 8.5, 6]/*DLH*/,extreme:/*DLX*/[4, 4.35, 6, 4.05, 4.5, 10, 7.5, 0, 5, 3.5, 5.5, 6.85, 8, 5.5, 5.5, 9.25, 8, 6, 3.95, 10, 10, 10, 10, 6, 7.5, 8.5, 5.5, 5, 8.5, 5]/*DLX*/};
 /* extra mechanics: blinking dots (visible part of the time), pulsing dots (radius breathes), fog (only a circle around you is lit) */
-const MECH={5:'blink',11:'blink',17:'blink',23:'blink',29:'blink',3:'pulse',9:'pulse',15:'pulse',21:'pulse',27:'pulse',13:'fog',19:'fog',25:'fog',7:'pulse',30:'blink'};
+const MECH={};
 function make(i,d){const L=ORDER[i](d);L.n=i+1;L.d=d;L.theme=THEMES[i%THEMES.length];L.mech=MECH[i+1]||null;
   if(L.mech==='blink')L.E.forEach((e,j)=>{if(j%2===0)e.blink={on:.55,k:2,ph:(j*.23)%1};});
   if(L.mech==='pulse')L.E.forEach((e,j)=>{e.pulse={amp:.55,k:2,ph:(j*.17)%1};});
@@ -402,7 +416,7 @@ return {W,H,T,P,LEVELS,make,setMode,setTS,getTS,DLS,pos,vis,rad,speed,PLAYER:{ha
 })();
 if(typeof module!=='undefined')module.exports=HG;
 </script>
-<script>const DEMO={"normal":{"1":".rrrrrrrrrrrrrrrrrrrrrrrrrrrrruurrurrrrrrrrrrrrrrrruuuuurrrrrrrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","2":"rrrrrrdrrrrrrrrrrrrrrrrrrrrrdddddddrrrrdddddddddddddrrrrdrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrr","3":"rrrrrrrrrrrrrrrrrrrrrrrrrrdddddrrrrrrrrrrrrrdddddddddrrrrrrrrrdddddddddddduuuuuuuuuuuuuuuuuuuuuuuuuurruuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrddddddddddddddddrrrrdddrddrdrrrdrrrrrrrrrrrrrrrrrrrrrrrrr","4":".....rrrrrrrrrrrdddddrdddrddrddrddrr....rrrrrrrrrrrrrrrrrrrrrrrrr.......rrruuuuuuuuuuuuuuuuuuuuuuurruuurrrrrrrrrrrrrrrrrdddrrrrddrddrrrrrrrrrrrrrrrr","5":"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddddddduuuuuuuuuuuuuuuuuuuuuluuurruuuuuuuuuuuuuuullluuuururruuuuuuuurrrrrrrrrrrrdddrrrrrrrrrrddddrrrrdddddrrrrrddddrrrrdddddrrrrrrr","6":"...rrrrrrrrrrrrrrrrrrrrrddddrrrrrrrrrdddddrrrrrrrrrrddddrrrrrrrrrdddddrddddrrrrddddddrdrrrrrrrrrrrrrrrrrddddddddddrrrrrurrrrrrrrrrrd","7":".......................rrrrrrrrrrrrrrrrrrrrrrrrrrrdrdrrdrrr..rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuurrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuulllllllllllllldldddddddddddddddddddldlddddddlddddrddrddrdrdrrdrrdrrdrrrrrrrrddddddddddddllllllllllllllllllllllllllllllllllllllllluuuuuuulllllllllllllldddddddllllllllllllllllllllllllllllllllll","8":"lllllllllllllllllllllllllllllllllllddddddddddddddddddddddddrrrrrrrruurrrdd..rrdddddrrrrrrrrrruuurrrrrrrrruuuurrrddrrrrrrrrrrrruurrrrrrrrrrrddrrrruurrrrrrrrdddddddddddddddddddddddd","9":"rrrrrrrrrrrrrrrrrrrrrdddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuullllllllllllllllllllllllluuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddrr","10":"..........rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddrrrrrrrrruuuuuuururruuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrruuuurrurrrddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrr","11":".......................................................rrrrrrrrrrrrrrrrrrrrrrrr.rrrrrruuuuuuuuuuuudddddddddddrrrrrrrrrrrrrrrrrrruuuuuuuuuuudddddddddddrrrrrrrrrrrrrrrrrrddddddddddddduuuuuuuuuuurrrrrrrrrrrrrruurrrrrrrrrrr","12":"rrrrrrrrrrrrruuuuuuuuuuuuuuuuurrrrrrrrrddddddddddddrr.rrrrrrrrrrrrrrrrrrrrrrdrdduuuruurrrrurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddrr","13":"rrrrrrrrrrrrruurrrrrrdddddddddddllddlddldldlllllllddddddddddrrrrrrrddddrrrrrrrrrrrdddddddddlllllllllllllllllllldddddddddllllllddddrrrrrrrruuuuuuurrrrurururrurrrrrrrrrrrrrrrrrrrruuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuurrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuurrrrrrrrrrrrrrrruuuulllldddddddlllldddddddddddddddddddlllllllldddddddddddddddddddddddrrrrrrrrrrr","14":"..........................rrrrrrrruruuruururururrrrrrrr.rrrrrdddddd.d.....................ddddddd.dddddddddddddddrdrrrrrrrrrrrrrrrrrrrrrrrddddrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuu.u................lluulllllllllllllllllllluuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddd","15":"llllllllllllllllllllllllllllddddddddddddddddddddllllllllllllrrrrrddddrdrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddlllddddddddddddddddddddd","16":"..rrrrrrrrrrurrrrrrdrddrdrdrdrrr.rrrrrrrrrrruuuurururururrrrrrrdddrddrdrdrdrrrrrrrrrrrrrruuuurrurururrurrrrrrddddrdrdrdrdrrrrrrrdddrrrrdddddddddllllllllllulullulllllllddddlllllll...ulululullllllllddddllllll.l.u.ululullllllllddddlllllll...uullulullllllllddddlllldlllllllllllrrrrrrrrdddddddddddddrrrrrrrrrrrrrrrrddddrdrdrdrrr.rrrrruuurururururr....rrrrrrrrrrddddrdrdrdrrrr.rrrruuurururururr..rrrrrrrrrrrrrrr","17":"rrrrrrrrrrrrrrrrrrrruuuurrrrrrrrrrrrrrrrrrrruurrrrrrruururuuuuuuuuuuuurrrrrrrddddddrddrddddddddddddddddddddddddllllddddddddlllldddrrrrrrrrrrrrrrrrrrrrrrrrruuuurrurrrrrururrrrrrruuuuuuuuuurr","18":"rrrrrrrrrrrrrrrrrrrrrrurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddrrrrrrrrrrr","19":".......rrrrruruuuuuu.uuuuuuruuuuuuruuuuuuurrddddddddddddddddddddddddddddddddddddddddddddddddddllddrrrrrrruurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddlluuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrruuuuuuuudddddddddddddddddddddrr","20":"......rrrrrrrruuuuuuuuuuuuuuuuuuuuurrurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrlllllllllllllllllllllddddddddddddddddddddddddddddddddddddddddrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruurrrrddrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuurr","21":"...........rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddddddddddllllllllllllllllllllllllllllllldlllllllllllllllllllllllllllllllllllllllddddddddddddddddddddd","22":"...rrrrrrrrrrruruururr......rrrrrurrr.....rrrrrrrr.....rrrrrrrr.....rrrrrrrr......rrrrrrrr.....rrrrrrrr.....rrrrrrrr......rrrrrrrr...rrrrrrrrrrrrrrrrrrlldddddlllddlddll......lllllldlll.....llllllll.....lllllll.l...lllllllllllllddddddddddddddddddddddlldldddlllllddddddddd...ddddddlldldddldll.....llllllll.....llllllll......lllllllll.....llllllll...lllllrrrr......rrrrrrrr.....rrrrrrrr.....rrrrrrrr......rrrrrrrr.....rrrrrrrr.....rrrrrrrr.r....rrrrrrr.r..rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","23":"..............rrrrrrrrrrrrrrrrruuuuuuuuuuuuurrrrrrrrrrrrrrdddddddddddddddddddddddddddddddddddddddrrrruuuuuuurrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuurruuuuuuuuuuurrrrrrrrrrrrrrrruuuuuuuuuuuuuuuurrrrdddddddddddddddddddddddddddddddddddrrrrrrrrrurrrrrrrrruuurr","24":"......rrrrrrrrrrrrrrrrrrrrrrrrrruruuuuuuuuuuuuuuuruuuruurururrurrurrrurrrrrrrrrddddddllldddddddrddddrdrddrdddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuurr","25":".....rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddrdddddddddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuruuuuruuruuruurrrrrrrrruuurr","26":".................................rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrdddddddddrdrrrddrdrrrrrrrrrrrrrrrdrdrdrrdddrddr.drdrdrrrrrrrrrrrrrrrrrrrrdddrddddddddddddrdrrrrrdrrrrrrrrrrrrrrddddddddddduuuuuuuuuuuuuuuuuuuuurr","27":"..................rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddddddrrrdddddddddllldddddddddddddddddddddduuuuuuuuuuu..uuuuuuuuuurrrrrrruuuuuuuuuuruuu.uuu.u.u....uururururrurrurrurrrurrrurrrrurrrrrrrrrrrrrrrrrrrrrrrrrruullllllllllldddddddddddddddddldddddlddlldlddllldlrrrdrdrrdddddrddddddddrdrrddd","28":".....rrrrrrrrrrrrrrrrrrrruuuuuuuuuuuurrur...rrrrrrrrruuurrrrrrrrrruuuuuuurrrrrruuuddddddd.ddddddddddddrrddddddrdddddddddddddddddddddd.ldddddrrrrruuuuruururrurrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuurrrrrrruuurr","29":"rrrruuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddddddduuuuuuuuuuuuuuuuuuuu","30":"rrrrrrrrrrrrrrrrrrrrrrrudddddddddddddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuurluuuuuuururururururrrrurrrrrrrruuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuullddddddddddddddddddddddddddddddddddddddddddddddd"},"hard":{"1":".rrrrrrrrrrrrrruurrrrrrrrrrrrrrrdrdrrrrdrdrdrdrrrrdddluuuuuuuuuuuurrrruurrrrrrrruurrrrrrrrrrrrrrrrrrrrrrrrrrr","2":"...................rrrrrrrrrrrrrrrrrrrrrdrrdddddd..rdddddddddrrrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddrrrrrrrrrrrrrrrrrrrrrrr","3":"rrrrrrrrrrrruuurrrrrrrrrrrrrrrrrrrrrrrrruuuuruuurururrururruuuuuuuuuudddrd.r.r.r.r.rrrddddllddddddddddddlddddddddldddldlddlddddddddddddddrrrrrrrruuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","4":"rrrrrrrrrrrdrddddrddddddddrrr....rrrrrrrrrrrrrrrrrrr.....rrrrrrrrruuuuuuuuuurruuulluuuuuuuuuuurrrrrrruurr.r...rrrrrrrrrrrrrrrrrrrrrrrrr","5":".....rrrrrrrrrrrrrrrrrrrrrrrrrrrddrrrrrrrrrrrrrrrrdddrdddddddddddddddddddluuuuuuuuuuuuuuuuuuuruuuuuuuuuuuuuuuu.rruuuuuuuuuuuuurrrrrrrrrrrrddrrrrrrrrrddddrrrrdddddrrrrddddrrrrddddrrrrrrr","6":".....rrrrrrrrrrrrrrrrrrrrddddrrrrrrrrddddrrrrrrrrrddddrrrrrdddddddddrrdrdrdrrrrrrr.rurr.rrrrrrddrrrrrddddddddddrrrrrrrrrrrrrrrdd","7":"rrrrrrrrrrrrrrrrururrrrrrrdrddrdrdrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuurrrrrrrrrrrrrrrrurururrurrrrrrruuullllddddddddddddlllllldddddddllllldddddddddrrrrrrrrrrrrrrrddddddddddddddddddddllllllllllllllllllllllllllllllllllllluuuuuuulllllllllllllldddddddlllllllllllllllllllllllllllllll","8":"lllllllllllllllddddddddddddddlddddllddddldddddlluullllddllllllluu.lrrrrrrrrddrruurrrrrrrddrrrrruurrrrrrrrrddrrruurrrrrrrrddrrrruurrrrrrrrrddrrruurrrrrrrrdddddddddddddddddd","9":"rrrrrrrrrrrrrrrrddddddddddddddddrrdrrrdrrrdrrrdrrrrrrrrdrrrrrrrrllllllllllllllllllllllluuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrruuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddrr","10":"....rrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuuuu...u.....rddrddrrrrrdddrrrddddddddddddddddrrrrrrrrrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrrr","11":".........................................rrrrrrrrrrrrrrrrrrrrrr......rrrrruuuuuuuuuuudddddddddddll........................................rrrrrrrrrrrrrr.....rrrrruuuuuruuuuuudddddddddddrrrrrrrrrrrrrrrrrddddddddddduuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrr","12":"............rrrrrrrrrrrruuuuuuuuuuuuuuuuddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrruuuuuuuururuuuuruuururrrr..r..........rrrrrrrrddddrdrrrrrrrrrrrrddddddddrrrrrrrrrrrrrrrdddduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrdddddddddddrr","13":"..rrrrrrrrrrrrurrrrrrddddddddddldldllllldldlldldddddddddrrddddrrrrrrrrrrrrrrdddddddddllllllllllllllllllllllllddddddddddddrrrrrrrruuuuuuurrrrrrrrrrrrrrrrrrruuuurrrrurruuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuurrrrrrrrrrrrruuuuuuurrrruuuuurrrrruuuurrrrrrrrrrllllddddddddddddddddddddddddldldldllllllllddddddddddddddddddrrrrrrrrrrr","14":".rrrrrrrrrrrrrrrrrurrrrr.............r.....rdrrrrr.r...rdrrdrrddrddrdddddddrrrrrrrrrddddddddddduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrdddddddddddddddddddddd.d.........rrddrrrrrrrrrrrrrrrrrrr","15":".dddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddldllllllllllllllllllluuuullllldddddddddddddllllllllllllldddldddllllllllllluuuuuuuuuuuuuulllllllllllllllllllllllluuurrdddddddddddddddddddddd","16":"..rrrrrrrrrrrruuruururr......rrrr.......rrrrr......rrrrr.......rrrr......rrrrr.....rrrrrdddduruururr......rrrrr.......rrrr......rrrrr.....rrrrrrrrrrrrrrrrrrddddddddddddrrrrdddddddddllllllllllllldllddlddldll......lllllllluuuuullluluuulllllddddlldlddldllllluuululuuluulull.....lllllllldddddlllldldddlllluuuulllulull.llllllllldrrrrrrrrdddddddddddddrrrrrrrrrrr......rrrr.......rrrrr.......rrrr.......rrrr.....rrrrrdddduruurrr.......rrurr.......rrrr......rrrr.r......rrrr......rrrrrrrrrrrrrrrr","17":".......rrrrrrrrrrrrrrrrrrruuuuurrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuurruuuuuudddddddlddddddd.dddrddddddddldddddddddrdddddduuuurruurrrrrrrrrrrrrrrruurrrrrrruuuurruuurrrrrrrrrrrrr","18":".............rrrrrrrrrrrrrrrrrrrrrurrrrrrrrrrrrrrrrrrrrurruurr.rdddurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddrrrrrrrrrr","19":"rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuurdddddddddddddddddddddddddddddddddddddddddddddddldrrrrrrurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdlluuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrudddddddddddddddddddrr","20":"................rrrrrrrruuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrllllllllllllllllllddddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrruurrrrddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuurr","21":"rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddddddddllllllllllllllllllllluuullllllllllldddllllllllllllllulllllllllllllllllllldddddddddddddddddddddd","22":"...........rrrrrrrruurrrrruur...rrrrr...rrrrrr..rrrrr...rrrrr...rrrrrr..rrrrr...rrrrr..rrrrrr...rrrrr...rrrrr..rrrrrr...rrrrrrrrrrrrrrrrrlllllllllllll..lllll...lllll..llllll...lllll...lllll.....dddddlddddddddddd......llllllllllddddddddddddddddddddddddddl...lllll...lllll..llllll...lllll...lllll..llllll...lllll..lllddddddddrrrrrrrrr...rrrrr...rrrrrr..rrrrr...rrrrr...rrrrrr..rrrrr...rrrrrr...rrrrr..rrrrr...rrrrrr..rrrrr.rrrrrdrrrrrrrrrrrrrr","23":"rrrrrrrrrrrrrrruuuuuuuuuuuurrrrrrrrrrrrrddddddddddddddddddddddddddddddrddddddrrruuuuuurrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrr....rrrrrrruuuuuuuuuuuuuuurrrrddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrruuurr","24":".........rrrrrrrrrrrrrrrrrrrrddddddddrrdddddrrrddddrrrdddrrrrdddrrrrrddrrrrrrrrruuuuuu.uuuuuuulllluuuuuuuruuuuuuuuuuuuuuu.uuuuuuuu.rrruuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddrr","25":"..............rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuurr","26":"rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrddddddrrrrdddrd....rrrrrrrrrrrrrrrrrrrrrdddddddddd..ldddrruurrrrrrrrrrrrrrrddddddddddddddddddrdrrddddrrrrrrrrrrrrrrrrrrdddduuuuuuuuuuuuuuuuuuurr","27":"......................................................rrrrrrddddddddddddddrrrrrddddrrrrrrrrrrrrrrdddddddddddddddddrrdddddrrrrrrrrrrrrdddddddduuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrururuuuuuurrurrururruuuururururrrrrurrurrrrrrrrrrrrrrrruuuuuuuuulllllllllldddddddddddddddddldddddldldldldlllrrdddrdddddddddddddrdrrrrrd","28":"..rrrrrrrrrrrr.....rrrr.rrrrdrrrrrdddrdrrrrrrrrrrrrrrdddrddrrdddddddddddddddlluuuuuuuuurruuuuuuuuuuuuuuulluuuuuuuuuuuuuuuuuuurrrrruuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddrr","29":"rrruuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrddddddddddrrrrrrrrddddddddddddddrrrrrrrrrrrrrrrrrrrrrruurrrrrrrrrrrrddrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddddduuuuuuuuuuuuuuuuuu","30":"............................rrrrrrrrrrrrrrrrrrrrrrudddddddddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuruuuuu.........ruuuuuuuuurururrrrrrrrrrruuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuudddddddddddddddddddddddddddddddddddddddddddd"},"extreme":{"1":"..rrrrrrrrrrrrrrrrrrrrrrrrrrruuurrrrrrrrrrrrrddddrddddddluuuuurrrruuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","2":"..........rrrrrrrrrrrrddrrrrrr..rrrrrddddd....rrrrrrdddddddddddddrrrrrrrrrrrrrrrrrrr..rrrrrrrrrrrrr..rrdddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrr","3":"......rrrrrrrrrrrrrrrrrrrrrrrrrrdrdddrddrddrr....rrrrrdddd..rrrrrrrrddddddddddddllllllluuuuuuuuuuuuuuuuuuuuuuuuuuuuuururururuuuuuuuuuuuuururrurdrrdrrddrrrrrdddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","4":"............................................rrrrrrrrrrrrrrdddddddddddddrr.........rrrrrrrrrrrrrrr.........rrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuurruuulllulllluulluuurrrrrrrrrrruurr.........rrrrrrrrrrrrrrrrrrrrrr","5":"....rrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddrrrrrrrrrrrddddddrrrrrrdddddddurruuuuuuuuuuuu.....uuuuuuuuuuuuurrruuuuuuuuuuuuuuuuuullluuuurrrrrrrrrrrrddrrrrrrrrrddddrrrrdddddrrrrddddrrrrddddrrrrrrr","6":".............rrrrrrrrrrrrrrrrdddddddddrrrrrrrrrrrrrrrrrrrrrdddrrrrrddddddddddrrrrdrrur......rddddrrrrdrrrrrrrrrrrrrrrrrddrddddrrrrdddddrrdrddrdrr","7":"........rrrrrrrrrdddddrrrrruururrrrrrrrrrdrdrdrr..rrrrrrrrrrrruurrrrrrrrrrrrrrrrrrrrurrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuullllddddddddddddllldddddllllllddlldddddddddrddrddrddrddddrdddddrdrrrrrrrrrddddllllllllllllllllllllllllllllllllllllluuuuuuulllllllllllllldddddddlllllllllllldlllllllllllllllllll","8":"...............rrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddrddddrddddrrddddrrrrulllllllldlllulllllldlllllulllllllldlllulllldllllllulllllllldlllullld...urrdlllulllllllldddddddddddddddddd","9":"rrrdddddrrrrrrrrrrrrrrrrrdddddddrrrrrrrrrrrrrrrrrrrrrrrddddddddlllllllllllllllllluuuuuullllluuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddrr","10":".....................rrrrrrrrrrrrrrrrrrrrrddrrrrdrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuuuuu.......rrrrrrrrrdrrrurrrrdrdrdrddddddddddddddddddddddrrrrrrrddrrrrrrrrrrrrrrrrrrrrrrr","11":".........................rrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuudddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrr....rrrrrddddddddddduuuuuuuuuuull.....................lllllllll........llllluuuuuuuuuuudddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","12":"...........rrrrrrrrrrrrdddddddddddddddduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrdddrrrrrrrrrrrrrrrrrrrdddddrdrddddd.d........lluuuuurrrrrurrrurururrrrrrrrrrrrruuuuuuuuurrrrrrrrrrrrrdddddddddddddddddddddddddddddddddddrrrruuuuuuuuuuurr","13":"....rrrrrrrrrrrrrrrrrrdddddddddddddldldllll.lllllddddddddrrrrrrrrrrrrrrrrdddddddddddddllllllllllllllllllllllllddddddddddddrrrrrrrruuuuuuurrrrruuurrrrrrrrrrrrrrrrruuuurrruuuuuurrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuruuuuurrrrrrrrrrrrrrrrruuuuuuuuuuuurrrrrrrrrrrrrrruuuullllddddddddddlllddddddddddddddlllllllldddddddddddddddddddddrrrrrrrrrrr","14":".......rrrrrrrrrrrrruuruurururrrrrrrrddddd.............rrrrrrrrrrrrrrrdddddddddddddrrrrrrrdddddddddddduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrddddddddddddddddddddrddddrdrrrr...........dddd.r.drrrrrrrrrrrrrrrrrrrr","15":".............rrrrrrrrrrrrrrrrrrrrddddddddddrrrrrrdddddddddrrrrrrrrrdddddd....urrlllllllllllllllllllllllldddddddddddddllllllllllllllddlllllllllllllllllllllllllllllluuuuuulllluuuuuuuuulluuurrdddddddddddddddddddddd","16":"...................rrrrrrrrrrddrrrrdrr...rrrr..rrrrr...rrrrr..rrrr..rrrrrrrruuddr..rrrrr...rrrrr..rrrr...rrrrr..rrrr.rrrrdrrrrrrrrrdddrrrrrdddddddddllllllllullllluul.....lllll.....lllll.....llll....lllll......llll....lllll.....lllll.....llll.....lllll.....llll.....lllll.....lllll...llllllllllllldddrrrrrrrrdddddddddddddrrrrrrrrrrr...rrrr...rrrrr...rrrr.rrrrrrrddrrrrdduurr...rrrr...rrrr...rrrr..rrrrr..rrurrrrrurrrrrrrrr","17":"......rrrrrrrrrrrrrrddddddddddrrrrrrrrrrrrrdddrrrrrrrrrrrrdddddrddddrrrruuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurruuuuuuuuuurrrrrrddddddrrrrrrrrrrrrrrrrrrddrrrrrrrrrrrrrrdddddddrr","18":"...rrrrrrrrrrrrrrrrrrrrurrrrrrrrrrrrrrrrrrrruuuurur.rrrrdddddrrrrdrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","19":"rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuur..rd.ldddddddddddddddddddddddddddddddddddddddddddddlddrrrrurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdlluuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurruuuuuud.lldddddddddddddddddrrrrdrr","20":".......rrrrrrrruuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrddddddddddddddddddduuuuuuuuuuuuuuuuurruurrrrrrrrrrrrrrrrldddddddddddddddddddddddddddddddddddddrdddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuurr","21":"rrrrrrrrrrrrrrrrrrrrdddddddddddddddddddrrrrrrrrrrrrrdddllllllllllllllllllluullulllllllldddlllllllllllllluuullllllllllllllllllllllldddddddddddddddddddddddd","22":".....rrrrrrrruuurrrrurr..rrrr.rrrrr.rrrrr..rrrrr..rrrr.rrrrr.rrrrr..rrrrr..rrrrr.rrrr.rrrrr..rrrrr.rrrrr..rrrr.rrrrr........rrrrrllllldddddddllllldl.lllll..lllll.llll..lllll.lllll..lllll....ddd....ddddd.llllllllllddddddddddddddddd.dddddddddll..llll.lllll..lllll.lllll..llll.lllll..lllll.lllll..lddddddddrrrrrrr.rrrrr.rrrrdr..rrrrr.rrrr..rrrrr.rrrrr.rrrrr..rrrr..rrrrr.rrrrr.rrrrr..rrrr..rrrrrrrrrrrrrrrrrrrrrrr","23":"..........rrrrrrrrrrrrrrruuuuuuuuuuuurrrrrrrrrrrrrddddddddddddddddddddddddddddddrddddddrrruuuuuuuuuuuurrrrrrrrrrrrrruuuuuuuuuuurrrruuuuurrruuuuurrrrrrrrrruuuuuuuuuuuuuuurrrrddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrruuurr","24":".....rrrrrrrrrrrrrrrrrrrrdddddrdddddrrddddrrdddrrrdddrrrrdddrrrrdrrrrrdrrluuuuuu.....rrrrruuuuuuu.lluuululuuuruuuuuuuuuuuuuuuu.uuulluuuu.uuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddddddrr","25":"rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuurrrrrrrrrrrruuurr","26":"................rrrrrrrruuuuuuuuuuuuuuuuuuuuuuuurrrrrrrddddddddddddddddddddddddddddddddrddrrddddrddrddrrdddrrddrrdrruuuuuuurrrruuuuuuuuuuuuuuuuruuururururu.rurrurrrr.rrddddllddduuuuuruurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddddddddddddduuuuuuuuuuuuuuuuuuurr","27":".................................rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddddddddddddddddddddddddddddduuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrruuuuuuururururrurrruururururrurrrrrrrrrrrrrrrrrrrruuuuuuuuuuuullllllllllllddddddddddddddddddddddldldldldlldddddddddddddddddrrrrrrrrrd","28":".......rrrrrurrrrruuurrrrrrrrruuuuururrrrrrrrrrrrrurruuuuuuuuuurrrrrrrrruuulddddddddddddrdddddddddddr.rrrdddddddddddddrrr.dllldddddddllddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuurrrrrrrurr","29":".....rrruuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddrdddddddddrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuu","30":"...................rrrrrrrrrrrrrrrrrrrrudddddddddd....dddddddddrrddddddddddddddddddddddddddrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuururururr.rrrddrdrdrduuuuuurrrrrrrrrrrrruuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuldddddddddrddddddddddddddddddddddddddddddddddd"}};
+<script>const DEMO={"normal":{"1":".rrrrrrrrrrrrrrrrrrrrrrrrrrrrruurrrurrrrrrrrrrrrrrruuuuurrrrrrrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","2":"rrrrrrdrrrrrrrrrrrrrrrrrrrrrdddddddrrrrdddddddddddddrrrrdrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrr","3":"...............................rrrrrruuuuuruurururururrurrrr.rrrrrrdrdrrrrrrrruurrrrrrrrrrrrrllllllddddddddddlr.r...d.d...d.rrrr...r......................rurrrrrr.rrrrrrrrrr.r......u.rrrr....r..............rrrrrrrrrrrrrrrrr","4":".....rrrrrrrrrrrdddddrddrdddrddrddrr....rrrrrrrrrrrrrrrrrrrrrrrrr.......rrruuuuuuuuuuuuuuuuuuuuuuurruuurrrrrrrrrrrrrrrrrdddrrrrddrdrrrrrrrrrrrrrrrr","5":".............................rrrrrrrrrruururrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuurrrrrrrrruuurrrrrrrrrrdddddddlllllddddddddddddllld..l..ddrdrrdddddddddddddddd.llllllddduuuuuuuuuuuuuuuuuuu...rrruuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrddddrrrrrrrrrr","6":"...................................rrrrrrrrrr.drrrdddddddrrdrrrrrrrrr.dddu.rrurrrrrddddrdrrdrdddrrrrrrrrrrddrrrrddrrrrrrrrrrrrrrdddddddddrrrrrdddrrrrdrdrl..luuuurrrrrrrrrrddddddddrrrrrr","7":"...........................rrrrrrrrrrrrrrrrdddrrrrddrdddddddddddddddduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrruuuururrrrrrrrrdrdddrddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrdddrdddddddddddrrrruruuuruuruuuruuruuururuuuuuuuuuuuuuuurrrrrrrrdddrr","8":"rrrrrrrrrrrrrrrrrrrrrdddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","9":"........rrrrurrrruuuuuuuuuuuuuuuurrrrrrrrrurrrrrrrrrrrrrrrrrrrrruuuu.rrrrrrrrrlddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrddddddddddddddddddddddddddddddddddddddlldddd......llllllluulllllllllllllllllllllddrrrrrrrrrrrrrrrrrurrdrrrrrrrrrrrrrrrrruurr.uuuuuuuuuulluuuurrrrurr","10":"...........rrrrrrrrrrrrrrrrrrrrrurrr..........rrrrrruuuuuuuuuuuuuuuuddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrdrdrrrr....rrrrrrdddddddddddddddduuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrr","11":".....rrrrrrddrrrrruuuuuurrrrddddddddrrrruuruuuuurrrrrdrdrr.rrrrr.rr.rrrrrrdrdrrrrrrrrrddrrrrruuuuuuurrrrdddddddrrdrrruuuuururrrrrdrdrdrdrdrrrdrrrrrrrrrrrrrr","12":"rrrrrrrrrrrrruuuuuuuuuuuuuuuuurrrrrrrrrdddddddddddrr.rrrrrrrrrrrrrrrrrrrrrrddrdduuurururrrurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddrr","13":".....................rrrrrdddddddddddddrrrrrrrrrrrrruurrrrruuuuuurrrrrrr..r.........rrrrrrrrrrrrrrrrrrrdd.......ddddddddddd..d..d..d..d..d.drddddddrdrrdddddddlllllldllllllllllluulllllllullllllllllllllllllllllllllllrrrrddrrdrrrrrrrrrurrrrrrruuuuuur.rrrrrrrruuuuuuuurrrrruuuudddddrrdrrddddddrr.........rrrrrrrrrrrrrrrrrrrrrrrruu..uuuuu...u..ruuuururrruuuuruurrrrrrrrrrrrruuuuuuuullllllllllllluuurrrrrrdrrrrddrrrrrrrrrrdddddddlddddddddrdddddddddd","14":"rrrrrrrrrrrrrrrrrrrurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruurrrrrrrrrrrrrrdddrdrrrrrrrrrrrrrrrrrrrrrrrrrrr","15":"..............................................lllllllllllllllllllllllllllddddddddddddd.ddddddddddd...llllllllllllluudd.....rrrddd.....dddddddddddrrrrrrrrrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrud.rrrrrrrrrrrruuuuuurruuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrllld....ddddddddddddddddddd","16":"..rrrrrrrrrrurrrrrrdrddrdrdrdrrr...rrrrrrrrrrruuuuuruururrurrrrrrrdduurrrrrrdddrrdrdrdrrdrrrrrruuuuruurrururr.rrrrrrrrrrrrrrrdddddddddddddrrrrrrdddddddddlllllllllddlllllllllullldldldldlll..llllluuullllullldldldldlllllllluuuullllllllldllluulululullllllllddddlllllllllllllllrrrrrrrrddddddddddddddrrrrrrrrrrrrrrrrddddrdrdrdrrr.rrrrruuuru.urururrr...rrrrrrrrrrddddrdrdrdrrr.rrrrruuuru.urururrr.rrrrrrrrrrrrrrr","17":"....rrrrrrrruurrrrrurrrrrruuurrrrrrrrrr...rrrrrrrrrruuuurrrrrruurruuuuuddddldddddddddddddddddd..lddddddddddrrddrrrrrrruuurrruuuuuurrrrrruurrrrrrrrrrrruurrrrrrrrrr","18":"....rrrrrrrrdrrrrrrrrrrrrrrrr..rrrrrrrrrrrrrrdddddd..rruurrrrrr.rrddluuuuudl..ddd.rdr...rrrrrrrrrrrruruuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","19":"lllllllllllllllllllllllllllllllllllddddddddddddddddddddddddrrrrrrrruurrrdd..rrrdddddrrrrrrrrruuurrrrrrrrruuuurrrddrrrrrrrrrrrruurrrrrrrrrrrddrrrruurrrrrrrrdddddddddddddddddddddddd","20":".........................................................rrrrdrrrrrr.............u..u.u..u..u..u.rurrr.r...r..r..r.rrrrdddddddrrrrrrr..dddddddddddlllddddrdrr....rdddddrrrrrrrrrrrruu..rrrrdrlluuuuuuuuuuurr...............uuuu....uuuu.lur..u..ll.uurur.u..ururrrrrrrrrrruuuuuuuuuuuuuluullullllllrrrdd.......rururrrrrrrrrrrrrrrrrrrrrrdddddrrddll....ddddddddrrrrrrrrrrrrrddrr","21":".rdddddddddrrrrrdrdrdrrdrrrdrrrrrddddddddddddd.rrrdrrrrrrrrrrrrrrulllllllllldllllllllllullulllllluulllllllullllllllllldlllllddldllllllldlllllllllllullddddddddddddddddddd","22":".................rrrrrrrruurrrrrrur....rrrrrr....rrrrrr....rrrrrr....rrrrrr....rrrrrr....rrrrrrr....rrrrrr....rrrruurr...rrrrrr....rrrrrr....rrrrrrrrrrrrrrrrrrrrrlllllllllllllll....lllllll....llllll...llllll....llllllllllllllllllddddddddddddlddddddddddddddddddddddddrrrddddddddd..........l.llldlll....llllll....llllll....llllll....llllll....llllll....llllll....lllllddddddddrrrrrrrrrrr....rrrrrr....rrrrrr....rrrrrrr....rrrrrr....rrrrdrr...rrrrrr....rrrrrr....rrrrrr....rrrrrr...rrrrrrrrrrrrdrrrrrrrrrrrrrrr","23":"rrrrrrrrrrrrrrrrrrrrrrrddddddddddrrdrrrrruuuuuuuuurrrrrrrrrrrrrrrrrrrrrrddddddddddddrrrrrrrrrrrrrrruuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrr","24":".............rrrrrrrrrrrrruurururru.uu.uu.rr.rrrrrrrrrrrruuurrrrruuuuuruururuuuuuuurrrrddddddddddddddddd.drdddrdddddrddddddddlddlddddddddddddddrdddrrrruuururuuuuuuuuuurrrrrrrrrrrururrurrrruuuuuuuuurrrrrrrrr","25":"............rrrrurruuuuuuuuuuuuuu......rruuuuuuuuuuurrrrrdddd...........................rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuudddd....llllllldddddddddddddddddddddddddddd...dddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrrr.rrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuurr","26":".rrrrrrrrrrrrrrrurrrruuuuuuuuuuudddl.dddrrrrrdddrrrrrrddrrrrrrrrdddddddrrrddddddrrdrrrrr.........rrrrrrrrrrrrrruuuruuuuuuuuruuurrrrrrrrrrrrrrrruuuuuluuuluuuddddddrrrrrrrrrrrrrdrr","27":".rrrrrrrrdrrrrrrrrrrrrddddddddddddddrrrddddddddddddddddddrrrdrrrrrrdrrrrrdddrrrrrddddddddddddduuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrruuuuuururrrruuuuuuuuuuuuuruuururururrrrrrrururrrruuurrrrrrdddddddddddddddddldldldldldlldllddllllllllllddddddddldddddddrdrdrdrdrrrrdddrrrrdrdrrrrrrrrrrr","28":"..............rrrrrrrruuuuuuuur.rrrdrrrrr.rrrdrrrrr.rurrrrr.uuuuuuurruuuuruuuuuuuudddddddddl..drrrrrrrrrrrrurrrrdddddddddddddddddrdrdrrrrrrrrdddddddddddddddddddrrdddrrrrrrrddrrr..rrrruuuurrrrrrrrrrrrrrrruuuuuuuuuuuuuruuu","29":"..l......rrruuuuuuuuuuuuuuururrruuuuuulluuuudddddrrrrrrrdddddddddrrrr.....rrrrrrdddddddddddrrrrrrrrrrrrrrruuuuuuurrrrrrrrrrddddddrdrrdrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddddrrdddllllluuuuuuuuuuuuruururuuuuru","30":"...rrrrrrrrdrrrrrrrruur....r..rrrrrddddddddddddddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuluuuuuuururrrrrrrrrrrrruuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuullllllllllllllddddddddddddddddddddddddddlllllllllddddddddddddddddllddddddddddrrrrrrrrrrrrrrr"},"hard":{"1":".rrrrrrrrrrrrrruurrrrrrrrrrrrrrrdrdrdrrrrdrdrdrrrrdddluuuuuuuuuuuurrrruurrrrrrrruurrrrrrrrrrrrrrrrrrrrrrrrrrr","2":"..................rrrrrrrrrrrrrrrrrrrrrrdrdddddd...rdddddddddrrrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddrrrrrrrrrrrrrrrrrrrrrrr","3":"................rrrrrrrrrruurururrurrrrrrururrruurrrrrrrruuuurrrrrrrrrlllllddddddddddlddrr..drrrrr.........................rrrrrru...rrrrrru.ulu.uluuuruurrr..rrrrrrrrurrrrurrrrrrrrrdddrr","4":"rrrrrrrrrrrddrddddrdddddddrrr....rrrrrrrrrrrrrrrrrrr.....rrrrrrrrruuuuuuuuuurruuulluuuuuuuuuuurrrrrrruurrr....rrrrrrrrrrrrrrrrrrrrrrrrr","5":".....................rrrrrrrrrruuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrd..rr.....rrdddddddddddddddddddllldddlllllllllllluulllluuuuulllluuuulllluuuullll...uurrrrrrrrrrrrruuuuuuuuuurrrrrrrrrrruuuuuuuuuurrrrrrruuurrrrrrrrrrrrddrrrrdddddrrrrddddrrrrrddddrrrrrrrrrr","6":"..........rrrrrrrrdrrrrdddrdrdrdrrrrrrrrrrddrrdddddllrrrrddrdrdrd..d.d..drrr.rrrrrrrrluuuuurrrrrrrrdddddddrrrrddrrrrrrrrrrrrrddddddrrrddddrrrrrrrrrrrrd","7":".rrrrrrrrdrdrdddrdrdddrddrddrddrddrddrduruuruuruuruuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrrrrrruuuurrrrrdrdddrdrdddrdddddddddddddddddddrrrrrrrrrrrrrrrrdddddddddddddrrrrrruruuruuruuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrddrr","8":"rrrrrrrrrrrrrrrrrrddddrdrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","9":"....................rrrrrrrrrrrrdddddddrr..ddllddddrrdddddddrrrrrrrrrrrrruu......ddrrr.rrrrrrrruu...rrrddrrlllluullllllddddddllllllllllllllllluuuuuulluuuuuuuull....rruuuuuuuuuuuuuuuuuuuuuuuuull.......urrrurrrrrrrruuu....rrddrrrrrrrrrrrrrrrruuuuuurrrrrdrrrrurrrddrrrrruurrrrrrrrrrrrrrrrddddddrrdddddddddrrrrrrrrddddrr","10":"......................................................................................................................................................rrrrrrrrrrrrrrrrrrrrrr...........rrrrrrrrrrrrrrrrrrrrrrrrrr......rrrrrrrrrrrrrdddddddddddddddduuuuuuuuuuuuuuuull.......lllllllll........llllllll.......rruuuuuuuuuuuuuuuuddddddddddddddddll..................................................lllllllll........llllllll.......rruuuuuuuuuuuuuuuuddddddddddddddddll............rrrrrrrrrrrrrr...........rrrrrrrrrrrrrrrrrrrrrrrrrr......rrrrrrrrrrrrrrrrrrrrr","11":"..........rrrrrrrruuurrrrdddddddrrruuuuuuurrr..rdddddrdrrruururrdrdrrrdrrrrrrr.rrrrrrrruuuurrrrddddrrrruuuuuuurrrdddddddrrrrruuuurrr.rrdrdrrdrdrrrrrrrrrrrrrrrr","12":"............rrrrrrrrrrrruuuuuuuuuuuuuuuuddddddddddddddddddddddddddddddddrrrrrrrrrrrrrrrrrrrrrrruuuuuuuururuuuuruuururrrr..r..........rrrrrrrrddddrdrrrrrrrrrrrrddddddddrrrrrrrrrrrrrrrdddduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrdddddddddddrr","13":"..............................................................rrrrrddddddddddddr...rrrrrrdddddrdrrr..rururuuu.uurur..ruuuuur....rrrrrrrrrrrr.r.rr.rr....rrrrr.r...d.....dddddddddddddddddddddddl....lllllllllll.ll.ll.l.l....llllllddddddldlll...l.ldlllllllllddlllluuuullurururuurur....rrrrrrrrrrr.rr.r.rr.r...rrrrrrruuuruuuruuuuurrruurrrrdddddddddddddr....rrrrrrrrrrrr.r.rr.rr....rrrrrrruuuuuu.uruuuurrrruurrrrrrrrruurrruuuuuuuu..u....ll...lllllluuuululullddrdrrrrddr...rrrrrrddd....dddddlddddddddrdddddddd","14":"...rrrrrrrrrrrrrrrrrurrrrr.rrrrrrrrrrrrrrrrrrrrrrrruurrrrrrrrrrddrdrrdrdrrrrrurrrrrrrrrrrrrrrrrrrrr","15":".......................................................llllllllllllllllllllllllddddddddddldddd..................ldddddlllllllllllrrrdddrrrrrrrrrrrrrrrrrrrrrddd...........dddddddddddd.rddrrrrrrrrrrrrrurdrrrrrrrrrrrruuuuuuluuuu.......uuuuurrrrrrrrrrrrrrrrrrrrrrrrlld..dddddddddddddddddd","16":"...............rrrrrrrrrrrdrdrddrdrr......rrrr.r.....rrrr.......rrrrr......rrrr.......rrrrr....rrrrruuuurdrddrr.......rrrrr......rrrr.......rrrdrr......rrrr.r......rrrr.....rrrrrrddrrrrrrrdddddddddlllllllluuuullllldddddllldldddllllluuuullluluulullllddddlldlddlddlll......llllllluuuuulllululuullllddddlllddlddlll......lldllllluuuuulllluull.llllllllldrrrrrrrrdddddddddddddrrrrrrrrrrr.......rrrr.......rrrrr......rrrr.......rrrr......rrrrrdddduuruurrr......rrrr.......rrrr.......rrrrr.......rrrr.....rrrrrrrrrrrrrrrr","17":"....rrrrrrrrrruruuuurrrrrrd...u.rruuuuurrr.rrrrr..rddrrrrrrruuuuuu.ll.urrrrrrrrrruddd.d..l.ddrrddddlllllllddddddddrrrrrrddddddddddddrddrrrrrrurr.....uuu..rruuuurr.rrrddrr..rrrrrrruuuuuuu.ddrrrrrrrrrrr","18":"...................................rrrrrrdrdrrr...r..r.rrrrurrrrrrrrrrrdrrrrrrrrrrrrrrrurlll...ll..uurrrruurur..l.urrrrruruurrrrrrrdddddddrrrrrrrrrrrrrrrrrrrrrrrrurrrrrr","19":"lllllllllllllllddddddddddddddlddddllddddldddddlluullllddllllllluu.lrrrrrrrrddrruurrrrrrrddrrrrruurrrrrrrrrddrrruurrrrrrrrddrrrruurrrrrrrrrddrrruurrrrrrrrdddddddddddddddddd","20":"...........rrruurrrrruuuuurr.................d..drrrr....r..r.r..rrrrrrrruuruuuuur..u..u.luru.u..u.u..u..rrrrrrrrddr..r.r..r.rrrurulllllldd.......dddd.....d.d..d.d..d.d.ldllllllllldddddd..llrdrd..d.d..d.d..d.drrrrrrrrrrrrrrrrr....ldddddr..d..d.d..d.d..d.d..d.rrrrrrruur.r..r.r..r.rrrrr...dd....rrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuuuuuuuuuuuullrrrrrrrrddddddrr","21":".ddddddddrrrdrrdrrrrrddrrrrrdddrrrdrrrrrrrrdddddddddr....rrrrrrllllllllldllllllllllullllluullullullllllllllllllllddlllllddllldlllllllllllllulllddddddd......ddddddddddd","22":"...........rrrrrrrruurrrrruur...rrrrr..rrrrrr...rrrrr..rrrrrr...rrrrr...rrrrrr..rrrrr...rrrrrr..rrrrr...rrrrr..rrrrrr...rrrrr..rrrrrrrrrrrllllllllllll..lllll...lllll..llllll.lllllddddrdddl..llllldl.....ldddddddd......llllllllllddddddddddddddddddddddddddl..llllll...lllll..llllll...lllll..llllll...lllll..lllll......llddddddddrrrrrrrr..rrrrr...rrrrrr..rrrrr...rrrrrr..rrrrr...rrrrrr..rrrrr...rrrrrr..rrrrr...rrrrr...rrrrrrrrrrrdrrrrrrrrrrrrrr","23":"........rrrrrrrrrrrrrr..............rrrrrrrrrrrrrrrrrrrrrrrrrrr...............rrrrrrrrrrrrrrrrrrrrrdddddddddddrrrrrrruuuuuuuurrrrrrrrrrrrrrrrr","24":".........rrrrrrrrrrruruuruuruu.uuruurrrrruuuu..r.r.....rrrrrrrrrr.r.r..r..rrrruuuuuuuuullldddddrddddddddddrrrrrrddddd.lllddddddddddlddlddrrrrddddddddddddddrrrrrrrruurruurrrrrruuruuuurrruruuuuuuurrrrurrrrrr","25":"..................................................rrrrrrrrrrrr......rrrrrrruuuuuuuul.....lllllluuuulllluuuuuuuuuuuurrrrrrrrrrrdddd............................rrrrrurrrrrrrrd...rrrrrurrrrrrrd....uuuudddd...rdddddddddddd......rrrrrdddddddddddddddddddddddddd..llllddddddrrrrdrrrrrrrrrrrrrrrrrrrdrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuuurr","26":"........rrrrruuurrrrrrrrrrrrruuuuuuuuu..........ddddl.l.ll.l.l...lllllldddddddddrrrrrrrdddd....rrrrrrrrrrrrrrddrrrrrrrrrrdddddrrrrrrr.........rruuuur.rrrrrrrrrruuuuuuurr...rrrrrrruuuuuu...rrruuuuuuu.rrrdddddddrrrrrrrrrrrrrr","27":"..................rrrrrrrrrrrrrdrrrrrrrrrrrddddrrrrrrrrrrrrrrrddddddddddddddrddd..ldddddddddddddddddddddddddduuuuuuuuuuuuuuuuuuuurrrrrrrrrrrruuuuuuurrrruuuuuuuuuuuuruuururuurururrrr.r.rrrrruurrrrrrrdddddddddddddddddddddddddd.r..llllllllllllllllllllldddddlddddddddrddrddrdrrrrrrrrrrrrrrrrrrrr","28":".............rruuuuuuuuuuuuuuuuuuuuuuururrrrrrur..rrrrrrrrdrrrrrrrrrrrrrldddddddddddldddrrrrrrdddddr.rr.rrrr.rrr.rddddrdddr..rrrrrr......ddddddddddddr.rr....ddddddddrdrrrrrdrdrrrrrrrruurrrrrrrrrrrrrrruuuuuuuuuuuuuuuuu","29":".l........................................rrrrrrruuuuuuuuuuuuuuuuuuullluuuuurrrdd.rrddrdrrrrrrdrrrrrddddddddddddddddddrrrrrrrrrrrrruuuuuuurrrrrrrrrrrdddddrduuuurrrrrrrrrrrrrrrrrdddddrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddrrdddddddllluuuuuuuuuuuuuruurruuu","30":"rrrrrrrdrrrrrrrruur....r....r....r....r....r....r....dd......ddddddddddddddddd.ddddddddddddddddddddddrrrrrrrrururuururrurrr.r.r.rr.rur.rr.rrruuuuuuuluuuullll...................l.......rrrrrr..r..u.urruruurururu....uuuuuuurr...rrrrrrrrrrruuruuruuruuruurrr...rrrrrrrrrrrrllllddddddddlllllllldddddddddddddddddddddddddddddddddddlllllllllllddddddddrrrrrrrrrrrrrr"},"extreme":{"1":"rrrrrrrrrrrrrrurrrrrrrrrrrrruuurrrrrrrrrrrrrdddddrddddddluuuuurrrruuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr","2":"..........rrrrrrrrrrrrddrrrrrr..rrrrrddddd....rrrrrrdddddddddddddrrrrrrrrrrrrrrrrrrr..rrrrrrrrrrrrr..rrdddddddddrrrrrrrrrrrrrrrrrrrrrrrrrrr","3":"......rrrrrrrrrrrrurururrurrruruurrrrurrrrrrruuuurrrrrrrrrrllllllllddddddlddddddrdd.drdrdrrrrrrrdrrrrdrrrrrrruruuuuuuurururrurrrurururrrrurrrrrrrrrrrr","4":"............................................rrrrrrrrrrrrrrdddddddddddddrr.........rrrrrrrrrrrrrrr.........rrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuurruuulllulllluulluuurrrrrrrrrrruurr.........rrrrrrrrrrrrrrrrrrrrrr","5":".............rrrrrrrrrrddddrrrdrrrrrrrrrrrrrrrrrrrrrrrrruuurrrrrdddddldlddddddddddddlllllluuuuuurrrrruuuuuuuuuuururrruuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrddrrrrdddddrrrrddddrrrrrddddrrrrrrrrrr","6":"rrrrrrrrddrrrrdddrdddrdrddrdrr...............rrrrdrdd.ddrdrrr..............rrrrrddrdrr...............rrrrdrddrddrrr........rruuurdrddrddrdrr............rrrrrrrrr.rururr..rrurrrrdddrddddr.rrruu........urrrddddrrrddd","7":"......................................................rrrrrrrrrrrruruuuuuuuuuuuuuuurrrrrrdddddddddddddddddddddddddddrd.r.r..r.r..r.r.r..r.r.r..rruur............................lllllllddlllllddddddddrrrruurrrrrrrrrrrrrururuuuuuurrrruruuuuuuuuuuuuuuuuuuuuuuuuuuuuuddddddr.r.r..r.r.r..r.r.r..r.rrrddddr...dddddrddrdrdrddrdrdrddrdrdrddrdddlddddddddllluuuuuuuuuulluuuuuuuuuururuuuuuurrrrdrdrddrdrdrddrdrdrrrrrrrrr","8":"rrrrrrrrrrrrrrrrrddddrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdrrrrrrrrrr","9":"rrrddddrrrrrdrrrrdddddddddddddddrruu...rrrddrrrrrrrrrrrrrruu.........dd.rddddrrrrruurrrrrrllllddllluu.lllllddlllllllllllllluu........uuuullluuuuuuuull....rruuuuuuuuuuuuuuuuuull.uuuuurruuullrrrurrrruuu.....rrrddrrrrrrrrrrrrruu.rrrrrrddrrrrruurrrrddrruu....rrrrddrrrrrrrrrrrrrruu....rrrddrrrdddddddddrrrrddddrrrrrr","10":"........................................................................rrrrrrrrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuddddddddddddddddll.........rrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuddddddddddddddddll............................................rrrrrr.............rrrrrrrrrrrrrrdddddddddddddddduuuuuuuuuuuuuuuurrr.........rrrrrrrrrrrrrrrrrrrrr","11":"rrrrrrrrruuurrrrddddddrdrrrruuuuuuurrrrrdrdrddrdrrdrrrrdrrrrrrrrrrrrrruuurruuuurrrrrdddddddrrrruuuuuuurrrrrdrddrdrrdrrdrrrdrrrrrrrrrrrrrrr","12":"...........rrrrrrrrrrrrdddddddddddddddduuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuurrrrrrrrrrrrrdddrrrrrrrrrrrrrrrrrrrdddddrdrddddd.d........lluuuuurrrrrurrrurururrrrrrrrrrrrruuuuuuuuurrrrrrrrrrrrrdddddddddddddddddddddddddddddddddddrrrruuuuuuuuuuurr","13":"....lllddddddddrddrdrrdrrrrrrrrrr.r....u.........uruuuuuuuuuururr..rurur.rrrr.r.rrrrrrddddrdrr..rrdrrrr.rr..rrrrrddd..ddddddddddd.ddddd.d......ddddddl.llllllllllllll.llllllllldddddlddlll..l.l.lllll.l.l.lllluluulull.dd.rruruuuurrrrrrrrrrrrr.rrrrr.rrrrrr.rruuuuuuuuuuururr..rrdrd.ddddd.r.rrdddddr.rrrrrrrrrrrrrr.rrrrrrrrr..ruu...........uuuuuuuuuruurr..rruur.rrrrurrrrrrruuu....uuuuull.........llllllluuuululldddrrrrrrrrrdrrrddd.dddd.d.dddddddddddddddd","14":".................rrrrrrrrrrrrrrrrrrrrrrrrurrrrrrrrrrrrrrrrrrrrruurddrrrrrrrrrrrrrrrdrrrrrrdrrrrrrrrrrrrrrrrrrr","15":".....rrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddd...........................dddddrrrdddrrrrrrrrllddddddddddddddd...lllllllllllllllddlllllllllllllllllllllulllllllllllldlllllllllllllllllllllluuuuuuuuuu.....uuuuulluuud...rrddddddddddddddddddddd","16":"..rrrrrrrrrrddrrrrdrr...rrrrr..rrrr...rrrrr..rrrr...rrrrr...rrrrr....dll..uuuddrr...rrrr..rrrrr...rrrr..rrrrr...rrrrr.rrdrrrrrrrrrrdddrrrrrdddddddddllllllllullllluull.....llll....lllull.....llll.....lllll.....lllll.....llll.....lllll.....llll.....lllll.....lllll.....llll....lllll..lllllllllllllddddrrrrrrrrdddddddddddddrrrrrrrrrrr...rrrr...rrrrr...rrrr...rrrr...rrrrr...rrrr....lldddduurr...rrrr...rrrr...rrrrr...rrrr..rrurrrrurrrrrrrrrr","17":"........rrrrrrrrurrrrrrrrdddrr....ll.drrrrrrrrrrdd.luuruuuuuuuu.l..rr.rrrrrrrd...uruuuuuuuuull.rrrrrrrrrrddluuruuddddlddddddrr..llllllldddllll.rr..llddddddrrrrrrrrrrddlddddddrr..lldddrdduuuu.l..rrrrrrrrrrddluuruuuuuuuul.drrrrrrrrrr..lluuruuuuuuuu.lddrrrrrrrrrrddddlddddrrrrrrrrrrr","18":"...........rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrurrrrlllu.uuuru..rrrrrruuuururuuurrrrrrrrrrrrrrrrrdddddddrrrrrrrrrrddddddrrrdddddrrrrrrr","19":"....rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddddddddddddduuuuuuuuuuuuuu..llllllllllllllllllllllllllllllddddddlddddddddllluulldddddddlddddlddddllddddllllllllllllllllllllllllllllluuuuuuuuuuuuuudddddddddddddddddd","20":"....rrruuuuurrrrruruur...........d.drdrrr...rrrrrrurrrrrruuuuuur..u.u.uu.u.u.ururrrrrrrdd.r.rrrrrrurulllllldd....dddd...d.d.d.dldlllllddllllddddddddllrrd.d.drdrrrrrrrrrrrrrrdrr..dddddd...d.d.d.d.dd.drdrrrrrruur.r.r.rrrrrrruuuuruuuuururururrrurrrrrrrrrruuuuuuuuuuuuuuuullrrrrrrrrddddddrr","21":"..........rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddddddd............dddddddddd...........llddlllldlldlllllllllllllulllluullullllllllulll..llllllllddllldldlllldlllllllllllllllulddddddd...rrddrrrrdrrrrdddddddd","22":".....rrrrrrrruuurrrrrur.rrrrr.rrrrr.rrrrrr.rrrrr.rrrrr.rrrrr.rrrrrr.rrrrr.rrrrr.rrrrr.rrrrrr.rrrrr.rrrrr.rrrrrrrrlllllllldddddddllllldl.lllll.llllll.lllll.lllll.lllll...dddddddd.......dddddddd....llllllllllddddddddddddddddddlllll.llllll.lllll.lllll.lllll.llllll.lllll........llllddddddddrrrrrrrrrrr.rrrrr.rrrrr.rrrrr.rrrrrr.rrrrr.rrrrr.rrrrr.rrrrrr.rrrrr.rrrrrrrrrdrrrrrrrrrrrrrrrrrrrr","23":"...................rrrrrrrrrrrrrr.........rrrrrrr..........rrrrrr........rrrrrrr.........rrrrrrr.........rrrrrrr.........rrrrrrr.........rrrrrrr.........rrrrrr.......rrrrrrrrrrrrrrrrrr","24":".rrrrrrrrrrrrrrurruuuuuuuur.rrrrrrrru.u.urururrurrrr.r.r..rrrruuuuullluuuuu.rrrddddddddddddlddddrrrdddrddlddddddddddlddlddrrrddddddddddddddrrrurrrrrurruurrrrrruuuuurrrruuuuuurruuuuuuuurrrrrrrrr","25":".........................................................................rrrrrrrrrrrrrrrrdddddrrruuuuuuuuuuuuul.llllllulllluuuuuuuuuuuuuuurrrrrrrrrrrdddd.......................................rrrrr....urrrrrrrrrrrrrrrrrrrrd.....uuuudddd.......dddddddddddd........ddddddddlddddd..rdddddddddddrrddddddddrrrrdrrrrrrrrrrrrr.....rrrrrrrrrrrrrrrrrrrrruuuuuuuuuuuuuuuuuuuurr","26":".....................................rrrrruurrrrrrrrruuuuuuuuuurrrrddddl.lddd.rrrrrrrrrrrdrrrrddddd....rrrddddrrr............dddddddrrrrrrr.........rruuuur.r.rrrrrrrrruuuuuuurr....rrrrrruuuuuu...rrrruuuuuu.urrrdddddd.drrrrrrrrrrrrrr","27":"........rrrdddddddddddddddddd.rddddrrrrrrrrrrrrrrrrrrrrrrrrddddd.rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrdddddddrddddrdrdrdrrrr..rrrrrruuuuuuuuluuluuuuuuddd.d.llllllllllllllllllllllllulllllllddd..ddddddddddddddddduuuuuuuuuuuuuuuuuuuurrrrrrrrrruuuurrrrrddrruuuuuuuurrrrruuuuuuuuuurruuururuurrrrruuurrrrrrrddddddddddddddddddddddddddr..rrruur.dddddddddrrrrddddddd","28":"......................rrrrrrrrrrruuuuuurrrrrruuuuuuruurrr......u.urrrr...uuuururrrrruuurrrrrrrddddrrrrrrddddddrdddrrd.dlddddrdddddl..rrrr.......rrrrrr.rrdddddddddddrdddddddrdddddddrdrrr........rrrrrrr....ruuurruuuuururrrrrrrrrrruuuuuuuuuuu","29":".l......rrrrrruuuuuuuuuuuurururuuuuuuuluullllurrdd.rrrrrddddrrrrruu...rddrrrrddddddddddddddddddrrrrrrrrrrrrruuuuuuurrrrrrrrrrrrrddddddurrrrrrrrrrrrrrrrddrrrrrrr....rrrdddddddddddrrrrdrrrrrrrdddddrdddrdrdddlllluuuuurruuuuuuruuuuuluurr","30":"......................................rrrrrrrurrrrrrrrrddrrrrrruuddddddddddd........ddddddddddddddddddddd.dddddddddrrrrrrruuuuuuuuuuuuururrrrurrruurrrr.....r................................rurrrrrr....r...u...u.rrurrururuuuuuuuuuurrrrrrrrrrrrrrrrrrrrrrrrrrrrrruuuuurruuullllddddddddddddddddddddddldldldlldldldlddddddddllllllllllldddddddddddddrrrrrrrrrrrrrr"}};
 const DEMO_SPD={normal:.93,hard:1,extreme:1};
 </script>
 <script>
