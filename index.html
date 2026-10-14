@@ -383,6 +383,16 @@
     </a>
 
     <!-- 11. Destiny Cards -->
+    <a class="card c-stone" href="hardest.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="7" height="7" fill="currentColor" fill-opacity=".35"/><circle cx="16" cy="8" r="2.6"/><circle cx="16" cy="24" r="2.6"/><circle cx="23" cy="16" r="2.6"/><path d="M16 11v10M26 16h3" opacity=".45"/></svg>
+      </div>
+      <div class="card-title">უძნელესი გზა</div>
+      <div class="card-sub">The Hardest Path · 30 levels</div>
+    </a>
+
     <a class="card c-freq" href="cards.html">
       <div class="card-glow"></div>
       <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
@@ -981,7 +991,7 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       grid.innerHTML='';
       grid.appendChild(frag);
       applyGroups();                                  /* regroup the API order */
