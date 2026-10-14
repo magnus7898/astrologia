@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>უძნელესი გზა · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(200,60,70,.12),transparent 60%),var(--void);color:var(--ink);
+  font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
+.page{max-width:900px;margin:0 auto;padding:24px 14px 60px}
+header{text-align:center;margin-bottom:14px;position:relative}
+.back{position:absolute;left:0;top:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.75;text-decoration:none;
+  border:1px solid var(--border);border-radius:3px;padding:6px 11px}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(22px,5vw,36px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px}
+.hud{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px}
+.hud div{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 4px;text-align:center}
+.hud b{display:block;font-family:'Cinzel',serif;font-size:18px;color:var(--gold-lt);font-weight:400;line-height:1.2}
+.hud span{font-size:10px;color:var(--ink-dim)}
+.wrap{position:relative;width:100%;aspect-ratio:25/15;background:#0b0918;border:1px solid var(--border-h);border-radius:8px;overflow:hidden;touch-action:none}
+canvas{display:block;width:100%;height:100%}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:10px;text-align:center;padding:14px;
+  background:rgba(8,6,18,.93);overflow:auto;z-index:2}
+.ov[hidden]{display:none}
+.ov h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
+.ov p{font-size:12.5px;color:var(--ink-mid);max-width:520px}
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:10px 20px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
+.btn.ghost{background:none;color:var(--gold);border:1px solid var(--border-h);font-weight:400}
+.lvgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;width:100%;max-width:560px}
+.lvgrid button{aspect-ratio:1;border-radius:6px;border:1px solid var(--border-h);background:var(--raised);color:var(--ink);font-family:'Cinzel',serif;font-size:14px;cursor:pointer;position:relative}
+.lvgrid button.done{background:rgba(95,207,138,.18);border-color:var(--ok)}
+.lvgrid button:disabled{opacity:.3;cursor:default}
+.lvgrid button small{position:absolute;bottom:1px;left:0;right:0;font-size:7.5px;color:var(--ink-dim);font-family:'Noto Serif Georgian',serif}
+.bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.bar button{background:none;border:1px solid var(--border-h);color:var(--gold-lt);border-radius:6px;padding:6px 12px;cursor:pointer;font:inherit;font-size:12.5px}
+.pad{display:none;margin:12px auto 0;width:200px;height:200px;position:relative;touch-action:none;user-select:none}
+.pad button{position:absolute;width:66px;height:66px;border-radius:12px;border:1px solid var(--border-h);background:var(--raised);color:var(--gold-lt);font-size:24px}
+.pad button.on{background:rgba(201,168,76,.25)}
+.pad .u{left:67px;top:0}.pad .d{left:67px;bottom:0}.pad .l{left:0;top:67px}.pad .r{right:0;top:67px}
+@media (pointer:coarse){.pad{display:block}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:16px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.panel li{font-size:12.5px;color:var(--ink-mid)}.panel ul{padding-left:18px}
+.optsrow{display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:12px;color:var(--ink-mid)}
+.optsrow label{display:flex;gap:6px;align-items:center;cursor:pointer}.optsrow input{accent-color:var(--gold)}
+.music .mrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.music select,.music input[type=text],.opts select{background:rgba(10,8,24,.8);border:1px solid rgba(201,168,76,.25);border-radius:6px;color:var(--ink);padding:6px 9px;font:inherit;font-size:12.5px}
+.music select{flex:1 1 220px;min-width:0}.music input[type=text]{flex:1 1 220px;min-width:0}
+.music input[type=range]{accent-color:var(--gold);width:110px}
+.mb{background:none;border:1px solid var(--border-h);color:var(--gold-lt);border-radius:6px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
+.mb:hover{background:rgba(201,168,76,.1)}
+.mauto{font-size:12px;color:var(--ink-mid);display:flex;gap:6px;align-items:center;cursor:pointer}.mauto input{accent-color:var(--gold)}
+.mplayer{margin-top:10px;width:220px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#000}
+.mplayer iframe{width:100%;height:100%;display:block}
+.mnote{font-size:11px;color:var(--ink-dim);margin-top:6px}
+.opts select{padding:3px 6px;font-size:12px}
+
+@media(max-width:600px){.back{position:static;display:inline-block;margin-bottom:8px}.hud b{font-size:15px}.lvgrid{grid-template-columns:repeat(6,1fr)}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html?g=fun">← გასართობი</a>
+  <h1>უძნელესი გზა</h1>
+  <div class="sub">წითელი კვადრატი · ლურჯ წერტილებს ნუ შეეხები · 30 დონე</div>
+</header>
+<div class="hud">
+  <div><b id="h-lv">1</b><span>დონე / 30</span></div>
+  <div><b id="h-coin">0/0</b><span>მონეტა</span></div>
+  <div><b id="h-dl">0</b><span>სიკვდილი (დონე)</span></div>
+  <div><b id="h-dt">0</b><span>სიკვდილი (სულ)</span></div>
+  <div><b id="h-t">0.0</b><span>წამი</span></div>
+</div>
+<div class="wrap" id="wrap"><canvas id="cv"></canvas><div class="ov" id="ov"></div></div>
+<div class="pad" id="pad"><button class="u" data-k="u">▲</button><button class="l" data-k="l">◀</button><button class="r" data-k="r">▶</button><button class="d" data-k="d">▼</button></div>
+<div class="bar"><button id="b-levels">☰ დონეები</button><button id="b-restart">↻ დონე თავიდან (R)</button><button id="b-pause">⏸ პაუზა (P)</button></div>
+<div class="optsrow"><label><input type="checkbox" id="o-snd" checked> ხმა</label><label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label></div>
+<div class="panel music">
+  <h3>🎵 ენერგიული მუსიკა · YouTube</h3>
+  <div class="mrow">
+    <select id="m-pre"></select>
+    <button class="mb" id="m-play" title="დაკვრა / პაუზა">▶</button>
+    <button class="mb" id="m-next" title="შემდეგი">⏭</button>
+    <input type="range" id="m-vol" min="0" max="100" value="45" title="ხმა">
+  </div>
+  <div class="mrow">
+    <input type="text" id="m-url" placeholder="ან ჩასვი შენი YouTube ბმული (ვიდეო ან playlist)">
+    <button class="mb" id="m-add">ჩართვა</button>
+  </div>
+  <label class="mauto"><input type="checkbox" id="m-auto" checked> თამაშის დაწყებისას მუსიკა ავტომატურად ჩაირთოს</label>
+  <div class="mplayer"><div id="yt"></div></div>
+  <div class="mnote" id="m-note">მუსიკა YouTube-იდან იკვრება; თუ ვიდეოს ავტორს ჩაშენება აკრძალული აქვს, ავტომატურად შემდეგზე გადავა.</div>
+</div>
+
+<div class="panel">
+  <h3>✦ როგორ ვითამაშოთ</h3>
+  <ul>
+    <li>მართე <b style="color:#e2685c">წითელი კვადრატი</b> — ისრებით ან WASD-ით; ტელეფონზე — ღილაკებით ან თითის გასმით დაფაზე (ჯოისტიკი).</li>
+    <li>მიდი <b style="color:#8fe39a">მწვანე სასტარტო ზონიდან</b> მწვანე ფინიშამდე, ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო.</li>
+    <li>თუ დონეზე <b style="color:#f1d34a">ყვითელი მონეტებია</b>, ფინიში მხოლოდ ყველას აკრეფის შემდეგ ითვლება.</li>
+    <li>შეხება → თავიდან სტარტიდან, მონეტები ბრუნდება. წერტილები არ ჩერდებიან — დაელოდე სწორ მომენტს.</li>
+    <li>30 დონე, 6 ტიპის: დერეფანი · ტალღები · ორბიტა · გველი · სვეტები · რგოლები — თითო ტიპი 5-ჯერ, სულ უფრო რთულად. ყველა დონე ავტომატურად შემოწმებულია, რომ გავლა შესაძლებელია.</li>
+  </ul>
+  <div id="stats" style="font-size:12.5px;color:var(--ink-mid);margin-top:8px"></div>
+</div>
+</div>
+<script>/* levels.js — 30 levels for "უძნელესი გზა". Shared by the game and the offline solver.
+   Board 25×15 tiles of 32 px. Every motion repeats with period P (8 s): each enemy makes k whole cycles per P. */
+var HG=(function(){
+const W=25,H=15,T=32,P=8;
+function blank(){return [...Array(H)].map(()=>Array(W).fill('#'));}
+function carve(g,x0,y0,x1,y1,ch){for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)g[y][x]=ch||'.';}
+const C=(x,y)=>[x+.5,y+.5];                       /* tile centre */
+/* ── generators: d = difficulty 0…4 ── */
+function corridor(d){
+  const g=blank(),y0=d>=2?4:5,y1=d>=2?10:9;
+  carve(g,4,y0,20,y1);carve(g,1,y0,3,y1,'S');carve(g,21,y0,23,y1,'E');
+  const n=4+d*2,E=[],k=d>=4?3:d>=2?3:2;
+  for(let i=0;i<n;i++){const x=5+i*(15/(n-1))*(n>1?1:0);
+    E.push({t:'line',a:[x+.5,y0+.5],b:[x+.5,y1+.5],k,ph:d<2?(i%2?.5:0):(i*.13)%1});}
+  const coins=[];if(d>=1)coins.push(C(12,y0));if(d>=2)coins.push(C(12,y1));if(d>=3){coins.push(C(8,y1));coins.push(C(16,y0));}
+  return {g,E,coins,name:'დერეფანი'};
+}
+function waves(d){
+  const g=blank();carve(g,4,3,20,11);carve(g,4,1,20,2,'S');carve(g,4,12,20,13,'E');
+  const rows=d<2?[4,6,8,10]:[4,5,6,7,8,9,10],m=1+Math.floor(d/2),k=d>=3?2:1,E=[];
+  rows.forEach((y,j)=>{for(let i=0;i<m;i++){E.push({t:'line',a:[4.5,y+.5],b:[20.5,y+.5],k,ph:(i/m+(j%2?.5:0)+j*.07)%1});}});
+  const coins=[];if(d>=1)coins.push(C(4,7),C(20,7));if(d>=3)coins.push(C(12,7));
+  return {g,E,coins,name:'ტალღები'};
+}
+function orbit(d){
+  const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const s=2+Math.min(d,2),R=3+Math.min(d,2),E=[];
+  for(let i=0;i<s;i++)for(let r=1;r<=R;r++)E.push({t:'circ',c:[12.5,7.5],r,k:1,ph:i/s});
+  if(d>=2)for(let i=0;i<4+(d>=4?2:0);i++)E.push({t:'circ',c:[12.5,7.5],r:R+1.2,k:-1,ph:i/(4+(d>=4?2:0))+.125});
+  if(d>=4)for(let i=0;i<3;i++)E.push({t:'circ',c:[12.5,7.5],r:2.5,k:-1,ph:i/3+.1});
+  const coins=[C(12,7)];if(d>=1)coins.push(C(4,3),C(20,11));if(d>=3)coins.push(C(4,11),C(20,3));
+  return {g,E,coins,name:'ორბიტა'};
+}
+function snake(d){
+  const g=blank();
+  carve(g,1,2,22,4);carve(g,2,6,22,8);carve(g,2,10,23,12);carve(g,20,5,22,5);carve(g,2,9,4,9);
+  carve(g,1,2,3,4,'S');carve(g,21,10,23,12,'E');
+  const E=[],k=2+Math.floor(d/2),per=3+d;
+  [[2,4,5,19],[6,8,5,19],[10,12,6,19]].forEach(([y0,y1,xa,xb],L)=>{for(let i=0;i<per;i++){const x=xa+i*(xb-xa)/(per-1);
+    E.push({t:'line',a:[x+.5,y0+.5],b:[x+.5,y1+.5],k,ph:((i+L)%2)*.5+(d>=3?i*.07:0)});}});
+  if(d>=2)E.push({t:'line',a:[20.5,4.5],b:[22.5,4.5],k:2,ph:0},{t:'line',a:[2.5,9.5],b:[4.5,9.5],k:2,ph:.5});
+  const coins=[];if(d>=1)coins.push(C(22,7));if(d>=2)coins.push(C(2,7));if(d>=4)coins.push(C(12,3));
+  return {g,E,coins,name:'გველი'};
+}
+function pillars(d){
+  const g=blank();carve(g,3,2,21,12);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const xs=d<2?[6,12,18]:[5,9,13,17],ys=d<1?[7]:d<3?[4,10]:[4,7,10],E=[],k=1+Math.floor(d/2);
+  xs.forEach((x,i)=>ys.forEach((y,j)=>{g[y][x]='#';
+    const pts=[[x-.5,y-.5],[x+1.5,y-.5],[x+1.5,y+1.5],[x-.5,y+1.5]];
+    const n=d>=2?2:1;for(let q=0;q<n;q++)E.push({t:'path',pts,k:(i+j)%2?k:-k,ph:q/n+(i*.1)});}));
+  const coins=[];if(d>=1)coins.push(C(12,2),C(12,12));if(d>=3)coins.push(C(3,2),C(21,12));
+  return {g,E,coins,name:'სვეტები'};
+}
+function rings(d){
+  const g=blank();carve(g,3,1,21,13);carve(g,1,6,2,8,'S');carve(g,22,6,23,8,'E');
+  const rr=[2,3.6,5.2].slice(0,1+Math.min(d,2)),E=[];
+  rr.forEach((r,j)=>{const n=4+Math.min(d,3)+j*2;for(let i=0;i<n;i++)E.push({t:'circ',c:[12.5,7.5],r,k:(j%2?-1:1)*(d>=3&&j===0?2:1),ph:i/n});});
+  if(d>=4)for(let i=0;i<5;i++)E.push({t:'circ',c:[12.5,7.5],r:6.4,k:-1,ph:i/5});
+  const coins=[C(12,7)];if(d>=2)coins.push(C(12,1),C(12,13));
+  return {g,E,coins,name:'რგოლები'};
+}
+const GEN=[corridor,waves,orbit,snake,pillars,rings];
+const LEVELS=[];for(let i=0;i<30;i++){const L=GEN[i%6](Math.floor(i/6));L.n=i+1;L.d=Math.floor(i/6);LEVELS.push(L);}
+/* ── motion ── */
+function plen(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=Math.hypot(b[0]-a[0],b[1]-a[1]);}return s;}
+function pos(e,t){
+  let u=((t/P)*Math.abs(e.k)+e.ph)%1;if(u<0)u+=1;
+  if(e.t==='line'){const s=u<.5?2*u:2-2*u;return [e.a[0]+(e.b[0]-e.a[0])*s,e.a[1]+(e.b[1]-e.a[1])*s];}
+  if(e.t==='circ'){const a=2*Math.PI*u*Math.sign(e.k);return [e.c[0]+e.r*Math.cos(a),e.c[1]+e.r*Math.sin(a)];}
+  const pts=e.pts,L=e._L||(e._L=plen(pts));let d=(e.k<0?1-u:u)*L;
+  for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length],l=Math.hypot(b[0]-a[0],b[1]-a[1]);
+    if(d<=l){const f=l?d/l:0;return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];}d-=l;}
+  return pts[0];
+}
+function speed(e){/* px/s */ if(e.t==='line')return Math.hypot(e.b[0]-e.a[0],e.b[1]-e.a[1])*2*Math.abs(e.k)/P*T;
+  if(e.t==='circ')return 2*Math.PI*e.r*Math.abs(e.k)/P*T;return plen(e.pts)*Math.abs(e.k)/P*T;}
+return {W,H,T,P,LEVELS,pos,speed,PLAYER:{half:9,speed:150},ER:8,CR:6};
+})();
+if(typeof module!=='undefined')module.exports=HG;
+</script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const {W,H,T,P,LEVELS,pos,PLAYER,ER,CR}=HG;
+const cv=$('cv'),ctx=cv.getContext('2d');
+const store={get(k,d){try{const v=localStorage.getItem('magnus_hg_'+k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem('magnus_hg_'+k,JSON.stringify(v));}catch(e){}}};
+let AC=null;
+function tone(f,d=.09,type='sine',v=.12){if(!$('o-snd').checked)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,AC.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d);}catch(e){}}
+const vib=p=>{if($('o-vib').checked&&navigator.vibrate)try{navigator.vibrate(p);}catch(e){}};
+
+/* ── state ── */
+const G={lv:0,L:null,t:0,lt:0,px:0,py:0,sx:0,sy:0,coins:[],got:0,dl:0,dt:store.get('deaths',0),run:false,paused:false,dead:0,won:false,keys:{},joy:null};
+const prog=store.get('prog',{unlocked:1,best:{}});
+/* ── static map layer ── */
+let bg=null;
+function drawMap(L){
+  bg=document.createElement('canvas');bg.width=W*T;bg.height=H*T;const c=bg.getContext('2d');
+  c.fillStyle='#0b0918';c.fillRect(0,0,W*T,H*T);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const ch=L.g[y][x];if(ch==='#')continue;
+    c.fillStyle=ch==='S'||ch==='E'?'#b6f0b0':((x+y)%2?'#e9e7fb':'#f8f7ff');c.fillRect(x*T,y*T,T,T);}
+  /* outline of the walkable area */
+  c.strokeStyle='#1a1430';c.lineWidth=3;
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){if(L.g[y][x]==='#')continue;const wall=(xx,yy)=>!L.g[yy]||L.g[yy][xx]==null||L.g[yy][xx]==='#';
+    c.beginPath();if(wall(x,y-1)){c.moveTo(x*T,y*T);c.lineTo(x*T+T,y*T);}if(wall(x,y+1)){c.moveTo(x*T,y*T+T);c.lineTo(x*T+T,y*T+T);}
+    if(wall(x-1,y)){c.moveTo(x*T,y*T);c.lineTo(x*T,y*T+T);}if(wall(x+1,y)){c.moveTo(x*T+T,y*T);c.lineTo(x*T+T,y*T+T);}c.stroke();}
+}
+function resize(){const r=$('wrap').getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);}
+window.addEventListener('resize',resize);
+const tileAt=(x,y)=>{const tx=Math.floor(x/T),ty=Math.floor(y/T);return (G.L.g[ty]&&G.L.g[ty][tx])||'#';};
+const h=PLAYER.half;
+function blocked(x,y){for(const [dx,dy] of [[-h,-h],[h-.01,-h],[-h,h-.01],[h-.01,h-.01]])if(tileAt(x+dx,y+dy)==='#')return true;return false;}
+function startPos(){let sx=0,sy=0,n=0;for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(G.L.g[y][x]==='S'){sx+=x+.5;sy+=y+.5;n++;}return [sx/n*T,sy/n*T];}
+
+function load(i){
+  G.lv=i;G.L=LEVELS[i];drawMap(G.L);[G.sx,G.sy]=startPos();G.dl=0;G.lt=0;G.won=false;respawn(true);hud();
+}
+function respawn(){G.px=G.sx;G.py=G.sy;G.coins=G.L.coins.map(c=>({x:c[0]*T,y:c[1]*T,got:false}));G.got=0;}
+function hud(){$('h-lv').textContent=G.lv+1;$('h-coin').textContent=`${G.got}/${G.coins.length}`;$('h-dl').textContent=G.dl;$('h-dt').textContent=G.dt;$('h-t').textContent=G.lt.toFixed(1);}
+function die(){G.dead=.45;G.dl++;G.dt++;store.set('deaths',G.dt);tone(160,.25,'sawtooth',.09);vib([60,30,60]);hud();}
+function win(){
+  G.won=true;G.run=false;tone(660,.12,'triangle');setTimeout(()=>tone(880,.12,'triangle'),120);setTimeout(()=>tone(1320,.2,'triangle'),240);vib(40);
+  const n=G.lv+1,b=prog.best[n];if(!b||G.dl<b.d||(G.dl===b.d&&G.lt<b.t))prog.best[n]={d:G.dl,t:+G.lt.toFixed(1)};
+  prog.unlocked=Math.max(prog.unlocked,Math.min(30,n+1));store.set('prog',prog);stats();
+  if(n===30)overlay(`<h2>✦ ყველა 30 დონე გავლილია!</h2><p>სულ სიკვდილი: <b>${G.dt}</b>. ახლა სცადე თითო დონე ნაკლები სიკვდილით.</p>
+    <div class="bar"><button class="btn" id="o-lv">☰ დონეები</button></div>`,()=>{$('o-lv').onclick=levels;});
+  else overlay(`<h2>დონე ${n} გავლილია</h2><p>სიკვდილი: <b>${G.dl}</b> · დრო: <b>${G.lt.toFixed(1)} წმ</b></p>
+    <div class="bar"><button class="btn" id="o-next">▶ დონე ${n+1}</button><button class="btn ghost" id="o-again">↻ თავიდან</button></div>`,
+    ()=>{$('o-next').onclick=()=>play(G.lv+1);$('o-again').onclick=()=>play(G.lv);});
+}
+/* ── loop ── */
+let last=0;
+function frame(ts){
+  const dt=Math.min(1/30,(ts-last)/1000||0);last=ts;
+  update(dt);
+  draw();requestAnimationFrame(frame);
+}
+function update(dt){
+  if(G.L&&!G.paused){
+    G.t+=dt;
+    if(G.run){G.lt+=dt;
+      if(G.dead>0){G.dead-=dt;if(G.dead<=0)respawn();}
+      else{
+        let vx=0,vy=0;const k=G.keys;
+        if(k.l)vx-=1;if(k.r)vx+=1;if(k.u)vy-=1;if(k.d)vy+=1;
+        if(G.joy&&G.joy.on){const jx=G.joy.x,jy=G.joy.y,m=Math.hypot(jx,jy);if(m>8){vx=jx/m;vy=jy/m;}}
+        const m=Math.hypot(vx,vy);if(m>1){vx/=m;vy/=m;}
+        const sp=PLAYER.speed*dt;
+        /* sub-steps so fast frames never skip a wall */
+        const n=Math.ceil(sp/4);for(let s=0;s<n;s++){const nx=G.px+vx*sp/n;if(!blocked(nx,G.py))G.px=nx;const ny=G.py+vy*sp/n;if(!blocked(G.px,ny))G.py=ny;}
+        for(const c of G.coins)if(!c.got){const nx=Math.max(G.px-h,Math.min(c.x,G.px+h)),ny=Math.max(G.py-h,Math.min(c.y,G.py+h));
+          if((nx-c.x)**2+(ny-c.y)**2<CR*CR){c.got=true;G.got++;tone(990,.08,'triangle');vib(10);}}
+        for(const e of G.L.E){const [ex,ey]=pos(e,G.t);const X=ex*T,Y=ey*T;const nx=Math.max(G.px-h,Math.min(X,G.px+h)),ny=Math.max(G.py-h,Math.min(Y,G.py+h));
+          if((nx-X)**2+(ny-Y)**2<ER*ER){die();break;}}
+        if(!G.dead&&G.got===G.coins.length&&tileAt(G.px,G.py)==='E')win();
+      }
+      hud();
+    }
+  }
+}
+function draw(){
+  const sc=cv.width/(W*T);ctx.setTransform(sc,0,0,sc,0,0);
+  if(!bg){ctx.fillStyle='#0b0918';ctx.fillRect(0,0,W*T,H*T);return;}
+  ctx.drawImage(bg,0,0);
+  for(const c of G.coins)if(!c.got){ctx.beginPath();ctx.arc(c.x,c.y,CR+1,0,7);ctx.fillStyle='#f1d34a';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle='#1a1430';ctx.stroke();}
+  /* player */
+  if(G.dead>0){ctx.globalAlpha=Math.max(0,G.dead/.45);}
+  ctx.fillStyle='#e8313a';ctx.fillRect(G.px-h,G.py-h,2*h,2*h);ctx.lineWidth=3;ctx.strokeStyle='#3a0a0e';ctx.strokeRect(G.px-h+1.5,G.py-h+1.5,2*h-3,2*h-3);
+  ctx.globalAlpha=1;
+  for(const e of G.L?G.L.E:[]){const [ex,ey]=pos(e,G.t);ctx.beginPath();ctx.arc(ex*T,ey*T,ER,0,7);ctx.fillStyle='#2f6bff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#0a0f3a';ctx.stroke();}
+  if(G.joy&&G.joy.on){const s=1/sc;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(G.joy.ox*s,G.joy.oy*s,34,0,7);ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(G.joy.ox*s+Math.max(-34,Math.min(34,G.joy.x)),G.joy.oy*s+Math.max(-34,Math.min(34,G.joy.y)),12,0,7);ctx.fillStyle='#c9a84c';ctx.fill();ctx.globalAlpha=1;}
+}
+/* ── input ── */
+const KM={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d',a:'l',d:'r',w:'u',s:'d',A:'l',D:'r',W:'u',S:'d','ა':'l','დ':'r','წ':'u','ს':'d'};
+document.addEventListener('keydown',e=>{const k=KM[e.key];if(k){G.keys[k]=true;e.preventDefault();}
+  if(e.key==='r'||e.key==='R'||e.key==='რ'){if(G.L&&!G.won)restart();}
+  if(e.key==='p'||e.key==='P'||e.key==='პ'||e.key==='Escape')pause();});
+document.addEventListener('keyup',e=>{const k=KM[e.key];if(k)G.keys[k]=false;});
+window.addEventListener('blur',()=>{G.keys={};});
+const wrap=$('wrap');
+wrap.addEventListener('pointerdown',e=>{if(e.target!==cv)return;const r=cv.getBoundingClientRect();G.joy={on:true,id:e.pointerId,ox:e.clientX-r.left,oy:e.clientY-r.top,x:0,y:0};
+  const sc=cv.width/(W*T)/(window.devicePixelRatio>1?Math.min(2,window.devicePixelRatio):1);G.joy.ox/=1;G.joy.oy/=1;cv.setPointerCapture(e.pointerId);});
+wrap.addEventListener('pointermove',e=>{if(!G.joy||!G.joy.on||e.pointerId!==G.joy.id)return;const r=cv.getBoundingClientRect();
+  G.joy.x=(e.clientX-r.left-G.joy.ox)*(W*T/r.width);G.joy.y=(e.clientY-r.top-G.joy.oy)*(W*T/r.width);});
+const endJoy=e=>{if(G.joy&&e.pointerId===G.joy.id)G.joy.on=false;};
+wrap.addEventListener('pointerup',endJoy);wrap.addEventListener('pointercancel',endJoy);
+$('pad').querySelectorAll('button').forEach(b=>{const k=b.dataset.k;
+  b.addEventListener('pointerdown',e=>{e.preventDefault();G.keys[k]=true;b.classList.add('on');b.setPointerCapture(e.pointerId);});
+  const up=()=>{G.keys[k]=false;b.classList.remove('on');};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);});
+/* joystick origin is stored in CSS px; convert to board px when drawing */
+const _draw=draw;
+/* ── screens ── */
+function overlay(html,bind){const o=$('ov');o.innerHTML=html;o.hidden=false;bind&&bind();}
+function hideOv(){$('ov').hidden=true;}
+function play(i){if(i>=prog.unlocked)return;load(i);hideOv();G.run=true;G.paused=false;$('b-pause').textContent='⏸ პაუზა (P)';}
+function start(){play(Math.min(prog.unlocked-1,29));}
+function restart(){if(!G.L)return;G.dl=0;G.lt=0;respawn();hideOv();G.run=true;G.won=false;G.paused=false;hud();}
+function pause(){if(!G.L||G.won)return;G.paused=!G.paused;$('b-pause').textContent=G.paused?'▶ გაგრძელება (P)':'⏸ პაუზა (P)';
+  if(G.paused)overlay(`<h2>პაუზა</h2><div class="bar"><button class="btn" id="o-res">▶ გაგრძელება</button><button class="btn ghost" id="o-lv2">☰ დონეები</button></div>`,
+    ()=>{$('o-res').onclick=pause;$('o-lv2').onclick=levels;});else hideOv();}
+function levels(){
+  G.run=false;G.paused=false;
+  overlay(`<h2>აირჩიე დონე</h2><p>გაიხსნა ${prog.unlocked} / 30. მწვანე — გავლილი (ქვემოთ — საუკეთესო: სიკვდილი).</p>
+    <div class="lvgrid">${LEVELS.map((L,i)=>{const b=prog.best[i+1];return `<button data-i="${i}" class="${b?'done':''}" ${i>=prog.unlocked?'disabled':''} title="${L.name}">${i+1}${b?`<small>☠${b.d}</small>`:''}</button>`;}).join('')}</div>
+    <button class="btn" id="o-go">▶ თამაში — დონე ${Math.min(prog.unlocked,30)}</button>`,
+    ()=>{$('ov').querySelectorAll('.lvgrid button').forEach(b=>b.onclick=()=>play(+b.dataset.i));$('o-go').onclick=start;});
+}
+function stats(){const done=Object.keys(prog.best).length,dsum=Object.values(prog.best).reduce((a,b)=>a+b.d,0);
+  $('stats').innerHTML=`გავლილი დონეები: <b style="color:var(--gold-lt)">${done}/30</b> · საუკეთესო შედეგების ჯამი: ☠ ${dsum} · სულ სიკვდილი: ${G.dt}`;}
+$('b-levels').onclick=levels;$('b-restart').onclick=restart;$('b-pause').onclick=pause;
+/* ── music: YouTube IFrame API ── */
+const PRESETS=[
+ ['NCS Gaming Music Mix — Best of EDM','l3IMwf8w8rU'],
+ ['Best of NCS Popular Songs — Electro House','NKOvofFnB4E'],
+ ['Gaming Music Mix — NCS & Electro Dance','PJMo2qY9uBI'],
+ ['NCS Female Vocal Music Mix','eKg26ESKzfc'],
+ ['Nightcore Gaming Mix — NCS','XV4UF4bUoXw'],
+];
+const M={yt:null,ready:false,idx:0,list:[],playing:false,pending:false};
+function parseYT(u){u=(u||'').trim();if(!u)return null;
+  const pl=u.match(/[?&]list=([\w-]+)/);const v=u.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/)||u.match(/^([\w-]{11})$/);
+  return v||pl?{v:v?v[1]:null,list:pl?pl[1]:null}:null;}
+function mLoad(){M.list=PRESETS.map(p=>({t:p[0],v:p[1]}));
+  const own=store.get('music',[]);own.forEach(o=>M.list.push(o));
+  $('m-pre').innerHTML=M.list.map((x,i)=>`<option value="${i}">${x.own?'★ ':''}${x.t}</option>`).join('');
+  M.idx=Math.min(store.get('music_i',0),M.list.length-1);$('m-pre').value=M.idx;$('m-vol').value=store.get('music_vol',45);
+  $('m-auto').checked=store.get('music_auto',true);}
+function ytInit(){if(window.YT&&YT.Player){mkPlayer();return;}
+  const t=document.createElement('script');t.src='https://www.youtube.com/iframe_api';t.onerror=()=>{$('m-note').textContent='YouTube ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი.';};document.head.appendChild(t);
+  window.onYouTubeIframeAPIReady=mkPlayer;}
+function mkPlayer(){const x=M.list[M.idx];
+  M.yt=new YT.Player('yt',{width:220,height:124,videoId:x.v||undefined,playerVars:{playsinline:1,rel:0,modestbranding:1,...(x.list?{listType:'playlist',list:x.list}:{})},
+    events:{onReady:()=>{M.ready=true;M.yt.setVolume(+$('m-vol').value);if(M.pending){M.pending=false;M.yt.playVideo();}},
+      onStateChange:e=>{M.playing=e.data===1;$('m-play').textContent=M.playing?'⏸':'▶';if(e.data===0&&!M.list[M.idx].list)mNext(true);},
+      onError:()=>{$('m-note').textContent=`„${M.list[M.idx].t}“ ჩაშენებით არ იკვრება — გადავდივარ შემდეგზე.`;setTimeout(()=>mNext(true),800);}}});}
+function mCue(play){const x=M.list[M.idx];store.set('music_i',M.idx);$('m-pre').value=M.idx;
+  if(!M.ready){M.pending=play;if(!M.yt)ytInit();return;}
+  if(x.list){play?M.yt.loadPlaylist({listType:'playlist',list:x.list,index:0}):M.yt.cuePlaylist({listType:'playlist',list:x.list});}
+  else{play?M.yt.loadVideoById(x.v):M.yt.cueVideoById(x.v);}}
+function mPlay(){if(!M.yt){M.pending=true;ytInit();return;}if(!M.ready){M.pending=true;return;}
+  if(M.playing)M.yt.pauseVideo();else M.yt.playVideo();}
+function mNext(play){M.idx=(M.idx+1)%M.list.length;mCue(play!==false);}
+mLoad();
+$('m-play').onclick=mPlay;$('m-next').onclick=()=>mNext(true);
+$('m-pre').onchange=e=>{M.idx=+e.target.value;mCue(true);};
+$('m-vol').oninput=e=>{store.set('music_vol',+e.target.value);if(M.ready)M.yt.setVolume(+e.target.value);};
+$('m-auto').onchange=e=>store.set('music_auto',e.target.checked);
+$('m-add').onclick=()=>{const r=parseYT($('m-url').value);if(!r){$('m-note').textContent='ბმული ვერ ამოვიცანი — ჩასვი youtube.com/watch?v=… ან youtu.be/… ან playlist-ის ბმული.';return;}
+  const own=store.get('music',[]);const item={t:(r.list?'Playlist ':'ვიდეო ')+(r.v||r.list),v:r.v,list:r.list,own:true};own.push(item);store.set('music',own.slice(-10));
+  mLoad();M.idx=M.list.length-1;$('m-url').value='';mCue(true);};
+ytInit();
+const _start=start;start=function(){if($('m-auto').checked&&!M.playing){if(M.ready)M.yt.playVideo();else M.pending=true;}return _start.apply(this,arguments);};
+window._music=M;
+
+resize();load(Math.min(prog.unlocked-1,29));stats();
+overlay(`<h2>უძნელესი გზა</h2><p>მიიყვანე წითელი კვადრატი მწვანე ფინიშამდე და არ შეეხო ლურჯ წერტილებს. აკრიფე ყველა ყვითელი მონეტა. 30 დონე.</p>
+  <div class="bar"><button class="btn" id="o-start">▶ დაწყება — დონე ${Math.min(prog.unlocked,30)}</button><button class="btn ghost" id="o-lvs">☰ დონეები</button></div>`,
+  ()=>{$('o-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}start();};$('o-lvs').onclick=levels;});
+requestAnimationFrame(frame);
+window._hg={G,prog,play,LEVELS,update,load};
+</script>
+</body>
+</html>
