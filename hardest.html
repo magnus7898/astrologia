@@ -104,6 +104,7 @@ canvas{display:block;width:100%;height:100%}
     <li>მართე <b style="color:#e2685c">წითელი კვადრატი</b> — ისრებით ან WASD-ით; ტელეფონზე — ღილაკებით ან თითის გასმით დაფაზე (ჯოისტიკი).</li>
     <li>მიდი ღია მწვანე სტარტიდან 🏁 ფინიშამდე (ჭადრაკულად დაფერილი მწვანე ზონა), ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო.</li>
     <li>ყველა დონეზე <b style="color:#f1d34a">ყვითელი მონეტებია</b> — ფინიში 🔒 დაკეტილია, სანამ ყველას არ აკრეფ (მთვლელი ფინიშზე და ზემოთ ჩანს).</li>
+    <li>ზოგ დონეზე დამატებითი ხრიკია: <b>ციმციმა</b> წერტილები (ქრებიან და ჩნდებიან — წყვეტილი წრე ნიშნავს, რომ ახლა უსაფრთხოა), <b>მფეთქავი</b> წერტილები (იზრდებიან და პატარავდებიან) და <b>სიბნელე</b> (ხედავ მხოლოდ შენ ირგვლივ).</li>
     <li>შეხება → თავიდან სტარტიდან, მონეტები ბრუნდება. წერტილები არ ჩერდებიან — დაელოდე სწორ მომენტს.</li>
     <li>30 დონე: პირველი ნაბიჯი · ზიგზაგი · ჯვარი · დერეფანი · საათი · კიბე · ოთხი ოთახი · ტალღები · დიდი რგოლი · ქანქარები · გვირაბი · ორბიტა · ლაბირინთი · ორი ქარიშხალი · ფანჯრები · გველი · ჭადრაკი · რვიანი · პერიმეტრი · სვეტები · სინუსოიდა · სარკე · კარიბჭეები · რგოლები · ბადე · ბორბალი · ტყუპები · მეტეორები · ციტადელი · ფინალი. 30 სხვადასხვა დონე — თითოეულს თავისი ფორმა, ფერი და მოძრაობის სახე. სამი სირთულე: <b>ჩვეულებრივი</b>, <b>რთული</b> და <b>უძნელესი</b> — ბოლოში დონეები ამომხსნელით აწეულია ზღვრამდე. ყველა დონე ყველა სირთულეზე შემოწმებულია, რომ გასავლელია.</li>
   </ul>
@@ -363,19 +364,27 @@ function finale(d){const g=blank();carve(g,1,1,7,13);carve(g,9,1,15,13);carve(g,
 const OLD=(f,b=3,m=1.15)=>d=>f(b+d*m);
 const ORDER=[firstStep,zigzag,cross,OLD(corridor),clock,stairs,rooms4,OLD(waves),donut,pendulums,tunnel,OLD(orbit,0,1.3),maze,storms,windows,
   OLD(snake),checker,eights,perimeter,OLD(pillars),sine,mirror,gates,OLD(rings,0,1.3),lattice,wheel,twins,meteors,citadel,finale];
-const THEMES=[['#f8f7ff','#e9e7fb','#0b0918'],['#f2fbf4','#dff3e5','#0a140e'],['#fff6ee','#fbe5d3','#160d07'],['#eef7ff','#d9ebfb','#07101a'],
-  ['#fffbe8','#f5ecc4','#141106'],['#fff0f4','#f8dbe4','#170910'],['#f2f2f2','#e0e0e3','#0d0d10'],['#eefcfc','#d4f2f2','#061313'],
-  ['#f6f0ff','#e6dafb','#100a1a'],['#f9fbea','#e8efc9','#10130a']];
+const THEMES=[['#f8f7ff','#e9e7fb','#0b0918'],['#f7f8ff','#e6e9fb','#0a0b18'],['#faf7ff','#ece6fb','#0d0918'],['#f6f8fd','#e4e8f6','#090c16']];
 /* tuned difficulty per level (solver-checked, see tune.js) */
-const DL=/*DL*/[0, 0.21, 0.41, 0.62, 0.83, 1.03, 1.24, 0.7, 1.66, 1.86, 2.07, 1.53, 2.48, 1.94, 2.9, 3.1, 3.31, 3.52, 3.72, 3.93, 4.14, 4.34, 4.55, 2.76, 2.97, 5.17, 3.88, 5.59, 5.79, 2.75]/*DL*/;
-const DLS={normal:DL,hard:/*DLH*/[1.5, 1.72, 1.94, 2.16, 2.38, 2.6, 2.82, 3.04, 3.26, 3.48, 3.7, 1.42, 2.64, 3.86, 2.58, 4.8, 5.02, 5.24, 5.46, 5.68, 5.9, 6.12, 6.34, 2.56, 2.78, 7, 5.72, 5.94, 7.66, 5.88]/*DLH*/,extreme:/*DLX*/[3, 3.32, 3.64, 3.96, 4.28, 4.6, 4.92, 4.24, 5.56, 5.88, 4.7, 6.52, 2.84, 3.66, 5.98, 7.8, 8.12, 8.44, 8.76, 9.08, 9.4, 9.72, 10.04, 10.36, 5.68, 7.5, 5.82, 8.64, 11.96, 5.78]/*DLX*/};
-function make(i,d){const L=ORDER[i](d);L.n=i+1;L.d=d;L.theme=THEMES[i%THEMES.length];return L;}
-const LEVELS=[];function setMode(m){if(!DLS[m])m='hard';LEVELS.length=0;for(let i=0;i<30;i++)LEVELS.push(make(i,DLS[m][i]));return m;}
+const DL=/*DL*/[1.5, 1.72, 1.94, 2.16, 2.38, 2.6, 2.82, 3.04, 3.26, 3.48, 3.7, 1.42, 2.64, 3.86, 2.58, 4.8, 5.02, 5.24, 5.46, 5.68, 5.9, 6.12, 6.34, 2.56, 2.78, 7, 3.72, 5.94, 7.66, 5.88]/*DL*/;
+const DLS={normal:DL,hard:/*DLH*/[3, 3.32, 3.64, 3.96, 4.28, 4.6, 4.92, 4.24, 5.56, 3.88, 6.2, 6.52, 2.84, 3.66, 5.98, 7.8, 8.12, 8.44, 5.76, 9.08, 9.4, 9.72, 9.54, 2.86, 5.68, 7.5, 5.82, 5.64, 11.96, 8.78]/*DLH*/,extreme:/*DLX*/[4, 4.35, 4.7, 4.05, 5.4, 5.75, 6.1, 3.95, 6.8, 3.65, 7.5, 6.85, 2.7, 3.55, 5.9, 9.25, 9.6, 9.95, 5.8, 10.65, 11, 11.35, 9.7, 2.55, 5.9, 7.75, 5.6, 5.95, 13.8, 8.65]/*DLX*/};
+/* extra mechanics: blinking dots (visible part of the time), pulsing dots (radius breathes), fog (only a circle around you is lit) */
+const MECH={5:'blink',11:'blink',17:'blink',23:'blink',29:'blink',3:'pulse',9:'pulse',15:'pulse',21:'pulse',27:'pulse',13:'fog',19:'fog',25:'fog',7:'pulse',30:'blink'};
+function make(i,d){const L=ORDER[i](d);L.n=i+1;L.d=d;L.theme=THEMES[i%THEMES.length];L.mech=MECH[i+1]||null;
+  if(L.mech==='blink')L.E.forEach((e,j)=>{if(j%2===0)e.blink={on:.55,k:2,ph:(j*.23)%1};});
+  if(L.mech==='pulse')L.E.forEach((e,j)=>{e.pulse={amp:.55,k:2,ph:(j*.17)%1};});
+  return L;}
+const TSM={normal:1,hard:1.25,extreme:1.6};let TS=1;
+const LEVELS=[];function setMode(m){if(!DLS[m])m='hard';TS=TSM[m];LEVELS.length=0;for(let i=0;i<30;i++)LEVELS.push(make(i,DLS[m][i]));return m;}
+function setTS(x){TS=x;}function getTS(){return TS;}
 setMode('normal');
 /* ── motion ── */
 function plen(pts){let s=0;for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];s+=Math.hypot(b[0]-a[0],b[1]-a[1]);}return s;}
+const cyc=(t,k,ph)=>{let u=((t*TS/P)*k+ph)%1;return u<0?u+1:u;};
+function vis(e,t){return !e.blink||cyc(t,e.blink.k,e.blink.ph)<e.blink.on;}
+function rad(e,t){return e.pulse?ER*(1+e.pulse.amp*(.5+.5*Math.sin(2*Math.PI*cyc(t,e.pulse.k,e.pulse.ph)))):ER;}
 function pos(e,t){
-  let u=((t/P)*Math.abs(e.k)+e.ph)%1;if(u<0)u+=1;const sg=Math.sign(e.k)||1;
+  let u=((t*TS/P)*Math.abs(e.k)+e.ph)%1;if(u<0)u+=1;const sg=Math.sign(e.k)||1;
   if(e.t==='line'){const s=u<.5?2*u:2-2*u;return [e.a[0]+(e.b[0]-e.a[0])*s,e.a[1]+(e.b[1]-e.a[1])*s];}
   if(e.t==='circ'){const a=2*Math.PI*u*sg;return [e.c[0]+e.r*Math.cos(a),e.c[1]+e.r*Math.sin(a)];}
   if(e.t==='swing'){const a=e.amp*Math.sin(2*Math.PI*u);return [e.c[0]+e.r*Math.sin(a),e.c[1]+e.r*Math.cos(a)];}
@@ -386,8 +395,9 @@ function pos(e,t){
     if(d<=l){const f=l?d/l:0;return [a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f];}d-=l;}
   return pts[0];
 }
-function speed(e){let m=0,p=pos(e,0);for(let i=1;i<=400;i++){const t=i*P/400,q=pos(e,t);m=Math.max(m,Math.hypot(q[0]-p[0],q[1]-p[1])*T/(P/400));p=q;}return m;}
-return {W,H,T,P,LEVELS,make,setMode,DLS,pos,speed,PLAYER:{half:9,speed:150},ER:8,CR:6};
+function speed(e){let m=0,p=pos(e,0);for(let i=1;i<=400;i++){const t=i*P/400/TS,q=pos(e,t);m=Math.max(m,Math.hypot(q[0]-p[0],q[1]-p[1])*T/(P/400/TS));p=q;}return m;}
+const ER=8;
+return {W,H,T,P,LEVELS,make,setMode,setTS,getTS,DLS,pos,vis,rad,speed,PLAYER:{half:9,speed:150},ER,CR:6};
 })();
 if(typeof module!=='undefined')module.exports=HG;
 </script>
@@ -474,8 +484,8 @@ function update(dt){
         const n=Math.ceil(sp/4);for(let s=0;s<n;s++){const nx=G.px+vx*sp/n;if(!blocked(nx,G.py))G.px=nx;const ny=G.py+vy*sp/n;if(!blocked(G.px,ny))G.py=ny;}
         for(const c of G.coins)if(!c.got){const nx=Math.max(G.px-h,Math.min(c.x,G.px+h)),ny=Math.max(G.py-h,Math.min(c.y,G.py+h));
           if((nx-c.x)**2+(ny-c.y)**2<CR*CR){c.got=true;G.got++;tone(990,.08,'triangle');vib(10);}}
-        for(const e of G.L.E){const [ex,ey]=pos(e,G.t);const X=ex*T,Y=ey*T;const nx=Math.max(G.px-h,Math.min(X,G.px+h)),ny=Math.max(G.py-h,Math.min(Y,G.py+h));
-          if((nx-X)**2+(ny-Y)**2<ER*ER){die();break;}}
+        for(const e of G.L.E){if(!HG.vis(e,G.t))continue;const R=HG.rad(e,G.t);const [ex,ey]=pos(e,G.t);const X=ex*T,Y=ey*T;const nx=Math.max(G.px-h,Math.min(X,G.px+h)),ny=Math.max(G.py-h,Math.min(Y,G.py+h));
+          if((nx-X)**2+(ny-Y)**2<R*R){die();break;}}
         if(!G.dead&&onFinish()){if(G.got===G.coins.length||!$('o-coin').checked)win();else if(!G.warned){G.warned=true;tone(300,.12,'square',.06);vib(30);}}
         if(!onFinish())G.warned=false;
       }
@@ -502,10 +512,14 @@ function draw(){
   if(G.dead>0){ctx.globalAlpha=Math.max(0,G.dead/.45);}
   ctx.fillStyle='#e8313a';ctx.fillRect(G.px-h,G.py-h,2*h,2*h);ctx.lineWidth=3;ctx.strokeStyle='#3a0a0e';ctx.strokeRect(G.px-h+1.5,G.py-h+1.5,2*h-3,2*h-3);
   ctx.globalAlpha=1;
-  for(const e of G.L?G.L.E:[]){const [ex,ey]=pos(e,G.t);ctx.beginPath();ctx.arc(ex*T,ey*T,ER,0,7);ctx.fillStyle='#2f6bff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#0a0f3a';ctx.stroke();}
-  if(G.L&&G.banner>0){ctx.globalAlpha=Math.min(1,G.banner);ctx.fillStyle='rgba(10,8,24,.85)';ctx.fillRect(W*T/2-170,H*T/2-34,340,60);
+  for(const e of G.L?G.L.E:[]){const [ex,ey]=pos(e,G.t);ctx.beginPath();
+    if(!HG.vis(e,G.t)){ctx.arc(ex*T,ey*T,ER,0,7);ctx.setLineDash([3,3]);ctx.lineWidth=1.5;ctx.strokeStyle='rgba(47,107,255,.45)';ctx.stroke();ctx.setLineDash([]);continue;}
+    ctx.arc(ex*T,ey*T,HG.rad(e,G.t),0,7);ctx.fillStyle='#2f6bff';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#0a0f3a';ctx.stroke();}
+  if(G.L&&G.L.mech==='fog'){const R=120,gx=G.px,gy=G.py;const gr=ctx.createRadialGradient(gx,gy,R*.55,gx,gy,R);gr.addColorStop(0,'rgba(5,4,11,0)');gr.addColorStop(1,'rgba(5,4,11,.97)');
+    ctx.fillStyle=gr;ctx.beginPath();ctx.rect(0,0,W*T,H*T);ctx.arc(gx,gy,R,0,7,true);ctx.fill();ctx.fillStyle=gr;ctx.beginPath();ctx.arc(gx,gy,R,0,7);ctx.fill();}
+  if(G.L&&G.banner>0){ctx.globalAlpha=Math.min(1,G.banner);ctx.fillStyle='rgba(10,8,24,.85)';ctx.fillRect(W*T/2-230,H*T/2-34,460,60);
     ctx.textAlign='center';ctx.fillStyle='#ecd59a';ctx.font='22px Cinzel,serif';ctx.fillText('დონე '+(G.lv+1),W*T/2,H*T/2-6);
-    ctx.font='14px "Noto Serif Georgian",serif';ctx.fillStyle='#b3a68f';ctx.fillText(G.L.name+' · მონეტა: '+G.coins.length,W*T/2,H*T/2+16);ctx.globalAlpha=1;}
+    ctx.font='14px "Noto Serif Georgian",serif';ctx.fillStyle='#b3a68f';ctx.fillText(G.L.name+' · მონეტა: '+G.coins.length+(G.L.mech?' · '+({blink:'ციმციმა წერტილები',pulse:'მფეთქავი წერტილები',fog:'სიბნელე'})[G.L.mech]:''),W*T/2,H*T/2+16);ctx.globalAlpha=1;}
   if(need&&$('o-coin').checked){ctx.font='bold 16px sans-serif';ctx.textAlign='center';
     ctx.fillStyle='rgba(10,8,24,.88)';ctx.fillRect(W*T/2-200,8,400,30);ctx.fillStyle='#f1d34a';ctx.fillText('ჯერ აკრიფე ყველა ყვითელი მონეტა: '+G.got+'/'+G.coins.length,W*T/2,29);}
   if(G.joy&&G.joy.on){const s=1;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(G.joy.ox*s,G.joy.oy*s,34,0,7);ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
@@ -599,7 +613,7 @@ window._music=M;
 resize();const qLv=+(new URLSearchParams(location.search).get('level')||0);load(qLv?Math.min(30,qLv)-1:Math.min(prog.unlocked-1,29));$('b-jump').value=G.lv;stats();
 overlay(`<h2>უძნელესი გზა</h2><p>მიიყვანე წითელი კვადრატი მწვანე ფინიშამდე და არ შეეხო ლურჯ წერტილებს. აკრიფე ყველა ყვითელი მონეტა. 30 დონე.</p>
   <div class="bar" id="o-modes">${Object.entries(MODES).map(([k,t])=>`<button class="btn${k===G.mode?'':' ghost'}" data-m="${k}">${t}</button>`).join('')}</div>
-  <p style="font-size:11.5px">ჩვეულებრივი — ადვილად გასავლელი · რთული — ვიწრო გასასვლელები · უძნელესი — ზღვარზე: მეტი და სწრაფი წერტილები, მილიმეტრული დრო.</p>
+  <p style="font-size:11.5px">ჩვეულებრივი — ვიწრო გასასვლელები · რთული — ყველაფერი 25%-ით სწრაფია, ზღვარზე · უძნელესი — 60%-ით სწრაფი, მილიმეტრული დრო.</p>
   <div class="bar"><button class="btn" id="o-start">▶ დაწყება — დონე ${G.lv+1}</button><button class="btn ghost" id="o-lvs">☰ დონეები</button></div>`,
   ()=>{$('o-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}start();};$('o-lvs').onclick=levels;$('o-modes').querySelectorAll('button').forEach(b=>b.onclick=()=>{setMode(b.dataset.m);load(G.lv);$('o-modes').querySelectorAll('button').forEach(x=>x.classList.toggle('ghost',x!==b));});});
 requestAnimationFrame(frame);
