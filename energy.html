@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ენერგია · ყურადღება · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(48,176,240,.12);--accent:#30b0f0}
+.sch{display:grid;gap:5px;width:min(100%,440px);aspect-ratio:1}
+.sch button{border-radius:8px;border:1px solid rgba(201,168,76,.12);background:var(--raised);color:var(--ink);font-family:'Cinzel',serif;
+  font-size:var(--fs,22px);cursor:pointer;transition:background .15s,border-color .15s}
+.sch button:hover{border-color:var(--border-h)}
+.sch button.done{background:rgba(95,207,138,.10);border-color:rgba(95,207,138,.35);color:rgba(239,230,212,.35)}
+.sch button.err{background:rgba(226,104,92,.25);border-color:var(--bad)}
+.nextn{font-size:13px;color:var(--ink-mid)}.nextn b{font-family:'Cinzel',serif;font-size:22px;color:var(--gold-lt);font-weight:400}
+.word{font-family:'Noto Serif Georgian',serif;font-weight:600;font-size:clamp(38px,10vw,64px);min-height:96px;display:flex;align-items:center;letter-spacing:1px}
+.cols{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(100%,460px)}
+.cols button{height:62px;border-radius:10px;border:1px solid var(--border);background:var(--raised);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+  color:var(--ink-mid);font:inherit;font-size:12px}
+.cols button i{width:22px;height:22px;border-radius:50%;flex:none}
+.cols button:active{transform:scale(.95)}
+.cols button:hover{border-color:var(--border-h)}
+.gng{width:min(100%,340px);aspect-ratio:1;border-radius:50%;border:1px solid var(--border-h);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:radial-gradient(circle at 50% 40%,rgba(48,176,240,.08),transparent 70%);font-size:110px;line-height:1;touch-action:manipulation}
+.gng.go{color:var(--gold-lt);text-shadow:0 0 40px rgba(236,213,154,.6)}
+.gng.no{color:var(--bad);text-shadow:0 0 40px rgba(226,104,92,.5)}
+.gng.fb-ok{box-shadow:0 0 0 3px rgba(95,207,138,.5)}
+.gng.fb-bad{box-shadow:0 0 0 3px rgba(226,104,92,.6)}
+@media (max-width:520px){.cols{grid-template-columns:repeat(2,1fr)}.gng{font-size:80px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="games.html">← თამაშები</a>
+  <div class="cellno">2</div>
+  <h1>ენერგია</h1>
+  <div class="sub">Attention · Focus · Self-control</div>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="hud">
+  <div><b id="h1">—</b><span id="l1"></span></div>
+  <div><b id="h2">—</b><span id="l2"></span></div>
+  <div><b id="h3">—</b><span id="l3"></span></div>
+  <div><b id="h4">—</b><span id="l4"></span></div>
+</div>
+<div class="stage" id="stage"></div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id),stage=$('stage');
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+function hud(v,l){[1,2,3,4].forEach(i=>{if(v&&v[i-1]!==undefined)$('h'+i).textContent=v[i-1];if(l&&l[i-1]!==undefined)$('l'+i).textContent=l[i-1];});}
+const BK='magnus_energy_v1';
+const best=k=>{try{return (JSON.parse(localStorage.getItem(BK))||{})[k];}catch(e){return undefined;}};
+const setBest=(k,v)=>{try{const d=JSON.parse(localStorage.getItem(BK))||{};d[k]=v;localStorage.setItem(BK,JSON.stringify(d));}catch(e){}};
+let timers=[];const later=(f,ms)=>{const t=setTimeout(f,ms);timers.push(t);return t;};
+let iv=null;function clearAll(){timers.forEach(clearTimeout);timers=[];if(iv){clearInterval(iv);iv=null;}document.onkeydown=null;}
+
+const TABS=[{k:'schulte',n:'შულტეს ცხრილი',run:startSchulte},{k:'stroop',n:'სტრუპის ტესტი',run:startStroop},{k:'gonogo',n:'Go / No-Go',run:startGNG}];
+let CUR;
+function go(k){clearAll();CUR=(TABS.find(t=>t.k===k)||TABS[0]).k;try{history.replaceState(null,'','?t='+CUR);}catch(e){}
+  $('tabs').innerHTML='';TABS.forEach(t=>{const b=document.createElement('button');b.textContent=t.n;b.className=t.k===CUR?'on':'';b.onclick=()=>go(t.k);$('tabs').appendChild(b);});
+  TABS.find(t=>t.k===CUR).run();}
+
+/* ════ SCHULTE ════ */
+let SC={size:5};
+function startSchulte(){
+  const N=SC.size*SC.size;SC.next=1;SC.err=0;SC.t0=0;SC.done=false;
+  const b=best('schulte'+SC.size);
+  hud(['0.0','1','0',b?b.toFixed(1)+'წ':'—'],['წამი','შემდეგი','შეცდომა','რეკორდი']);
+  stage.innerHTML=`<div class="seg" id="sz">${[4,5,6,7].map(s=>`<button data-s="${s}" class="${s===SC.size?'on':''}">${s}×${s}</button>`).join('')}</div>
+   <div class="how">იპოვე და შეეხე რიცხვებს <b>1-დან ${N}-მდე</b> რიგით. მზერა ცენტრში გეჭიროს — პერიფერიული ხედვით ეძებე. დრო პირველ შეხებაზე იწყება.</div>
+   <div class="nextn">შემდეგი: <b id="nx">1</b></div>
+   <div class="sch" id="sch" style="grid-template-columns:repeat(${SC.size},1fr);--fs:${[0,0,0,0,26,22,19,16][SC.size]}px"></div>
+   <div class="msg" id="msg">&nbsp;</div>`;
+  [...$('sz').children].forEach(x=>x.onclick=()=>{SC.size=+x.dataset.s;go('schulte');});
+  shuffle([...Array(N)].map((_,i)=>i+1)).forEach(n=>{
+    const c=document.createElement('button');c.textContent=n;
+    c.onclick=()=>{
+      if(SC.done)return;
+      if(!SC.t0){SC.t0=performance.now();iv=setInterval(()=>hud([((performance.now()-SC.t0)/1000).toFixed(1)]),100);}
+      if(n===SC.next){c.classList.add('done');SC.next++;$('nx').textContent=Math.min(SC.next,N);hud([undefined,Math.min(SC.next,N)]);
+        if(SC.next>N)schulteEnd();}
+      else{SC.err++;c.classList.add('err');setTimeout(()=>c.classList.remove('err'),300);hud([undefined,undefined,SC.err]);}
+    };
+    $('sch').appendChild(c);
+  });
+}
+function schulteEnd(){
+  SC.done=true;clearInterval(iv);iv=null;
+  const t=(performance.now()-SC.t0)/1000,k='schulte'+SC.size,b=best(k),rec=!b||t<b;if(rec)setBest(k,t);
+  const per=t/(SC.size*SC.size);
+  const norm={4:[10,16],5:[25,40],6:[45,70],7:[80,120]}[SC.size];
+  const lvl=t<=norm[0]?'მაღალი ენერგია — ყურადღება მკვრივია და მშვიდი.':t<=norm[1]?'ნორმა — კარგი, სტაბილური ფოკუსი.':'ენერგია ამჟამად დაბალია — დაისვენე, ისუნთქე, სცადე ისევ.';
+  hud([t.toFixed(1),'✓',SC.err,(rec?t:b).toFixed(1)+'წ']);
+  $('msg').innerHTML=`<b>${t.toFixed(1)} წმ</b> · ${per.toFixed(2)} წმ/რიცხვი${rec?' · <b>ახალი რეკორდი</b>':''}<br>${lvl}<br><button class="btn" style="margin-top:10px" onclick="go('schulte')">თავიდან</button>`;
+}
+
+/* ════ STROOP ════ */
+const SC_COLORS=[{n:'წითელი',c:'#e0574c'},{n:'ლურჯი',c:'#4a8ff0'},{n:'მწვანე',c:'#3fbf72'},{n:'ყვითელი',c:'#e8cd45'}];
+let ST=null;
+function startStroop(){
+  ST={i:0,n:32,res:[],busy:true};
+  hud(['0/32','—','—',best('stroop')!==undefined?best('stroop')+'მწ':'—'],['ცდა','სიზუსტე','საშ. დრო','საუკ. ეფექტი']);
+  stage.innerHTML=`<div class="how">სიტყვა დაწერილია ფერით. დააჭირე <b>მელნის ფერს</b>, და არა იმას, რაც წერია. „წითელი“ ლურჯად → ლურჯი. სწრაფად და უშეცდომოდ.</div>
+   <div class="word" id="w">მზად?</div>
+   <div class="cols" id="cols">${SC_COLORS.map((c,i)=>`<button data-i="${i}"><i style="background:${c.c}"></i>${c.n}</button>`).join('')}</div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn" id="sgo">დაწყება</button></div>`;
+  [...$('cols').children].forEach(b=>b.onclick=()=>stroopAns(+b.dataset.i));
+  document.onkeydown=e=>{const k='1234'.indexOf(e.key);if(k>=0)stroopAns(k);};
+  $('sgo').onclick=()=>{$('sgo').style.display='none';stroopNext();};
+}
+function stroopNext(){
+  const ink=ri(0,3),cong=Math.random()<1/3,word=cong?ink:(ink+ri(1,3))%4;
+  ST.cur={ink,cong};$('w').textContent='';
+  later(()=>{$('w').textContent=SC_COLORS[word].n;$('w').style.color=SC_COLORS[ink].c;ST.t0=performance.now();ST.busy=false;},350);
+}
+function stroopAns(k){
+  if(ST.busy||!ST.cur)return;ST.busy=true;
+  const rt=performance.now()-ST.t0,ok=k===ST.cur.ink;
+  ST.res.push({ok,rt,cong:ST.cur.cong});ST.i++;
+  $('msg').innerHTML=ok?'<span class="ok">✓</span> '+Math.round(rt)+' მწ':'<span class="bad">✕ მელანი იყო '+SC_COLORS[ST.cur.ink].n+'</span>';
+  const okN=ST.res.filter(r=>r.ok);
+  hud([ST.i+'/'+ST.n,Math.round(100*okN.length/ST.i)+'%',okN.length?Math.round(okN.reduce((a,r)=>a+r.rt,0)/okN.length)+'მწ':'—']);
+  if(ST.i>=ST.n)return stroopEnd();
+  stroopNext();
+}
+function stroopEnd(){
+  const mean=a=>a.length?a.reduce((s,r)=>s+r.rt,0)/a.length:0;
+  const C=ST.res.filter(r=>r.ok&&r.cong),I=ST.res.filter(r=>r.ok&&!r.cong);
+  const eff=Math.round(mean(I)-mean(C)),acc=Math.round(100*ST.res.filter(r=>r.ok).length/ST.n);
+  const b=best('stroop'),rec=acc>=90&&(b===undefined||eff<b);if(rec)setBest('stroop',eff);
+  const tag=acc<80?'ბევრი შეცდომა — სიტყვა ჯერ კიდევ „იტაცებს“ ყურადღებას.':eff<60?'ძლიერი კონტროლი — სიტყვის ჩარევა თითქმის არ ჩანს.':eff<150?'ნორმა — ჩარევა არის, მაგრამ მართავ.':'ჩარევა დიდია — ენერგია იხარჯება ავტომატური კითხვის შეკავებაზე.';
+  stage.innerHTML=`<div class="big">${eff}<small> მწ</small></div><div class="how">სტრუპის ეფექტი — რამდენით ნელდები, როცა სიტყვა და ფერი ერთმანეთს ეწინააღმდეგება</div>
+   <div class="msg"><b>${tag}</b></div>
+   <table class="stats"><tr><td>სიზუსტე</td><td>${acc}%</td></tr><tr><td>თანხვედრილი (სიტყვა = ფერი)</td><td>${Math.round(mean(C))} მწ</td></tr>
+   <tr><td>შეუთავსებელი</td><td>${Math.round(mean(I))} მწ</td></tr>${rec?'<tr><td colspan="2" style="text-align:center;color:var(--gold-lt)">✦ ახალი რეკორდი</td></tr>':''}</table>
+   <div class="row"><button class="btn" onclick="go('stroop')">თავიდან</button></div>`;
+  hud([undefined,undefined,undefined,(rec?eff:b)!==undefined?(rec?eff:b)+'მწ':'—']);
+}
+
+/* ════ GO / NO-GO ════ */
+let GN=null;
+function startGNG(){
+  GN={i:0,n:40,hit:0,miss:0,fa:0,cr:0,rts:[],state:'idle'};
+  hud(['0/40','0','0',best('gonogo')!==undefined?best('gonogo')+'%':'—'],['ცდა','შეცდომით დაჭერა','გამოტოვება','რეკორდი']);
+  stage.innerHTML=`<div class="how">როცა ჩნდება <b style="color:var(--gold-lt)">✦</b> — დააჭირე წრეს (ან Space) რაც შეიძლება სწრაფად. როცა <b style="color:var(--bad)">✕</b> — <b>არ</b> დააჭირო. 40 ცდა, ~1 წუთი.</div>
+   <div class="gng" id="gng">·</div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn" id="ggo">დაწყება</button></div>`;
+  const press=()=>gngPress();
+  $('gng').addEventListener('pointerdown',press);
+  document.onkeydown=e=>{if(e.code==='Space'){e.preventDefault();press();}};
+  $('ggo').onclick=()=>{$('ggo').style.display='none';gngNext();};
+}
+function gngNext(){
+  const g=$('gng');g.className='gng';g.textContent='·';
+  if(GN.i>=GN.n)return gngEnd();
+  later(()=>{
+    GN.go=Math.random()<.75;GN.state='on';GN.pressed=false;GN.t0=performance.now();
+    g.className='gng '+(GN.go?'go':'no');g.textContent=GN.go?'✦':'✕';
+    later(()=>gngResolve(),GN.go?700:900);
+  },ri(500,1200));
+}
+function gngPress(){
+  if(GN.state!=='on'||GN.pressed)return;GN.pressed=true;
+  const g=$('gng');
+  if(GN.go){GN.hit++;GN.rts.push(performance.now()-GN.t0);g.classList.add('fb-ok');$('msg').innerHTML='<span class="ok">'+Math.round(GN.rts[GN.rts.length-1])+' მწ</span>';}
+  else{GN.fa++;g.classList.add('fb-bad');$('msg').innerHTML='<span class="bad">✕ არ უნდა დაგეჭირა</span>';}
+}
+function gngResolve(){
+  if(GN.state!=='on')return;GN.state='gap';
+  if(GN.go&&!GN.pressed){GN.miss++;$('msg').innerHTML='<span class="bad">გამოტოვე</span>';}
+  if(!GN.go&&!GN.pressed){GN.cr++;$('msg').innerHTML='<span class="ok">✓ შეიკავე</span>';}
+  GN.i++;hud([GN.i+'/'+GN.n,GN.fa,GN.miss]);gngNext();
+}
+function gngEnd(){
+  const goN=GN.hit+GN.miss,noN=GN.fa+GN.cr;
+  const acc=Math.round(100*(GN.hit+GN.cr)/(goN+noN)),rt=GN.rts.length?Math.round(GN.rts.reduce((a,b)=>a+b,0)/GN.rts.length):0;
+  const b=best('gonogo'),rec=b===undefined||acc>b;if(rec)setBest('gonogo',acc);
+  const tag=GN.fa/(noN||1)>.4?'იმპულსი ძლიერია — ენერგია წინ გარბის, შეკავება სუსტია.':GN.miss/(goN||1)>.2?'ენერგია დაბალია — სიგნალს ხშირად ვერ ასწრებ.':acc>=95?'იდეალური ბალანსი — სწრაფი და კონტროლირებადი.':'კარგი ბალანსი სიჩქარესა და შეკავებას შორის.';
+  stage.innerHTML=`<div class="big">${acc}<small>%</small></div><div class="msg"><b>${tag}</b></div>
+   <table class="stats"><tr><td>საშ. რეაქცია (✦)</td><td>${rt} მწ</td></tr>
+   <tr><td>შეცდომით დაჭერა (✕) — იმპულსურობა</td><td>${GN.fa} / ${noN}</td></tr>
+   <tr><td>გამოტოვება (✦) — ყურადღების ვარდნა</td><td>${GN.miss} / ${goN}</td></tr></table>
+   <div class="row"><button class="btn" onclick="go('gonogo')">თავიდან</button></div>`;
+  hud([undefined,undefined,undefined,Math.max(acc,b||0)+'%']);
+}
+
+go(new URLSearchParams(location.search).get('t'));
+</script>
+</body>
+</html>
