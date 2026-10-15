@@ -151,19 +151,21 @@
   }
   /* ── main boxes: 1 × 4 (desktop) · 2 × 2 (tablet / phone) ── */
   /* 1 × 4 — one row of four; 2 × 2 on tablets, see below */
-  .grid.main4 { grid-template-columns:repeat(var(--n,4),1fr) !important;max-width:calc(var(--n,4) * 290px);gap:16px; }
+  .grid.main4 { --c:var(--n,4);display:flex !important;flex-wrap:wrap;justify-content:center;max-width:calc(var(--c) * 290px);gap:16px; }
+  .grid.main4 > .card.main { flex:0 0 calc((100% - (var(--c) - 1) * 16px) / var(--c)); }
   .grid.main4 > .card.main { height:260px; }
   .grid.main4 > .card.main .sym { width:46px;height:46px;margin-bottom:14px; }
   .grid.main4 > .card.main .card-title { font-size:13px;letter-spacing:2.5px; }
   .grid.main4 > .card.main .card-sub { opacity:.4;font-size:10px; }
   .grid.main4 > .card.main .grp-n { top:12px;right:28px;font-size:9px; }
   @media (max-width:900px) {
-    .grid.main4 { grid-template-columns:1fr 1fr !important;max-width:620px; }
+    .grid.main4 { --c:2;max-width:620px; }
     .grid.main4 > .card.main:last-child:nth-child(odd) { grid-column:1/-1;justify-self:center;width:calc(50% - 8px); }
     .grid.main4 > .card.main { height:200px; }
   }
   @media (max-width:520px) {
     .grid.main4 { gap:10px; }
+    .grid.main4 > .card.main { flex-basis:calc((100% - 10px) / 2); }
     .grid.main4 > .card.main { height:160px; }
     .grid.main4 > .card.main .sym { width:36px;height:36px;margin-bottom:10px; }
     .grid.main4 > .card.main .card-title { font-size:10.5px;letter-spacing:1.5px; }
@@ -704,6 +706,26 @@
       <div class="card-sub">Logic · Sequences · Matrices</div>
     </a>
 
+    <a class="card c-pyth" href="intuition.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16c4-6 8-8 13-8s9 2 13 8c-4 6-8 8-13 8s-9-2-13-8z" opacity=".55"/><path d="M16 11l1.5 3.4 3.7.4-2.8 2.5.8 3.6L16 19l-3.2 1.9.8-3.6-2.8-2.5 3.7-.4z" fill="currentColor" fill-opacity=".35"/><path d="M16 3v3M16 26v3M5 6l2 2M27 6l-2 2" opacity=".5"/></svg>
+      </div>
+      <div class="card-title">ინტუიციის ტესტი</div>
+      <div class="card-sub">Zener · Precognition · Time Sense</div>
+    </a>
+
+    <a class="card c-pyth" href="pythagames.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27V9l18 18z"/><path d="M5 23h4v4" opacity=".6"/><rect x="18" y="4" width="10" height="10" opacity=".55"/><path d="M21.3 4v10M24.7 4v10M18 7.3h10M18 10.7h10" opacity=".35"/></svg>
+      </div>
+      <div class="card-title">პითაგორას თამაშები</div>
+      <div class="card-sub">Psychomatrix · Lo Shu · Triples</div>
+    </a>
+
     <a class="card c-name" href="meditation.html">
       <div class="card-glow"></div>
       <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
@@ -887,7 +909,9 @@
     {key:'compat',title:'შეთავსება',sub:'Zodiac Compatibility',css:'c-astro',art:'compat.html',
      members:['compat.html'],label:{}},
     {key:'health',title:'ჯანმრთელობა',sub:'Breathing · Sleep · Memory · Meditation…',css:'c-name',art:'breath.html',
-     members:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html'],label:{},always:true},
+     members:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','cold.html','fasting.html','rhythm.html'],label:{},always:true},
+    {key:'games',title:'თამაშები',sub:'Intuition · Memory · Logic · Pythagoras…',css:'c-pyth',art:'intuition.html',
+     members:['intuition.html','pythagames.html','memory.html','logic.html','hardest.html'],label:{},always:true},
     {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
   ];
@@ -951,7 +975,7 @@
       boxes.push(box);
     }
     grid.innerHTML='';grid.classList.remove('sub');grid.classList.add('main4');
-    grid.style.setProperty('--n',boxes.length===6?3:boxes.length);           /* 5 boxes → one row of five */
+    grid.style.setProperty('--n',boxes.length>5?Math.ceil(boxes.length/2):boxes.length);  /* ≤5 → one row; more → two rows, last row centred */
     boxes.forEach(b=>grid.appendChild(b));
     document.title='MAGNUS';
   }
@@ -991,7 +1015,7 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','pythagames.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       grid.innerHTML='';
       grid.appendChild(frag);
       applyGroups();                                  /* regroup the API order */
