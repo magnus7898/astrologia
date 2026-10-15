@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ჯანმრთელობა · სხეული · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(48,200,144,.11);--accent:#30c890}
+.pad{width:100%;max-width:560px;height:280px;border-radius:14px;border:1px solid var(--border-h);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;touch-action:manipulation;transition:background .08s;text-align:center;gap:6px}
+.pad b{font-family:'Cinzel',serif;font-size:42px;font-weight:400;line-height:1}
+.pad span{font-size:13px;color:var(--ink-mid)}
+.pad.idle{background:var(--raised)}
+.pad.wait{background:#2a1220;border-color:rgba(226,104,92,.5)}
+.pad.wait b{color:var(--bad)}
+.pad.go{background:linear-gradient(160deg,#c9a84c,#8a6a24);border-color:var(--gold-lt)}
+.pad.go b,.pad.go span{color:#120c02}
+.pad.early{background:#3a1410}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.dots i{min-width:54px;padding:4px 6px;border-radius:12px;border:1px solid var(--border);font-style:normal;font-family:'Cinzel',serif;font-size:12px;color:var(--ink-mid);text-align:center}
+.dots i.on{border-color:var(--gold);color:var(--gold-lt)}
+.beat{width:200px;height:200px;border-radius:50%;border:1px solid var(--border-h);display:flex;align-items:center;justify-content:center;flex-direction:column;
+  cursor:pointer;touch-action:manipulation;background:radial-gradient(circle,rgba(48,200,144,.06),transparent 70%);transition:transform .06s}
+.beat.pulse{transform:scale(1.07);box-shadow:0 0 40px rgba(48,200,144,.35)}
+.beat.tap{border-color:var(--gold-lt)}
+.beat b{font-family:'Cinzel',serif;font-size:34px;font-weight:400;color:var(--gold-lt);line-height:1}
+.beat span{font-size:11px;color:var(--ink-dim);margin-top:6px}
+.tl{width:100%;max-width:560px;height:46px;position:relative;border-top:1px solid var(--border);margin-top:4px}
+.tl i{position:absolute;top:0;width:2px;height:14px;background:var(--ink-dim)}
+.tl u{position:absolute;top:16px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--gold-lt)}
+canvas{display:block;width:100%;max-width:640px;border-radius:12px;border:1px solid var(--border);background:#0b0918;touch-action:none}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="games.html">← თამაშები</a>
+  <div class="cellno">4</div>
+  <h1>სხეული</h1>
+  <div class="sub">Reaction · Rhythm · Steady Hand</div>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="hud">
+  <div><b id="h1">—</b><span id="l1"></span></div>
+  <div><b id="h2">—</b><span id="l2"></span></div>
+  <div><b id="h3">—</b><span id="l3"></span></div>
+  <div><b id="h4">—</b><span id="l4"></span></div>
+</div>
+<div class="stage" id="stage"></div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id),stage=$('stage');
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function hud(v,l){[1,2,3,4].forEach(i=>{if(v&&v[i-1]!==undefined)$('h'+i).textContent=v[i-1];if(l&&l[i-1]!==undefined)$('l'+i).textContent=l[i-1];});}
+const BK='magnus_body_v1';
+const best=k=>{try{return (JSON.parse(localStorage.getItem(BK))||{})[k];}catch(e){return undefined;}};
+const setBest=(k,v)=>{try{const d=JSON.parse(localStorage.getItem(BK))||{};d[k]=v;localStorage.setItem(BK,JSON.stringify(d));}catch(e){}};
+let timers=[];const later=(f,ms)=>{const t=setTimeout(f,ms);timers.push(t);return t;};
+let raf=null;
+function clearAll(){timers.forEach(clearTimeout);timers=[];if(raf){cancelAnimationFrame(raf);raf=null;}document.onkeydown=null;window.onresize=null;}
+
+const TABS=[{k:'reaction',n:'რეაქციის დრო',run:startReaction},{k:'rhythm',n:'რიტმი',run:startRhythm},{k:'steady',n:'მყარი ხელი',run:startSteady}];
+let CUR;
+function go(k){clearAll();CUR=(TABS.find(t=>t.k===k)||TABS[0]).k;try{history.replaceState(null,'','?t='+CUR);}catch(e){}
+  $('tabs').innerHTML='';TABS.forEach(t=>{const b=document.createElement('button');b.textContent=t.n;b.className=t.k===CUR?'on':'';b.onclick=()=>go(t.k);$('tabs').appendChild(b);});
+  TABS.find(t=>t.k===CUR).run();}
+
+/* ════ REACTION ════ */
+let RX=null;
+function startReaction(){
+  RX={n:5,res:[],state:'idle'};
+  const b=best('reaction');
+  hud(['—','—','0/5',b?b+'მწ':'—'],['ბოლო','საშუალო','ცდა','რეკორდი']);
+  stage.innerHTML=`<div class="how">შეეხე ველს. როცა <b>წითელი</b> გახდება <b>ოქროსფერი</b> — მაშინვე დააჭირე (ან Space). ადრე დაჭერა არ ითვლება. 5 ცდა.</div>
+   <div class="pad idle" id="pad"><b>დაწყება</b><span>შეეხე</span></div>
+   <div class="dots" id="dots">${'<i>—</i>'.repeat(5)}</div>
+   <div class="msg" id="msg">&nbsp;</div>`;
+  const hit=()=>rxPress();
+  $('pad').addEventListener('pointerdown',hit);
+  document.onkeydown=e=>{if(e.code==='Space'){e.preventDefault();hit();}};
+}
+function rxSet(cls,b,s){const p=$('pad');p.className='pad '+cls;p.innerHTML=`<b>${b}</b><span>${s}</span>`;}
+function rxPress(){
+  if(RX.state==='idle'||RX.state==='result'){
+    if(RX.res.length>=RX.n){go('reaction');return;}
+    RX.state='wait';rxSet('wait','მოიცადე…','როცა ოქროსფერი გახდება');
+    RX.tm=later(()=>{RX.state='go';RX.t0=performance.now();rxSet('go','ახლა!','');},ri(1400,4200));
+  }else if(RX.state==='wait'){
+    clearTimeout(RX.tm);RX.state='result';rxSet('early','ადრეა','შეეხე თავიდან — ეს ცდა არ ითვლება');
+  }else if(RX.state==='go'){
+    const t=Math.round(performance.now()-RX.t0);RX.res.push(t);RX.state='result';
+    const avg=Math.round(RX.res.reduce((a,b)=>a+b,0)/RX.res.length);
+    [...$('dots').children].forEach((d,i)=>{if(RX.res[i]!==undefined){d.textContent=RX.res[i];d.className='on';}});
+    hud([t+'მწ',avg+'მწ',RX.res.length+'/5']);
+    if(RX.res.length>=RX.n){
+      const b=best('reaction'),rec=!b||avg<b;if(rec)setBest('reaction',avg);
+      const tag=avg<220?'ელვისებური — სპორტსმენის დონე.':avg<280?'ძალიან კარგი — ნერვული სისტემა ფხიზლადაა.':avg<350?'ნორმა.':'ნელი — დაღლილობა, ძილის ნაკლებობა ან ყავის დრო.';
+      rxSet('idle',avg+' მწ','საშუალო · შეეხე თავიდან დასაწყებად');
+      $('msg').innerHTML='<b>'+tag+'</b>'+(rec?' · <b>ახალი რეკორდი</b>':'');
+      hud([undefined,undefined,undefined,(rec?avg:b)+'მწ']);
+    }else rxSet('idle',t+' მწ','შეეხე შემდეგი ცდისთვის');
+  }
+}
+
+/* ════ RHYTHM ════ */
+let RH={bpm:90};let actx=null;
+function click(t,hi){
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=hi?1320:880;o.type='sine';
+    g.gain.setValueAtTime(0.0001,actx.currentTime);g.gain.exponentialRampToValueAtTime(.35,actx.currentTime+.005);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+.08);
+    o.connect(g).connect(actx.destination);o.start();o.stop(actx.currentTime+.1);}catch(e){}
+}
+function startRhythm(){
+  RH.phase='idle';RH.taps=[];RH.beats=[];
+  const b=best('rhythm'+RH.bpm);
+  hud(['—','—','—',b!==undefined?b+'%':'—'],['ტემპი','სიზუსტე','ფაზა','რეკორდი']);hud([RH.bpm+'']);
+  stage.innerHTML=`<div class="seg" id="bpm">${[60,90,120].map(v=>`<button data-v="${v}" class="${v===RH.bpm?'on':''}">${v} BPM</button>`).join('')}</div>
+   <div class="how">8 დარტყმა მეტრონომთან ერთად დააკაკუნე წრეზე (ან Space). მერე ხმა ქრება — <b>გააგრძელე იგივე ტემპით 16 დარტყმა</b> საკუთარი შინაგანი რიტმით.</div>
+   <div class="beat" id="beat"><b>▶</b><span>დაწყება</span></div>
+   <div class="tl" id="tl"></div>
+   <div class="msg" id="msg">&nbsp;</div>`;
+  [...$('bpm').children].forEach(x=>x.onclick=()=>{RH.bpm=+x.dataset.v;go('rhythm');});
+  const tap=()=>rhTap();
+  $('beat').addEventListener('pointerdown',tap);
+  document.onkeydown=e=>{if(e.code==='Space'){e.preventDefault();tap();}};
+}
+function rhTap(){
+  const now=performance.now();
+  if(RH.phase==='idle'){
+    RH.phase='lead';RH.taps=[];RH.period=60000/RH.bpm;RH.t0=now+400;
+    for(let i=0;i<8;i++)later(()=>{click(0,i%4===0);const bt=$('beat');bt.classList.add('pulse');setTimeout(()=>bt.classList.remove('pulse'),90);
+      $('beat').innerHTML=`<b>${8-i}</b><span>ერთად</span>`;},400+i*RH.period);
+    later(()=>{RH.phase='solo';$('beat').innerHTML='<b>…</b><span>გააგრძელე მარტო</span>';hud([undefined,undefined,'მარტო']);},400+7.5*RH.period);
+    hud([undefined,undefined,'ერთად']);return;
+  }
+  if(RH.phase==='done')return;
+  const bt=$('beat');bt.classList.add('tap');setTimeout(()=>bt.classList.remove('tap'),80);
+  if(RH.phase==='solo'){
+    RH.taps.push(now);
+    $('beat').innerHTML=`<b>${RH.taps.length}</b><span>/ 16</span>`;
+    if(RH.taps.length>=16)rhEnd();
+  }
+}
+function rhEnd(){
+  RH.phase='done';
+  const iv=[];for(let i=1;i<RH.taps.length;i++)iv.push(RH.taps[i]-RH.taps[i-1]);
+  const mean=iv.reduce((a,b)=>a+b,0)/iv.length,sd=Math.sqrt(iv.reduce((a,b)=>a+(b-mean)**2,0)/iv.length);
+  const drift=(RH.period-mean)/RH.period*100,cv=sd/mean*100;     /* drift>0 → speeding up */
+  const first=iv.slice(0,5).reduce((a,b)=>a+b,0)/5,last=iv.slice(-5).reduce((a,b)=>a+b,0)/5;
+  const score=Math.max(0,Math.round(100-Math.abs(drift)*2-cv*2));
+  const k='rhythm'+RH.bpm,b=best(k),rec=b===undefined||score>b;if(rec)setBest(k,score);
+  const tl=$('tl');const span=RH.taps[RH.taps.length-1]-RH.taps[0]+RH.period;
+  tl.innerHTML=Array.from({length:16},(_,i)=>`<i style="left:${100*i*RH.period/span}%"></i>`).join('')+
+    RH.taps.map(t=>`<u style="left:${100*(t-RH.taps[0])/span}%"></u>`).join('');
+  $('beat').innerHTML=`<b>${score}</b><span>ქულა</span>`;
+  const tag=Math.abs(drift)<3&&cv<5?'მეტრონომივით ზუსტი შინაგანი რიტმი.':drift>3?'ტემპი აჩქარდა — სხეული ჩქარობს, მოდუნება სჭირდება.':drift<-3?'ტემპი შენელდა — ენერგია ქვემოთ ეშვება.':cv>=8?'ტემპი სწორია, მაგრამ დარტყმები არათანაბარია.':'კარგი, სტაბილური რიტმი.';
+  $('msg').innerHTML=`<b>${tag}</b><br>ტემპის გადახრა ${drift>=0?'+':''}${drift.toFixed(1)}% · არათანაბრობა ${cv.toFixed(1)}% · ${Math.round(60000/first)}→${Math.round(60000/last)} BPM${rec?' · <b>ახალი რეკორდი</b>':''}
+   <br><button class="btn" style="margin-top:10px" onclick="go('rhythm')">თავიდან</button>`;
+  hud([undefined,score+'%','✓',(rec?score:b)+'%']);
+}
+
+/* ════ STEADY HAND ════ */
+let SH={level:1};
+function startSteady(){
+  const b=best('steady')||0;
+  SH.state='ready';
+  hud([SH.level,'—','—',b?'დონე '+b:'—'],['დონე','დრო','შეხება','მაქს. დონე']);
+  stage.innerHTML=`<div class="how">თითით/მაუსით <b>ოქროს წერტილი</b> მწვანე წრიდან გაიყვანე ბოლომდე ისე, რომ კედლებს არ შეეხო. ყოველ დონეზე დერეფანი ვიწროვდება. 10 დონე.</div>
+   <canvas id="cv"></canvas><div class="msg" id="msg">დაიწყე მწვანე წრიდან</div>`;
+  const cv=$('cv');
+  const fit=()=>{const w=Math.min(640,stage.clientWidth-32),h=Math.round(w*0.48),r=window.devicePixelRatio||1;
+    cv.width=w*r;cv.height=h*r;cv.style.height=h+'px';SH.W=w;SH.H=h;SH.r=r;buildPath();drawSteady();};
+  window.onresize=()=>{if(SH.state!=='drag')fit();};
+  fit();
+  const pos=e=>{const b=cv.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top];};
+  cv.onpointerdown=e=>{
+    const [x,y]=pos(e);const s=SH.pts[0];
+    if(Math.hypot(x-s[0],y-s[1])<Math.max(16,SH.hw+6)&&SH.state!=='done'){
+      cv.setPointerCapture(e.pointerId);SH.state='drag';SH.t0=performance.now();SH.trail=[[x,y]];SH.maxI=0;$('msg').innerHTML='&nbsp;';
+    }
+  };
+  cv.onpointermove=e=>{
+    if(SH.state!=='drag')return;const [x,y]=pos(e);SH.trail.push([x,y]);
+    let bi=0,bd=1e9;for(let i=Math.max(0,SH.maxI-20);i<Math.min(SH.pts.length,SH.maxI+40);i++){const d=Math.hypot(x-SH.pts[i][0],y-SH.pts[i][1]);if(d<bd){bd=d;bi=i;}}
+    SH.maxI=Math.max(SH.maxI,bi);
+    hud([undefined,((performance.now()-SH.t0)/1000).toFixed(1)+'წ']);
+    if(bd>SH.hw){SH.state='fail';SH.fails=(SH.fails||0)+1;hud([undefined,undefined,SH.fails]);SH.hitAt=[x,y];drawSteady();$('msg').innerHTML='<span class="bad">კედელს შეეხე</span> — თავიდან მწვანე წრიდან';later(()=>{SH.state='ready';SH.trail=[];drawSteady();},900);return;}
+    if(bi>=SH.pts.length-2){steadyWin();return;}
+    drawSteady();
+  };
+  cv.onpointerup=()=>{if(SH.state==='drag'){SH.state='ready';SH.trail=[];drawSteady();$('msg').innerHTML='ხელი აუშვი — თავიდან';}};
+}
+function buildPath(){
+  const W=SH.W,H=SH.H,L=SH.level,pad=Math.max(24,H*0.13+10);
+  if(!SH.seed||SH.seedLevel!==L){SH.seed=[Math.random()*6,Math.random()*6,Math.random()*6];SH.seedLevel=L;}
+  const amp=H*0.32,f1=1.2+L*.18,f2=2.6+L*.3;
+  SH.pts=[];for(let i=0;i<=300;i++){const t=i/300,x=pad+t*(W-2*pad);
+    const y=H/2+amp*(.65*Math.sin(t*Math.PI*f1+SH.seed[0])+.35*Math.sin(t*Math.PI*f2+SH.seed[1]))*Math.min(1,t*6,(1-t)*6);
+    SH.pts.push([x,y]);}
+  SH.hw=Math.max(5,(H*0.13)*(1-(L-1)*0.085));
+}
+function drawSteady(){
+  const c=$('cv');if(!c)return;const g=c.getContext('2d');g.setTransform(SH.r,0,0,SH.r,0,0);g.clearRect(0,0,SH.W,SH.H);
+  g.lineCap='round';g.lineJoin='round';
+  const path=()=>{g.beginPath();SH.pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));};
+  path();g.strokeStyle='rgba(201,168,76,.45)';g.lineWidth=SH.hw*2+2;g.stroke();
+  path();g.strokeStyle='#161127';g.lineWidth=SH.hw*2-1;g.stroke();
+  if(SH.maxI&&SH.state==='drag'){g.beginPath();SH.pts.slice(0,SH.maxI+1).forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.strokeStyle='rgba(48,200,144,.18)';g.lineWidth=SH.hw*2-1;g.stroke();}
+  const s=SH.pts[0],e=SH.pts[SH.pts.length-1];
+  g.beginPath();g.arc(s[0],s[1],Math.max(10,SH.hw),0,7);g.fillStyle='rgba(48,200,144,.35)';g.fill();
+  g.beginPath();g.arc(e[0],e[1],Math.max(10,SH.hw),0,7);g.strokeStyle='#ecd59a';g.lineWidth=1.5;g.stroke();
+  if(SH.trail&&SH.trail.length){g.beginPath();SH.trail.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.strokeStyle='rgba(236,213,154,.5)';g.lineWidth=1.5;g.stroke();
+    const p=SH.trail[SH.trail.length-1];g.beginPath();g.arc(p[0],p[1],5,0,7);g.fillStyle='#ecd59a';g.shadowColor='#ecd59a';g.shadowBlur=12;g.fill();g.shadowBlur=0;}
+  if(SH.state==='fail'&&SH.hitAt){g.beginPath();g.arc(SH.hitAt[0],SH.hitAt[1],9,0,7);g.strokeStyle='#e2685c';g.lineWidth=2;g.stroke();}
+}
+function steadyWin(){
+  SH.state='done';const t=(performance.now()-SH.t0)/1000;
+  const b=best('steady')||0;if(SH.level>b)setBest('steady',SH.level);
+  hud([undefined,t.toFixed(1)+'წ',undefined,'დონე '+Math.max(b,SH.level)]);
+  drawSteady();
+  if(SH.level>=10){$('msg').innerHTML='<b>✦ ყველა 10 დონე გავლილია — ქირურგის ხელი!</b><br><button class="btn" style="margin-top:8px" onclick="SH.level=1;SH.seed=null;go(\'steady\')">თავიდან</button>';return;}
+  $('msg').innerHTML=`<b class="ok">✓ დონე ${SH.level}</b> · ${t.toFixed(1)} წმ<br><button class="btn" style="margin-top:8px" id="nxt">დონე ${SH.level+1} →</button>`;
+  $('nxt').onclick=()=>{SH.level++;SH.seed=null;go('steady');};
+}
+
+go(new URLSearchParams(location.search).get('t'));
+</script>
+</body>
+</html>
