@@ -1,5 +1,5 @@
 /* hd_find.js — Human Design · 🔎 ძებნა წარსულში / მომავალში
-   Self-injecting block inside the ტრანზიტი tab (needs hd_transit.js first).
+   Self-injecting tab of its own (🔎 ძებნა, after ტრანზიტი; needs hd_transit.js first).
    hd.html needs only, after hd_transit.js:   <script src="hd_find.js"></script>
    Backend: POST /api/hd_find (hd_find.py)
 
@@ -10,8 +10,8 @@
      • მოტივაცია / პერსპექტივა        — personality Sun / Node color
      • ცენტრი (ჩაკრა)                 — when transit defines it in YOUR chart
                                         (or in the sky alone)
-   ◀ წარსული / მომავალი ▶ from the transit moment; "↧ ნატალში" opens the
-   chart of a found moment.                                                   */
+   ◀ წარსული / მომავალი ▶ from the chosen moment (default: now); centers use
+   the ნატალური tab's data; "↧ ნატალში" opens the chart of a found moment.                                                   */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -93,11 +93,24 @@ function css(){
   document.head.appendChild(s);
 }
 
+const num=(id,l,v,a,b)=>`<div class="field"><label>${l}</label><input type="number" id="${id}" value="${v}" min="${a}" max="${b}"></div>`;
 function inject(){
   if($('hf'))return true;
-  const ns=$('ns');if(!ns)return false;
+  const bar=document.querySelector('.tab-bar'),shell=document.querySelector('.form-shell');
+  if(!bar||!shell||!$('tr-tab-btn'))return false;
   css();
-  const d=document.createElement('div');d.id='hf';
+  const tb=document.createElement('button');tb.className='tab-btn';tb.id='hf-tab-btn';tb.textContent='🔎 ძებნა';tb.onclick=activate;
+  bar.appendChild(tb);
+  const now=new Date();
+  const sec=document.createElement('div');sec.id='form-find';sec.className='form-section';
+  sec.innerHTML=`
+    <div class="person-label" style="color:${TCOL}">🕐 საიდან ვეძებთ
+      <button type="button" id="hf-now" style="margin-left:8px;background:none;border:1px solid var(--border);color:${TCOL};border-radius:5px;padding:1px 8px;cursor:pointer;font-size:.62rem">ახლა</button></div>
+    <div class="form-row">${num('ff-day','დღე',now.getDate(),1,31)}${num('ff-month','თვე',now.getMonth()+1,1,12)}${num('ff-year','წელი',now.getFullYear(),1,3000)}</div>
+    <div class="form-row">${num('ff-hour','საათი',now.getHours(),0,23)}${num('ff-minute','წუთი',now.getMinutes(),0,59)}</div>
+    <div class="tz-row">🕐 ${TZ()} · ცენტრების ძებნა იყენებს „ნატალური“ ჩანართის მონაცემებს</div>`;
+  shell.appendChild(sec);
+  const d=document.createElement('div');d.id='hf';d.style.borderTop='none';d.style.marginTop='6px';
   d.innerHTML=`
     <div class="person-label" style="color:${TCOL}">🔎 ძებნა წარსულში და მომავალში
       <span style="text-transform:none;letter-spacing:0;opacity:.75"> — პროფილი · საკვები · გარემო · ცენტრები</span></div>
@@ -109,14 +122,23 @@ function inject(){
     <div class="hf-row">
       <div class="hf-dir" id="hf-dir"><button type="button" data-d="prev">◀ წარსული</button> <button type="button" data-d="next" class="on">მომავალი ▶</button></div>
       <select id="hf-n"><option value="3">3</option><option value="5" selected>5</option><option value="10">10</option></select>
-      <span style="font-size:.66rem;color:var(--ink-dim)">ტრანზიტის მომენტიდან</span></div>
+      <span style="font-size:.66rem;color:var(--ink-dim)">ზემოთ მითითებული მომენტიდან</span></div>
     <div class="hf-opt" id="hf-copt" hidden>
       <label><input type="radio" name="hf-nat" value="1" checked> ჩემს რუქაში (ნატალი + ტრანზიტი)</label>
       <label><input type="radio" name="hf-nat" value="0"> მხოლოდ ცაში</label>
       <label><input type="checkbox" id="hf-moon"> მთვარის ჩათვლით</label></div>
     <button type="button" class="ns-go" id="hf-go">🔎 ძებნა</button>
     <div class="ns-res" id="hf-res"></div>`;
-  ns.parentNode.insertBefore(d,ns.nextSibling);
+  sec.appendChild(d);
+  $('hf-now').onclick=()=>{const n=new Date(),st=(i,v)=>{$(i).value=v;};
+    st('ff-day',n.getDate());st('ff-month',n.getMonth()+1);st('ff-year',n.getFullYear());st('ff-hour',n.getHours());st('ff-minute',n.getMinutes());};
+  /* keep the page's setMode() and the transit tab from leaving this tab lit */
+  if(typeof setMode==='function'&&!setMode._hf){
+    const o=window.setMode||setMode;
+    const w=function(m){o(m);tb.classList.remove('active');sec.classList.remove('active');};
+    w._hf=true;w._tr=o._tr;window.setMode=w;
+  }
+  const trb=$('tr-tab-btn');if(trb)trb.addEventListener('click',()=>{tb.classList.remove('active');sec.classList.remove('active');});
 
   const q=$('hf-q'),dd=$('hf-dd');
   q.addEventListener('focus',()=>drop());
@@ -135,6 +157,15 @@ function inject(){
     $('hf-dir').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));if(sel)search(false);});
   $('hf-go').onclick=()=>search(false);
   return true;
+}
+function activate(){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  $('hf-tab-btn').classList.add('active');
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  $('form-find').classList.add('active');
+  ['results-natal','results-synastry','results-transit'].forEach(id=>{const e=$(id);if(e)e.classList.add('hidden');});
+  try{currentMode='find';}catch(e){}
+  const st=$('status');if(st)st.textContent='';
 }
 function chips(){$('hf-chips').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.g===grpF));}
 function match(it,qs){const h=(it.label+' '+it.keys+' '+it.grp).toLowerCase();return qs.every(t=>h.includes(t));}
@@ -160,15 +191,14 @@ function pick(i){
 /* ── request ── */
 function moment(){
   const g=id=>+(($(id)||{}).value||0);
-  if(!$('tt-year'))return null;
-  return {date:`${g('tt-year')}-${pad(g('tt-month'))}-${pad(g('tt-day'))}`,time:`${pad(g('tt-hour'))}:${pad(g('tt-minute'))}`,tz_name:TZ()};
+  return {date:`${g('ff-year')}-${pad(g('ff-month'))}-${pad(g('ff-day'))}`,time:`${pad(g('ff-hour'))}:${pad(g('ff-minute'))}`,tz_name:TZ()};
 }
 function natal(){
-  if(!$('tn-lat').value&&$('n-lat')&&$('n-lat').value&&$('tr-copy'))$('tr-copy').click();
-  if(!$('tn-lat').value)return null;
-  const g=id=>+$(id).value;
-  return {date:`${g('tn-year')}-${pad(g('tn-month'))}-${pad(g('tn-day'))}`,time:`${pad(g('tn-hour'))}:${pad(g('tn-minute'))}`,
-    lat:+$('tn-lat').value,lon:+$('tn-lon').value,tz_name:$('tn-tz').value||'UTC'};
+  const P=$('n-lat')&&$('n-lat').value?'n':($('tn-lat')&&$('tn-lat').value?'tn':null);
+  if(!P)return null;
+  const g=id=>+$(P+'-'+id).value;
+  return {date:`${g('year')}-${pad(g('month'))}-${pad(g('day'))}`,time:`${pad(g('hour'))}:${pad(g('minute'))}`,
+    lat:+$(P+'-lat').value,lon:+$(P+'-lon').value,tz_name:$(P+'-tz').value||'UTC'};
 }
 function jdParts(jd,tz){
   const o={};new Intl.DateTimeFormat('en-GB',{timeZone:tz,year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',hourCycle:'h23'})
@@ -183,7 +213,7 @@ async function search(more){
     body.moon=$('hf-moon').checked;
     if(document.querySelector('input[name=hf-nat]:checked').value==='1'){
       const n=natal();
-      if(!n){box.innerHTML='<div class="tr-empty">შენი რუქისთვის ზემოთ შეიყვანე დაბადების მონაცემები და ქალაქი — ან აირჩიე „მხოლოდ ცაში“.</div>';return;}
+      if(!n){box.innerHTML='<div class="tr-empty">შენი რუქისთვის „ნატალური“ ჩანართში შეიყვანე დაბადების მონაცემები და აირჩიე ქალაქი — ან აქ აირჩიე „მხოლოდ ცაში“.</div>';return;}
       body.natal=n;}
   }
   if(more&&last&&last.windows.length){
@@ -237,7 +267,7 @@ function render(d,more){
 /* open the chart of a found moment in the natal tab (city from the transit form, else the natal one) */
 function toNatal(jd){
   const set=(id,v)=>{const e=$(id);if(e)e.value=v;};
-  if($('tn-lat').value){for(const k of ['city','lat','lon','tz'])set('n-'+k,$('tn-'+k).value);
+  if(!$('n-lat').value&&$('tn-lat')&&$('tn-lat').value){for(const k of ['city','lat','lon','tz'])set('n-'+k,$('tn-'+k).value);
     const h=$('tn-city-hint'),nh=$('n-city-hint');if(h&&nh)nh.textContent=h.textContent;
     const r=$('tn-tz-row'),nr=$('n-tz-row');if(r&&nr)nr.textContent=r.textContent;}
   const tz=($('n-lat').value&&$('n-tz').value)||TZ(),p=jdParts(jd,tz);
