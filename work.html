@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>შრომა · მოთმინება · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(201,168,76,.12);--accent:#c9a84c}
+.hanoi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:620px;height:260px}
+.peg{position:relative;border-radius:10px;border:1px solid var(--border);background:var(--raised);cursor:pointer;display:flex;flex-direction:column-reverse;align-items:center;
+  padding:10px 4px 14px;gap:3px;transition:border-color .15s}
+.peg::before{content:'';position:absolute;left:50%;top:22px;bottom:14px;width:4px;margin-left:-2px;border-radius:2px;background:rgba(201,168,76,.28)}
+.peg::after{content:'';position:absolute;left:8%;right:8%;bottom:10px;height:4px;border-radius:2px;background:rgba(201,168,76,.35)}
+.peg:hover{border-color:var(--border-h)}
+.peg.src{border-color:var(--gold)}
+.disc{position:relative;z-index:1;height:20px;border-radius:10px;border:1px solid rgba(0,0,0,.35);transition:transform .15s}
+.disc.lift{transform:translateY(-14px);box-shadow:0 6px 18px rgba(236,213,154,.35)}
+.fifteen{display:grid;gap:6px;width:min(100%,380px);aspect-ratio:1}
+.tile{border-radius:10px;border:1px solid rgba(201,168,76,.35);background:linear-gradient(160deg,#241a3c,#151024);color:var(--gold-lt);font-family:'Cinzel',serif;
+  font-size:var(--fs,26px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .08s}
+.tile:active{transform:scale(.95)}
+.tile.home{border-color:rgba(95,207,138,.5)}
+.tile.blank{background:none;border:1px dashed var(--border);cursor:default}
+.text{width:100%;max-width:600px;font-size:19px;line-height:1.9;background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:14px 16px;
+  letter-spacing:.3px;user-select:none;min-height:110px}
+.text span{color:var(--ink-dim);border-radius:2px}
+.text span.g{color:var(--ink)}
+.text span.b{color:#fff;background:rgba(226,104,92,.55)}
+.text span.c{box-shadow:0 2px 0 var(--gold-lt);color:var(--gold-lt)}
+.typ{width:100%;max-width:600px;background:var(--surface);border:1px solid var(--border-h);border-radius:8px;color:var(--ink);font:inherit;font-size:17px;padding:10px 12px;outline:none}
+.kbhint{font-size:11.5px;color:var(--ink-dim)}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="games.html">← თამაშები</a>
+  <div class="cellno">6</div>
+  <h1>შრომა</h1>
+  <div class="sub">Tower of Hanoi · 15 Puzzle · Typing</div>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="hud">
+  <div><b id="h1">—</b><span id="l1"></span></div>
+  <div><b id="h2">—</b><span id="l2"></span></div>
+  <div><b id="h3">—</b><span id="l3"></span></div>
+  <div><b id="h4">—</b><span id="l4"></span></div>
+</div>
+<div class="stage" id="stage"></div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id),stage=$('stage');
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function hud(v,l){[1,2,3,4].forEach(i=>{if(v&&v[i-1]!==undefined)$('h'+i).textContent=v[i-1];if(l&&l[i-1]!==undefined)$('l'+i).textContent=l[i-1];});}
+const BK='magnus_work_v1';
+const best=k=>{try{return (JSON.parse(localStorage.getItem(BK))||{})[k];}catch(e){return undefined;}};
+const setBest=(k,v)=>{try{const d=JSON.parse(localStorage.getItem(BK))||{};d[k]=v;localStorage.setItem(BK,JSON.stringify(d));}catch(e){}};
+let iv=null;const fmt=s=>s<60?s.toFixed(1)+'წ':Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+function clearAll(){if(iv){clearInterval(iv);iv=null;}document.onkeydown=null;}
+function clock(t0){if(iv)clearInterval(iv);iv=setInterval(()=>hud([undefined,fmt((performance.now()-t0)/1000)]),200);}
+
+const TABS=[{k:'hanoi',n:'ჰანოის კოშკი',run:startHanoi},{k:'fifteen',n:'15-ის თავსატეხი',run:startFifteen},{k:'typing',n:'ბეჭდვის სიჩქარე',run:startTyping}];
+let CUR;
+function go(k){clearAll();CUR=(TABS.find(t=>t.k===k)||TABS[0]).k;try{history.replaceState(null,'','?t='+CUR);}catch(e){}
+  $('tabs').innerHTML='';TABS.forEach(t=>{const b=document.createElement('button');b.textContent=t.n;b.className=t.k===CUR?'on':'';b.onclick=()=>go(t.k);$('tabs').appendChild(b);});
+  TABS.find(t=>t.k===CUR).run();}
+
+/* ════ TOWER OF HANOI ════ */
+let HN={n:4};
+const DISC_COL=['#e2685c','#e08a2e','#e3c740','#5fcf8a','#30b0f0','#6a7ef0','#a585ef','#e050a0'];
+function startHanoi(){
+  HN.pegs=[[...Array(HN.n)].map((_,i)=>HN.n-i),[],[]];HN.sel=null;HN.moves=0;HN.t0=0;HN.done=false;
+  const min=2**HN.n-1,b=best('hanoi'+HN.n);
+  hud(['0','0.0წ',min,b?b.m+' · '+fmt(b.t):'—'],['სვლა','დრო','მინიმუმი','რეკორდი']);
+  stage.innerHTML=`<div class="seg" id="hn">${[3,4,5,6,7,8].map(v=>`<button data-v="${v}" class="${v===HN.n?'on':''}">${v} დისკო</button>`).join('')}</div>
+   <div class="how">გადაიტანე მთელი კოშკი <b>მარჯვენა</b> ღერძზე. ერთ ჯერზე — ერთი დისკო; დიდი პატარაზე არასდროს. შეეხე ღერძს — აიღე, შეეხე მეორეს — დადე. იდეალი: <b>${min}</b> სვლა.</div>
+   <div class="hanoi" id="hanoi"></div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn ghost" onclick="go('hanoi')">თავიდან</button></div>`;
+  [...$('hn').children].forEach(x=>x.onclick=()=>{HN.n=+x.dataset.v;go('hanoi');});
+  document.onkeydown=e=>{const k='123'.indexOf(e.key);if(k>=0)hanoiClick(k);};
+  drawHanoi();
+}
+function drawHanoi(){
+  const box=$('hanoi');box.innerHTML='';
+  HN.pegs.forEach((p,pi)=>{
+    const el=document.createElement('div');el.className='peg'+(HN.sel===pi?' src':'');
+    p.forEach((d,di)=>{const x=document.createElement('div');x.className='disc'+(HN.sel===pi&&di===p.length-1?' lift':'');
+      x.style.width=(26+d*(64/HN.n))+'%';x.style.background=DISC_COL[d-1];el.appendChild(x);});
+    el.onclick=()=>hanoiClick(pi);box.appendChild(el);
+  });
+}
+function hanoiClick(pi){
+  if(HN.done)return;
+  if(HN.sel===null){if(HN.pegs[pi].length){HN.sel=pi;drawHanoi();}return;}
+  if(HN.sel===pi){HN.sel=null;drawHanoi();return;}
+  const from=HN.pegs[HN.sel],to=HN.pegs[pi],d=from[from.length-1];
+  if(to.length&&to[to.length-1]<d){$('msg').innerHTML='<span class="bad">დიდი დისკო პატარაზე არ დაიდება</span>';HN.sel=null;drawHanoi();return;}
+  if(!HN.t0){HN.t0=performance.now();clock(HN.t0);}
+  to.push(from.pop());HN.sel=null;HN.moves++;$('msg').innerHTML='&nbsp;';hud([HN.moves]);drawHanoi();
+  if(HN.pegs[2].length===HN.n){
+    HN.done=true;clearInterval(iv);iv=null;const t=(performance.now()-HN.t0)/1000,min=2**HN.n-1,k='hanoi'+HN.n,b=best(k);
+    const rec=!b||HN.moves<b.m||(HN.moves===b.m&&t<b.t);if(rec)setBest(k,{m:HN.moves,t});
+    const eff=Math.round(100*min/HN.moves);
+    hud([HN.moves,fmt(t),min,rec?HN.moves+' · '+fmt(t):b.m+' · '+fmt(b.t)]);
+    $('msg').innerHTML=`<b class="ok">✓ კოშკი აშენდა</b> · ეფექტურობა ${eff}%${HN.moves===min?' · <b>იდეალური გზა</b>':''}${rec?' · <b>ახალი რეკორდი</b>':''}`+
+      (HN.n<8?`<br><button class="btn" style="margin-top:8px" onclick="HN.n++;go('hanoi')">${HN.n+1} დისკო →</button>`:'');
+  }
+}
+
+/* ════ 15 PUZZLE ════ */
+let FT={n:4};
+function startFifteen(){
+  const n=FT.n,N=n*n;FT.b=[...Array(N)].map((_,i)=>(i+1)%N);
+  let blank=N-1,prev=-1;
+  for(let s=0;s<n*n*40;s++){                         /* random legal moves → always solvable */
+    const nb=neighbors(blank,n).filter(x=>x!==prev),j=nb[ri(0,nb.length-1)];
+    [FT.b[blank],FT.b[j]]=[FT.b[j],FT.b[blank]];prev=blank;blank=j;
+  }
+  FT.moves=0;FT.t0=0;FT.done=false;
+  const b=best('fifteen'+n);
+  hud(['0','0.0წ',inPlace()+'/'+(N-1),b?b.m+' · '+fmt(b.t):'—'],['სვლა','დრო','ადგილზე','რეკორდი']);
+  stage.innerHTML=`<div class="seg" id="ft">${[3,4,5].map(v=>`<button data-v="${v}" class="${v===n?'on':''}">${v}×${v}</button>`).join('')}</div>
+   <div class="how">დაალაგე <b>1-დან ${N-1}-მდე</b> რიგით, ცარიელი — ბოლოს. შეეხე ფილას ცარიელის რიგში ან სვეტში — გადაიწევა. ისრებიც მუშაობს.</div>
+   <div class="fifteen" id="ft15" style="grid-template-columns:repeat(${n},1fr);--fs:${[0,0,0,32,26,21][n]}px"></div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn ghost" onclick="go('fifteen')">აურიე თავიდან</button></div>`;
+  [...$('ft').children].forEach(x=>x.onclick=()=>{FT.n=+x.dataset.v;go('fifteen');});
+  document.onkeydown=e=>{const bl=FT.b.indexOf(0),r=Math.floor(bl/n),c=bl%n;
+    const m={ArrowUp:[r+1,c],ArrowDown:[r-1,c],ArrowLeft:[r,c+1],ArrowRight:[r,c-1]}[e.key];
+    if(m&&m[0]>=0&&m[0]<n&&m[1]>=0&&m[1]<n){e.preventDefault();ftClick(m[0]*n+m[1]);}};
+  drawFifteen();
+}
+function neighbors(i,n){const r=Math.floor(i/n),c=i%n,a=[];if(r)a.push(i-n);if(r<n-1)a.push(i+n);if(c)a.push(i-1);if(c<n-1)a.push(i+1);return a;}
+function inPlace(){return FT.b.filter((v,i)=>v&&v===i+1).length;}
+function drawFifteen(){
+  const box=$('ft15');box.innerHTML='';
+  FT.b.forEach((v,i)=>{const t=document.createElement('div');t.className='tile'+(v?'':' blank')+(v&&v===i+1?' home':'');t.textContent=v||'';
+    t.onclick=()=>ftClick(i);box.appendChild(t);});
+}
+function ftClick(i){
+  if(FT.done)return;const n=FT.n,bl=FT.b.indexOf(0),r=Math.floor(i/n),c=i%n,br=Math.floor(bl/n),bc=bl%n;
+  if(i===bl||(r!==br&&c!==bc))return;
+  if(!FT.t0){FT.t0=performance.now();clock(FT.t0);}
+  const step=r===br?(c<bc?-1:1):(r<br?-n:n);let cur=bl;
+  while(cur!==i){const nx=cur+step;FT.b[cur]=FT.b[nx];FT.b[nx]=0;cur=nx;FT.moves++;}
+  hud([FT.moves,undefined,inPlace()+'/'+(n*n-1)]);drawFifteen();
+  if(inPlace()===n*n-1){
+    FT.done=true;clearInterval(iv);iv=null;const t=(performance.now()-FT.t0)/1000,k='fifteen'+n,b=best(k);
+    const rec=!b||t<b.t;if(rec)setBest(k,{m:FT.moves,t});
+    hud([FT.moves,fmt(t),undefined,rec?FT.moves+' · '+fmt(t):b.m+' · '+fmt(b.t)]);
+    $('msg').innerHTML=`<b class="ok">✓ დალაგდა</b> · ${FT.moves} სვლა · ${fmt(t)}${rec?' · <b>ახალი რეკორდი</b>':''}`;
+  }
+}
+
+/* ════ TYPING ════ */
+const TXT={
+  ka:['ვინც დილით ადრე დგება, დღე მას ეკუთვნის, რადგან დრო მხოლოდ ყურადღებიან ადამიანს ემორჩილება.',
+      'რიცხვები არ ტყუიან: ყოველი თარიღი თავის კვადრატს ქმნის და ყოველი კვადრატი თავის გზას აჩვენებს.',
+      'ვარსკვლავები მიმართულებას გვაძლევენ, მაგრამ გზას ჩვენი ფეხები გადიან, ნაბიჯ-ნაბიჯ და მოთმინებით.',
+      'შრომა ის ენაა, რომლითაც ადამიანი სამყაროს ესაუბრება; რაც უფრო ხშირად ლაპარაკობ, მით უფრო გესმის პასუხი.',
+      'მთვარე ყოველ თვე ქრება და ისევ ბრუნდება, რათა გვახსოვდეს, რომ დასასრული ახალი ციკლის დასაწყისია.',
+      'პატარა საქმე ყოველდღე უფრო ძლიერია, ვიდრე დიდი გეგმა, რომელიც მხოლოდ ფიქრებში ცხოვრობს.',
+      'გონება მდინარესავითაა: როცა მშვიდია, ფსკერს ხედავ, როცა აღელვებულია, საკუთარ ანარეკლსაც ვერ ცნობ.',
+      'ცხრა ციფრი, ცხრა უჯრა და ერთი ადამიანი, რომელიც ყველა მათგანს თავის თავში ატარებს.'],
+  en:['Every date builds its own square, and every square quietly shows the path that was there from the start.',
+      'The stars give direction, but the road is walked by our own feet, one patient step after another.',
+      'Small work done every day is stronger than a great plan that lives only in the mind.',
+      'The moon disappears each month and returns, reminding us that every ending opens a new cycle.',
+      'A calm mind is like still water: you see the bottom clearly and recognise your own reflection.'],
+};
+let TY={lang:'ka'};
+function startTyping(){
+  const L=TXT[TY.lang];TY.text=L[ri(0,L.length-1)];TY.t0=0;TY.done=false;TY.errs=0;
+  const b=best('typing_'+TY.lang);
+  hud(['0','0.0წ','100%',b?b+' wpm':'—'],['სიტყვა/წთ','დრო','სიზუსტე','რეკორდი']);
+  stage.innerHTML=`<div class="seg" id="tl">${[['ka','ქართული'],['en','English']].map(([k,n])=>`<button data-k="${k}" class="${k===TY.lang?'on':''}">${n}</button>`).join('')}</div>
+   <div class="how">გადაბეჭდე ტექსტი ზუსტად. დრო პირველ ასოზე იწყება. შეცდომა წითლად ჩანს — წაშალე და გაასწორე.</div>
+   <div class="text" id="tx">${[...TY.text].map(ch=>`<span>${ch===' '?'&nbsp;':ch}</span>`).join('')}</div>
+   <input class="typ" id="ti" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="${TY.lang==='ka'?'აქ დაბეჭდე… (ქართული განლაგება)':'type here…'}">
+   <div class="kbhint">${TY.lang==='ka'?'საჭიროა ქართული კლავიატურის განლაგება':''}</div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn ghost" onclick="go('typing')">ახალი ტექსტი</button></div>`;
+  [...$('tl').children].forEach(x=>x.onclick=()=>{TY.lang=x.dataset.k;go('typing');});
+  const ti=$('ti');ti.focus();TY.prevLen=0;
+  ti.oninput=()=>{
+    if(TY.done)return;const v=ti.value;
+    if(!TY.t0&&v.length){TY.t0=performance.now();clock(TY.t0);}
+    if(v.length>TY.prevLen&&v[v.length-1]!==TY.text[v.length-1])TY.errs++;
+    TY.prevLen=v.length;
+    const spans=$('tx').children;let good=0;
+    for(let i=0;i<spans.length;i++){
+      spans[i].className=i<v.length?(v[i]===TY.text[i]?'g':'b'):i===v.length?'c':'';
+      if(i<v.length&&v[i]===TY.text[i])good++;
+    }
+    const min=(performance.now()-TY.t0)/60000,wpm=min>0?Math.round(good/5/min):0;
+    const acc=Math.max(0,Math.round(100*(1-TY.errs/Math.max(1,v.length))));
+    hud([wpm,undefined,acc+'%']);
+    if(v===TY.text){
+      TY.done=true;clearInterval(iv);iv=null;ti.disabled=true;
+      const t=(performance.now()-TY.t0)/1000,fw=Math.round(TY.text.length/5/(t/60)),k='typing_'+TY.lang,b=best(k),rec=acc>=90&&(!b||fw>b);if(rec)setBest(k,fw);
+      hud([fw,fmt(t),acc+'%',(rec?fw:b||0)+' wpm']);
+      const tag=fw>=60?'პროფესიონალის სიჩქარე.':fw>=40?'კარგი, საშუალოზე მაღალი.':fw>=25?'საშუალო — ვარჯიში შედეგს მალე მოიტანს.':'დამწყები — ყოველდღე 5 წუთი და ნახავ ზრდას.';
+      $('msg').innerHTML=`<b class="ok">✓ ${fw} სიტყვა/წთ</b> · სიზუსტე ${acc}% · ${fmt(t)}<br><b>${tag}</b>${rec?' · <b>ახალი რეკორდი</b>':''}`;
+    }
+  };
+}
+
+go(new URLSearchParams(location.search).get('t'));
+</script>
+</body>
+</html>
