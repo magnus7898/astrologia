@@ -29,6 +29,13 @@ canvas{display:block;width:100%;height:100%}
 .ov[hidden]{display:none}
 .ov h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
 .ov p{font-size:12.5px;color:var(--ink-mid);max-width:520px}
+.ov .done{font-size:13px;color:#5fcf8a;letter-spacing:.5px}
+.ov .lvno{font-family:'Cinzel',serif;font-size:11px;letter-spacing:5px;color:var(--gold);opacity:.75}
+.ov .ttl{font-family:'Cinzel Decorative',serif;font-size:clamp(24px,5vw,36px);letter-spacing:2px;color:var(--gold-lt);line-height:1.15;animation:ttlIn .5s cubic-bezier(.3,1.4,.5,1)}
+.ov .quip{font-size:15px;font-style:italic;color:var(--ink);max-width:460px;line-height:1.5;opacity:0;animation:fadeIn .5s .25s forwards}
+.ov .cd{font-family:'Cinzel',serif;font-size:34px;color:var(--gold-lt);min-height:42px;line-height:1}
+@keyframes ttlIn{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadeIn{to{opacity:1}}
 .btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:10px 20px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
 .btn.ghost{background:none;color:var(--gold);border:1px solid var(--border-h);font-weight:400}
 .lvgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;width:100%;max-width:560px}
@@ -600,7 +607,7 @@ function tone(f,d=.09,type='sine',v=.12){if(!$('o-snd').checked)return;try{AC=AC
 const vib=p=>{if($('o-vib').checked&&navigator.vibrate)try{navigator.vibrate(p);}catch(e){}};
 
 /* ── state ── */
-const G={lv:0,L:null,t:0,lt:0,px:0,py:0,sx:0,sy:0,coins:[],got:0,dl:0,dt:store.get('deaths',0),run:false,paused:false,dead:0,won:false,keys:{},joy:null};
+const G={lv:0,L:null,t:0,lt:0,px:0,py:0,sx:0,sy:0,coins:[],got:0,dl:0,dt:store.get('deaths',0),run:false,paused:false,dead:0,won:false,keys:{},joy:null,intro:false,go:null};
 const prog=store.get('prog',{unlocked:1,best:{}});
 const MODES={normal:'ჩვეულებრივი',hard:'რთული',extreme:'უძნელესი'};
 G.mode=HG.setMode(store.get('mode','hard'));
@@ -648,10 +655,7 @@ function win(){
   prog.unlocked=Math.max(prog.unlocked,Math.min(30,n+1));store.set('prog',prog);stats();
   if(n===30)overlay(`<h2>✦ ყველა 30 დონე გავლილია!</h2><p>სულ სიკვდილი: <b>${G.dt}</b>. ახლა სცადე თითო დონე ნაკლები სიკვდილით.</p>
     <div class="bar"><button class="btn" id="o-lv">☰ დონეები</button></div>`,()=>{$('o-lv').onclick=levels;});
-  else{clearTimeout(G.autoT);G.autoT=setTimeout(()=>{if(G.won&&G.lv===n-1)play(n);},2200);
-    overlay(`<h2>დონე ${n} გავლილია</h2><p>სიკვდილი: <b>${G.dl}</b> · დრო: <b>${G.lt.toFixed(1)} წმ</b></p><p style="font-size:12px">დონე ${n+1} ავტომატურად დაიწყება… (Enter — ახლავე)</p>
-    <div class="bar"><button class="btn" id="o-next">▶ დონე ${n+1}</button><button class="btn ghost" id="o-again">↻ თავიდან</button></div>`,
-    ()=>{$('o-next').onclick=()=>play(G.lv+1);$('o-again').onclick=()=>{clearTimeout(G.autoT);play(G.lv);};});}
+  else play(n,{dl:G.dl,lt:G.lt});
 }
 /* ── loop ── */
 let last=0;
@@ -723,7 +727,7 @@ function draw(){
 }
 /* ── input ── */
 const KM={ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d',a:'l',d:'r',w:'u',s:'d',A:'l',D:'r',W:'u',S:'d','ა':'l','დ':'r','წ':'u','ს':'d'};
-document.addEventListener('keydown',e=>{const k=KM[e.key];if(k&&G.demo){stopDemo();G.demoAllOn=false;G.t=G.t;}if(k){G.keys[k]=true;e.preventDefault();}
+document.addEventListener('keydown',e=>{const k=KM[e.key];if(G.intro&&(k||e.key==='Enter'||e.key===' ')){e.preventDefault();G.go&&G.go();if(k)G.keys[k]=true;return;}if(k&&G.demo){stopDemo();G.demoAllOn=false;G.t=G.t;}if(k){G.keys[k]=true;e.preventDefault();}
   if((e.key==='Enter'||e.key===' ')&&G.won&&!G.demo&&G.lv<29){e.preventDefault();play(G.lv+1);return;}
   if(e.key==='r'||e.key==='R'||e.key==='რ'){if(G.L&&!G.won)restart();}
   if(e.key==='Escape'&&G.demo){stopDemo();G.demoAllOn=false;}
@@ -743,21 +747,63 @@ $('pad').querySelectorAll('button').forEach(b=>{const k=b.dataset.k;
 /* ── screens ── */
 function overlay(html,bind){const o=$('ov');o.innerHTML=html;o.hidden=false;bind&&bind();}
 function hideOv(){$('ov').hidden=true;}
-function play(i){clearTimeout(G.autoT);stopDemo();G.demoAllOn=false;i=Math.max(0,Math.min(29,i|0));$('b-jump').value=i;load(i);hideOv();G.run=true;G.paused=false;$('b-pause').textContent='⏸ პაუზა (P)';}
-function start(){play(G.L?G.lv:Math.min(prog.unlocked-1,29));}
+const QUIPS=['ეს დონე ბებიაჩემმაც გაიარა. ფეხსაცმლით.',
+ 'ლურჯი წერტილები არ კბენენ. უბრალოდ კლავენ.',
+ 'ღრმად ჩაისუნთქე… ამოისუნთქე… ახლა — წადი!',
+ 'შენ წითელი კვადრატი ხარ. ეს უკვე ძალაა.',
+ 'სიკვდილი აქ უფასოა. გამოიყენე გონივრულად.',
+ 'პროფესიონალი ის მოყვარულია, რომელიც არ დანებდა.',
+ 'ნელა იჩქარე — როგორც ბრძენები ამბობენ.',
+ 'შენი თითები ახლა ოლიმპიურ ფორმაში არიან.',
+ 'მთავარია, ტელეფონი კედელს არ ესროლო.',
+ 'მეათე დონე! დედაშენი ამაყობს. ალბათ.',
+ 'ეს წერტილები შენზე მეტს ვარჯიშობდნენ. ჯერჯერობით.',
+ 'თვალი არ დაახამხამო. ან დაახამხამე — ოღონდ სწრაფად.',
+ 'სადღაც ცაში პითაგორა გიყურებს და გიღიმის.',
+ 'ამ დონის გავლა რეზიუმეში ჩაწერე. სერიოზულად.',
+ 'შუა გზაზე ხარ. უკან დასაბრუნებელი გზა არ არსებობს.',
+ 'მონეტები ძვირი ღირს. სიცოცხლე — არა.',
+ 'კედელს ნუ შეეხები. მასაც თავისი პირადი სივრცე აქვს.',
+ 'გაიარე ისე, თითქოს არაფერი. მერე იამაყე.',
+ 'ყველა ჩემპიონი ოდესღაც მე-19 დონეზე იჭედებოდა.',
+ 'ოცი დონე! ოფიციალურად დამოკიდებული ხარ.',
+ 'აქედან ვარდისფერები იწყებენ. ისინი უფრო გაბრაზებულები არიან.',
+ 'გული აჩქარდა? ესე იგი ცოცხალი ხარ.',
+ 'ყოველი შეცდომა გაკვეთილია. მოემზადე ბევრი გაკვეთილისთვის.',
+ 'ეს დონე მისტიკოსებმა დახატეს. ზუსტად არავინ იცის, რატომ.',
+ 'შენი წინამორბედების მესამედი აქ ტიროდა. შენ — არ იტირებ.',
+ 'ვარსკვლავები გიყურებენ. აჩვენე მათ, ვინ ხარ.',
+ 'კიდევ სამი დონე. სამი! ეს ხომ არაფერია!',
+ 'ამ დონეზე ფიზიკის კანონები შვებულებაში არიან.',
+ 'ბოლოსწინა. სუნთქვა. ფოკუსი. ✦',
+ 'ფინალი. წითელი ლურჯის წინააღმდეგ — მარადიული ომი. დაასრულე.'];
+const WINQ=['ჩემპიონი!','ეს ლამაზი იყო.','წერტილები შოკში არიან.','კლასიკა.','ასე უნდა!','გენიოსი თუ იღბლიანი? ორივე.'];
+function winLine(dl){return dl===0?'უშეცდომოდ! ლეგენდა.':dl>=25?dl+' სიკვდილი — მაგრამ ვინ ითვლის?':WINQ[Math.floor(Math.random()*WINQ.length)];}
+/* every level opens with a title card, then starts by itself (or Enter / arrow / tap) */
+function play(i,prev){clearTimeout(G.autoT);clearInterval(G.cdT);stopDemo();G.demoAllOn=false;i=Math.max(0,Math.min(29,i|0));$('b-jump').value=i;load(i);
+  G.banner=0;G.run=false;G.paused=false;G.intro=true;G.keys={};$('b-pause').textContent='⏸ პაუზა (P)';
+  const L=LEVELS[i],mech=L.mech?' · '+({blink:'ციმციმა წერტილები',pulse:'მფეთქავი წერტილები',fog:'სიბნელე'})[L.mech]:'';
+  overlay(`${prev?`<div class="done">✓ დონე ${i} · ${winLine(prev.dl)} · ☠ ${prev.dl} · ${prev.lt.toFixed(1)} წმ</div>`:''}
+    <div class="lvno">დონე ${i+1} / 30</div><div class="ttl">${L.name}</div><div class="quip">„${QUIPS[i]}“</div>
+    <p>მონეტა: ${L.coins.length}${mech}</p><div class="cd" id="o-cd">3</div>
+    <div class="bar"><button class="btn" id="o-goi">▶ წავედით!</button></div>`,()=>{$('o-goi').onclick=()=>G.go&&G.go();});
+  let n=3;G.cdT=setInterval(()=>{n--;const c=$('o-cd');if(c)c.textContent=n>0?n:'✦';if(n<=0){clearInterval(G.cdT);G.go&&G.go();}},800);
+  G.go=()=>{if(!G.intro)return;clearInterval(G.cdT);G.intro=false;G.go=null;hideOv();G.run=true;G.lt=0;tone(660,.08,'triangle');};
+}
+function start(){play(G.L?G.lv:0);}
 function stopDemo(){if(!G.demo)return;G.demo=null;G.keys={};HG.PLAYER.speed=150;$('b-demo').textContent='👁 დემო';}
-function demo(i,all){const mv=DEMO[G.mode]&&DEMO[G.mode][i+1];if(!mv)return;load(i);hideOv();$('b-jump').value=i;
+function demo(i,all){const mv=DEMO[G.mode]&&DEMO[G.mode][i+1];if(!mv)return;clearInterval(G.cdT);G.intro=false;G.go=null;load(i);hideOv();$('b-jump').value=i;
   HG.PLAYER.speed=150*DEMO_SPD[G.mode];G.t=0;G.lt=0;G.dl=0;G.run=true;G.paused=false;G.won=false;G.banner=1.2;
   G.demo={mv,all:!!all,fast:1};G.demoAllOn=!!all;$('b-demo').textContent='■ დემოს გაჩერება';}
-function restart(){stopDemo();G.demoAllOn=false;if(!G.L)return;G.dl=0;G.lt=0;respawn();hideOv();G.run=true;G.won=false;G.paused=false;hud();}
-function pause(){if(!G.L||G.won)return;G.paused=!G.paused;$('b-pause').textContent=G.paused?'▶ გაგრძელება (P)':'⏸ პაუზა (P)';
+function restart(){stopDemo();G.demoAllOn=false;if(!G.L||G.intro)return;G.dl=0;G.lt=0;respawn();hideOv();G.run=true;G.won=false;G.paused=false;hud();}
+function pause(){if(!G.L||G.won||G.intro)return;G.paused=!G.paused;$('b-pause').textContent=G.paused?'▶ გაგრძელება (P)':'⏸ პაუზა (P)';
   if(G.paused)overlay(`<h2>პაუზა</h2><div class="bar"><button class="btn" id="o-res">▶ გაგრძელება</button><button class="btn ghost" id="o-lv2">☰ დონეები</button></div>`,
     ()=>{$('o-res').onclick=pause;$('o-lv2').onclick=levels;});else hideOv();}
 function levels(){
   G.run=false;G.paused=false;
   overlay(`<h2>აირჩიე დონე · ${MODES[G.mode]}</h2><p>ყველა დონე ღიაა. მწვანე — გავლილი (ქვემოთ — საუკეთესო შედეგი: სიკვდილი).</p>
     <div class="lvgrid">${LEVELS.map((L,i)=>{const b=prog.best[bk(i+1)];return `<button data-i="${i}" class="${b?'done':''}" title="${L.name}">${i+1}${b?`<small>☠${b.d}</small>`:''}</button>`;}).join('')}</div>
-    <button class="btn" id="o-go">▶ თამაში — დონე ${Math.min(prog.unlocked,30)}</button>`,
+    <button class="btn" id="o-go">▶ თამაში — დონე ${G.lv+1}</button>`,
     ()=>{$('ov').querySelectorAll('.lvgrid button').forEach(b=>b.onclick=()=>play(+b.dataset.i));$('o-go').onclick=start;});
 }
 function stats(){const own=Object.entries(prog.best).filter(([k])=>k.startsWith(G.mode+':')).map(x=>x[1]),done=own.length,dsum=own.reduce((a,b)=>a+b.d,0);
@@ -814,7 +860,7 @@ ytInit();
 const _start=start;start=function(){if($('m-auto').checked&&!M.playing){if(M.ready)M.yt.playVideo();else M.pending=true;}return _start.apply(this,arguments);};
 window._music=M;
 
-resize();const qLv=+(new URLSearchParams(location.search).get('level')||0);load(qLv?Math.min(30,qLv)-1:Math.min(prog.unlocked-1,29));$('b-jump').value=G.lv;stats();
+resize();const qLv=+(new URLSearchParams(location.search).get('level')||0);load(qLv?Math.min(30,qLv)-1:0);$('b-jump').value=G.lv;stats();
 overlay(`<h2>უძნელესი გზა</h2><p>მიიყვანე წითელი კვადრატი მწვანე ფინიშამდე და არ შეეხო ლურჯ წერტილებს. აკრიფე ყველა ყვითელი მონეტა. 30 დონე.</p>
   <div class="bar" id="o-modes">${Object.entries(MODES).map(([k,t])=>`<button class="btn${k===G.mode?'':' ghost'}" data-m="${k}">${t}</button>`).join('')}</div>
   <p style="font-size:11.5px">ჩვეულებრივი — ვიწრო გასასვლელები · რთული — ყველაფერი 25%-ით სწრაფია, ზღვარზე · უძნელესი — 60%-ით სწრაფი, მილიმეტრული დრო.</p>
