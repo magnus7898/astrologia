@@ -4,7 +4,8 @@
    Backend: POST /api/hd_find (hd_find.py)
 
    One search bar for:
-     • პროფილი 1/3 … 6/3            — when a person is / was born with it
+     • ტიპი (5)                     — when a person is / was born with it
+     • პროფილი 1/3 … 6/3            — same
      • საკვები (დიზაინის მზის ფერი)   — digestion, with or without the arrow
      • გარემო (დიზაინის კვანძის ფერი) — environment
      • მოტივაცია / პერსპექტივა        — personality Sun / Node color
@@ -44,6 +45,10 @@ const CEN=[['Head','თავი','head crown თხემის'],['Ajna','ა�
   ['Solar Plexus','მზის წნული','solar plexus emotions ემოცია'],['Spleen','ელენთა','spleen სპლენი ინტუიცია'],
   ['Sacral','საკრალი','sacral სიცოცხლე'],['Root','ფესვი','root ფუძე']];
 const ITEMS=[];
+[['Manifestor','მანიფესტორი','manifestor მანიფესტორი'],['Generator','გენერატორი','generator გენერატორი'],
+ ['Manifesting Generator','მანიფესტირებადი გენერატორი','manifesting generator mg მანიფესტირებადი'],
+ ['Projector','პროექტორი','projector პროექტორი'],['Reflector','რეფლექტორი','reflector რეფლექტორი']]
+ .forEach(([en,ka,k])=>ITEMS.push({kind:'type',value:en,side:null,grp:'ტიპი',label:`${ka} (${en})`,keys:`type ტიპი ${k}`}));
 Object.entries(PROF).forEach(([k,n])=>ITEMS.push({kind:'profile',value:k,side:null,grp:'პროფილი',
   label:`${k} — ${n}`,keys:`profile პროფილი ${k} ${k.replace('/','')}`}));
 Object.entries(VARS).forEach(([kind,V])=>V.t.forEach((x,i)=>{
@@ -54,8 +59,8 @@ Object.entries(VARS).forEach(([kind,V])=>V.t.forEach((x,i)=>{
 }));
 CEN.forEach(([en,ka,k])=>ITEMS.push({kind:'center',value:en,side:null,grp:'ცენტრი',label:`${ka} (${en})`,
   keys:`center ცენტრი ჩაკრა chakra ${en} ${k} განსაზღვრა აქტივაცია`}));
-const GROUPS=['პროფილი','საკვები','გარემო','მოტივაცია','პერსპექტივა','ცენტრი'];
-const GHELP={'პროფილი':'როდის იბადება / დაიბადა ადამიანი ამ პროფილით',
+const GROUPS=['ტიპი','პროფილი','საკვები','გარემო','მოტივაცია','პერსპექტივა','ცენტრი'];
+const GHELP={'ტიპი':'როდის იბადება / დაიბადა ადამიანი ამ ტიპით (რეფლექტორი იშვიათია — ძებნა ~10 წმ)','პროფილი':'როდის იბადება / დაიბადა ადამიანი ამ პროფილით',
   'საკვები':'დიზაინის მზის ფერი · ← / → ისარი ტონიდან (1-3 / 4-6)','გარემო':'დიზაინის ჩრდ. კვანძის ფერი',
   'მოტივაცია':'პიროვნების მზის ფერი','პერსპექტივა':'პიროვნების ჩრდ. კვანძის ფერი',
   'ცენტრი':'როდის განსაზღვრავს ტრანზიტი ამ ცენტრს შენს რუქაში (ან თვითონ ცაში)'};
@@ -113,9 +118,9 @@ function inject(){
   const d=document.createElement('div');d.id='hf';d.style.borderTop='none';d.style.marginTop='6px';
   d.innerHTML=`
     <div class="person-label" style="color:${TCOL}">🔎 ძებნა წარსულში და მომავალში
-      <span style="text-transform:none;letter-spacing:0;opacity:.75"> — პროფილი · საკვები · გარემო · ცენტრები</span></div>
+      <span style="text-transform:none;letter-spacing:0;opacity:.75"> — ტიპი · პროფილი · საკვები · გარემო · ცენტრები</span></div>
     <div class="hf-box"><span class="hf-ic">🔎</span>
-      <input id="hf-q" autocomplete="off" placeholder="მაგ. 4/6, მადა, მთები, ყელი, ელენთა, sacral…">
+      <input id="hf-q" autocomplete="off" placeholder="მაგ. პროექტორი, 4/6, მადა, მთები, ყელი, ელენთა, sacral…">
       <div id="hf-dd" hidden></div></div>
     <div class="hf-chips" id="hf-chips">${GROUPS.map(g=>`<button type="button" data-g="${g}">${g}</button>`).join('')}</div>
     <div class="hf-sel" id="hf-sel"><small>აირჩიე, რას ეძებ — ჩაწერე ან დააჭირე ჯგუფს.</small></div>
