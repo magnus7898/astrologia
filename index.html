@@ -901,7 +901,7 @@
      members:['compat.html'],label:{}},
     {key:'health',title:'ჯანმრთელობა',sub:'Breathing · Sleep · Memory · Meditation…',css:'c-name',art:'breath.html',
      members:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','cold.html','fasting.html','rhythm.html'],label:{},always:true},
-    {key:'games',title:'თამაშები',sub:'Intuition · Memory · Logic · Hardest Path',css:'c-pyth',art:'intuition.html',
+    {key:'games',title:'თამაშები',sub:'პითაგორას კვადრატი · 9 უჯრა',css:'c-pyth',art:'intuition.html',href:'games.html',count:9,
      members:['intuition.html','memory.html','logic.html','hardest.html'],label:{},always:true},
     {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
@@ -910,6 +910,7 @@
      no parameter → the four boxes. Same file, so the admin-panel order
      and visibility apply on both, and the back button works.           */
   const params=new URLSearchParams(location.search);
+  if(params.get('g')==='games'){location.replace('games.html');return;}
   const homeHref=location.pathname.split('/').pop()||'index.html';
   {const bk=document.getElementById('grp-back');if(bk)bk.href=homeHref;}
   function groupTiles(G,all){
@@ -955,10 +956,10 @@
       const src=original[G.art]||tiles[0];
       const box=document.createElement('a');
       box.className='card grp main '+G.css;box.dataset.grp=G.key;
-      box.href=homeHref+'?g='+encodeURIComponent(G.key);
+      box.href=G.href||homeHref+'?g='+encodeURIComponent(G.key);
       const sym=src.querySelector('.sym');
       box.innerHTML='<div class="card-glow"></div><div class="cn tl"></div><div class="cn tr"></div>'+
-        '<div class="cn bl"></div><div class="cn br"></div><span class="grp-n">'+tiles.length+'</span>'+
+        '<div class="cn bl"></div><div class="cn br"></div><span class="grp-n">'+(G.count||tiles.length)+'</span>'+
         (sym?sym.outerHTML:'<div class="sym">✦</div>')+
         '<div class="card-title"></div><div class="card-sub"></div>';
       box.querySelector('.card-title').textContent=G.title;
