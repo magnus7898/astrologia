@@ -89,15 +89,46 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 .mnote{font-size:11px;color:var(--ink-dim);margin-top:6px}
 .opts select{padding:3px 6px;font-size:12px}
 @media(max-width:600px){.overlay{gap:8px;padding:12px}.overlay p{font-size:11.5px}.stats{gap:5px}.stats div{padding:4px 2px}.big{font-size:36px}.overlay .btn{padding:9px 18px}.stats b{font-size:15px}.overlay h2{font-size:17px}.back{position:static;display:inline-block;margin-bottom:10px}.hud b{font-size:17px}.big{font-size:42px}}
+.tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:-4px 0 14px}
+.tabs button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:16px;padding:6px 14px;font:inherit;font-size:12.5px;cursor:pointer}
+.tabs button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+.gsec[hidden]{display:none}
+.stage2{position:relative;width:min(100%,560px);aspect-ratio:4/3;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;touch-action:manipulation;user-select:none}
+/* vanish */
+.plate{position:absolute;left:8%;right:8%;bottom:9%;height:13%;border-radius:50%;background:radial-gradient(ellipse at 50% 35%,#3a2f55,#1a1430 70%);border:2px solid rgba(201,168,76,.35);box-shadow:0 8px 30px rgba(0,0,0,.5),inset 0 -6px 16px rgba(0,0,0,.5);transition:box-shadow .3s,filter .3s}
+.plate.glow{box-shadow:0 0 40px rgba(236,213,154,.55),inset 0 0 30px rgba(236,213,154,.4);filter:brightness(1.4)}
+.fig{position:absolute;width:var(--fz,56px);height:var(--fz,56px);margin:calc(var(--fz,56px)/-2) 0 0 calc(var(--fz,56px)/-2);display:flex;align-items:center;justify-content:center;
+  font-size:calc(var(--fz,56px)*.78);line-height:1;text-shadow:0 0 12px rgba(255,255,255,.25),0 3px 6px rgba(0,0,0,.6);transition:transform .7s cubic-bezier(.3,1.35,.5,1),opacity .5s,left .45s,top .45s}
+.fig.up{transform:translateY(-120vh)}
+.fig.down{transform:translateY(60vh) scale(.6);opacity:0;transition:transform .6s cubic-bezier(.6,0,.9,.4),opacity .55s}
+.choices{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px auto 0;max-width:560px;min-height:58px}
+.choices button{width:54px;height:54px;border-radius:10px;background:var(--raised);border:1px solid var(--border);font-size:32px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.choices button:hover{border-color:var(--border-h)}
+.choices button.ok{background:rgba(95,207,138,.2);border-color:var(--ok)}
+.choices button.no{background:rgba(226,104,92,.2);border-color:var(--bad)}
+/* cups */
+.cup{position:absolute;width:var(--cw,80px);height:calc(var(--cw,80px)*1.05);margin-left:calc(var(--cw,80px)/-2);cursor:pointer;z-index:2;
+  transition-property:left,top,transform;transition-timing-function:ease-in-out}
+.cup i{position:absolute;inset:0;clip-path:polygon(16% 0,84% 0,100% 100%,0 100%);border-radius:4px;
+  background:linear-gradient(90deg,#6a1f2a,#c94a52 30%,#f08a84 45%,#b3383f 65%,#5c1a24)}
+.cup i::after{content:'';position:absolute;left:0;right:0;bottom:0;height:12%;background:linear-gradient(90deg,#4a1219,#9a2f36,#4a1219)}
+.cup b{position:absolute;left:30%;right:30%;top:-7%;height:12%;border-radius:40%;background:linear-gradient(90deg,#5c1a24,#d0585e,#5c1a24)}
+.cup.lift{transform:translateY(-55%)}
+.cup.hl i{filter:brightness(1.35) drop-shadow(0 0 6px #ecd59a)}
+.ball{position:absolute;width:calc(var(--cw,80px)*.42);height:calc(var(--cw,80px)*.42);margin-left:calc(var(--cw,80px)*-.21);border-radius:50%;z-index:1;
+  background:radial-gradient(circle at 35% 30%,#fff6d8,#ecd59a 40%,#c9a84c 70%,#6a4c14);box-shadow:0 0 18px rgba(236,213,154,.6)}
+.table{position:absolute;left:4%;right:4%;height:3px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
 </style>
 </head>
 <body>
 <div class="page">
 <header>
-  <a class="back" href="index.html?g=games">← თამაშები</a>
+  <a class="back" href="index.html?g=health">← ჯანმრთელობა</a>
   <h1>მეხსიერების ბადე</h1>
   <div class="sub">ვიზუალურ-სივრცითი მეხსიერება · 3×3 → 10×10 · ერთი წუთი</div>
 </header>
+<div class="tabs" id="tabs"><button data-g="g1" class="on">▦ ბადე</button><button data-g="g2">◆ რომელი გაქრა?</button><button data-g="g3">🥤 ჭიქები</button></div>
+<section class="gsec" id="g1">
 
 <div class="hud">
   <div><b id="h-time">60</b><span>წამი</span></div>
@@ -113,12 +144,35 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
   <div class="overlay" id="ov"></div>
 </div>
 
+
+
+</section>
+<section class="gsec" id="g2" hidden>
+<div class="hud">
+  <div><b id="v-lives">♥♥♥</b><span>სიცოცხლე</span></div>
+  <div><b id="v-score">0</b><span>ქულა</span></div>
+  <div><b id="v-lv">1</b><span>საფეხური</span></div>
+  <div><b id="v-n">3</b><span>ფიგურა</span></div>
+</div>
+<div class="msg" id="v-msg">ფიგურები თეფშზე დაეცემა — დაიმახსოვრე. მერე თეფშში ჩაცვივდებიან და ერთის გარდა დაბრუნდებიან.</div>
+<div class="stage2" id="v-stage"><div class="plate" id="v-plate"></div><div class="overlay" id="v-ov"></div></div>
+<div class="choices" id="v-ch"></div>
+</section>
+<section class="gsec" id="g3" hidden>
+<div class="hud">
+  <div><b id="c-lives">♥♥♥</b><span>სიცოცხლე</span></div>
+  <div><b id="c-score">0</b><span>ქულა</span></div>
+  <div><b id="c-n">3</b><span>ჭიქა</span></div>
+  <div><b id="c-sw">4</b><span>გადაადგილება</span></div>
+</div>
+<div class="msg" id="c-msg">უყურე ბურთს — ჭიქები აირევა. მერე მიუთითე, რომელშია ბურთი.</div>
+<div class="stage2" id="c-stage"><div class="overlay" id="c-ov"></div></div>
+</section>
 <div class="opts">
   <label><input type="checkbox" id="o-snd" checked> ხმა</label>
   <label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label>
   <label>ჩვენება <select id="o-spd"><option value="fast">სწრაფი</option><option value="mid">საშუალო</option><option value="slow">ნელი</option></select></label>
 </div>
-
 <div class="panel music">
   <h3>🎵 ენერგიული მუსიკა · YouTube</h3>
   <div class="mrow">
@@ -326,6 +380,120 @@ const _start=start;start=function(){if($('m-auto').checked&&!M.playing){if(M.rea
 window._music=M;
 menu();renderBest();
 window._mem={S,LEVELS};
+/* ── game switcher ── */
+const G1=['g1'];
+function showGame(id){document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.g===id));
+  ['g1','g2','g3'].forEach(g=>{$(g).hidden=g!==id;});
+  if(id!=='g1'&&S.running)finish();if(id!=='g2')V.stop();if(id!=='g3')CU.stop();
+  if(id==='g2')V.menu();if(id==='g3')CU.menu();store.set('game',id);
+  document.querySelector('h1').textContent={g1:'მეხსიერების ბადე',g2:'რომელი გაქრა?',g3:'ჭიქები'}[id];
+  document.querySelector('header .sub').textContent={g1:'ვიზუალურ-სივრცითი მეხსიერება · 3×3 → 10×10 · ერთი წუთი',g2:'ვიზუალური მეხსიერება · 3 → 12 ფიგურა',g3:'ყურადღება და სისწრაფე · 3 → 10 ჭიქა'}[id];}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>showGame(b.dataset.g));
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function ov2(id,html,bind){const o=$(id);o.innerHTML=html;o.hidden=false;bind&&bind();}
+
+/* ── game 2: which one vanished ── */
+const V=(()=>{
+  const SH=['●','▲','■','◆','★','♥','☾','✚','♣','♠','⬟','✿'],CO=['#e2685c','#5fa8ff','#5fcf8a','#ecd59a','#c38bff','#ff9f43'];
+  const st={run:false,lv:0,score:0,lives:3,tok:0,best:store.get('v_best',0)};
+  const cfg=lv=>({n:Math.min(12,3+Math.floor(lv/2)),show:Math.max(900,2600-lv*110)*SPEED[$('o-spd').value],opts:Math.min(9,4+Math.floor(lv/2)),shuffle:lv>=3});
+  const hud=()=>{const c=cfg(st.lv);$('v-lives').textContent='♥'.repeat(Math.max(0,st.lives))||'—';$('v-score').textContent=st.score;$('v-lv').textContent=st.lv+1;$('v-n').textContent=c.n;};
+  const key=f=>f.s+'|'+f.c;
+  function slots(n){const S2=$('v-stage'),W=S2.clientWidth,H=S2.clientHeight,cols=n<=4?n:n<=8?Math.ceil(n/2):Math.ceil(n/3),rows=Math.ceil(n/cols);
+    const fz=Math.min(64,Math.max(30,W*.8/cols*.62));S2.style.setProperty('--fz',fz+'px');const out=[];
+    for(let i=0;i<n;i++){const r=Math.floor(i/cols),c=i%cols,inRow=Math.min(cols,n-r*cols);
+      const x=W*.5+(c-(inRow-1)/2)*Math.min(W*.8/cols,fz*1.35),y=H*.86-fz*.55-(rows-1-r)*fz*1.05;out.push([x,y]);}return out;}
+  function clear(){$('v-stage').querySelectorAll('.fig').forEach(e=>e.remove());$('v-ch').innerHTML='';}
+  async function round(){const tok=++st.tok;clear();hud();const c=cfg(st.lv);
+    const pool=[];SH.forEach(s=>CO.forEach(col=>pool.push({s,c:col})));shuf(pool);
+    const figs=[],used=new Set();for(const f of pool){if(figs.length>=c.n)break;if(figs.some(g=>g.s===f.s))continue;figs.push(f);}
+    const P=slots(c.n),els=figs.map((f,i)=>{const e=document.createElement('div');e.className='fig up';e.textContent=f.s;e.style.color=f.c;e.style.left=P[i][0]+'px';e.style.top=P[i][1]+'px';$('v-stage').appendChild(e);return e;});
+    $('v-msg').innerHTML=`დაიმახსოვრე — <b>${c.n}</b> ფიგურა`;
+    await sleep(60);for(let i=0;i<els.length;i++){if(tok!==st.tok)return;els[i].classList.remove('up');tone(380+i*40,.05);await sleep(140);}
+    await sleep(c.show);if(tok!==st.tok)return;
+    $('v-msg').innerHTML='ფიგურები თეფშში ჩაცვივდნენ…';$('v-plate').classList.add('glow');els.forEach(e=>e.classList.add('down'));tone(220,.3,'triangle',.08);
+    await sleep(750);if(tok!==st.tok)return;
+    const miss=Math.floor(Math.random()*c.n),keep=[...Array(c.n).keys()].filter(i=>i!==miss);if(c.shuffle)shuf(keep);
+    const P2=slots(c.n-1);keep.forEach((fi,k)=>{const e=els[fi];e.style.transition='none';e.classList.remove('down');e.classList.add('up');e.style.left=P2[k][0]+'px';e.style.top=P2[k][1]+'px';});
+    els[miss].remove();await sleep(40);keep.forEach(fi=>{els[fi].style.transition='';});await sleep(20);$('v-plate').classList.remove('glow');
+    for(const fi of keep){if(tok!==st.tok)return;els[fi].classList.remove('up');await sleep(70);}
+    await sleep(350);if(tok!==st.tok)return;
+    /* choices: the missing one + decoys (same shape in another colour, or unseen shapes) */
+    const M=figs[miss],opts=[M],seen=new Set(figs.map(key));
+    const dec=pool.filter(f=>!seen.has(key(f)));const close=shuf(dec.filter(f=>f.s===M.s||f.c===M.c)),far=shuf(dec.filter(f=>f.s!==M.s&&f.c!==M.c));
+    for(const f of close.concat(far)){if(opts.length>=c.opts)break;if(!opts.some(o=>key(o)===key(f)))opts.push(f);}
+    shuf(opts);$('v-msg').innerHTML='რომელი <b>გაქრა</b>?';
+    $('v-ch').innerHTML=opts.map((o,i)=>`<button data-i="${i}" style="color:${o.c}">${o.s}</button>`).join('');
+    $('v-ch').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(tok!==st.tok||st.wait)return;st.wait=true;const o=opts[+b.dataset.i],ok=key(o)===key(M);
+      $('v-ch').querySelectorAll('button').forEach((x,j)=>{if(key(opts[j])===key(M))x.classList.add('ok');});
+      if(ok){st.score+=10*c.n+st.lv*5;st.lv++;tone(880,.12,'triangle');setTimeout(()=>tone(1175,.15,'triangle'),110);vib(15);$('v-msg').innerHTML='✔ სწორია!';}
+      else{b.classList.add('no');st.lives--;st.lv=Math.max(0,st.lv-1);tone(180,.25,'sawtooth',.08);vib([60,40,60]);$('v-msg').innerHTML='✕ არა — გამქრალი ფიგურა მწვანედაა მონიშნული';}
+      hud();setTimeout(()=>{st.wait=false;if(tok!==st.tok)return;if(st.lives<=0)end();else round();},ok?700:1500);});}
+  function end(){st.run=false;st.tok++;const rec=st.score>st.best;if(rec){st.best=st.score;store.set('v_best',st.best);}
+    ov2('v-ov',`<h2>თამაში დასრულდა</h2><div class="big">${st.score}</div>${rec?'<div class="rec">✦ ახალი რეკორდი!</div>':`<div style="font-size:12px;color:var(--ink-dim)">რეკორდი: ${st.best}</div>`}
+      <p>მიაღწიე <b>${st.lv+1}</b>-ე საფეხურს — ${cfg(st.lv).n} ფიგურა.</p><div class="row"><button class="btn" id="v-again">↻ თავიდან</button></div>`,()=>{$('v-again').onclick=menu;});}
+  function menu(){st.run=false;st.tok++;clear();st.lv=0;st.score=0;st.lives=3;hud();
+    ov2('v-ov',`<h2>რომელი გაქრა?</h2><p>ფიგურები ზემოდან თეფშზე დაეცემა. დაიმახსოვრე. მერე ყველა თეფშში ჩაცვივდება და ამოვა — ერთის გარდა. გამოიცანი, რომელი გაქრა. 3 ფიგურიდან 12-მდე, 3 სიცოცხლე.</p>
+      ${st.best?`<div style="font-size:12px;color:var(--ink-dim)">რეკორდი: ${st.best}</div>`:''}<button class="btn" id="v-start">▶ დაწყება</button>`,
+      ()=>{$('v-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}$('v-ov').hidden=true;st.run=true;
+        if($('m-auto').checked&&!M.playing){if(M.ready)M.yt.playVideo();else M.pending=true;}round();};});}
+  function stop(){st.run=false;st.tok++;}
+  return {menu,stop,st,round};})();
+
+/* ── game 3: cups (shell game) ── */
+const CU=(()=>{
+  const st={run:false,lv:0,score:0,lives:3,n:3,wins:0,tok:0,best:store.get('c_best',0)};
+  const cfg=()=>({sw:Math.min(30,4+st.lv),dur:Math.max(150,560-st.lv*28)*(SPEED[$('o-spd').value]>1?1.25:1),par:st.n>=5&&st.lv>=4?(st.n>=8&&st.lv>=9?3:2):1});
+  const hud=()=>{$('c-lives').textContent='♥'.repeat(Math.max(0,st.lives))||'—';$('c-score').textContent=st.score;$('c-n').textContent=st.n;$('c-sw').textContent=cfg().sw;};
+  let cups=[],pos=[],ballCup=0,ball=null;
+  function layout(n){const S3=$('c-stage'),W=S3.clientWidth,H=S3.clientHeight,rows=n<=5?1:2,perRow=Math.ceil(n/rows);
+    const cw=Math.min(92,W/perRow*.66);S3.style.setProperty('--cw',cw+'px');const P=[];
+    for(let i=0;i<n;i++){const r=rows===1?0:(i<perRow?0:1),c=rows===1?i:(r?i-perRow:i),inRow=rows===1?n:(r?n-perRow:perRow);
+      P.push([W/2+(c-(inRow-1)/2)*(W*.9/perRow),rows===1?H*.42:(r?H*.66:H*.22)]);}return {P,cw,rows,H};}
+  function build(){const S3=$('c-stage');S3.querySelectorAll('.cup,.ball,.table').forEach(e=>e.remove());const L=layout(st.n);pos=L.P;
+    const ys=[...new Set(pos.map(p=>p[1]))];ys.forEach(y=>{const t=document.createElement('div');t.className='table';t.style.top=(y+L.cw*1.05)+'px';S3.appendChild(t);});
+    cups=pos.map((p,i)=>{const c=document.createElement('div');c.className='cup';c.innerHTML='<i></i><b></b>';c.dataset.k=i;c.style.left=p[0]+'px';c.style.top=p[1]+'px';
+      c.addEventListener('pointerdown',e=>{e.preventDefault();pick(i);});S3.appendChild(c);return {el:c,slot:i};});
+    ball=document.createElement('div');ball.className='ball';S3.appendChild(ball);}
+  function placeBall(){const p=pos[cups[ballCup].slot],cw=parseFloat($('c-stage').style.getPropertyValue('--cw'));ball.style.left=p[0]+'px';ball.style.top=(p[1]+cw*1.05-cw*.42)+'px';}
+  const setDur=ms=>cups.forEach(c=>{c.el.style.transitionDuration=ms+'ms';});
+  async function swapMany(pairs,ms){const cw=parseFloat($('c-stage').style.getPropertyValue('--cw'));setDur(ms/2);
+    pairs.forEach(([a,b])=>{const A=cups[a],B=cups[b],pa=pos[A.slot],pb=pos[B.slot],mx=(pa[0]+pb[0])/2,my=(pa[1]+pb[1])/2,lift=cw*.55;
+      A.el.style.left=mx+'px';A.el.style.top=(my-lift)+'px';B.el.style.left=mx+'px';B.el.style.top=(my+lift*.5)+'px';A.el.style.zIndex=3;B.el.style.zIndex=2;});
+    await sleep(ms/2);
+    pairs.forEach(([a,b])=>{const A=cups[a],B=cups[b];[A.slot,B.slot]=[B.slot,A.slot];const pa=pos[A.slot],pb=pos[B.slot];
+      A.el.style.left=pa[0]+'px';A.el.style.top=pa[1]+'px';B.el.style.left=pb[0]+'px';B.el.style.top=pb[1]+'px';});
+    await sleep(ms/2+15);}
+  async function round(){const tok=++st.tok;st.phase='show';build();hud();const c=cfg();ballCup=Math.floor(Math.random()*st.n);
+    setDur(300);placeBall();ball.style.opacity=1;cups[ballCup].el.classList.add('lift');$('c-msg').innerHTML='ბურთი <b>აქ</b>ა — თვალი ადევნე!';tone(660,.08);
+    await sleep(1100);if(tok!==st.tok)return;cups[ballCup].el.classList.remove('lift');await sleep(380);if(tok!==st.tok)return;ball.style.opacity=0;
+    $('c-msg').innerHTML='ირევა…';
+    for(let s=0;s<c.sw;s++){if(tok!==st.tok)return;const idx=shuf([...Array(st.n).keys()]),pairs=[];
+      for(let p=0;p<c.par&&2*p+1<idx.length;p++)pairs.push([idx[2*p],idx[2*p+1]]);
+      /* make sure the ball's cup moves often enough */
+      if(s%2===0&&!pairs.some(pr=>pr.includes(ballCup))){const o=idx.find(x=>!pairs.some(pr=>pr.includes(x))&&x!==ballCup);if(o!==undefined)pairs[0]=[ballCup,o];}
+      tone(300+((s*37)%200),.03,'triangle',.05);await swapMany(pairs,c.dur);}
+    if(tok!==st.tok)return;st.phase='pick';$('c-msg').innerHTML='რომელ ჭიქაშია <b>ბურთი</b>?';}
+  function pick(i){if(st.phase!=='pick')return;st.phase='wait';const tok=st.tok;const ok=i===ballCup;setDur(300);placeBall();ball.style.opacity=1;
+    cups[i].el.classList.add('lift');if(!ok)setTimeout(()=>{cups[ballCup].el.classList.add('lift','hl');},350);
+    const c=cfg();
+    if(ok){st.score+=st.n*10+c.sw*2;st.wins++;st.lv++;if(st.wins>=2&&st.n<10){st.n++;st.wins=0;}tone(880,.12,'triangle');setTimeout(()=>tone(1175,.15,'triangle'),110);vib(15);$('c-msg').innerHTML='✔ იპოვე!';}
+    else{st.lives--;st.lv=Math.max(0,st.lv-2);st.wins=0;tone(180,.25,'sawtooth',.08);vib([60,40,60]);$('c-msg').innerHTML='✕ ბურთი სხვა ჭიქაში იყო';}
+    hud();setTimeout(()=>{if(tok!==st.tok)return;if(st.lives<=0)end();else round();},ok?900:1700);}
+  function end(){st.run=false;st.tok++;const rec=st.score>st.best;if(rec){st.best=st.score;store.set('c_best',st.best);}
+    ov2('c-ov',`<h2>თამაში დასრულდა</h2><div class="big">${st.score}</div>${rec?'<div class="rec">✦ ახალი რეკორდი!</div>':`<div style="font-size:12px;color:var(--ink-dim)">რეკორდი: ${st.best}</div>`}
+      <p>მიაღწიე <b>${st.n}</b> ჭიქას, ${cfg().sw} გადაადგილებას.</p><div class="row"><button class="btn" id="c-again">↻ თავიდან</button></div>`,()=>{$('c-again').onclick=menu;});}
+  function menu(){st.run=false;st.tok++;st.lv=0;st.score=0;st.lives=3;st.n=3;st.wins=0;build();ball.style.opacity=0;hud();
+    ov2('c-ov',`<h2>ჭიქები</h2><p>ბურთი ერთ-ერთ ჭიქაშია. ჭიქები აირევა — თვალი ადევნე და მიუთითე სწორი. ყოველ 2 მოგებაზე ემატება ჭიქა (10-მდე), ირევა უფრო დიდხანს და უფრო სწრაფად; მერე რამდენიმე წყვილი ერთდროულად. 3 სიცოცხლე.</p>
+      ${st.best?`<div style="font-size:12px;color:var(--ink-dim)">რეკორდი: ${st.best}</div>`:''}<button class="btn" id="c-start">▶ დაწყება</button>`,
+      ()=>{$('c-start').onclick=()=>{try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume();}catch(e){}$('c-ov').hidden=true;st.run=true;
+        if($('m-auto').checked&&!M.playing){if(M.ready)M.yt.playVideo();else M.pending=true;}round();};});}
+  function stop(){st.run=false;st.tok++;}
+  return {menu,stop,st,round};})();
+const qg=new URLSearchParams(location.search).get('game');showGame({grid:'g1',vanish:'g2',cups:'g3'}[qg]||store.get('game','g1'));
+window._v=V;window._cu=CU;
+
 </script>
 </body>
 </html>
