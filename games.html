@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>თამაშები · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(240,160,40,.10)}
+.page{max-width:900px}
+.me{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:4px 0 16px;font-size:12px;color:var(--ink-dim)}
+.me input{width:130px;background:var(--raised);border:1px solid var(--border);border-radius:6px;color:var(--ink);text-align:center;
+  font-family:'Cinzel',serif;font-size:15px;padding:6px 4px;outline:none}
+.me input:focus{border-color:var(--border-h)}
+.me button{padding:7px 14px;font-size:11px}
+.matrix{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cell{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 14px 12px;min-height:178px;
+  display:flex;flex-direction:column;gap:6px;transition:border-color .2s,box-shadow .2s}
+.cell:hover{border-color:var(--border-h)}
+.cell .n{font-family:'Cinzel Decorative',serif;font-size:30px;line-height:1;color:var(--c);opacity:.9}
+.cell .t{font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:2px;color:var(--gold-lt)}
+.cell .s{font-size:10.5px;color:var(--ink-dim);margin-top:-4px}
+.cell .digits{position:absolute;top:12px;right:14px;font-family:'Cinzel',serif;font-size:15px;letter-spacing:1px;color:var(--gold-lt)}
+.cell .digits.none{color:var(--ink-dim)}
+.cell ul{list-style:none;display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.cell a{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink);text-decoration:none;padding:4px 8px;border-radius:6px;border:1px solid transparent}
+.cell a::before{content:'';width:5px;height:5px;transform:rotate(45deg);background:var(--c);opacity:.7;flex:none}
+.cell a:hover{border-color:var(--border);background:rgba(255,255,255,.025);color:var(--gold-lt)}
+.cell.weak{border-color:rgba(226,104,92,.55);box-shadow:0 0 0 1px rgba(226,104,92,.18) inset}
+.cell.weak .tag,.cell.strong .tag{display:block}
+.cell .tag{display:none;font-size:10.5px;letter-spacing:.5px;margin-top:auto;padding-top:6px}
+.cell.weak .tag{color:var(--bad)}
+.cell.strong .tag{color:var(--ok)}
+.legend{font-size:11.5px;color:var(--ink-dim);text-align:center;margin-top:14px}
+@media (max-width:640px){.matrix{grid-template-columns:1fr 1fr}.cell{min-height:0;order:var(--o)}}
+@media (max-width:420px){.matrix{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html">← მთავარი</a>
+  <h1>თამაშები</h1>
+  <div class="sub">პითაგორას კვადრატი · ყოველი უჯრა — თავისი ვარჯიში</div>
+</header>
+
+<div class="me">
+  <span>შენი თარიღი:</span>
+  <input id="bd" placeholder="DD/MM/YYYY" inputmode="numeric" autocomplete="off">
+  <button class="btn ghost" id="bdGo">ჩემი კვადრატი</button>
+  <button class="btn ghost" id="bdClr" hidden>×</button>
+</div>
+
+<div class="matrix" id="matrix"></div>
+<div class="legend" id="legend">შეიყვანე დაბადების თარიღი — ცარიელი უჯრები წითლად მოინიშნება: სწორედ მათ სჭირდებათ ვარჯიში.</div>
+</div>
+
+<script>
+'use strict';
+const CELLS={
+  1:{t:'ხასიათი',s:'ნება · Character',c:'#e2685c',g:[['hardest.html','უძნელესი გზა']]},
+  2:{t:'ენერგია',s:'ყურადღება · Energy',c:'#30b0f0',g:[['energy.html?t=schulte','შულტეს ცხრილი'],['energy.html?t=stroop','სტრუპის ტესტი'],['energy.html?t=gonogo','Go / No-Go']]},
+  3:{t:'ინტერესი',s:'ზუსტი მეცნიერება · Interest',c:'#e0a030',g:[['pythagames.html?t=root','ციფრული ფესვი'],['pythagames.html?t=loshu','ლო შუს კვადრატი'],['pythagames.html?t=triple','პითაგორას სამეული'],['pythagames.html?t=kenken','კენკენი']]},
+  4:{t:'ჯანმრთელობა',s:'სხეული · Health',c:'#30c890',g:[['body.html?t=reaction','რეაქციის დრო'],['body.html?t=rhythm','რიტმი'],['body.html?t=steady','მყარი ხელი']]},
+  5:{t:'ლოგიკა',s:'გონება · Logic',c:'#9060e0',g:[['logic.html','ლოგიკა'],['pythagames.html?t=square','კვადრატის აწყობა']]},
+  6:{t:'შრომა',s:'მოთმინება · Labour',c:'#c9a84c',g:[['work.html?t=hanoi','ჰანოის კოშკი'],['work.html?t=fifteen','15-ის თავსატეხი'],['work.html?t=typing','ბეჭდვის სიჩქარე']]},
+  7:{t:'იღბალი',s:'ინტუიცია · Luck',c:'#a585ef',g:[['intuition.html?t=zener','ზენერის ბარათები'],['intuition.html?t=cups','მარგალიტი'],['intuition.html?t=precog','წინათგრძნობა'],['intuition.html?t=time','დროის შეგრძნება']]},
+  8:{t:'მოვალეობა',s:'პასუხისმგებლობა · Duty',c:'#e050a0',g:[['duty.html?t=dilemma','პატიმრის დილემა'],['duty.html?t=patience','მოთმინება'],['duty.html?t=plant','ზრუნვა']]},
+  9:{t:'მეხსიერება',s:'გონება · Memory',c:'#2fae7d',g:[['memory.html','მეხსიერების ბადე']]},
+};
+const GRID_ORDER=[1,4,7,2,5,8,3,6,9];
+
+/* same classic maths as pythagoras.html */
+function sumDigits(n){return Math.abs(n).toString().split("").reduce((a,b)=>a+Number(b),0);}
+function digitsOf(n){return Math.abs(n).toString().split("").map(Number);}
+function classicCount(day,month,year){
+  const bd=(day+month+year).split("").map(Number),A=bd.reduce((a,b)=>a+b,0);
+  const fd=(day[0]!=="0")?Number(day[0]):Number(day[1]);
+  const B=sumDigits(A),C=Math.abs(A-2*fd),D=sumDigits(C);
+  const c={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+  [...bd,...digitsOf(A),...digitsOf(B),...digitsOf(C),...digitsOf(D)].forEach(d=>{if(c[d]!==undefined)c[d]++;});
+  return c;
+}
+const KEY='magnus_games_bd';
+function draw(count){
+  const box=document.getElementById('matrix');box.innerHTML='';
+  GRID_ORDER.forEach(n=>{
+    const C=CELLS[n],el=document.createElement('div');el.className='cell';el.style.setProperty('--c',C.c);el.style.setProperty('--o',n);
+    let dg='';
+    if(count){const k=count[n];dg=`<span class="digits${k?'':' none'}">${k?String(n).repeat(k):'—'}</span>`;
+      if(!k)el.classList.add('weak');else if(k>=3)el.classList.add('strong');}
+    el.innerHTML=`${dg}<div class="n">${n}</div><div class="t">${C.t}</div><div class="s">${C.s}</div>
+      <ul>${C.g.map(([h,l])=>`<li><a href="${h}">${l}</a></li>`).join('')}</ul>
+      <span class="tag">${count&&!count[n]?'✦ ცარიელი უჯრა — ივარჯიშე აქ':'✦ ძლიერი უჯრა'}</span>`;
+    box.appendChild(el);
+  });
+}
+function apply(v){
+  if(!/^\d{2}\/\d{2}\/\d{4}$/.test(v))return false;
+  const [d,m,y]=v.split('/');
+  if(+m<1||+m>12||+d<1||+d>new Date(+y,+m,0).getDate())return false;
+  const c=classicCount(d,m,y);draw(c);
+  const weak=[1,2,3,4,5,6,7,8,9].filter(n=>!c[n]);
+  document.getElementById('legend').innerHTML=weak.length
+    ?'ცარიელი უჯრები: <b style="color:var(--bad)">'+weak.join(', ')+'</b> — მათი თამაშები შენი ვარჯიშია. მწვანე — 3+ ციფრი.'
+    :'ცარიელი უჯრა არ გაქვს — თამაშე იქ, სადაც ციფრი ყველაზე ცოტაა.';
+  document.getElementById('bdClr').hidden=false;
+  return true;
+}
+const bd=document.getElementById('bd');
+bd.addEventListener('input',()=>{let v=bd.value.replace(/\D/g,'').slice(0,8);
+  if(v.length>4)v=v.slice(0,2)+'/'+v.slice(2,4)+'/'+v.slice(4);else if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);bd.value=v;});
+document.getElementById('bdGo').onclick=()=>{if(apply(bd.value)){try{localStorage.setItem(KEY,bd.value);}catch(e){}}else{bd.style.borderColor='var(--bad)';setTimeout(()=>bd.style.borderColor='',900);}};
+bd.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('bdGo').click();});
+document.getElementById('bdClr').onclick=()=>{try{localStorage.removeItem(KEY);}catch(e){}bd.value='';draw(null);
+  document.getElementById('bdClr').hidden=true;
+  document.getElementById('legend').textContent='შეიყვანე დაბადების თარიღი — ცარიელი უჯრები წითლად მოინიშნება: სწორედ მათ სჭირდებათ ვარჯიში.';};
+let saved=null;try{saved=localStorage.getItem(KEY);}catch(e){}
+if(saved){bd.value=saved;if(!apply(saved))draw(null);}else draw(null);
+</script>
+</body>
+</html>
