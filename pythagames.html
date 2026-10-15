@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>პითაგორული თამაშები · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c;--amber:#e0a030}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(240,160,40,.11),transparent 60%),var(--void);color:var(--ink);
+  font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
+.page{max-width:760px;margin:0 auto;padding:28px 16px 60px}
+header{text-align:center;margin-bottom:18px;position:relative}
+.back{position:absolute;left:0;top:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.75;text-decoration:none;
+  border:1px solid var(--border);border-radius:3px;padding:6px 11px}
+.back:hover{opacity:1;border-color:var(--border-h)}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(22px,4.6vw,36px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px;margin-top:2px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px 0}
+.tabs button,.seg button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:16px;padding:6px 13px;font:inherit;font-size:12.5px;cursor:pointer}
+.tabs button.on,.seg button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.08)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.seg button{font-size:11.5px;padding:4px 11px}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.hud div{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 6px;text-align:center}
+.hud b{display:block;font-family:'Cinzel',serif;font-size:20px;color:var(--gold-lt);font-weight:400;line-height:1.2}
+.hud span{font-size:10px;color:var(--ink-dim);letter-spacing:.5px}
+.stage{position:relative;min-height:440px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 16px;
+  display:flex;flex-direction:column;align-items:center;gap:14px}
+.how{font-size:12.5px;color:var(--ink-mid);text-align:center;max-width:540px}
+.how b{color:var(--gold-lt);font-weight:400}
+.msg{text-align:center;font-size:13.5px;color:var(--ink-mid);min-height:22px}
+.msg b{color:var(--gold-lt);font-weight:400}
+.msg .ok{color:var(--ok)}.msg .bad{color:var(--bad)}
+.date{font-family:'Cinzel',serif;font-size:30px;letter-spacing:4px;color:var(--gold-lt)}
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:11px 22px;font-family:'Cinzel',serif;
+  font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:none;color:var(--gold);border:1px solid var(--border-h);font-weight:400}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
+/* psychomatrix */
+.wn{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.wn label{display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--ink-dim);gap:3px}
+.wn input,.ans{width:64px;background:var(--raised);border:1px solid var(--border);border-radius:6px;color:var(--ink);text-align:center;
+  font-family:'Cinzel',serif;font-size:18px;padding:6px 4px;outline:none}
+.wn input:focus,.ans:focus{border-color:var(--border-h)}
+.wn input.ok,.cell.ok{border-color:var(--ok)!important;background:rgba(95,207,138,.1)}
+.wn input.bad,.cell.bad{border-color:var(--bad)!important;background:rgba(226,104,92,.12)}
+.sq{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:min(100%,360px)}
+.cell{position:relative;aspect-ratio:1.25;border-radius:8px;background:var(--raised);border:1px solid rgba(201,168,76,.12);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:21px;color:var(--gold-lt);letter-spacing:1px;user-select:none;
+  transition:border-color .15s,background .15s}
+.cell:hover{border-color:var(--border-h)}
+.cell .d{position:absolute;top:4px;left:7px;font-size:10px;color:var(--ink-dim);font-family:'Noto Serif Georgian',serif}
+.cell .sol{position:absolute;bottom:3px;right:7px;font-size:11px;color:var(--ok)}
+.cell.empty::after{content:'—';color:var(--ink-dim);font-size:16px}
+.cell.fixed{cursor:default;color:var(--ink)}
+.cell.sel{border-color:var(--gold)}
+/* keypad */
+.pad{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;width:min(100%,460px)}
+.pad button{aspect-ratio:1;border-radius:8px;border:1px solid var(--border);background:var(--raised);color:var(--ink);font-family:'Cinzel',serif;font-size:19px;cursor:pointer}
+.pad button:hover:not(:disabled){border-color:var(--border-h)}
+.pad button:active:not(:disabled){transform:scale(.93)}
+.pad button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+.pad button:disabled{opacity:.25;cursor:default}
+.num{font-family:'Cinzel',serif;font-size:clamp(34px,9vw,56px);color:var(--gold-lt);letter-spacing:4px;min-height:70px;display:flex;align-items:center}
+.num.flash-ok{color:var(--ok)}.num.flash-bad{color:var(--bad)}
+.tbar{height:5px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;width:100%}
+.tbar i{display:block;height:100%;background:linear-gradient(90deg,#9a7028,var(--gold-lt));width:100%;transition:width .2s linear}
+/* lo shu */
+.lsq{width:min(100%,300px);grid-template-columns:repeat(3,1fr)}
+.lsq .cell{aspect-ratio:1;font-size:30px}
+.sums{font-size:11.5px;color:var(--ink-dim);text-align:center}
+/* triangle */
+.tri{width:min(100%,340px)}
+.tri text{font-family:'Cinzel',serif}
+.big{font-family:'Cinzel',serif;font-size:52px;color:var(--gold-lt);line-height:1}
+.best{font-size:11.5px;color:var(--ink-dim);text-align:center}
+@media (max-width:520px){header{padding-top:34px}.back{top:0}.cell .d{font-size:0}.cell .d::first-letter{font-size:10px}.hud b{font-size:17px}.cell{font-size:17px}.pad button{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html?g=games">← თამაშები</a>
+  <h1>პითაგორას თამაშები</h1>
+  <div class="sub">Psychomatrix · Digital Roots · Lo Shu · Triples</div>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="hud">
+  <div><b id="h1">0</b><span id="l1">ქულა</span></div>
+  <div><b id="h2">0</b><span id="l2">სერია</span></div>
+  <div><b id="h3">—</b><span id="l3">რაუნდი</span></div>
+  <div><b id="h4">—</b><span id="l4">რეკორდი</span></div>
+</div>
+<div class="stage" id="stage"></div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const stage=$('stage');
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function hud(v,l){[1,2,3,4].forEach(i=>{if(v[i-1]!==undefined)$('h'+i).textContent=v[i-1];if(l&&l[i-1])$('l'+i).textContent=l[i-1];});}
+const BKEY='magnus_pythagames_v1';
+function bestGet(k){try{return (JSON.parse(localStorage.getItem(BKEY))||{})[k];}catch(e){return undefined;}}
+function bestSet(k,v){try{const d=JSON.parse(localStorage.getItem(BKEY))||{};d[k]=v;localStorage.setItem(BKEY,JSON.stringify(d));}catch(e){}}
+let timer=null;function stopTimer(){if(timer){clearInterval(timer);timer=null;}}
+
+const TABS=[
+  {k:'square',n:'კვადრატის აწყობა',run:startSquare},
+  {k:'root',  n:'ციფრული ფესვი',run:startRoot},
+  {k:'loshu', n:'ლო შუს კვადრატი',run:startLoShu},
+  {k:'triple',n:'პითაგორას სამეული',run:startTriple},
+];
+let CUR='square';
+function renderTabs(){
+  $('tabs').innerHTML='';
+  TABS.forEach(t=>{const b=document.createElement('button');b.textContent=t.n;b.className=t.k===CUR?'on':'';b.onclick=()=>go(t.k);$('tabs').appendChild(b);});
+}
+function go(k){
+  stopTimer();CUR=(TABS.find(t=>t.k===k)||TABS[0]).k;
+  try{history.replaceState(null,'','?t='+CUR);}catch(e){}
+  renderTabs();TABS.find(t=>t.k===CUR).run();
+}
+
+/* ════ 1 · PSYCHOMATRIX BUILDER — identical maths to pythagoras.html ════ */
+function sumDigits(n){return Math.abs(n).toString().split("").reduce((a,b)=>a+Number(b),0);}
+function digitsOf(n){return Math.abs(n).toString().split("").map(Number);}
+function computeModes(day,month,year){
+  const birthDigits=(day+month+year).split("").map(Number);
+  const A=birthDigits.reduce((a,b)=>a+b,0);
+  const fd=(day[0]!=="0")?Number(day[0]):Number(day[1]);
+  const cB=sumDigits(A), cC=Math.abs(A-2*fd), cD=sumDigits(cC);
+  const classic={disp:[String(A),String(cB),String(cC),String(cD)],
+    extra:[...digitsOf(A),...digitsOf(cB),...digitsOf(cC),...digitsOf(cD)]};
+  const isXXI=Number(year)>=2000;
+  let corrected;
+  if(isXXI){const C=A+19,D=sumDigits(C);corrected={disp:[String(A),"+19",String(C),String(D)],extra:[...digitsOf(A),1,9,...digitsOf(C),...digitsOf(D)]};}
+  else{const C=A-2,D=sumDigits(C);corrected={disp:[String(A),"−2",String(C),String(D)],extra:[...digitsOf(A),2,...digitsOf(C),...digitsOf(D)]};}
+  const kA=Math.abs(A-9),kB=sumDigits(kA),kC=Math.abs(kA-2*fd),kD=sumDigits(kC);
+  const crisis={disp:[String(kA),String(kB),String(kC),String(kD)],extra:[...digitsOf(kA),...digitsOf(kB),...digitsOf(kC),...digitsOf(kD)]};
+  const mk=extra=>{const c={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};[...birthDigits,...extra].forEach(d=>{if(c[d]!==undefined)c[d]++;});return c;};
+  classic.count=mk(classic.extra);corrected.count=mk(corrected.extra);crisis.count=mk(crisis.extra);
+  return {classic,corrected,crisis};
+}
+const GRID_ORDER=[1,4,7,2,5,8,3,6,9];
+const SQ_MODES={classic:'კლასიკური',corrected:'კორექცია',crisis:'კრიზისი'};
+const SQ_NAMES={1:'ხასიათი',2:'ენერგია',3:'ინტერესი',4:'ჯანმრთელობა',5:'ლოგიკა',6:'შრომა',7:'იღბალი',8:'მოვალეობა',9:'მეხსიერება'};
+let SQ={mode:'classic',score:0,streak:0,round:0};
+function randomDate(){
+  const y=ri(1930,2025),m=ri(1,12),dim=new Date(y,m,0).getDate(),d=ri(1,dim);
+  return [String(d).padStart(2,'0'),String(m).padStart(2,'0'),String(y)];
+}
+function startSquare(){
+  SQ.round++;
+  const [d,m,y]=randomDate();SQ.date=[d,m,y];SQ.ans=computeModes(d,m,y)[SQ.mode];SQ.user={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};SQ.checked=false;
+  hud([SQ.score,SQ.streak,SQ.round,bestGet('square')||0],['ქულა','სერია','რაუნდი','საუკ. სერია']);
+  stage.innerHTML=`<div class="seg" id="sqMode">${Object.entries(SQ_MODES).map(([k,v])=>`<button data-k="${k}" class="${k===SQ.mode?'on':''}">${v}</button>`).join('')}</div>
+   <div class="how">ააწყე ფსიქომატრიცა ამ თარიღისთვის: ჯერ ოთხი სამუშაო რიცხვი, მერე <b>შეეხე უჯრას</b> — ყოველი შეხება ამატებს ციფრს (7-ის შემდეგ ისევ ცარიელია).</div>
+   <div class="date">${d}.${m}.${y}</div>
+   <div class="wn">${[0,1,2,3].map(i=>`<label>${['I','II','III','IV'][i]}<input inputmode="numeric" id="wn${i}" autocomplete="off"></label>`).join('')}</div>
+   <div class="sq" id="sq"></div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn" id="chk">შემოწმება</button><button class="btn ghost" id="nxt">ახალი თარიღი</button></div>`;
+  [...$('sqMode').children].forEach(b=>b.onclick=()=>{SQ.mode=b.dataset.k;SQ.round--;startSquare();});
+  /* corrected mode's II is a sign (+19 / −2), not a number — show it */
+  if(SQ.mode==='corrected'){const w=$('wn1');w.value=SQ.ans.disp[1];w.disabled=true;}
+  drawSq();
+  $('chk').onclick=checkSquare;$('nxt').onclick=()=>{if(!SQ.checked){SQ.streak=0;}startSquare();};
+}
+function drawSq(){
+  const box=$('sq');box.innerHTML='';
+  GRID_ORDER.forEach(n=>{
+    const c=document.createElement('div');c.className='cell';c.dataset.n=n;
+    const v=SQ.user[n];
+    c.innerHTML=`<span class="d">${n} · ${SQ_NAMES[n]}</span>${v?String(n).repeat(v):''}`;
+    if(!v)c.classList.add('empty');
+    if(SQ.checked){
+      const a=SQ.ans.count[n];c.classList.add(a===v?'ok':'bad');
+      if(a!==v)c.insertAdjacentHTML('beforeend',`<span class="sol">${a?String(n).repeat(a):'—'}</span>`);
+    }
+    c.onclick=()=>{if(SQ.checked)return;SQ.user[n]=(SQ.user[n]+1)%8;drawSq();};
+    box.appendChild(c);
+  });
+}
+function checkSquare(){
+  if(SQ.checked)return;SQ.checked=true;
+  let wnOk=true;
+  [0,1,2,3].forEach(i=>{const w=$('wn'+i);if(w.disabled)return;
+    const v=w.value.trim().replace('-','−');const ok=v===SQ.ans.disp[i];w.classList.add(ok?'ok':'bad');if(!ok){wnOk=false;w.value=SQ.ans.disp[i];}});
+  const cellsOk=GRID_ORDER.filter(n=>SQ.ans.count[n]===SQ.user[n]).length;
+  const all=cellsOk===9&&wnOk;
+  drawSq();
+  if(all){SQ.score+=10;SQ.streak++;if(SQ.streak>(bestGet('square')||0))bestSet('square',SQ.streak);}
+  else{SQ.score+=cellsOk;SQ.streak=0;}
+  hud([SQ.score,SQ.streak,SQ.round,bestGet('square')||0]);
+  $('msg').innerHTML=all?'<b class="ok">✓ სრულიად სწორია</b> · +10':
+    `<span class="bad">${cellsOk}/9 უჯრა</span>${wnOk?'':' · სამუშაო რიცხვები: <b>'+SQ.ans.disp.join(' · ')+'</b>'}`;
+  $('chk').disabled=true;
+}
+
+/* ════ 2 · DIGITAL ROOT SPRINT ════ */
+const droot=n=>n===0?0:1+(n-1)%9;
+let RT=null;
+function startRoot(){
+  RT={score:0,streak:0,left:60,running:false,n:0};
+  hud([0,0,'60',bestGet('root')||0],['ქულა','სერია','წამი','რეკორდი']);
+  stage.innerHTML=`<div class="how">რიცხვის <b>ციფრული ფესვი</b> — ციფრების ჯამი, სანამ ერთნიშნა არ დარჩება (4728 → 21 → 3). 60 წამი; რაც მეტ სწორს იტყვი, მით გრძელდება რიცხვები. სწორი სერია ქულას ამრავლებს.</div>
+   <div class="tbar"><i id="rbar"></i></div>
+   <div class="num" id="rnum">—</div>
+   <div class="pad" id="rpad">${[1,2,3,4,5,6,7,8,9].map(d=>`<button data-d="${d}" disabled>${d}</button>`).join('')}</div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn" id="rgo">დაწყება</button></div>`;
+  [...$('rpad').children].forEach(b=>b.onclick=()=>rootAnswer(+b.dataset.d));
+  $('rgo').onclick=rootGo;
+  document.onkeydown=e=>{if(CUR==='root'&&RT&&RT.running&&/^[1-9]$/.test(e.key))rootAnswer(+e.key);};
+}
+function rootGo(){
+  RT.running=true;$('rgo').style.display='none';[...$('rpad').children].forEach(b=>b.disabled=false);
+  rootNext();const t0=Date.now();
+  timer=setInterval(()=>{RT.left=Math.max(0,60-(Date.now()-t0)/1000);$('rbar').style.width=(RT.left/60*100)+'%';hud([undefined,undefined,Math.ceil(RT.left)]);
+    if(RT.left<=0)rootEnd();},100);
+}
+function rootNext(){
+  const digits=Math.min(9,2+Math.floor(RT.n/4));
+  let v=String(ri(1,9));for(let i=1;i<digits;i++)v+=ri(0,9);
+  RT.cur=v;RT.ans=droot([...v].reduce((a,c)=>a+ +c,0));$('rnum').textContent=v;$('rnum').className='num';
+}
+function rootAnswer(d){
+  if(!RT.running)return;
+  const ok=d===RT.ans;
+  if(ok){RT.streak++;RT.n++;RT.score+=Math.min(5,1+Math.floor(RT.streak/3))*(RT.cur.length-1);}
+  else{RT.streak=0;RT.n=Math.max(0,RT.n-2);}
+  $('rnum').className='num '+(ok?'flash-ok':'flash-bad');
+  $('msg').innerHTML=ok?'&nbsp;':`<span class="bad">${RT.cur} → ${RT.ans}</span>`;
+  hud([RT.score,RT.streak]);
+  setTimeout(()=>{if(RT.running)rootNext();},ok?120:500);
+}
+function rootEnd(){
+  stopTimer();RT.running=false;[...$('rpad').children].forEach(b=>b.disabled=true);
+  const best=bestGet('root')||0,rec=RT.score>best;if(rec)bestSet('root',RT.score);
+  $('rnum').textContent=RT.score;$('rnum').className='num';
+  $('msg').innerHTML=rec?'<b>✦ ახალი რეკორდი!</b>':'დრო ამოიწურა · რეკორდი '+best;
+  hud([RT.score,RT.streak,'0',Math.max(best,RT.score)]);
+  const g=$('rgo');g.style.display='';g.textContent='თავიდან';g.onclick=startRoot;
+}
+
+/* ════ 3 · LO SHU MAGIC SQUARE ════ */
+const LOSHU=[4,9,2,3,5,7,8,1,6];
+function symmetries(b){
+  const rot=a=>[a[6],a[3],a[0],a[7],a[4],a[1],a[8],a[5],a[2]],ref=a=>[a[2],a[1],a[0],a[5],a[4],a[3],a[8],a[7],a[6]];
+  const out=[];let a=b.slice();for(let i=0;i<4;i++){out.push(a,ref(a));a=rot(a);}return out;
+}
+const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let LS={level:3,solved:0};
+function startLoShu(){
+  const sol=symmetries(LOSHU)[ri(0,7)];
+  const idx=[0,1,2,3,4,5,6,7,8].sort(()=>Math.random()-.5).slice(0,LS.level);
+  LS.grid=Array(9).fill(0);LS.fixed=new Set(idx);idx.forEach(i=>LS.grid[i]=sol[i]);LS.pick=null;LS.t0=Date.now();LS.done=false;
+  const bk='loshu'+LS.level,best=bestGet(bk);
+  hud([LS.solved,'—','—',best?best.toFixed(1)+'წ':'—'],['ამოხსნილი','დრო','მოცემული','რეკორდი']);
+  hud([undefined,undefined,LS.level]);
+  stage.innerHTML=`<div class="seg" id="lsLvl">${[[3,'მარტივი'],[2,'საშუალო'],[1,'რთული'],[0,'ცარიელი']].map(([v,n])=>`<button data-v="${v}" class="${v===LS.level?'on':''}">${n}</button>`).join('')}</div>
+   <div class="how">ჩაწერე <b>1–9</b> ისე, რომ ყოველი სტრიქონი, სვეტი და დიაგონალი <b>15</b>-ს უდრიდეს — ლო შუ, პითაგორელთა და ფენ-შუის საერთო კვადრატი. აირჩიე ციფრი, მერე უჯრა.</div>
+   <div class="sq lsq" id="ls"></div>
+   <div class="sums" id="sums">&nbsp;</div>
+   <div class="pad" id="lpad" style="width:min(100%,380px)">${[1,2,3,4,5,6,7,8,9].map(d=>`<button data-d="${d}">${d}</button>`).join('')}</div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="row"><button class="btn ghost" id="lnew">ახალი</button></div>`;
+  [...$('lsLvl').children].forEach(b=>b.onclick=()=>{LS.level=+b.dataset.v;startLoShu();});
+  [...$('lpad').children].forEach(b=>b.onclick=()=>{LS.pick=+b.dataset.d;drawLs();});
+  $('lnew').onclick=startLoShu;
+  stopTimer();timer=setInterval(()=>{if(!LS.done)hud([undefined,((Date.now()-LS.t0)/1000).toFixed(0)+'წ']);},500);
+  drawLs();
+}
+function drawLs(){
+  const box=$('ls');box.innerHTML='';
+  LS.grid.forEach((v,i)=>{
+    const c=document.createElement('div');c.className='cell'+(LS.fixed.has(i)?' fixed':'')+(v?'':' empty');c.textContent=v||'';
+    c.onclick=()=>{if(LS.done||LS.fixed.has(i))return;
+      if(LS.pick===null||LS.grid[i]===LS.pick){LS.grid[i]=0;}
+      else{const j=LS.grid.indexOf(LS.pick);if(j>=0){if(LS.fixed.has(j))return;LS.grid[j]=0;}LS.grid[i]=LS.pick;}
+      drawLs();lsCheck();};
+    box.appendChild(c);
+  });
+  [...$('lpad').children].forEach(b=>{const d=+b.dataset.d;b.classList.toggle('on',d===LS.pick);
+    const at=LS.grid.indexOf(d);b.disabled=at>=0&&LS.fixed.has(at);});
+  const sums=LINES.map(L=>L.every(i=>LS.grid[i])?L.reduce((a,i)=>a+LS.grid[i],0):null);
+  $('sums').innerHTML=sums.map((s,k)=>s===null?'·':`<span style="color:${s===15?'var(--ok)':'var(--bad)'}">${s}</span>`).join(' &nbsp;');
+}
+function lsCheck(){
+  if(LS.grid.some(v=>!v))return;
+  const ok=LINES.every(L=>L.reduce((a,i)=>a+LS.grid[i],0)===15);
+  if(!ok){$('msg').innerHTML='<span class="bad">ჯამები ჯერ არ ემთხვევა</span>';return;}
+  LS.done=true;stopTimer();LS.solved++;
+  const t=(Date.now()-LS.t0)/1000,bk='loshu'+LS.level,best=bestGet(bk),rec=!best||t<best;if(rec)bestSet(bk,t);
+  [...$('ls').children].forEach(c=>c.classList.add('ok'));
+  $('msg').innerHTML=`<b class="ok">✓ ჯადოსნური კვადრატი</b> · ${t.toFixed(1)} წმ${rec?' · <b>ახალი რეკორდი</b>':''}`;
+  hud([LS.solved,t.toFixed(1)+'წ',undefined,(rec?t:best).toFixed(1)+'წ']);
+}
+
+/* ════ 4 · PYTHAGOREAN TRIPLES ════ */
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const PRIM=[];for(let m=2;m<=8;m++)for(let n=1;n<m;n++)if((m-n)%2&&gcd(m,n)===1)PRIM.push([m*m-n*n,2*m*n,m*m+n*n].sort((x,y)=>x-y));
+let TR=null;
+function startTriple(){
+  TR={i:0,n:10,score:0,t0:Date.now(),streak:0};
+  hud([0,0,'1/10',bestGet('triple')||'—'],['ქულა','სერია','რაუნდი','რეკორდი']);
+  stage.innerHTML=`<div class="how">მართკუთხა სამკუთხედი: <b>a² + b² = c²</b>. იპოვე დაკარგული გვერდი — მთელი რიცხვია. 10 რაუნდი, სიჩქარე ქულას მატებს.</div>
+   <svg class="tri" id="tri" viewBox="0 0 340 220"></svg>
+   <div class="row"><input class="ans" id="tin" inputmode="numeric" autocomplete="off" style="width:110px"><button class="btn" id="tok">პასუხი</button></div>
+   <div class="msg" id="msg">&nbsp;</div>`;
+  $('tok').onclick=tripleAnswer;$('tin').onkeydown=e=>{if(e.key==='Enter')tripleAnswer();};
+  tripleNext();
+}
+function tripleNext(){
+  const p=PRIM[ri(0,Math.min(PRIM.length-1,2+TR.i*2))],k=ri(1,TR.i<4?3:6);
+  TR.t=p.map(x=>x*k);if(Math.random()<.5)TR.t=[TR.t[1],TR.t[0],TR.t[2]];TR.hide=ri(0,2);TR.q0=Date.now();
+  const [a,b,c]=TR.t,lab=(i,v)=>i===TR.hide?'?':v;
+  const W=260,H=150,sx=a>=b?W:W*a/b,sy=a>=b?H*b/a:H, x0=40,y0=190;
+  $('tri').innerHTML=`<path d="M${x0} ${y0}H${x0+sx}L${x0} ${y0-sy}Z" fill="rgba(224,160,48,.06)" stroke="#c9a84c" stroke-width="1.6"/>
+   <path d="M${x0} ${y0-14}h14v14" fill="none" stroke="#c9a84c" stroke-width="1" opacity=".6"/>
+   <text x="${x0+sx/2}" y="${y0+22}" text-anchor="middle" fill="${TR.hide===0?'#e0a030':'#ecd59a'}" font-size="18">a = ${lab(0,a)}</text>
+   <text x="${x0-10}" y="${y0-sy/2}" text-anchor="end" fill="${TR.hide===1?'#e0a030':'#ecd59a'}" font-size="18">b = ${lab(1,b)}</text>
+   <text x="${x0+sx/2+14}" y="${y0-sy/2-10}" fill="${TR.hide===2?'#e0a030':'#ecd59a'}" font-size="18">c = ${lab(2,c)}</text>`;
+  $('tin').value='';$('tin').focus();
+}
+function tripleAnswer(){
+  if(!TR||TR.i>=TR.n)return;
+  const v=parseInt($('tin').value,10);if(isNaN(v))return;
+  const want=TR.t[TR.hide],ok=v===want,dt=(Date.now()-TR.q0)/1000;
+  if(ok){TR.streak++;TR.score+=10+Math.max(0,Math.round(15-dt));}else TR.streak=0;
+  $('msg').innerHTML=ok?`<b class="ok">✓</b> ${TR.t[0]}² + ${TR.t[1]}² = ${TR.t[2]}²`:`<span class="bad">✕ ${want}</span> · ${TR.t[0]}² + ${TR.t[1]}² = ${TR.t[2]}²`;
+  TR.i++;hud([TR.score,TR.streak,Math.min(TR.i+1,TR.n)+'/10']);
+  if(TR.i>=TR.n){
+    const best=bestGet('triple')||0,rec=TR.score>best;if(rec)bestSet('triple',TR.score);
+    stage.innerHTML=`<div class="big">${TR.score}</div><div class="msg">${rec?'<b>✦ ახალი რეკორდი</b>':'რეკორდი '+best} · ${((Date.now()-TR.t0)/1000).toFixed(0)} წმ</div>
+      <div class="row"><button class="btn" id="tagain">თავიდან</button></div>`;
+    $('tagain').onclick=startTriple;hud([undefined,undefined,undefined,Math.max(best,TR.score)]);return;
+  }
+  setTimeout(tripleNext,ok?500:1300);
+}
+
+go(new URLSearchParams(location.search).get('t')||'square');
+</script>
+</body>
+</html>
