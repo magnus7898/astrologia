@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>მოვალეობა · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(224,80,160,.11);--accent:#e050a0}
+.duel{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;width:100%;max-width:520px}
+.side{background:var(--raised);border:1px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center}
+.side .who{font-size:11px;color:var(--ink-dim);letter-spacing:1px}
+.side .mv{font-size:40px;line-height:1.2;min-height:52px}
+.side .pts{font-family:'Cinzel',serif;font-size:22px;color:var(--gold-lt)}
+.vs{font-family:'Cinzel',serif;color:var(--ink-dim);font-size:12px}
+.choice{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.choice button{min-width:150px;padding:14px 16px;border-radius:10px;border:1px solid var(--border-h);background:var(--raised);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.choice button:hover{background:rgba(201,168,76,.08)}
+.choice button.c{border-color:rgba(95,207,138,.6)}
+.choice button.d{border-color:rgba(226,104,92,.6)}
+.choice button:disabled{opacity:.4;cursor:default}
+.payoff{font-size:11.5px;color:var(--ink-dim);text-align:center}
+.hist{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;max-width:520px}
+.hist i{width:18px;height:26px;border-radius:4px;display:flex;flex-direction:column;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.hist i b,.hist i s{flex:1}
+.C{background:rgba(95,207,138,.6)}.D{background:rgba(226,104,92,.65)}
+.stars{font-size:28px;letter-spacing:4px;color:var(--gold-lt);min-height:40px;text-align:center;word-break:break-all}
+.ring{position:relative;width:200px;height:200px}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .in b{font-family:'Cinzel',serif;font-size:40px;font-weight:400;color:var(--gold-lt);line-height:1}
+.ring .in span{font-size:11px;color:var(--ink-dim);margin-top:4px}
+.plant{width:220px;height:240px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:min(100%,320px)}
+.cal i{aspect-ratio:1;border-radius:5px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);font-style:normal;font-size:9px;color:var(--ink-dim);
+  display:flex;align-items:center;justify-content:center}
+.cal i.w{background:rgba(48,176,240,.35);border-color:rgba(48,176,240,.6);color:var(--ink)}
+.cal i.t{border-color:var(--gold)}
+@media (max-width:520px){.duel{gap:8px}.choice button{min-width:130px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="games.html">← თამაშები</a>
+  <div class="cellno">8</div>
+  <h1>მოვალეობა</h1>
+  <div class="sub">Trust · Patience · Care</div>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="hud">
+  <div><b id="h1">—</b><span id="l1"></span></div>
+  <div><b id="h2">—</b><span id="l2"></span></div>
+  <div><b id="h3">—</b><span id="l3"></span></div>
+  <div><b id="h4">—</b><span id="l4"></span></div>
+</div>
+<div class="stage" id="stage"></div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id),stage=$('stage');
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+function hud(v,l){[1,2,3,4].forEach(i=>{if(v&&v[i-1]!==undefined)$('h'+i).textContent=v[i-1];if(l&&l[i-1]!==undefined)$('l'+i).textContent=l[i-1];});}
+const BK='magnus_duty_v1';
+const load=()=>{try{return JSON.parse(localStorage.getItem(BK))||{};}catch(e){return {};}};
+const save=d=>{try{localStorage.setItem(BK,JSON.stringify(d));}catch(e){}};
+let timers=[],iv=null;const later=(f,ms)=>{const t=setTimeout(f,ms);timers.push(t);return t;};
+function clearAll(){timers.forEach(clearTimeout);timers=[];if(iv){clearInterval(iv);iv=null;}document.onkeydown=null;}
+
+const TABS=[{k:'dilemma',n:'პატიმრის დილემა',run:startDilemma},{k:'patience',n:'მოთმინება',run:startPatience},{k:'plant',n:'ზრუნვა',run:startPlant}];
+let CUR;
+function go(k){clearAll();CUR=(TABS.find(t=>t.k===k)||TABS[0]).k;try{history.replaceState(null,'','?t='+CUR);}catch(e){}
+  $('tabs').innerHTML='';TABS.forEach(t=>{const b=document.createElement('button');b.textContent=t.n;b.className=t.k===CUR?'on':'';b.onclick=()=>go(t.k);$('tabs').appendChild(b);});
+  TABS.find(t=>t.k===CUR).run();}
+
+/* ════ PRISONER'S DILEMMA ════ */
+const OPP=[
+  {k:'mirror', n:'სარკე',     d:'პირველად ენდობა, მერე იმეორებს შენს წინა სვლას (Tit-for-Tat)', f:h=>h.length?h[h.length-1].me:'C'},
+  {k:'saint',  n:'წმინდანი',  d:'ყოველთვის ენდობა',                                          f:()=>'C'},
+  {k:'cheat',  n:'მატყუარა',  d:'ყოველთვის ღალატობს',                                        f:()=>'D'},
+  {k:'grudge', n:'წყენიანი',  d:'ენდობა, სანამ ერთხელ არ უღალატებ — მერე აღარასდროს',          f:h=>h.some(r=>r.me==='D')?'D':'C'},
+  {k:'random', n:'ჭირვეული',  d:'შემთხვევით, 50 / 50',                                       f:()=>Math.random()<.5?'C':'D'},
+];
+const PAY={CC:[3,3],CD:[0,5],DC:[5,0],DD:[1,1]};
+const RPO=5;
+let PD=null;
+function startDilemma(){
+  PD={order:shuffle(OPP.slice()),oi:0,h:[],all:[],me:0,them:0,busy:false};
+  const b=load().dilemma;
+  hud(['0','0','1/5',b?b.best:'—'],['შენი ქულა','მოწინააღმდეგე','პარტნიორი','რეკორდი']);
+  stage.innerHTML=`<div class="how">ხუთი უცნობი პარტნიორი, თითოეულთან <b>${RPO} რაუნდი</b>. ყოველ რაუნდში ირჩევ: <b style="color:var(--ok)">ენდობი</b> თუ <b style="color:var(--bad)">უღალატებ</b>. ბოლოს გაიგებ, ვინ ვინ იყო — და რა თქვა შენზე შენმა არჩევანმა.</div>
+   <div class="duel"><div class="side"><div class="who">შენ</div><div class="mv" id="mm">·</div><div class="pts" id="mp">0</div></div>
+     <div class="vs">VS</div>
+     <div class="side"><div class="who" id="on">პარტნიორი 1</div><div class="mv" id="om">·</div><div class="pts" id="op">0</div></div></div>
+   <div class="choice"><button class="c" id="bc">🤝 ვენდობი</button><button class="d" id="bd">🗡 ვუღალატებ</button></div>
+   <div class="payoff">ორივე ენდობა: 3 / 3 · ორივე ღალატობს: 1 / 1 · ერთი ღალატობს: 5 მოღალატეს, 0 მიმნდობს</div>
+   <div class="msg" id="msg">&nbsp;</div>
+   <div class="hist" id="hist"></div>`;
+  $('bc').onclick=()=>pdPlay('C');$('bd').onclick=()=>pdPlay('D');
+  document.onkeydown=e=>{if(e.key==='1')pdPlay('C');if(e.key==='2')pdPlay('D');};
+}
+function pdPlay(me){
+  if(PD.busy)return;PD.busy=true;$('bc').disabled=$('bd').disabled=true;
+  const O=PD.order[PD.oi],them=O.f(PD.h),[a,b]=PAY[me+them];
+  PD.h.push({me,them});PD.all.push({me,them,o:O.k,r:PD.h.length});PD.me+=a;PD.them+=b;
+  $('mm').textContent=me==='C'?'🤝':'🗡';$('om').textContent=them==='C'?'🤝':'🗡';
+  $('mp').textContent=PD.h.reduce((s,r)=>s+PAY[r.me+r.them][0],0);$('op').textContent=PD.h.reduce((s,r)=>s+PAY[r.me+r.them][1],0);
+  $('msg').innerHTML=me==='C'&&them==='C'?'<span class="ok">ორმხრივი ნდობა · +3</span>':me==='D'&&them==='D'?'<span class="bad">ორივემ უღალატა · +1</span>':me==='C'?'<span class="bad">გიღალატეს · 0</span>':'<b>გამოიყენე ნდობა · +5</b>';
+  $('hist').insertAdjacentHTML('beforeend',`<i title="პარტნიორი ${PD.oi+1}"><b class="${me}"></b><s class="${them}"></s></i>`);
+  hud([PD.me,PD.them]);
+  later(()=>{
+    if(PD.h.length>=RPO){PD.oi++;PD.h=[];
+      if(PD.oi>=PD.order.length)return pdEnd();
+      $('hist').insertAdjacentHTML('beforeend','<i style="width:6px;border:none"></i>');
+      $('on').textContent='პარტნიორი '+(PD.oi+1);$('mp').textContent=$('op').textContent='0';hud([undefined,undefined,(PD.oi+1)+'/5']);
+      $('msg').innerHTML='<b>ახალი პარტნიორი</b>';}
+    $('mm').textContent=$('om').textContent='·';PD.busy=false;$('bc').disabled=$('bd').disabled=false;
+  },650);
+}
+function pdEnd(){
+  const A=PD.all,coop=A.filter(r=>r.me==='C').length/A.length;
+  const vs=k=>A.filter(r=>r.o===k);
+  const saintExploit=vs('saint').filter(r=>r.me==='D').length/RPO;
+  /* forgiveness: after they betrayed you, did you trust again next round (same partner)? */
+  let fOpp=0,fYes=0;for(let i=1;i<A.length;i++)if(A[i].o===A[i-1].o&&A[i-1].them==='D'){fOpp++;if(A[i].me==='C')fYes++;}
+  const forgive=fOpp?fYes/fOpp:null;
+  let firstMoves=PD.order.map(O=>A.find(r=>r.o===O.k).me),openTrust=firstMoves.filter(m=>m==='C').length/5;
+  const duty=Math.round(100*(coop*.4+(1-saintExploit)*.35+openTrust*.25));
+  const D=load();D.dilemma=D.dilemma||{best:0,games:0};D.dilemma.best=Math.max(D.dilemma.best,PD.me);D.dilemma.games++;save(D);
+  const tag=duty>=80?'ძლიერი რვიანი — სიტყვას იცავ, ნდობას არ იყენებ ბოროტად.':duty>=60?'სამართლიანი — ენდობი, მაგრამ თავსაც იცავ.':duty>=40?'პრაგმატიკოსი — სარგებელი ხშირად ვალზე წინ დგას.':'ცივი სტრატეგი — ნდობა შენთვის მხოლოდ ინსტრუმენტია.';
+  stage.innerHTML=`<div class="big">${duty}<small> / 100</small></div><div class="how">მოვალეობის ინდექსი</div><div class="msg"><b>${tag}</b></div>
+   <table class="stats">
+    <tr><td>ქულა (შენ / ისინი)</td><td>${PD.me} / ${PD.them}</td></tr>
+    <tr><td>ნდობის წილი</td><td>${Math.round(coop*100)}%</td></tr>
+    <tr><td>პირველი სვლა — ნდობა</td><td>${Math.round(openTrust*100)}%</td></tr>
+    <tr><td>მიტევება ღალატის შემდეგ</td><td>${forgive===null?'—':Math.round(forgive*100)+'%'}</td></tr>
+    <tr><td>„წმინდანის“ გამოყენება</td><td>${Math.round(saintExploit*100)}%</td></tr>
+   </table>
+   <table class="stats">${PD.order.map((O,i)=>{const r=vs(O.k),s=r.reduce((a,x)=>a+PAY[x.me+x.them][0],0);
+     return `<tr><td>${i+1}. <b style="color:var(--gold-lt);font-weight:400">${O.n}</b> — ${O.d}</td><td>${s}</td></tr>`;}).join('')}</table>
+   <div class="row"><button class="btn" onclick="go('dilemma')">თავიდან</button></div>`;
+  hud([undefined,undefined,'✓',D.dilemma.best]);
+}
+
+/* ════ PATIENCE (delayed reward) ════ */
+const WAITS=[8,12,16,20,25,30];
+let PT=null;
+function startPatience(){
+  PT={i:0,stars:0,waited:0,quitAt:[]};
+  const b=load().patience;
+  hud(['0','0/6','1/6',b?b.best+'✦':'—'],['ვარსკვლავი','მოთმინება','რაუნდი','რეკორდი']);
+  stage.innerHTML=`<div class="how">ყოველ რაუნდში: აიღე <b>1 ✦ ახლავე</b> — ან დაელოდე და მიიღე <b>3 ✦</b>. ლოდინის დროს ნებისმიერ წამს შეგიძლია დანებდე და 1 აიღო. ლოდინი თანდათან იზრდება.</div>
+   <div class="ring" id="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5"/>
+     <circle id="arc" cx="50" cy="50" r="44" fill="none" stroke="#e050a0" stroke-width="5" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"/></svg>
+     <div class="in"><b id="rt">—</b><span id="rs">წამი</span></div></div>
+   <div class="choice"><button id="now">✦ ახლავე (1)</button><button class="c" id="wait">⏳ დაველოდები (3)</button></div>
+   <div class="stars" id="stars"></div>
+   <div class="msg" id="msg">&nbsp;</div>`;
+  ptRound();
+}
+function ptRound(){
+  const w=WAITS[PT.i];$('rt').textContent=w;$('rs').textContent='წამი ლოდინი';$('arc').setAttribute('stroke-dashoffset',276.5);
+  $('now').disabled=false;$('wait').disabled=false;$('now').textContent='✦ ახლავე (1)';$('wait').style.display='';
+  hud([undefined,undefined,(PT.i+1)+'/6']);
+  $('now').onclick=()=>ptTake(1,false);
+  $('wait').onclick=()=>{
+    $('wait').style.display='none';$('now').textContent='დავნებდი — 1 ✦';
+    const t0=performance.now();
+    iv=setInterval(()=>{const el=(performance.now()-t0)/1000,left=Math.max(0,w-el);
+      $('rt').textContent=Math.ceil(left);$('rs').textContent='დარჩა';$('arc').setAttribute('stroke-dashoffset',276.5*(1-el/w));
+      if(left<=0){clearInterval(iv);iv=null;ptTake(3,true);}},100);
+    $('now').onclick=()=>{clearInterval(iv);iv=null;PT.quitAt.push(w);ptTake(1,false,true);};
+  };
+}
+function ptTake(n,waited,quit){
+  $('now').disabled=true;$('wait').disabled=true;
+  PT.stars+=n;if(waited)PT.waited++;
+  $('stars').textContent='✦'.repeat(PT.stars);
+  $('msg').innerHTML=waited?'<span class="ok">მოთმინება დაჯილდოვდა · +3</span>':quit?'<span class="bad">დანებდი · +1</span>':'+1 ✦';
+  hud([PT.stars,PT.waited+'/6']);PT.i++;
+  later(()=>{$('msg').innerHTML='&nbsp;';if(PT.i>=WAITS.length)ptEnd();else ptRound();},900);
+}
+function ptEnd(){
+  const D=load();D.patience=D.patience||{best:0};D.patience.best=Math.max(D.patience.best,PT.stars);save(D);
+  const tag=PT.waited===6?'ურყევი მოთმინება — დაპირებულს ბოლომდე ელოდები.':PT.waited>=4?'ძლიერი თვითკონტროლი.':PT.quitAt.length?'იწყებ მოთმინებით, მაგრამ ხანგრძლივი ლოდინი გღლის.':'„ახლა და აქ“ — მყისიერი ჯილდო გიზიდავს.';
+  stage.innerHTML=`<div class="big">${PT.stars}<small> / 18 ✦</small></div><div class="msg"><b>${tag}</b></div>
+   <table class="stats"><tr><td>ბოლომდე დალოდებული რაუნდი</td><td>${PT.waited} / 6</td></tr>
+   <tr><td>შუა ლოდინში დანებება</td><td>${PT.quitAt.length?PT.quitAt.map(s=>s+'წ').join(', '):'არცერთხელ'}</td></tr></table>
+   <div class="row"><button class="btn" onclick="go('patience')">თავიდან</button></div>`;
+  hud([undefined,undefined,'✓',D.patience.best+'✦']);
+}
+
+/* ════ CARE (daily plant) ════ */
+const dayKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const dayDiff=(a,b)=>Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864e5);
+function plantState(){
+  const D=load(),P=D.plant||{days:[],best:0};const today=dayKey(new Date());
+  let run=0;if(P.days.length){run=1;for(let i=P.days.length-1;i>0;i--){if(dayDiff(P.days[i-1],P.days[i])===1)run++;else break;}}
+  const last=P.days[P.days.length-1],gap=last?dayDiff(last,today):null;
+  const streak=gap!==null&&gap<=1?run:0;
+  return {D,P,today,streak,run,gap,watered:last===today};
+}
+function plantSVG(stage,wilt){
+  const H=Math.min(10,stage),col=wilt?'#8a7a4a':'#3fae6a',lc=wilt?'#7a6a3a':'#5fcf8a';
+  const top=200-20-H*15;let s=`<svg class="plant" viewBox="0 0 220 240">`;
+  s+=`<path d="M70 200h80l-8 34H78z" fill="#3a2a1a" stroke="#c9a84c" stroke-width="1.2"/><rect x="64" y="192" width="92" height="10" rx="3" fill="#4a3522" stroke="#c9a84c" stroke-width="1.2"/>`;
+  if(stage===0){s+=`<ellipse cx="110" cy="192" rx="6" ry="3" fill="#6b4a2a"/>`;return s+'</svg>';}
+  const bend=wilt?18:0;
+  s+=`<path d="M110 192 Q${110+bend} ${(192+top)/2} ${110+bend*1.6} ${top}" stroke="${col}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  for(let i=1;i<=H;i++){const y=192-i*15,side=i%2?1:-1,x=110+bend*(1-(y-top)/(192-top))*1.2;
+    const droop=wilt?10:-6;s+=`<path d="M${x} ${y} q${side*16} ${droop-8} ${side*30} ${droop}" stroke="${lc}" stroke-width="2" fill="${lc}" fill-opacity=".35"/>`;}
+  if(stage>=7&&!wilt){const fx=110,fy=top-6;for(let k=0;k<6;k++){const a=k*Math.PI/3;s+=`<ellipse cx="${fx+Math.cos(a)*9}" cy="${fy+Math.sin(a)*9}" rx="7" ry="4.5" transform="rotate(${k*60} ${fx+Math.cos(a)*9} ${fy+Math.sin(a)*9})" fill="#e050a0" opacity=".85"/>`;}
+    s+=`<circle cx="${fx}" cy="${fy}" r="5" fill="#ecd59a"/>`;}
+  return s+'</svg>';
+}
+function startPlant(){
+  const S=plantState(),P=S.P;
+  const wilt=S.gap!==null&&S.gap>=2,dead=S.gap!==null&&S.gap>=4;
+  const stg=dead?0:Math.min(10,wilt?S.run:S.streak);
+  hud([S.streak,P.days.length,P.best||0,S.watered?'✓':'—'],['სერია (დღე)','სულ მორწყვა','საუკ. სერია','დღეს']);
+  const last28=[];for(let i=27;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last28.push(dayKey(d));}
+  stage.innerHTML=`<div class="how">ეს მცენარე მხოლოდ შენს ზრუნვაზეა დამოკიდებული. მორწყე <b>დღეში ერთხელ</b>. ყოველი დღე ზედიზედ — ახალი ფოთოლი; 7 დღეზე ყვავის. ორი დღე დავიწყებული — ხმება; ოთხი — იღუპება.</div>
+   ${plantSVG(stg,wilt&&!dead)}
+   <div class="msg" id="msg">${dead?'<span class="bad">მცენარე გახმა… დათესე ხელახლა — ახალი დასაწყისი.</span>':wilt?'<span class="bad">მცენარე წყალს ითხოვს!</span>':S.watered?'<b>დღეს უკვე მორწყე</b> — ხვალამდე.':S.streak?'დღეს ჯერ არ მოგირწყავს.':'დათესე და მორწყე პირველად.'}</div>
+   <div class="row"><button class="btn" id="water" ${S.watered?'disabled':''}>💧 ${P.days.length&&!dead?'მორწყვა':'დათესვა'}</button></div>
+   <div class="cal">${last28.map(d=>`<i class="${P.days.includes(d)?'w':''}${d===S.today?' t':''}">${+d.slice(8)}</i>`).join('')}</div>
+   <div class="note">ბოლო 28 დღე · ინახება ამ ბრაუზერში</div>`;
+  $('water').onclick=()=>{
+    const s=plantState();if(s.watered)return;
+    if(s.gap!==null&&s.gap>=4)s.P.days=[];
+    s.P.days.push(s.today);if(s.P.days.length>400)s.P.days=s.P.days.slice(-400);
+    const ns=(()=>{let k=1;for(let i=s.P.days.length-1;i>0;i--){if(dayDiff(s.P.days[i-1],s.P.days[i])===1)k++;else break;}return k;})();
+    s.P.best=Math.max(s.P.best||0,ns);s.D.plant=s.P;save(s.D);startPlant();
+  };
+}
+
+go(new URLSearchParams(location.search).get('t'));
+</script>
+</body>
+</html>
