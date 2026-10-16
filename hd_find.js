@@ -169,7 +169,7 @@ function activate(){
   $('hf-tab-btn').classList.add('active');
   document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
   $('form-find').classList.add('active');
-  ['results-natal','results-synastry','results-transit'].forEach(id=>{const e=$(id);if(e)e.classList.add('hidden');});
+  ['results-natal','results-synastry','results-transit','results-stats'].forEach(id=>{const e=$(id);if(e)e.classList.add('hidden');});
   try{currentMode='find';}catch(e){}
   const st=$('status');if(st)st.textContent='';
 }
@@ -467,5 +467,8 @@ function toNatal(jd){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+/* shared with hd_stats.js */
+window.HDE={init:async()=>{A=await needAE();return A;},rawL:(b,jd)=>rawL(b,aT(jd)),sunL,nodeL,designJD,decomp,centersOf,typeOf,
+  calJD,jdCal,fmt,parts,localToJD,TZ,CG,G2C,CH,PLAN,JMIN,JMAX};
 let tries=0;(function wait(){if(inject()||++tries>100)return;setTimeout(wait,100);})();
 })();
