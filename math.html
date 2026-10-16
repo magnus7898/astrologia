@@ -88,8 +88,27 @@ tbody tr:hover td{background:rgba(214,178,94,.06)}
 .fnrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center}
 .sw{width:12px;height:12px;border-radius:50%}
 .sliders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 16px}
-.sl{display:grid;grid-template-columns:auto minmax(0,1fr) 3.5em;gap:8px;align-items:center;font:500 13px var(--mono)}
+.sl{display:grid;grid-template-columns:auto minmax(0,1fr) 3.2em auto;gap:8px;align-items:center;font:500 13px var(--mono)}
 .sl b{color:var(--gold)} .sl output{text-align:right;color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.sl .play{padding:3px 8px;font-size:11px;min-width:30px}
+.fnrow{grid-template-columns:auto minmax(0,1fr) auto}
+.fnrow .pv{grid-column:2/4;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;min-height:22px;font-size:12px}
+.pv .kind{font:500 10.5px var(--mono);letter-spacing:.06em;color:var(--muted);border:1px solid var(--rule);border-radius:3px;padding:1px 6px}
+.math{font:italic 400 16px var(--serif);color:var(--fg);line-height:1.9}
+.math i{font-style:italic}
+.math .fn{font-style:normal}
+.math sup{font-size:.72em;vertical-align:.55em;line-height:0}
+.math .fr{font-style:normal;font-size:.92em}
+.math .fr > span{font-style:italic}
+.sq{display:inline-flex;align-items:flex-start;font-style:normal}
+.sq .ol{border-top:1.4px solid currentColor;padding:0 2px;margin-left:1px;font-style:italic}
+.sq .ix{font-size:.62em;vertical-align:0;margin-right:-3px;line-height:1.4}
+.pgroup{display:grid;gap:6px}
+.pgroup > span{font:500 11px var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+details.syntax{border-top:0;padding-top:0}
+table.syn td{text-align:left;white-space:normal;font-size:12.5px}
+table.syn td:first-child{color:var(--gold-hi);white-space:nowrap}
+table.syn tbody tr{cursor:default}
 
 /* matrices */
 .medit{display:grid;gap:6px;justify-content:start}
@@ -220,15 +239,34 @@ summary{cursor:pointer;color:var(--gold);font-size:13px}
     <div class="bench">
       <div class="col">
         <div class="card">
-          <h2>ფუნქციები <small>y = …</small></h2>
-          <div id="fnRows" style="display:grid;gap:8px"></div>
-          <div class="row"><button id="fnAdd" type="button">+ ფუნქცია</button><button id="fnClear" type="button">გასუფთავება</button></div>
-          <p class="hint">შეგიძლია გამოიყენო: x, + − * / ^, sin cos tan cot, sqrt, abs, ln, log, exp, pi, e და პარამეტრები a b c d.</p>
-          <div class="chips" id="fnPresets"></div>
+          <h2>ფორმულები <small>დაწერე თავად</small></h2>
+          <div id="fnRows" style="display:grid;gap:10px"></div>
+          <div class="row"><button id="fnAdd" type="button">+ ფორმულა</button><button id="fnClear" type="button">გასუფთავება</button></div>
+          <details class="syntax"><summary>როგორ დავწერო</summary>
+            <div class="tbl"><table class="syn"><tbody>
+              <tr><td>x/3^4</td><td>წილადი და ხარისხი</td></tr>
+              <tr><td>sqrt(x), root(x,3), x^(2/3)</td><td>კვადრატული, მესამე და ნებისმიერი ფესვი</td></tr>
+              <tr><td>|x|, 5!, sin^2(x)</td><td>მოდული, ფაქტორიალი, ხარისხი ფუნქციაზე</td></tr>
+              <tr><td>x^2 + y^2 = 25</td><td>x-ისა და y-ის განტოლება (წრე, ელიფსი…)</td></tr>
+              <tr><td>y &gt; x^2 − 2</td><td>უტოლობა: არე იფერება</td></tr>
+              <tr><td>(cos(3t), sin(2t))</td><td>პარამეტრული მრუდი x(t), y(t)</td></tr>
+              <tr><td>r = 1 − sin(θ)</td><td>პოლარული მრუდი (θ ან theta)</td></tr>
+              <tr><td>a, b, c, d</td><td>პარამეტრები სლაიდერებიდან, ანიმირდება ▶ ღილაკით</td></tr>
+            </tbody></table></div>
+          </details>
+          <div class="pgroup"><span>ფუნქციები</span><div class="chips" id="fnPresets1"></div></div>
+          <div class="pgroup"><span>x და y მრუდები, უტოლობები</span><div class="chips" id="fnPresets2"></div></div>
+          <div class="pgroup"><span>პარამეტრული და პოლარული</span><div class="chips" id="fnPresets3"></div></div>
+          <div class="pgroup"><span>ანიმაციით</span><div class="chips" id="fnPresets4"></div></div>
         </div>
         <div class="card">
-          <h2>პარამეტრები <small>a · f(b·x + c) + d</small></h2>
+          <h2>პარამეტრები <small>▶ ანიმირებს</small></h2>
           <div class="sliders" id="sliders"></div>
+          <div class="row">
+            <label class="f" for="tMin">t, θ საწყისი<input type="text" id="tMin" value="0"></label>
+            <label class="f" for="tMax">t, θ ბოლო<input type="text" id="tMax" value="2pi"></label>
+            <label class="f" for="aSpeed">ანიმაციის სიჩქარე<input type="range" id="aSpeed" min="0.2" max="3" step="0.1" value="1"></label>
+          </div>
         </div>
         <div class="card">
           <h2>ანალიზი <small id="anName"></small></h2>
@@ -238,7 +276,7 @@ summary{cursor:pointer;color:var(--gold);font-size:13px}
       <div class="col">
         <div class="card">
           <div class="row" style="justify-content:space-between"><h2>გრაფიკი</h2>
-            <div class="row"><button id="gPi" type="button" aria-pressed="false">π ღერძი</button><button id="gReset" type="button">ხედის აღდგენა</button></div></div>
+            <div class="row"><button class="primary" id="gDraw" type="button">▶ დახატვა</button><button id="gTan" type="button" aria-pressed="false">მხები</button><button id="gPi" type="button" aria-pressed="false">π ღერძი</button><button id="gReset" type="button">ხედის აღდგენა</button></div></div>
           <canvas class="cv grab" id="gCv" aria-label="ფუნქციების გრაფიკი"></canvas>
           <p class="hint" id="gHover">გადაათრიე გრაფიკი, ბორბლით გაადიდე, ორჯერ დააჭირე ხედის აღსადგენად.</p>
         </div>
@@ -413,6 +451,7 @@ summary{cursor:pointer;color:var(--gold);font-size:13px}
         <div class="qcard">
           <div class="qtopic" id="gTopic"></div>
           <p class="qtext" id="gQ"></p>
+          <canvas class="cv" id="gqCv" aria-label="ამოცანის გრაფიკი" hidden></canvas>
           <div class="row">
             <label class="f" for="gA" style="flex:1 1 200px">პასუხი (შეგიძლია: 3/4, 0.75, sqrt(3)/2, pi/6)<input type="text" id="gA" autocomplete="off"></label>
             <button class="primary" id="gCheck" type="button">შემოწმება</button>
@@ -632,23 +671,34 @@ $('dmsIn').addEventListener('input',e=>{const m=e.target.value.replace(/[−]/g,
 
 /* ================= GRAPHS ================= */
 const gp=new Plot($('gCv'),{xmin:-8,xmax:8,ymin:-5,ymax:5,aspect:.72,interactive:true});plots.push(gp);
-const params={a:1,b:1,c:0,d:0};let fns=[];
-const PRESETS=[['sin x','sin(x)'],['cos x','cos(x)'],['tg x','tan(x)'],['x²','x^2'],['x³','x^3'],['√x','sqrt(x)'],['1/x','1/x'],['|x|','abs(x)'],['eˣ','e^x'],['ln x','ln(x)'],['2ˣ','2^x'],['sin x / x','sin(x)/x'],
-  ['a·sin(bx+c)+d','a*sin(b*x+c)+d'],['a(x+c)²+d','a*(x+c)^2+d'],['a·x²+b·x+c','a*x^2+b*x+c'],['ax + b','a*x+b']];
-PRESETS.forEach(([l,e])=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=l;b.onclick=()=>addFn(e);$('fnPresets').appendChild(b);});
-['a','b','c','d'].forEach(k=>{const w=document.createElement('label');w.className='sl';w.htmlFor='sl'+k;
-  w.innerHTML=`<b>${k}</b><input type="range" id="sl${k}" min="-5" max="5" step="0.1" value="${params[k]}"><output id="so${k}">${params[k]}</output>`;$('sliders').appendChild(w);
-  w.querySelector('input').addEventListener('input',e=>{params[k]=+e.target.value;$('so'+k).textContent=nf(params[k],2);analyze();gp.draw();});});
-function addFn(expr){if(fns.length>=6)fns.shift();fns.push({expr,f:null,err:null});renderFns();}
+const params={a:1,b:1,c:0,d:0};const anim={a:0,b:0,c:0,d:0};let fns=[],prog=1,tangent=false;
+const KIND={explicit:'y = f(x)',implicit:'F(x, y) = 0',ineq:'უტოლობა',param:'პარამეტრული',polar:'პოლარული'};
+const PRESETS=[
+  [['sin x','sin(x)'],['cos x','cos(x)'],['tg x','tan(x)'],['x²','x^2'],['x³','x^3'],['x/3⁴','x/3^4'],['√x','sqrt(x)'],['∛x','root(x,3)'],['x^(2/3)','x^(2/3)'],['1/x','1/x'],['|x|','|x|'],['eˣ','e^x'],['ln x','ln(x)'],['sin x / x','sin(x)/x'],['x·sin(1/x)','x*sin(1/x)'],['ზარი','e^(-x^2)']],
+  [['წრე','x^2+y^2=16'],['ელიფსი','x^2/9+y^2/4=1'],['ჰიპერბოლა','x^2-y^2=1'],['ელიფსური მრუდი','y^2=x^3-2x+1'],['გული','(x^2+y^2-1)^3=x^2*y^3'],['sin x + sin y','sin(x)+sin(y)=0.5'],['x = sin y','x=sin(y)'],['y > x² − 2','y>x^2-2'],['x² + y² ≤ 9','x^2+y^2<=9'],['|x| + |y| < 3','|x|+|y|<3']],
+  [['ლისაჟუ','(cos(3t), sin(2t))'],['ციკლოიდა','(t-sin(t), 1-cos(t))'],['ასტროიდა','(2cos(t)^3, 2sin(t)^3)'],['ვარდი','r=3cos(4θ)'],['კარდიოიდა','r=2-2sin(θ)'],['სპირალი','r=θ/3'],['ლემნისკატა','r=3sqrt(|cos(2θ)|)'],['პეპელა','r=e^sin(θ)-2cos(4θ)']],
+  [['ტალღა a·sin(bx+c)+d','a*sin(b*x+c)+d'],['პარაბოლა a(x+c)²+d','a*(x+c)^2+d'],['წრე რადიუსით a','x^2+y^2=a^2'],['ვარდი r = a·cos(bθ)','r=a*cos(b*θ)'],['ლისაჟუ a, b','(sin(a*t), sin(b*t))'],['კვადრატული ax²+bx+c','a*x^2+b*x+c']]];
+PRESETS.forEach((grp,gi)=>grp.forEach(([l,e])=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=l;b.onclick=()=>{addFn(e);if(gi===2&&/θ|theta/.test(e)&&!/[ab]/.test(e)){$('tMax').value=e.includes('θ/3')?'8pi':'2pi';readT();}startDraw();};$('fnPresets'+(gi+1)).appendChild(b);}));
+['a','b','c','d'].forEach(k=>{const w=document.createElement('div');w.className='sl';
+  w.innerHTML=`<label for="sl${k}"><b>${k}</b></label><input type="range" id="sl${k}" min="-5" max="5" step="0.05" value="${params[k]}"><output id="so${k}">${params[k]}</output><button type="button" class="play" id="pl${k}" aria-label="ანიმაცია ${k}">▶</button>`;$('sliders').appendChild(w);
+  w.querySelector('input').addEventListener('input',e=>{params[k]=+e.target.value;$('so'+k).textContent=nf(params[k],2);analyze();gp.draw();});
+  w.querySelector('.play').onclick=e=>{anim[k]=anim[k]?0:1;e.currentTarget.textContent=anim[k]?'❚❚':'▶';e.currentTarget.setAttribute('aria-pressed',!!anim[k]);loopStart();};});
+let tRange=[0,2*Math.PI];
+function readT(){try{const a=MathCore.evaluate($('tMin').value),b=MathCore.evaluate($('tMax').value);if(isFinite(a)&&isFinite(b)&&b>a){tRange=[a,b];$('tMin').classList.remove('err');$('tMax').classList.remove('err');}else throw 0;}catch(e){$('tMax').classList.add('err');}gp.draw();}
+$('tMin').addEventListener('input',readT);$('tMax').addEventListener('input',readT);
+function addFn(expr){if(fns.length>=6)fns.shift();fns.push({expr});renderFns();}
+function compileFn(o){try{Object.assign(o,{f:null,g:null,fx:null,fy:null,fr:null},MathCore.classify(o.expr));o.err=null;}catch(e){o.kind=null;o.err=e.message;}}
 function renderFns(){const box=$('fnRows');box.innerHTML='';
-  fns.forEach((o,i)=>{o.col=COL.c[i%6];const r=document.createElement('div');r.className='fnrow';
-    r.innerHTML=`<span class="sw" style="background:${o.col}"></span><input type="text" id="fn${i}" value="${esc(o.expr)}" aria-label="ფუნქცია ${i+1}"><button type="button" aria-label="წაშლა">✕</button>`;
-    const inp=r.querySelector('input');const upd=()=>{o.expr=inp.value;try{o.f=MathCore.compile(o.expr);o.err=null;inp.classList.remove('err');}catch(e){o.f=null;o.err=e.message;inp.classList.add('err');}analyze();gp.draw();};
-    inp.addEventListener('input',upd);r.querySelector('button').onclick=()=>{fns.splice(i,1);renderFns();};box.appendChild(r);
-    try{o.f=MathCore.compile(o.expr);o.err=null;}catch(e){o.f=null;o.err=e.message;inp.classList.add('err');}});
+  fns.forEach((o,i)=>{o.col=COL.c[i%6];compileFn(o);const r=document.createElement('div');r.className='fnrow';
+    r.innerHTML=`<span class="sw" style="background:${o.col}"></span><input type="text" id="fn${i}" value="${esc(o.expr)}" aria-label="ფორმულა ${i+1}" spellcheck="false"><button type="button" aria-label="წაშლა">✕</button><div class="pv"></div>`;
+    const inp=r.querySelector('input'),pv=r.querySelector('.pv');
+    const paint=()=>{if(o.err){pv.innerHTML=`<span class="bad">${esc(o.err)}</span>`;inp.classList.add('err');}else{pv.innerHTML=`<span class="kind">${KIND[o.kind]}</span><span class="math">${o.html}</span>`;inp.classList.remove('err');}};
+    paint();inp.addEventListener('input',()=>{o.expr=inp.value;compileFn(o);paint();analyze();gp.draw();});
+    r.querySelector('button').onclick=()=>{fns.splice(i,1);renderFns();};box.appendChild(r);});
   analyze();gp.draw();}
-function features(f){const out={zeros:[],ext:[]},N=1200,a=gp.xmin,b=gp.xmax,h=(b-a)/N;let px=a,py=f(a),pd=null;
-  const g=x=>{try{return f(x);}catch(e){return NaN;}};
+const V=(x,y,t)=>({x,y,t,theta:t,...params});
+function features(f){const out={zeros:[],ext:[]},N=1200,a=gp.xmin,b=gp.xmax,h=(b-a)/N;
+  const g=x=>{try{return f(x);}catch(e){return NaN;}};let px=a,py=g(a),pd=null;
   for(let i=1;i<=N;i++){const x=a+i*h,y=g(x);
     if(isFinite(py)&&isFinite(y)&&Math.abs(y-py)<(gp.ymax-gp.ymin)){
       if(py===0)out.zeros.push(px);else if(py*y<0){let l=px,r=x;for(let k=0;k<50;k++){const m=(l+r)/2;(g(l)*g(m)<=0)?r=m:l=m;}out.zeros.push((l+r)/2);}
@@ -658,22 +708,77 @@ function features(f){const out={zeros:[],ext:[]},N=1200,a=gp.xmin,b=gp.xmax,h=(b
     px=x;py=y;}
   out.zeros=out.zeros.filter((z,i,arr)=>i===0||Math.abs(z-arr[i-1])>h*2).slice(0,12);out.ext=out.ext.slice(0,10);return out;}
 let feat=null;
-function analyze(){const o=fns.find(x=>x.f);if(!o){$('anOut').innerHTML='';$('anName').textContent='';feat=null;return;}
-  const f=x=>o.f({x,...params});feat={o,...features(f)};$('anName').textContent='y = '+o.expr;
+function analyze(){const o=fns.find(x=>x.kind);if(!o){$('anOut').innerHTML='';$('anName').textContent='';feat=null;return;}
+  $('anName').innerHTML='';
+  if(o.kind!=='explicit'){feat=null;
+    const info={implicit:'წერტილები, სადაც მარცხენა და მარჯვენა მხარე ტოლია. იხატება „მარშირებადი კვადრატების“ მეთოდით.',ineq:'გაფერადებულია ყველა წერტილი (x; y), რომელიც უტოლობას აკმაყოფილებს. წყვეტილი საზღვარი = მკაცრი უტოლობა.',
+      param:`წერტილი (x(t); y(t)), t ∈ [${nf(tRange[0],3)}; ${nf(tRange[1],3)}].`,polar:`x = r·cos θ, y = r·sin θ, θ ∈ [${nf(tRange[0],3)}; ${nf(tRange[1],3)}].`}[o.kind];
+    kv($('anOut'),[['ტიპი',KIND[o.kind]],['ფორმულა',`<span class="math">${o.html}</span>`],['როგორ იხატება',info]]);return;}
+  const f=x=>o.f(V(x,0,0));feat={o,...features(f)};
   let y0;try{y0=f(0);}catch(e){y0=NaN;}
-  kv($('anOut'),[['ნულები (y = 0)',feat.zeros.length?feat.zeros.map(z=>'x ≈ '+nf(z,4)).join(', '):'ხილულ არეში არ არის'],
+  kv($('anOut'),[['ფორმულა',`<span class="math">${o.html}</span>`],['ნულები (y = 0)',feat.zeros.length?feat.zeros.map(z=>'x ≈ '+nf(z,4)).join(', '):'ხილულ არეში არ არის'],
     ['ექსტრემუმები',feat.ext.length?feat.ext.map(([x,y,t])=>`${t==='max'?'მაქს.':'მინ.'} (${nf(x,3)}; ${nf(y,3)})`).join('<br>'):'ხილულ არეში არ არის'],
     ['y-თან გადაკვეთა',isFinite(y0)?'(0; '+nf(y0,4)+')':'არ არსებობს'],['პარამეტრები',`a=${nf(params.a,2)}, b=${nf(params.b,2)}, c=${nf(params.c,2)}, d=${nf(params.d,2)}`]]);}
-gp.onDraw=p=>{fns.forEach(o=>{if(o.f)p.fn(x=>o.f({x,...params}),o.col,2.4);});
-  if(feat){feat.zeros.forEach(z=>p.dot(z,0,feat.o.col,4));feat.ext.forEach(([x,y])=>p.dot(x,y,COL.hi,4.5));}
-  if(hover){p.seg(hover[0],p.ymin,hover[0],p.ymax,'rgba(236,227,204,.15)',1);fns.forEach(o=>{if(!o.f)return;const y=o.f({x:hover[0],...params});if(isFinite(y))p.dot(hover[0],y,o.col,4,nf(y,3));});}};
-let hover=null;gp.onHover=(x,y)=>{hover=[x,y];$('gHover').textContent=`x = ${nf(x,3)}, y = ${nf(y,3)}`;gp.draw();};
+
+/* marching squares for F(x,y) = 0 */
+function implicitPlot(p,G,color,dashed){const c=p.ctx,s=4,nx=Math.ceil(p.W/s)+1,ny=Math.ceil(p.H/s)+1,val=new Float64Array(nx*ny);
+  for(let j=0;j<ny;j++){const y=p.wy(j*s);for(let i=0;i<nx;i++){let v;try{v=G(V(p.wx(i*s),y,0));}catch(e){v=NaN;}val[j*nx+i]=v;}}
+  const ok=(va,vb,xa,ya,xb,yb)=>{if(!(isFinite(va)&&isFinite(vb))||(va<0)===(vb<0)||va===vb)return null;const t=va/(va-vb),px=xa+(xb-xa)*t,py=ya+(yb-ya)*t;
+    let vm;try{vm=G(V(p.wx((xa+xb)/2),p.wy((ya+yb)/2),0));}catch(e){vm=NaN;}if(!isFinite(vm)||Math.abs(vm)>Math.max(Math.abs(va),Math.abs(vb))*1.5+1e-9)return null;return[px,py];};
+  c.save();c.strokeStyle=color;c.lineWidth=2.3;c.lineCap='round';c.beginPath();
+  for(let j=0;j<ny-1;j++)for(let i=0;i<nx-1;i++){const a=val[j*nx+i],b=val[j*nx+i+1],d=val[(j+1)*nx+i],e=val[(j+1)*nx+i+1],X=i*s,Y=j*s;
+    if(dashed&&((i+j)&2))continue;
+    const pts=[ok(a,b,X,Y,X+s,Y),ok(b,e,X+s,Y,X+s,Y+s),ok(e,d,X+s,Y+s,X,Y+s),ok(d,a,X,Y+s,X,Y)].filter(Boolean);
+    if(pts.length===2){c.moveTo(pts[0][0],pts[0][1]);c.lineTo(pts[1][0],pts[1][1]);}
+    else if(pts.length===4){c.moveTo(pts[0][0],pts[0][1]);c.lineTo(pts[1][0],pts[1][1]);c.moveTo(pts[2][0],pts[2][1]);c.lineTo(pts[3][0],pts[3][1]);}}
+  c.stroke();c.restore();}
+function shade(p,G,op,color){const c=p.ctx,s=3;c.save();c.fillStyle=color;c.globalAlpha=.2;
+  const test=op==='<'?v=>v<0:op==='>'?v=>v>0:op==='<='?v=>v<=0:v=>v>=0;
+  for(let j=0;j<p.H;j+=s){const y=p.wy(j+s/2);let run=-1;
+    for(let i=0;i<=p.W;i+=s){let v;try{v=G(V(p.wx(i+s/2),y,0));}catch(e){v=NaN;}const inn=i<p.W&&isFinite(v)&&test(v);
+      if(inn&&run<0)run=i;else if(!inn&&run>=0){c.fillRect(run,j,i-run,s);run=-1;}}}
+  c.restore();}
+function curveT(p,fx,fy,color,upto){const c=p.ctx,N=2400,[t0,t1]=tRange,te=t0+(t1-t0)*upto,span=Math.hypot(p.xmax-p.xmin,p.ymax-p.ymin)*.25;
+  c.strokeStyle=color;c.lineWidth=2.3;c.lineJoin='round';c.beginPath();let pen=false,last=null,px=null;
+  for(let i=0;i<=N;i++){const t=t0+(te-t0)*i/N;let x,y;try{x=fx(t);y=fy(t);}catch(e){x=NaN;}
+    if(!isFinite(x)||!isFinite(y)||(px&&Math.hypot(x-px[0],y-px[1])>span)){pen=false;px=null;continue;}
+    const sx=p.sx(x),sy=p.sy(y);if(!pen){c.moveTo(sx,sy);pen=true;}else c.lineTo(sx,sy);px=[x,y];last=px;}
+  c.stroke();return last;}
+gp.onDraw=p=>{const c=p.ctx;
+  fns.forEach(o=>{if(!o.kind)return;
+    if(o.kind==='ineq'){c.save();c.beginPath();c.rect(0,0,p.W*prog,p.H);c.clip();shade(p,o.g,o.op,o.col);implicitPlot(p,o.g,o.col,o.op.length===1);c.restore();}
+    else if(o.kind==='implicit'){c.save();c.beginPath();c.rect(0,0,p.W*prog,p.H);c.clip();implicitPlot(p,o.g,o.col);c.restore();}
+    else if(o.kind==='explicit'){const xe=p.xmin+(p.xmax-p.xmin)*prog;c.save();c.beginPath();c.rect(0,0,p.sx(xe),p.H);c.clip();p.fn(x=>o.f(V(x,0,0)),o.col,2.4);c.restore();
+      if(prog<1){const y=o.f(V(xe,0,0));if(isFinite(y))p.dot(xe,y,COL.hi,5);}}
+    else if(o.kind==='param'){const l=curveT(p,t=>o.fx(V(0,0,t)),t=>o.fy(V(0,0,t)),o.col,prog);if(l&&prog<1)p.dot(l[0],l[1],COL.hi,5);}
+    else if(o.kind==='polar'){const R=t=>o.fr(V(0,0,t));const l=curveT(p,t=>R(t)*Math.cos(t),t=>R(t)*Math.sin(t),o.col,prog);if(l&&prog<1){p.seg(0,0,l[0],l[1],'rgba(243,217,147,.45)',1);p.dot(l[0],l[1],COL.hi,5);}}});
+  if(feat&&prog>=1){feat.zeros.forEach(z=>p.dot(z,0,feat.o.col,4));feat.ext.forEach(([x,y])=>p.dot(x,y,COL.hi,4.5));}
+  if(hover){p.seg(hover[0],p.ymin,hover[0],p.ymax,'rgba(236,227,204,.15)',1);
+    fns.forEach(o=>{if(o.kind!=='explicit')return;const f=x=>o.f(V(x,0,0)),x=hover[0],y=f(x);if(!isFinite(y))return;
+      if(tangent){const h=(p.xmax-p.xmin)*1e-5,k=(f(x+h)-f(x-h))/(2*h);if(isFinite(k)){p.fn(X=>y+k*(X-x),'rgba(243,217,147,.6)',1.3);p.dot(x,y,o.col,4.5,`k = ${nf(k,3)}`);return;}}
+      p.dot(x,y,o.col,4,nf(y,3));});}};
+let hover=null;gp.onHover=(x,y)=>{hover=[x,y];let s=`x = ${nf(x,3)}, y = ${nf(y,3)}`;
+  if(tangent){const o=fns.find(q=>q.kind==='explicit');if(o){const f=X=>o.f(V(X,0,0)),h=1e-5,k=(f(x+h)-f(x-h))/(2*h);if(isFinite(k))s+=`  ·  მხების დახრა f′(x) ≈ ${nf(k,4)}`;}}
+  $('gHover').textContent=s;gp.draw();};
 $('gCv').addEventListener('pointerleave',()=>{hover=null;gp.draw();});
 $('gCv').addEventListener('pointerup',()=>{analyze();gp.draw();});$('gCv').addEventListener('wheel',()=>{clearTimeout(gp._t);gp._t=setTimeout(()=>{analyze();gp.draw();},120);});
-$('fnAdd').onclick=()=>addFn('x');$('fnClear').onclick=()=>{fns=[];renderFns();};
+$('fnAdd').onclick=()=>addFn('');$('fnClear').onclick=()=>{fns=[];renderFns();};
 $('gReset').onclick=()=>{[gp.xmin,gp.xmax,gp.ymin,gp.ymax]=gp.home;analyze();gp.draw();};
 $('gPi').onclick=e=>{gp.o.piTicks=!gp.o.piTicks;e.currentTarget.setAttribute('aria-pressed',gp.o.piTicks);gp.draw();};
-fns=[{expr:'sin(x)'},{expr:'cos(x)'},{expr:'x^2/4-2'}];
+$('gTan').onclick=e=>{tangent=!tangent;e.currentTarget.setAttribute('aria-pressed',tangent);gp.draw();};
+/* animation loop: parameter sweeps + drawing progress */
+let raf=0,lastT=0,drawing=false;const dir={a:1,b:1,c:1,d:1};
+function startDraw(){prog=0;drawing=true;loopStart();}
+$('gDraw').onclick=startDraw;
+function loopStart(){if(!raf){lastT=0;raf=requestAnimationFrame(tick);}}
+function tick(ts){raf=0;const dt=lastT?Math.min(.05,(ts-lastT)/1000):.016;lastT=ts;const sp=+$('aSpeed').value;let active=false;
+  if(drawing){prog=Math.min(1,prog+dt*sp/3);if(prog>=1)drawing=false;active=true;}
+  ['a','b','c','d'].forEach(k=>{if(!anim[k])return;active=true;params[k]+=dir[k]*dt*sp*1.2;if(params[k]>5){params[k]=5;dir[k]=-1;}if(params[k]<-5){params[k]=-5;dir[k]=1;}
+    $('sl'+k).value=params[k];$('so'+k).textContent=nf(params[k],2);});
+  if(Object.values(anim).some(Boolean))analyze();
+  if($('p-graph').hidden&&!drawing){/* keep params paused while tab hidden */}
+  gp.draw();if(active)raf=requestAnimationFrame(tick);}
+fns=[{expr:'x^4/3^4-2'},{expr:'root(x,3)'},{expr:'x^2+y^2=(a+3)^2'}];
 
 /* ================= EQUATIONS ================= */
 const qp=new Plot($('qCv'),{xmin:-5,xmax:5,ymin:-5,ymax:5,aspect:.7,interactive:true});plots.push(qp);let qRes=null;
@@ -836,7 +941,7 @@ $('mPlay').onclick=()=>{let t0=null;const run=ts=>{if(!t0)t0=ts;const k=Math.min
 /* ================= GAME ================= */
 const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[Math.floor(Math.random()*a.length)];
 const nz=(a,b)=>{let x;do x=ri(a,b);while(x===0);return x;};
-const TOPICS={all:'ყველა',frac:'წილადები',trig:'ტრიგონომეტრია',pow:'ხარისხები და x²',eq:'განტოლებები',geo:'გეომეტრია',mat:'მატრიცები'};
+const TOPICS={all:'ყველა',frac:'წილადები',trig:'ტრიგონომეტრია',pow:'ხარისხები და x²',eq:'განტოლებები',geo:'გეომეტრია',mat:'მატრიცები',graph:'გრაფიკის კითხვა'};
 const GEN={
   frac:[L=>{const d=pick(L<2?[2,4,5,10]:[4,8,20,25,40]),n=ri(1,d-1),f=new F(BigInt(n),BigInt(d));return{q:`${f} = ? (ათწილადად)`,a:f.num(),sol:[`${f.n} ÷ ${f.d} = ${nf(f.num(),6)}`]};},
     L=>{const v=pick(L<2?['0.25','0.5','0.75','0.2']:['0.125','0.375','0.35','0.06','1.25']);const f=F.parse(v);return{q:`${v} = ? (წილადად)`,a:f.num(),sol:[`${v} = ${f}`,'ჩაწერე ხაზით: მაგ. 3/4']};},
@@ -860,11 +965,18 @@ const GEN={
     L=>{const a=ri(20,80),b=ri(20,170-a);return{q:`სამკუთხედის ორი კუთხეა ${a}° და ${b}°. მესამე = ?`,a:180-a-b,sol:[`180° − ${a}° − ${b}° = ${180-a-b}°`]};},
     L=>{const r=ri(1,L<2?5:10);return{q:`წრის რადიუსი ${r}. ფართობი = ? (π-ით, მაგ. 9pi)`,a:Math.PI*r*r,sol:[`S = πr² = ${r*r}π`]};},
     L=>{const n=pick([5,6,8,10,12]);return{q:`წესიერი ${n}-კუთხედის შიგა კუთხე = ? (°)`,a:(n-2)*180/n,sol:[`(n − 2)·180° / n = ${(n-2)*180/n}°`]};}],
+  graph:[L=>{const h=ri(-4,4),k=ri(-3,3),a=pick(L<2?[1,-1]:[1,-1,2,-2,0.5]);return{q:'პარაბოლის წვეროს x-კოორდინატი = ?',a:h,plot:{f:x=>a*(x-h)**2+k},sol:[`y = ${a}(x ${h<0?'+':'−'} ${Math.abs(h)})² ${k<0?'−':'+'} ${Math.abs(k)}`,`წვერო (${h}; ${k})`]};},
+    L=>{const m=pick(L<2?[1,2,-1,-2,3]:[0.5,-0.5,1.5,-3,2,-2]),b=ri(-3,3);return{q:'წრფის დახრა (კუთხური კოეფიციენტი) k = ?',a:m,plot:{f:x=>m*x+b,grid:true},sol:[`y = ${m}x ${b<0?'−':'+'} ${Math.abs(b)}`,'k = Δy / Δx']};},
+    L=>{const A=pick(L<2?[1,2,3]:[0.5,1.5,2.5,4]),B=pick(L<2?[1]:[1,2,0.5]);return{q:'სინუსოიდის ამპლიტუდა = ?',a:A,plot:{f:x=>A*Math.sin(B*x),pi:true},sol:[`y = ${A}·sin(${B}x)`,'ამპლიტუდა = მაქსიმუმის მანძილი ღერძიდან']};},
+    L=>{const r=ri(1,L<2?4:5);return{q:'წრის რადიუსი = ?',a:r,plot:{g:v=>v.x*v.x+v.y*v.y-r*r},sol:[`x² + y² = ${r*r}`,`r = √${r*r} = ${r}`]};},
+    L=>{const r1=ri(-4,3),r2=r1+ri(1,5);return{q:'მარჯვენა ნული (სადაც y = 0) x = ?',a:r2,plot:{f:x=>(x-r1)*(x-r2)/2},sol:[`y = ½(x ${r1<0?'+':'−'} ${Math.abs(r1)})(x − ${r2})`,`ნულები: ${r1} და ${r2}`]};}],
   mat:[L=>{const m=[[nz(-5,5),ri(-5,5)],[ri(-5,5),nz(-5,5)]];return{q:`det [${m[0].join(' ')} ; ${m[1].join(' ')}] = ?`,a:m[0][0]*m[1][1]-m[0][1]*m[1][0],sol:[`${m[0][0]}·${m[1][1]} − ${m[0][1]}·${m[1][0]} = ${m[0][0]*m[1][1]-m[0][1]*m[1][0]}`]};},
     L=>{const A=[[ri(-3,4),ri(-3,4)],[ri(-3,4),ri(-3,4)]],B=[[ri(-3,4),ri(-3,4)],[ri(-3,4),ri(-3,4)]],i=ri(0,1),j=ri(0,1);const v=A[i][0]*B[0][j]+A[i][1]*B[1][j];
       return{q:`A = [${A[0].join(' ')} ; ${A[1].join(' ')}], B = [${B[0].join(' ')} ; ${B[1].join(' ')}]. (A·B)${toSub(i+1)}${toSub(j+1)} = ?`,a:v,sol:[`${A[i][0]}·${B[0][j]} + ${A[i][1]}·${B[1][j]} = ${v}`]};},
     L=>{const m=[[ri(-6,6),ri(-6,6)],[ri(-6,6),ri(-6,6)]];return{q:`tr [${m[0].join(' ')} ; ${m[1].join(' ')}] = ?`,a:m[0][0]+m[1][1],sol:['კვალი = დიაგონალის ჯამი = '+(m[0][0]+m[1][1])]};}]
 };
+const gqp=new Plot($('gqCv'),{xmin:-6,xmax:6,ymin:-5,ymax:5,aspect:.55,equal:true});plots.push(gqp);
+gqp.onDraw=p=>{const q=p.plotSpec;if(!q)return;if(q.f)p.fn(q.f,COL.c[0],2.6);if(q.g)implicitPlot(p,v=>q.g(v),COL.c[1]);};
 let G={topic:'all',level:1,cur:null,score:0,streak:0,best:0,tries:0,right:0,hist:[],answered:false};
 try{G.best=+(localStorage.getItem('mathlab.best')||0);}catch(e){}
 Object.entries(TOPICS).forEach(([k,l])=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=l;b.setAttribute('aria-pressed',k===G.topic);
@@ -872,6 +984,7 @@ Object.entries(TOPICS).forEach(([k,l])=>{const b=document.createElement('button'
 [1,2,3].forEach(l=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=['მარტივი','საშუალო','რთული'][l-1];b.setAttribute('aria-pressed',l===G.level);
   b.onclick=()=>{G.level=l;$('gLevels').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));nextQ();};$('gLevels').appendChild(b);});
 function nextQ(){const t=G.topic==='all'?pick(Object.keys(GEN)):G.topic;const q=pick(GEN[t])(G.level);G.cur=q;G.answered=false;
+  const qc=$('gqCv');qc.hidden=!q.plot;if(q.plot){gqp.o.piTicks=!!q.plot.pi;gqp.setView(q.plot.pi?-7:-6,q.plot.pi?7:6,-5,5,true);gqp.plotSpec=q.plot;requestAnimationFrame(()=>gqp.draw());}
   $('gTopic').textContent=TOPICS[t]+' · '+['მარტივი','საშუალო','რთული'][G.level-1];$('gQ').textContent=q.q;$('gA').value='';$('gFb').textContent='';$('gFb').className='hint';$('gSol').innerHTML='';$('gA').focus({preventScroll:true});}
 function check(){if(!G.cur)return;if(G.answered){nextQ();return;}let v;try{v=MathCore.evaluate($('gA').value);}catch(e){$('gFb').textContent='პასუხი ვერ წავიკითხე: '+e.message;$('gFb').className='bad';return;}
   if(!isFinite(v)){$('gFb').textContent='ჩაწერე რიცხვი';$('gFb').className='bad';return;}
