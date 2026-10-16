@@ -116,11 +116,25 @@
   };
   const CONSTS = { pi: Math.PI, e: Math.E, tau: 2 * Math.PI };
 
+  /* real power: (-8)^(1/3) = -2, x^(2/3) defined for x < 0 */
+  function rpow(b, e) {
+    if (b >= 0 || Number.isInteger(e)) return Math.pow(b, e);
+    for (let q = 3; q <= 15; q += 2) { const p = Math.round(e * q); if (Math.abs(e * q - p) < 1e-9) { const r = Math.pow(-b, e); return (p % 2 ? -r : r); } }
+    return NaN;
+  }
+  FUNCS.root = (x, n) => rpow(x, 1 / n);
+  FUNCS.nroot = FUNCS.root;
+  FUNCS.max = Math.max; FUNCS.min = Math.min;
+  FUNCS.mod = (a, b) => ((a % b) + b) % b;
+  FUNCS.logb = (x, b) => Math.log(x) / Math.log(b);
+  const VARS = ['x', 'y', 't', 'theta', 'r', 'a', 'b', 'c', 'd', 'k', 'n'];
+
   function normalizeExpr(s) {
     return String(s).toLowerCase()
-      .replace(/²/g, '^2').replace(/³/g, '^3').replace(/π/g, 'pi').replace(/√/g, 'sqrt')
-      .replace(/[·×]/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/,/g, '.')
-      .replace(/^\s*y\s*=/, '').replace(/^\s*f\s*\(\s*x\s*\)\s*=/, '');
+      .replace(/²/g, '^2').replace(/³/g, '^3').replace(/⁴/g, '^4').replace(/π/g, 'pi').replace(/θ/g, 'theta').replace(/∛/g, 'cbrt').replace(/√/g, 'sqrt')
+      .replace(/[·×]/g, '*').replace(/÷/g, '/').replace(/[−–]/g, '-')
+      .replace(/(\d),(\d)(?![^()]*\))/g, '$1.$2') // decimal comma outside parentheses
+      .replace(/^\s*f\s*\(\s*x\s*\)\s*=/, '');
   }
   function tokenize(s) {
     const t = []; let i = 0;
@@ -128,63 +142,151 @@
       const c = s[i];
       if (/\s/.test(c)) { i++; continue; }
       if (/[\d.]/.test(c)) { let j = i; while (j < s.length && /[\d.]/.test(s[j])) j++;
-        if (s[j] === 'e' && /[\d+-]/.test(s[j + 1] || '') && !/[a-z]/.test(s[j + 1])) { j++; if (/[+-]/.test(s[j])) j++; while (/\d/.test(s[j] || '')) j++; }
-        t.push({ k: 'n', v: parseFloat(s.slice(i, j)) }); i = j; continue; }
+        if (s[j] === 'e' && /[\d+-]/.test(s[j + 1] || '') && /\d/.test(s[j + 1] === '-' || s[j + 1] === '+' ? s[j + 2] || '' : s[j + 1])) { j++; if (/[+-]/.test(s[j])) j++; while (/\d/.test(s[j] || '')) j++; }
+        const v = parseFloat(s.slice(i, j)); if (isNaN(v)) throw new Error('არასწორი რიცხვი: ' + s.slice(i, j));
+        t.push({ k: 'n', v }); i = j; continue; }
       if (/[a-z]/.test(c)) { let j = i; while (j < s.length && /[a-z]/.test(s[j])) j++;
         let w = s.slice(i, j);
         if (w.endsWith('log') && s[j] === '2') { w += '2'; j++; }
-        // split glued names like "xsin", "2pix" into known pieces
-        const parts = splitIdent(w); parts.forEach(p => t.push({ k: 'id', v: p })); i = j; continue; }
-      if ('+-*/^()'.includes(c)) { t.push({ k: c }); i++; continue; }
+        splitIdent(w).forEach(p => t.push({ k: 'id', v: p })); i = j; continue; }
+      if ('+-*/^(),|!'.includes(c)) { t.push({ k: c }); i++; continue; }
       throw new Error('უცნობი სიმბოლო: ' + c);
     }
     return t;
   }
   function splitIdent(w) {
-    const known = Object.keys(FUNCS).concat(Object.keys(CONSTS), ['x', 'y', 't', 'a', 'b', 'c', 'd', 'k', 'n'])
-      .sort((a, b) => b.length - a.length);
+    const known = Object.keys(FUNCS).concat(Object.keys(CONSTS), VARS).sort((a, b) => b.length - a.length);
     const out = []; let i = 0;
     while (i < w.length) {
       const hit = known.find(k => w.startsWith(k, i));
-      if (!hit) { if (/\d/.test(w[i])) { // trailing digits like log2 handled above
-          throw new Error('უცნობი სახელი: ' + w); }
-        throw new Error('უცნობი სახელი: ' + w.slice(i)); }
+      if (!hit) throw new Error('უცნობი სახელი: ' + w.slice(i));
       out.push(hit); i += hit.length;
     }
     return out;
   }
-  function compile(src) {
-    const toks = tokenize(normalizeExpr(src)); let p = 0;
+  function fact(n) { if (n < 0 || !Number.isInteger(n)) return NaN; let r = 1; for (let i = 2; i <= n && r < Infinity; i++) r *= i; return r; }
+
+  /* ---- parse → AST ---- */
+  function parse(src) {
+    const toks = tokenize(normalizeExpr(src)); let p = 0, absDepth = 0;
     const peek = () => toks[p], next = () => toks[p++];
-    const expect = k => { const t = next(); if (!t || t.k !== k) throw new Error('მოსალოდნელია „' + k + '“'); };
-    function expr() { let n = term(); while (peek() && (peek().k === '+' || peek().k === '-')) { const o = next().k, r = term(), l = n; n = o === '+' ? v => l(v) + r(v) : v => l(v) - r(v); } return n; }
-    function startsFactor(t) { return t && (t.k === 'n' || t.k === 'id' || t.k === '('); }
+    const expect = k => { const t = next(); if (!t || t.k !== k) throw new Error('აკლია „' + k + '“'); };
+    function expr() { let n = term(); while (peek() && (peek().k === '+' || peek().k === '-')) { const op = next().k; n = { k: 'b', op, l: n, r: term() }; } return n; }
+    const startsFactor = t => t && (t.k === 'n' || t.k === 'id' || t.k === '(' || (t.k === '|' && absDepth === 0));
     function term() { let n = unary();
       for (;;) { const t = peek();
-        if (t && (t.k === '*' || t.k === '/')) { next(); const r = unary(), l = n; n = t.k === '*' ? v => l(v) * r(v) : v => l(v) / r(v); }
-        else if (startsFactor(t)) { const r = power(), l = n; n = v => l(v) * r(v); }
+        if (t && (t.k === '*' || t.k === '/')) { next(); n = { k: 'b', op: t.k, l: n, r: unary() }; }
+        else if (startsFactor(t)) n = { k: 'b', op: '*', imp: true, l: n, r: power() };
         else return n; } }
-    function unary() { const t = peek(); if (t && t.k === '-') { next(); const u = unary(); return v => -u(v); } if (t && t.k === '+') { next(); return unary(); } return power(); }
-    function power() { const b = atom(); if (peek() && peek().k === '^') { next(); const e = unary(); return v => Math.pow(b(v), e(v)); } return b; }
+    function unary() { const t = peek(); if (t && t.k === '-') { next(); return { k: 'u', a: unary() }; } if (t && t.k === '+') { next(); return unary(); } return power(); }
+    function power() { let b = postfix(); if (peek() && peek().k === '^') { next(); return { k: 'b', op: '^', l: b, r: unary() }; } return b; }
+    function postfix() { let a = atom(); while (peek() && peek().k === '!') { next(); a = { k: 'f', name: 'fact', args: [a] }; } return a; }
     function atom() {
-      const t = next(); if (!t) throw new Error('გამოსახულება დაუსრულებელია');
-      if (t.k === 'n') { const c = t.v; return () => c; }
+      const t = next(); if (!t) throw new Error('ფორმულა დაუსრულებელია');
+      if (t.k === 'n') return { k: 'n', v: t.v };
       if (t.k === '(') { const e = expr(); expect(')'); return e; }
+      if (t.k === '|') { absDepth++; const e = expr(); absDepth--; expect('|'); return { k: 'f', name: 'abs', args: [e] }; }
       if (t.k === 'id') {
-        if (FUNCS[t.v]) { const f = FUNCS[t.v];
-          let arg; if (peek() && peek().k === '(') { next(); arg = expr(); expect(')'); }
-          else arg = power(); // sin x, sin 2x → sin(2)*x handled as sin(2)… keep simple: sin x
-          // allow sin^2 x? not supported
-          return v => f(arg(v)); }
-        if (t.v in CONSTS) { const c = CONSTS[t.v]; return () => c; }
-        const name = t.v; return v => (v && name in v ? v[name] : NaN);
+        if (FUNCS[t.v]) {
+          let pw = null; if (peek() && peek().k === '^') { next(); pw = postfix(); } // sin^2(x)
+          let args;
+          if (peek() && peek().k === '(') { next(); args = [expr()]; while (peek() && peek().k === ',') { next(); args.push(expr()); } expect(')'); }
+          else args = [power()];
+          const f = { k: 'f', name: t.v, args };
+          return pw ? { k: 'b', op: '^', l: f, r: pw } : f;
+        }
+        if (t.v in CONSTS) return { k: 'c', name: t.v };
+        return { k: 'v', name: t.v };
       }
       throw new Error('მოულოდნელი „' + t.k + '“');
     }
-    const fn = expr(); if (p < toks.length) throw new Error('ზედმეტი სიმბოლო: ' + (toks[p].k === 'id' ? toks[p].v : toks[p].k));
-    return fn;
+    const ast = expr();
+    if (p < toks.length) throw new Error('ზედმეტი სიმბოლო: ' + (toks[p].k === 'id' ? toks[p].v : toks[p].k));
+    return ast;
   }
+  function compileAST(n) {
+    switch (n.k) {
+      case 'n': { const c = n.v; return () => c; }
+      case 'c': { const c = CONSTS[n.name]; return () => c; }
+      case 'v': { const nm = n.name; return v => (v && nm in v ? v[nm] : NaN); }
+      case 'u': { const a = compileAST(n.a); return v => -a(v); }
+      case 'b': { const l = compileAST(n.l), r = compileAST(n.r);
+        switch (n.op) { case '+': return v => l(v) + r(v); case '-': return v => l(v) - r(v); case '*': return v => l(v) * r(v);
+          case '/': return v => l(v) / r(v); default: return v => rpow(l(v), r(v)); } }
+      case 'f': { const f = n.name === 'fact' ? fact : FUNCS[n.name], as = n.args.map(compileAST);
+        if (as.length === 1) { const a = as[0]; return v => f(a(v)); }
+        if (as.length === 2) { const [a, b] = as; return v => f(a(v), b(v)); }
+        return v => f(...as.map(g => g(v))); }
+    }
+  }
+  function usedVars(n, s = new Set()) {
+    if (n.k === 'v') s.add(n.name);
+    if (n.l) usedVars(n.l, s); if (n.r) usedVars(n.r, s); if (n.a) usedVars(n.a, s); if (n.args) n.args.forEach(a => usedVars(a, s));
+    return s;
+  }
+  /* ---- AST → pretty HTML (fractions, powers, roots) ---- */
+  const VNAME = { theta: 'θ' };
+  function numHTML(v) { let s = String(+v.toPrecision(12)); if (s.includes('e')) s = s.replace(/e\+?(-?\d+)/, '·10<sup>$1</sup>'); return s; }
+  function toHTML(n, parentPrec = 0, side) {
+    const prec = n.k === 'b' ? ({ '+': 1, '-': 1, '*': 2, '/': 2, '^': 4 })[n.op] : n.k === 'u' ? 3 : 5;
+    let h;
+    switch (n.k) {
+      case 'n': h = numHTML(n.v); break;
+      case 'c': h = n.name === 'pi' ? 'π' : n.name === 'tau' ? 'τ' : '<i>e</i>'; break;
+      case 'v': h = '<i>' + (VNAME[n.name] || n.name) + '</i>'; break;
+      case 'u': h = '−' + toHTML(n.a, 3); break;
+      case 'f': {
+        const a = n.args.map(x => toHTML(x, 0));
+        if (n.name === 'sqrt') h = '<span class="sq">√<span class="ol">' + a[0] + '</span></span>';
+        else if (n.name === 'cbrt') h = '<span class="sq"><sup class="ix">3</sup>√<span class="ol">' + a[0] + '</span></span>';
+        else if (n.name === 'root' || n.name === 'nroot') h = '<span class="sq"><sup class="ix">' + (a[1] || '') + '</sup>√<span class="ol">' + a[0] + '</span></span>';
+        else if (n.name === 'abs') h = '|' + a[0] + '|';
+        else if (n.name === 'fact') h = toHTML(n.args[0], 5) + '!';
+        else if (n.name === 'exp') h = '<i>e</i><sup>' + a[0] + '</sup>';
+        else { const nm = { tan: 'tg', cot: 'ctg', arctan: 'arctg', atan: 'arctg', log: 'lg', log2: 'log<sub>2</sub>' }[n.name] || n.name;
+          if (n.name === 'logb') h = 'log<sub>' + a[1] + '</sub>(' + a[0] + ')';
+          else h = '<span class="fn">' + nm + '</span>(' + a.join(', ') + ')'; }
+        break; }
+      case 'b':
+        if (n.op === '/') { h = '<span class="fr"><span>' + toHTML(n.l, 0) + '</span><span>' + toHTML(n.r, 0) + '</span></span>'; break; }
+        if (n.op === '^') { h = toHTML(n.l, 5) + '<sup>' + toHTML(n.r, 0) + '</sup>'; break; }
+        if (n.op === '*') { const L = toHTML(n.l, 2), R = toHTML(n.r, 2.5);
+          const numRight = n.r.k === 'n' || (n.r.k === 'b' && n.r.op === '^' && n.r.l.k === 'n');
+          h = L + (n.imp && !numRight ? '' : '·') + R; break; }
+        h = toHTML(n.l, 1) + (n.op === '+' ? ' + ' : ' − ') + toHTML(n.r, 1.5); break;
+    }
+    return prec < parentPrec || (n.k === 'u' && parentPrec > 1) ? '(' + h + ')' : h;
+  }
+  function compile(src) { return compileAST(parse(src)); }
   function evaluate(src, vars) { return compile(src)(vars || {}); }
+
+  /* ---- classify a typed formula: explicit / implicit / inequality / parametric / polar ---- */
+  function splitTop(s, ch) { let d = 0; for (let i = 0; i < s.length; i++) { const c = s[i]; if (c === '(') d++; else if (c === ')') d--; else if (c === ch && d === 0) return [s.slice(0, i), s.slice(i + 1)]; } return null; }
+  function classify(raw) {
+    let s = normalizeExpr(raw).trim();
+    if (!s) throw new Error('ცარიელი');
+    // parametric: (f(t), g(t))
+    if (s[0] === '(' && s[s.length - 1] === ')') { const inner = s.slice(1, -1), parts = splitTop(inner, ',');
+      if (parts) { const X = parse(parts[0]), Y = parse(parts[1]);
+        return { kind: 'param', fx: compileAST(X), fy: compileAST(Y), html: '<i>x</i> = ' + toHTML(X) + ', &nbsp;<i>y</i> = ' + toHTML(Y) }; } }
+    const ineq = s.match(/^(.*?)(<=|>=|≤|≥|<|>)(.*)$/);
+    if (ineq) { const L = parse(ineq[1]), R = parse(ineq[3]); const op = { '≤': '<=', '≥': '>=' }[ineq[2]] || ineq[2];
+      const sym = { '<': '&lt;', '>': '&gt;', '<=': '≤', '>=': '≥' }[op];
+      const l = compileAST(L), r = compileAST(R);
+      return { kind: 'ineq', op, g: v => l(v) - r(v), html: toHTML(L) + ' ' + sym + ' ' + toHTML(R) }; }
+    const eq = splitTop(s, '=');
+    if (eq) {
+      const lhs = eq[0].trim(), rhs = eq[1].trim();
+      if (lhs === 'r') { const R = parse(rhs); return { kind: 'polar', fr: compileAST(R), html: '<i>r</i> = ' + toHTML(R) }; }
+      const L = parse(lhs), R = parse(rhs);
+      if (lhs === 'y' && !usedVars(R).has('y')) return { kind: 'explicit', f: compileAST(R), html: '<i>y</i> = ' + toHTML(R), ast: R };
+      const l = compileAST(L), r = compileAST(R);
+      return { kind: 'implicit', g: v => l(v) - r(v), html: toHTML(L) + ' = ' + toHTML(R) };
+    }
+    const A = parse(s);
+    if (usedVars(A).has('y')) { const g = compileAST(A); return { kind: 'implicit', g, html: toHTML(A) + ' = 0' }; }
+    return { kind: 'explicit', f: compileAST(A), html: '<i>y</i> = ' + toHTML(A), ast: A };
+  }
 
   /* ---------------- matrices (exact) ---------------- */
   const M = {
@@ -432,7 +534,7 @@
     return { sign: s, d, m, s: sec };
   }
 
-  const api = { F, decimalExpansion, gcd, simplifySqrt, primeFactors, compile, evaluate, M, fmt, polyRoots, quadratic,
+  const api = { F, decimalExpansion, gcd, simplifySqrt, primeFactors, compile, evaluate, parse, compileAST, toHTML, classify, usedVars, rpow, M, fmt, polyRoots, quadratic,
     solveTriangle, solveRight, piFraction, EXACT_TRIG, toDMS, D2R, R2D };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.MathCore = api;
 })(typeof window !== 'undefined' ? window : globalThis);
