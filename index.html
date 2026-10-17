@@ -897,6 +897,9 @@
      members:['matrix.html','pythagoras.html','name.html','tarotborth.html','kabbalah.html'],label:{}},
     {key:'hd',title:'ადამიანის დიზაინი',sub:'Human Design · Gene Keys · I Ching',css:'c-freq',art:'hd.html',
      members:['hd.html','genekeys.html','iching.html'],label:{}},
+    {key:'stats',title:'სტატისტიკა',sub:'Zodiac · Numerology · Pythagoras · Matrix · Human Design',css:'c-freq',art:'astro.html',href:'stats.html',count:7,
+     sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27h22"/><rect x="7" y="17" width="3.5" height="10"/><rect x="14.2" y="10" width="3.5" height="17"/><rect x="21.5" y="14" width="3.5" height="13"/><path d="M6 13l7-6 6 4 7-6"/><circle cx="26" cy="5" r="1"/></svg>',
+     members:['astro.html','pythagoras.html','matrix.html','hd.html'],label:{},always:true},
     {key:'compat',title:'შეთავსება',sub:'Zodiac Compatibility',css:'c-astro',art:'compat.html',
      members:['compat.html'],label:{}},
     {key:'health',title:'ჯანმრთელობა',sub:'Breathing · Sleep · Memory · Meditation…',css:'c-name',art:'breath.html',
@@ -911,6 +914,7 @@
      and visibility apply on both, and the back button works.           */
   const params=new URLSearchParams(location.search);
   if(params.get('g')==='games'){location.replace('games.html');return;}
+  if(params.get('g')==='stats'){location.replace('stats.html');return;}
   const homeHref=location.pathname.split('/').pop()||'index.html';
   {const bk=document.getElementById('grp-back');if(bk)bk.href=homeHref;}
   function groupTiles(G,all){
@@ -960,7 +964,7 @@
       const sym=src.querySelector('.sym');
       box.innerHTML='<div class="card-glow"></div><div class="cn tl"></div><div class="cn tr"></div>'+
         '<div class="cn bl"></div><div class="cn br"></div><span class="grp-n">'+(G.count||tiles.length)+'</span>'+
-        (sym?sym.outerHTML:'<div class="sym">✦</div>')+
+        (G.sym?'<div class="sym">'+G.sym+'</div>':sym?sym.outerHTML:'<div class="sym">✦</div>')+
         '<div class="card-title"></div><div class="card-sub"></div>';
       box.querySelector('.card-title').textContent=G.title;
       box.querySelector('.card-sub').textContent=G.sub;
