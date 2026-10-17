@@ -162,17 +162,30 @@ function pyth(d,m,y){   /* pythagoras.html classic */
   [...bd,...[A1,B1,C1,D1].flatMap(x=>String(x).split('').map(Number))].forEach(x=>{if(x>0)cnt[x]++;});
   return {cnt,w:[A1,B1,C1,D1]};
 }
-function matrix(d,m,y){  /* matrix_stats.js m1 (method 1) */
-  const R=R22,R3=y===0?22:R(Math.abs(y));
-  const L3=R(d),T3=R(m);
+/* matrix_stats.js m1() — verbatim (method 1) */
+function m1(dd,mm,R3){const R=R22;
+  const L3=R(dd),T3=R(mm);
   const B3=R(L3+T3+R3),Cv=R(L3+T3+R3+B3);
   const TL3=R(L3+T3),TR3=R(T3+R3),BR3=R(R3+B3),BL3=R(B3+L3);
-  const RC1=R(TL3+TR3+BR3+BL3);
-  const B1=R(Cv+B3),B2=R(B1+B3),R1=R(Cv+R3),L1=R(Cv+L3),T1=R(Cv+T3),G1=R(L1+Cv),G2=R(T1+Cv);
+  const RC1=R(TL3+TR3+BR3+BL3),RC2=R(RC1+Cv);
+  const B1=R(Cv+B3),B2=R(B1+B3),R1=R(Cv+R3),R2=R(R1+R3),L1=R(Cv+L3),L2=R(L1+L3),T1=R(Cv+T3),T2=R(T1+T3),G1=R(L1+Cv),G2=R(T1+Cv);
+  const dCv=RC1;
+  const TL1=R(TL3+dCv),TL2=R(TL1+TL3),TR1=R(TR3+dCv),TR2=R(TR1+TR3),BR1=R(BR3+dCv),BR2=R(BR1+BR3),BL1=R(BL3+dCv),BL2=R(BL1+BL3);
   const W2=R(B1+R1),W1=R(B1+W2),W3=R(R1+W2);
-  const SOUL=R(R(T3+B3)+R(R3+L3)),SOC=R(R(TL3+BR3)+R(TR3+BL3));
-  return {L3,T3,R3,B3,Cv,B1,B2,R1,L1,T1,G1,G2,W1,W3,RC1,SOUL,SOC,MISSION:R(SOUL+SOC),MALE:R(TL3+BR3),FEM:R(TR3+BL3),tail:B3+'-'+B2+'-'+B1};
+  const v={L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,TL3,TR3,BR3,BL3,RC1,RC2,TL1,TL2,TR1,TR2,BR1,BR2,BL1,BL2,W1,W2,W3};
+  /* chakra rows exactly as renderChakra()/chakraRows() for method 1 */
+  const CH=[['sahasrara',T3,L3],['ajna',T2,L2],['vishudha',T1,L1],['anahata',G2,G1],['manipura',Cv,Cv],['svadhistana',B1,R1],['muladhara',B3,R3]];
+  let se=0,sp=0,ss=0;
+  for(const [k,e,p] of CH){const s=R(e+p);v['CHE_'+k]=e;v['CHP_'+k]=p;v['CHS_'+k]=s;se+=e;sp+=p;ss+=s;}
+  v.CHE_total=R(se);v.CHP_total=R(sp);v.CHS_total=R(ss);
+  v.S6=v.CHS_svadhistana;
+  /* purposes (extra panels) */
+  v.MALE=R(TL3+BR3);v.FEM=R(TR3+BL3);
+  const sT=R(T3+B3),sB=R(R3+L3);v.SOUL=R(sT+sB);
+  const oT=R(TL3+BR3),oB=R(TR3+BL3);v.SOC=R(oT+oB);v.MISSION=R(v.SOUL+v.SOC);
+  return v;
 }
+function matrix(d,m,y){const v=m1(d,m,y===0?22:R22(Math.abs(y)));v.tail=v.B3+'-'+v.B2+'-'+v.B1;return v;}
 
 /* ── one sample ──
    stage 0: date systems (free)  ·  stage 1: sky at birth  ·  stage 2: Human Design */
