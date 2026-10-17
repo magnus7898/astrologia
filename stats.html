@@ -107,7 +107,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
     <label>რიცხვი (დღე)<select id="cd"></select></label>
     <label>თვე<select id="cm"></select></label>
     <label>წელი<input id="cy" type="number" min="-3000" max="9999" placeholder="ნებისმიერი"></label>
-    <label>ქალაქი<select id="place"></select></label>
+    <label>ქალაქი <small id="plmsg" style="color:var(--ink-dim)"></small><input id="place" list="plist" autocomplete="off" spellcheck="false" value="თბილისი" placeholder="ჩაწერე ქალაქი — თბილისი, Paris…"><datalist id="plist"></datalist></label>
     <label>განედი<input id="lat" type="number" step="0.01" value="41.72"></label>
     <label>გრძედი<input id="lon" type="number" step="0.01" value="44.79"></label>
     <label>დროის სარტყელი (UTC±სთ)<input id="off" type="number" step="0.5" value="4"></label>
@@ -146,8 +146,8 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 როგორ ითვლება: <b>თარიღზე დამოკიდებული</b> ყველაფერი — რიცხვი, თვე, ბედის მატრიცა (მეთოდი 1 — 32 პოზიცია, დანიშნულებები, ჩაკრები და ყველა კოდი)
 და პითაგორას კვადრატი — ითვლება <b>ზუსტად, პერიოდის ყოველ დღეზე</b> (ნაგულისხმევად ძვ.წ. 3001 — 9999, დაახლ. 4,75 მილიონი დღე), შერჩევის გარეშე.
 <b>ადამიანის დიზაინი და ასტროლოგია</b> დაბადების წუთზეა დამოკიდებული — 13 000 წლის ყოველი წუთის რუქა (≈ 7 მილიარდი) ვერ გამოითვლება, ამიტომ
-აიღება 5 000 მომენტი, თანაბრად გადანაწილებული პერიოდზე (ან პირობის შესაბამის დღეებზე): HD — 26 აქტივაცია, ასტროლოგია — ტროპიკული, გეოცენტრული,
-ნამდვილი კვანძი, პლაციდუსის სახლები, ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°. თუ პირობაში HD ან ასტროლოგიაა, ჯგუფი მოიძებნება ამ მომენტებიდან.
+აიღება 100 000 მომენტი, თანაბრად გადანაწილებული პერიოდზე (ან პირობის შესაბამის დღეებზე); რუქები ითვლება პარალელურად, კომპიუტერის ყველა ბირთვზე: HD — 26 აქტივაცია, ასტროლოგია — ტროპიკული, გეოცენტრული,
+ნამდვილი კვანძი, პლაციდუსის სახლები, ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°; დაბნელებები — ყველა მზისა და მთვარის დაბნელება ძვ.წ. 3001 — 10001 (Astronomy Engine): წინა დაბნელების ნიშანი და სახე, და რამდენი დღეა უახლოეს დაბნელებამდე. თუ პირობაში HD ან ასტროლოგიაა, ჯგუფი მოიძებნება ამ მომენტებიდან.
 × — რამდენჯერ ხშირია ჯგუფში ჩვეულებრივთან შედარებით. პითაგორას კვადრატი ითვლება მხოლოდ ქრისტეს შემდეგ წლებზე.
 ეს დროის წილია და არა ადამიანების — შობადობა სეზონისა და საათის მიხედვით არ არის გათვალისწინებული.
 კალენდარი: იულიუსის 1582 წლამდე; წელი 0 = ძვ.წ. 1. დროის სარტყელი მუდმივია (ზაფხულის დროის გარეშე).
@@ -157,6 +157,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 <script src="matrix_combos.js"></script>
 <script src="pluto_far.js"></script>
 <script src="stats_engine.js"></script>
+<script src="eclipses.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -228,9 +229,11 @@ const CHK=[['sahasrara','საჰასრარა'],['ajna','აჯნა'],[
 const ZONES=[['karmic_tail','კარმული კუდი',['B3','B2','B1']],['persona','პერსონა',['L3','L2','L1']],['talent_zone','ტალანტების ზონა',['T3','T2','T1']],
   ['material_karma','მატერიალური კარმა',['R3','R2','R1']],['sex','სექსუალურობა',['Cv','RC1','RC2']],['love','პირადი ურთიერთობების ხაზი',['B1','W1','W2']],
   ['money','ფულის ხაზი',['R1','W3','S6']],['tl','ნიჭები — კაცი წინაპრების ხაზით',['TL3','TL2','TL1']],['tr','ნიჭები — ქალი წინაპრების ხაზით',['TR3','TR2','TR1']],
-  ['br','კაცი წინაპრების კარმა',['BR3','BR2','BR1']],['bl','ქალი წინაპრების კარმა',['BL3','BL2','BL1']],
-  ...CHK.map(([c,n])=>['ch_'+c,n+' — ენერგია·ემოცია·ფიზიკა',['CHE_'+c,'CHS_'+c,'CHP_'+c]])];
+  ['br','კაცი წინაპრების კარმა',['BR3','BR2','BR1']],['bl','ქალი წინაპრების კარმა',['BL3','BL2','BL1']]];
 const ZM={};ZONES.forEach(z=>ZM[z[0]]=z);
+/* single energies: the side lines (TL·TR·BR·BL) only as codes; B2, R2 and the centre's side circles (RC1, RC2) only inside their codes */
+const MXDROP=new Set(['TL3','TL2','TL1','TR3','TR2','TR1','BR3','BR2','BR1','BL3','BL2','BL1','B2','R2','RC1','RC2']);
+const MXP16=MX32.filter(([k])=>!MXDROP.has(k));
 const EXACT=new Set(['karmic_tail',...CHK.map(c=>'ch_'+c[0])]);
 function codeOf(zid,v){const n=ZM[zid][2].map(k=>v[k]),f=n.join('-');if(EXACT.has(zid))return f;const r=[...n].reverse().join('-');return f<=r?f:r;}
 const DBZ=()=>(typeof MATRIX_DB!=='undefined')?MATRIX_DB:(window.MATRIX_DB||{});
@@ -244,12 +247,26 @@ const ZV=(()=>{const S={};ZONES.forEach(z=>S[z[0]]=new Set());
   return O;})();
 const STRAT={'Generator':'რეაგირება','Manifesting Generator':'რეაგირება, მერე ინფორმირება','Projector':'მოწვევის ლოდინი','Manifestor':'ინფორმირება','Reflector':'მთვარის ციკლის (28 დღე) ლოდინი'};
 /* family: id · sys · label · st (stage) · vals(p) · get(S,p) · params? · pair? · multi? · heat? (table) · split? (card per param) · cols? */
+/* eclipses (eclipses.js — every solar and lunar eclipse, Astronomy Engine) */
+const ECL=(typeof ECLIPSES!=='undefined')?ECLIPSES:null;
+function eclLast(a,u){if(!a.length||u<a[0])return -1;let lo=0,hi=a.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(a[m]<=u)lo=m;else hi=m-1;}return lo;}
+const eUT=S=>S.jd-2451545;
+const ePre=(k,S)=>eclLast(ECL[k].ut,eUT(S));
+function eNear(k,S){const a=ECL[k].ut,u=eUT(S),i=eclLast(a,u);let b=Infinity;for(const j of [i,i+1])if(j>=0&&j<a.length)b=Math.min(b,Math.abs(a[j]-u));return b<=1?0:b<=7?1:b<=15?2:3;}
+const ENEAR=[[0,'±1 დღე'],[1,'2–7 დღე'],[2,'8–15 დღე'],[3,'15 დღეზე მეტი']];
+const EFAM=ECL?[
+ {id:'eps',sys:'as',jd:true,label:'წინა მზის დაბნელება — ნიშანი',st:1,vals:()=>SG,get:S=>{const i=ePre('solar',S);return i<0?-1:ECL.solar.sign[i];}},
+ {id:'ept',sys:'as',jd:true,label:'წინა მზის დაბნელება — სახე',st:1,vals:()=>[['P','ნაწილობრივი'],['A','რგოლისებრი'],['T','სრული']],get:S=>{const i=ePre('solar',S);return i<0?'':ECL.solar.kind[i];}},
+ {id:'epl',sys:'as',jd:true,label:'წინა მთვარის დაბნელება — ნიშანი',st:1,vals:()=>SG,get:S=>{const i=ePre('lunar',S);return i<0?-1:ECL.lunar.sign[i];}},
+ {id:'eplt',sys:'as',jd:true,label:'წინა მთვარის დაბნელება — სახე',st:1,vals:()=>[['N','ნახევარჩრდილოვანი'],['P','ნაწილობრივი'],['T','სრული']],get:S=>{const i=ePre('lunar',S);return i<0?'':ECL.lunar.kind[i];}},
+ {id:'ens',sys:'as',jd:true,label:'მზის დაბნელებამდე / შემდეგ',st:1,vals:()=>ENEAR,get:S=>eNear('solar',S)},
+ {id:'enl',sys:'as',jd:true,label:'მთვარის დაბნელებამდე / შემდეგ',st:1,vals:()=>ENEAR,get:S=>eNear('lunar',S)},
+]:[];
 const FAM=[
  {id:'day',sys:'date',label:'რიცხვი',st:0,vals:()=>seq(1,31),get:S=>S.d},
  {id:'month',sys:'date',label:'თვე',st:0,vals:()=>MON.map((n,i)=>[i+1,n]),get:S=>S.m},
- {id:'mxp',sys:'mx',label:'32 პოზიცია',st:0,heat:true,params:MX32,cols:seq(1,22).map(x=>x[1]),vals:()=>seq(1,22,i=>i+' '+ARC[i]),get:(S,p)=>S.mx[p]},
+ {id:'mxp',sys:'mx',label:'პოზიციები',st:0,heat:true,params:MXP16,cols:seq(1,22).map(x=>x[1]),vals:()=>seq(1,22,i=>i+' '+ARC[i]),get:(S,p)=>S.mx[p]},
  {id:'mxd',sys:'mx',label:'დანიშნულებები',st:0,heat:true,params:MXD,cols:seq(1,22).map(x=>x[1]),vals:()=>seq(1,22,i=>i+' '+ARC[i]),get:(S,p)=>S.mx[p]},
- {id:'mxe',sys:'mx',label:'ჩაკრები — ემოცია',st:0,heat:true,params:CHK.map(([c,n])=>['CHS_'+c,n]),cols:seq(1,22).map(x=>x[1]),vals:()=>seq(1,22,i=>i+' '+ARC[i]),get:(S,p)=>S.mx[p]},
  {id:'mxc',sys:'mx',label:'კოდები',st:0,split:true,params:ZONES.map(z=>[z[0],z[1]]),vals:p=>ZV[p],get:(S,p)=>codeOf(p,S.mx)},
  {id:'pyc',sys:'py',label:'ციფრები კვადრატში',st:0,heat:true,params:seq(1,9,i=>i+' '+PYL[i]),cols:['—','1','2','3','4','5','6+'],
    vals:p=>seq(0,6,i=>i===0?`${p} არ არის`:String(p).repeat(i)+(i===6?'+':'')),get:(S,p)=>Math.min(6,S.py.cnt[p])},
@@ -280,6 +297,7 @@ const FAM=[
  {id:'psun',sys:'hd',label:'პიროვნების მზის კარიბჭე',st:2,vals:()=>seq(1,64,i=>'☉ '+i),get:S=>S.hd.psun},
  {id:'sign',sys:'as',label:'პლანეტები ნიშნებში',st:1,heat:true,params:BODS.map(b=>[b[0],BN[b[0]]]),cols:ZS,vals:()=>SG,get:(S,p)=>sgn(S.L[p])},
  {id:'house',sys:'as',label:'პლანეტები სახლებში (პლაციდუსი)',st:1,heat:true,params:BOD.map(b=>[b[0],BN[b[0]]]),cols:seq(1,12).map(x=>x[1]),vals:()=>seq(1,12,i=>i+' სახლი'),get:(S,p)=>SE.houseOf(S.cusps,S.L[p])},
+ ...EFAM,
  {id:'asp',sys:'as',label:'ასპექტები',st:1,heat:true,pair:true,params:PAIRS,cols:['☌','⚹','□','△','☍','—'],vals:()=>ASP,get:(S,p)=>{const [a,b]=p.split('-');return SE.aspect(S.L[a],S.L[b]);}},
 ];
 const FM={};FAM.forEach(f=>{FM[f.id]=f;f.vm={};});
@@ -315,7 +333,7 @@ function readCond(){
   return {fl:[...fl,...FL.filter(x=>CFM[x[0]]).map(x=>[...x])],extra:FL.length,year};
 }
 const yrTxt=y=>y<=0?`ძვ.წ. ${1-y}`:String(y);
-const placeName=()=>{const P=PLACES[+$('place').value]||[];return (P[1]!==null&&P[0]?P[0]+' · ':'')+`UTC${(+$('off').value||0)>=0?'+':''}${+$('off').value||0}`;};
+const placeName=()=>(PLACE_NAME?PLACE_NAME+' · ':`${$('lat').value}°, ${$('lon').value}° · `)+`UTC${(+$('off').value||0)>=0?'+':''}${+$('off').value||0}`;
 function dateLabel(c){const d=c.fl.find(x=>x[0]==='day:'),m=c.fl.find(x=>x[0]==='month:');
   const parts=[];if(d)parts.push(d[2]+' რიცხვი');if(m)parts.push(MON[m[2]-1]);if(c.year!==null)parts.push(yrTxt(c.year)+' წელი');
   return parts.length?'დაბადებული: '+parts.join(' · '):'';}
@@ -373,6 +391,8 @@ const FALIAS={type:'type ტიპი',strat:'strategy',auth:'authority',prof:'p
   ncent:'centers',env:'environment გარემო',dig:'digestion determination taste გემო კვება დიეტა',mot:'motivation',per:'perspective view',
   sense:'sense',cross:'cross ჯვარი',vari:'variable arrows ისრები',chan:'channel არხი',nch:'channels',gate:'gate კარიბჭე',psun:'sun gate',
   sign:'sign ნიშანი',house:'house',asp:'aspect',mxp:'matrix position პოზიცია',mxd:'purpose',mxe:'chakra emotion',mxc:'code კოდი combo',
+  eps:'eclipse prenatal solar დაბნელება მზის წინა',ept:'eclipse prenatal solar total annular დაბნელება',epl:'eclipse prenatal lunar დაბნელება მთვარის წინა',eplt:'eclipse lunar total დაბნელება',
+  ens:'eclipse solar near დაბნელება მზის ახლოს',enl:'eclipse lunar near დაბნელება მთვარის ახლოს',
   pyc:'pythagoras პითაგორა',pyl:'line',pye:'empty ცარიელი',pyw1:'working number',pyw2:'working number',pyw3:'working number',pyw4:'working number'};
 const VALIAS=(c,v)=>{
   if(c.f.id==='sign')return LOC[v]+' '+SEN[v];
@@ -414,11 +434,35 @@ $('q').addEventListener('keydown',ev=>{
 });
 
 /* ═════════════ place ═════════════ */
-const PLACES=[['თბილისი',41.72,44.79,4],['ბათუმი',41.64,41.63,4],['ქუთაისი',42.27,42.70,4],['მოსკოვი',55.76,37.62,3],['სტამბოლი',41.01,28.98,3],
-  ['ბერლინი',52.52,13.40,1],['ლონდონი',51.51,-0.13,0],['ნიუ-იორკი',40.71,-74.01,-5],['ლოს-ანჯელესი',34.05,-118.24,-8],['ტოკიო',35.68,139.69,9],['სხვა…',null,null,null]];
-$('place').innerHTML=PLACES.map((p,i)=>`<option value="${i}">${p[0]}</option>`).join('');
-$('place').onchange=()=>{const p=PLACES[+$('place').value];if(p[1]===null)return;$('lat').value=p[1];$('lon').value=p[2];$('off').value=p[3];};
-['lat','lon','off'].forEach(id=>$(id).addEventListener('input',()=>{$('place').value=PLACES.length-1;}));
+const PLACES=[['თბილისი',41.72,44.79,4],['ბათუმი',41.64,41.63,4],['ქუთაისი',42.27,42.70,4],['რუსთავი',41.55,45.0,4],['გორი',41.98,44.11,4],['ზუგდიდი',42.51,41.87,4],
+  ['თელავი',41.92,45.47,4],['ფოთი',42.15,41.67,4],['მოსკოვი',55.76,37.62,3],['სტამბოლი',41.01,28.98,3],['ერევანი',40.18,44.51,4],['ბაქო',40.41,49.87,4],['კიევი',50.45,30.52,2],
+  ['ბერლინი',52.52,13.40,1],['პარიზი',48.86,2.35,1],['რომი',41.90,12.50,1],['ათენი',37.98,23.73,2],['ლონდონი',51.51,-0.13,0],['ნიუ-იორკი',40.71,-74.01,-5],
+  ['ლოს-ანჯელესი',34.05,-118.24,-8],['დუბაი',25.20,55.27,4],['დელი',28.70,77.10,5.5],['პეკინი',39.90,116.41,8],['ტოკიო',35.68,139.69,9],['სიდნეი',-33.87,151.21,10]];
+const BACKEND='https://astrology-production-b165.up.railway.app';
+let PLACE_NAME='თბილისი',PLACE_Q='თბილისი',PLACE_P=null;
+$('plist').innerHTML=PLACES.map(p=>`<option value="${p[0]}"></option>`).join('');
+const KA2L={'ა':'a','ბ':'b','გ':'g','დ':'d','ე':'e','ვ':'v','ზ':'z','თ':'t','ი':'i','კ':'k','ლ':'l','მ':'m','ნ':'n','ო':'o','პ':'p','ჟ':'zh','რ':'r','ს':'s','ტ':'t','უ':'u',
+  'ფ':'p','ქ':'k','ღ':'gh','ყ':'q','შ':'sh','ჩ':'ch','ც':'ts','ძ':'dz','წ':'ts','ჭ':'ch','ხ':'kh','ჯ':'j','ჰ':'h'};
+const toLat=t=>[...t].map(c=>KA2L[c]??c).join('');
+/* standard (winter) offset of an IANA zone — the page keeps one offset for the whole period */
+function stdOff(tz){try{const f=d=>{const v=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'shortOffset'}).formatToParts(d).find(x=>x.type==='timeZoneName').value;
+    const m=v.match(/GMT([+-])(\d+)(?::(\d+))?/);return m?(m[1]==='-'?-1:1)*(+m[2]+(m[3]?+m[3]/60:0)):0;};
+  return Math.min(f(new Date(Date.UTC(2021,0,15))),f(new Date(Date.UTC(2021,6,15))));}catch(e){return null;}}
+function setPlace(name,lat,lon,off){PLACE_NAME=name;PLACE_Q=$('place').value.trim();$('lat').value=+(+lat).toFixed(4);$('lon').value=+(+lon).toFixed(4);if(off!==null)$('off').value=off;$('plmsg').textContent='';}
+function resolvePlace(){
+  const q=$('place').value.trim();if(!q||q===PLACE_Q)return PLACE_P||Promise.resolve();
+  const pre=PLACES.find(p=>p[0]===q);if(pre){setPlace(pre[0],pre[1],pre[2],pre[3]);return Promise.resolve();}
+  $('plmsg').textContent='· იძებნება…';
+  const tl=toLat(q).toLowerCase(),cand=[...new Set([q,tl,tl.replace(/i$/,'')])];
+  PLACE_P=(async()=>{for(const c of cand){try{
+      const r=await fetch(BACKEND+'/geocode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city:c})});
+      if(!r.ok)continue;const j=await r.json();if(j&&j.lat!=null){setPlace(j.display||q,j.lat,j.lon,stdOff(j.tz_name));$('place').value=q;PLACE_Q=q;return;}}catch(e){}}
+    $('plmsg').textContent='· ვერ მოიძებნა — ჩაწერე ლათინურად ან შეიყვანე კოორდინატები';PLACE_Q=q;})();
+  const pr=PLACE_P;pr.finally(()=>{if(PLACE_P===pr)PLACE_P=null;});return pr;
+}
+$('place').addEventListener('change',resolvePlace);
+$('place').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();resolvePlace();}});
+['lat','lon','off'].forEach(id=>$(id).addEventListener('input',()=>{PLACE_NAME='';}));
 
 /* ═════════════ engine ═════════════
    date systems (day, month, matrix, Pythagoras) → EXACT: every calendar day of the period is counted.
@@ -430,7 +474,56 @@ $('place').onchange=()=>{const p=PLACES[+$('place').value];if(p[1]===null)return
    that match the date conditions). Pythagoras: years after Christ only (no BC). */
 let RUN=0,BASE=null,BASEKEY='',BDATE=null,BDKEY='',RES=null;
 const tick=()=>new Promise(r=>setTimeout(r,0));
-const NS=5000;                         /* moments for HD / astrology */
+const NS=100000;                       /* moments for HD / astrology */
+const AE_URL='https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js';
+/* charts are drawn in parallel Web Workers (one per spare CPU core); same engine files */
+const WSRC=`self.onmessage=async e=>{const m=e.data;
+  if(m.init){try{importScripts(...m.urls);await SE.init();postMessage({ready:1});}catch(err){postMessage({err:String(err)});}return;}
+  const out=new Array(m.jds.length);
+  for(let i=0;i<m.jds.length;i++){const S=SE.stage2(SE.stage1(SE.stage0(m.jds[i],m.off),m.lat,m.lon));out[i]={jd:S.jd,L:S.L,c:S.cusps,hd:S.hd};}
+  postMessage({out});};`;
+let POOL=null;
+async function pool(){
+  if(POOL)return POOL;
+  if(location.protocol==='file:'||typeof Worker==='undefined')return POOL=[];
+  try{const n=Math.max(1,Math.min(8,(navigator.hardwareConcurrency||2)-1));
+    const url=URL.createObjectURL(new Blob([WSRC],{type:'text/javascript'}));
+    const urls=[AE_URL,new URL('pluto_far.js',location.href).href,new URL('stats_engine.js',location.href).href];
+    POOL=await Promise.all([...Array(n)].map(()=>new Promise((ok,no)=>{const w=new Worker(url),to=setTimeout(()=>no(new Error('timeout')),30000);
+      w.onmessage=e=>{clearTimeout(to);e.data.ready?ok(w):no(new Error(e.data.err));};w.onerror=er=>{clearTimeout(to);no(er);};w.postMessage({init:1,urls});})));
+  }catch(e){console.warn('Web Workers unavailable — single thread',e);POOL=[];}
+  return POOL;
+}
+/* draw charts for gen() moments (null = done); onS(S) returns false to stop. Resolves false if cancelled. */
+async function charts(gen,P,onS,tok,prog){
+  const W=await pool(),BATCH=300;let done=0,t0=performance.now();
+  const tick50=async()=>{if(performance.now()-t0>80){prog(done);await tick();t0=performance.now();}};
+  if(!W.length){
+    for(;;){const jd=gen();if(jd===null)return true;const S=SE.stage2(SE.stage1(SE.stage0(jd,P.off),P.lat,P.lon));done++;
+      if(onS(S)===false)return true;await tick50();if(tok!==RUN)return false;}
+  }
+  return new Promise(res=>{let active=0,stop=false,ended=false;
+    const fin=()=>{if(!ended&&!active){ended=true;res(tok===RUN);}};
+    const send=w=>{if(stop||tok!==RUN){fin();return;}
+      const jds=[];for(let i=0;i<BATCH;i++){const j=gen();if(j===null)break;jds.push(j);}
+      if(!jds.length){stop=true;fin();return;}
+      active++;w.postMessage({jds,lat:P.lat,lon:P.lon,off:P.off});};
+    W.forEach(w=>{w.onmessage=e=>{active--;
+      if(!stop&&tok===RUN){for(const r of e.data.out){const S=SE.stage0(r.jd,P.off);S.L=r.L;S.cusps=r.c;S.hd=r.hd;S.stage=2;done++;
+          if(onS(S)===false){stop=true;break;}}
+        if(performance.now()-t0>80){prog(done);t0=performance.now();}}
+      send(w);};send(w);});
+  });
+}
+/* the "usual" for a period and place is the same every time: keep it (this browser) and ship the default one */
+const SIG=(()=>{let h=0;const t=NS+'|'+CF.map(c=>c.fid+':'+c.vals.length).join(',');for(let i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))|0;return 'v1.'+(h>>>0).toString(36);})();
+const lsGet=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
+function packAcc(R,list){const c={},nn={};for(const x of list){c[x.fid]=R.c[x.fid];nn[x.fid]=R.nn[x.fid];}return {c,nn,days:R.days,mom:R.mom};}
+function unpackAcc(R,o,list){for(const x of list){if(!o.c[x.fid])return false;}for(const x of list){R.c[x.fid]=Object.assign(Object.create(null),o.c[x.fid]);R.nn[x.fid]=o.nn[x.fid];}return true;}
+let SHIPPED;  /* stats_base.json — the default (−3000…9999, Tbilisi) computed once */
+async function shipped(key){if(SHIPPED===undefined){try{const r=await fetch('stats_base.json',{cache:'force-cache'});SHIPPED=r.ok?await r.json():null;}catch(e){SHIPPED=null;}}
+  return SHIPPED&&SHIPPED.sig===SIG&&SHIPPED.key===key?SHIPPED:null;}
 const CFD=CF.filter(x=>x.f.st===0),CFT=CF.filter(x=>x.f.st>0);
 const isPy=x=>x.f.sys==='py';
 function newAcc(){const c={},nn={};for(const x of CF){c[x.fid]=Object.create(null);nn[x.fid]=0;}return {c,nn,days:0,mom:0};}
@@ -439,7 +532,7 @@ function addSet(R,S,list,w){
     const v=x.f.get(S,x.p),o=R.c[x.fid];R.nn[x.fid]+=w;
     if(x.f.multi){for(const e of v)o[e]=(o[e]||0)+w;}else o[v]=(o[v]||0)+w;}
 }
-function compile(fl){return fl.map(([fid,op,v])=>{const c=CFM[fid];return {st:c.f.st,neg:op==='≠',
+function compile(fl){return fl.map(([fid,op,v])=>{const c=CFM[fid];return {st:c.f.st,jd:!!c.f.jd,neg:op==='≠',
   test:S=>{if(isPy(c)&&S.y<1)return false;const x=c.f.get(S,c.p);return c.f.multi?x.some(e=>String(e)===String(v)):String(x)===String(v);}};});}
 const passes=(F,S,st)=>F.every(q=>q.st!==st||(q.test(S)!==q.neg));
 function params(){
@@ -486,24 +579,28 @@ async function go(){
    if(d&&m&&d>[31,29,31,30,31,30,31,31,30,31,30,31][m-1]){$('msg').innerHTML=`<span class="bad">${d} ${MON[m-1]} არ არსებობს.</span>`;$('res').style.display='none';return;}}
   $('ya').value=P.a;$('yb').value=P.b;
   $('run').disabled=true;$('stop').hidden=false;
-  try{location.hash=encodeURIComponent(JSON.stringify({d:$('cd').value,m:$('cm').value,y:$('cy').value,f:FL,a:P.a,b:P.b,lat:P.lat,lon:P.lon,off:P.off}));}catch(e){}
+  try{location.hash=encodeURIComponent(JSON.stringify({d:$('cd').value,m:$('cm').value,y:$('cy').value,f:FL,a:P.a,b:P.b,lat:P.lat,lon:P.lon,off:P.off,pl:PLACE_NAME,pq:$('place').value}));}catch(e){}
   try{
     $('msg').textContent='⏳ ასტრონომიული ბიბლიოთეკა იტვირთება…';
     await SE.init();
     const j0=SE.calJD(P.a,1,1,0)-P.off/24,j1=SE.calJD(P.b+1,1,1,0)-P.off/24,span=j1-j0;
-    const full=S=>SE.stage2(SE.stage1(S,P.lat,P.lon));
     /* ── "usual": every day exactly + NS moments ── */
     const key=[P.a,P.b,P.lat,P.lon,P.off].join('|'),dkey=P.a+'|'+P.b;
     if(key!==BASEKEY||!BASE){
-      const B=newAcc();
-      /* the day part does not depend on the place — reuse it when only the city changed */
+      const B=newAcc(),hit=(await shipped(key))||lsGet('statsT|'+SIG+'|'+key),dhit=lsGet('statsD|'+SIG+'|'+dkey);
+      /* days — they do not depend on the place */
       if(dkey===BDKEY&&BDATE){for(const x of CFD){B.c[x.fid]=BDATE.c[x.fid];B.nn[x.fid]=BDATE.nn[x.fid];}B.days=BDATE.days;}
-      else{if(!await dayPass(P.a,P.b,null,B,null,tok,'ჩვეულებრივი · ყველა დღე',0,HAS?20:40))return;BDATE=B;BDKEY=dkey;}
-      const w=span/NS;let t0=performance.now();
-      for(let i=0;i<NS;i++){
-        addSet(B,full(SE.stage0(j0+(i+Math.random())*w,P.off)),CFT,1);B.mom++;
-        if(performance.now()-t0>50){$('bar').style.width=((HAS?20:40)+(HAS?30:60)*i/NS)+'%';
-          $('msg').textContent=`ჩვეულებრივი · HD და ასტროლოგია: ${i.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;await tick();t0=performance.now();if(tok!==RUN)return;}
+      else if(hit&&hit.D&&unpackAcc(B,hit.D,CFD)){B.days=hit.D.days;BDATE=B;BDKEY=dkey;}
+      else if(dhit&&unpackAcc(B,dhit,CFD)){B.days=dhit.days;BDATE=B;BDKEY=dkey;}
+      else{if(!await dayPass(P.a,P.b,null,B,null,tok,'ჩვეულებრივი · ყველა დღე',0,HAS?20:40))return;BDATE=B;BDKEY=dkey;lsSet('statsD|'+SIG+'|'+dkey,packAcc(B,CFD));}
+      /* moments */
+      if(hit&&hit.T&&unpackAcc(B,hit.T,CFT)){B.mom=hit.T.mom;}
+      else{
+        const w=span/NS;let i=0;const p0=HAS?20:40,p1=HAS?30:60;
+        const ok=await charts(()=>i<NS?j0+(i++ +Math.random())*w:null,P,S=>{addSet(B,S,CFT,1);B.mom++;},tok,
+          n=>{$('bar').style.width=(p0+p1*n/NS)+'%';$('msg').textContent=`ჩვეულებრივი · HD და ასტროლოგია: ${n.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;});
+        if(!ok)return;
+        lsSet('statsT|'+SIG+'|'+key,{T:packAcc(B,CFT)});
       }
       BASE=B;BASEKEY=key;
     }
@@ -520,29 +617,30 @@ async function go(){
       const draw=hasD?(pick=>()=>{const t=pick();return SE.calJD(t.y,t.m,t.d,0)-off/24+Math.random();})(picker(E)):()=>j0+Math.random()*span;
       if(!hasT){
         /* date-only condition: dates exact, HD/astrology from NS moments inside the matching days */
-        let t0=performance.now();
-        for(let i=0;i<NS;i++){const S=full(SE.stage0(draw(),off));addSet(M,S,CFT,1);M.mom++;if(ex.length<60&&Math.random()<0.05)ex.push(S.jd);
-          if(performance.now()-t0>50){$('bar').style.width=(62+38*i/NS)+'%';
-            $('msg').textContent=`ჯგუფი · HD და ასტროლოგია: ${i.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;await tick();t0=performance.now();if(tok!==RUN)return;}}
+        let i=0;
+        const ok=await charts(()=>i++<NS?draw():null,P,S=>{addSet(M,S,CFT,1);M.mom++;if(ex.length<60&&Math.random()<0.002)ex.push(S.jd);},tok,
+          n=>{$('bar').style.width=(62+38*n/NS)+'%';$('msg').textContent=`ჯგუფი · HD და ასტროლოგია: ${n.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;});
+        if(!ok)return;
         freq=dayFrac;$('msg').textContent='';
       }else{
         /* time condition: moments inside the matching days until NS matches, the condition proves rare, or time is up */
-        exact=false;let tries=0,acc=0,stop='';const T0=performance.now();let t0=T0;
-        for(;;){
-          const S0=SE.stage0(draw(),off);tries++;let S=SE.stage1(S0,P.lat,P.lon);
-          if(passes(F,S,1)){S=SE.stage2(S);
-            if(passes(F,S,2)){acc++;if(M.mom<NS){addSet(M,S,CF,1);M.mom++;M.days++;if(ex.length<60&&Math.random()<0.25)ex.push(S.jd);}}}
-          if(M.mom>=NS){stop='n';break;}
-          if(performance.now()-t0>50){const el=(performance.now()-T0)/1000;
-            $('bar').style.width=(62+38*Math.min(1,Math.max(M.mom/NS,el/150)))+'%';
-            $('msg').textContent=`პირობის ძებნა: ნაპოვნია ${M.mom.toLocaleString()} / ${NS.toLocaleString()} · შემოწმდა ${tries.toLocaleString()} მომენტი`;
-            await tick();t0=performance.now();if(tok!==RUN)return;
-            if((el>45&&M.mom>=600)||(el>150&&M.mom>=30)){stop='t';break;}
-            if(el>60&&M.mom<30&&tries>2e5){stop='rare';break;}}
-        }
+        exact=false;let tries=0,acc=0,stop='';const T0=performance.now();
+        /* eclipse conditions need only the moment — test them before a chart is drawn */
+        const FJ=F.filter(q=>q.jd);let chk=0;
+        const gen=FJ.length?()=>{for(let k=0;k<2e6;k++){const jd=draw();tries++;if(FJ.every(q=>q.test({jd})!==q.neg))return jd;}return null;}:()=>{tries++;return draw();};
+        const ok=await charts(gen,P,S=>{
+            if(passes(F,S,1)&&passes(F,S,2)){acc++;addSet(M,S,CF,1);M.mom++;M.days++;if(ex.length<60&&Math.random()<0.05)ex.push(S.jd);}
+            if(M.mom>=NS){stop='n';return false;}
+            if((++chk&255)===0){const el=(performance.now()-T0)/1000;
+              if((el>60&&M.mom>=2000)||(el>180&&M.mom>=30)){stop='t';return false;}
+              if(el>90&&M.mom<30){stop='rare';return false;}}
+          },tok,
+          ()=>{const el=(performance.now()-T0)/1000;$('bar').style.width=(62+38*Math.min(1,Math.max(M.mom/NS,el/180)))+'%';
+            $('msg').textContent=`პირობის ძებნა: ნაპოვნია ${M.mom.toLocaleString()} · შემოწმდა ${tries.toLocaleString()} მომენტი`;});
+        if(!ok)return;
         if(!M.mom){$('msg').innerHTML='<span class="bad">ამ პირობით დაბადება ვერ მოიძებნა — შესაძლოა ეს კომბინაცია შეუძლებელია ან ძალიან იშვიათი.</span>';$('res').style.display='none';return;}
         freq=dayFrac*acc/tries;
-        $('msg').textContent=stop==='n'?'':stop==='t'?`იშვიათი პირობაა — ნაჩვენებია ${M.mom.toLocaleString()} ნაპოვნი რუქა (სტატისტიკისთვის საკმარისია).`:'პირობა ძალიან იშვიათია — ნაჩვენებია ნაპოვნი რუქები.';
+        $('msg').textContent=stop==='n'?'':stop==='t'?`ნაჩვენებია ${M.mom.toLocaleString()} ნაპოვნი რუქა — ძებნა დროის ლიმიტზე შეჩერდა (სტატისტიკისთვის საკმარისია).`:'პირობა ძალიან იშვიათია — ნაჩვენებია ნაპოვნი რუქები.';
       }
     }else $('msg').textContent='';
     $('bar').style.width='100%';
@@ -551,7 +649,8 @@ async function go(){
   }catch(e){$('msg').innerHTML='<span class="bad">შეცდომა: '+esc(e.message)+'</span>';console.error(e);}
   finally{if(tok===RUN){$('run').disabled=false;$('stop').hidden=true;}}
 }
-$('run').onclick=go;
+$('run').onclick=async()=>{await resolvePlace();go();};
+window._statsBase=()=>({sig:SIG,key:BASEKEY,D:packAcc(BASE,CFD),T:packAcc(BASE,CFT)});
 $('stop').onclick=()=>{RUN++;$('run').disabled=false;$('stop').hidden=true;$('msg').textContent='შეჩერდა.';};
 
 /* ═════════════ render ═════════════ */
@@ -648,7 +747,7 @@ function heatHTML(f){
     if(s.d!=null)$('cd').value=s.d;if(s.m!=null)$('cm').value=s.m;if(s.y!=null)$('cy').value=s.y;
     if(Array.isArray(s.f))FL=s.f.filter(x=>Array.isArray(x)&&CFM[x[0]]);
     if(s.a!=null)$('ya').value=s.a;if(s.b!=null)$('yb').value=s.b;
-    if(s.lat!=null){$('lat').value=s.lat;$('lon').value=s.lon;$('off').value=s.off;const i=PLACES.findIndex(p=>p[1]===s.lat&&p[2]===s.lon);$('place').value=i>=0?i:PLACES.length-1;}
+    if(s.lat!=null){$('lat').value=s.lat;$('lon').value=s.lon;$('off').value=s.off;PLACE_NAME=s.pl||'';$('place').value=s.pq||s.pl||'';PLACE_Q=$('place').value.trim();}
     }}catch(e){}
   drawRows();
 })();
