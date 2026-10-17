@@ -35,6 +35,10 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5v
 .tq b{display:block;font-weight:600;font-size:13.5px;line-height:1.35}
 .tq .pt{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);letter-spacing:1.5px;margin-top:5px}
 .tq .pu{font-size:10.5px;color:var(--dim);margin-top:3px}
+.grp{grid-column:1/-1;font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--gold);opacity:.75;margin:8px 0 -2px}
+.grp.adv{color:var(--warn);opacity:.9;margin-top:16px}
+.grp small{display:block;font-family:'Noto Sans Georgian',sans-serif;letter-spacing:0;font-size:11px;color:var(--dim);margin-top:4px;opacity:1}
+.tq.adv{border-color:rgba(240,160,112,.28)}.tq.adv .pt{color:var(--warn)}
 .tq .dn{position:absolute;top:9px;right:10px;font-size:10px;color:var(--in)}
 .player{display:grid;grid-template-columns:1.05fr 1fr;gap:22px;background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:22px}
 @media(max-width:860px){.player{grid-template-columns:1fr}}
@@ -123,7 +127,9 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5v
    phase kinds: in · hold · out · empty (hold on empty lungs)
                 wave  — n rhythmic deep breaths (Wim Hof)
                 pulse — n quick active exhalations (kapalabhati)
-                open  — retention until the user taps (max seconds)            */
+                open  — retention until the user taps (max seconds)
+                shallow — n small, soft breaths (Buteyko reduced breathing)
+                rest  — relaxed free breathing for s seconds (between holds)   */
 const P=(k,s,l)=>({k,s,l});
 const T=[
  {id:'478',name:'4-7-8 · დამამშვიდებელი სუნთქვა',en:'Dr. Andrew Weil',pu:'ძილი · შფოთვა',
@@ -183,13 +189,51 @@ const T=[
   how:'ჩაისუნთქე ღრმად, ამოუშვი თავისუფლად — 30-ჯერ, ტალღასავით. ბოლო ამოსუნთქვის შემდეგ შეიკავე სუნთქვა; როცა მოგინდება ჩასუნთქვა, დააჭირე „ჩავისუნთქე“, ღრმად ჩაისუნთქე და შეიკავე 15 წამი.',
   daily:'3 რაუნდი, დილით, უზმოზე.',
   warn:'არასდროს გააკეთო წყალში, საჭესთან ან ფეხზე მდგომმა — შესაძლებელია გონების დაკარგვა. არ გააკეთო ორსულობისას, ეპილეფსიის ან გულის დაავადების დროს.',
-  cyc:3,max:5,ph:[{k:'wave',n:30,s:96,l:'ღრმად ისუნთქე'},{k:'open',s:180,l:'შეიკავე ამოსუნთქულზე'},P('in',2,'ღრმად ჩაისუნთქე'),P('hold',15,'შეიკავე'),P('out',3,'გაუშვი')]}];
-const LBL={in:'ჩაისუნთქე',hold:'შეიკავე',out:'ამოისუნთქე',empty:'შეიკავე ცარიელზე',pulse:'ბიძგი',wave:'ღრმად ისუნთქე',open:'შეიკავე'};
-const COL={in:'#5fc8b0',hold:'#c9a84c',out:'#7f9cf0',empty:'#9a84d8',pulse:'#f0a070',wave:'#5fc8b0',open:'#c9a84c'};
+  cyc:3,max:5,ph:[{k:'wave',n:30,s:96,l:'ღრმად ისუნთქე'},{k:'open',s:180,l:'შეიკავე ამოსუნთქულზე'},P('in',2,'ღრმად ჩაისუნთქე'),P('hold',15,'შეიკავე'),P('out',3,'გაუშვი')]},
+ {id:'bhas',adv:true,unit:'რაუნდი',pt:'20 მძლავრი · შეკავება · ×3',name:'ბჰასტრიკა — ბუხრის საბერველა',en:'Bhastrika pranayama',pu:'ენერგია · სითბო · სიცხადე',
+  desc:'კლასიკური ჰატჰა-იოგის პრანაიამა: ჩასუნთქვაც და ამოსუნთქვაც აქტიური და ძლიერია, თანაბარი ტემპით — როგორც მჭედლის საბერველა. ბოლოს სრული ჩასუნთქვა და შეკავება ჯალანდჰარა ბანდჰით (ნიკაპი მკერდთან). მკვეთრად ზრდის ფხიზლობას და სიმპათიკურ აქტივობას; მოკლე კვლევებში აუმჯობესებს რეაქციის დროს და ყურადღებას.',
+  how:'მჯდომარე, ხერხემალი სწორი. ცხვირით ძლიერად ჩაისუნთქე და ძლიერად ამოისუნთქე — წამში ერთი სრული სუნთქვა, მუცლითა და მკერდით — 20-ჯერ. შემდეგ სრულად ჩაისუნთქე, ნიკაპი დაუშვი მკერდისკენ და შეიკავე; ბოლოს თავი ასწიე და ნელა ამოისუნთქე. ორი მშვიდი სუნთქვა — და შემდეგი რაუნდი.',
+  daily:'3 რაუნდი დილით, უზმოზე. დაიწყე 10 სუნთქვით რაუნდში, 2 კვირაში მიიყვანე 20-მდე.',
+  warn:'არა: ორსულობისას, მაღალი წნევის, გულის დაავადების, ეპილეფსიის, ინსულტის ისტორიის, თიაქრის, გლაუკომის, ახალი ოპერაციის დროს. თავბრუსხვევაზე ან ჩხვლეტაზე — გაჩერდი და ჩვეულებრივ ისუნთქე.',
+  cyc:3,max:5,ph:[{k:'wave',n:20,s:22,l:'ძლიერად ისუნთქე'},P('in',4,'სრულად ჩაისუნთქე'),P('hold',15,'შეიკავე — ნიკაპი მკერდთან'),P('out',6,'თავი ასწიე, ნელა ამოისუნთქე'),P('in',4,'მშვიდად ჩაისუნთქე'),P('out',6,'მშვიდად ამოისუნთქე')]},
+ {id:'tummo',adv:true,unit:'რაუნდი',pt:'30 · შეკავება სავსეზე · ×5',name:'ტუმო — შინაგანი ცეცხლი',en:'Tummo (g-tum-mo) · ტიბეტური',pu:'სითბო · ნება · იმუნიტეტი',
+  desc:'ტიბეტური ბუდისტური პრაქტიკა, რომლითაც ბერები სიცივეში სხეულის ტემპერატურას ზრდიდნენ (ბენსონი, 1982; კოზჰევნიკოვა, 2013 — ბირთვის ტემპერატურის მომატება მხოლოდ სუნთქვისა და ვიზუალიზაციის ერთად შესრულებისას). თანამედროვე ფორმა: ღრმა რიტმული სუნთქვა, შემდეგ შეკავება სავსე ფილტვებზე მუცლის „ჩაკეტვით“ და ცეცხლის ვიზუალიზაცია ჭიპის ქვემოთ.',
+  how:'30 ღრმა სუნთქვა: ჩასუნთქვა მუცლიდან მკერდამდე, ამოსუნთქვა თავისუფლად. შემდეგ სრულად ჩაისუნთქე და შეიკავე სავსეზე: მენჯის ფსკერი და მუცელი ოდნავ შეკუმშე, თითქოს ჰაერს ქვემოთ აწვები; წარმოიდგინე ცეცხლი ჭიპის ქვემოთ. როცა მოგინდება ამოსუნთქვა — დააჭირე „✓“ და ნელა გაუშვი.',
+  daily:'3–5 რაუნდი, დილით, უზმოზე, თბილად ჩაცმულმა.',
+  warn:'მხოლოდ მჯდომარე ან წოლით. არასდროს წყალში, აბაზანაში, საჭესთან ან ფეხზე — შესაძლებელია გონების დაკარგვა. არა: ორსულობა, ეპილეფსია, გულის დაავადება, მაღალი წნევა, ინსულტის ისტორია.',
+  cyc:5,max:7,ph:[{k:'wave',n:30,s:90,l:'ღრმად ისუნთქე'},P('in',3,'სრულად ჩაისუნთქე'),{k:'open',s:90,l:'შეიკავე სავსეზე — მუცელი ჩაკეტე'},P('out',5,'ნელა გაუშვი'),P('in',4,'მშვიდად ჩაისუნთქე'),P('out',6,'მშვიდად ამოისუნთქე')]},
+ {id:'buty',adv:true,unit:'რაუნდი',pt:'კონტროლის პაუზა · 3 წთ',name:'ბუტეიკოს მეთოდი',en:'Buteyko · Control Pause + reduced breathing',pu:'ასთმა · ცხვირით სუნთქვა · ძილი',
+  desc:'კ. ბუტეიკოს (1950-იანები) მეთოდი ზედმეტი სუნთქვის (ჰიპერვენტილაციის) წინააღმდეგ: სუნთქვა შეგნებულად მცირდება, CO₂-ის ტოლერანტობა იზრდება. „კონტროლის პაუზა“ — რამდენ წამს უძლებ ამოსუნთქვის შემდეგ პირველ სურვილამდე — პროგრესის საზომია. კოქრეინის მიმოხილვით ასთმის დროს ამცირებს სიმპტომებს და ბრონქოდილატატორის საჭიროებას.',
+  how:'ჩვეულებრივ ამოისუნთქე, დაიჭირე ცხვირი და დაიწყე თვლა. პირველივე სურვილზე ჩასუნთქვისა — დააჭირე „✓“ (ეს შენი კონტროლის პაუზაა), ჩაისუნთქე ცხვირით მშვიდად. შემდეგ 3 წუთი ისუნთქე ცოტა, ზედაპირულად, მხოლოდ ცხვირით — ისე, რომ მსუბუქი „ჰაერის ნაკლებობა“ იგრძნო, მაგრამ ჰაერისთვის არ იბრძოლო.',
+  daily:'3 რაუნდი, დღეში 2-ჯერ. კონტროლის პაუზა: < 20 წმ — დაბალი, 20–40 — საშუალო, 40+ — კარგი.',
+  warn:'შემცირებული სუნთქვა არ უნდა გადაიზარდოს ჰაერისთვის ბრძოლაში. ასთმის დროს ინჰალატორი არ შეწყვიტო ექიმთან შეთანხმების გარეშე.',
+  cyc:3,max:5,ph:[P('out',4,'ჩვეულებრივ ამოისუნთქე'),{k:'open',s:120,l:'კონტროლის პაუზა — ცხვირი დაიჭირე'},P('in',3,'მშვიდად ჩაისუნთქე ცხვირით'),{k:'shallow',n:30,s:180,l:'ცოტა ისუნთქე'}]},
+ {id:'co2',adv:true,unit:'ცხრილი',pt:'8 × შეკავება 45 · დასვენება 2:00→0:15',name:'CO₂ ცხრილი — ფრიდაივერების ვარჯიში',en:'CO₂ tolerance table · static apnea',pu:'გამძლეობა · სიმშვიდე სტრესში',
+  desc:'ფრიდაივინგის სტანდარტული მშრალი ვარჯიში: შეკავება ყოველთვის ერთნაირია, დასვენება კი ყოველ რაუნდში 15 წამით მცირდება — CO₂ გროვდება და სხეული სწავლობს „ჰაერის ნაკლებობის“ შეგრძნების მშვიდად ატანას. ნაგულისხმევი შეკავება 45 წამია; იდეალურად ის უნდა იყოს შენი მაქსიმალური შეკავების დაახლოებით ნახევარი.',
+  how:'წოლით ან მჯდომარე, მოდუნებული. დასვენებისას ისუნთქე მშვიდად, ცხვირით. სიგნალზე — ღრმად ჩაისუნთქე და შეიკავე, სახე და მხრები მოადუნე; კრუნჩხვები დიაფრაგმაში ნორმალურია, მაგრამ თუ ძალიან რთულია — უბრალოდ ამოისუნთქე.',
+  daily:'ერთი ცხრილი დღეში, არა უმეტეს კვირაში 3–4-ჯერ; ერთ დღეს მხოლოდ CO₂ ან მხოლოდ სხვა შეკავებები.',
+  warn:'მხოლოდ ხმელეთზე, წოლით ან მჯდომარე. არასდროს წყალში ან მარტოს აუზში — შეკავების შემდეგ გონების დაკარგვა წყალში სიკვდილის მიზეზია. არა: გულის დაავადება, ორსულობა, ეპილეფსია.',
+  cyc:1,max:1,ph:[120,105,90,75,60,45,30,15].flatMap((r,i)=>[{k:'rest',s:r,l:`დასვენება · რაუნდი ${i+1}/8`},P('in',3,'ღრმად ჩაისუნთქე'),P('hold',45,`შეიკავე · ${i+1}/8`),P('out',3,'ამოისუნთქე, ჩაისუნთქე მშვიდად')])},
+ {id:'kumb',adv:true,unit:'ციკლი',pt:'1 : 4 : 2 — 4 · 16 · 8',name:'კუმბჰაკა 1 : 4 : 2',en:'Antara kumbhaka · Hatha Yoga Pradipika',pu:'კონცენტრაცია · ნერვული სისტემა',
+  desc:'კლასიკური პრანაიამის ფარდობა: შეკავება ოთხჯერ გრძელია ჩასუნთქვაზე, ამოსუნთქვა — ორჯერ. შეკავება სავსე ფილტვებზე მულა ბანდჰით (მენჯის ფსკერის შეკუმშვა). ავითარებს ტოლერანტობას, ფოკუსს და დიაფრაგმის კონტროლს; ხანგრძლივი ამოსუნთქვა ბოლოს ამშვიდებს.',
+  how:'მჯდომარე, ხერხემალი სწორი. ჩაისუნთქე ცხვირით 4 წამი, შეიკავე 16 — მენჯის ფსკერი ოდნავ აწიე (მულა ბანდჰა), სახე მოდუნებული; ამოისუნთქე ნელა 8 წამი. ჯერ 4·8·8-ით დაიწყე, როცა მარტივი გახდება — 4·16·8.',
+  daily:'10 ციკლი (≈ 5 წთ), დღეში 1–2-ჯერ.',
+  warn:'შეკავებაზე არ დაძაბო სახე და ყელი, არ „დააწვე“. არა: მაღალი წნევა, გულის დაავადება, ორსულობა.',
+  cyc:10,max:30,ph:[P('in',4),P('hold',16,'შეიკავე — მულა ბანდჰა'),P('out',8)]},
+ {id:'maha',adv:true,unit:'ციკლი',pt:'ცარიელზე 15 · სამი ბანდჰა',name:'მაჰა ბანდჰა — შეკავება ცარიელზე',en:'Bahya kumbhaka · Maha bandha',pu:'ენერგია · საჭმლის მონელება · ფოკუსი',
+  desc:'გარე შეკავება (ბაჰია კუმბჰაკა) სრულ ამოსუნთქვაზე სამი „საკეტით“: ჯალანდჰარა (ნიკაპი მკერდთან), უდიანა (მუცელი ზევით და შიგნით, ნეკნების ქვეშ) და მულა (მენჯის ფსკერი). ჰატჰა-იოგაში ერთ-ერთ უძლიერეს პრაქტიკად ითვლება; სრულდება მხოლოდ ცარიელ კუჭზე.',
+  how:'ჩაისუნთქე, შემდეგ ბოლომდე ამოისუნთქე პირით. ცარიელზე: ნიკაპი მკერდთან, მუცელი შეიწიე ზევით-შიგნით, მენჯის ფსკერი აწიე — შეიკავე. საკეტები გახსენი ზევიდან: ჯერ მულა, მერე უდიანა, ბოლოს ასწიე თავი და ნაზად ჩაისუნთქე. ორი მშვიდი სუნთქვა შემდეგ ციკლამდე.',
+  daily:'5 ციკლი, დილით, უზმოზე.',
+  warn:'მხოლოდ ცარიელ კუჭზე. არა: ორსულობა, მენსტრუაცია, მაღალი წნევა, გულის დაავადება, კუჭის წყლული, თიაქარი, გლაუკომა. თავბრუსხვევაზე — შეწყვიტე.',
+  cyc:5,max:9,ph:[P('in',4),P('out',8,'ბოლომდე ამოისუნთქე'),P('empty',15,'ცარიელზე — სამი ბანდჰა'),P('in',4,'გახსენი, ნაზად ჩაისუნთქე'),P('out',6,'მშვიდად ამოისუნთქე'),P('in',4,'მშვიდად ჩაისუნთქე'),P('out',6,'მშვიდად ამოისუნთქე')]}];
+
+const LBL={in:'ჩაისუნთქე',hold:'შეიკავე',out:'ამოისუნთქე',empty:'შეიკავე ცარიელზე',pulse:'ბიძგი',wave:'ღრმად ისუნთქე',open:'შეიკავე',shallow:'ცოტა ისუნთქე',rest:'მშვიდად ისუნთქე'};
+const COL={in:'#5fc8b0',hold:'#c9a84c',out:'#7f9cf0',empty:'#9a84d8',pulse:'#f0a070',wave:'#5fc8b0',open:'#c9a84c',shallow:'#8fb8a8',rest:'#7f9cb0'};
 const $=id=>document.getElementById(id);
 const roundSec=t=>t.ph.reduce((a,p)=>a+(p.k==='open'?60:p.s),0);
 const fmtT=s=>{s=Math.max(0,Math.round(s));const m=Math.floor(s/60),r=s%60;return m?`${m} წთ ${r?r+' წმ':''}`.trim():`${r} წმ`;};
-const patStr=t=>t.ph.filter(p=>!['pulse','wave','open'].includes(p.k)).map(p=>p.s).join(' · ');
+const patStr=t=>t.pt||t.ph.filter(p=>!['pulse','wave','open','shallow','rest'].includes(p.k)).map(p=>p.s).join(' · ');
+const unitOf=t=>t.unit||(t.id==='wim'||t.id==='kap'?'რაუნდი':'ციკლი');
 
 /* ═════ daily log (this device only) ═════ */
 const dayKey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
@@ -224,6 +268,8 @@ function cue(p,cur){
   else if(p.k==='out'){tone(330,220,d,'sine',0.17);if(cur&&cur.hum)hum(p.s);}
   else if(p.k==='hold'||p.k==='open')bell(392);
   else if(p.k==='empty')bell(294,0.13);
+  else if(p.k==='rest')bell(262,0.1);
+  else if(p.k==='shallow')tone(260,300,0.3,'sine',0.08);
   if($('oVib').checked&&navigator.vibrate)try{navigator.vibrate(p.k==='in'?60:p.k==='out'?[40,60,40]:120);}catch(e){}
 }
 const finishChime=()=>{[523.3,659.3,784].forEach((f,i)=>setTimeout(()=>bell(f,0.15),i*260));};
@@ -231,8 +277,11 @@ const finishChime=()=>{[523.3,659.3,784].forEach((f,i)=>setTimeout(()=>bell(f,0.
 /* ═════ UI ═════ */
 let cur=T[0];
 function buildList(){
-  $('list').innerHTML=T.map(t=>`<button class="tq" data-id="${t.id}"><span class="dn"></span><b>${t.name}</b>
-    <div class="pt">${t.id==='wim'?'30 · შეკავება · 15':t.id==='kap'?'30 ბიძგი × 3':patStr(t)}</div><div class="pu">${t.pu}</div></button>`).join('');
+  const card=t=>`<button class="tq${t.adv?' adv':''}" data-id="${t.id}"><span class="dn"></span><b>${t.name}</b>
+    <div class="pt">${t.id==='wim'?'30 · შეკავება · 15':t.id==='kap'?'30 ბიძგი × 3':patStr(t)}</div><div class="pu">${t.pu}</div></button>`;
+  $('list').innerHTML='<div class="grp">ძირითადი</div>'+T.filter(t=>!t.adv).map(card).join('')+
+    '<div class="grp adv">მოწინავე · ძლიერი ტექნიკები<small>შეკავებები, ჰიპერვენტილაცია, ბანდჰები. მხოლოდ მჯდომარე ან წოლით, არასდროს წყალში ან საჭესთან. ჯერ ძირითადი აითვისე; თავბრუსხვევაზე — გაჩერდი.</small></div>'+
+    T.filter(t=>t.adv).map(card).join('');
   document.querySelectorAll('.tq').forEach(b=>b.onclick=()=>{select(b.dataset.id);
     if(innerWidth<860)document.querySelector('.player').scrollIntoView({behavior:'smooth'});});
 }
@@ -242,11 +291,11 @@ function select(id){
   $('info').innerHTML=`<h2>${cur.name}</h2><div class="en">${cur.en} · ${cur.pu}</div><p>${cur.desc}</p>
     <h3>როგორ</h3><p>${cur.how}</p><div class="daily">📅 <b>დღიური ნორმა:</b> ${cur.daily}</div>${cur.warn?`<div class="warn">⚠ ${cur.warn}</div>`:''}`;
   $('cycles').value=cur.cyc;updCyc();
-  $('pat').innerHTML=cur.ph.map((p,i)=>`<span data-i="${i}" style="border-color:${COL[p.k]};color:${COL[p.k]}">${p.l||LBL[p.k]}${p.k==='wave'||p.k==='pulse'?' ×'+p.n:p.k==='open'?'':' '+p.s}</span>`).join('');
+  $('pat').innerHTML=cur.ph.map((p,i)=>`<span data-i="${i}" style="border-color:${COL[p.k]};color:${COL[p.k]}">${p.l||LBL[p.k]}${p.k==='wave'||p.k==='pulse'||p.k==='shallow'?' ×'+p.n:p.k==='open'?'':' '+p.s}</span>`).join('');
   try{history.replaceState(null,'','#'+cur.id);}catch(e){}
 }
 function cycles(){return Math.max(1,Math.min(cur.max*3,+$('cycles').value||cur.cyc));}
-function updCyc(){$('cyLbl').textContent=(cur.id==='wim'||cur.id==='kap'?'რაუნდი':'ციკლი')+' · ≈ '+fmtT(roundSec(cur)*cycles());}
+function updCyc(){$('cyLbl').textContent=unitOf(cur)+' · ≈ '+fmtT(roundSec(cur)*cycles());}
 $('minus').onclick=()=>{$('cycles').value=Math.max(1,cycles()-1);updCyc();};
 $('plus').onclick=()=>{$('cycles').value=cycles()+1;updCyc();};
 $('cycles').oninput=updCyc;
@@ -308,11 +357,15 @@ function loop(){
     if(sub!==run.lastSub&&sub<p.n){run.lastSub=sub;tone(520,380,0.09,'square',0.05);}
     lbl='ბიძგი · '+Math.min(p.n,sub+1)+'/'+p.n;}
   else if(p.k==='open'){scale=.45+.03*Math.sin(el*2);left=el;frac=el/p.s;}
+  else if(p.k==='shallow'){const per=p.s/p.n,sub=Math.floor(el/per),f=(el%per)/per;
+    scale=f<.4?.45+.16*ease(f/.4):.61-.16*ease((f-.4)/.6);
+    lbl=(f<.4?'ცოტა ჩაისუნთქე':'მოდუნდი')+' · '+Math.min(p.n,sub+1)+'/'+p.n;}
+  else if(p.k==='rest'){const f=(el%6)/6;scale=f<.45?.5+.25*ease(f/.45):.75-.25*ease((f-.45)/.55);}
   orb.style.transform=`scale(${scale.toFixed(3)})`;
   arc.style.strokeDashoffset=(CIRC*(1-Math.min(1,frac))).toFixed(1);
   $('ph').textContent=lbl;$('ph').style.color=COL[p.k];
   $('sec').textContent=p.k==='open'?Math.floor(el)+'″':Math.max(1,Math.ceil(left));
-  const unit=run.tech.id==='wim'||run.tech.id==='kap'?'რაუნდი':'ციკლი';
+  const unit=unitOf(run.tech);
   $('cy').textContent=`${unit} ${p.c+1} / ${run.list[run.list.length-1].c+1}`;
   /* seconds tick */
   if($('oTick').checked&&p.k!=='wave'&&p.k!=='pulse'){const w=Math.floor(el);if(w!==run.lastTick&&w>0){run.lastTick=w;tone(880,880,0.04,'sine',0.035);}}
