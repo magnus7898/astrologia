@@ -1,4 +1,4 @@
-l<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ka">
 <head>
 <meta charset="UTF-8">
@@ -73,6 +73,18 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin:0 3px 0 8px}
 .ex{font-size:11px;color:var(--ink-dim);line-height:1.8;columns:3 180px}
 .note{line-height:1.7}
+.srch{margin-top:14px}
+.srch input{width:100%;padding:10px 12px;font-size:13px;border-color:var(--border-h)}
+.qres{display:none;margin-top:6px;max-height:320px;overflow:auto;border:1px solid var(--border);border-radius:8px;background:var(--raised)}
+.qres.on{display:block}
+.qres button{display:flex;justify-content:space-between;align-items:baseline;gap:10px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);color:var(--ink);font:inherit;font-size:12.5px;padding:7px 11px;cursor:pointer}
+.qres button:last-child{border-bottom:none}
+.qres button:hover,.qres button.on{background:rgba(201,168,76,.1);color:var(--gold-lt)}
+.qres button small{color:var(--ink-dim);font-size:10.5px;white-space:nowrap;flex:none}
+.qres .none{padding:9px 11px;font-size:12px;color:var(--ink-dim)}
+.frow select{flex:1 1 130px}
+.sec-t{font-size:10.5px;letter-spacing:1.5px;color:var(--gold);margin-top:14px;text-transform:uppercase;font-family:'Cinzel',serif}
+#res [data-f]{cursor:pointer}
 @media (max-width:640px){.jump{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.jump button{flex:none}.top2{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.br{grid-template-columns:minmax(0,1fr) 64px 42px 40px}}
 </style>
 </head>
@@ -81,7 +93,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 <header>
   <a class="back" href="index.html">← მთავარი</a>
   <h1>სტატისტიკა</h1>
-  <div class="sub">რიცხვი · თვე · წელი → მატრიცა · პითაგორას კვადრატი · ადამიანის დიზაინი · ასტროლოგია</div>
+  <div class="sub">ნებისმიერი ნიშანი → მატრიცა · პითაგორას კვადრატი · ადამიანის დიზაინი · ასტროლოგია</div>
 </header>
 
 <div class="panel">
@@ -91,13 +103,22 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
     <label>თვე<select id="cm"></select></label>
     <label>წელი<input id="cy" type="number" min="-3000" max="9999" placeholder="ნებისმიერი"></label>
   </div>
-  <div class="hint" style="margin-top:10px">აირჩიე ერთი, ორი ან სამივე. მაგ.: მხოლოდ „3“ — ყველა, ვინც თვის 3 რიცხვში დაიბადა; „3 · მარტი“; „1990“; „3 · მარტი · 1990“.
-  ცარიელი — ყველა დაბადება.</div>
+  <div class="sec-t">ან / და — ნებისმიერი ნიშნით</div>
+  <div class="srch">
+    <input id="q" type="search" autocomplete="off" spellcheck="false"
+      placeholder="🔎 ძებნა: გენერატორი · 3/5 · კარიბჭე 34 · 34-57 · 9-6-15 · ცენტრი 22 · გარემო მთები · 11111 · ლომში …">
+    <div class="qres" id="qres"></div>
+  </div>
+  <div id="rows"></div>
+  <button class="add" id="add" type="button">+ პირობის დამატება</button>
+  <div class="pre" id="pre"></div>
+  <div class="hint" style="margin-top:10px">ყველა პირობა ერთად მოქმედებს („და“). შეგიძლია აირჩიო მხოლოდ რიცხვი/თვე/წელი, მხოლოდ ნიშნები, ან ორივე —
+  მაგ. „გენერატორი“ + „კარმული კუდი 9-6-15“ + „მარტი“. შედეგის ნებისმიერ მნიშვნელობაზე დაჭერა მას პირობად ამატებს.</div>
 </div>
 
 <div class="panel">
   <h3>2 · პერიოდი და ადგილი</h3>
-  <div class="hint" style="margin-bottom:10px">პერიოდი — საიდან აიღება დაბადებები, როცა წელი არ არის არჩეული; ამავე პერიოდით ითვლება „ჩვეულებრივი“ შესადარებლად.</div>
+  <div class="hint" style="margin-bottom:10px">პერიოდი — სადაც იძებნება პირობის შესაბამისი დაბადებები (თუ წელი არ არის არჩეული); ამავე პერიოდით ითვლება „ჩვეულებრივი“ შესადარებლად.</div>
   <div class="set">
     <label>წლიდან<input id="ya" type="number" value="1900" min="-3000" max="9999"></label>
     <label>წლამდე<input id="yb" type="number" value="2025" min="-3000" max="9999"></label>
@@ -129,7 +150,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 </div>
 
 <p class="note hint" style="margin-top:20px">
-როგორ ითვლება: არჩეული რიცხვის / თვის / წლის დაბადებებიდან აიღება შემთხვევითი მომენტები (ნებისმიერ საათზე, დროში თანაბრად) და თითოეულისთვის
+როგორ ითვლება: თარიღზე დამოკიდებული პირობები (რიცხვი, თვე, წელი, მატრიცა, პითაგორა) ჯერ ყველა დღეზე მოწმდება და შესაბამისი დღეები ზუსტად ირჩევა; ამ დღეებიდან აიღება შემთხვევითი მომენტები (ნებისმიერ საათზე, დროში თანაბრად) და თითოეულისთვის
 სრულად გამოითვლება: ბედის მატრიცა (მეთოდი 1 — 32 პოზიცია, დანიშნულებები, ჩაკრები და ყველა კოდი, როგორც მატრიცის გვერდზე),
 პითაგორას კვადრატი (კლასიკური), ადამიანის დიზაინი (26 აქტივაცია) და ტროპიკული ასტროლოგია (გეოცენტრული, ნამდვილი კვანძი, პლაციდუსის სახლები;
 ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°). შედარებისთვის იგივე ითვლება ყველა დაბადებისთვის არჩეულ პერიოდში; × — რამდენჯერ ხშირია ჯგუფში ჩვეულებრივთან შედარებით.
@@ -290,18 +311,131 @@ function condText(fl){
   return `${cfTitle(c)}: ${fl[1]==='='?'':'არა '}${v}`;
 }
 
-/* ═════════════ condition: day · month · year ═════════════ */
+/* ═════════════ condition: day · month · year + any feature ═════════════ */
 $('cd').innerHTML='<option value="">ნებისმიერი</option>'+seq(1,31).map(([k])=>`<option value="${k}">${k}</option>`).join('');
 $('cm').innerHTML='<option value="">ნებისმიერი</option>'+MON.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');
+let FL=[];   /* extra conditions: [fid, op, value] */
 function readCond(){
   const fl=[];if($('cd').value)fl.push(['day:','=',+$('cd').value]);if($('cm').value)fl.push(['month:','=',+$('cm').value]);
   const t=$('cy').value.trim();const year=t===''||isNaN(+t)?null:Math.max(-3000,Math.min(9999,Math.round(+t)));
-  return {fl,year};
+  return {fl:[...fl,...FL.filter(x=>CFM[x[0]]).map(x=>[...x])],extra:FL.length,year};
 }
 const yrTxt=y=>y<=0?`ძვ.წ. ${1-y}`:String(y);
-function condLabel(c){const d=c.fl.find(x=>x[0]==='day:'),m=c.fl.find(x=>x[0]==='month:');
+function dateLabel(c){const d=c.fl.find(x=>x[0]==='day:'),m=c.fl.find(x=>x[0]==='month:');
   const parts=[];if(d)parts.push(d[2]+' რიცხვი');if(m)parts.push(MON[m[2]-1]);if(c.year!==null)parts.push(yrTxt(c.year)+' წელი');
-  return parts.length?'დაბადებული: '+parts.join(' · '):'ყველა დაბადება';}
+  return parts.length?'დაბადებული: '+parts.join(' · '):'';}
+function condLines(c){const o=[],dl=dateLabel(c);if(dl)o.push(dl);
+  for(const f of c.fl)if(f[0]!=='day:'&&f[0]!=='month:')o.push(condText(f));return o;}
+function condLabel(c){const o=condLines(c);return o.length?o.join(' · '):'ყველა დაბადება';}
+
+/* rows */
+const RSYS=SYS;   /* systems offered in rows (date has its own fields above) */
+function sysOpts(sel){return RSYS.map(([k,n])=>`<option value="${k}"${k===sel?' selected':''}>${n}</option>`).join('');}
+function famOpts(sys,sel){return FAM.filter(f=>f.sys===sys).map(f=>`<option value="${f.id}"${f.id===sel?' selected':''}>${esc(f.label)}</option>`).join('');}
+function rowHTML(i){
+  const [fid,op,v]=FL[i],c=CFM[fid],f=c.f;
+  let h=`<span class="and">${i?'და':''}</span><select data-k="sys">${sysOpts(f.sys)}</select><select data-k="fam">${famOpts(f.sys,f.id)}</select>`;
+  if(f.pair){const [a,b]=c.p.split('-');const o=s=>BOD.map(x=>`<option value="${x[0]}"${x[0]===s?' selected':''}>${esc(BN[x[0]])}</option>`).join('');
+    h+=`<select data-k="pa">${o(a)}</select><select data-k="pb">${o(b)}</select>`;}
+  else if(f.params)h+=`<select data-k="p">${f.params.map(([k,n])=>`<option value="${esc(k)}"${String(k)===String(c.p)?' selected':''}>${esc(n)}</option>`).join('')}</select>`;
+  h+=`<select data-k="op"><option value="="${op==='='?' selected':''}>${f.multi?'აქვს':'='}</option><option value="≠"${op==='≠'?' selected':''}>${f.multi?'არ აქვს':'≠ არა'}</option></select>`;
+  h+=`<select data-k="v">${c.vals.map(([k,n])=>`<option value="${esc(k)}"${String(k)===String(v)?' selected':''}>${esc(n)}</option>`).join('')}</select>`;
+  return h+`<button class="x" type="button" title="წაშლა">×</button>`;
+}
+function drawRows(){
+  const R=$('rows');R.innerHTML='';
+  FL.forEach((_,i)=>{const d=document.createElement('div');d.className='frow';d.innerHTML=rowHTML(i);R.appendChild(d);
+    d.querySelector('.x').onclick=()=>{FL.splice(i,1);drawRows();};
+    d.querySelectorAll('select').forEach(sl=>sl.onchange=()=>onRow(i,sl.dataset.k,sl.value));});
+}
+function firstFid(famId){const f=FM[famId];if(f.pair)return famId+':Mars-Pluto';return famId+':'+(f.params?f.params[0][0]:'');}
+function onRow(i,k,val){
+  const r=FL[i],c=CFM[r[0]];
+  if(k==='sys'){const f=FAM.find(x=>x.sys===val);r[0]=firstFid(f.id);r[2]=CFM[r[0]].vals[0][0];}
+  else if(k==='fam'){r[0]=firstFid(val);r[2]=CFM[r[0]].vals[0][0];}
+  else if(k==='p'){r[0]=c.f.id+':'+val;if(!CFM[r[0]].lab[String(r[2])])r[2]=CFM[r[0]].vals[0][0];}
+  else if(k==='pa'||k==='pb'){let [a,b]=c.p.split('-');if(k==='pa')a=val;else b=val;
+    if(a===b){drawRows();return;}
+    const ia=BOD.findIndex(x=>x[0]===a),ib=BOD.findIndex(x=>x[0]===b);r[0]='asp:'+(ia<ib?a+'-'+b:b+'-'+a);}
+  else if(k==='op')r[1]=val;
+  else if(k==='v'){const kk=CFM[r[0]].vals.find(x=>String(x[0])===val);r[2]=kk?kk[0]:val;}
+  drawRows();
+}
+function pushCond(fid,v,op){
+  const c=CFM[fid];if(!c)return false;const kk=c.vals.find(x=>String(x[0])===String(v));if(!kk)return false;
+  if(FL.some(x=>x[0]===fid&&String(x[2])===String(kk[0])&&x[1]===(op||'=')))return false;
+  if(!c.f.multi){const j=FL.findIndex(x=>x[0]===fid&&x[1]==='=');if(j>=0&&(op||'=')==='='){FL[j][2]=kk[0];drawRows();return true;}}
+  FL.push([fid,op||'=',kk[0]]);drawRows();return true;
+}
+$('add').onclick=()=>{FL.push(['type:','=','Generator']);drawRows();};
+
+/* search across every feature × value */
+const nz=t=>String(t).toLowerCase().replace(/[\u{FE0E}\u{FE0F}]/gu,'').replace(/\s+/g,' ').trim();
+/* extra words a person may type (English names, other forms) */
+const LOC=['ვერძში','კუროში','ტყუპებში','კირჩხიბში','ლომში','ქალწულში','სასწორში','მორიელში','მშვილდოსანში','თხის რქაში','მერწყულში','თევზებში'];
+const SEN=['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+const FALIAS={type:'type ტიპი',strat:'strategy',auth:'authority',prof:'profile',def:'definition',cent:'center centre centers ჩაკრა chakra',
+  ncent:'centers',env:'environment გარემო',dig:'digestion determination taste გემო კვება დიეტა',mot:'motivation',per:'perspective view',
+  sense:'sense',cross:'cross ჯვარი',vari:'variable arrows ისრები',chan:'channel არხი',nch:'channels',gate:'gate კარიბჭე',psun:'sun gate',
+  sign:'sign ნიშანი',house:'house',asp:'aspect',mxp:'matrix position პოზიცია',mxd:'purpose',mxe:'chakra emotion',mxc:'code კოდი combo',
+  pyc:'pythagoras პითაგორა',pyl:'line',pye:'empty ცარიელი',pyw1:'working number',pyw2:'working number',pyw3:'working number',pyw4:'working number'};
+const VALIAS=(c,v)=>{
+  if(c.f.id==='sign')return LOC[v]+' '+SEN[v];
+  if(c.f.id==='type'||c.f.id==='cent'||c.f.id==='auth')return String(v);
+  if(c.f.id==='pyc'&&+v===0)return 'ცარიელი empty ნული';
+  return '';};
+const SIDX=[];
+for(const c of CF){if(c.f.sys==='date')continue;
+  const t=c.f.multi?c.f.label:cfTitle(c),sn=(SYS.find(x=>x[0]===c.f.sys)||['',''])[1],fa=FALIAS[c.f.id]||'';
+  for(const [v,l] of c.vals)SIDX.push({fid:c.fid,v,t,l,sn,h:nz(t+' '+l+' '+v+' '+sn+' '+fa+' '+VALIAS(c,v))});}
+let QR=[],QI=0;
+function search(q){
+  const toks=nz(q).split(' ').filter(Boolean);if(!toks.length)return [];
+  const out=[];
+  for(const e of SIDX){if(!toks.every(t=>e.h.includes(t)))continue;
+    const lv=nz(e.l),vv=nz(e.v),q0=toks.join(' ');
+    const tt=nz(e.t);
+    const sc=(vv===q0||lv===q0?0:lv.startsWith(q0)||vv.startsWith(q0)?1:toks.every(t=>tt.includes(t)||lv.includes(t)||vv.includes(t))&&toks.some(t=>tt.includes(t))?2:toks.every(t=>lv.includes(t)||vv.includes(t))?3:4)*1000+e.h.length;
+    out.push([sc,e]);}
+  return out.sort((a,b)=>a[0]-b[0]).slice(0,40).map(x=>x[1]);
+}
+function drawQ(){
+  const box=$('qres'),q=$('q').value;
+  if(!q.trim()){box.classList.remove('on');box.innerHTML='';return;}
+  QR=search(q);QI=0;box.classList.add('on');
+  if(!QR.length){box.innerHTML='<div class="none">ვერაფერი მოიძებნა</div>';return;}
+  box.innerHTML=QR.map((e,i)=>`<button type="button" data-i="${i}"${i===QI?' class="on"':''}><span>${esc(e.t)}: <b>${esc(e.l)}</b></span><small>${esc(e.sn)}</small></button>`).join('');
+  box.querySelectorAll('button').forEach(b=>b.onclick=()=>pickQ(+b.dataset.i));
+}
+function pickQ(i){const e=QR[i];if(!e)return;pushCond(e.fid,e.v);$('q').value='';drawQ();$('q').focus();}
+$('q').addEventListener('input',drawQ);
+$('q').addEventListener('keydown',ev=>{
+  if(ev.key==='Enter'){ev.preventDefault();if(QR.length)pickQ(QI);}
+  else if(ev.key==='ArrowDown'||ev.key==='ArrowUp'){if(!QR.length)return;ev.preventDefault();
+    QI=(QI+(ev.key==='ArrowDown'?1:-1)+QR.length)%QR.length;
+    $('qres').querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',i===QI));
+    const b=$('qres').querySelector('button.on');b&&b.scrollIntoView({block:'nearest'});}
+  else if(ev.key==='Escape'){$('q').value='';drawQ();}
+});
+
+/* presets */
+const PRE=[
+  ['რეფლექტორი',[['type:','=','Reflector']]],
+  ['პროფილი 1/3',[['prof:','=','1/3']]],
+  ['არხი 34-57 ძალაუფლება',[['chan:','=','34-57']]],
+  ['კარიბჭე 51',[['gate:','=',51]]],
+  ['ემოციური ავტორიტეტი',[['auth:','=','emo']]],
+  ['გარემო: მთები',[['env:','=',6]]],
+  ['მატრიცის ცენტრი 22',[['mxp:Cv','=',22]]],
+  ['კარმული კუდი 18-9-9',[['mxc:karmic_tail','=','18-9-9']]],
+  ['11111 პითაგორაში',[['pyc:1','=',5]]],
+  ['ცარიელი 5 (ლოგიკა)',[['pyc:5','=',0]]],
+  ['☉ ლომში',[['sign:Sun','=',4]]],
+  ['♂ □ ♇',[['asp:Mars-Pluto','=',90]]],
+  ['გენერატორი + მატრიცის ცენტრი 5',[['type:','=','Generator'],['mxp:Cv','=',5]]],
+].filter(([,c])=>c.every(([f,,v])=>CFM[f]&&CFM[f].lab[String(v)]!==undefined));
+$('pre').innerHTML=PRE.map(([n],i)=>`<button type="button" data-i="${i}">${esc(n)}</button>`).join('');
+$('pre').querySelectorAll('button').forEach(b=>b.onclick=()=>{FL=PRE[+b.dataset.i][1].map(x=>[...x]);$('cd').value='';$('cm').value='';drawRows();go();});
 
 /* ═════════════ place ═════════════ */
 const PLACES=[['თბილისი',41.72,44.79,4],['ბათუმი',41.64,41.63,4],['ქუთაისი',42.27,42.70,4],['მოსკოვი',55.76,37.62,3],['სტამბოლი',41.01,28.98,3],
@@ -327,12 +461,12 @@ function params(){
   return {a,b,lat:+$('lat').value||0,lon:+$('lon').value||0,off:+$('off').value||0,N:+$('nk').value};
 }
 async function go(){
-  const tok=++RUN,P=params(),C=readCond(),FL=C.fl,F=compile(FL),HAS=FL.length>0||C.year!==null;
+  const tok=++RUN,P=params(),C=readCond(),F=compile(C.fl),HAS=C.fl.length>0||C.year!==null;
   {const d=+$('cd').value,m=+$('cm').value;
    if(d&&m&&d>[31,29,31,30,31,30,31,31,30,31,30,31][m-1]){$('msg').innerHTML=`<span class="bad">${d} ${MON[m-1]} არ არსებობს.</span>`;$('res').style.display='none';return;}}
   $('ya').value=P.a;$('yb').value=P.b;
   $('run').disabled=true;$('stop').hidden=false;
-  try{location.hash=encodeURIComponent(JSON.stringify({d:$('cd').value,m:$('cm').value,y:$('cy').value,a:P.a,b:P.b,lat:P.lat,lon:P.lon,off:P.off,n:P.N}));}catch(e){}
+  try{location.hash=encodeURIComponent(JSON.stringify({d:$('cd').value,m:$('cm').value,y:$('cy').value,f:FL,a:P.a,b:P.b,lat:P.lat,lon:P.lon,off:P.off,n:P.N}));}catch(e){}
   try{
     $('msg').textContent='⏳ ასტრონომიული ბიბლიოთეკა იტვირთება…';
     await SE.init();
@@ -349,17 +483,32 @@ async function go(){
       }
       BASE=B;BASEKEY=key;
     }
-    let M=BASE,tries=BASE.n,acc=BASE.n,ex=[];
+    let M=BASE,tries=BASE.n,acc=BASE.n,ex=[],DLF=1;
     if(HAS){
       /* matches come from the chosen year, or from the whole period */
       const m0=C.year!==null?SE.calJD(C.year,1,1,0)-P.off/24:j0,m1=C.year!==null?SE.calJD(C.year+1,1,1,0)-P.off/24:j1,mspan=m1-m0;
+      /* date-type conditions (day, month, matrix, Pythagoras) depend on the day only:
+         test every day once, then sample moments only inside the matching days */
+      let DL=null,dayFrac=1;
+      if(F.some(q=>q.st===0)){
+        const nd=Math.max(1,Math.round(mspan));const buf=new Int32Array(nd);let L=0,t0=performance.now();
+        for(let k=0;k<nd;k++){
+          if(passes(F,SE.stage0(m0+k+0.5,P.off),0))buf[L++]=k;
+          if((k&2047)===0&&performance.now()-t0>50){
+            $('bar').style.width=(50+25*k/nd)+'%';
+            $('msg').textContent=`დღეების შემოწმება: ${k.toLocaleString()} / ${nd.toLocaleString()} · შესაფერისი ${L.toLocaleString()}`;
+            await tick();t0=performance.now();if(tok!==RUN)return;}
+        }
+        if(!L){$('msg').innerHTML='<span class="bad">ამ პერიოდში ასეთი თარიღი არ არსებობს — ეს კომბინაცია შეუძლებელია (ან სცადე სხვა პერიოდი).</span>';$('res').style.display='none';return;}
+        DL=buf.subarray(0,L);dayFrac=L/nd;DLF=dayFrac;
+      }
       /* matches: repeated stratified sweeps until N found, the condition proves too rare, or time is up */
       M=newAcc();tries=0;acc=0;const N=P.N,T0=performance.now();let t0=T0,sweep=0,stop='';
       const SW=Math.max(2000,N*4);
       outer:for(;;){
         const w=mspan/SW;
         for(let i=0;i<SW;i++){
-          const jd=m0+(i+Math.random())*w;tries++;
+          const jd=DL?m0+DL[Math.min(DL.length-1,Math.floor((i+Math.random())*DL.length/SW))]+Math.random():m0+(i+Math.random())*w;tries++;
           let S=SE.stage0(jd,P.off);
           if(passes(F,S,0)){S=SE.stage1(S,P.lat,P.lon);
             if(passes(F,S,1)){S=SE.stage2(S);
@@ -370,7 +519,7 @@ async function go(){
             $('bar').style.width=(50+50*Math.min(1,Math.max(M.n/N,el/150)))+'%';
             $('msg').textContent=`პირობის ძებნა: ნაპოვნია ${M.n.toLocaleString()} / ${N.toLocaleString()} · შემოწმდა ${tries.toLocaleString()} მომენტი`;
             await tick();t0=performance.now();if(tok!==RUN)return;
-            if(el>150&&M.n>=30){stop='t';break outer;}
+            if((el>45&&M.n>=Math.min(N,600))||(el>150&&M.n>=30)){stop='t';break outer;}
             if(el>60&&M.n<30&&tries>2e5){stop='rare';break outer;}
           }
           if(stop)break outer;
@@ -378,10 +527,10 @@ async function go(){
         sweep++;if(M.n>=N){stop='n';break;}
       }
       if(!M.n){$('msg').innerHTML='<span class="bad">ამ პირობით დაბადება ვერ მოიძებნა — შესაძლოა ეს კომბინაცია შეუძლებელია ან ძალიან იშვიათი.</span>';$('res').style.display='none';return;}
-      $('msg').textContent=stop==='n'?'':stop==='t'?'დრო ამოიწურა — ნაჩვენებია ნაპოვნი რუქები.':'პირობა ძალიან იშვიათია — ნაჩვენებია ნაპოვნი რუქები.';
+      $('msg').textContent=stop==='n'?'':stop==='t'?`იშვიათი პირობაა — ნაჩვენებია ${M.n.toLocaleString()} ნაპოვნი რუქა (სტატისტიკისთვის საკმარისია).`:'პირობა ძალიან იშვიათია — ნაჩვენებია ნაპოვნი რუქები.';
     }else $('msg').textContent='';
     $('bar').style.width='100%';
-    RES={M,B:BASE,P,C,has:HAS,freq:HAS?acc/tries:1,tries,ex};
+    RES={M,B:BASE,P,C,has:HAS,freq:HAS?acc/tries*DLF:1,tries,ex};
     render();
   }catch(e){$('msg').innerHTML='<span class="bad">შეცდომა: '+esc(e.message)+'</span>';console.error(e);}
   finally{if(tok===RUN){$('run').disabled=false;$('stop').hidden=true;}}
@@ -403,21 +552,21 @@ function render(){
   const R=RES,M=R.M,B=R.B,P=R.P;
   $('res').style.display='block';
   const yr=y=>y<=0?`ძვ.წ. ${1-y}`:y;
-  const C=R.C,showF=C.year===null&&C.fl.length;
+  const C=R.C,showF=C.fl.length>0,per=C.year!==null?yrTxt(C.year)+' წლის':`${yrTxt(P.a)}–${yrTxt(P.b)} წლების`;
   $('sum').innerHTML=filtered()
-    ?`<div class="cond">${esc(condLabel(C))}</div>
-      ${showF?`<div class="freq">${fp(R.freq*100)}%</div><div class="meta">დაბადებებიდან (ანუ ≈ 1 / ${R.freq>0?Math.round(1/R.freq).toLocaleString():'∞'})</div>`:''}
+    ?`<div class="cond">${condLines(C).map(esc).join('<br><span style="color:var(--ink-dim);font-size:12px">და</span><br>')||'ყველა დაბადება'}</div>
+      ${showF?`<div class="freq">${fp(R.freq*100)}%</div><div class="meta">${per} დაბადებებიდან აკმაყოფილებს პირობას (ანუ ≈ 1 / ${R.freq>0?Math.round(1/R.freq).toLocaleString():'∞'})</div>`:''}
       <div class="meta" style="margin-top:6px">ჯგუფი: ${M.n.toLocaleString()} რუქა · შედარება: ყველა დაბადება ${yrTxt(P.a)}–${yrTxt(P.b)} (${B.n.toLocaleString()} რუქა) · UTC${P.off>=0?'+':''}${P.off}</div>`
-    :`<div class="cond">ყველა დაბადება</div><div class="meta">${B.n.toLocaleString()} რუქა · ${yrTxt(P.a)}–${yrTxt(P.b)} · UTC${P.off>=0?'+':''}${P.off} — აირჩიე რიცხვი, თვე ან წელი, რომ ნახო რით განსხვავდება ჯგუფი</div>`;
+    :`<div class="cond">ყველა დაბადება</div><div class="meta">${B.n.toLocaleString()} რუქა · ${yrTxt(P.a)}–${yrTxt(P.b)} · UTC${P.off>=0?'+':''}${P.off} — აირჩიე რიცხვი, თვე, წელი ან ნებისმიერი ნიშანი, რომ ნახო რით განსხვავდება ჯგუფი</div>`;
   $('legend').innerHTML=filtered()
     ?`<span style="color:var(--gold-lt)">▬</span> ჯგუფში · <span style="color:#8fb8e8">|</span> ჩვეულებრივ · ×  რამდენჯერ ხშირია`+
-     `<i style="background:rgba(var(--up),.55)"></i>უფრო ხშირი<i style="background:rgba(var(--dn),.5)"></i>უფრო იშვიათი · ფერი მხოლოდ სანდო სხვაობაზე`
-    :`ფერი — წილი რიგში (რაც უფრო მკვეთრია, მით ხშირი) · ოქროს ხაზი — ყველაზე ხშირი`;
+     `<i style="background:rgba(var(--up),.55)"></i>უფრო ხშირი<i style="background:rgba(var(--dn),.5)"></i>უფრო იშვიათი · ფერი მხოლოდ სანდო სხვაობაზე · მნიშვნელობაზე დაჭერა — პირობად დამატება`
+    :`ფერი — წილი რიგში (რაც უფრო მკვეთრია, მით ხშირი) · ოქროს ხაზი — ყველაზე ხშირი · მნიშვნელობაზე დაჭერა — პირობად დამატება`;
   /* top lifts */
   $('topP').style.display=filtered()?'':'none';
   if(filtered()){
-    const all=[];
-    for(const x of CF){if(x.f.sys==='date')continue;
+    const all=[],used=new Set(C.fl.map(f=>f[0]));
+    for(const x of CF){if(x.f.sys==='date'||used.has(x.fid))continue;
       for(const [v] of x.vals){const s=statOf(x.fid,String(v));if(s.k+ (B.c[x.fid][v]||0)<8)continue;all.push({x,v,s});}}
     const up=all.filter(a=>a.s.z>3&&a.s.lift>1.15).sort((a,b)=>b.s.z-a.s.z).slice(0,24);
     const dn=all.filter(a=>a.s.z<-3&&a.s.lift<0.87).sort((a,b)=>a.s.z-b.s.z).slice(0,24);
@@ -441,6 +590,7 @@ function render(){
   $('ex').innerHTML=filtered()&&R.ex&&R.ex.length?R.ex.slice(0,45).map(j=>exDate(j)).join('<br>'):'—';
   $('ex').parentElement.style.display=filtered()?'':'none';
   $('res').querySelectorAll('.more').forEach(b=>b.onclick=()=>{const c=b.previousElementSibling;c.querySelectorAll('.br[hidden]').forEach(x=>x.hidden=false);b.remove();});
+  $('res').querySelectorAll('[data-f]').forEach(el=>el.onclick=()=>{if(pushCond(el.dataset.f,el.dataset.v))go();});
   $('sum').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function exDate(jd){const p=SE.jdDay(jd+RES.P.off/24),f=((jd+RES.P.off/24+0.5)%1+1)%1,mi=Math.floor(f*1440);
@@ -477,9 +627,11 @@ function heatHTML(f){
 (function(){
   try{const h=decodeURIComponent(location.hash.slice(1));if(h){const s=JSON.parse(h);
     if(s.d!=null)$('cd').value=s.d;if(s.m!=null)$('cm').value=s.m;if(s.y!=null)$('cy').value=s.y;
+    if(Array.isArray(s.f))FL=s.f.filter(x=>Array.isArray(x)&&CFM[x[0]]);
     if(s.a!=null)$('ya').value=s.a;if(s.b!=null)$('yb').value=s.b;
     if(s.lat!=null){$('lat').value=s.lat;$('lon').value=s.lon;$('off').value=s.off;const i=PLACES.findIndex(p=>p[1]===s.lat&&p[2]===s.lon);$('place').value=i>=0?i:PLACES.length-1;}
     if(s.n)$('nk').value=s.n;}}catch(e){}
+  drawRows();
 })();
 </script>
 </body>
