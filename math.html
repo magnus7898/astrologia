@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>მათემატიკის ლაბორატორია</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Noto+Sans+Georgian:wght@400;500;600;700&family=Noto+Serif+Georgian:wght@500;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
@@ -140,6 +145,8 @@ summary{cursor:pointer;color:var(--gold);font-size:13px}
 .dots i.y{background:var(--ok)} .dots i.n{background:var(--bad)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <header>
@@ -1006,3 +1013,5 @@ $('mOps').querySelector('[data-op="solve"]').click();
 const h=(location.hash||'').slice(1);if(TOPICS&&document.querySelector(`.tab[data-tab="${h}"]`))openTab(h);else plots.forEach(p=>p.draw());
 })();
 </script>
+</body>
+</html>
