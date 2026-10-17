@@ -130,6 +130,12 @@ input:focus,select:focus{outline:none;border-color:var(--purple);box-shadow:0 0 
 input::placeholder{color:rgba(155,168,184,.35)}
 input[readonly]{background:rgba(6,5,18,.7);color:rgba(155,168,184,.6)}
 .city-hint{font-size:11px;color:var(--purple);margin-top:2px;min-height:14px;padding-left:2px}
+.city-list{display:flex;flex-direction:column;margin-top:4px;border:1px solid var(--brd);border-radius:8px;overflow:hidden;background:rgba(8,6,20,.92)}
+.city-list button{all:unset;box-sizing:border-box;display:flex;justify-content:space-between;gap:8px;width:100%;padding:10px 12px;min-height:40px;font-size:13px;color:var(--txt);cursor:pointer;border-top:1px solid rgba(122,90,34,.25);font-family:inherit}
+.city-list button:first-child{border-top:0}
+.city-list button:hover,.city-list button:focus-visible{background:rgba(217,168,96,.14)}
+.city-list button.on{background:rgba(217,168,96,.2);color:var(--gold)}
+.city-list small{color:var(--dim);font-size:11px;white-space:nowrap}
 .tz-display{
   font-size:11px;color:var(--gold);margin-bottom:12px;
   background:rgba(6,5,18,.5);border-radius:6px;padding:5px 10px;
@@ -1101,34 +1107,83 @@ function setMode(mode){
 }
 
 // ── GEOCODE ──
-const cityTimers={};
+/* Typing clears the old coordinates (no more silently using a previous city),
+   asks /geocode/search for up to 8 matches (Georgian, Russian, Latin names,
+   most-populous first), fills the best one and lists the others to pick from.
+   generate() waits for any search still in flight. */
+const cityTimers={},_geoSeq={},_geoDone={};
+window._geoPending={};
+function _geoEls(prefix){
+  const g=id=>document.getElementById(prefix+id);
+  return{city:g('-city'),hint:g('-city-hint'),lat:g('-lat'),lon:g('-lon'),tz:g('-tz'),tzd:g('-tz-display')};
+}
+function _geoPop(n){return !n?'':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':String(n);}
+function _geoFill(prefix,d){
+  const e=_geoEls(prefix);
+  if(e.lat)e.lat.value=(+d.lat).toFixed(4);
+  if(e.lon)e.lon.value=(+d.lon).toFixed(4);
+  if(e.tz)e.tz.value=d.tz_name||'UTC';
+  if(e.tzd)e.tzd.textContent='🕐 '+(d.tz_name||'UTC')+' · 📍 '+d.display;
+  if(e.hint)e.hint.textContent='📍 '+d.display;
+  if(prefix==='acg'&&typeof scheduleAcgUpdate==='function')scheduleAcgUpdate();
+}
+function _geoList(prefix,list){
+  const e=_geoEls(prefix);if(!e.hint)return;
+  let box=document.getElementById(prefix+'-city-list');
+  if(box)box.remove();
+  if(!list||list.length<2)return;
+  box=document.createElement('div');box.className='city-list';box.id=prefix+'-city-list';
+  list.forEach((d,i)=>{
+    const b=document.createElement('button');b.type='button';if(i===0)b.className='on';
+    b.innerHTML=`<span>${d.display}</span><small>${_geoPop(d.pop)}</small>`;
+    b.addEventListener('click',()=>{_geoFill(prefix,d);box.remove();});
+    box.appendChild(b);
+  });
+  e.hint.after(box);
+}
 function searchCity(prefix){
   clearTimeout(cityTimers[prefix]);
-  // handle special case rl-birth
-  const cityId=prefix+'-city', hintId=prefix+'-city-hint', latId=prefix+'-lat', lonId=prefix+'-lon', tzId=prefix+'-tz', tzDisp=prefix+'-tz-display';
-  const cityEl=document.getElementById(cityId);
-  if(!cityEl)return;
+  const e=_geoEls(prefix);
+  if(!e.city)return;
+  if(_geoDone[prefix]){_geoDone[prefix]();delete _geoDone[prefix];}
+  if(e.lat)e.lat.value='';if(e.lon)e.lon.value='';
+  if(e.tzd)e.tzd.textContent='—';
+  _geoList(prefix,null);
+  const q=e.city.value.trim();
+  if(q.length<2){e.hint.textContent='';delete window._geoPending[prefix];return;}
+  e.hint.textContent='⏳ ძიება...';
+  window._geoPending[prefix]=new Promise(r=>{_geoDone[prefix]=r;});
+  const my=_geoSeq[prefix]=(_geoSeq[prefix]||0)+1;
   cityTimers[prefix]=setTimeout(async()=>{
-    const city=cityEl.value;
-    if(city.length<2)return;
-    const hint=document.getElementById(hintId);
-    hint.textContent='⏳ ძიება...';
     try{
-      const r=await fetch(`${BACKEND}/geocode`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city})});
-      const raw=await r.text();
-      let d;try{d=JSON.parse(raw);}catch(e){hint.textContent='❌ Error';return;}
-      if(d.error){hint.textContent='❌ '+d.error;return;}
-      const latEl=document.getElementById(latId);
-      const lonEl=document.getElementById(lonId);
-      if(latEl)latEl.value=d.lat.toFixed(4);
-      if(lonEl)lonEl.value=d.lon.toFixed(4);
-      document.getElementById(tzId).value=d.tz_name||'UTC';
-      const tzEl=document.getElementById(tzDisp);
-      if(tzEl)tzEl.textContent='🕐 '+d.tz_name+' · 📍 '+d.display;
-      hint.textContent='📍 '+d.display;
-    }catch(e){hint.textContent='❌ '+e.message;}
-  },600);
+      let list=null;
+      try{
+        const r=await fetch(`${BACKEND}/geocode/search`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q})});
+        if(r.ok){const j=await r.json();if(Array.isArray(j.results))list=j.results;}
+      }catch(_){}
+      if(list===null){            /* older backend without /geocode/search */
+        const r=await fetch(`${BACKEND}/geocode`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city:q})});
+        let d;try{d=JSON.parse(await r.text());}catch(_){d={error:'Error'};}
+        list=d.error?[]:[d];
+      }
+      if(my!==_geoSeq[prefix])return;          /* user kept typing */
+      if(!list.length){e.hint.textContent='❌ ვერ მოიძებნა — სცადეთ ლათინურად ან სრული სახელი';return;}
+      _geoFill(prefix,list[0]);
+      _geoList(prefix,list);
+    }catch(err){if(my===_geoSeq[prefix])e.hint.textContent='❌ '+err.message;}
+    finally{
+      if(my===_geoSeq[prefix]){
+        if(_geoDone[prefix]){_geoDone[prefix]();delete _geoDone[prefix];}
+        delete window._geoPending[prefix];
+      }
+    }
+  },350);
 }
+
+document.addEventListener('click',ev=>{
+  if(ev.target.closest('.city-list')||ev.target.matches('input[id$="-city"]'))return;
+  document.querySelectorAll('.city-list').forEach(x=>x.remove());
+});
 
 function toggleTU(prefix){
   const unk=document.getElementById(prefix+'-time-unknown').checked;
@@ -1699,6 +1754,7 @@ async function generate(){
   const btn=document.querySelector('.form-section.active .gen-btn:last-child');
   if(btn){btn.disabled=true;btn.textContent='⏳ იტვირთება...';}
   try{
+    await Promise.all(Object.values(window._geoPending||{}));
     const mode=currentMode;
     window._cindReq=null;
 
@@ -1930,8 +1986,10 @@ const DOMX_MOKA={cardinal:"კარდინალური",fixed:"ფიქ�
 let SHOW_DEGREES = true;
 /* re-render after a resize or rotation so the label scaling stays right */
 if(typeof window!=='undefined'){
-  let _rt=null;
+  let _rt=null,_rw=window.innerWidth;
   window.addEventListener('resize',()=>{
+    if(Math.abs(window.innerWidth-_rw)<2)return;   /* height-only = mobile URL bar */
+    _rw=window.innerWidth;
     clearTimeout(_rt);
     _rt=setTimeout(()=>{ if(typeof redrawCurrent==='function')redrawCurrent(); },350);
   });
@@ -2457,7 +2515,11 @@ function renderCinderella(r){
 function redrawCurrent(){
   const r=window._lastRender;
   if(!r)return;
+  const y=window.scrollY;
+  window._redrawing=true;
   try{ r.fn.apply(null,r.args); }catch(e){}
+  window._redrawing=false;
+  window.scrollTo({top:y,behavior:'instant'});
 }
 function showSingleChart(data,label,dual){
   window._lastRender={fn:showSingleChart,args:[data,label,dual]};
@@ -2488,7 +2550,7 @@ function showSingleChart(data,label,dual){
   setupSkyChartCard();
   if(currentMode!=='pastlife'){const _pw=document.getElementById('pl-incarn-wrap');if(_pw)_pw.remove();if(window._plMap){window._plMap.remove();window._plMap=null;}}else{plPlaceTable();}
   const _sc=document.getElementById('synastry-score-card');if(_sc)_sc.style.display='none';
-  document.getElementById('chart-area').scrollIntoView({behavior:'smooth',block:'start'});
+  if(!window._redrawing)document.getElementById('chart-area').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 let _d1=null,_d2=null,_name1='',_name2='',_crossAsp=[];
@@ -2547,7 +2609,7 @@ function _renderDouble(d1,d2,name1,name2,label,crossAsp){
   const filteredAsp=crossAsp.filter(isAspectVisible);
   drawAspectTable(filteredAsp,'aspect-tbody','aspect-table-title',`⚡ ჯვარედინი ასპექტები: ${name1} × ${name2}`);
   drawWheel(d1,d2,filteredAsp);
-  document.getElementById('chart-area').scrollIntoView({behavior:'smooth',block:'start'});
+  if(!window._redrawing)document.getElementById('chart-area').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function showOwnAspects(d1,d2,name1,name2){
