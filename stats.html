@@ -51,6 +51,7 @@ section.sys>h2{font-family:'Cinzel',serif;font-weight:400;font-size:15px;letter-
 .card h4{font-weight:400;font-size:13px;color:var(--gold-lt);margin-bottom:8px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .card h4 small{font-size:10.5px;color:var(--ink-dim);font-weight:300}
 .bars{display:flex;flex-direction:column;gap:2px}
+.bars.long{max-height:420px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--border-h) transparent}
 .br{display:grid;grid-template-columns:minmax(0,1fr) 92px 46px 44px;gap:6px;align-items:center;font-size:11.5px;padding:2px 4px;border-radius:4px}
 .br:hover{background:rgba(201,168,76,.07)}
 .br .l{color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -61,7 +62,9 @@ section.sys>h2{font-family:'Cinzel',serif;font-weight:400;font-size:15px;letter-
 .br .p{text-align:right;color:var(--ink);font-family:'Cinzel',serif;font-size:11px}
 .br .k{text-align:right;font-size:10.5px;color:var(--ink-dim)}
 .br .k.u{color:rgb(var(--up))}.br .k.d{color:rgb(var(--dn))}
-.more{background:none;border:none;color:var(--gold);font:inherit;font-size:11px;cursor:pointer;margin-top:4px}
+.cards{grid-auto-flow:row dense}
+.card.span2{grid-column:span 2}
+@media (max-width:700px){.card.span2{grid-column:auto}}
 .hw{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.heat{border-collapse:separate;border-spacing:2px;font-size:10.5px;width:100%}
 table.heat th{font-weight:400;color:var(--ink-dim);padding:2px 3px;white-space:nowrap}
@@ -703,11 +706,11 @@ function render(){
       card.innerHTML=f.heat?heatHTML(f):barsHTML(f);box.appendChild(card);}
     H.appendChild(sec);
   }
+  $('sections').querySelectorAll('.bars.long').forEach(b=>b.closest('.card').classList.add('span2'));
   $('jump').innerHTML=(filtered()?'<button data-j="topP">★ მთავარი</button>':'')+SYS.map(([k,n])=>`<button data-j="sys-${k}">${n}</button>`).join('');
   $('jump').querySelectorAll('button').forEach(b=>b.onclick=()=>$(b.dataset.j).scrollIntoView({behavior:'smooth',block:'start'}));
   $('ex').innerHTML=filtered()&&R.ex&&R.ex.length?R.ex.slice(0,45).map(j=>exDate(j)).join('<br>'):'—';
   $('ex').parentElement.style.display=filtered()?'':'none';
-  $('res').querySelectorAll('.more').forEach(b=>b.onclick=()=>{const c=b.previousElementSibling;c.querySelectorAll('.br[hidden]').forEach(x=>x.hidden=false);b.remove();});
   $('res').querySelectorAll('[data-f]').forEach(el=>el.onclick=()=>{if(pushCond(el.dataset.f,el.dataset.v))go();});
   $('sum').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -720,12 +723,11 @@ function barsHTML(f,x0,title){
   if(many)rows.sort((a,b)=>filtered()?(b.s.p-a.s.p)||(b.s.lift-a.s.lift):b.s.p-a.s.p);
   rows=rows.filter(r=>r.s.k||(RES.B.c[x.fid][r.v]||0)||!many);
   const mx=Math.max(...rows.map(r=>Math.max(r.s.p,filtered()?r.s.q:0)),1e-9),top=Math.max(...rows.map(r=>r.s.p));
-  const lim=many?12:rows.length;
-  const h=rows.map((r,i)=>`<div class="br${r.s.p===top&&top>0?' top':''}" data-f="${esc(x.fid)}" data-v="${esc(r.v)}" title="${esc(r.l)} — ჯგუფში ${fp(r.s.p*100)}%${filtered()?`, ჩვეულებრივ ${fp(r.s.q*100)}%`:''}"${i>=lim?' hidden':''}>
+  const h=rows.map((r,i)=>`<div class="br${r.s.p===top&&top>0?' top':''}" data-f="${esc(x.fid)}" data-v="${esc(r.v)}" title="${esc(r.l)} — ჯგუფში ${fp(r.s.p*100)}%${filtered()?`, ჩვეულებრივ ${fp(r.s.q*100)}%`:''}">
     <span class="l">${esc(r.l)}</span><span class="b"><i style="width:${100*r.s.p/mx}%"></i>${filtered()?`<u style="left:${100*r.s.q/mx}%"></u>`:''}</span>
     <span class="p">${fp(r.s.p*100)}%</span><span class="k ${liftCls(r.s)}">${liftTxt(r.s)}</span></div>`).join('');
-  const sub=f.multi?'% რუქებისა, სადაც არის':(many?'დალაგებულია სიხშირით':'');
-  return `<h4>${esc(title||f.label)}<small>${sub}</small></h4><div class="bars">${h}</div>${rows.length>lim?`<button class="more">ყველა (${rows.length}) ▾</button>`:''}`;
+  const sub=(f.multi?'% რუქებისა, სადაც არის':(many?'დალაგებულია სიხშირით':''))+(many?` · ყველა ${rows.length}`:'');
+  return `<h4>${esc(title||f.label)}<small>${sub}</small></h4><div class="bars${rows.length>14?' long':''}">${h}</div>`;
 }
 function heatHTML(f){
   const cols=f.cols,ps=f.params;
