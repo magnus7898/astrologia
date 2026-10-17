@@ -64,6 +64,7 @@ section.sys>h2{font-family:'Cinzel',serif;font-weight:400;font-size:15px;letter-
 .br .k.u{color:rgb(var(--up))}.br .k.d{color:rgb(var(--dn))}
 .cards{grid-auto-flow:row dense}
 .card.span2{grid-column:span 2}
+.br.pr{grid-template-columns:minmax(0,1fr) 70px}.br.pr .l{color:var(--ink);font-variant-numeric:tabular-nums}
 @media (max-width:700px){.card.span2{grid-column:auto}}
 .hw{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.heat{border-collapse:separate;border-spacing:2px;font-size:10.5px;width:100%}
@@ -529,7 +530,8 @@ async function shipped(key){if(SHIPPED===undefined){try{const r=await fetch('sta
   return SHIPPED&&SHIPPED.sig===SIG&&SHIPPED.key===key?SHIPPED:null;}
 const CFD=CF.filter(x=>x.f.st===0),CFT=CF.filter(x=>x.f.st>0);
 const isPy=x=>x.f.sys==='py';
-function newAcc(){const c={},nn={};for(const x of CF){c[x.fid]=Object.create(null);nn[x.fid]=0;}return {c,nn,days:0,mom:0};}
+function newAcc(){const c={},nn={};for(const x of CF){c[x.fid]=Object.create(null);nn[x.fid]=0;}return {c,nn,days:0,mom:0,yrs:Object.create(null),ny:0};}
+const yAdd=(R,S)=>{R.yrs[S.y]=(R.yrs[S.y]||0)+1;R.ny++;};
 function addSet(R,S,list,w){
   for(const x of list){if(isPy(x)&&S.y<1)continue;
     const v=x.f.get(S,x.p),o=R.c[x.fid];R.nn[x.fid]+=w;
@@ -621,7 +623,7 @@ async function go(){
       if(!hasT){
         /* date-only condition: dates exact, HD/astrology from NS moments inside the matching days */
         let i=0;
-        const ok=await charts(()=>i++<NS?draw():null,P,S=>{addSet(M,S,CFT,1);M.mom++;if(ex.length<60&&Math.random()<0.002)ex.push(S.jd);},tok,
+        const ok=await charts(()=>i++<NS?draw():null,P,S=>{addSet(M,S,CFT,1);M.mom++;yAdd(M,S);if(ex.length<60&&Math.random()<0.002)ex.push(S.jd);},tok,
           n=>{$('bar').style.width=(62+38*n/NS)+'%';$('msg').textContent=`ჯგუფი · HD და ასტროლოგია: ${n.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;});
         if(!ok)return;
         freq=dayFrac;$('msg').textContent='';
@@ -632,7 +634,7 @@ async function go(){
         const FJ=F.filter(q=>q.jd);let chk=0;
         const gen=FJ.length?()=>{for(let k=0;k<2e6;k++){const jd=draw();tries++;if(FJ.every(q=>q.test({jd})!==q.neg))return jd;}return null;}:()=>{tries++;return draw();};
         const ok=await charts(gen,P,S=>{
-            if(passes(F,S,1)&&passes(F,S,2)){acc++;addSet(M,S,CF,1);M.mom++;M.days++;if(ex.length<60&&Math.random()<0.05)ex.push(S.jd);}
+            if(passes(F,S,1)&&passes(F,S,2)){acc++;addSet(M,S,CF,1);M.mom++;M.days++;yAdd(M,S);if(ex.length<60&&Math.random()<0.05)ex.push(S.jd);}
             if(M.mom>=NS){stop='n';return false;}
             if((++chk&255)===0){const el=(performance.now()-T0)/1000;
               if((el>60&&M.mom>=2000)||(el>180&&M.mom>=30)){stop='t';return false;}
@@ -687,7 +689,7 @@ function render(){
   $('topP').style.display=filtered()?'':'none';
   if(filtered()){
     const all=[],used=new Set(C.fl.map(f=>f[0]));
-    for(const x of CF){if(x.f.sys==='date'||used.has(x.fid))continue;
+    for(const x of CF){if(used.has(x.fid))continue;
       for(const [v] of x.vals){const s=statOf(x.fid,String(v));if(s.k+ (B.c[x.fid][v]||0)<8)continue;all.push({x,v,s});}}
     const up=all.filter(a=>a.s.z>3&&a.s.lift>1.15).sort((a,b)=>b.s.z-a.s.z).slice(0,24);
     const dn=all.filter(a=>a.s.z<-3&&a.s.lift<0.87).sort((a,b)=>a.s.z-b.s.z).slice(0,24);
@@ -697,6 +699,15 @@ function render(){
   }
   /* sections */
   const H=$('sections');H.innerHTML='';
+  if(filtered()){
+    const sec=document.createElement('section');sec.className='sys';sec.id='sys-date';
+    sec.innerHTML=`<h2>📅 როდის — თვე · რიცხვი · წელი</h2><div class="cards"></div>`;
+    const box=sec.querySelector('.cards');
+    for(const f of [FM.month,FM.day]){const card=document.createElement('div');card.className='card';card.innerHTML=barsHTML(f);box.appendChild(card);}
+    const yc=document.createElement('div');yc.className='card';yc.innerHTML=yearsHTML();box.appendChild(yc);
+    if(planetConds(C.fl).length){const pc=document.createElement('div');pc.className='card wide';pc.id='periods';pc.innerHTML='<h4>ზუსტი პერიოდები<small>იძებნება…</small></h4>';box.appendChild(pc);}
+    H.appendChild(sec);
+  }
   for(const [sk,sn] of SYS){
     const sec=document.createElement('section');sec.className='sys';sec.id='sys-'+sk;sec.innerHTML=`<h2>${sn}</h2><div class="cards"></div>`;
     const box=sec.querySelector('.cards');
@@ -707,12 +718,54 @@ function render(){
     H.appendChild(sec);
   }
   $('sections').querySelectorAll('.bars.long').forEach(b=>b.closest('.card').classList.add('span2'));
-  $('jump').innerHTML=(filtered()?'<button data-j="topP">★ მთავარი</button>':'')+SYS.map(([k,n])=>`<button data-j="sys-${k}">${n}</button>`).join('');
+  $('jump').innerHTML=(filtered()?'<button data-j="topP">★ მთავარი</button><button data-j="sys-date">📅 როდის</button>':'')+SYS.map(([k,n])=>`<button data-j="sys-${k}">${n}</button>`).join('');
   $('jump').querySelectorAll('button').forEach(b=>b.onclick=()=>$(b.dataset.j).scrollIntoView({behavior:'smooth',block:'start'}));
   $('ex').innerHTML=filtered()&&R.ex&&R.ex.length?R.ex.slice(0,45).map(j=>exDate(j)).join('<br>'):'—';
   $('ex').parentElement.style.display=filtered()?'':'none';
   $('res').querySelectorAll('[data-f]').forEach(el=>el.onclick=()=>{if(pushCond(el.dataset.f,el.dataset.v))go();});
   $('sum').scrollIntoView({behavior:'smooth',block:'start'});
+  if($('periods'))scanPeriods(C,P,RUN,$('periods'));
+}
+/* birth years of the group, against the share of time each span of years takes */
+function yearsHTML(){
+  const R=RES,P=R.P,C=R.C,ya=C.year!==null?C.year:P.a,yb=C.year!==null?C.year:P.b,span=yb-ya+1;
+  const size=span<=150?1:span<=1500?10:100,M=R.M;
+  const b0=Math.floor(ya/size)*size,rows=[],T=SE.calJD(yb+1,1,1,0)-SE.calJD(ya,1,1,0);
+  for(let a=b0;a<=yb;a+=size){const lo=Math.max(a,ya),hi=Math.min(a+size-1,yb);let k=0;for(let y=lo;y<=hi;y++)k+=M.yrs[y]||0;
+    const q=(SE.calJD(hi+1,1,1,0)-SE.calJD(lo,1,1,0))/T,p=M.ny?k/M.ny:0;
+    rows.push({l:size===1?yrTxt(lo):`${yrTxt(lo)}–${yrTxt(hi)}`,p,q,k});}
+  const mx=Math.max(...rows.map(r=>Math.max(r.p,r.q)),1e-9),top=Math.max(...rows.map(r=>r.p));
+  const h=rows.map(r=>{const lift=r.q>0?r.p/r.q:0,se=Math.sqrt(Math.max(r.q*(1-r.q),1e-9)/Math.max(M.ny,1)),z=(r.p-r.q)/se;
+    const cls=Math.abs(z)<2.5?'':r.p>r.q?'u':'d';
+    return `<div class="br${r.p===top&&top>0?' top':''}" title="${esc(r.l)} — ჯგუფში ${fp(r.p*100)}%, დროის წილი ${fp(r.q*100)}%"><span class="l">${esc(r.l)}</span><span class="b"><i style="width:${100*r.p/mx}%"></i><u style="left:${100*r.q/mx}%"></u></span><span class="p">${fp(r.p*100)}%</span><span class="k ${cls}">×${lift>=10?lift.toFixed(0):lift.toFixed(2)}</span></div>`;}).join('');
+  return `<h4>დაბადების წელი${size>1?` (${size} წლით)`:''}<small>${M.ny.toLocaleString()} ნაპოვნი მომენტიდან · | — დროის წილი</small></h4><div class="bars${rows.length>14?' long':''}">${h}</div>`;
+}
+/* exact periods for planet conditions (signs and aspects): scan the time line, refine each edge */
+const PLB=new Set(BOD.map(b=>b[0]));
+function planetConds(fl){return fl.filter(([fid])=>{const c=CFM[fid];return c&&((c.f.id==='sign'&&PLB.has(c.p))||c.f.id==='asp');});}
+async function scanPeriods(C,P,tok,box){
+  const pc=planetConds(C.fl);if(!pc.length)return;
+  const ya=C.year!==null?C.year:P.a,yb=C.year!==null?C.year:P.b,moon=pc.some(([fid])=>/Moon/.test(fid)),maxY=moon?60:600;
+  const others=C.fl.length-pc.length;
+  const head=t=>`<h4>ზუსტი პერიოდები — ${pc.map(condText).map(esc).join(' და ')}<small>${t}</small></h4>`;
+  if(yb-ya+1>maxY){box.innerHTML=head('')+`<div class="hint">ზუსტი თარიღების სიისთვის აირჩიე წელი ან ${maxY} წელზე მოკლე პერიოდი (ახლა ${(yb-ya+1).toLocaleString()} წელია). წლების განაწილება ზემოთ ჩანს.</div>`;return;}
+  const step=moon?0.1:1,bodies=[...new Set(pc.flatMap(([fid])=>{const c=CFM[fid];return c.f.id==='sign'?[c.p]:c.p.split('-');}))];
+  const ok=jd=>{const l={};for(const b of bodies)l[b]=b==='Node'?SE.nodeL(jd):SE.rawL(b,jd);
+    return pc.every(([fid,op,v])=>{const c=CFM[fid];const x=c.f.id==='sign'?Math.floor(l[c.p]/30):SE.aspect(l[c.p.split('-')[0]],l[c.p.split('-')[1]]);return (String(x)===String(v))!==(op==='≠');});};
+  const m0=SE.calJD(ya,1,1,0)-P.off/24,m1=SE.calJD(yb+1,1,1,0)-P.off/24;
+  const edge=(a,b,va)=>{for(let k=0;k<14;k++){const m=(a+b)/2;if(ok(m)===va)a=m;else b=m;}return (a+b)/2;};
+  const out=[];let prev=ok(m0),start=prev?m0:null,t0=performance.now();
+  for(let jd=m0+step;jd<m1;jd+=step){const cur=ok(jd);
+    if(cur!==prev){const e=edge(jd-step,jd,prev);if(cur)start=e;else{out.push([start,e]);start=null;}prev=cur;}
+    if(performance.now()-t0>60){box.innerHTML=head(`იძებნება… ${Math.round(100*(jd-m0)/(m1-m0))}%`);await tick();t0=performance.now();if(tok!==RUN||!box.isConnected)return;}}
+  if(start!==null)out.push([start,m1]);
+  const tot=out.reduce((a,[x,y])=>a+(y-x),0),dt=jd=>{const p=SE.jdDay(jd+P.off/24),f=((jd+P.off/24+0.5)%1+1)%1,mi=Math.floor(f*1440);
+    return `${String(p.d).padStart(2,'0')}.${String(p.m).padStart(2,'0')}.${p.y<=0?'ძვ.წ.'+(1-p.y):p.y} ${String(Math.floor(mi/60)).padStart(2,'0')}:${String(mi%60).padStart(2,'0')}`;};
+  const dur=d=>d>=2?Math.round(d)+' დღე':Math.round(d*24)+' სთ',LIM=1500;
+  box.innerHTML=head(`${out.length.toLocaleString()} პერიოდი · ჯამში ${Math.round(tot).toLocaleString()} დღე (${fp(100*tot/(m1-m0))}% დროისა) · ${yrTxt(ya)}–${yrTxt(yb)} · UTC${P.off>=0?'+':''}${P.off}`)+
+    (out.length?`<div class="bars long ex2">${out.slice(0,LIM).map(([a,b])=>`<div class="br pr"><span class="l">${dt(a)} — ${dt(b)}</span><span class="p">${dur(b-a)}</span></div>`).join('')}</div>`+
+      (out.length>LIM?`<div class="hint">…და კიდევ ${(out.length-LIM).toLocaleString()} პერიოდი — შეამოკლე პერიოდი.</div>`:''):'<div class="hint">ამ პერიოდში არ ხდება.</div>')+
+    `<div class="hint" style="margin-top:6px">გეოცენტრული, ტროპიკული; ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°; საზღვრები — წუთის სიზუსტით.${others?' ამ სიაში მხოლოდ პლანეტების პირობებია — სხვა პირობები (მატრიცა, HD…) აქ არ მოწმდება.':''}</div>`;
 }
 function exDate(jd){const p=SE.jdDay(jd+RES.P.off/24),f=((jd+RES.P.off/24+0.5)%1+1)%1,mi=Math.floor(f*1440);
   const y=p.y<=0?`ძვ.წ.${1-p.y}`:p.y;return `${String(p.d).padStart(2,'0')}.${String(p.m).padStart(2,'0')}.${y} ${String(Math.floor(mi/60)).padStart(2,'0')}:${String(mi%60).padStart(2,'0')}`;}
