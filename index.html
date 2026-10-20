@@ -1027,7 +1027,11 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','vedictrop.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      /* a kept new tile sits next to its sibling, not at the very end */
+      const AFTER={'vedictrop.html':'vedic.html'};
+      for(const [h,sib] of Object.entries(AFTER)){const t=[...frag.children].find(x=>x.getAttribute('href')===h),b=[...frag.children].find(x=>x.getAttribute('href')===sib);
+        if(t&&b)b.after(t);}
       grid.innerHTML='';
       grid.appendChild(frag);
       applyGroups();                                  /* regroup the API order */
