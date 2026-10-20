@@ -46,6 +46,9 @@ canvas{display:block;width:100%;height:100%}
 .bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
 .bar button{background:none;border:1px solid var(--border-h);color:var(--gold-lt);border-radius:6px;padding:6px 12px;cursor:pointer;font:inherit;font-size:12.5px}
 .pad{display:none;margin:12px auto 0;width:200px;height:200px;position:relative;touch-action:none;user-select:none}
+/* long-press on a phone must not select / copy the ▲◀▶▼ or open the callout menu */
+.pad,.pad *,.wrap,.wrap *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+.pad button{touch-action:none;font-family:system-ui,sans-serif}
 .pad button{position:absolute;width:66px;height:66px;border-radius:12px;border:1px solid var(--border-h);background:var(--raised);color:var(--gold-lt);font-size:24px}
 .pad button.on{background:rgba(201,168,76,.25)}
 .pad .u{left:67px;top:0}.pad .d{left:67px;bottom:0}.pad .l{left:0;top:67px}.pad .r{right:0;top:67px}
@@ -948,8 +951,15 @@ wrap.addEventListener('pointermove',e=>{if(!G.joy||!G.joy.on||e.pointerId!==G.jo
 const endJoy=e=>{if(G.joy&&e.pointerId===G.joy.id)G.joy.on=false;};
 wrap.addEventListener('pointerup',endJoy);wrap.addEventListener('pointercancel',endJoy);
 $('pad').querySelectorAll('button').forEach(b=>{const k=b.dataset.k;
-  b.addEventListener('pointerdown',e=>{e.preventDefault();G.keys[k]=true;b.classList.add('on');b.setPointerCapture(e.pointerId);});
-  const up=()=>{G.keys[k]=false;b.classList.remove('on');};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);});
+  b.addEventListener('pointerdown',e=>{e.preventDefault();G.keys[k]=true;b.classList.add('on');try{b.setPointerCapture(e.pointerId);}catch(_){}});
+  const up=()=>{G.keys[k]=false;b.classList.remove('on');};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);
+  b.addEventListener('lostpointercapture',up);});
+/* phones: no selection, magnifier, copy menu or context menu on the controls */
+['pad','wrap'].forEach(id=>{const el=id==='pad'?$('pad'):document.querySelector('.wrap');if(!el)return;
+  ['contextmenu','selectstart','dragstart'].forEach(t=>el.addEventListener(t,e=>e.preventDefault()));
+  el.addEventListener('touchstart',e=>{if(e.target.closest('.pad button')||e.target===cv)e.preventDefault();},{passive:false});});
+document.addEventListener('selectionchange',()=>{const s=window.getSelection&&window.getSelection();
+  if(s&&s.rangeCount&&s.anchorNode&&$('pad').contains(s.anchorNode))s.removeAllRanges();});
 /* ── screens ── */
 function overlay(html,bind){const o=$('ov');o.innerHTML=html;o.hidden=false;bind&&bind();}
 function hideOv(){$('ov').hidden=true;}
