@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ცის კალენდარი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(110,90,210,.13);--rx:#e0a050;--sh:rgba(224,160,80,.28);--now:#5fc8b0}
+.page{max-width:980px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2.5px;color:var(--gold);margin-bottom:10px;text-transform:uppercase}
+.hint{font-size:11.5px;color:var(--ink-dim);line-height:1.6}
+select,input{background:var(--raised);border:1px solid var(--border);border-radius:6px;color:var(--ink);font:inherit;font-size:12.5px;padding:6px 8px;outline:none;min-width:0;max-width:100%}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end}
+.ctl label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-dim)}
+.ctl label.ck{flex-direction:row;align-items:center;gap:7px;font-size:12px;color:var(--ink-mid);cursor:pointer;padding-bottom:7px}
+.ctl input[type=checkbox]{accent-color:var(--gold)}
+.tabs button{font-family:'Noto Serif Georgian',serif;font-size:12.5px;letter-spacing:.5px;padding:8px 16px}
+#msg{text-align:center;font-size:12.5px;color:var(--ink-mid);min-height:20px;margin:8px 0}
+.view{display:none}.view.on{display:block}
+.now{display:flex;gap:12px;align-items:center;border:1px solid var(--border-h);border-radius:12px;padding:12px 16px;margin-bottom:12px;background:rgba(201,168,76,.06)}
+.now .big{font-size:30px;line-height:1;font-family:'Cinzel',serif;color:var(--gold-lt)}
+.now b{color:var(--gold-lt);font-weight:600}
+.now.v{border-color:rgba(95,200,176,.55);background:rgba(95,200,176,.07)}
+table.t{width:100%;border-collapse:collapse;font-size:12.5px}
+table.t th{font-weight:400;font-size:10.5px;letter-spacing:1px;color:var(--gold);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+table.t td{padding:8px;border-bottom:1px solid rgba(201,168,76,.08);vertical-align:top}
+table.t td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+table.t tr.cur td{background:rgba(95,200,176,.09)}
+table.t tr.past td{opacity:.5}
+table.t .sm{display:block;font-size:11px;color:var(--ink-dim)}
+.g{font-size:15px;color:var(--gold-lt)}
+.tag{display:inline-block;font-size:10px;padding:1px 8px;border-radius:9px;border:1px solid;white-space:nowrap;margin-left:4px}
+.tag.cur{color:var(--now);border-color:var(--now)}.tag.fut{color:var(--gold);border-color:rgba(201,168,76,.5)}
+.wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chips button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:4px 12px;font:inherit;font-size:12px;cursor:pointer}
+.chips button.on{background:rgba(201,168,76,.16);border-color:var(--gold);color:var(--gold-lt)}
+tr.rx{cursor:pointer}tr.rx:hover td{background:rgba(201,168,76,.05)}
+tr.rx td:first-child::before{content:'▸ ';color:var(--ink-dim);font-size:10px}
+tr.rx.open td:first-child::before{content:'▾ '}
+tr.ev td{background:rgba(10,8,22,.55);padding:10px 12px 14px}
+.evl{display:grid;grid-template-columns:118px 1fr;gap:3px 12px;font-size:12px}
+.evl .d{color:var(--ink-dim);font-variant-numeric:tabular-nums;white-space:nowrap}
+.evl .e b{color:var(--gold-lt);font-weight:400}
+.evl .e.k-ecl b{color:#f08a6a}.evl .e.k-overlap b,.evl .e.k-station b{color:var(--rx)}
+.theme{font-size:12px;color:var(--ink-mid);margin-bottom:8px;line-height:1.6}
+svg.tl{width:100%;height:auto;display:block}
+svg.tl text{font-family:'Noto Serif Georgian',serif}
+svg.tl .bar{cursor:pointer}
+.legend{font-size:11px;color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:14px;margin-top:6px}
+.legend i{display:inline-block;width:18px;height:8px;border-radius:2px;vertical-align:0;margin-right:5px}
+@media (max-width:640px){table.t{font-size:11.5px}table.t td,table.t th{padding:6px 5px}.evl{grid-template-columns:96px 1fr}.hide-m{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html?g=astrology">← ასტროლოგია</a>
+  <h1>ცის კალენდარი</h1>
+  <div class="sub">მთვარე კურსის გარეშე · რეტროგრადები · ცის მოვლენები</div>
+</header>
+
+<div class="panel">
+  <div class="ctl">
+    <label>დროის სარტყელი<select id="tz"></select></label>
+    <label>დაწყება<input id="d0" type="date"></label>
+    <label class="ck"><input id="outer" type="checkbox" checked> ურანი, ნეპტუნი, პლუტონი ასპექტებში</label>
+  </div>
+  <div class="hint" style="margin-top:8px">გეოცენტრული, ტროპიკული ზოდიაქო; პლანეტების ზუსტი მდებარეობა — Astronomy Engine (წამის სიზუსტით). ასპექტები: ☌ ⚹ □ △ ☍ ზუსტი მომენტით.</div>
+</div>
+
+<div class="tabs" id="tabs"><button data-v="voc" class="on">☽ კურსის გარეშე · 30 დღე</button><button data-v="rx">℞ რეტროგრადები · 10 წელი</button></div>
+<div id="msg">⏳ ასტრონომიული ბიბლიოთეკა იტვირთება…</div>
+
+<div class="view on" id="v-voc">
+  <div id="vnow"></div>
+  <div class="panel"><h3>☽ მთვარე კურსის გარეშე (Void of Course)</h3>
+    <div class="hint" style="margin-bottom:8px">იწყება მთვარის <b>ბოლო ზუსტი ასპექტით</b> პლანეტასთან მიმდინარე ნიშანში და გრძელდება, სანამ მთვარე შემდეგ ნიშანში არ შევა. ტრადიციულად — ახალი საქმის დაწყებისთვის, ხელშეკრულებისა და ყიდვისთვის არახელსაყრელი დრო; კარგია დასვენებისთვის, ფიქრისა და დასრულებისთვის.</div>
+    <div class="wrap"><table class="t" id="vt"></table></div></div>
+  <div class="panel"><h3>პლანეტები კურსის გარეშე</h3>
+    <div class="hint" style="margin-bottom:8px">იგივე წესი ☉ ☿ ♀ ♂ ♃ ♄-სთვის: ბოლო ზუსტი ასპექტი სხვა პლანეტასთან, სანამ ნიშანს დატოვებს. ნაჩვენებია ის პერიოდები, რომლებიც ამ 30 დღეს ეხება.</div>
+    <div class="wrap"><table class="t" id="pvt"></table></div></div>
+</div>
+
+<div class="view" id="v-rx">
+  <div class="panel"><h3>℞ დროის ხაზი</h3>
+    <div id="tl"></div>
+    <div class="legend"><span><i style="background:var(--rx)"></i>რეტროგრადი</span><span><i style="background:var(--sh)"></i>ჩრდილი (წინა / შემდგომი)</span><span><i style="background:var(--now)"></i>დღეს</span></div></div>
+  <div class="panel"><h3>რეტროგრადების ცხრილი</h3>
+    <div class="chips" id="chips"></div>
+    <div id="theme" class="theme"></div>
+    <div class="wrap"><table class="t" id="rt"></table></div>
+    <div class="hint" style="margin-top:8px">სტრიქონზე დაჭერა — რა ხდება ცაში ამ რეტროგრადის დროს: სხვა რეტროგრადები და სტაციები, დაბნელებები, ამ პლანეტის ზუსტი ასპექტები, ნელი პლანეტების ასპექტები და ნიშნის ცვლა, ☿ ♀ ♂-ისთვის — ახალი და სავსე მთვარეები.
+      <b>წინა ჩრდილი</b> — როცა პლანეტა პირველად აღწევს იმ გრადუსს, სადაც მერე პირდაპირ სვლას დაიწყებს; <b>შემდგომი ჩრდილი</b> — სანამ ისევ არ გაივლის რეტროს დაწყების გრადუსს.</div></div>
+</div>
+</div>
+
+<script src="skycal_engine.js"></script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SIGNS=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const LOC=['ვერძში','კუროში','ტყუპებში','კირჩხიბში','ლომში','ქალწულში','სასწორში','მორიელში','მშვილდოსანში','თხის რქაში','მერწყულში','თევზებში'];
+const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(z=>z+'︎');
+const PN={Sun:['☉','მზე'],Moon:['☽','მთვარე'],Mercury:['☿','მერკური'],Venus:['♀','ვენერა'],Mars:['♂','მარსი'],Jupiter:['♃','იუპიტერი'],
+  Saturn:['♄','სატურნი'],Uranus:['♅','ურანი'],Neptune:['♆','ნეპტუნი'],Pluto:['♇','პლუტონი']};
+const G=b=>PN[b][0]+'︎',NM=b=>PN[b][1];
+const AG={0:['☌','შეერთება'],60:['⚹','სექსტილი'],90:['□','კვადრატი'],120:['△','ტრინი'],180:['☍','ოპოზიცია']};
+const THEME={Mercury:'კომუნიკაცია, დოკუმენტები, ტექნიკა, მგზავრობა — გადახედვის, გადამოწმებისა და დაუმთავრებლის დასრულების დრო.',
+  Venus:'ურთიერთობები, ფასეულობები, ფული, სილამაზე — ძველი გრძნობებისა და ღირებულებების გადაფასება.',
+  Mars:'მოქმედება, ენერგია, კონფლიქტები — ძალის გადანაწილება, ახლის ნაცვლად დაწყებულის დასრულება.',
+  Jupiter:'ზრდა, რწმენა, სწავლა — შინაგანი ზრდა, გეგმებისა და მრწამსის გადახედვა.',
+  Saturn:'მოვალეობა, სტრუქტურა, დრო — პასუხისმგებლობისა და საზღვრების გადამოწმება.',
+  Uranus:'ცვლილება, თავისუფლება — შინაგანი გარდატეხა, ძველი ჩარჩოების მოშლა შიგნიდან.',
+  Neptune:'ოცნება, ილუზია, სულიერება — ნისლი იფანტება, ინტუიცია ძლიერდება.',
+  Pluto:'ძალაუფლება, ტრანსფორმაცია — ღრმა შინაგანი გარდაქმნა, დამალულის ზედაპირზე ამოსვლა.'};
+const pad=n=>String(n).padStart(2,'0');
+const deg=L=>{const s=Math.floor(L/30),d=L-30*s,D=Math.floor(d),M=Math.floor((d-D)*60);return `${D}°${pad(M)}′ ${ZS[s]}`;};
+const jdNow=()=>Date.now()/864e5+2440587.5;
+/* time zone */
+const BTZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';}catch(e){return 'UTC';}})();
+const TZS=[...new Set([BTZ,'Asia/Tbilisi','UTC','Europe/London','Europe/Berlin','Europe/Moscow','Europe/Istanbul','Asia/Dubai','America/New_York','America/Los_Angeles','Asia/Tokyo','Australia/Sydney'])];
+$('tz').innerHTML=TZS.map(z=>`<option value="${z}">${z===BTZ?z+' (ეს მოწყობილობა)':z}</option>`).join('');
+try{const s=localStorage.getItem('skycal_tz');if(s&&TZS.includes(s))$('tz').value=s;}catch(e){}
+let TZ=$('tz').value,FMT=null;
+function mkFmt(){FMT=new Intl.DateTimeFormat('ka-GE',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});}
+mkFmt();
+const MON=['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
+const WD=['კვ','ორ','სმ','ოთ','ხთ','პრ','შბ'];
+function parts(jd){const d=new Date((jd-2440587.5)*864e5),o={};for(const p of FMT.formatToParts(d))o[p.type]=p.value;
+  const wd=new Date(Date.UTC(+o.year,+o.month-1,+o.day)).getUTCDay();return {y:+o.year,m:+o.month,d:+o.day,h:o.hour,mi:o.minute,wd};}
+const dt=jd=>{const p=parts(jd);return `${WD[p.wd]} ${p.d} ${MON[p.m-1]} ${p.h}:${p.mi}`;};
+const dty=jd=>{const p=parts(jd);return `${p.d} ${MON[p.m-1]} ${p.y}`;};
+const dtyt=jd=>{const p=parts(jd);return `${p.d} ${MON[p.m-1]} ${p.y}, ${p.h}:${p.mi}`;};
+const durH=d=>{const m=Math.round(d*1440);if(m<60)return m+' წთ';const h=Math.floor(m/60);if(h<48)return `${h} სთ ${pad(m%60)} წთ`;return Math.round(d)+' დღე';};
+/* start date */
+function todayISO(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());return p;}
+$('d0').value=todayISO();
+function startJD(){const v=$('d0').value;if(!v)return jdNow();const [y,m,d]=v.split('-').map(Number);
+  /* local midnight in TZ → UT */
+  const guess=Date.UTC(y,m-1,d);const off=(()=>{const p=parts(guess/864e5+2440587.5);return (Date.UTC(p.y,p.m-1,p.d,+p.h,+p.mi)-guess)/6e4;})();
+  return (guess-off*6e4)/864e5+2440587.5;}
+
+/* ── VOC ── */
+let VOC=null,PVOC=null,RX=null,RXSEL='all';
+function renderVoc(){
+  const now=jdNow(),j0=startJD(),cur=VOC.find(v=>v.start<=now&&now<v.end),nxt=VOC.find(v=>v.start>now);
+  const lastTxt=v=>v.last?`${G('Moon')} ${AG[v.last.ang][0]} ${G(v.last.b)} <span class="sm">${AG[v.last.ang][1]} — ${NM(v.last.b)}</span>`:'<span class="sm">ასპექტი ამ ნიშანში არ ყოფილა</span>';
+  $('vnow').innerHTML=cur
+    ?`<div class="now v"><div class="big">☽︎</div><div>ახლა მთვარე <b>კურსის გარეშეა</b> — ${LOC[cur.sign]} ${ZS[cur.sign]}, ბოლო ასპექტის შემდეგ.<br>დასრულდება: <b>${dt(cur.end)}</b>, როცა შევა ${ZS[cur.next]} ${LOC[cur.next]} (${durH(cur.end-now)} დარჩა).</div></div>`
+    :`<div class="now"><div class="big">☽︎</div><div>ახლა მთვარე <b>კურსზეა</b>.${nxt?` შემდეგი კურსის გარეშე: <b>${dt(nxt.start)}</b> — ${dt(nxt.end)} (${durH(nxt.end-nxt.start)}).`:''}</div></div>`;
+  $('vt').innerHTML=`<tr><th>დაწყება</th><th>ბოლო ასპექტი</th><th>დასრულება — შედის</th><th>ხანგრძლივობა</th></tr>`+
+    VOC.map(v=>{const c=v.start<=now&&now<v.end?'cur':v.end<now?'past':'';
+      return `<tr class="${c}"><td class="n">${dt(v.start)}${c==='cur'?'<span class="tag cur">ახლა</span>':''}</td><td>${lastTxt(v)}</td>
+        <td class="n">${dt(v.end)}<span class="sm">${ZS[v.sign]} → ${ZS[v.next]} ${SIGNS[v.next]}</span></td><td class="n">${durH(v.end-v.start)}</td></tr>`;}).join('');
+  $('pvt').innerHTML=PVOC.length?`<tr><th>პლანეტა</th><th>დაწყება — ბოლო ასპექტი</th><th>დასრულება — შედის</th><th>ხანგრძლივობა</th></tr>`+
+    PVOC.map(v=>{const c=v.start<=now&&now<v.end?'cur':'';
+      return `<tr class="${c}"><td><span class="g">${G(v.P)}</span> ${NM(v.P)}${c?'<span class="tag cur">ახლა</span>':''}</td>
+      <td class="n">${dty(v.start)}<span class="sm">${v.last?`${G(v.P)} ${AG[v.last.ang][0]} ${G(v.last.b)} ${AG[v.last.ang][1]}`:'ასპექტი ამ ნიშანში არ ყოფილა'}</span></td>
+      <td class="n">${dty(v.end)}<span class="sm">${ZS[v.sign]} → ${ZS[v.next]} ${SIGNS[v.next]}${v.rx?' ℞':''}</span></td><td class="n">${durH(v.end-v.start)}</td></tr>`;}).join('')
+    :'<tr><td class="hint">ამ 30 დღეში ☉–♄ კურსის გარეშე არ არის.</td></tr>';
+}
+/* ── retrogrades ── */
+function evText(e,p){
+  if(e.k==='overlap')return `<b>${G(e.q.b)} ${NM(e.q.b)} ℞</b> ერთდროულად (${dty(e.q.sr)} — ${dty(e.q.sd)})`;
+  if(e.k==='station')return `<b>${G(e.s.b)} ${NM(e.s.b)}</b> ${e.s.rx?'რეტრო სტაცია ℞':'პირდაპირი სტაცია D'} — ${deg(e.s.lon)}`;
+  if(e.k==='asp'){const x=e.x;return `<b>${G(x.a)} ${AG[x.ang][0]} ${G(x.b)}</b> ${NM(x.a)} — ${NM(x.b)}: ${AG[x.ang][1]}${x.a==='Sun'||x.b==='Sun'?(x.ang===0&&p.b===x.a||x.ang===0&&p.b===x.b?(p.b==='Mercury'||p.b==='Venus'?' (ქვედა შეერთება — რეტროს შუაგული)':''):x.ang===180?' (რეტროს შუაგული)':''):''}`;}
+  if(e.k==='ing'){const x=e.x;return `<b>${G(x.b)} ${NM(x.b)}</b> ${ZS[x.from]} → ${ZS[x.to]} ${LOC[x.to]}${(x.to-x.from+12)%12===11?' (უკან)':''}`;}
+  if(e.k==='ecl'){const K={total:'სრული',annular:'რგოლისებრი',partial:'ნაწილობრივი',penumbral:'ნახევარჩრდილოვანი',hybrid:'ჰიბრიდული'};
+    return `<b>${e.solar?'☀ მზის':'🌕 მთვარის'} დაბნელება</b> — ${K[e.kind]||e.kind}, ${deg(e.lon)}`;}
+  if(e.k==='lun')return `<b>${e.full?'🌕 სავსე მთვარე':'🌑 ახალი მთვარე'}</b> ${deg(e.lon)}`;
+  return '';
+}
+function renderRx(){
+  const now=jdNow(),j0=startJD(),j1=j0+3652.5;
+  /* timeline */
+  const W=900,lh=26,top=24,left=86,H=top+SKY.RXB.length*lh+6,X=jd=>left+(W-left-8)*(jd-j0)/(j1-j0);
+  let s=`<svg class="tl" viewBox="0 0 ${W} ${H}" role="img" aria-label="რეტროგრადების დროის ხაზი">`;
+  const y0=parts(j0).y;for(let y=y0;y<=y0+10;y++){const jd=Date.UTC(y,0,1)/864e5+2440587.5;if(jd<j0||jd>j1)continue;const x=X(jd);
+    s+=`<line x1="${x}" y1="${top-6}" x2="${x}" y2="${H-4}" stroke="rgba(201,168,76,.12)"/><text x="${x+3}" y="${top-10}" font-size="10" fill="#8c7f69">${y}</text>`;}
+  SKY.RXB.forEach((b,i)=>{const y=top+i*lh;
+    s+=`<text x="4" y="${y+15}" font-size="12" fill="#ecd59a">${G(b)} ${NM(b)}</text>`;
+    for(const p of RX.filter(q=>q.b===b)){const a=Math.max(j0,p.pre||p.sr),c=Math.min(j1,p.post||p.sd);
+      if(c>a)s+=`<rect x="${X(a)}" y="${y+5}" width="${Math.max(1,X(c)-X(a))}" height="12" rx="2" fill="var(--sh)"/>`;
+      const r0=Math.max(j0,p.sr),r1=Math.min(j1,p.sd);
+      if(r1>r0)s+=`<rect class="bar" data-i="${RX.indexOf(p)}" x="${X(r0)}" y="${y+5}" width="${Math.max(2,X(r1)-X(r0))}" height="12" rx="2" fill="var(--rx)"><title>${NM(b)} ℞ ${dty(p.sr)} — ${dty(p.sd)}</title></rect>`;}});
+  if(now>=j0&&now<=j1)s+=`<line x1="${X(now)}" y1="${top-4}" x2="${X(now)}" y2="${H-2}" stroke="var(--now)" stroke-width="1.5"/>`;
+  $('tl').innerHTML=s+'</svg>';
+  $('tl').querySelectorAll('.bar').forEach(r=>r.onclick=()=>{const p=RX[+r.dataset.i];RXSEL='all';drawChips();drawTable(p);});
+  drawChips();drawTable();
+}
+function drawChips(){
+  $('chips').innerHTML=`<button data-b="all"${RXSEL==='all'?' class="on"':''}>ყველა</button>`+SKY.RXB.map(b=>`<button data-b="${b}"${RXSEL===b?' class="on"':''}>${G(b)} ${NM(b)}</button>`).join('');
+  $('chips').querySelectorAll('button').forEach(x=>x.onclick=()=>{RXSEL=x.dataset.b;drawChips();drawTable();});
+  $('theme').innerHTML=RXSEL!=='all'?`<span class="g">${G(RXSEL)}</span> ${esc(THEME[RXSEL])}`:'';
+}
+function drawTable(open){
+  const now=jdNow(),list=RX.filter(p=>RXSEL==='all'||p.b===RXSEL);
+  $('rt').innerHTML=`<tr><th>პლანეტა</th><th>℞ იწყება</th><th>D მთავრდება</th><th class="hide-m">ხანგრძლ.</th><th class="hide-m">ჩრდილი</th></tr>`+
+    list.map(p=>{const i=RX.indexOf(p),c=p.sr<=now&&now<p.sd?'cur':'';
+      return `<tr class="rx ${c}" data-i="${i}"><td><span class="g">${G(p.b)}</span> ${NM(p.b)}${c?'<span class="tag cur">ახლა</span>':p.sr>now&&list.find(q=>q.sr>now)===p?'<span class="tag fut">შემდეგი</span>':''}</td>
+        <td class="n">${dtyt(p.sr)}<span class="sm">${deg(p.lsr)}</span></td><td class="n">${dtyt(p.sd)}<span class="sm">${deg(p.lsd)}</span></td>
+        <td class="n hide-m">${Math.round(p.sd-p.sr)} დღე</td><td class="n hide-m">${p.pre?dty(p.pre):'—'}<span class="sm">— ${p.post?dty(p.post):'—'}</span></td></tr>`;}).join('');
+  $('rt').querySelectorAll('tr.rx').forEach(tr=>tr.onclick=()=>toggle(tr));
+  if(open){const tr=$('rt').querySelector(`tr.rx[data-i="${RX.indexOf(open)}"]`);if(tr){toggle(tr);tr.scrollIntoView({behavior:'smooth',block:'center'});}}
+}
+function toggle(tr){
+  const nx=tr.nextElementSibling;if(tr.classList.contains('open')){tr.classList.remove('open');if(nx&&nx.classList.contains('ev'))nx.remove();return;}
+  tr.classList.add('open');const p=RX[+tr.dataset.i];
+  const row=document.createElement('tr');row.className='ev';row.innerHTML=`<td colspan="5"><div class="hint">იძებნება…</div></td>`;tr.after(row);
+  setTimeout(()=>{const ev=SKY.events(p,RX);
+    row.firstElementChild.innerHTML=`<div class="theme"><span class="g">${G(p.b)}</span> ${esc(THEME[p.b])}</div>
+      <div class="evl"><div class="d">${dtyt(p.sr)}</div><div class="e k-station"><b>${G(p.b)} ${NM(p.b)} ℞</b> რეტრო იწყება — ${deg(p.lsr)}</div>
+      ${ev.filter(e=>!(e.k==='station'&&e.s.b===p.b)).map(e=>`<div class="d">${dtyt(e.jd)}</div><div class="e k-${e.k}">${evText(e,p)}</div>`).join('')}
+      <div class="d">${dtyt(p.sd)}</div><div class="e k-station"><b>${G(p.b)} ${NM(p.b)} D</b> პირდაპირ სვლას იწყებს — ${deg(p.lsd)}</div></div>`;},20);
+}
+/* ── run ── */
+async function run(){
+  $('msg').textContent='⏳ ითვლება…';await new Promise(r=>setTimeout(r,20));
+  const j0=startJD(),o={outer:$('outer').checked};
+  VOC=SKY.voc(j0,30,o);PVOC=SKY.planetVoc(j0,30,o);renderVoc();
+  $('msg').textContent='⏳ რეტროგრადები ითვლება…';await new Promise(r=>setTimeout(r,20));
+  RX=SKY.retro(j0,10);renderRx();$('msg').textContent='';
+}
+$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('tabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));});
+$('tz').onchange=()=>{TZ=$('tz').value;try{localStorage.setItem('skycal_tz',TZ);}catch(e){}mkFmt();if(VOC){renderVoc();renderRx();}};
+$('d0').onchange=()=>run();$('outer').onchange=()=>{if(!VOC)return;const o={outer:$('outer').checked},j0=startJD();VOC=SKY.voc(j0,30,o);PVOC=SKY.planetVoc(j0,30,o);renderVoc();};
+SKY.init().then(run).catch(e=>{$('msg').innerHTML='<span style="color:var(--bad)">შეცდომა: '+esc(e.message)+'</span>';});
+</script>
+</body>
+</html>
