@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>სუდოკუ · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c;--c:#9060e0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(144,96,224,.14),transparent 60%),var(--void);color:var(--ink);
+  font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
+.page{max-width:560px;margin:0 auto;padding:24px 14px 60px}
+header{text-align:center;margin-bottom:14px;position:relative}
+.back{position:absolute;left:0;top:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.75;text-decoration:none;
+  border:1px solid var(--border);border-radius:3px;padding:6px 11px}
+.back:hover{opacity:1;border-color:var(--border-h)}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,6vw,38px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px;margin-top:2px}
+.lv{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0 12px}
+.lv button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer}
+.lv button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+.hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.hud div{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;text-align:center}
+.hud b{display:block;font-family:'Cinzel',serif;font-size:19px;color:var(--gold-lt);font-weight:400;line-height:1.2}
+.hud span{font-size:10px;color:var(--ink-dim);letter-spacing:.5px}
+.boardwrap{position:relative}
+.board{display:grid;grid-template-columns:repeat(9,1fr);width:100%;aspect-ratio:1;border:2px solid var(--gold);border-radius:8px;overflow:hidden;
+  background:var(--surface);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.c{position:relative;display:flex;align-items:center;justify-content:center;border-right:1px solid rgba(201,168,76,.14);border-bottom:1px solid rgba(201,168,76,.14);
+  font-family:'Cinzel',serif;font-size:clamp(18px,5.6vw,28px);color:#c8b8ff;cursor:pointer;min-width:0}
+.c:nth-child(9n){border-right:none}.c:nth-child(n+73){border-bottom:none}
+.c.br{border-right:2px solid rgba(201,168,76,.55)}.c.bb{border-bottom:2px solid rgba(201,168,76,.55)}
+.c.given{color:var(--ink);font-weight:600}
+.c.area{background:rgba(144,96,224,.08)}
+.c.same{background:rgba(201,168,76,.16)}
+.c.sel{background:rgba(201,168,76,.32)}
+.c.err{color:var(--bad)!important;background:rgba(226,104,92,.14)}
+.c.hint{animation:glow 1s ease 2}
+@keyframes glow{50%{background:rgba(95,207,138,.35)}}
+.c .nt{position:absolute;inset:1px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);font-family:system-ui,sans-serif;font-size:clamp(7px,2.1vw,11px);color:var(--ink-mid);font-weight:400}
+.c .nt i{display:flex;align-items:center;justify-content:center;font-style:normal}
+.c .nt i.hl{color:var(--gold-lt);font-weight:700}
+.pad{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-top:12px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.pad button{aspect-ratio:1/1.15;background:var(--raised);border:1px solid var(--border-h);color:var(--gold-lt);border-radius:8px;font-family:'Cinzel',serif;
+  font-size:clamp(17px,5vw,24px);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;touch-action:manipulation}
+.pad button small{font-family:system-ui,sans-serif;font-size:9px;color:var(--ink-dim);margin-top:2px}
+.pad button.done{opacity:.25}
+.pad button:active{transform:scale(.94)}
+.tools{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+.tools button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:8px;padding:8px 2px;font:inherit;font-size:11.5px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:1px;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.tools button b{font-size:17px;font-weight:400;color:var(--gold-lt);line-height:1.1}
+.tools button.on{border-color:var(--gold);background:rgba(201,168,76,.12);color:var(--gold-lt)}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;
+  background:rgba(11,9,24,.94);border-radius:8px;z-index:3}
+.overlay[hidden]{display:none}
+.overlay h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
+.overlay p{font-size:13px;color:var(--ink-mid);max-width:360px}
+.big{font-family:'Cinzel',serif;font-size:44px;color:var(--gold-lt);line-height:1}
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:11px 22px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
+.btn.ghost{background:none;color:var(--gold-lt);border:1px solid var(--border-h)}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.optsrow{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:12px;color:var(--ink-mid);flex-wrap:wrap}
+.optsrow label{display:flex;gap:6px;align-items:center;cursor:pointer}.optsrow input{accent-color:var(--gold)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:16px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.panel li,.panel p{font-size:12.5px;color:var(--ink-mid)}.panel ul{padding-left:18px}
+.rec{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center}
+.rec div{border:1px solid var(--border);border-radius:8px;padding:6px 2px}
+.rec b{display:block;font-family:'Cinzel',serif;font-size:15px;color:var(--gold-lt);font-weight:400}
+.rec span{font-size:9.5px;color:var(--ink-dim)}
+@media(max-width:600px){.back{position:static;display:inline-block;margin-bottom:8px}.tools button{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="games.html">← თამაშები</a>
+  <h1>სუდოკუ</h1>
+  <div class="sub">5 · ლოგიკა — ყოველ ამოცანას ზუსტად ერთი ამონახსნი აქვს და ლოგიკით იხსნება, გამოცნობის გარეშე</div>
+</header>
+<div class="lv" id="lv"></div>
+<div class="hud">
+  <div><b id="h-time">0:00</b><span>დრო</span></div>
+  <div><b id="h-err">0</b><span>შეცდომა</span></div>
+  <div><b id="h-left">0</b><span>დარჩა</span></div>
+</div>
+<div class="boardwrap">
+  <div class="board" id="board"></div>
+  <div class="overlay" id="ov" hidden></div>
+</div>
+<div class="pad" id="pad"></div>
+<div class="tools">
+  <button id="t-undo"><b>↶</b>უკან</button>
+  <button id="t-erase"><b>⌫</b>წაშლა</button>
+  <button id="t-notes"><b>✎</b>შენიშვნა</button>
+  <button id="t-hint"><b>💡</b>მინიშნება</button>
+  <button id="t-new"><b>↻</b>ახალი</button>
+</div>
+<div class="optsrow">
+  <label><input type="checkbox" id="o-check" checked> შეცდომების ჩვენება</label>
+  <label><input type="checkbox" id="o-auto" checked> შენიშვნების ავტოგასუფთავება</label>
+  <label><input type="checkbox" id="o-hl" checked> ერთნაირი ციფრების მონიშვნა</label>
+</div>
+<div class="panel"><h3>საუკეთესო დრო</h3><div class="rec" id="rec"></div></div>
+<div class="panel"><h3>დონეები</h3>
+  <ul>
+    <li><b>მარტივი</b> — ბევრი ციფრი; საკმარისია „ერთადერთი ადგილი“ რიგში, სვეტში ან კვადრატში.</li>
+    <li><b>საშუალო</b> — იგივე ხერხები, ნაკლები ციფრით.</li>
+    <li><b>რთული</b> — საჭიროა წყვილები და „მიმართული“ კანდიდატები (pointing, box-line).</li>
+    <li><b>ექსპერტი</b> — სამეულები და X-wing.</li>
+    <li><b>ოსტატი</b> — Swordfish და XY-wing. მაინც მხოლოდ ლოგიკა — გამოცნობა არასოდესაა საჭირო.</li>
+  </ul>
+  <p style="margin-top:8px">ციფრის ჩასაწერად: მონიშნე უჯრა და დააჭირე ციფრს (ან კლავიატურით 1–9, ისრები, Backspace, N — შენიშვნები). ✎ რეჟიმში ციფრი პატარა შენიშვნად იწერება.</p>
+</div>
+</div>
+<script src="sudoku_engine.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const E=window.SudokuEngine;
+const LV=[[1,'მარტივი'],[2,'საშუალო'],[3,'რთული'],[4,'ექსპერტი'],[5,'ოსტატი']];
+const KEY='sudoku_v1',RKEY='sudoku_best_v1';
+let S=null,sel=-1,notesMode=false,timer=null,hist=[];
+const opt=id=>$(id).checked;
+
+/* ── persistence ── */
+function save(){try{localStorage.setItem(KEY,JSON.stringify({...S,hist:hist.slice(-200)}));}catch(_){}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.puzzle&&s.puzzle.length===81)return s;}catch(_){}return null;}
+function best(){try{return JSON.parse(localStorage.getItem(RKEY)||'{}');}catch(_){return{};}}
+const fmt=t=>{t=Math.floor(t);const h=Math.floor(t/3600),m=Math.floor(t/60)%60,s=t%60;return(h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0');};
+
+/* ── build DOM once ── */
+$('lv').innerHTML=LV.map(([n,t])=>`<button data-lv="${n}">${t}</button>`).join('');
+const B=$('board');
+for(let i=0;i<81;i++){const d=document.createElement('div');d.className='c'+(i%9===2||i%9===5?' br':'')+(((i/9)|0)===2||((i/9)|0)===5?' bb':'');d.dataset.i=i;B.appendChild(d);}
+const cells=[...B.children];
+$('pad').innerHTML=[1,2,3,4,5,6,7,8,9].map(d=>`<button data-d="${d}">${d}<small></small></button>`).join('');
+['contextmenu','selectstart','dragstart'].forEach(t=>{B.addEventListener(t,e=>e.preventDefault());$('pad').addEventListener(t,e=>e.preventDefault());});
+
+/* ── game ── */
+function newGame(lv){
+  stopTimer();
+  overlay(`<h2>⏳ ამოცანა იქმნება…</h2><p>ვამოწმებ, რომ ზუსტად ერთი ამონახსნი ჰქონდეს და ლოგიკით იხსნებოდეს.</p>`);
+  setTimeout(()=>{
+    const r=E.generate(lv,(Math.random()*2**32)>>>0,6000);
+    S={lv,puzzle:r.puzzle,solution:r.solution,cur:r.puzzle.slice(),notes:new Array(81).fill(0),err:0,t:0,done:false,used:r.used||{}};
+    hist=[];sel=-1;overlay(null);render();startTimer();save();
+  },30);
+}
+function startTimer(){stopTimer();timer=setInterval(()=>{if(S&&!S.done&&!document.hidden){S.t++;$('h-time').textContent=fmt(S.t);if(S.t%5===0)save();}},1000);}
+function stopTimer(){if(timer)clearInterval(timer);timer=null;}
+
+function render(){
+  if(!S)return;
+  document.querySelectorAll('#lv button').forEach(b=>b.classList.toggle('on',+b.dataset.lv===S.lv));
+  const sv=sel>=0?S.cur[sel]:0,hl=opt('o-hl'),chk=opt('o-check');
+  const cnt=new Array(10).fill(0);
+  for(let i=0;i<81;i++){
+    const c=cells[i],v=S.cur[i],given=!!S.puzzle[i];
+    c.className=c.className.replace(/ (given|area|same|sel|err)/g,'');
+    if(given)c.className+=' given';
+    if(sel>=0&&i!==sel&&(E.ROW[i]===E.ROW[sel]||E.COL[i]===E.COL[sel]||E.BOX[i]===E.BOX[sel]))c.className+=' area';
+    if(hl&&sv&&v===sv&&i!==sel)c.className+=' same';
+    if(i===sel)c.className+=' sel';
+    if(v&&!given&&chk&&v!==S.solution[i])c.className+=' err';
+    if(v){c.textContent=v;if(v===S.solution[i]||!chk)cnt[v]++;}
+    else if(S.notes[i]){let h='<div class="nt">';for(let d=1;d<=9;d++)h+=`<i class="${hl&&sv===d?'hl':''}">${S.notes[i]&(1<<d)?d:''}</i>`;c.innerHTML=h+'</div>';}
+    else c.textContent='';
+  }
+  document.querySelectorAll('#pad button').forEach(b=>{const d=+b.dataset.d,left=9-cnt[d];b.classList.toggle('done',left<=0);b.querySelector('small').textContent=left>0?left:'';});
+  $('h-err').textContent=S.err;$('h-time').textContent=fmt(S.t);
+  $('h-left').textContent=S.cur.filter((v,i)=>v!==S.solution[i]).length;
+  $('t-notes').classList.toggle('on',notesMode);
+  renderBest();
+}
+function renderBest(){const b=best();$('rec').innerHTML=LV.map(([n,t])=>`<div><b>${b[n]?fmt(b[n].t):'—'}</b><span>${t}${b[n]?' · '+b[n].n+'×':''}</span></div>`).join('');}
+
+function push(){hist.push({cur:S.cur.slice(),notes:S.notes.slice()});if(hist.length>300)hist.shift();}
+function input(d){
+  if(!S||S.done||sel<0||S.puzzle[sel])return;
+  push();
+  if(notesMode){if(S.cur[sel])return;S.notes[sel]^=(1<<d);}
+  else{
+    if(S.cur[sel]===d){S.cur[sel]=0;}
+    else{
+      S.cur[sel]=d;S.notes[sel]=0;
+      if(d!==S.solution[sel]){S.err++;if(navigator.vibrate)try{navigator.vibrate(60);}catch(_){}}
+      else if(opt('o-auto'))for(const p of E.PEERS[sel])S.notes[p]&=~(1<<d);
+    }
+  }
+  render();save();checkDone();
+}
+function erase(){if(!S||S.done||sel<0||S.puzzle[sel])return;push();S.cur[sel]=0;S.notes[sel]=0;render();save();}
+function undo(){if(!hist.length||!S||S.done)return;const h=hist.pop();S.cur=h.cur;S.notes=h.notes;render();save();}
+function hint(){
+  if(!S||S.done)return;
+  /* first fix a wrong digit, else the cell the logic solver would fill next */
+  let i=S.cur.findIndex((v,k)=>v&&v!==S.solution[k]);
+  if(i<0){let best=-1,bc=10;
+    for(let k=0;k<81;k++)if(!S.cur[k]){let m=0x3fe;for(const p of E.PEERS[k])if(S.cur[p])m&=~(1<<S.cur[p]);let c=0;for(let x=m;x;x&=x-1)c++;if(c<bc){bc=c;best=k;}}
+    i=best;}
+  if(i<0)return;
+  push();S.cur[i]=S.solution[i];S.notes[i]=0;S.hints=(S.hints||0)+1;
+  if(opt('o-auto'))for(const p of E.PEERS[i])S.notes[p]&=~(1<<S.solution[i]);
+  sel=i;render();cells[i].classList.add('hint');setTimeout(()=>cells[i].classList.remove('hint'),2100);save();checkDone();
+}
+function checkDone(){
+  if(S.cur.some((v,i)=>v!==S.solution[i]))return;
+  S.done=true;stopTimer();save();
+  const b=best(),prev=b[S.lv];const rec=!prev||S.t<prev.t;
+  b[S.lv]={t:rec?S.t:prev.t,n:(prev?prev.n:0)+1};try{localStorage.setItem(RKEY,JSON.stringify(b));}catch(_){}
+  const KA={'naked single':'ერთადერთი კანდიდატი','hidden single':'ერთადერთი ადგილი','pointing':'მიმართული კანდიდატი','box-line':'კვადრატი–ხაზი',
+    'naked pair':'ღია წყვილი','hidden pair':'ფარული წყვილი','naked triple':'ღია სამეული','hidden triple':'ფარული სამეული'};
+  const T=Object.keys(S.used||{}).map(k=>KA[k]||k).join(' · ');
+  overlay(`<h2>✦ ამოხსნილია ✦</h2><div class="big">${fmt(S.t)}</div>
+    <p>${LV[S.lv-1][1]} · შეცდომა: ${S.err}${S.hints?' · მინიშნება: '+S.hints:''}${rec?'<br><b style="color:var(--ok);font-weight:400">ახალი რეკორდი!</b>':''}</p>
+    ${T?`<p style="font-size:11px">საჭირო ხერხები: ${T}</p>`:''}
+    <div class="row"><button class="btn" id="o-again">▶ ახალი — ${LV[S.lv-1][1]}</button>${S.lv<5?`<button class="btn ghost" id="o-up">${LV[S.lv][1]} →</button>`:''}</div>`);
+  $('o-again').onclick=()=>newGame(S.lv);if($('o-up'))$('o-up').onclick=()=>newGame(S.lv+1);
+  renderBest();
+}
+function overlay(html){const o=$('ov');if(html==null){o.hidden=true;o.innerHTML='';return;}o.innerHTML=html;o.hidden=false;}
+
+/* ── events ── */
+B.addEventListener('pointerdown',e=>{const c=e.target.closest('.c');if(!c)return;e.preventDefault();sel=+c.dataset.i;render();});
+$('pad').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;e.preventDefault();input(+b.dataset.d);});
+$('lv').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const lv=+b.dataset.lv;
+  if(S&&!S.done&&S.cur.some((v,i)=>v&&!S.puzzle[i])&&!confirm('დაწყებული თამაში დაიკარგება. ახალი დავიწყოთ?'))return;newGame(lv);});
+$('t-undo').onclick=undo;$('t-erase').onclick=erase;$('t-hint').onclick=hint;
+$('t-notes').onclick=()=>{notesMode=!notesMode;render();};
+$('t-new').onclick=()=>{if(S&&!S.done&&S.cur.some((v,i)=>v&&!S.puzzle[i])&&!confirm('ახალი ამოცანა? ეს თამაში დაიკარგება.'))return;newGame(S?S.lv:2);};
+['o-check','o-hl','o-auto'].forEach(id=>$(id).addEventListener('change',render));
+document.addEventListener('keydown',e=>{
+  if(!S||e.target.tagName==='INPUT')return;
+  if(e.key>='1'&&e.key<='9'){input(+e.key);e.preventDefault();return;}
+  if(e.key==='Backspace'||e.key==='Delete'||e.key==='0'){erase();e.preventDefault();return;}
+  if(e.key==='n'||e.key==='N'){notesMode=!notesMode;render();return;}
+  if((e.key==='z'||e.key==='Z')&&(e.ctrlKey||e.metaKey)){undo();e.preventDefault();return;}
+  const mv={ArrowUp:-9,ArrowDown:9,ArrowLeft:-1,ArrowRight:1}[e.key];
+  if(mv){e.preventDefault();if(sel<0)sel=0;else{const r=(sel/9)|0,c=sel%9;
+    sel=mv===-9?((r+8)%9)*9+c:mv===9?((r+1)%9)*9+c:mv===-1?r*9+(c+8)%9:r*9+(c+1)%9;}render();}
+});
+document.addEventListener('visibilitychange',()=>{if(S)save();});
+
+/* ── start: resume or ?lv= or medium ── */
+const q=new URLSearchParams(location.search),qlv=+q.get('lv');
+const old=load();
+if(old&&!old.done&&!(qlv>=1&&qlv<=5&&qlv!==old.lv)){S=old;hist=old.hist||[];delete S.hist;render();startTimer();}
+else newGame(qlv>=1&&qlv<=5?qlv:2);
+})();
+</script>
+</body>
+</html>
