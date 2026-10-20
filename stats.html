@@ -94,6 +94,20 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 @media (max-width:640px){.cgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .sec-t{font-size:10.5px;letter-spacing:1.5px;color:var(--gold);margin-top:14px;text-transform:uppercase;font-family:'Cinzel',serif}
 #res [data-f]{cursor:pointer}
+.fo{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(80px,1fr) auto;gap:6px 12px;align-items:center;font-size:12.5px}
+.fo .l{color:var(--ink)}.fo .b{position:relative;height:10px;background:rgba(255,255,255,.05);border-radius:2px}
+.fo .b i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#9a7028,var(--gold-lt));border-radius:2px}
+.fo .b u{position:absolute;top:-3px;bottom:-3px;width:2px;background:#8fb8e8}
+.fo .p{text-align:right;font-family:'Cinzel',serif;font-size:11.5px;white-space:nowrap}
+.fo .p small{font-family:'Noto Serif Georgian',serif;color:var(--ink-dim);font-size:10.5px}
+.fo .all{font-weight:600;color:var(--gold-lt)}
+.lift{font-size:13px;margin:10px 0 2px;line-height:1.7}.lift b.u{color:rgb(var(--up))}.lift b.d{color:rgb(var(--dn))}
+.cond2{font-size:12.5px;color:var(--ink-mid);line-height:1.8;margin-top:6px}
+.cond2 b{color:var(--gold-lt);font-weight:400}
+.ptab{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}.ptab td,.ptab th{padding:5px 6px;border-bottom:1px solid var(--border);text-align:left}
+.ptab th{font-weight:400;color:var(--gold);font-size:10.5px}.ptab td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pg{display:flex;gap:8px;justify-content:center;margin-top:8px}.pg button{background:none;border:1px solid var(--border);color:var(--gold-lt);border-radius:12px;padding:3px 12px;font:inherit;font-size:11.5px;cursor:pointer}
+.pg button:disabled{opacity:.35;cursor:default}
 @media (max-width:640px){.jump{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;scrollbar-width:none}.jump button{flex:none}.top2{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.br{grid-template-columns:minmax(0,1fr) 64px 42px 40px}}
 </style>
 </head>
@@ -137,6 +151,10 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 
 <div id="res">
   <div class="panel sum" id="sum"></div>
+  <div class="panel" id="focus" style="display:none"></div>
+  <div class="panel" id="periodsP" style="display:none"></div>
+  <div class="go" id="fullT" style="display:none"><button class="btn ghost" id="fullBtn" type="button">▾ სრული სტატისტიკა ამ ჯგუფისთვის — ყველა სისტემა</button></div>
+  <div id="full">
   <div class="jump" id="jump"></div>
   <div class="panel" id="topP"><h3>ყველაზე დამახასიათებელი ამ ჯგუფისთვის</h3>
     <div class="top2"><div><div class="hint" style="margin-bottom:6px">▲ ჩვეულებრივზე ხშირი</div><ul class="toplist" id="topU"></ul></div>
@@ -144,6 +162,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
   <div class="legend" id="legend"></div>
   <div id="sections"></div>
   <div class="panel" style="margin-top:22px"><h3>მაგალითები ამ ჯგუფიდან</h3><div class="ex" id="ex"></div></div>
+  </div>
 </div>
 
 <p class="note hint" style="margin-top:20px">
@@ -153,6 +172,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 აიღება 100 000 მომენტი, თანაბრად გადანაწილებული პერიოდზე (ან პირობის შესაბამის დღეებზე); რუქები ითვლება პარალელურად, კომპიუტერის ყველა ბირთვზე: HD — 26 აქტივაცია, ასტროლოგია — ტროპიკული, გეოცენტრული,
 ნამდვილი კვანძი, პლაციდუსის სახლები, ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°; დაბნელებები — ყველა მზისა და მთვარის დაბნელება ძვ.წ. 3001 — 10001 (Astronomy Engine): წინა დაბნელების ნიშანი და სახე, და რამდენი დღეა უახლოეს დაბნელებამდე. თუ პირობაში HD ან ასტროლოგიაა, ჯგუფი მოიძებნება ამ მომენტებიდან.
 × — რამდენჯერ ხშირია ჯგუფში ჩვეულებრივთან შედარებით. პითაგორას კვადრატი ითვლება მხოლოდ ქრისტეს შემდეგ წლებზე.
+<b>პლანეტების პირობები</b> (ნიშნები, ასპექტები, კვანძი) ითვლება <b>ზუსტად</b> — მოიძებნება მთელი პერიოდის ყველა მომენტი, როცა სრულდება, შემთხვევითი შერჩევის გარეშე; დანარჩენი მომენტები ნაწილდება თანაბრად (ოქროს კვეთის მიმდევრობით), არა შემთხვევით, და დროის ლიმიტი არ არის.
 ეს დროის წილია და არა ადამიანების — შობადობა სეზონისა და საათის მიხედვით არ არის გათვალისწინებული.
 კალენდარი: იულიუსის 1582 წლამდე; წელი 0 = ძვ.წ. 1. დროის სარტყელი მუდმივია (ზაფხულის დროის გარეშე).
 </p>
@@ -161,6 +181,8 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 <script src="matrix_combos.js"></script>
 <script src="pluto_far.js"></script>
 <script src="stats_engine.js"></script>
+<script src="search.js"></script>
+<script src="exactscan.js"></script>
 <script src="eclipses.js"></script>
 <script>
 'use strict';
@@ -575,9 +597,32 @@ async function dayPass(a,b,F,R,E,tok,label,b0,b1){
   }
   return {match,total};
 }
-function picker(E){let c=0;const cum=E.map(e=>c+=e.w);
-  return ()=>{const r=Math.random()*c;let lo=0,hi=cum.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(cum[mid]>r)hi=mid;else lo=mid+1;}
-    const e=E[lo],y=e.g.years[Math.floor(Math.random()*e.g.years.length)];return {y,m:e.m,d:e.d};};}
+/* evenly spread moments, nothing random: additive recurrences with irrational steps (R3 sequence) —
+   every prefix covers the matching days, their years and the hours of the day evenly */
+const PHI=0.6180339887498949,R3=[0.8191725133961645,0.6710436067037893,0.5497004779019703];
+const frac=x=>x-Math.floor(x);
+function picker(E){let c=0;const cum=E.map(e=>c+=e.w);let k=0;
+  return ()=>{k++;const r=frac(k*R3[0])*c;let lo=0,hi=cum.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(cum[mid]>r)hi=mid;else lo=mid+1;}
+    const e=E[lo],y=e.g.years[Math.floor(frac(k*R3[1])*e.g.years.length)];return {y,m:e.m,d:e.d,f:frac(k*R3[2])};};}
+/* planet conditions → exact windows (exactscan.js on search.js's ephemeris; the node = Astronomy Engine true node) */
+const EXB=b=>b==='Node'?'node':b.toLowerCase();
+function exCond(fl){const [fid,op,v]=fl,c=CFM[fid];if(!c||typeof EXS==='undefined'||!window._search)return null;
+  if(c.f.id==='sign'&&PLB.has(c.p))return EXS.sign(EXB(c.p),[+v],op==='≠');
+  if(c.f.id==='asp'){const [a,b]=c.p.split('-');
+    if(+v===-1)return EXS.anyAsp(EXB(a),EXB(b),SE.ASPS,op!=='≠');
+    const o=SE.ASPS.find(x=>x[0]===+v);return o?EXS.asp(EXB(a),EXB(b),+v,o[1],op==='≠'):null;}
+  return null;}
+/* matching calendar days → merged time windows (null when there are too many to list) */
+function dayWins(E,off){let n=0;for(const e of E)n+=e.g.years.length;if(n>1.5e6)return null;
+  const W=new Array(n);let k=0;for(const e of E)for(const y of e.g.years){const s=SE.calJD(y,e.m,e.d,0)-off/24;W[k++]=[s,s+1];}
+  W.sort((a,b)=>a[0]-b[0]);const M=[];for(const w of W){if(M.length&&w[0]<=M[M.length-1][1]+1e-9)M[M.length-1][1]=Math.max(M[M.length-1][1],w[1]);else M.push(w);}return M;}
+const WCACHE=new Map();
+async function exWins(xc,key,m0,m1,tok,lab,b0,b1){
+  const k=key+'|'+m0+'|'+m1;if(WCACHE.has(k))return WCACHE.get(k);
+  const W=await EXS.scan(xc,m0,m1,{prog:f=>{$('bar').style.width=(b0+(b1-b0)*f)+'%';$('msg').textContent=`${lab}: ${Math.round(100*f)}%`;},cancelled:()=>tok!==RUN});
+  if(W){if(WCACHE.size>40)WCACHE.clear();WCACHE.set(k,W);}return W;}
+const NSG=30000;          /* group charts for the full breakdown — spread evenly through all of the group's time */
+const TRYCAP=3000000;     /* moments checked at most for a rare non-planet condition (evenly over the whole time) */
 async function go(){
   const tok=++RUN,P=params(),C=readCond(),F=compile(C.fl),HAS=C.fl.length>0||C.year!==null;
   {const d=+$('cd').value,m=+$('cm').value;
@@ -585,74 +630,132 @@ async function go(){
   $('ya').value=P.a;$('yb').value=P.b;
   $('run').disabled=true;$('stop').hidden=false;
   try{location.hash=encodeURIComponent(JSON.stringify({d:$('cd').value,m:$('cm').value,y:$('cy').value,f:FL,a:P.a,b:P.b,lat:P.lat,lon:P.lon,off:P.off,pl:PLACE_NAME,pq:$('place').value}));}catch(e){}
+  const bad=t=>{$('msg').innerHTML=`<span class="bad">${t}</span>`;$('res').style.display='none';};
   try{
     $('msg').textContent='⏳ ასტრონომიული ბიბლიოთეკა იტვირთება…';
-    await SE.init();
+    await SE.init();if(typeof EXS!=='undefined')EXS.provide('node',SE.nodeL,0.32);
     const j0=SE.calJD(P.a,1,1,0)-P.off/24,j1=SE.calJD(P.b+1,1,1,0)-P.off/24,span=j1-j0;
     /* ── "usual": every day exactly + NS moments ── */
     const key=[P.a,P.b,P.lat,P.lon,P.off].join('|'),dkey=P.a+'|'+P.b;
     if(key!==BASEKEY||!BASE){
       const B=newAcc(),hit=(await shipped(key))||lsGet('statsT|'+SIG+'|'+key),dhit=lsGet('statsD|'+SIG+'|'+dkey);
-      /* days — they do not depend on the place */
       if(dkey===BDKEY&&BDATE){for(const x of CFD){B.c[x.fid]=BDATE.c[x.fid];B.nn[x.fid]=BDATE.nn[x.fid];}B.days=BDATE.days;}
       else if(hit&&hit.D&&unpackAcc(B,hit.D,CFD)){B.days=hit.D.days;BDATE=B;BDKEY=dkey;}
       else if(dhit&&unpackAcc(B,dhit,CFD)){B.days=dhit.days;BDATE=B;BDKEY=dkey;}
-      else{if(!await dayPass(P.a,P.b,null,B,null,tok,'ჩვეულებრივი · ყველა დღე',0,HAS?20:40))return;BDATE=B;BDKEY=dkey;lsSet('statsD|'+SIG+'|'+dkey,packAcc(B,CFD));}
-      /* moments */
+      else{if(!await dayPass(P.a,P.b,null,B,null,tok,'ჩვეულებრივი · ყველა დღე',0,HAS?15:40))return;BDATE=B;BDKEY=dkey;lsSet('statsD|'+SIG+'|'+dkey,packAcc(B,CFD));}
       if(hit&&hit.T&&unpackAcc(B,hit.T,CFT)){B.mom=hit.T.mom;}
       else{
-        const w=span/NS;let i=0;const p0=HAS?20:40,p1=HAS?30:60;
-        const ok=await charts(()=>i<NS?j0+(i++ +Math.random())*w:null,P,S=>{addSet(B,S,CFT,1);B.mom++;},tok,
+        /* one moment in each of NS equal slices of the period, its place in the slice by the golden ratio */
+        const w=span/NS;let i=0;const p0=HAS?15:40,p1=HAS?20:60;
+        const ok=await charts(()=>{if(i>=NS)return null;const jd=j0+(i+frac((i+1)*PHI))*w;i++;return jd;},P,S=>{addSet(B,S,CFT,1);B.mom++;},tok,
           n=>{$('bar').style.width=(p0+p1*n/NS)+'%';$('msg').textContent=`ჩვეულებრივი · HD და ასტროლოგია: ${n.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;});
         if(!ok)return;
         lsSet('statsT|'+SIG+'|'+key,{T:packAcc(B,CFT)});
       }
       BASE=B;BASEKEY=key;
     }
-    let M=BASE,freq=1,ex=[],exact=true;
+    let M=BASE,freq=1,ex=[],exact=true,fexact=true,W=null,FOC=null,lazy=null,ya=P.a,yb=P.b,m0=j0,m1=j1,cov='';
     if(HAS){
-      const ya=C.year!==null?C.year:P.a,yb=C.year!==null?C.year:P.b;
-      const hasT=F.some(q=>q.st>0);
-      M=newAcc();const E=[],hasD=F.some(q=>q.st===0)||C.year!==null;
-      let dp;
-      if(hasD){dp=await dayPass(ya,yb,F,hasT?null:M,E,tok,'პირობის დღეები',50,62);if(!dp)return;}
-      else dp={match:1,total:1};          /* no date condition: every day of the period qualifies */
-      if(!dp.match){$('msg').innerHTML='<span class="bad">ამ პერიოდში ასეთი თარიღი არ არსებობს — ეს კომბინაცია შეუძლებელია (ან სცადე სხვა პერიოდი).</span>';$('res').style.display='none';return;}
-      const dayFrac=dp.match/dp.total,off=P.off;
-      const draw=hasD?(pick=>()=>{const t=pick();return SE.calJD(t.y,t.m,t.d,0)-off/24+Math.random();})(picker(E)):()=>j0+Math.random()*span;
+      ya=C.year!==null?C.year:P.a;yb=C.year!==null?C.year:P.b;
+      m0=SE.calJD(ya,1,1,0)-P.off/24;m1=SE.calJD(yb+1,1,1,0)-P.off/24;
+      const PCi=C.fl.map((f,i)=>exCond(f)?i:-1).filter(i=>i>=0),XC=PCi.map(i=>exCond(C.fl[i]));
+      const hasT=F.some(q=>q.st>0),hasD=F.some(q=>q.st===0);
+      const otherT=F.some((q,i)=>q.st>0&&!PCi.includes(i));     /* HD, houses, ASC/MC, eclipses */
+      M=newAcc();
+      /* 1 — planet conditions: exact windows, every moment of the whole period */
+      if(XC.length){
+        W=await exWins(XC,JSON.stringify(PCi.map(i=>C.fl[i])),m0,m1,tok,'⏳ ზუსტი ძებნა მთელ პერიოდში',35,55);if(!W)return;
+        if(!W.length){bad('ამ პერიოდში ეს პლანეტების პირობა არცერთხელ არ სრულდება.');return;}}
+      /* 2 — date conditions: every matching day */
+      const E=[];let dp={match:1,total:1};
+      if(hasD){dp=await dayPass(ya,yb,F,hasT?null:M,E,tok,'პირობის დღეები',55,62);if(!dp)return;
+        if(!dp.match){bad('ამ პერიოდში ასეთი თარიღი არ არსებობს — ეს კომბინაცია შეუძლებელია (ან სცადე სხვა პერიოდი).');return;}}
+      const dayFrac=dp.match/dp.total;
       if(!hasT){
-        /* date-only condition: dates exact, HD/astrology from NS moments inside the matching days */
-        let i=0;
-        const ok=await charts(()=>i++<NS?draw():null,P,S=>{addSet(M,S,CFT,1);M.mom++;yAdd(M,S);if(ex.length<60&&Math.random()<0.002)ex.push(S.jd);},tok,
-          n=>{$('bar').style.width=(62+38*n/NS)+'%';$('msg').textContent=`ჯგუფი · HD და ასტროლოგია: ${n.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;});
-        if(!ok)return;
+        /* date-only condition: dates exact, HD/astrology from NS moments spread evenly through the matching days */
+        lazy={kind:'date',E};          /* HD / astrology of these days — charted when the full statistics is opened */
         freq=dayFrac;$('msg').textContent='';
       }else{
-        /* time condition: moments inside the matching days until NS matches, the condition proves rare, or time is up */
-        exact=false;let tries=0,acc=0,stop='';const T0=performance.now();
-        /* eclipse conditions need only the moment — test them before a chart is drawn */
-        const FJ=F.filter(q=>q.jd);let chk=0;
-        const gen=FJ.length?()=>{for(let k=0;k<2e6;k++){const jd=draw();tries++;if(FJ.every(q=>q.test({jd})!==q.neg))return jd;}return null;}:()=>{tries++;return draw();};
+        /* time condition: where it can hold at all = planet windows ∩ matching days; moments spread evenly
+           (golden-ratio sweep) through ALL of that time — no clock limit, the sweep covers the whole period */
+        exact=false;let T=W||[[m0,m1]],dateIn=!hasD;
+        if(hasD){const DW=dayWins(E,P.off);if(DW){T=EXS.inter(T,DW);dateIn=true;}}
+        if(!T.length){bad('ამ პერიოდში ეს პირობები ერთად არცერთხელ არ სრულდება.');return;}
+        const share=EXS.measure(T)/(m1-m0);
+        if(!otherT&&dateIn){fexact=true;freq=share;lazy={kind:'time',T,F};$('msg').textContent='';}   /* exact already — charts only for the full breakdown, on demand */
+        else{
+        const next=EXS.sweep(T);
+        const FJ=F.filter(q=>q.jd);let tries=0,acc=0,stop='',chk=0;
+        const gen=()=>{for(let k=0;k<2e6;k++){if(tries>=TRYCAP)return null;const jd=next();tries++;if(!FJ.length||FJ.every(q=>q.test({jd})!==q.neg))return jd;}return null;};
         const ok=await charts(gen,P,S=>{
-            if(passes(F,S,1)&&passes(F,S,2)){acc++;addSet(M,S,CF,1);M.mom++;M.days++;yAdd(M,S);if(ex.length<60&&Math.random()<0.05)ex.push(S.jd);}
-            if(M.mom>=NS){stop='n';return false;}
-            if((++chk&255)===0){const el=(performance.now()-T0)/1000;
-              if((el>60&&M.mom>=2000)||(el>180&&M.mom>=30)){stop='t';return false;}
-              if(el>90&&M.mom<30){stop='rare';return false;}}
+            if(passes(F,S,0)&&passes(F,S,1)&&passes(F,S,2)){acc++;addSet(M,S,CF,1);M.mom++;M.days++;yAdd(M,S);if(ex.length<60&&acc%97===1)ex.push(S.jd);}
+            if(M.mom>=NSG){stop='n';return false;}
           },tok,
-          ()=>{const el=(performance.now()-T0)/1000;$('bar').style.width=(62+38*Math.min(1,Math.max(M.mom/NS,el/180)))+'%';
-            $('msg').textContent=`პირობის ძებნა: ნაპოვნია ${M.mom.toLocaleString()} · შემოწმდა ${tries.toLocaleString()} მომენტი`;});
+          ()=>{$('bar').style.width=(62+38*Math.min(1,Math.max(M.mom/NSG,tries/TRYCAP)))+'%';
+            $('msg').textContent=`პირობის ძებნა მთელ დროში: ნაპოვნია ${M.mom.toLocaleString()} · შემოწმდა ${tries.toLocaleString()} თანაბრად განაწილებული მომენტი`;});
         if(!ok)return;
-        if(!M.mom){$('msg').innerHTML='<span class="bad">ამ პირობით დაბადება ვერ მოიძებნა — შესაძლოა ეს კომბინაცია შეუძლებელია ან ძალიან იშვიათი.</span>';$('res').style.display='none';return;}
-        freq=dayFrac*acc/tries;
-        $('msg').textContent=stop==='n'?'':stop==='t'?`ნაჩვენებია ${M.mom.toLocaleString()} ნაპოვნი რუქა — ძებნა დროის ლიმიტზე შეჩერდა (სტატისტიკისთვის საკმარისია).`:'პირობა ძალიან იშვიათია — ნაჩვენებია ნაპოვნი რუქები.';
+        if(!M.mom){bad(`ამ პირობით დაბადება ვერ მოიძებნა — შემოწმდა ${tries.toLocaleString()} მომენტი, თანაბრად გადანაწილებული მთელ პერიოდზე; ეს კომბინაცია შეუძლებელია ან უკიდურესად იშვიათია.`);return;}
+        fexact=!otherT&&dateIn;                      /* only planet (+date) conditions → the share of time is exact */
+        freq=fexact?share:share*acc/tries;
+        cov=`ნიმუში: ${M.mom.toLocaleString()} რუქა${stop==='n'?'':' — ყველა ნაპოვნი'} · შემოწმდა ${tries.toLocaleString()} მომენტი, თანაბრად მთელ ${EXS.measure(T)>=(m1-m0)-1e-6?'პერიოდზე':'შესაძლო დროზე'}`;
+        $('msg').textContent='';
+        }
       }
+      FOC=await focus(C,P,ya,yb,m0,m1,freq,fexact,tok);if(FOC===null)return;
     }else $('msg').textContent='';
     $('bar').style.width='100%';
-    RES={M,B:BASE,P,C,has:HAS,freq,exact,ex};
+    RES={M,B:BASE,P,C,has:HAS,freq,exact,fexact,ex,W,FOC,m0,m1,ya,yb,cov,page:null,lazy};FULLOPEN=false;
     render();
   }catch(e){$('msg').innerHTML='<span class="bad">შეცდომა: '+esc(e.message)+'</span>';console.error(e);}
   finally{if(tok===RUN){$('run').disabled=false;$('stop').hidden=true;}}
+}
+/* full breakdown of the group, charted only when asked for: NSG moments spread evenly through all of its time */
+async function runLazy(){
+  const R=RES;if(!R||!R.lazy)return true;const L=R.lazy,tok=RUN,M=R.M,ex=R.ex,every=Math.ceil(NSG/60);
+  $('run').disabled=true;$('stop').hidden=false;$('fullBtn').disabled=true;
+  const prog=n=>{$('bar').style.width=(100*n/NSG)+'%';$('msg').textContent=`ჯგუფის სრული სტატისტიკა: ${n.toLocaleString()} / ${NSG.toLocaleString()} რუქა (თანაბრად მთელ დროში)`;};
+  let ok=false;
+  try{
+    if(L.kind==='date'){const pick=picker(L.E),off=R.P.off;let i=0;
+      ok=await charts(()=>{if(i++>=NSG)return null;const t=pick();return SE.calJD(t.y,t.m,t.d,0)-off/24+t.f;},R.P,S=>{addSet(M,S,CFT,1);M.mom++;yAdd(M,S);if(ex.length<60&&M.mom%every===1)ex.push(S.jd);},tok,prog);}
+    else{const next=EXS.sweep(L.T);let i=0;
+      ok=await charts(()=>i++<NSG?next():null,R.P,S=>{if(passes(L.F,S,0)&&passes(L.F,S,1)&&passes(L.F,S,2)){addSet(M,S,CF,1);M.mom++;M.days++;yAdd(M,S);if(ex.length<60&&M.mom%every===1)ex.push(S.jd);}},tok,prog);}
+  }finally{if(tok===RUN){$('run').disabled=false;$('stop').hidden=true;}$('fullBtn').disabled=false;}
+  if(!ok||RES!==R)return false;
+  R.lazy=null;$('msg').textContent='';$('bar').style.width='100%';return true;
+}
+/* ── the chosen factors alone, together, and against chance ── */
+async function focus(C,P,ya,yb,m0,m1,joint,jexact,tok){
+  const fl=C.fl,items=[];
+  for(let i=0;i<fl.length;i++){
+    const f=fl[i],xc=exCond(f),it={f,lab:condText(f)};
+    if(f[0]==='day:'||f[0]==='month:')it.lab=f[0]==='day:'?`რიცხვი: ${f[2]}`:`თვე: ${MON[f[2]-1]}`;
+    if(fl.length===1){it.p=joint;it.ex=jexact;items.push(it);break;}
+    if(xc){it.W=await exWins([xc],JSON.stringify(f),m0,m1,tok,`⏳ ფაქტორი ${i+1}/${fl.length} — ზუსტად მთელ პერიოდში`,80,95);if(!it.W)return null;
+      it.p=EXS.measure(it.W)/(m1-m0);it.ex=true;}
+    else if(CFM[f[0]].f.st===0){const E=[];const dp=await dayPass(ya,yb,compile([f]),null,E,tok,`ფაქტორი ${i+1}/${fl.length} · დღეები`,80,95);if(!dp)return null;
+      it.p=dp.total?dp.match/dp.total:0;it.E=E;it.ex=true;}
+    else it.need=true;
+    items.push(it);
+  }
+  const k=items.length,pairs=[];
+  for(let i=0;i<k;i++)for(let j=i+1;j<k;j++){const a=items[i],b=items[j],pr={i,j};
+    if(k===2){pr.p=joint;pr.ex=jexact;}
+    else if(a.W&&b.W){pr.p=EXS.measure(EXS.inter(a.W,b.W))/(m1-m0);pr.ex=true;}
+    else if((a.W&&b.E)||(a.E&&b.W)){const DW=dayWins(a.E||b.E,P.off);if(DW){pr.p=EXS.measure(EXS.inter(a.W||b.W,DW))/(m1-m0);pr.ex=true;}else pr.need=true;}
+    else if(a.E&&b.E){const E=[];const dp=await dayPass(ya,yb,compile([a.f,b.f]),null,E,tok,'წყვილი · დღეები',95,97);if(!dp)return null;pr.p=dp.match/dp.total;pr.ex=true;}
+    else pr.need=true;
+    pairs.push(pr);}
+  /* anything with HD / houses / ASC / eclipses: moments spread evenly through the whole period, every factor tested on each */
+  if(items.some(x=>x.need)||pairs.some(x=>x.need)){
+    const NS2=30000,next=EXS.sweep([[m0,m1]]),T=items.map(x=>compile([x.f])[0]),cnt=items.map(()=>0),pc=pairs.map(()=>0);let n=0,t=0;
+    const ok=await charts(()=>t++<NS2?next():null,P,S=>{n++;const v=T.map(q=>q.test(S)!==q.neg);v.forEach((x,i)=>{if(x)cnt[i]++;});pairs.forEach((pr,i)=>{if(v[pr.i]&&v[pr.j])pc[i]++;});},tok,
+      d=>{$('bar').style.width=(95+5*d/NS2)+'%';$('msg').textContent=`ფაქტორების შედარება: ${d.toLocaleString()} / ${NS2.toLocaleString()} მომენტი`;});
+    if(!ok)return null;
+    items.forEach((x,i)=>{if(x.need){x.p=cnt[i]/n;x.ex=false;}});pairs.forEach((x,i)=>{if(x.need){x.p=pc[i]/n;x.ex=false;}});
+    $('msg').textContent='';
+  }
+  return {items,pairs,joint,jexact};
 }
 $('run').onclick=async()=>{await resolvePlace();go();};
 window._statsBase=()=>({sig:SIG,key:BASEKEY,D:packAcc(BASE,CFD),T:packAcc(BASE,CFT)});
@@ -668,17 +771,23 @@ function statOf(fid,v){
   return {k,p,q,lift:q>0?p/q:(p>0?Infinity:1),z:(p-q)/se};
 }
 const filtered=()=>RES.has;
+let FULLOPEN=false;
+$('fullBtn').onclick=async()=>{FULLOPEN=!FULLOPEN;
+  if(FULLOPEN&&RES&&RES.lazy){if(!await runLazy()){FULLOPEN=false;return;}render(true);}
+  $('full').style.display=FULLOPEN?'':'none';$('fullBtn').textContent=(FULLOPEN?'▴ დამალე':'▾ სრული სტატისტიკა ამ ჯგუფისთვის')+' — ყველა სისტემა';
+  if(FULLOPEN)$('full').scrollIntoView({behavior:'smooth',block:'start'});};
 function liftTxt(s){if(!filtered())return '';if(s.lift===Infinity)return 'ახ.';return '×'+(s.lift>=10?s.lift.toFixed(0):s.lift.toFixed(2));}
 function liftCls(s){if(!filtered()||Math.abs(s.z)<2.5)return '';return s.p>s.q?'u':'d';}
-function render(){
+function render(keep){
   const R=RES,M=R.M,B=R.B,P=R.P;
   $('res').style.display='block';
   const yr=y=>y<=0?`ძვ.წ. ${1-y}`:y;
   const C=R.C,showF=C.fl.length>0,per=C.year!==null?yrTxt(C.year)+' წლის':`${yrTxt(P.a)}–${yrTxt(P.b)} წლების`;
   $('sum').innerHTML=filtered()
     ?`<div class="cond">${condLines(C).map(esc).join('<br><span style="color:var(--ink-dim);font-size:12px">და</span><br>')||'ყველა დაბადება'}</div>
-      ${showF?`<div class="freq">${fp(R.freq*100)}%</div><div class="meta">${per} დაბადებებიდან აკმაყოფილებს პირობას (ანუ ≈ 1 / ${R.freq>0?Math.round(1/R.freq).toLocaleString():'∞'})</div>`:''}
-      <div class="meta" style="margin-top:6px">ჯგუფი: ${R.exact?`📅 ${M.days.toLocaleString()} დღე — ყველა, ზუსტად · 🕐 HD და ასტროლოგია: ${M.mom.toLocaleString()} მომენტი`:`${M.mom.toLocaleString()} ნაპოვნი რუქა`}
+      ${showF?`<div class="freq">${fp(R.freq*100)}%</div><div class="meta">${per} დროის ${R.fexact?'<b>ზუსტად</b>':'≈'} ამდენ ნაწილში სრულდება პირობა (ანუ ${R.fexact?'':'≈ '}1 / ${R.freq>0?Math.round(1/R.freq).toLocaleString():'∞'})${R.fexact?' — დათვლილია პერიოდის ყოველი მომენტი':''}</div>`:''}
+      ${R.cov?`<div class="meta">${esc(R.cov)}</div>`:''}
+      <div class="meta" style="margin-top:6px">${R.lazy?`სრული სტატისტიკა (HD, ასტროლოგია, მატრიცა… ამ ჯგუფისთვის) — ქვემოთ ღილაკით: ${NSG.toLocaleString()} რუქა, თანაბრად მთელ დროში · `:''}ჯგუფი: ${R.exact?`📅 ${M.days.toLocaleString()} დღე — ყველა, ზუსტად · 🕐 HD და ასტროლოგია: ${M.mom.toLocaleString()} მომენტი`:`${M.mom.toLocaleString()} ნაპოვნი რუქა`}
         · შედარება: ყველა დაბადება ${yrTxt(P.a)}–${yrTxt(P.b)} (📅 ${B.days.toLocaleString()} დღე · 🕐 ${B.mom.toLocaleString()} მომენტი) · ${esc(placeName())}</div>`
     :`<div class="cond">ყველა დაბადება</div><div class="meta">${yrTxt(P.a)}–${yrTxt(P.b)} · 📅 ${B.days.toLocaleString()} დღე — ყველა, ზუსტად · 🕐 HD და ასტროლოგია: ${B.mom.toLocaleString()} მომენტი · ${esc(placeName())} — აირჩიე რიცხვი, თვე, წელი ან ნებისმიერი ნიშანი, რომ ნახო რით განსხვავდება ჯგუფი</div>`;
   $('legend').innerHTML=filtered()
@@ -705,7 +814,6 @@ function render(){
     const box=sec.querySelector('.cards');
     for(const f of [FM.month,FM.day]){const card=document.createElement('div');card.className='card';card.innerHTML=barsHTML(f);box.appendChild(card);}
     const yc=document.createElement('div');yc.className='card';yc.innerHTML=yearsHTML();box.appendChild(yc);
-    if(planetConds(C.fl).length){const pc=document.createElement('div');pc.className='card wide';pc.id='periods';pc.innerHTML='<h4>ზუსტი პერიოდები<small>იძებნება…</small></h4>';box.appendChild(pc);}
     H.appendChild(sec);
   }
   for(const [sk,sn] of SYS){
@@ -723,8 +831,13 @@ function render(){
   $('ex').innerHTML=filtered()&&R.ex&&R.ex.length?R.ex.slice(0,45).map(j=>exDate(j)).join('<br>'):'—';
   $('ex').parentElement.style.display=filtered()?'':'none';
   $('res').querySelectorAll('[data-f]').forEach(el=>el.onclick=()=>{if(pushCond(el.dataset.f,el.dataset.v))go();});
-  $('sum').scrollIntoView({behavior:'smooth',block:'start'});
-  if($('periods'))scanPeriods(C,P,RUN,$('periods'));
+  if(!keep)$('sum').scrollIntoView({behavior:'smooth',block:'start'});
+  /* conditions chosen → only their statistics; the rest of the systems on demand */
+  const foc=filtered()&&R.FOC&&R.FOC.items.length>0;$('focus').style.display=foc?'':'none';$('fullT').style.display=filtered()?'':'none';
+  $('full').style.display=filtered()&&!FULLOPEN?'none':'';
+  $('fullBtn').textContent=(FULLOPEN?'▴ დამალე':'▾ სრული სტატისტიკა ამ ჯგუფისთვის')+' — ყველა სისტემა';
+  if(foc)$('focus').innerHTML=focusHTML(R);
+  showPeriods();
 }
 /* birth years of the group, against the share of time each span of years takes */
 function yearsHTML(){
@@ -743,29 +856,65 @@ function yearsHTML(){
 /* exact periods for planet conditions (signs and aspects): scan the time line, refine each edge */
 const PLB=new Set(BOD.map(b=>b[0]));
 function planetConds(fl){return fl.filter(([fid])=>{const c=CFM[fid];return c&&((c.f.id==='sign'&&PLB.has(c.p))||c.f.id==='asp');});}
-async function scanPeriods(C,P,tok,box){
-  const pc=planetConds(C.fl);if(!pc.length)return;
-  const ya=C.year!==null?C.year:P.a,yb=C.year!==null?C.year:P.b,moon=pc.some(([fid])=>/Moon/.test(fid)),maxY=moon?60:600;
-  const others=C.fl.length-pc.length;
-  const head=t=>`<h4>ზუსტი პერიოდები — ${pc.map(condText).map(esc).join(' და ')}<small>${t}</small></h4>`;
-  if(yb-ya+1>maxY){box.innerHTML=head('')+`<div class="hint">ზუსტი თარიღების სიისთვის აირჩიე წელი ან ${maxY} წელზე მოკლე პერიოდი (ახლა ${(yb-ya+1).toLocaleString()} წელია). წლების განაწილება ზემოთ ჩანს.</div>`;return;}
-  const step=moon?0.1:1,bodies=[...new Set(pc.flatMap(([fid])=>{const c=CFM[fid];return c.f.id==='sign'?[c.p]:c.p.split('-');}))];
-  const ok=jd=>{const l={};for(const b of bodies)l[b]=b==='Node'?SE.nodeL(jd):SE.rawL(b,jd);
-    return pc.every(([fid,op,v])=>{const c=CFM[fid];const x=c.f.id==='sign'?Math.floor(l[c.p]/30):SE.aspect(l[c.p.split('-')[0]],l[c.p.split('-')[1]]);return (String(x)===String(v))!==(op==='≠');});};
-  const m0=SE.calJD(ya,1,1,0)-P.off/24,m1=SE.calJD(yb+1,1,1,0)-P.off/24;
-  const edge=(a,b,va)=>{for(let k=0;k<14;k++){const m=(a+b)/2;if(ok(m)===va)a=m;else b=m;}return (a+b)/2;};
-  const out=[];let prev=ok(m0),start=prev?m0:null,t0=performance.now();
-  for(let jd=m0+step;jd<m1;jd+=step){const cur=ok(jd);
-    if(cur!==prev){const e=edge(jd-step,jd,prev);if(cur)start=e;else{out.push([start,e]);start=null;}prev=cur;}
-    if(performance.now()-t0>60){box.innerHTML=head(`იძებნება… ${Math.round(100*(jd-m0)/(m1-m0))}%`);await tick();t0=performance.now();if(tok!==RUN||!box.isConnected)return;}}
-  if(start!==null)out.push([start,m1]);
-  const tot=out.reduce((a,[x,y])=>a+(y-x),0),dt=jd=>{const p=SE.jdDay(jd+P.off/24),f=((jd+P.off/24+0.5)%1+1)%1,mi=Math.floor(f*1440);
+/* exact periods of the planet conditions: the windows found over the whole period; the shown page's
+   edges are refined with Astronomy Engine (true node) to the minute */
+const PAGE=300;
+function okAE(pc,jd){const l={};
+  return pc.every(([fid,op,v])=>{const c=CFM[fid];const g=b=>l[b]!=null?l[b]:(l[b]=b==='Node'?SE.nodeL(jd):SE.rawL(b,jd));
+    const x=c.f.id==='sign'?Math.floor(g(c.p)/30):SE.aspect(g(c.p.split('-')[0]),g(c.p.split('-')[1]));return (String(x)===String(v))!==(op==='≠');});}
+function refine(pc,e,into){   /* into: true at a start edge (false → true) */
+  for(const d of [0.0007,0.007,0.07,0.7,3,12]){const a=okAE(pc,e-d),b=okAE(pc,e+d);
+    if(a!==into&&b===into){let lo=e-d,hi=e+d;while(hi-lo>3e-4){const m=(lo+hi)/2;if(okAE(pc,m)===into)hi=m;else lo=m;}return (lo+hi)/2;}}
+  return e;}
+async function showPeriods(){
+  const box=$('periodsP'),R=RES,C=R.C,P=R.P,pc=planetConds(C.fl);
+  if(!R.has||!R.W||!pc.length){box.style.display='none';return;}
+  box.style.display='';const W=R.W,tok=RUN;
+  const now=Date.now()/864e5+2440587.5;
+  if(R.page===null){let i=W.findIndex(w=>w[1]>now);if(i<0)i=W.length;R.page=Math.max(0,Math.min(Math.max(0,W.length-PAGE),i-Math.floor(PAGE/3)));}
+  const a=R.page,b=Math.min(W.length,a+PAGE),tot=EXS.measure(W),others=C.fl.length-pc.length;
+  const dt=jd=>{const p=SE.jdDay(jd+P.off/24),f=((jd+P.off/24+0.5)%1+1)%1,mi=Math.floor(f*1440);
     return `${String(p.d).padStart(2,'0')}.${String(p.m).padStart(2,'0')}.${p.y<=0?'ძვ.წ.'+(1-p.y):p.y} ${String(Math.floor(mi/60)).padStart(2,'0')}:${String(mi%60).padStart(2,'0')}`;};
-  const dur=d=>d>=2?Math.round(d)+' დღე':Math.round(d*24)+' სთ',LIM=1500;
-  box.innerHTML=head(`${out.length.toLocaleString()} პერიოდი · ჯამში ${Math.round(tot).toLocaleString()} დღე (${fp(100*tot/(m1-m0))}% დროისა) · ${yrTxt(ya)}–${yrTxt(yb)} · UTC${P.off>=0?'+':''}${P.off}`)+
-    (out.length?`<div class="bars long ex2">${out.slice(0,LIM).map(([a,b])=>`<div class="br pr"><span class="l">${dt(a)} — ${dt(b)}</span><span class="p">${dur(b-a)}</span></div>`).join('')}</div>`+
-      (out.length>LIM?`<div class="hint">…და კიდევ ${(out.length-LIM).toLocaleString()} პერიოდი — შეამოკლე პერიოდი.</div>`:''):'<div class="hint">ამ პერიოდში არ ხდება.</div>')+
-    `<div class="hint" style="margin-top:6px">გეოცენტრული, ტროპიკული; ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°; საზღვრები — წუთის სიზუსტით.${others?' ამ სიაში მხოლოდ პლანეტების პირობებია — სხვა პირობები (მატრიცა, HD…) აქ არ მოწმდება.':''}</div>`;
+  const dur=d=>d>=2?Math.round(d)+' დღე':d>=1/24?Math.round(d*24)+' სთ':Math.round(d*1440)+' წთ';
+  const head=`<h3>ზუსტი პერიოდები — ${pc.map(condText).map(esc).join(' და ')}</h3>
+    <div class="hint">${W.length.toLocaleString()} პერიოდი · ჯამში ${Math.round(tot).toLocaleString()} დღე (${fp(100*tot/(R.m1-R.m0))}% დროისა) · ${yrTxt(R.ya)}–${yrTxt(R.yb)} · UTC${P.off>=0?'+':''}${P.off} — ნაპოვნია <b>ყველა</b>, პერიოდის ყოველი მომენტი შემოწმებულია.</div>`;
+  const pager=W.length>PAGE?`<div class="pg"><button data-d="-1"${a?'':' disabled'}>◀ ადრე</button><span class="hint">${(a+1).toLocaleString()}–${b.toLocaleString()} / ${W.length.toLocaleString()}</span><button data-d="1"${b<W.length?'':' disabled'}>გვიან ▶</button><button data-d="0">დღეს</button></div>`:'';
+  box.innerHTML=head+'<div class="hint" style="margin-top:6px">საზღვრები ზუსტდება…</div>';
+  const rows=[];let t0=performance.now();
+  for(let i=a;i<b;i++){const [s,e]=W[i];rows.push([s<=R.m0+1e-6?s:refine(pc,s,true),e>=R.m1-1e-6?e:refine(pc,e,false)]);
+    if(performance.now()-t0>60){await tick();t0=performance.now();if(tok!==RUN||RES!==R)return;}}
+  box.innerHTML=head+pager+`<div class="bars long ex2" style="margin-top:8px">${rows.map(([x,y])=>`<div class="br pr${x<=now&&now<=y?' top':''}"><span class="l">${dt(x)} — ${dt(y)}</span><span class="p">${dur(y-x)}</span></div>`).join('')}</div>`+pager+
+    `<div class="hint" style="margin-top:6px">გეოცენტრული, ტროპიკული, ნამდვილი კვანძი; ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°; საზღვრები — წუთის სიზუსტით.${others?' აქ მხოლოდ პლანეტების პირობებია — დანარჩენი პირობები (თარიღი, HD, სახლები…) ამ პერიოდების შიგნით ცალკე მოწმდება.':''}</div>`;
+  box.querySelectorAll('.pg button').forEach(x=>x.onclick=()=>{const d=+x.dataset.d;
+    if(d===0){let i=W.findIndex(w=>w[1]>now);if(i<0)i=W.length;R.page=Math.max(0,Math.min(Math.max(0,W.length-PAGE),i-Math.floor(PAGE/3)));}
+    else R.page=Math.max(0,Math.min(W.length-1,R.page+d*PAGE));showPeriods();});
+}
+/* the focus panel: each chosen factor, all of them together, and how far that is from chance */
+function focusHTML(R){
+  const F=R.FOC,it=F.items,k=it.length,per=`${yrTxt(R.ya)}–${yrTxt(R.yb)}`;
+  const one=p=>p>0?`1 / ${Math.round(1/p).toLocaleString()}`:'არასდროს';
+  const mx=Math.max(...it.map(x=>x.p),F.joint,1e-9);
+  const row=(lab,p,ex,cls,q)=>`<span class="l ${cls||''}">${lab}</span><span class="b"><i style="width:${100*p/mx}%"></i>${q!=null?`<u style="left:${Math.min(100,100*q/mx)}%"></u>`:''}</span>
+    <span class="p">${ex?'':'≈'}${fp(p*100)}% <small>${one(p)}</small></span>`;
+  let h=`<h3>${k>1?'არჩეული ფაქტორები — ერთად და ცალ-ცალკე':'არჩეული ფაქტორი'}</h3><div class="fo">`;
+  it.forEach(x=>h+=row(esc(x.lab),x.p,x.ex));
+  const exp=it.reduce((a,x)=>a*x.p,1);
+  if(k>1)h+=row('ყველა ერთად',F.joint,F.jexact,'all',exp);
+  h+='</div>';
+  if(k>1){const L=exp>0?F.joint/exp:0;
+    const Lt=L>=10?L.toFixed(0):L.toFixed(2);
+    h+=`<div class="lift">${F.joint<=0?'ეს ფაქტორები ამ პერიოდში <b class="d">არასდროს</b> ემთხვევა ერთმანეთს.'
+      :L>=1.1?`ერთად ხდება <b class="u">${Lt}-ჯერ უფრო ხშირად</b>, ვიდრე შემთხვევით მოხდებოდა`
+      :L<=0.9?`ერთად ხდება <b class="d">უფრო იშვიათად</b> (×${Lt}), ვიდრე შემთხვევით მოხდებოდა`
+      :`ერთად ხდება დაახლოებით იმდენად, რამდენადაც შემთხვევით (<b>×${Lt}</b>) — კავშირი არ ჩანს`}${F.joint>0?` · დამოუკიდებლობისას იქნებოდა ${fp(exp*100)}% (ცისფერი ხაზი).`:''}</div>`;
+    if(k===2&&it[0].p>0&&it[1].p>0){const a=it[0],b=it[1];
+      h+=`<div class="cond2">როცა <b>${esc(a.lab)}</b> — <b>${esc(b.lab)}</b> სრულდება დროის ${fp(100*F.joint/a.p)}%-ში (საერთოდ ${fp(100*b.p)}%).<br>
+        როცა <b>${esc(b.lab)}</b> — <b>${esc(a.lab)}</b> სრულდება დროის ${fp(100*F.joint/b.p)}%-ში (საერთოდ ${fp(100*a.p)}%).</div>`;}
+    if(k>2)h+=`<table class="ptab"><tr><th>წყვილი</th><th style="text-align:right">ერთად</th><th style="text-align:right">შემთხვევით</th><th style="text-align:right">×</th></tr>`+
+      F.pairs.map(pr=>{const a=it[pr.i],b=it[pr.j],e=a.p*b.p,L=e>0?pr.p/e:0;
+        return `<tr><td>${esc(a.lab)} <span style="color:var(--ink-dim)">+</span> ${esc(b.lab)}</td><td class="n">${pr.ex?'':'≈'}${fp(pr.p*100)}%</td><td class="n">${fp(e*100)}%</td><td class="n"><span class="k ${L>=1.1?'u':L<=0.9?'d':''}" style="color:${L>=1.1?'rgb(var(--up))':L<=0.9?'rgb(var(--dn))':'inherit'}">×${L>=10?L.toFixed(0):L.toFixed(2)}</span></td></tr>`;}).join('')+'</table>';}
+  h+=`<div class="hint" style="margin-top:8px">${per} · % — დროის რა ნაწილში სრულდება. ${it.some(x=>x.ex)||F.jexact?'უნიშნოდ — <b>ზუსტად</b>: პლანეტების პირობები ყოველ მომენტზე, თარიღები ყოველ დღეზე, მთელ პერიოდში':''}${it.some(x=>!x.ex)||!F.jexact?'; ≈ — HD, სახლები, ASC/MC და დაბნელებები: მომენტები თანაბრად გადანაწილებული მთელ პერიოდზე':''}.</div>`;
+  return h;
 }
 function exDate(jd){const p=SE.jdDay(jd+RES.P.off/24),f=((jd+RES.P.off/24+0.5)%1+1)%1,mi=Math.floor(f*1440);
   const y=p.y<=0?`ძვ.წ.${1-p.y}`:p.y;return `${String(p.d).padStart(2,'0')}.${String(p.m).padStart(2,'0')}.${y} ${String(Math.floor(mi/60)).padStart(2,'0')}:${String(mi%60).padStart(2,'0')}`;}

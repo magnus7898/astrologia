@@ -158,7 +158,8 @@ function test(c,jd){
   const si=Math.floor(L/30);
   if(typeof c.s==='string'){const k=+c.s.slice(1);if(c.s[0]==='e'?si%4!==k:si%3!==k)return false;}   /* element e0-3 / modality m0-2 */
   else if(si!==c.s)return false;
-  if(c.rx){const d=norm(lon(c.b,jd+0.1)-lon(c.b,jd-0.1)+180)-180;if(d>=0)return false;}
+  const mo=c.mo||(c.rx?'rx':'');   /* '' any motion · 'rx' retrograde only · 'dir' direct only */
+  if(mo){const d=norm(lon(c.b,jd+0.1)-lon(c.b,jd-0.1)+180)-180;if(mo==='rx'?d>=0:d<0)return false;}
   return true;
 }
 function ok(conds,jd){return conds.every(c=>test(c,jd));}
@@ -221,7 +222,9 @@ const CSS=`
 @media(max-width:560px){.sr-row.sr-asp{grid-template-columns:1fr 1fr}.sr-row.sr-asp .sr-x{justify-self:end}}
 .sr-adds{display:flex;gap:8px;flex-wrap:wrap}
 .sr-it .ex{color:#F0D48A;font-size:11px}
-.sr-row .rx{display:flex;align-items:center;gap:5px;font-size:11px;padding-bottom:9px;white-space:nowrap}
+.sr-row .rx{display:flex;flex-direction:column;gap:3px;font-size:11px;padding-bottom:4px;white-space:nowrap}
+.sr-row .rx label{display:flex;align-items:center;gap:5px;cursor:pointer;text-transform:none;letter-spacing:0;margin:0}
+.sr-row .rx input:disabled+span{opacity:.35}
 .sr-x{background:none;border:1px solid rgba(201,162,76,.3);color:#E8C97A;border-radius:50%;width:30px;height:30px;cursor:pointer;margin-bottom:3px}
 .sr-add{background:rgba(201,162,76,.1);border:1px dashed rgba(201,162,76,.45);color:#E8C97A;border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit}
 .sr-add:disabled{opacity:.35;cursor:default}
@@ -244,7 +247,7 @@ function rowHTML(b){
   return `<div class="sr-row">
     <div class="field"><label>პლანეტა / წერტილი</label><select class="sr-b">${BODIES.map(x=>`<option value="${x[0]}"${x[0]===b?' selected':''}>${x[2]} ${x[1]}</option>`).join('')}</select></div>
     <div class="field"><label>ნიშანი</label><select class="sr-s">${signOpts()}</select></div>
-    <label class="rx"><input type="checkbox" class="sr-rx" style="accent-color:#C9A24C"> ℞</label>
+    <div class="rx" title="ორივე ან არცერთი — ნებისმიერი მოძრაობა; მხოლოდ ერთი — მხოლოდ ის"><label><input type="checkbox" class="sr-dir" style="accent-color:#5fc8b0"><span>D პირდაპირი</span></label><label><input type="checkbox" class="sr-rx" style="accent-color:#C9A24C"><span>℞ რეტრო</span></label></div>
     <button type="button" class="sr-x" title="წაშლა">×</button></div>`;
 }
 function aspRowHTML(a,ang,b){
@@ -268,7 +271,7 @@ function inject(){
   sec.innerHTML=`
     <div class="person-label">🔎 ძებნა — როდის იყო / იქნება</div>
     <div style="font-size:11px;color:rgba(200,180,140,.7);line-height:1.6;margin:-2px 0 12px">
-      დაამატე პირობები (${MAXC}-მდე): <b>პლანეტა ნიშანში</b> და/ან <b>ასპექტი ორ პლანეტას შორის</b> (ორბით) — ვიპოვი ყველა პერიოდს, როცა <b>ყველა პირობა ერთად</b> სრულდება, ასპექტისთვის — ზუსტ მომენტსაც. ℞ — მხოლოდ რეტროგრადულ მოძრაობაში.</div>
+      დაამატე პირობები (${MAXC}-მდე): <b>პლანეტა ნიშანში</b> და/ან <b>ასპექტი ორ პლანეტას შორის</b> (ორბით) — ვიპოვი ყველა პერიოდს, როცა <b>ყველა პირობა ერთად</b> სრულდება, ასპექტისთვის — ზუსტ მომენტსაც. <b>D</b> / <b>℞</b> — მხოლოდ პირდაპირ ან მხოლოდ რეტროგრადულ მოძრაობაში; ორივე მონიშნული ან არცერთი — ორივე ერთად.</div>
     <div id="sr-rows">${rowHTML('jupiter')}</div>
     <div class="sr-adds"><button type="button" class="sr-add" id="sr-add">+ პლანეტა ნიშანში</button><button type="button" class="sr-add" id="sr-add-asp">+ ასპექტი</button></div>
     <div class="form-grid-2" style="margin-top:12px">
@@ -287,8 +290,8 @@ function inject(){
   const wire=()=>{rows.querySelectorAll('.sr-row').forEach(r=>{
     r.querySelector('.sr-x').onclick=()=>{if(rows.children.length>1){r.remove();upd();}};
     if(r.classList.contains('sr-asp'))return;
-    const sel=r.querySelector('.sr-b'),rx=r.querySelector('.sr-rx');
-    sel.onchange=()=>{rx.disabled=!CAN_RX.has(sel.value);if(rx.disabled)rx.checked=false;};sel.onchange();});upd();};
+    const sel=r.querySelector('.sr-b'),bx=r.querySelectorAll('.sr-rx,.sr-dir');
+    sel.onchange=()=>{const no=!CAN_RX.has(sel.value);bx.forEach(x=>{x.disabled=no;if(no)x.checked=false;});};sel.onchange();});upd();};
   add.onclick=()=>{if(rows.children.length>=MAXC)return;
     const used=new Set([...rows.querySelectorAll('.sr-b')].map(s=>s.value));
     const nb=(['saturn','mars','sun','venus','mercury','moon','uranus','neptune','pluto','chiron','node','lilith','snode','selena','jupiter'].find(x=>!used.has(x)))||'sun';
@@ -298,13 +301,16 @@ function inject(){
   wire();
   $('sr-go').onclick=run;
 }
+/* direct / retro boxes: exactly one ticked → only that motion; both or none → any motion */
+function motionOf(r,rxSel,dirSel){const x=r.querySelector(rxSel),d=r.querySelector(dirSel);const a=!!(x&&x.checked),b=!!(d&&d.checked);return a===b?'':a?'rx':'dir';}
+const moLbl=c=>{const m=c.mo||(c.rx?'rx':'');return m==='rx'?' ℞':m==='dir'?' D':'';};
 let running=false,cancel=false;
 async function run(){
   if(running){cancel=true;return;}
   const conds=[...document.querySelectorAll('#sr-rows .sr-row')].map(r=>r.classList.contains('sr-asp')
     ?{t:'asp',a:r.querySelector('.sr-a').value,b:r.querySelector('.sr-b2').value,ang:+r.querySelector('.sr-ang').value,
       orb:Math.max(0.1,Math.min(10,parseFloat(r.querySelector('.sr-orb').value)||1))}
-    :{t:'sign',b:r.querySelector('.sr-b').value,s:parseS(r.querySelector('.sr-s').value),rx:r.querySelector('.sr-rx').checked});
+    :{t:'sign',b:r.querySelector('.sr-b').value,s:parseS(r.querySelector('.sr-s').value),mo:motionOf(r,'.sr-rx','.sr-dir')});
   const bad=conds.find(c=>c.t==='asp'&&(c.a===c.b||[c.a,c.b].sort().join()==='node,snode'));
   if(bad){$('sr-out').innerHTML='<div class="sr-sum">ასპექტისთვის აირჩიე ორი სხვადასხვა პლანეტა.</div>';return;}
   const asps=conds.filter(c=>c.t==='asp');
@@ -329,7 +335,7 @@ async function run(){
   const now=jdOfMs(Date.now());
   const BN=k=>{const B=BODIES.find(x=>x[0]===k);return `${B[2]} ${B[1]}`;},AS=g=>ASPECTS.find(x=>x[0]===g);
   const label=conds.map(c=>c.t==='asp'?`${BN(c.a)} ${AS(c.ang)[2]} ${BN(c.b)} <span style="font-weight:400;opacity:.75">(${AS(c.ang)[1]}, ორბი ${c.orb}°)</span>`
-    :`${BN(c.b)} ${signLbl(c.s)}${c.rx?' ℞':''}`).join(' + ');
+    :`${BN(c.b)} ${signLbl(c.s)}${moLbl(c)}`).join(' + ');
   const fmtOrb=d=>`${Math.floor(d)}°${pad(Math.round((d%1)*60)%60)}′`;
   const exInfo=r=>asps.map(c=>{const e=exactIn(c,r[0],r[1]);r._ex=r._ex||e.jd;
     return `<div class="ex">${AS(c.ang)[2]} ${BODIES.find(x=>x[0]===c.a)[2]}${BODIES.find(x=>x[0]===c.b)[2]} ${e.dev<1/60?'ზუსტი':'უახლოესი'}: ${fmt(e.jd,true)}${e.dev<1/60?'':' (ორბი '+fmtOrb(e.dev)+')'}</div>`;}).join('');
@@ -360,5 +366,5 @@ function openChart(jd){
 }
 function boot(){try{inject();}catch(e){console.warn('search.js',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window._search={poleOfDate,precVec,helio,helio0,chironHelio,KEP,signOpts,parseS,signLbl,BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
+window._search={motionOf,moLbl,poleOfDate,precVec,helio,helio0,chironHelio,KEP,signOpts,parseS,signLbl,BODIES,SIGNS,ZS,ASPECTS,CAN_RX,STEP,VMAX,CH_Y0,CH_Y1,lon,scan,ok,exactIn,cal2jd,jd2cal,deltaT};
 })();
