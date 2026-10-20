@@ -1,6 +1,6 @@
 /* famous.js — „ცნობილი ადამიანები“: famous natal charts for astro.html.
-   Self-injecting: adds a picker to the natal form (#form-natal). Choosing a person fills
-   name, date, time, place, coordinates and zone, and draws the chart with generate().
+   Self-injecting: its own tab „ცნობილი ადამიანები“ (setMode('famous')). Choosing a person fills
+   the natal form behind the scenes and draws the chart with generate(), staying on this tab.
    Data: birth records as published in astrological data collections (Astro-Databank style)
    with their Rodden rating — AA birth certificate / record · A from the person or family ·
    B biography · C unverified · X date only (time unknown → the chart is drawn for noon,
@@ -103,12 +103,16 @@ const GRP={sci:'მეცნიერება და აზროვნებ�
 const RAT={AA:'AA — დაბადების მოწმობა / ჩანაწერი',A:'A — თავად ადამიანის ან ოჯახის ცნობით',B:'B — ბიოგრაფიიდან',C:'C — გადაუმოწმებელი, სიფრთხილით',X:'X — მხოლოდ თარიღი, დრო უცნობია'};
 const pad=n=>String(n).padStart(2,'0');
 const CSS=`
-#fm-box{border:1px solid rgba(201,162,76,.28);border-radius:10px;padding:10px 12px;margin:0 0 12px;background:rgba(201,162,76,.05)}
-#fm-box .fm-row{display:flex;gap:8px;align-items:center}
-#fm-box select{flex:1 1 auto;min-width:0}
-#fm-box .fm-n{font-size:11px;color:rgba(200,180,140,.75);line-height:1.6;margin-top:6px}
-#fm-box .fm-n b{color:#E8C97A;font-weight:500}
-#fm-box label{font-size:10px;letter-spacing:1.5px;color:#C9A24C;margin-bottom:5px;display:block}`;
+#form-famous .fm-q{width:100%;box-sizing:border-box;margin-bottom:10px}
+#form-famous .fm-g{font-size:10px;letter-spacing:1.5px;color:#C9A24C;margin:12px 0 6px;text-transform:uppercase}
+#form-famous .fm-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
+#form-famous .fm-p{all:unset;box-sizing:border-box;cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:baseline;
+  border:1px solid rgba(201,162,76,.2);border-radius:8px;padding:7px 10px;font-size:12.5px;background:rgba(201,162,76,.04)}
+#form-famous .fm-p:hover,#form-famous .fm-p.on{border-color:#C9A24C;background:rgba(201,162,76,.14)}
+#form-famous .fm-p small{font-size:10.5px;color:rgba(200,180,140,.7);white-space:nowrap}
+#form-famous .fm-p .r{font-size:9.5px;border:1px solid rgba(201,162,76,.35);border-radius:6px;padding:0 4px;margin-left:4px;color:#E8C97A}
+#form-famous .fm-n{font-size:11.5px;color:rgba(200,180,140,.8);line-height:1.65;margin:4px 0 8px;min-height:18px}
+#form-famous .fm-n b{color:#E8C97A;font-weight:500}`;
 /* UT of a local-mean-time birth (lon/15 hours east of Greenwich) */
 function toUT(r){
   const off=r[7]==='L'?r[9]/15:r[7];
@@ -131,21 +135,45 @@ function fill(r){
   const tu=$('n-time-unknown');if(tu){tu.checked=unknown;if(typeof window.toggleTU==='function')window.toggleTU('n');}
   $('fm-note').innerHTML=`<b>${r[0]}</b> · ${r[1]} · ${r[4]}.${pad(r[3])}.${r[2]} · ${r[10]}<br>${note}<br>რეიტინგი (როდენი): <b>${RAT[r[11]]}</b>`;
 }
+/* draw the chart through the natal pipeline while staying on this tab */
+async function draw(r,btn){
+  fill(r);
+  const sec=$('form-famous');sec.querySelectorAll('.fm-p.on').forEach(x=>x.classList.remove('on'));if(btn)btn.classList.add('on');
+  if(typeof window.generate!=='function')return;
+  try{currentMode='natal';await window.generate();}catch(e){console.warn('famous',e);}   /* astro.html's global `let currentMode` */
+  finally{try{currentMode='famous';}catch(e){}}
+  const ca=$('chart-area');if(ca&&ca.style.display!=='none')ca.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function list(q){
+  const z=s=>String(s).toLowerCase(),t=z(q||'').trim();
+  return Object.keys(GRP).map(g=>{const rows=P.map((r,i)=>[r,i]).filter(([r])=>r[12]===g&&(!t||z(r[0]+' '+r[1]+' '+r[10]+' '+r[2]).includes(t)))
+      .sort((a,b)=>a[0][0].localeCompare(b[0][0],'ka'));
+    return rows.length?`<div class="fm-g">${GRP[g]}</div><div class="fm-list">${rows.map(([r,i])=>`<button type="button" class="fm-p" data-i="${i}"><span>${r[0]}<span class="r">${r[11]}</span></span><small>${r[4]}.${pad(r[3])}.${r[2]}</small></button>`).join('')}</div>`:'';}).join('')
+    ||'<div class="fm-n">ვერ მოიძებნა</div>';
+}
 function inject(){
-  const sec=$('form-natal');if(!sec||$('fm-box'))return;
+  const bar=document.querySelector('.tab-bar'),card=document.querySelector('.form-card');
+  if(!bar||!card||!$('form-natal'))return false;if($('form-famous'))return true;
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
-  const box=document.createElement('div');box.id='fm-box';
-  const opts=Object.keys(GRP).map(g=>`<optgroup label="${GRP[g]}">`+P.map((r,i)=>[r,i]).filter(([r])=>r[12]===g)
-    .sort((a,b)=>a[0][0].localeCompare(b[0][0],'ka')).map(([r,i])=>`<option value="${i}">${r[0]} · ${r[2]}${r[7]===null?' (დრო უცნობია)':''}</option>`).join('')+'</optgroup>').join('');
-  box.innerHTML=`<label>⭐ ცნობილი ადამიანის რუქა</label><div class="fm-row"><select id="fm-sel"><option value="">— აირჩიე (${P.length}) —</option>${opts}</select></div>
-    <div class="fm-n" id="fm-note">არჩევისას ფორმა შეივსება და რუქა აიგება. ნაჩვენებია დაბადების დროის წყაროს რეიტინგიც.</div>`;
-  const first=sec.querySelector('.field')||sec.firstElementChild;
-  const lbl=sec.querySelector('.person-label');
-  (lbl||first).insertAdjacentElement(lbl?'afterend':'beforebegin',box);
-  $('fm-sel').onchange=()=>{const i=$('fm-sel').value;if(i==='')return;fill(P[+i]);
-    if(typeof window.setMode==='function'&&!sec.classList.contains('active'))window.setMode('natal');
-    if(typeof window.generate==='function')window.generate();};
+  const b=document.createElement('button');b.className='tab-btn';b.id='fm-tab-btn';b.textContent='ცნობილი ადამიანები';b.setAttribute('onclick',"setMode('famous')");
+  const after=document.querySelector(".tab-btn[onclick*=\"'natal'\"]");
+  if(after&&after.nextSibling)bar.insertBefore(b,after.nextSibling);else bar.appendChild(b);
+  const sec=document.createElement('div');sec.id='form-famous';sec.className='form-section';
+  sec.innerHTML=`<div class="person-label">⭐ ცნობილი ადამიანების ნატალური რუქები (${P.length})</div>
+    <input class="fm-q" id="fm-q" type="search" placeholder="🔎 სახელი, ქალაქი, წელი… (Einstein, Diana, 1940)" autocomplete="off">
+    <div class="fm-n" id="fm-note">აირჩიე ადამიანი — რუქა აიგება. ნიშანი სახელთან — დაბადების დროის წყაროს რეიტინგი (როდენი): AA ჩანაწერი · A ოჯახის ცნობა · C გადაუმოწმებელი · X დრო უცნობია.</div>
+    <div id="fm-items">${list('')}</div>`;
+  card.insertBefore(sec,$('form-natal').nextSibling);
+  const wire=()=>sec.querySelectorAll('.fm-p').forEach(x=>x.onclick=()=>draw(P[+x.dataset.i],x));
+  $('fm-q').oninput=()=>{$('fm-items').innerHTML=list($('fm-q').value);wire();};wire();
+  if(typeof window.setMode==='function'&&!window.setMode._fm){
+    const o=window.setMode;
+    const w=function(m){const r=o.apply(this,arguments);const on=m==='famous';b.classList.toggle('active',on);
+      if(on)document.querySelectorAll('.tab-btn').forEach(x=>{if(x!==b)x.classList.remove('active');});return r;};
+    w._fm=true;w._pp=o._pp;window.setMode=w;
+  }
+  return true;
 }
 window.FAMOUS=P;
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else setTimeout(inject,0);
+let tries=0;(function wait(){if(inject()||++tries>100)return;setTimeout(wait,100);})();
 })();
