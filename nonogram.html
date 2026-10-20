@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>ნონოგრამა · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c;--c:#e0a030;--cs:28px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(224,160,48,.13),transparent 60%),var(--void);color:var(--ink);
+  font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
+.page{max-width:680px;margin:0 auto;padding:24px 14px 60px}
+header{text-align:center;margin-bottom:14px;position:relative}
+.back{position:absolute;left:0;top:4px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold);opacity:.75;text-decoration:none;
+  border:1px solid var(--border);border-radius:3px;padding:6px 11px}
+.back:hover{opacity:1;border-color:var(--border-h)}
+h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,6vw,36px);letter-spacing:3px;
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px;margin-top:2px}
+.lv{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0 12px}
+.lv button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer}
+.lv button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+.hud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.hud div{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px;text-align:center}
+.hud b{display:block;font-family:'Cinzel',serif;font-size:19px;color:var(--gold-lt);font-weight:400;line-height:1.2}
+.hud span{font-size:10px;color:var(--ink-dim);letter-spacing:.5px}
+.scroller{position:relative;overflow:auto;max-width:100%;-webkit-overflow-scrolling:touch;border-radius:8px}
+.nono{display:grid;width:max-content;margin:0 auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none;font-family:system-ui,sans-serif}
+.corner{background:transparent}
+.cc{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:1px;padding:3px 0 4px;font-size:calc(var(--cs)*.42);line-height:1.05;color:var(--gold-lt);
+  border-right:1px solid rgba(201,168,76,.1)}
+.rc{display:flex;justify-content:flex-end;align-items:center;gap:calc(var(--cs)*.22);padding:0 6px 0 4px;font-size:calc(var(--cs)*.42);color:var(--gold-lt);
+  border-bottom:1px solid rgba(201,168,76,.1);white-space:nowrap}
+.cc.done,.rc.done{color:var(--ink-dim)}
+.cc.hot,.rc.hot{background:rgba(201,168,76,.1)}
+.cell{width:var(--cs);height:var(--cs);background:#1a1430;border-right:1px solid rgba(201,168,76,.13);border-bottom:1px solid rgba(201,168,76,.13);position:relative;cursor:pointer}
+.cell.b5r{border-right:2px solid rgba(201,168,76,.5)}.cell.b5b{border-bottom:2px solid rgba(201,168,76,.5)}
+.cell.f{background:linear-gradient(145deg,#f0d38a,#c9a84c 60%,#9a7028)}
+.cell.x::after{content:'×';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(239,230,212,.35);font-size:calc(var(--cs)*.7);line-height:1}
+.cell.err{background:rgba(226,104,92,.55)!important}
+.cell.hint{animation:glow 1s ease 2}
+@keyframes glow{50%{box-shadow:0 0 0 3px var(--ok) inset}}
+.cell.hl{filter:brightness(1.25)}
+.board-frame{display:inline-block;border:2px solid var(--gold);border-top:none;border-left:none}
+.tools{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
+.tools button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:8px;padding:8px 2px;font:inherit;font-size:11.5px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:1px;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.tools button b{font-size:17px;font-weight:400;color:var(--gold-lt);line-height:1.1}
+.tools button.on{border-color:var(--gold);background:rgba(201,168,76,.14);color:var(--gold-lt)}
+.mode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.mode button{border:1px solid var(--border-h);background:var(--raised);color:var(--ink-mid);border-radius:10px;padding:10px;font:inherit;font-size:13px;cursor:pointer;touch-action:manipulation}
+.mode button.on{border-color:var(--gold);color:#120c02;background:linear-gradient(135deg,#8a6a24,#c9a84c);font-weight:600}
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;
+  background:rgba(11,9,24,.95);border-radius:8px;z-index:3;min-height:240px}
+.overlay[hidden]{display:none}
+.overlay h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
+.overlay p{font-size:13px;color:var(--ink-mid);max-width:360px}
+.big{font-family:'Cinzel',serif;font-size:40px;color:var(--gold-lt);line-height:1}
+.pic{display:grid;gap:1px;background:rgba(201,168,76,.15);padding:1px;border-radius:4px}
+.pic i{display:block;width:var(--ps);height:var(--ps);background:#120e22}.pic i.f{background:var(--gold)}
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:11px 22px;font-family:'Cinzel',serif;font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
+.btn.ghost{background:none;color:var(--gold-lt);border:1px solid var(--border-h)}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.optsrow{display:flex;justify-content:center;gap:16px;margin-top:12px;font-size:12px;color:var(--ink-mid);flex-wrap:wrap}
+.optsrow label{display:flex;gap:6px;align-items:center;cursor:pointer}.optsrow input{accent-color:var(--gold)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:16px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.panel li,.panel p{font-size:12.5px;color:var(--ink-mid)}.panel ul{padding-left:18px}
+.rec{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center}
+.rec div{border:1px solid var(--border);border-radius:8px;padding:6px 2px}
+.rec b{display:block;font-family:'Cinzel',serif;font-size:15px;color:var(--gold-lt);font-weight:400}
+.rec span{font-size:9.5px;color:var(--ink-dim)}
+@media(max-width:600px){.back{position:static;display:inline-block;margin-bottom:8px}.tools button{font-size:10px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="games.html">← თამაშები</a>
+  <h1>ნონოგრამა</h1>
+  <div class="sub">3 · ინტერესი — ციფრები გეუბნება, რამდენი შევსებული უჯრაა ზედიზედ. ყოველ ამოცანას ერთი სურათი აქვს და რიგ-რიგად, ლოგიკით იხსნება</div>
+</header>
+<div class="lv" id="lv"></div>
+<div class="hud">
+  <div><b id="h-time">0:00</b><span>დრო</span></div>
+  <div><b id="h-err">0</b><span>შეცდომა</span></div>
+  <div><b id="h-left">0</b><span>დარჩა</span></div>
+</div>
+<div class="scroller" id="scroller">
+  <div class="nono" id="nono"></div>
+  <div class="overlay" id="ov" hidden></div>
+</div>
+<div class="mode"><button id="m-fill" class="on">■ შევსება</button><button id="m-x">× ცარიელი</button></div>
+<div class="tools">
+  <button id="t-undo"><b>↶</b>უკან</button>
+  <button id="t-hint"><b>💡</b>მინიშნება</button>
+  <button id="t-check"><b>✓</b>შემოწმება</button>
+  <button id="t-clear"><b>⌫</b>გასუფთავება</button>
+  <button id="t-new"><b>↻</b>ახალი</button>
+</div>
+<div class="optsrow">
+  <label><input type="checkbox" id="o-live"> შეცდომების მაშინვე ჩვენება</label>
+  <label><input type="checkbox" id="o-autox" checked> დასრულებულ რიგში ავტომატურად ×</label>
+</div>
+<div class="panel"><h3>საუკეთესო დრო</h3><div class="rec" id="rec"></div></div>
+<div class="panel"><h3>როგორ ვითამაშოთ</h3>
+  <ul>
+    <li>რიგის მარცხნივ და სვეტის თავზე ციფრები — შევსებული ბლოკების სიგრძეები, თანმიმდევრობით. ბლოკებს შორის ერთი ცარიელი უჯრა მაინცაა.</li>
+    <li>„10“ 10-უჯრიან რიგში — მთლიანად სავსე. „4 · 5“ — 4, ცარიელი, 5. დიდი ბლოკი ცენტრს ყოველთვის ფარავს — იქიდან დაიწყე.</li>
+    <li>■ — უჯრის შევსება, × — ცარიელად მონიშვნა (დამხმარე ნიშანი). თითის გასმით მთელ რიგს ერთბაშად შეავსებ.</li>
+    <li>დასრულებული რიგის ციფრები ნაცრისფერდება. სურათი ჩნდება, როცა ყველა შევსებული უჯრა სწორადაა.</li>
+  </ul>
+</div>
+</div>
+<script src="nonogram_engine.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const E=window.NonoEngine;
+const LV=[[1,'5×5'],[2,'8×8'],[3,'10×10'],[4,'15×15'],[5,'20×20']];
+const KEY='nono_v1',RKEY='nono_best_v1';
+let S=null,mode=1,timer=null,hist=[],cellsEl=[],rcEl=[],ccEl=[];
+const fmt=t=>{t=Math.floor(t);const m=Math.floor(t/60),s=t%60;return m+':'+String(s).padStart(2,'0');};
+function save(){try{localStorage.setItem(KEY,JSON.stringify({...S,hist:undefined}));}catch(_){}}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.solution&&s.state)return s;}catch(_){}return null;}
+function best(){try{return JSON.parse(localStorage.getItem(RKEY)||'{}');}catch(_){return{};}}
+
+$('lv').innerHTML=LV.map(([n,t])=>`<button data-lv="${n}">${t}</button>`).join('');
+
+function newGame(lv){
+  const r=E.generate(lv);if(!r)return;
+  S={lv,W:r.W,H:r.H,rows:r.rows,cols:r.cols,solution:r.solution,state:new Array(r.W*r.H).fill(0),err:0,t:0,done:false,hints:0};
+  hist=[];build();render();startTimer();save();overlay(null);
+}
+function startTimer(){stopTimer();timer=setInterval(()=>{if(S&&!S.done&&!document.hidden){S.t++;$('h-time').textContent=fmt(S.t);if(S.t%5===0)save();}},1000);}
+function stopTimer(){if(timer)clearInterval(timer);timer=null;}
+
+/* ── board ── */
+function build(){
+  const N=$('nono'),W=S.W,H=S.H;
+  const maxR=Math.max(...S.rows.map(r=>r.length)),maxC=Math.max(...S.cols.map(c=>c.length));
+  const avail=Math.min($('scroller').clientWidth||360,680);
+  /* row clue width ≈ maxR numbers; cell size fills the width, min 18px (scrolls inside on small screens) */
+  const cs=Math.max(18,Math.min(40,Math.floor((avail-4)/(W+maxR*0.62+0.6))));
+  N.style.setProperty('--cs',cs+'px');
+  N.style.gridTemplateColumns=`auto repeat(${W},${cs}px)`;
+  N.style.gridTemplateRows=`auto repeat(${H},${cs}px)`;
+  let h='<div class="corner"></div>';
+  for(let c=0;c<W;c++)h+=`<div class="cc" data-c="${c}" style="min-height:${Math.round(maxC*cs*.46+8)}px">${S.cols[c].map(x=>`<span>${x}</span>`).join('')}</div>`;
+  for(let r=0;r<H;r++){
+    h+=`<div class="rc" data-r="${r}">${S.rows[r].map(x=>`<span>${x}</span>`).join('')}</div>`;
+    for(let c=0;c<W;c++){const b5r=(c%5===4&&c<W-1)?' b5r':'',b5b=(r%5===4&&r<H-1)?' b5b':'';h+=`<div class="cell${b5r}${b5b}" data-i="${r*W+c}"></div>`;}
+  }
+  N.innerHTML=h;
+  cellsEl=[...N.querySelectorAll('.cell')];rcEl=[...N.querySelectorAll('.rc')];ccEl=[...N.querySelectorAll('.cc')];
+}
+const lineDone=(arr,clue)=>JSON.stringify(E.clueOf(arr.map(v=>v===1?1:0)))===JSON.stringify(clue);
+function render(){
+  if(!S)return;
+  document.querySelectorAll('#lv button').forEach(b=>b.classList.toggle('on',+b.dataset.lv===S.lv));
+  const live=$('o-live').checked;
+  for(let i=0;i<cellsEl.length;i++){const v=S.state[i],el=cellsEl[i];
+    el.classList.toggle('f',v===1);el.classList.toggle('x',v===2);
+    el.classList.toggle('err',!!(live||S.showErr)&&((v===1&&!S.solution[i])||(v===2&&S.solution[i])));}
+  for(let r=0;r<S.H;r++)rcEl[r].classList.toggle('done',lineDone(S.state.slice(r*S.W,r*S.W+S.W),S.rows[r]));
+  for(let c=0;c<S.W;c++){const l=[];for(let r=0;r<S.H;r++)l.push(S.state[r*S.W+c]);ccEl[c].classList.toggle('done',lineDone(l,S.cols[c]));}
+  $('h-err').textContent=S.err;$('h-time').textContent=fmt(S.t);
+  $('h-left').textContent=S.solution.reduce((a,v,i)=>a+(v&&S.state[i]!==1?1:0),0);
+  renderBest();
+}
+function renderBest(){const b=best();$('rec').innerHTML=LV.map(([n,t])=>`<div><b>${b[n]?fmt(b[n].t):'—'}</b><span>${t}${b[n]?' · '+b[n].n+'×':''}</span></div>`).join('');}
+
+/* ── painting: tap or drag; drag locks to the first row/column moved along ── */
+let drag=null;
+function setCell(i,val){
+  if(S.state[i]===val)return false;
+  S.state[i]=val;
+  if(val===1&&!S.solution[i]){S.err++;if(navigator.vibrate)try{navigator.vibrate(50);}catch(_){}}
+  return true;
+}
+function autoX(){
+  if(!$('o-autox').checked)return;
+  for(let r=0;r<S.H;r++){const row=S.state.slice(r*S.W,r*S.W+S.W);if(lineDone(row,S.rows[r]))for(let c=0;c<S.W;c++)if(!S.state[r*S.W+c])S.state[r*S.W+c]=2;}
+  for(let c=0;c<S.W;c++){const l=[];for(let r=0;r<S.H;r++)l.push(S.state[r*S.W+c]);if(lineDone(l,S.cols[c]))for(let r=0;r<S.H;r++)if(!S.state[r*S.W+c])S.state[r*S.W+c]=2;}
+}
+const N=$('nono');
+N.addEventListener('pointerdown',e=>{
+  const el=e.target.closest('.cell');if(!el||!S||S.done)return;e.preventDefault();
+  const i=+el.dataset.i,cur=S.state[i];
+  hist.push(S.state.slice());if(hist.length>300)hist.shift();
+  const val=cur===mode?0:mode;            /* tapping the same mark clears it */
+  drag={id:e.pointerId,val,r:(i/S.W)|0,c:i%S.W,axis:null,last:i};
+  try{N.setPointerCapture(e.pointerId);}catch(_){}
+  setCell(i,val);render();
+});
+N.addEventListener('pointermove',e=>{
+  if(!drag||e.pointerId!==drag.id)return;
+  const t=document.elementFromPoint(e.clientX,e.clientY),el=t&&t.closest&&t.closest('.cell');if(!el)return;
+  let i=+el.dataset.i;if(i===drag.last)return;
+  let r=(i/S.W)|0,c=i%S.W;
+  if(!drag.axis&&(r!==drag.r||c!==drag.c))drag.axis=r===drag.r?'row':c===drag.c?'col':(Math.abs(c-drag.c)>=Math.abs(r-drag.r)?'row':'col');
+  if(drag.axis==='row')r=drag.r;else if(drag.axis==='col')c=drag.c;
+  i=r*S.W+c;drag.last=i;
+  /* fill the whole span from the start, so fast drags don't skip cells */
+  const a=drag.axis==='row'?[drag.c,c]:[drag.r,r],lo=Math.min(...a),hi=Math.max(...a);
+  let ch=false;
+  for(let k=lo;k<=hi;k++){const j=drag.axis==='row'?drag.r*S.W+k:k*S.W+drag.c;
+    if(drag.val===0||S.state[j]===0||S.state[j]===drag.val)ch=setCell(j,drag.val)||ch;}
+  if(ch)render();
+});
+const endDrag=e=>{if(!drag||(e&&e.pointerId!==drag.id))return;drag=null;autoX();render();save();checkDone();};
+N.addEventListener('pointerup',endDrag);N.addEventListener('pointercancel',endDrag);
+['contextmenu','selectstart','dragstart'].forEach(t=>N.addEventListener(t,e=>e.preventDefault()));
+/* highlight the row/column clues of the hovered cell (desktop) */
+N.addEventListener('pointerover',e=>{const el=e.target.closest('.cell');rcEl.forEach(x=>x.classList.remove('hot'));ccEl.forEach(x=>x.classList.remove('hot'));
+  if(!el||!S)return;const i=+el.dataset.i;rcEl[(i/S.W)|0].classList.add('hot');ccEl[i%S.W].classList.add('hot');});
+
+function checkDone(){
+  if(!S||S.done)return;
+  if(S.solution.some((v,i)=>(v===1)!==(S.state[i]===1)))return;
+  S.done=true;stopTimer();
+  for(let i=0;i<S.state.length;i++)if(!S.solution[i])S.state[i]=0;render();save();
+  const b=best(),prev=b[S.lv],rec=!prev||S.t<prev.t;
+  b[S.lv]={t:rec?S.t:prev.t,n:(prev?prev.n:0)+1};try{localStorage.setItem(RKEY,JSON.stringify(b));}catch(_){}
+  const ps=Math.max(4,Math.floor(150/S.W));
+  overlay(`<h2>✦ სურათი გამოჩნდა ✦</h2>
+    <div class="pic" style="grid-template-columns:repeat(${S.W},${ps}px);--ps:${ps}px">${S.solution.map(v=>`<i class="${v?'f':''}"></i>`).join('')}</div>
+    <div class="big">${fmt(S.t)}</div>
+    <p>${LV[S.lv-1][1]} · შეცდომა: ${S.err}${S.hints?' · მინიშნება: '+S.hints:''}${rec?'<br><b style="color:var(--ok);font-weight:400">ახალი რეკორდი!</b>':''}</p>
+    <div class="row"><button class="btn" id="o-again">▶ კიდევ ${LV[S.lv-1][1]}</button>${S.lv<5?`<button class="btn ghost" id="o-up">${LV[S.lv][1]} →</button>`:''}<button class="btn ghost" id="o-close">სურათის ნახვა</button></div>`);
+  $('o-again').onclick=()=>newGame(S.lv);if($('o-up'))$('o-up').onclick=()=>newGame(S.lv+1);$('o-close').onclick=()=>overlay(null);
+}
+function overlay(html){const o=$('ov');if(html==null){o.hidden=true;o.innerHTML='';return;}o.innerHTML=html;o.hidden=false;}
+
+/* ── tools ── */
+function setMode(m){mode=m;$('m-fill').classList.toggle('on',m===1);$('m-x').classList.toggle('on',m===2);}
+$('m-fill').onclick=()=>setMode(1);$('m-x').onclick=()=>setMode(2);
+$('t-undo').onclick=()=>{if(!hist.length||!S||S.done)return;S.state=hist.pop();render();save();};
+$('t-clear').onclick=()=>{if(!S||S.done)return;if(!confirm('გავასუფთაოთ მთელი დაფა?'))return;hist.push(S.state.slice());S.state.fill(0);render();save();};
+$('t-check').onclick=()=>{if(!S||S.done)return;S.showErr=true;render();setTimeout(()=>{S.showErr=false;render();},2500);
+  const n=S.state.reduce((a,v,i)=>a+(((v===1&&!S.solution[i])||(v===2&&S.solution[i]))?1:0),0);
+  $('h-err').textContent=S.err+(n?` (${n} არასწორი ახლა)`:'');};
+$('t-hint').onclick=()=>{
+  if(!S||S.done)return;
+  /* first a wrong mark; otherwise a cell that line logic can decide from the correct marks you have */
+  let i=S.state.findIndex((v,k)=>(v===1&&!S.solution[k])||(v===2&&S.solution[k]));
+  if(i<0){
+    const start=S.state.map((v,k)=>v===1?1:v===2?0:-1);
+    let pick=-1;
+    for(let r=0;r<S.H&&pick<0;r++){const o=E.solveLine(start.slice(r*S.W,r*S.W+S.W),S.rows[r]);if(o)for(let c=0;c<S.W;c++)if(start[r*S.W+c]===-1&&o[c]!==-1){pick=r*S.W+c;break;}}
+    for(let c=0;c<S.W&&pick<0;c++){const l=[];for(let r=0;r<S.H;r++)l.push(start[r*S.W+c]);const o=E.solveLine(l,S.cols[c]);if(o)for(let r=0;r<S.H;r++)if(l[r]===-1&&o[r]!==-1){pick=r*S.W+c;break;}}
+    i=pick>=0?pick:S.solution.findIndex((v,k)=>v&&S.state[k]!==1);
+  }
+  if(i<0)return;
+  hist.push(S.state.slice());S.state[i]=S.solution[i]?1:2;S.hints++;
+  render();cellsEl[i].classList.add('hint');setTimeout(()=>cellsEl[i].classList.remove('hint'),2100);autoX();render();save();checkDone();
+};
+$('t-new').onclick=()=>{if(S&&!S.done&&S.state.some(v=>v)&&!confirm('ახალი ამოცანა? ეს თამაში დაიკარგება.'))return;newGame(S?S.lv:2);};
+$('lv').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(S&&!S.done&&S.state.some(v=>v)&&!confirm('დაწყებული თამაში დაიკარგება. ახალი დავიწყოთ?'))return;newGame(+b.dataset.lv);});
+['o-live','o-autox'].forEach(id=>$(id).addEventListener('change',()=>{if(id==='o-autox')autoX();render();save();}));
+document.addEventListener('keydown',e=>{if(e.key==='x'||e.key==='X')setMode(mode===1?2:1);if((e.key==='z'||e.key==='Z')&&(e.ctrlKey||e.metaKey)){$('t-undo').click();e.preventDefault();}});
+let rt=null,lw=window.innerWidth;window.addEventListener('resize',()=>{if(Math.abs(window.innerWidth-lw)<2)return;lw=window.innerWidth;clearTimeout(rt);rt=setTimeout(()=>{if(S){build();render();}},200);});
+document.addEventListener('visibilitychange',()=>{if(S)save();});
+
+const q=new URLSearchParams(location.search),qlv=+q.get('lv'),old=load();
+if(old&&!old.done&&!(qlv>=1&&qlv<=5&&qlv!==old.lv)){S=old;build();render();startTimer();}
+else newGame(qlv>=1&&qlv<=5?qlv:2);
+})();
+</script>
+</body>
+</html>
