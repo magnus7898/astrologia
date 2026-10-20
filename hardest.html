@@ -128,7 +128,7 @@ body.gfs{overflow:hidden}
   <h3>✦ როგორ ვითამაშოთ</h3>
   <ul>
     <li>მართე <b style="color:#e2685c">წითელი კვადრატი</b> — ისრებით ან WASD-ით; ტელეფონზე — ღილაკებით ან თითის გასმით დაფაზე (ჯოისტიკი).</li>
-    <li>მიდი იისფერი START-იდან 🏁 ფინიშამდე — <b style="color:#6fdc86">მწვანე ზონა მხოლოდ ფინიშია</b>, ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო — თითოეულზე პლანეტის ან ზოდიაქოს ნიშანია, ან რიცხვი 1-დან 22-მდე. 21–29 დონეებზე წერტილები ვარდისფერია, 31-ზე კი როლები იცვლება: შენ ლურჯი კვადრატი ხარ, წერტილები — წითელი.</li>
+    <li>მიდი იისფერი START-იდან 🏁 ფინიშამდე — <b style="color:#6fdc86">მწვანე ზონა მხოლოდ ფინიშია</b>, ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო (მე-14 დონეზე მათზე პლანეტების, ზოდიაქოს ნიშნები და რიცხვები 1–22 წერია). 21–29 დონეებზე წერტილები ვარდისფერია, 31-ზე კი როლები იცვლება: შენ ლურჯი კვადრატი ხარ, წერტილები — წითელი.</li>
     <li>ყველა დონეზე <b style="color:#f1d34a">ყვითელი ვარსკვლავებია</b> — ფინიში 🔒 დაკეტილია, სანამ ყველას არ აკრეფ. როცა აკრეფ, ფინიში აციმციმდება და ხაზი გაჩვენებს გზას — შეეხე მწვანე ზონას და შემდეგი დონე დაიწყება.</li>
     <li><b>👁 დემო</b> — ნახე, როგორ გადის მიმდინარე დონეს ამომხსნელი; <b>🎬 ყველა დონე</b> — 31-ვე დონე ზედიზედ. ისრის დაჭერით დემო ჩერდება და მართვა შენზე გადმოდის.</li>
     <li>🚩 იისფერი საკონტროლო წერტილი (checkpoint) — თუ მას გაივლი, შეხების შემდეგ იქიდან დაიწყებ და აკრეფილი ვარსკვლავები შენ რჩება.</li>
@@ -921,11 +921,13 @@ function update(dt){
         const n=Math.ceil(sp/4);for(let s=0;s<n;s++){const nx=G.px+vx*sp/n;if(!blocked(nx,G.py))G.px=nx;const ny=G.py+vy*sp/n;if(!blocked(G.px,ny))G.py=ny;}
         for(const c of G.coins)if(!c.got){const nx=Math.max(G.px-h,Math.min(c.x,G.px+h)),ny=Math.max(G.py-h,Math.min(c.y,G.py+h));
           if((nx-c.x)**2+(ny-c.y)**2<CR*CR){c.got=true;G.got++;tone(990,.08,'triangle');vib(10);}}
+        /* finish FIRST: touching the green with every star wins, even if a dot brushes you in the same instant */
+        if(onFinish()&&(G.got===G.coins.length||!$('o-coin').checked)){win();return;}
+        if(onFinish()&&!G.warned){G.warned=true;tone(300,.12,'square',.06);vib(30);}
         for(const e of G.L.E){if(!HG.vis(e,G.t))continue;const R=HG.rad(e,G.t);const [ex,ey]=pos(e,G.t);const X=ex*T,Y=ey*T;const nx=Math.max(G.px-h,Math.min(X,G.px+h)),ny=Math.max(G.py-h,Math.min(Y,G.py+h));
           if((nx-X)**2+(ny-Y)**2<R*R){die();break;}}
         if(!G.dead&&G.L._cpAt){const r=G.L._cpAt(Math.floor(G.px/T),Math.floor(G.py/T));
           if(r&&G.cp!==r.id){G.cp=r.id;G.sx=r.cx;G.sy=r.cy;G.cpGot=G.coins.map(c=>c.got);tone(740,.1,'triangle');vib(15);}}
-        if(!G.dead&&onFinish()){if(G.got===G.coins.length||!$('o-coin').checked)win();else if(!G.warned){G.warned=true;tone(300,.12,'square',.06);vib(30);}}
         if(!onFinish())G.warned=false;
       }
       hud();
@@ -947,6 +949,7 @@ function star(x,y,r,rot){
 const GLY=[...'☉☽☿♀♂♃♄♅♆♇'].map(g=>g+'︎').concat([...'♈♉♊♋♌♍♎♏♐♑♒♓'].map(g=>g+'︎'),Array.from({length:22},(_,i)=>String(i+1)));
 function dot(k,x,y,r){const ec=(G.L&&G.L.ec)||['#2f6bff','#0a0f3a'];
   ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=ec[0];ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=ec[1];ctx.stroke();
+  if(G.lv!==13)return;                       /* symbols only on level 14; elsewhere plain dots */
   const g=GLY[k%GLY.length],num=g.length<=2&&/\d/.test(g);
   ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.font=(num?'bold ':'')+Math.round(r*(num&&g.length===2?1.05:1.3))+'px '+(num?'Cinzel,serif':'"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif');
