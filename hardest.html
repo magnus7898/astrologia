@@ -25,8 +25,24 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(22px,5v
 .wrap{position:relative;width:100%;aspect-ratio:25/15;background:#0b0918;border:1px solid var(--border-h);border-radius:8px;overflow:hidden;touch-action:none}
 canvas{display:block;width:100%;height:100%}
 .ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:10px;text-align:center;padding:14px;
-  background:rgba(8,6,18,.93);overflow:auto;z-index:2}
+  background:#07051a;overflow:auto;z-index:2}
 .ov[hidden]{display:none}
+/* readable on phones: HTML, not text drawn into the scaled-down canvas */
+.note{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:1;background:rgba(10,8,24,.92);border:1px solid rgba(241,211,74,.6);
+  color:#f1d34a;font-size:13px;line-height:1.35;padding:6px 12px;border-radius:8px;text-align:center;max-width:92%;pointer-events:none;font-family:'Noto Serif Georgian',serif}
+.note[hidden]{display:none}
+.fsb{position:absolute;right:6px;bottom:6px;z-index:2;width:34px;height:34px;border-radius:8px;border:1px solid var(--border-h);background:rgba(10,8,24,.75);
+  color:var(--gold-lt);font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+/* fullscreen: the game fills the screen; works on iPhone too (CSS, no API needed) */
+#game.fs{position:fixed;inset:0;z-index:50;background:#05040b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+#game.fs .wrap{width:min(calc(100vw - 16px),calc((100dvh - 16px - var(--padh,0px)) * 25 / 15));border-radius:6px}
+#game.fs .ov p{font-size:14px}
+@media (pointer:coarse) and (orientation:portrait){#game.fs{--padh:220px}}
+@media (pointer:coarse) and (orientation:landscape){#game.fs{justify-content:center;align-items:flex-start}#game.fs .wrap{width:min(calc(100vw - 210px),calc((100dvh - 16px) * 25 / 15))}
+  #game.fs .pad{position:fixed;right:max(10px,env(safe-area-inset-right));bottom:10px;margin:0;opacity:.82;z-index:51;width:170px;height:170px}
+  #game.fs .pad button{width:56px;height:56px}#game.fs .pad .u,#game.fs .pad .d{left:57px}#game.fs .pad .l,#game.fs .pad .r{top:57px}}
+body.gfs{overflow:hidden}
 .ov h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
 .ov p{font-size:12.5px;color:var(--ink-mid);max-width:520px}
 .ov .done{font-size:13px;color:#5fcf8a;letter-spacing:.5px}
@@ -87,8 +103,8 @@ canvas{display:block;width:100%;height:100%}
   <div><b id="h-dt">0</b><span>სიკვდილი (სულ)</span></div>
   <div><b id="h-t">0.0</b><span>წამი</span></div>
 </div>
-<div class="wrap" id="wrap"><canvas id="cv"></canvas><div class="ov" id="ov"></div></div>
-<div class="pad" id="pad"><button class="u" data-k="u">▲</button><button class="l" data-k="l">◀</button><button class="r" data-k="r">▶</button><button class="d" data-k="d">▼</button></div>
+<div id="game"><div class="wrap" id="wrap"><canvas id="cv"></canvas><div class="note" id="note" hidden></div><button class="fsb" id="fsb" title="მთელ ეკრანზე">⛶</button><div class="ov" id="ov"></div></div>
+<div class="pad" id="pad"><button class="u" data-k="u">▲</button><button class="l" data-k="l">◀</button><button class="r" data-k="r">▶</button><button class="d" data-k="d">▼</button></div></div><!-- /game -->
 <div class="bar"><button id="b-levels">☰ დონეები</button><select id="b-mode" style="background:var(--raised);color:var(--gold-lt);border:1px solid var(--border-h);border-radius:6px;padding:6px;font:inherit;font-size:12.5px"><option value="normal">სირთულე: ჩვეულებრივი</option><option value="hard">სირთულე: რთული</option><option value="extreme">სირთულე: უძნელესი</option></select><select id="b-jump" style="background:var(--raised);color:var(--gold-lt);border:1px solid var(--border-h);border-radius:6px;padding:6px;font:inherit;font-size:12.5px"></select><button id="b-demo">👁 დემო</button><button id="b-demoall">🎬 ყველა დონე</button><button id="b-restart">↻ დონე თავიდან (R)</button><button id="b-pause">⏸ პაუზა (P)</button></div>
 <div class="optsrow"><label><input type="checkbox" id="o-coin" checked> მონეტები სავალდებულოა</label><label><input type="checkbox" id="o-snd" checked> ხმა</label><label><input type="checkbox" id="o-vib" checked> ვიბრაცია</label></div>
 <div class="panel music">
@@ -831,6 +847,18 @@ function drawMap(L){
 }
 function resize(){const r=$('wrap').getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);}
 window.addEventListener('resize',resize);
+if(window.ResizeObserver)new ResizeObserver(()=>resize()).observe($('wrap'));
+/* ── fullscreen (real API where it exists; the CSS layout covers iPhone) ── */
+function setFS(on){
+  const g=$('game');g.classList.toggle('fs',on);document.body.classList.toggle('gfs',on);$('fsb').textContent=on?'✕':'⛶';$('fsb').title=on?'გამოსვლა':'მთელ ეკრანზე';
+  try{if(on&&g.requestFullscreen&&!document.fullscreenElement)g.requestFullscreen({navigationUI:'hide'}).then(()=>{try{screen.orientation.lock('landscape').catch(()=>{});}catch(_){}}).catch(()=>{});
+    else if(!on&&document.fullscreenElement)document.exitFullscreen().catch(()=>{});}catch(_){}
+  setTimeout(resize,50);setTimeout(resize,350);
+}
+$('fsb').addEventListener('click',e=>{e.stopPropagation();setFS(!$('game').classList.contains('fs'));});
+$('fsb').addEventListener('pointerdown',e=>e.stopPropagation());
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&$('game').classList.contains('fs'))setFS(false);});
+document.addEventListener('keydown',e=>{if((e.key==='f'||e.key==='F')&&!e.ctrlKey&&!e.metaKey)setFS(!$('game').classList.contains('fs'));if(e.key==='Escape'&&$('game').classList.contains('fs'))setFS(false);});
 const onFinish=()=>[[-h,-h],[h-.01,-h],[-h,h-.01],[h-.01,h-.01]].some(([dx,dy])=>tileAt(G.px+dx,G.py+dy)==='E');
 const tileAt=(x,y)=>{const tx=Math.floor(x/T),ty=Math.floor(y/T);return (G.L.g[ty]&&G.L.g[ty][tx])||'#';};
 const h=PLAYER.half;
@@ -929,8 +957,8 @@ function draw(){
   if(G.L&&G.banner>0){ctx.globalAlpha=Math.min(1,G.banner);ctx.fillStyle='rgba(10,8,24,.85)';ctx.fillRect(W*T/2-230,H*T/2-34,460,60);
     ctx.textAlign='center';ctx.fillStyle='#ecd59a';ctx.font='22px Cinzel,serif';ctx.fillText('დონე '+(G.lv+1),W*T/2,H*T/2-6);
     ctx.font='14px "Noto Serif Georgian",serif';ctx.fillStyle='#b3a68f';ctx.fillText(G.L.name+' · მონეტა: '+G.coins.length+(G.L.mech?' · '+({blink:'ციმციმა წერტილები',pulse:'მფეთქავი წერტილები',fog:'სიბნელე'})[G.L.mech]:''),W*T/2,H*T/2+16);ctx.globalAlpha=1;}
-  if(need&&$('o-coin').checked){ctx.font='bold 16px sans-serif';ctx.textAlign='center';
-    ctx.fillStyle='rgba(10,8,24,.88)';ctx.fillRect(W*T/2-200,8,400,30);ctx.fillStyle='#f1d34a';ctx.fillText('ჯერ აკრიფე ყველა ყვითელი მონეტა: '+G.got+'/'+G.coins.length,W*T/2,29);}
+  {const msg=need&&$('o-coin').checked?'🔒 ფინიში დაკეტილია — ჯერ აკრიფე ყველა ყვითელი მონეტა: '+G.got+'/'+G.coins.length:'';
+    const nt=$('note');if(nt._m!==msg){nt._m=msg;nt.textContent=msg;nt.hidden=!msg;}}
   if(G.joy&&G.joy.on){const s=1;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(G.joy.ox*s,G.joy.oy*s,34,0,7);ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
     ctx.beginPath();ctx.arc(G.joy.ox*s+Math.max(-34,Math.min(34,G.joy.x)),G.joy.oy*s+Math.max(-34,Math.min(34,G.joy.y)),12,0,7);ctx.fillStyle='#c9a84c';ctx.fill();ctx.globalAlpha=1;}
 }
