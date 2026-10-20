@@ -94,7 +94,7 @@ body.gfs{overflow:hidden}
 <header>
   <a class="back" href="games.html">← თამაშები</a>
   <h1>უძნელესი გზა</h1>
-  <div class="sub">წითელი კვადრატი · პლანეტებს ნუ შეეხები · 31 დონე</div>
+  <div class="sub">წითელი კვადრატი · ლურჯ წერტილებს ნუ შეეხები · 31 დონე</div>
 </header>
 <div class="hud">
   <div><b id="h-lv">1</b><span>დონე / 31</span></div>
@@ -128,11 +128,11 @@ body.gfs{overflow:hidden}
   <h3>✦ როგორ ვითამაშოთ</h3>
   <ul>
     <li>მართე <b style="color:#e2685c">წითელი კვადრატი</b> — ისრებით ან WASD-ით; ტელეფონზე — ღილაკებით ან თითის გასმით დაფაზე (ჯოისტიკი).</li>
-    <li>მიდი იისფერი START-იდან 🏁 ფინიშამდე — <b style="color:#6fdc86">მწვანე ზონა მხოლოდ ფინიშია</b>, ისე რომ <b style="color:#e0bf6e">პლანეტებს</b> (მერკური, ვენერა, დედამიწა, მარსი, იუპიტერი, რგოლებიანი სატურნი, ურანი, ნეპტუნი) არ შეეხო. შეხებად ითვლება პლანეტის სხეული — რგოლები უვნებელია. ბოლო დონეზე შენ ლურჯი კვადრატი ხარ.</li>
+    <li>მიდი იისფერი START-იდან 🏁 ფინიშამდე — <b style="color:#6fdc86">მწვანე ზონა მხოლოდ ფინიშია</b>, ისე რომ <b style="color:#5fa8ff">ლურჯ წერტილებს</b> არ შეეხო — თითოეულზე პლანეტის ან ზოდიაქოს ნიშანია, ან რიცხვი 1-დან 22-მდე. 21–29 დონეებზე წერტილები ვარდისფერია, 31-ზე კი როლები იცვლება: შენ ლურჯი კვადრატი ხარ, წერტილები — წითელი.</li>
     <li>ყველა დონეზე <b style="color:#f1d34a">ყვითელი ვარსკვლავებია</b> — ფინიში 🔒 დაკეტილია, სანამ ყველას არ აკრეფ. როცა აკრეფ, ფინიში აციმციმდება და ხაზი გაჩვენებს გზას — შეეხე მწვანე ზონას და შემდეგი დონე დაიწყება.</li>
     <li><b>👁 დემო</b> — ნახე, როგორ გადის მიმდინარე დონეს ამომხსნელი; <b>🎬 ყველა დონე</b> — 31-ვე დონე ზედიზედ. ისრის დაჭერით დემო ჩერდება და მართვა შენზე გადმოდის.</li>
     <li>🚩 იისფერი საკონტროლო წერტილი (checkpoint) — თუ მას გაივლი, შეხების შემდეგ იქიდან დაიწყებ და აკრეფილი ვარსკვლავები შენ რჩება.</li>
-    <li>შეხება → თავიდან სტარტიდან, ვარსკვლავები ბრუნდება. პლანეტები არ ჩერდებიან — დაელოდე სწორ მომენტს.</li>
+    <li>შეხება → თავიდან სტარტიდან, ვარსკვლავები ბრუნდება. წერტილები არ ჩერდებიან — დაელოდე სწორ მომენტს.</li>
     <li>31 დონე: პირველი ნაბიჯი · ზიგზაგი · რვიანები · ტყე · ფიჭა · სარკე · გველი · ორი ოთახი · ოთხი ოთახი · კარიბჭეები · ბორბლები · გუგა · ქვიშის საათი · რგოლები · ტალღები · განძი · მოძრავი კედლები · ყბები · ვარდი · ციტადელი · ლაბირინთი · მატარებლები · ლოკოკინა · ჭადრაკი · მბრუნავი კარები · სინუსოიდა · ბილიარდი · გზაჯვარედინი · აკორდეონი · სუნთქვის ლაბირინთი · ბადე. 31 სხვადასხვა დონე — თითოეულს თავისი ფორმა, ფერი და მოძრაობის სახე. სამი სირთულე: <b>ჩვეულებრივი</b>, <b>რთული</b> და <b>უძნელესი</b> — ბოლოში დონეები ამომხსნელით აწეულია ზღვრამდე. ყველა დონე ყველა სირთულეზე შემოწმებულია, რომ გასავლელია.</li>
   </ul>
   <div id="stats" style="font-size:12.5px;color:var(--ink-mid);margin-top:8px"></div>
@@ -933,34 +933,24 @@ function update(dt){
   }
 }
 /* ── stars (pickups) and planets (enemies); the hit radius is the planet's body, rings are decoration ── */
-function star(x,y,r,rot){ctx.save();ctx.translate(x,y);ctx.rotate(Math.sin(rot)*.25);ctx.beginPath();
-  for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}ctx.closePath();
-  const g=ctx.createRadialGradient(-r*.25,-r*.3,r*.1,0,0,r);g.addColorStop(0,'#fff6c4');g.addColorStop(.55,'#f5cf3a');g.addColorStop(1,'#d39a12');
-  ctx.fillStyle=g;ctx.fill();ctx.lineWidth=1.6;ctx.strokeStyle='#5a3d05';ctx.stroke();ctx.restore();}
-const PLAN=[ /* body colours [light, mid, dark], bands, ring */
-  {c:['#d9d4cc','#a39d94','#5e5952']},                                  /* მერკური */
-  {c:['#fff1c8','#e8c77d','#9c7a35']},                                  /* ვენერა */
-  {c:['#9fd4ff','#2f7fe0','#0d2f6b'],land:1},                           /* დედამიწა */
-  {c:['#ffb08a','#d9562b','#6e2010']},                                  /* მარსი */
-  {c:['#f4e2c4','#d0a676','#7d5630'],bands:['#b9824e','#e9d2ad','#a86b3c']}, /* იუპიტერი */
-  {c:['#fbe7b0','#e0bf6e','#8a6a2a'],bands:['#cfa556'],ring:'#e9d49a'}, /* სატურნი */
-  {c:['#d6fbff','#7fd9e6','#2c7e8c'],ring:'#bff3f8',tilt:1.35},         /* ურანი */
-  {c:['#a9c4ff','#3d62e0','#13226e'],bands:['#2c4cc0']}];               /* ნეპტუნი */
-const SPR={};
-function sprite(t){if(SPR[t])return SPR[t];const P=PLAN[t],S=64,R=20,cv2=document.createElement('canvas');cv2.width=cv2.height=S;const c=cv2.getContext('2d'),m=S/2;
-  const ring=(front)=>{if(!P.ring)return;c.save();c.translate(m,m);c.rotate(P.tilt?P.tilt:-.38);c.beginPath();
-    c.ellipse(0,0,R*1.55,R*.42,0,front?0:Math.PI,front?Math.PI:Math.PI*2);c.lineWidth=4.5;c.strokeStyle=P.ring;c.stroke();
-    c.beginPath();c.ellipse(0,0,R*1.33,R*.33,0,front?0:Math.PI,front?Math.PI:Math.PI*2);c.lineWidth=1.6;c.strokeStyle='rgba(120,90,40,.55)';c.stroke();c.restore();};
-  ring(false);
-  const g=c.createRadialGradient(m-R*.4,m-R*.45,R*.1,m,m,R);g.addColorStop(0,P.c[0]);g.addColorStop(.6,P.c[1]);g.addColorStop(1,P.c[2]);
-  c.save();c.beginPath();c.arc(m,m,R,0,7);c.fillStyle=g;c.fill();c.clip();
-  if(P.bands)P.bands.forEach((b,i)=>{c.fillStyle=b;c.globalAlpha=.55;c.fillRect(m-R,m-R*.55+i*R*.42,R*2,R*.16);});c.globalAlpha=1;
-  if(P.land){c.fillStyle='#3fa257';[[-6,-5,7],[5,4,6],[-2,9,4]].forEach(([dx,dy,rr])=>{c.beginPath();c.arc(m+dx,m+dy,rr,0,7);c.fill();});}
-  c.restore();
-  c.beginPath();c.arc(m,m,R,0,7);c.lineWidth=1.8;c.strokeStyle='rgba(10,8,30,.8)';c.stroke();
-  ring(true);
-  return SPR[t]=cv2;}
-function planet(k,x,y,r){const t=k%PLAN.length,sp=sprite(t),s=r/20*64;ctx.drawImage(sp,x-s/2,y-s/2,s,s);}
+function star(x,y,r,rot){
+  ctx.save();ctx.translate(x,y);
+  const halo=ctx.createRadialGradient(0,0,r*.2,0,0,r*1.9);halo.addColorStop(0,'rgba(255,224,110,.55)');halo.addColorStop(1,'rgba(255,224,110,0)');
+  ctx.fillStyle=halo;ctx.beginPath();ctx.arc(0,0,r*1.9,0,7);ctx.fill();
+  ctx.rotate(rot*.35);ctx.beginPath();
+  for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.5:r;ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);}ctx.closePath();
+  const g=ctx.createLinearGradient(-r,-r,r,r);g.addColorStop(0,'#fffbe0');g.addColorStop(.45,'#ffd84a');g.addColorStop(1,'#f0a400');
+  ctx.lineJoin='round';ctx.lineWidth=2.2;ctx.strokeStyle='#b97800';ctx.stroke();ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();ctx.arc(-r*.18,-r*.22,r*.17,0,7);ctx.fillStyle='rgba(255,255,255,.85)';ctx.fill();
+  ctx.restore();}
+/* each dot carries a symbol: 10 planets · 12 zodiac signs · numbers 1–22 (U+FE0E keeps phones from turning them into emoji) */
+const GLY=[...'☉☽☿♀♂♃♄♅♆♇'].map(g=>g+'︎').concat([...'♈♉♊♋♌♍♎♏♐♑♒♓'].map(g=>g+'︎'),Array.from({length:22},(_,i)=>String(i+1)));
+function dot(k,x,y,r){const ec=(G.L&&G.L.ec)||['#2f6bff','#0a0f3a'];
+  ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=ec[0];ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=ec[1];ctx.stroke();
+  const g=GLY[k%GLY.length],num=g.length<=2&&/\d/.test(g);
+  ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font=(num?'bold ':'')+Math.round(r*(num&&g.length===2?1.05:1.3))+'px '+(num?'Cinzel,serif':'"Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif');
+  ctx.fillText(g,x,y+(num?.5:1));ctx.textBaseline='alphabetic';}
 function draw(){
   const sc=cv.width/(W*T);ctx.setTransform(sc,0,0,sc,0,0);
   if(!bg){ctx.fillStyle='#0b0918';ctx.fillRect(0,0,W*T,H*T);return;}
@@ -977,7 +967,7 @@ function draw(){
       ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillStyle='#0d5a24';ctx.fillText('ფინიში ღიაა!',ex,ey+T*.9);}}
   for(const c of G.coins)if(!c.got){const pr=1+.12*Math.sin(G.t*6+c.x)+(need?.35*Math.abs(Math.sin(G.t*8)):0);
     if(need){ctx.setLineDash([6,6]);ctx.strokeStyle='rgba(241,211,74,.8)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(G.px,G.py);ctx.lineTo(c.x,c.y);ctx.stroke();ctx.setLineDash([]);}
-    star(c.x,c.y,(CR+3.5)*pr,G.t*1.2+c.x);}
+    star(c.x,c.y,(CR+3)*pr,G.t+c.x*.01);}
   if(G.parts)for(const q of G.parts)if(q.l>0){ctx.globalAlpha=Math.max(0,q.l/.6);ctx.fillStyle=((G.L&&G.L.pc)||['#e8313a'])[0];ctx.fillRect(q.x-3,q.y-3,6,6);}
   ctx.globalAlpha=1;
   /* player */
@@ -986,12 +976,12 @@ function draw(){
   ctx.globalAlpha=1;
   {const LE=G.L?G.L.E:[];for(let k=0;k<LE.length;k++){const e=LE[k],[ex,ey]=pos(e,G.t);
     if(!HG.vis(e,G.t)){ctx.beginPath();ctx.arc(ex*T,ey*T,ER,0,7);ctx.setLineDash([3,3]);ctx.lineWidth=1.5;ctx.strokeStyle='rgba(120,120,170,.5)';ctx.stroke();ctx.setLineDash([]);continue;}
-    planet(k,ex*T,ey*T,HG.rad(e,G.t));}}
+    dot(k,ex*T,ey*T,HG.rad(e,G.t));}}
   if(G.L&&G.L.mech==='fog'){const R=120,gx=G.px,gy=G.py;const gr=ctx.createRadialGradient(gx,gy,R*.55,gx,gy,R);gr.addColorStop(0,'rgba(5,4,11,0)');gr.addColorStop(1,'rgba(5,4,11,.97)');
     ctx.fillStyle=gr;ctx.beginPath();ctx.rect(0,0,W*T,H*T);ctx.arc(gx,gy,R,0,7,true);ctx.fill();ctx.fillStyle=gr;ctx.beginPath();ctx.arc(gx,gy,R,0,7);ctx.fill();}
   if(G.L&&G.banner>0){ctx.globalAlpha=Math.min(1,G.banner);ctx.fillStyle='rgba(10,8,24,.85)';ctx.fillRect(W*T/2-230,H*T/2-34,460,60);
     ctx.textAlign='center';ctx.fillStyle='#ecd59a';ctx.font='22px Cinzel,serif';ctx.fillText('დონე '+(G.lv+1),W*T/2,H*T/2-6);
-    ctx.font='14px "Noto Serif Georgian",serif';ctx.fillStyle='#b3a68f';ctx.fillText(G.L.name+' · ვარსკვლავი: '+G.coins.length+(G.L.mech?' · '+({blink:'ციმციმა პლანეტები',pulse:'მფეთქავი პლანეტები',fog:'სიბნელე'})[G.L.mech]:''),W*T/2,H*T/2+16);ctx.globalAlpha=1;}
+    ctx.font='14px "Noto Serif Georgian",serif';ctx.fillStyle='#b3a68f';ctx.fillText(G.L.name+' · ვარსკვლავი: '+G.coins.length+(G.L.mech?' · '+({blink:'ციმციმა წერტილები',pulse:'მფეთქავი წერტილები',fog:'სიბნელე'})[G.L.mech]:''),W*T/2,H*T/2+16);ctx.globalAlpha=1;}
   {const msg=need&&$('o-coin').checked?'🔒 ფინიში დაკეტილია — ჯერ აკრიფე ყველა ყვითელი ვარსკვლავი: '+G.got+'/'+G.coins.length:'';
     const nt=$('note');if(nt._m!==msg){nt._m=msg;nt.textContent=msg;nt.hidden=!msg;}}
   if(G.joy&&G.joy.on){const s=1;ctx.globalAlpha=.35;ctx.beginPath();ctx.arc(G.joy.ox*s,G.joy.oy*s,34,0,7);ctx.strokeStyle='#c9a84c';ctx.lineWidth=2;ctx.stroke();
@@ -1007,14 +997,16 @@ document.addEventListener('keydown',e=>{const k=KM[e.key];if(G.intro&&(k||e.key=
 document.addEventListener('keyup',e=>{const k=KM[e.key];if(k)G.keys[k]=false;});
 window.addEventListener('blur',()=>{G.keys={};});
 const wrap=$('wrap');
-wrap.addEventListener('pointerdown',e=>{if(e.target!==cv)return;const r=cv.getBoundingClientRect(),k=W*T/r.width;
+/* touching the arrows or the board during a demo hands control to the player (like a keyboard arrow) */
+function takeOver(){if(G.demo){stopDemo();G.demoAllOn=false;}}
+wrap.addEventListener('pointerdown',e=>{if(e.target!==cv)return;takeOver();const r=cv.getBoundingClientRect(),k=W*T/r.width;
   G.joy={on:true,id:e.pointerId,ox:(e.clientX-r.left)*k,oy:(e.clientY-r.top)*k,x:0,y:0};cv.setPointerCapture(e.pointerId);});
 wrap.addEventListener('pointermove',e=>{if(!G.joy||!G.joy.on||e.pointerId!==G.joy.id)return;const r=cv.getBoundingClientRect();
   const k=W*T/r.width;G.joy.x=(e.clientX-r.left)*k-G.joy.ox;G.joy.y=(e.clientY-r.top)*k-G.joy.oy;});
 const endJoy=e=>{if(G.joy&&e.pointerId===G.joy.id)G.joy.on=false;};
 wrap.addEventListener('pointerup',endJoy);wrap.addEventListener('pointercancel',endJoy);
 $('pad').querySelectorAll('button').forEach(b=>{const k=b.dataset.k;
-  b.addEventListener('pointerdown',e=>{e.preventDefault();G.keys[k]=true;b.classList.add('on');try{b.setPointerCapture(e.pointerId);}catch(_){}});
+  b.addEventListener('pointerdown',e=>{e.preventDefault();takeOver();G.keys[k]=true;b.classList.add('on');try{b.setPointerCapture(e.pointerId);}catch(_){}});
   const up=()=>{G.keys[k]=false;b.classList.remove('on');};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);
   b.addEventListener('lostpointercapture',up);});
 /* phones: no selection, magnifier, copy menu or context menu on the controls */
@@ -1062,7 +1054,7 @@ function winLine(dl){return dl===0?'უშეცდომოდ! ლეგენ
 /* every level opens with a title card, then starts by itself (or Enter / arrow / tap) */
 function play(i,prev){clearTimeout(G.autoT);clearInterval(G.cdT);stopDemo();G.demoAllOn=false;i=Math.max(0,Math.min(NL-1,i|0));$('b-jump').value=i;load(i);
   G.banner=0;G.run=false;G.paused=false;G.intro=true;G.keys={};$('b-pause').textContent='⏸ პაუზა (P)';
-  const L=LEVELS[i],mech=L.mech?' · '+({blink:'ციმციმა პლანეტები',pulse:'მფეთქავი პლანეტები',fog:'სიბნელე'})[L.mech]:'';
+  const L=LEVELS[i],mech=L.mech?' · '+({blink:'ციმციმა წერტილები',pulse:'მფეთქავი წერტილები',fog:'სიბნელე'})[L.mech]:'';
   overlay(`${prev?`<div class="done">✓ დონე ${i} · ${winLine(prev.dl)} · ☠ ${prev.dl} · ${prev.lt.toFixed(1)} წმ</div>`:''}
     <div class="lvno">დონე ${i+1} / ${NL}</div><div class="ttl">${L.name}</div><div class="quip">„${QUIPS[i]}“</div>
     <p>ვარსკვლავი: ${L.coins.length}${mech}</p><div class="cd" id="o-cd">3</div>
@@ -1141,7 +1133,7 @@ const _start=start;start=function(){if($('m-auto').checked&&!M.playing){if(M.rea
 window._music=M;
 
 resize();const qLv=+(new URLSearchParams(location.search).get('level')||0);load(qLv?Math.min(NL,qLv)-1:0);$('b-jump').value=G.lv;stats();
-overlay(`<h2>უძნელესი გზა</h2><p>მიიყვანე წითელი კვადრატი მწვანე ფინიშამდე და არ შეეხო პლანეტებს. ჯერ აკრიფე ყველა ყვითელი ვარსკვლავი — მერე ფინიში გაიხსნება. 31 დონე.</p>
+overlay(`<h2>უძნელესი გზა</h2><p>მიიყვანე წითელი კვადრატი მწვანე ფინიშამდე და არ შეეხო ლურჯ წერტილებს. ჯერ აკრიფე ყველა ყვითელი ვარსკვლავი — მერე ფინიში გაიხსნება. 31 დონე.</p>
   <div class="bar" id="o-modes">${Object.entries(MODES).map(([k,t])=>`<button class="btn${k===G.mode?'':' ghost'}" data-m="${k}">${t}</button>`).join('')}</div>
   <p style="font-size:11.5px">ჩვეულებრივი — ვიწრო გასასვლელები · რთული — ყველაფერი 25%-ით სწრაფია, ზღვარზე · უძნელესი — 60%-ით სწრაფი, მილიმეტრული დრო.</p>
   <div class="bar"><button class="btn" id="o-start">▶ დაწყება — დონე ${G.lv+1}</button><button class="btn ghost" id="o-lvs">☰ დონეები</button></div>`,
