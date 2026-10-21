@@ -271,5 +271,5 @@ function hook(){
     const w=function(){const r=o.apply(this,arguments);const c=$('form-card');if(c)c.style.display='none';return r;};for(const k in o)w[k]=o[k];w._fm=true;window.showDoubleChart=w;}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hook);else setTimeout(hook,0);
-window._formulas={FORMULAS,model,links,evalFormula};
+window._formulas={FORMULAS,model,links,evalFormula,pctile};
 })();
