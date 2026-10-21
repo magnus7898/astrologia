@@ -645,7 +645,7 @@ async function go(){
     /* ── "usual": every day exactly + NS moments ── */
     const key=[P.a,P.b,P.lat,P.lon,P.off].join('|')+(P.hsys==='P'?'':'|'+P.hsys),dkey=P.a+'|'+P.b;
     if(key!==BASEKEY||!BASE){
-      const B=newAcc(),hit=(await shipped(key))||lsGet('statsT|'+SIG+'|'+key),dhit=lsGet('statsD|'+SIG+'|'+dkey);
+      const B=newAcc(),hit=(await shipped(key))||lsGet('statsT2|'+SIG+'|'+key),dhit=lsGet('statsD|'+SIG+'|'+dkey);
       if(dkey===BDKEY&&BDATE){for(const x of CFD){B.c[x.fid]=BDATE.c[x.fid];B.nn[x.fid]=BDATE.nn[x.fid];}B.days=BDATE.days;}
       else if(hit&&hit.D&&unpackAcc(B,hit.D,CFD)){B.days=hit.D.days;BDATE=B;BDKEY=dkey;}
       else if(dhit&&unpackAcc(B,dhit,CFD)){B.days=dhit.days;BDATE=B;BDKEY=dkey;}
@@ -657,7 +657,7 @@ async function go(){
         const ok=await charts(()=>{if(i>=NS)return null;const jd=j0+(i+frac((i+1)*PHI))*w;i++;return jd;},P,S=>{addSet(B,S,CFT,1);B.mom++;},tok,
           n=>{$('bar').style.width=(p0+p1*n/NS)+'%';$('msg').textContent=`ჩვეულებრივი · HD და ასტროლოგია: ${n.toLocaleString()} / ${NS.toLocaleString()} მომენტი`;});
         if(!ok)return;
-        lsSet('statsT|'+SIG+'|'+key,{T:packAcc(B,CFT)});
+        lsSet('statsT2|'+SIG+'|'+key,{T:packAcc(B,CFT)});
       }
       BASE=B;BASEKEY=key;
     }

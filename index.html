@@ -920,6 +920,9 @@
      A box with a single member is that tile itself — a plain link.
      label: how a member is titled INSIDE its box (optional).            */
   const GROUPS=[
+    {key:'life',title:'ცხოვრების რუქა',sub:'ქვეყანა · პროფესია · ფული · პარტნიორი · ჯანმრთელობა',css:'c-astro',art:'astro.html',href:'life.html',count:5,
+     sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="M4 16h24M16 4c4 4 4 20 0 24M16 4c-4 4-4 20 0 24"/><path d="M16 9l1.6 3.4 3.7.4-2.8 2.5.8 3.7-3.3-1.9-3.3 1.9.8-3.7-2.8-2.5 3.7-.4z" fill="currentColor" opacity=".25"/></svg>',
+     members:['astro.html','pythagoras.html','matrix.html','hd.html','vedic.html'],label:{},always:true},
     {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · Sidereal · Chinese · Tibetan · Maya…',css:'c-astro',art:'astro.html',
      members:['astro.html','vedic.html','vedictrop.html','true_sidereal.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html'],
      label:{'astro.html':'დასავლური ასტროლოგია'}},
@@ -945,6 +948,7 @@
   const params=new URLSearchParams(location.search);
   if(params.get('g')==='games'){location.replace('games.html');return;}
   if(params.get('g')==='stats'){location.replace('stats.html');return;}
+  if(params.get('g')==='life'){location.replace('life.html');return;}
   const homeHref=location.pathname.split('/').pop()||'index.html';
   {const bk=document.getElementById('grp-back');if(bk)bk.href=homeHref;}
   function groupTiles(G,all){

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ცხოვრების რუქა · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(201,168,76,.12)}
+.page{max-width:1000px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12.5px;letter-spacing:2.5px;color:var(--gold);margin-bottom:10px;text-transform:uppercase}
+.hint{font-size:11.5px;color:var(--ink-dim);line-height:1.6}
+select,input{background:var(--raised);border:1px solid var(--border);border-radius:6px;color:var(--ink);font:inherit;font-size:13px;padding:7px 9px;outline:none;min-width:0;max-width:100%;box-sizing:border-box}
+select:focus,input:focus{border-color:var(--border-h)}
+.form{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px 12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-dim);min-width:0}
+.form .w2{grid-column:span 2}.form .w3{grid-column:span 3}.form .w6{grid-column:span 6}
+.form label.ck{flex-direction:row;align-items:center;gap:7px;font-size:12px;color:var(--ink-mid);cursor:pointer;padding-top:18px}
+.form input[type=checkbox]{accent-color:var(--gold)}
+@media(max-width:640px){.form{grid-template-columns:repeat(2,minmax(0,1fr))}.form .w2,.form .w3,.form .w6{grid-column:span 2}}
+.go{display:flex;justify-content:center;margin:14px 0 4px}
+#msg{text-align:center;font-size:12.5px;color:var(--ink-mid);min-height:20px;margin:6px 0}
+#msg .bad{color:var(--bad)}
+#res{display:none}
+.hero{text-align:center;padding:18px 14px}
+.hero .nm{font-family:'Cinzel',serif;font-size:20px;color:var(--gold-lt);letter-spacing:1px}
+.hero .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.chip{border:1px solid var(--border);border-radius:14px;padding:3px 11px;font-size:12px;color:var(--ink-mid);background:rgba(201,168,76,.05)}
+.chip b{color:var(--gold-lt);font-weight:400}
+.jump{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:4px 0 14px}
+.jump button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:4px 11px;font:inherit;font-size:11.5px;cursor:pointer}
+.jump button:hover{border-color:var(--border-h);color:var(--gold-lt)}
+.sec{scroll-margin-top:10px}
+.sec>h2{font-family:'Cinzel',serif;font-weight:400;font-size:15px;letter-spacing:2px;color:var(--gold-lt);margin:22px 0 10px;text-align:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.src{font-size:10px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;margin:10px 0 4px;font-family:'Cinzel',serif}
+.src:first-child{margin-top:0}
+p.t{font-size:13px;line-height:1.75;color:var(--ink);margin:3px 0}
+p.t b{color:var(--gold-lt);font-weight:500}
+p.t .dim{color:var(--ink-dim);font-size:12px}
+ul.l{list-style:none;padding:0;margin:4px 0}
+ul.l li{font-size:13px;line-height:1.6;padding:5px 0;border-bottom:1px dashed var(--border);color:var(--ink)}
+ul.l li:last-child{border-bottom:none}
+ul.l li b{color:var(--gold-lt);font-weight:500}
+ul.l li small{display:block;color:var(--ink-dim);font-size:11.5px}
+.rank{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(70px,1fr) auto;gap:6px 10px;align-items:center;font-size:13px}
+.rank .b{height:9px;background:rgba(255,255,255,.05);border-radius:2px;position:relative}
+.rank .b i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:linear-gradient(90deg,#9a7028,var(--gold-lt))}
+.rank .n{font-size:11px;color:var(--ink-dim);white-space:nowrap;text-align:right}
+.rank .k b{color:var(--gold-lt);font-weight:500}
+.rank .k small{display:block;color:var(--ink-dim);font-size:11px}
+.good{color:#7fd8a8}.warn{color:#e8907a}
+details{margin-top:6px}details summary{cursor:pointer;font-size:12px;color:var(--gold)}
+details p{font-size:12.5px;line-height:1.7;color:var(--ink-mid);margin-top:4px}
+.py{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;max-width:270px;margin:4px auto}
+.py div{border:1px solid var(--border);border-radius:6px;text-align:center;padding:8px 2px;font-family:'Cinzel',serif;font-size:14px;color:var(--gold-lt);min-height:44px}
+.py div small{display:block;font-family:'Noto Serif Georgian',serif;font-size:9.5px;color:var(--ink-dim)}
+.py div.z{color:var(--ink-dim);opacity:.6}
+.note{font-size:11.5px;color:var(--ink-dim);line-height:1.7;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="index.html">← მთავარი</a>
+  <h1>ცხოვრების რუქა</h1>
+  <div class="sub">პითაგორა · ადამიანის დიზაინი · ასტროლოგია · ვედური ასტროლოგია · ბედის მატრიცა — ერთად</div>
+</header>
+
+<div class="panel">
+  <div class="form">
+    <label class="w3">სახელი<input id="nm" placeholder="სახელი (არასავალდებულო)" autocomplete="off"></label>
+    <label>დღე<input id="dd" type="number" min="1" max="31" value="1"></label>
+    <label>თვე<input id="mm" type="number" min="1" max="12" value="1"></label>
+    <label>წელი<input id="yy" type="number" min="1" max="9999" value="1990"></label>
+    <label>საათი<input id="hh" type="number" min="0" max="23" value="12"></label>
+    <label>წუთი<input id="mi" type="number" min="0" max="59" value="0"></label>
+    <label class="ck"><input id="tu" type="checkbox"> დრო უცნობია</label>
+    <label class="w3">დაბადების ქალაქი <small id="plmsg"></small><input id="place" list="plist" autocomplete="off" value="თბილისი" placeholder="თბილისი, Paris, New York…"><datalist id="plist"></datalist></label>
+    <label class="w3">სახლების სისტემა<select id="hs">
+      <option value="P">პლაციდუსი</option><option value="K">კოხი</option><option value="W">მთლიანი ნიშნები</option><option value="E">თანაბარი (ASC)</option>
+      <option value="O">პორფირიუსი</option><option value="R">რეგიომონტანუსი</option><option value="C">კამპანუსი</option><option value="T">ტოპოცენტრული</option>
+      <option value="B">ალკაბიციუსი</option><option value="V">ფელოვი</option><option value="D">თანაბარი (MC)</option></select></label>
+  </div>
+  <div class="hint" style="margin-top:10px">აუცილებელია მხოლოდ დაბადების თარიღი. დრო და ქალაქი საჭიროა სახლებისთვის (II, VI, X…), ასცენდენტისთვის, საუკეთესო ქვეყნებისა და ქალაქებისთვის და ზუსტი ადამიანის დიზაინისთვის.</div>
+  <div class="go"><button class="btn" id="run" type="button">✦ გამოთვლა</button></div>
+  <div id="msg"></div>
+</div>
+
+<div id="res">
+  <div class="panel hero" id="hero"></div>
+  <div class="jump" id="jump"></div>
+  <div id="out"></div>
+  <p class="note">როგორ ითვლება: ასტროლოგია — ტროპიკული, გეოცენტრული, პლანეტების ზუსტი მდებარეობა (Astronomy Engine), მმართველები MAGNUS-ის სისტემით (ვერძი ♇/♂, მორიელი ♂/♇, მშვილდოსანი ♃/♄, თხის რქა ♄/♅, მერწყული ♅/♄, თევზები ♆/♃), სახლის მმართველები — სახლში მოხვედრილი ყველა ნიშნისა. ვედური — ლაჰირის აიანამშა, მთლიანი ნიშნების სახლები. ადამიანის დიზაინი — 88° მზის რკალით. ბედის მატრიცა — მეთოდი 1, MAGNUS-ის კომბინაციების ბაზით. პითაგორას კვადრატი — კლასიკური.
+  საუკეთესო ქალაქები — ასტროკარტოგრაფია: 700-მდე ქალაქის რელოკაციის რუქა, სადაც ბედნიერი პლანეტები (♃ ♀ ☉ ☽) კუთხეებზე (ASC, MC, DSC, IC) ჯდება და მძიმე პლანეტები (♄ ♇ ♂ ♆) — არა. პროფესიები — ყველა სისტემის მითითება ერთად შეჯამებული; რაც მეტი სისტემა ემთხვევა, მით ზემოთაა. ეს არის ეზოთერიკული ინტერპრეტაცია და არა სამედიცინო ან ფინანსური რჩევა.</p>
+</div>
+</div>
+
+<script src="pluto_far.js"></script>
+<script src="stats_engine.js"></script>
+<script src="matrix_combos.js"></script>
+<script src="matrix_autotext.js"></script>
+<script src="livecities.js"></script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nrm=x=>((x%360)+360)%360,w180=x=>((x%360)+540)%360-180;
+
+/* ═══════════ reference tables ═══════════ */
+const SIGNS=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const LOC=['ვერძში','კუროში','ტყუპებში','კირჩხიბში','ლომში','ქალწულში','სასწორში','მორიელში','მშვილდოსანში','თხის რქაში','მერწყულში','თევზებში'];
+const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(z=>z+'︎');
+const ELN=['ცეცხლი','მიწა','ჰაერი','წყალი'],MODN=['კარდინალური','ფიქსირებული','მუტაბელური'];
+const PL={Sun:['☉','მზე'],Moon:['☽','მთვარე'],Mercury:['☿','მერკური'],Venus:['♀','ვენერა'],Mars:['♂','მარსი'],Jupiter:['♃','იუპიტერი'],
+  Saturn:['♄','სატურნი'],Uranus:['♅','ურანი'],Neptune:['♆','ნეპტუნი'],Pluto:['♇','პლუტონი'],Node:['☊','ჩრდ. კვანძი']};
+const G=b=>PL[b][0]+'︎',PN=b=>PL[b][1];
+const PLAN=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+/* MAGNUS rulership (first / second ruler) */
+const RUL={0:['Pluto','Mars'],1:['Venus'],2:['Mercury'],3:['Moon'],4:['Sun'],5:['Mercury'],6:['Venus'],7:['Mars','Pluto'],8:['Jupiter','Saturn'],9:['Saturn','Uranus'],10:['Uranus','Saturn'],11:['Neptune','Jupiter']};
+const HOUSE=['','პიროვნება, სხეული','ფული, ღირებულებები','კომუნიკაცია, ახლობლები','სახლი, ოჯახი, ფესვები','შემოქმედება, სიყვარული, ბავშვები','სამუშაო, ყოველდღიურობა, ჯანმრთელობა',
+  'პარტნიორობა, ქორწინება','კრიზისი, სხვისი რესურსები, ტრანსფორმაცია','უცხოეთი, განათლება, მსოფლმხედველობა','კარიერა, სტატუსი, მოწოდება','მეგობრები, გუნდი, მომავლის გეგმები','სულიერება, მარტოობა, ფარული'];
+const PKW={Sun:'ნება, თვითგამოხატვა',Moon:'ემოციები, უსაფრთხოება',Mercury:'აზროვნება, სიტყვა',Venus:'სიყვარული, ღირებულება',Mars:'მოქმედება, ბრძოლა',
+  Jupiter:'ზრდა, რწმენა',Saturn:'დისციპლინა, შეზღუდვა',Uranus:'ცვლილება, თავისუფლება',Neptune:'ოცნება, ილუზია',Pluto:'ძალაუფლება, ტრანსფორმაცია',Node:'გზა, მიმართულება'};
+/* profession areas — every system points to these same tags, so they can be summed */
+const TAG={mgmt:['მენეჯმენტი და ლიდერობა','ხელმძღვანელი, დირექტორი, პროექტის მენეჯერი'],biz:['ბიზნესი და მეწარმეობა','საკუთარი საქმე, სტარტაპი, მეწარმე'],
+  fin:['ფინანსები და ინვესტიციები','ბანკი, ბუღალტერი, ინვესტორი, ანალიტიკოსი'],it:['IT და ტექნოლოგიები','პროგრამისტი, ინჟინერი, ანალიტიკოსი, დიზაინერი'],
+  sci:['მეცნიერება და კვლევა','მკვლევარი, ექსპერტი, ლაბორატორია'],med:['მედიცინა და ჯანმრთელობა','ექიმი, ფარმაცევტი, ნუტრიციოლოგი, მასაჟისტი'],
+  psy:['ფსიქოლოგია და კონსულტირება','ფსიქოლოგი, ქოუჩი, მრჩეველი'],edu:['განათლება და სწავლება','მასწავლებელი, ლექტორი, მწვრთნელი'],
+  law:['სამართალი და სახელმწიფო','იურისტი, მოსამართლე, საჯარო სამსახური, დიპლომატი'],comm:['კომუნიკაცია და მედია','ჟურნალისტი, PR, მარკეტინგი, ბლოგერი, თარჯიმანი'],
+  trade:['ვაჭრობა და გაყიდვები','გაყიდვები, ბროკერი, ვაჭრობა, მოლაპარაკებები'],art:['ხელოვნება, მუსიკა, კინო','მხატვარი, მუსიკოსი, მსახიობი, მწერალი'],
+  design:['დიზაინი და სილამაზე','დიზაინერი, სტილისტი, კოსმეტოლოგი, არქიტექტორი-დიზაინერი'],build:['მშენებლობა და ინჟინერია','ინჟინერი, არქიტექტორი, ხელოსანი, ტექნიკოსი'],
+  sport:['სპორტი და ფიზიკური საქმე','სპორტსმენი, ფიტნეს-მწვრთნელი, ცეკვა'],travel:['ტურიზმი და საერთაშორისო საქმე','ტურიზმი, ლოჯისტიკა, საერთაშორისო ბიზნესი'],
+  food:['კვება, სახლი, მიწა','შეფ-მზარეული, რესტორანი, უძრავი ქონება, სოფლის მეურნეობა'],care:['ზრუნვა და სოციალური საქმე','აღმზრდელი, სოციალური მუშაკი, ექთანი, ბავშვები'],
+  spirit:['სულიერება და ეზოთერიკა','ასტროლოგი, მკურნალი, სასულიერო, მედიტაციის მასწავლებელი'],secur:['უსაფრთხოება და კრიზისი','სამხედრო, პოლიცია, მაშველი, კრიზის-მენეჯერი, ქირურგი']};
+const ARCJ={1:['biz','trade','it','comm'],2:['psy','sci','med','spirit'],3:['design','fin','food','care'],4:['mgmt','law','build','secur'],5:['edu','law','psy','spirit'],
+  6:['comm','design','psy','trade'],7:['travel','sport','mgmt','secur'],8:['law','fin','med'],9:['sci','it','edu','spirit'],10:['fin','biz','travel','art'],
+  11:['sport','mgmt','med','secur'],12:['med','care','art','spirit'],13:['med','psy','secur','fin'],14:['med','food','art','comm'],15:['biz','fin','trade','art'],
+  16:['build','secur','it','mgmt'],17:['art','design','comm','spirit'],18:['art','psy','med','spirit'],19:['mgmt','edu','care','art'],20:['edu','care','psy','sci'],
+  21:['travel','law','comm','biz'],22:['travel','art','care','biz']};
+const ARCB={1:'თავი, ნერვული სისტემა',2:'ჰორმონები, ენდოკრინული სისტემა',3:'ფარისებრი ჯირკვალი, რეპროდუქციული სისტემა',4:'გული, წნევა, ძვლები',5:'ღვიძლი, ხერხემალი, სმენა',
+  6:'გული, სისხლძარღვები, თირკმელები',7:'ფეხები, სახსრები, ტრავმები',8:'სასუნთქი სისტემა, თირკმელები',9:'ხერხემალი, ძვლები, კვების რეჟიმი',10:'კუჭ-ნაწლავი, ნივთიერებათა ცვლა',
+  11:'კუნთები, ზურგი, წნევა',12:'იმუნიტეტი, სისხლის მიმოქცევა, ფეხები',13:'გამოყოფის და სასქესო სისტემა',14:'სისხლი, ლიმფა, ზომიერება კვებაში',15:'დამოკიდებულებები, ენდოკრინული სისტემა',
+  16:'ძვლები, ტრავმები, გული',17:'ყელი, ფარისებრი ჯირკვალი, კანი',18:'თირკმელები, ლიმფა, ძილი და ფსიქიკა',19:'გული, მხედველობა, ენერგია',20:'ხერხემალი, სმენა, მემკვიდრეობითი',
+  21:'ფილტვები, იმუნიტეტი',22:'ნერვული სისტემა, ტრავმები უყურადღებობით'};
+const SGN={ /* body · jobs · partner · money · growth */
+  0:['თავი, სახე',['mgmt','sport','secur','biz'],'ენერგიული, დამოუკიდებელი, პირდაპირი','სწრაფი შემოსავალი საკუთარი ინიციატივით','გამბედაობა, დამოუკიდებლობა, პირველობა'],
+  1:['ყელი, კისერი, ფარისებრი',['fin','food','art','design'],'სტაბილური, ერთგული, გრძნობადი','ნელა და მყარად — ქონება, დანაზოგი, მიწა','სტაბილურობა, საკუთარი ღირებულების შეგრძნება'],
+  2:['ფილტვები, ხელები, ნერვები',['comm','trade','edu','it'],'ჭკვიანი, მოლაპარაკე, ცნობისმოყვარე','რამდენიმე წყაროდან — სიტყვით, ვაჭრობით, კავშირებით','ცნობისმოყვარეობა, კომუნიკაცია, სწავლა'],
+  3:['კუჭი, მკერდი',['food','care','med'],'მზრუნველი, ოჯახური, ემოციური','ოჯახური საქმე, უძრავი ქონება, დაგროვება','ოჯახი, ემოციური სიღრმე, ზრუნვა'],
+  4:['გული, ზურგი',['mgmt','art','care'],'კეთილშობილი, გულუხვი, ბრწყინვალე','ლიდერობა, სახელი, შემოქმედება','შემოქმედება, გულით ლიდერობა, სიხარული'],
+  5:['ნაწლავები, საჭმლის მონელება',['med','sci','fin','it'],'პრაქტიკული, საიმედო, დეტალებზე მზრუნველი','შრომით, სიზუსტით, სერვისით','სამსახური, წესრიგი, ჯანმრთელობა'],
+  6:['თირკმელები, წელი',['law','design','comm'],'ჰარმონიული, ესთეტი, დიპლომატი','პარტნიორობით და ხელშეკრულებებით','პარტნიორობა, ბალანსი, დიპლომატია'],
+  7:['სასქესო და გამოყოფის სისტემა',['psy','fin','med','secur'],'ვნებიანი, ღრმა, ერთგული','სხვისი რესურსებით, ინვესტიციებით, კრიზისიდან','ტრანსფორმაცია, ნდობა, სიღრმე'],
+  8:['თეძოები, ღვიძლი',['edu','law','travel'],'თავისუფალი, ოპტიმისტი, მოგზაური','ცოდნით, უცხოეთით, გაფართოებით','რწმენა, სიბრძნე, მოგზაურობა'],
+  9:['ძვლები, მუხლები, კბილები, კანი',['mgmt','build','law','fin'],'სერიოზული, საიმედო, ამბიციური','გრძელვადიანი, დისციპლინით, კარიერით','პასუხისმგებლობა, სტრუქტურა, მიზანი'],
+  10:['წვივები, სისხლის მიმოქცევა',['it','sci','spirit'],'მეგობარი, ორიგინალური, თავისუფლების მოყვარე','ინოვაციით, ქსელით, გუნდით','საზოგადოება, თავისუფლება, ინოვაცია'],
+  11:['ტერფები, ლიმფა, იმუნიტეტი',['art','med','psy','spirit'],'რომანტიკული, თანამგრძნობი, მეოცნებე','შემოქმედებით, ინტუიციით','სულიერება, თანაგრძნობა, მინდობა']};
+const PJ={Sun:['mgmt'],Moon:['care','food'],Mercury:['comm','it','trade'],Venus:['art','design','fin'],Mars:['sport','build','secur'],Jupiter:['edu','law','travel'],
+  Saturn:['build','mgmt','sci'],Uranus:['it','spirit','sci'],Neptune:['art','med','spirit'],Pluto:['fin','psy','secur'],Node:[]};
+const PYL={1:'ნება, ხასიათი',2:'ენერგია',3:'ინტერესი მეცნიერებისადმი',4:'ჯანმრთელობა',5:'ლოგიკა, ინტუიცია',6:'შრომა, ხელობა',7:'იღბალი, ნიჭი',8:'პასუხისმგებლობა, მოვალეობა',9:'მეხსიერება, გონება'};
+const PYJ={1:['mgmt'],2:['sport','care'],3:['sci','it'],4:['sport','med'],5:['it','law','sci'],6:['build','food'],7:['art'],8:['care','law','med'],9:['sci','edu']};
+const PYLOW={1:'თავდაჯერებულობა და საკუთარი აზრის დაცვა გასავარჯიშებელია',2:'ენერგიის მარაგი მცირეა — დაიცავი დასვენება და ძილი',3:'მეცნიერება და წესრიგი ნაკლებად იზიდავს — ისწავლე დაგეგმვა',
+  4:'ჯანმრთელობას განსაკუთრებული მოვლა სჭირდება — პროფილაქტიკა',5:'ლოგიკისა და ინტუიციის ნაცვლად — სხვისი რჩევა; ისწავლე ანალიზი',6:'ფიზიკური შრომა არ გიყვარს — ფული სხვა გზით უნდა მოვიდეს',
+  7:'იღბალს შრომით ქმნი — ნუ ელი საჩუქარს',8:'პასუხისმგებლობის გრძნობა გასავითარებელია',9:'მეხსიერებას ვარჯიში სჭირდება'};
+const HDT={'Generator':['გენერატორი','უპასუხე — დაელოდე, რას გამოეხმაურება შენი სხეული, ნუ დაიწყებ ცარიელი ძალით','სიამოვნება','იმედგაცრუება',['build','sport','biz']],
+  'Manifesting Generator':['მანიფესტირებადი გენერატორი','უპასუხე, მერე გააფრთხილე სხვები — სწრაფი, მრავალმხრივი','სიამოვნება და მშვიდობა','იმედგაცრუება და ბრაზი',['biz','it','sport']],
+  'Projector':['პროექტორი','დაელოდე მოწვევას — შენი ძალა სხვების ხედვასა და წარმართვაშია','წარმატება','სიმწარე',['mgmt','psy','edu']],
+  'Manifestor':['მანიფესტორი','გააფრთხილე სხვები, სანამ იმოქმედებ — შენ ხარ ინიციატორი','მშვიდობა','ბრაზი',['biz','mgmt','art']],
+  'Reflector':['რეფლექტორი','დაელოდე მთვარის სრულ ციკლს (≈28 დღე) დიდი გადაწყვეტილებისთვის','გაკვირვება','იმედგაცრუება',['psy','care','spirit']]};
+const HDA={emo:'ემოციური — ნუ გადაწყვეტ ემოციურ პიკზე; დაელოდე სიცხადეს',sac:'საკრალური — ენდე სხეულის „კი/არა“ პასუხს ახლავე',spl:'სპლენური — პირველი ინტუიციური წამი, ის არ მეორდება',
+  ego:'ეგო — მხოლოდ ის, რაც გულით ნამდვილად გინდა და შეგიძლია შეასრულო',self:'თვით-პროექცია — ილაპარაკე და მოუსმინე, საითკენ მიდის შენი სიტყვები',ment:'გარემო — გადაწყვეტილება სწორ ადგილას და სწორ ადამიანებთან საუბარში მწიფდება',moon:'მთვარის ციკლი — ≈28 დღე'};
+const HDC={Head:['თავი','გონებრივი წნეხი, თავის ტკივილი — ნუ ცდილობ ყველა კითხვას უპასუხო'],Ajna:['აჯნა','ზედმეტი ფიქრი — არ არის აუცილებელი ყველაფერში დარწმუნება'],
+  Throat:['ყელი','ფარისებრი, ყელი; ყურადღების მისაპყრობად ლაპარაკი — თქვი, როცა გკითხავენ'],G:['G · მე','იდენტობა და მიმართულება იცვლება — სწორი ადგილი და ხალხი გადამწყვეტია'],
+  Heart:['გული · ეგო','გული, კუჭი — ნუ ამტკიცებ თავს, ნუ დაპირდები ზედმეტს'],'Solar Plexus':['მზის წნული','სხვისი ემოციების შეწოვა, კონფლიქტისგან გაქცევა, საჭმლის მონელება'],
+  Spleen:['ელენთა','იმუნიტეტი, შიშები — ნუ ებღაუჭები იმას, რაც ცუდად მოქმედებს'],Sacral:['საკრალი','გადაწვა და ძილის დარღვევა — იცოდე, როდის არის საკმარისი'],
+  Root:['ფესვი','სტრესი, ადრენალინი, ჩქარობა — ნუ იჩქარებ სხვისი წნეხით']};
+const HDENV=[['მღვიმეები','დაცული, მყუდრო სივრცე, პატარა ქალაქი ან მშვიდი უბანი'],['ბაზრები','ხალხმრავალი დიდი ქალაქი, სავაჭრო ცენტრი'],
+  ['სამზარეულოები','აქტიური, შემოქმედებითი, მრავალფეროვანი გარემო'],['მთები','მთიანი, მაღალი ადგილი, ფართო ხედით'],['ველები','ხეობა, დაბლობი, მდინარის ველი'],['სანაპიროები','ზღვის, ტბის ან მდინარის პირი']];
+const NODE=['დამოუკიდებლობა, გამბედაობა, საკუთარი გზა','სტაბილურობა, საკუთარი ღირებულების შეგრძნება, სიმშვიდე','ცნობისმოყვარეობა, სწავლა, კომუნიკაცია','ოჯახი, ემოციური სიღრმე, ზრუნვა',
+  'შემოქმედება, გულით ლიდერობა, საკუთარი თავის გამოხატვა','სამსახური, წესრიგი, ჯანსაღი ყოველდღიურობა','პარტნიორობა, დიპლომატია, სხვისი მოსმენა','ტრანსფორმაცია, ნდობა, ძველის გაშვება',
+  'რწმენა, სიბრძნე, მოგზაურობა, უცხოეთი','პასუხისმგებლობა, კარიერა, სიმწიფე','საზოგადოება, თავისუფლება, ინოვაცია','სულიერება, თანაგრძნობა, ღმერთზე მინდობა'];
+const NAK=[['აშვინი','Ketu'],['ბჰარანი','Venus'],['კრიტიკა','Sun'],['როჰინი','Moon'],['მრიგაშირა','Mars'],['არდრა','Rahu'],['პუნარვასუ','Jupiter'],['პუშია','Saturn'],['აშლეშა','Mercury'],
+  ['მაღა','Ketu'],['პურვა ფალგუნი','Venus'],['უტარა ფალგუნი','Sun'],['ჰასტა','Moon'],['ჩიტრა','Mars'],['სვატი','Rahu'],['ვიშაკჰა','Jupiter'],['ანურადჰა','Saturn'],['ჯიეშტჰა','Mercury'],
+  ['მულა','Ketu'],['პურვა აშადჰა','Venus'],['უტარა აშადჰა','Sun'],['შრავანა','Moon'],['დჰანიშტა','Mars'],['შატაბჰიშა','Rahu'],['პურვა ბჰადრაპადა','Jupiter'],['უტარა ბჰადრაპადა','Saturn'],['რევატი','Mercury']];
+const VLORD={0:'Mars',1:'Venus',2:'Mercury',3:'Moon',4:'Sun',5:'Mercury',6:'Venus',7:'Mars',8:'Jupiter',9:'Saturn',10:'Saturn',11:'Jupiter'};
+const VKA={Rahu:'რაჰუ',Ketu:'კეტუ'};const VN=b=>VKA[b]||PN(b);
+const MATRIX_ZONES=[['persona','პიროვნული ენერგია (პერსონა)',['L3','L2','L1']],['talent_zone','ნიჭების ზონა',['T3','T2','T1']],['karmic_tail','კარმული კუდი',['B3','B2','B1']],
+  ['material_karma','მატერიალური კარმა',['R3','R2','R1']],['money','ფულის ხაზი',['R1','W3','S6']],['love','სიყვარულის (გულის) ხაზი',['B1','W1','W2']]];
+const EXACTZ=new Set(['karmic_tail']);
+const ARC=n=>(window.ARCANA&&window.ARCANA[String(n)])||{n:'არკანი '+n,p:'',m:'',rel:'',mon:'',task:'',fear:'',beh:'',v:''};
+/* places */
+const PLACES=[['თბილისი',41.72,44.79,'Asia/Tbilisi'],['ბათუმი',41.64,41.63,'Asia/Tbilisi'],['ქუთაისი',42.27,42.70,'Asia/Tbilisi'],['რუსთავი',41.55,45.0,'Asia/Tbilisi'],['გორი',41.98,44.11,'Asia/Tbilisi'],
+  ['ზუგდიდი',42.51,41.87,'Asia/Tbilisi'],['თელავი',41.92,45.47,'Asia/Tbilisi'],['ფოთი',42.15,41.67,'Asia/Tbilisi'],['მოსკოვი',55.76,37.62,'Europe/Moscow'],['სტამბოლი',41.01,28.98,'Europe/Istanbul'],
+  ['ერევანი',40.18,44.51,'Asia/Yerevan'],['ბაქო',40.41,49.87,'Asia/Baku'],['კიევი',50.45,30.52,'Europe/Kyiv'],['ბერლინი',52.52,13.40,'Europe/Berlin'],['პარიზი',48.86,2.35,'Europe/Paris'],
+  ['ლონდონი',51.51,-0.13,'Europe/London'],['ნიუ-იორკი',40.71,-74.01,'America/New_York'],['ლოს-ანჯელესი',34.05,-118.24,'America/Los_Angeles'],['დუბაი',25.20,55.27,'Asia/Dubai']];
+$('plist').innerHTML=PLACES.map(p=>`<option value="${p[0]}"></option>`).join('');
+const BACKEND='https://astrology-production-b165.up.railway.app';
+let PLACE=null;
+async function resolvePlace(){
+  const q=$('place').value.trim();if(!q)return null;
+  if(PLACE&&PLACE.q===q)return PLACE;
+  const pre=PLACES.find(p=>p[0]===q);if(pre)return PLACE={q,name:pre[0],lat:pre[1],lon:pre[2],tz:pre[3]};
+  $('plmsg').textContent='· იძებნება…';
+  try{const r=await fetch(BACKEND+'/geocode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city:q})});
+    if(r.ok){const j=await r.json();if(j&&j.lat!=null){$('plmsg').textContent='· '+(j.display||q);return PLACE={q,name:j.display||q,lat:+j.lat,lon:+j.lon,tz:j.tz_name||'UTC'};}}}catch(e){}
+  $('plmsg').textContent='· ვერ მოიძებნა';return null;
+}
+/* UTC offset (hours) of an IANA zone at a local wall time */
+function tzOff(tz,y,m,d,h,mi){
+  try{const f=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric'});
+    const at=ms=>{const o={};for(const p of f.formatToParts(new Date(ms)))o[p.type]=p.value;return (Date.UTC(+o.year,+o.month-1,+o.day,+o.hour,+o.minute)-ms)/6e4;};
+    const dt=new Date(0);dt.setUTCFullYear(y,m-1,d);dt.setUTCHours(h,mi,0,0);const wall=dt.getTime();
+    let off=at(wall);off=at(wall-off*6e4);return off/60;}catch(e){return 0;}
+}
+
+/* ═══════════ calculation ═══════════ */
+function housesInfo(S){   /* signs in each house (cusp sign + intercepted), rulers, planets */
+  const c=S.cusps,H={};
+  for(let i=0;i<12;i++){const s0=c[i],span=nrm(c[(i+1)%12]-s0),signs=[Math.floor(s0/30)];
+    for(let k=1;k<12;k++){const st=nrm((Math.floor(s0/30)+k)*30);if(nrm(st-s0)<span)signs.push(Math.floor(st/30)%12);else break;}
+    const rul=[...new Set(signs.flatMap(sg=>RUL[sg]))];
+    const pl=PLAN.concat(['Node']).filter(b=>SE.houseOf(c,S.L[b])===i+1);
+    H[i+1]={signs,rul,pl,cusp:s0};}
+  return H;
+}
+function aspectsOf(L,set){const out=[],ANG=[[0,'☌','შეერთება',8],[60,'⚹','სექსტილი',5],[90,'□','კვადრატი',7],[120,'△','ტრინი',7],[180,'☍','ოპოზიცია',8]];
+  for(let i=0;i<set.length;i++)for(let j=i+1;j<set.length;j++){const a=set[i],b=set[j],s=Math.abs(w180(L[a]-L[b]));
+    for(const [g,gl,gn,o] of ANG)if(Math.abs(s-g)<=o){out.push({a,b,g,gl,gn,orb:Math.abs(s-g)});break;}}
+  return out;}
+function vedic(S,jd,known){
+  const ay=23.853+(jd-2451545)/36525*1.39697,sid=x=>nrm(x-ay),V={ay};
+  V.moonNak=Math.floor(sid(S.L.Moon)/(360/27));V.moonSign=Math.floor(sid(S.L.Moon)/30);V.sunSign=Math.floor(sid(S.L.Sun)/30);
+  const seven=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn'];
+  V.ak=seven.reduce((a,b)=>(sid(S.L[b])%30)>(sid(S.L[a])%30)?b:a);
+  if(known){V.lagna=Math.floor(sid(S.L.Asc)/30);V.h10=(V.lagna+9)%12;V.lord10=VLORD[V.h10];V.h2=(V.lagna+1)%12;V.h7=(V.lagna+6)%12;V.h6=(V.lagna+5)%12;
+    V.in10=seven.filter(b=>Math.floor(sid(S.L[b])/30)===V.h10);}
+  return V;
+}
+function zoneCode(z,v){const n=z[2].map(k=>v[k]),f=n.join('-');if(EXACTZ.has(z[0]))return f;const r=[...n].reverse().join('-');return f<=r?f:r;}
+function zoneInfo(z,v){const code=zoneCode(z,v),D=window.MATRIX_DB||{},cs=(D[z[0]]&&D[z[0]].combos)||{},rev=code.split('-').reverse().join('-');
+  const e=cs[code]||(!EXACTZ.has(z[0])&&cs[rev])||null;return {code,title:e&&e.title||'',text:e&&e.text||''};}
+/* astrocartography: relocated angles for every city */
+function cities(S,jd){
+  const C=window.LIVE_CITIES||[],W={Jupiter:{MC:3,ASC:3,IC:2,DSC:2},Venus:{ASC:3,DSC:3,MC:2,IC:2},Sun:{MC:3,ASC:2,IC:1,DSC:1},Moon:{IC:2,ASC:1.5,MC:1,DSC:1},
+    Mercury:{MC:1.5,ASC:1},Node:{MC:1,ASC:1},Saturn:{ASC:-3,MC:-1.5,IC:-2,DSC:-2},Mars:{ASC:-1.5,DSC:-2,IC:-2,MC:0.5},Pluto:{ASC:-2,DSC:-2,IC:-1.5,MC:-0.5},
+    Neptune:{ASC:-1.5,MC:-1,DSC:-1,IC:-0.5},Uranus:{ASC:-0.5,DSC:-1,IC:-1,MC:0.5}},ORB=7;
+  const AK={ASC:'ASC',MC:'MC',DSC:'DSC',IC:'IC'},cat={MC:'car',DSC:'love',IC:'home',ASC:'self'};
+  const res=[];
+  for(const c of C){if(Math.abs(c[3])>66)continue;
+    const h=SE.houses(jd,c[3],c[4],'O'),A={ASC:h.asc,MC:h.mc,DSC:nrm(h.asc+180),IC:nrm(h.mc+180)};
+    let tot=0;const sc={car:0,love:0,home:0,self:0},why=[];
+    for(const b in W)for(const a in W[b]){const d=Math.abs(w180(S.L[b]-A[a]));if(d<ORB){const v=W[b][a]*(1-d/ORB);tot+=v;sc[cat[a]]+=v;why.push({b,a,v,d});}}
+    if(!why.length)continue;
+    why.sort((x,y)=>Math.abs(y.v)-Math.abs(x.v));
+    res.push({c,tot,sc,why});}
+  return res;
+}
+let CNAME=null;try{CNAME=new Intl.DisplayNames(['ka'],{type:'region'});}catch(e){}
+const country=iso=>{try{return CNAME?CNAME.of(iso):iso;}catch(e){return iso;}};
+const cityName=c=>c[1]||c[0];
+
+async function run(){
+  const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value,known=!$('tu').checked;
+  if(!(d>=1&&d<=31&&m>=1&&m<=12&&y>=1&&y<=9999)){$('msg').innerHTML='<span class="bad">შეამოწმე თარიღი.</span>';return;}
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
+  if(d>dim){$('msg').innerHTML=`<span class="bad">${d}.${m}.${y} არ არსებობს.</span>`;return;}
+  const h=known?(+$('hh').value||0):12,mi=known?(+$('mi').value||0):0;
+  $('run').disabled=true;$('msg').textContent='⏳ ითვლება…';
+  try{
+    await SE.init();
+    const P=await resolvePlace()||{name:'თბილისი',lat:41.72,lon:44.79,tz:'Asia/Tbilisi',guess:true};
+    const off=tzOff(P.tz,y,m,d,h,mi);
+    const jd=SE.calJD(y,m,d,h+mi/60)-off/24;
+    SE.HSYS=$('hs').value;
+    const S=SE.stage2(SE.stage1(SE.stage0(jd,off),P.lat,P.lon));
+    const v=SE.matrix(d,m,y);   /* the date as written */
+    const py=SE.pyth(d,m,y);
+    const H=known?housesInfo(S):null,V=vedic(S,jd,known);
+    const CT=known?cities(S,jd):[];
+    render({d,m,y,h,mi,known,P,off,S,v,py,H,V,CT,name:$('nm').value.trim()});
+    $('msg').textContent='';
+  }catch(e){console.error(e);$('msg').innerHTML='<span class="bad">შეცდომა: '+esc(e.message)+'</span>';}
+  finally{$('run').disabled=false;}
+}
+
+/* ═══════════ render ═══════════ */
+const sg=L=>Math.floor(nrm(L)/30);
+const pos=(S,b)=>`${G(b)} ${PN(b)} ${ZS[sg(S.L[b])]} ${LOC[sg(S.L[b])]}`;
+const deg=L=>{const x=nrm(L)%30;return Math.floor(x)+'°'+String(Math.floor((x%1)*60)).padStart(2,'0')+'′';};
+function card(title,body){return `<div class="panel"><h3>${title}</h3>${body}</div>`;}
+function src(t){return `<div class="src">${t}</div>`;}
+function rankHTML(rows,max){return `<div class="rank">${rows.map(r=>`<span class="k">${r.k}</span><span class="b"><i style="width:${Math.max(4,100*r.v/(max||1))}%"></i></span><span class="n">${r.n||''}</span>`).join('')}</div>`;}
+function hasRx(S,b){return S.rx&&S.rx[b];}
+
+function render(R){
+  const {S,v,py,H,V,known}=R,hd=S.hd,L=S.L;
+  const sun=sg(L.Sun),moon=sg(L.Moon),asc=known?sg(L.Asc):null;
+  const t=HDT[hd.type];
+  $('hero').innerHTML=`<div class="nm">${esc(R.name||'ცხოვრების რუქა')}</div>
+    <div class="hint">${R.d}.${String(R.m).padStart(2,'0')}.${R.y}${known?` · ${String(R.h).padStart(2,'0')}:${String(R.mi).padStart(2,'0')}`:' · დრო უცნობია'} · ${esc(R.P.name)}${R.P.guess?' (ქალაქი ვერ მოიძებნა — თბილისი)':''} · UTC${R.off>=0?'+':''}${+R.off.toFixed(2)}</div>
+    <div class="chips"><span class="chip">☉ <b>${SIGNS[sun]}</b></span><span class="chip">☽ <b>${SIGNS[moon]}</b></span>${known?`<span class="chip">ASC <b>${SIGNS[asc]}</b></span><span class="chip">MC <b>${SIGNS[sg(L.MC)]}</b></span>`:''}
+    <span class="chip">ვედური ☽ <b>${NAK[V.moonNak][0]}</b></span>${known?`<span class="chip">ლაგნა <b>${SIGNS[V.lagna]}</b></span>`:''}
+    <span class="chip">HD <b>${t[0]}</b> · ${hd.prof}</span><span class="chip">მატრიცა <b>${v.L3} ${ARC(v.L3).n}</b></span><span class="chip">კარმული კუდი <b>${v.tail}</b></span></div>`;
+  const secs=[];
+  /* ── country & city ── */
+  {let h='';
+    if(known&&R.CT.length){
+      const best=[...R.CT].sort((a,b)=>b.tot-a.tot);
+      const byC=new Map();for(const r of best){const k=r.c[2];if(!byC.has(k))byC.set(k,r);}
+      const topC=[...byC.values()].filter(r=>r.tot>0).slice(0,10),mx=topC.length?topC[0].tot:1;
+      const why=r=>r.why.slice(0,3).map(w=>`<span class="${w.v>0?'good':'warn'}">${G(w.b)} ${w.a}</span>`).join(' · ');
+      h+=src('ასტროკარტოგრაფია — საუკეთესო ქვეყნები')+rankHTML(topC.map(r=>({k:`<b>${esc(country(r.c[2]))}</b> <small>${esc(cityName(r.c))} · ${why(r)}</small>`,v:r.tot,n:'+'+r.tot.toFixed(1)})),mx);
+      const cat=(k,lab)=>{const seen=new Set(),t=[...R.CT].sort((a,b)=>b.sc[k]-a.sc[k]).filter(r=>r.sc[k]>0.5&&!seen.has(r.c[2])&&seen.add(r.c[2])).slice(0,6);
+        return t.length?`<li><b>${lab}:</b> ${t.map(r=>`${esc(cityName(r.c))} <span class="dim">(${esc(country(r.c[2]))})</span>`).join(', ')}</li>`:'';};
+      h+=src('ქალაქები მიზნის მიხედვით')+`<ul class="l">${cat('car','კარიერა და სახელი (MC)')}${cat('love','სიყვარული და პარტნიორობა (DSC)')}${cat('home','სახლი და ოჯახი (IC)')}${cat('self','თავდაჯერება და ჯანმრთელობა (ASC)')}</ul>`;
+      const worst=[...R.CT].sort((a,b)=>a.tot-b.tot).filter(r=>r.tot<-1).slice(0,6);
+      if(worst.length)h+=src('სიფრთხილით')+`<p class="t">${worst.map(r=>`${esc(cityName(r.c))} <span class="dim">(${esc(country(r.c[2]))}: ${why(r)})</span>`).join(', ')}</p>`;
+    }else h+=`<p class="t dim">ქვეყნებისა და ქალაქების ასტროკარტოგრაფიისთვის საჭიროა დაბადების ზუსტი დრო და ადგილი.</p>`;
+    const env=HDENV[Math.floor(hd.env/2)];
+    h+=src('ადამიანის დიზაინი — გარემო')+`<p class="t"><b>${env[0]}</b> — ${env[1]}.</p>`;
+    if(known){const h4=H[4],h9=H[9];
+      h+=src('ასტროლოგია — სახლი (IV) და უცხოეთი (IX)')+`<p class="t">IV სახლი: <b>${h4.signs.map(s=>SIGNS[s]).join(', ')}</b>${h4.pl.length?' · '+h4.pl.map(G).join(' '):''} — ${SGN[h4.signs[0]][4]}. IX სახლი: <b>${h9.signs.map(s=>SIGNS[s]).join(', ')}</b>${h9.pl.length?' · '+h9.pl.map(b=>G(b)+' '+PN(b)).join(', '):''}${h9.pl.some(b=>['Jupiter','Venus','Sun','Moon'].includes(b))?' — უცხოეთი წარმატებას მოგიტანს':h9.pl.some(b=>['Saturn','Pluto','Mars'].includes(b))?' — უცხოეთში გამოცდები, მაგრამ ზრდაც':''}.</p>`;}
+    h+=src('ვედური')+`<p class="t">მთვარე ნაკშატრაში <b>${NAK[V.moonNak][0]}</b> (მმართველი ${VN(NAK[V.moonNak][1])})${known?`, ლაგნა <b>${SIGNS[V.lagna]}</b>`:''}.</p>`;
+    secs.push(['country','🌍 ქვეყანა და ქალაქი',card('სად ცხოვრება',h)]);}
+  /* ── professions ── */
+  {const sc={},why={};const add=(tags,w,lab)=>{for(const t of tags||[]){sc[t]=(sc[t]||0)+w;(why[t]=why[t]||new Set()).add(lab);}};
+    for(const k of ['T3','T2','T1'])add(ARCJ[v[k]],1,'მატრიცა: ნიჭები');
+    add(ARCJ[v.R1],1.5,'მატრიცა: სამუშაო თვისებები');add(ARCJ[v.W3],1.5,'მატრიცა: ფულის არხი');add(ARCJ[v.L3],1,'მატრიცა: პიროვნება');
+    if(known){add(SGN[sg(L.MC)][1],2,'ასტროლოგია: MC');for(const b of H[10].pl)add(PJ[b],2,'ასტროლოგია: X სახლი');for(const b of H[10].rul)add(PJ[b],1.5,'ასტროლოგია: X-ის მმართველი');
+      add(SGN[H[6].signs[0]][1],1,'ასტროლოგია: VI სახლი');for(const b of H[6].pl)add(PJ[b],1,'ასტროლოგია: VI სახლი');add(SGN[H[2].signs[0]][1],1,'ასტროლოგია: II სახლი');
+      add(SGN[V.h10][1],1.5,'ვედური: X ბჰავა');add(PJ[V.lord10],1,'ვედური: X-ის მმართველი');for(const b of V.in10)add(PJ[b],1,'ვედური: X ბჰავა');}
+    else add(SGN[sun][1],1.5,'ასტროლოგია: მზე');
+    add(PJ[V.ak],1,'ვედური: ატმაკარაკა');
+    for(let k=1;k<=9;k++)if(py.cnt[k]>=2)add(PYJ[k],py.cnt[k]>=3?1.5:1,'პითაგორა: '+String(k).repeat(Math.min(py.cnt[k],4)));
+    add(t[4],1,'ადამიანის დიზაინი: '+t[0]);
+    const top=Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,8),mx=top.length?top[0][1]:1;
+    let h=src('ყველა სისტემა ერთად — რაც მეტი ემთხვევა, მით ზემოთ')+rankHTML(top.map(([k,s])=>({k:`<b>${TAG[k][0]}</b><small>${TAG[k][1]} · ${[...why[k]].join(', ')}</small>`,v:s,n:why[k].size+' წყარო'})),mx);
+    h+=src('ბედის მატრიცა — ნიჭები')+`<p class="t">ნიჭის ენერგიები: ${['T3','T2','T1'].map(k=>`<b>${v[k]} ${ARC(v[k]).n}</b>`).join(' · ')} — ${esc(ARC(v.T3).p)}.</p>`;
+    if(known){h+=src('ასტროლოგია — X, VI სახლი')+`<p class="t">MC <b>${ZS[sg(L.MC)]} ${SIGNS[sg(L.MC)]}</b>; X სახლის მმართველები: ${H[10].rul.map(b=>G(b)+' '+PN(b)).join(', ')}${H[10].pl.length?'; X-ში: '+H[10].pl.map(b=>G(b)+' '+PN(b)).join(', '):''}.<br>
+      VI სახლი (ყოველდღიური სამუშაო): <b>${H[6].signs.map(s=>SIGNS[s]).join(', ')}</b>${H[6].pl.length?' · '+H[6].pl.map(b=>G(b)+' '+PN(b)).join(', '):''}.</p>`;
+      h+=src('ვედური — X ბჰავა')+`<p class="t">X ბჰავა <b>${SIGNS[V.h10]}</b>, მმართველი ${VN(V.lord10)}${V.in10.length?'; შიგნით: '+V.in10.map(VN).join(', '):''}; ატმაკარაკა (სულის მაჩვენებელი) — <b>${VN(V.ak)}</b>.</p>`;}
+    h+=src('ადამიანის დიზაინი')+`<p class="t"><b>${t[0]}</b> ${hd.prof} — ${t[1]}.</p>`;
+    secs.push(['work','💼 პროფესია',card('რა გამოგივა საუკეთესოდ',h)]);}
+  /* ── money & karma ── */
+  {const zs=MATRIX_ZONES.map(z=>({z,i:zoneInfo(z,v)}));const zb=k=>zs.find(x=>x.z[0]===k);
+    const zHTML=x=>`<p class="t"><b>${x.z[1]}</b> <span class="dim">${x.i.code}</span>${x.i.title?` — <b>${esc(x.i.title)}</b>`:''}</p>${x.i.text?`<details><summary>აღწერა</summary><p>${x.i.text}</p></details>`:''}`;
+    let h=src('ბედის მატრიცა')+zHTML(zb('money'))+zHTML(zb('material_karma'))+`<p class="t">ფულის ენერგია ${v.W3} <b>${ARC(v.W3).n}</b>: ${esc(ARC(v.W3).mon)}.</p>`;
+    if(known)h+=src('ასტროლოგია — II სახლი')+`<p class="t">II სახლი: <b>${H[2].signs.map(s=>SIGNS[s]).join(', ')}</b> — ${SGN[H[2].signs[0]][3]}. მმართველები: ${H[2].rul.map(b=>`${G(b)} ${PN(b)} (${LOC[sg(L[b])]}, ${SE.houseOf(S.cusps,L[b])} სახლში)`).join('; ')}${H[2].pl.length?'. II-ში: '+H[2].pl.map(b=>G(b)+' '+PN(b)).join(', '):''}.</p>`;
+    h+=src('პითაგორა — ფულის ხაზი (4+5+6)')+`<p class="t">${[4,5,6].map(k=>py.cnt[k]).reduce((a,b)=>a+b,0)} ქულა — ${[4,5,6].map(k=>py.cnt[k]).reduce((a,b)=>a+b,0)>=5?'ფულის ძლიერი ხაზი':[4,5,6].map(k=>py.cnt[k]).reduce((a,b)=>a+b,0)>=3?'საშუალო, შრომით იზრდება':'ფული სტაბილურობას მოითხოვს — დაგეგმე'}.</p>`;
+    h+=src('იუპიტერი — იღბალი და ზრდა')+`<p class="t">${pos(S,'Jupiter')}${known?`, ${SE.houseOf(S.cusps,L.Jupiter)} სახლში (${HOUSE[SE.houseOf(S.cusps,L.Jupiter)]})`:''} — ზრდა: ${SGN[sg(L.Jupiter)][4]}.</p>`;
+    const kt=zb('karmic_tail');
+    secs.push(['money','💰 ფული და კარმა',`<div class="grid2">${card('ფული',h)}${card('კარმა',src('კარმული კუდი')+zHTML(kt)+src('სულის ამოცანა')+`<p class="t">ამოცანა (${v.B3} ${ARC(v.B3).n}): ${esc(ARC(v.B3).task)}.<br>შიში: ${esc(ARC(v.B3).fear)}.</p>`+
+      src('სულის დანიშნულებები')+`<p class="t">პირადი ${v.SOUL} <b>${ARC(v.SOUL).n}</b> · სოციალური ${v.SOC} <b>${ARC(v.SOC).n}</b> · სულიერი ${v.MISSION} <b>${ARC(v.MISSION).n}</b></p>`)}</div>`]);}
+  /* ── partner ── */
+  {const lv=zoneInfo(MATRIX_ZONES[5],v);
+    let h=src('ბედის მატრიცა — სიყვარულის ხაზი')+`<p class="t">${lv.code}${lv.title?` — <b>${esc(lv.title)}</b>`:''}</p>${lv.text?`<details><summary>აღწერა</summary><p>${lv.text}</p></details>`:''}<p class="t">პარტნიორის ენერგია ${v.W1} <b>${ARC(v.W1).n}</b>: ${esc(ARC(v.W1).rel)}. ემოციური კმაყოფილება ${v.W2} <b>${ARC(v.W2).n}</b>.</p>`;
+    const el=s=>s%4,score={};
+    for(let s=0;s<12;s++){let x=0;if(el(s)===el(sun))x+=2;if(el(s)===el(moon))x+=2;if(el(s)===el(sg(L.Venus)))x+=1.5;
+      const comp=[[0,2],[1,3]].some(p=>p.includes(el(s))&&p.includes(el(sun)));if(comp&&el(s)!==el(sun))x+=1;
+      if(known&&s===sg(L.Asc+180))x+=3;if(s===sg(L.Venus))x+=1;if(s===sg(L.Mars))x+=0.5;score[s]=x;}
+    const best=Object.entries(score).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([s])=>+s);
+    h+=src('ასტროლოგია')+`<p class="t">${pos(S,'Venus')} — როგორ გიყვარს; ${pos(S,'Mars')} — რა გიზიდავს.${known?`<br>DSC (VII სახლი): <b>${ZS[sg(L.Asc+180)]} ${SIGNS[sg(L.Asc+180)]}</b> — პარტნიორი: ${SGN[sg(L.Asc+180)][2]}${H[7].pl.length?'; VII-ში: '+H[7].pl.map(b=>G(b)+' '+PN(b)).join(', '):''}.`:''}<br>
+      ყველაზე თავსებადი ნიშნები: <b>${best.map(s=>ZS[s]+' '+SIGNS[s]).join(', ')}</b>.</p>`;
+    if(known)h+=src('ვედური — VII ბჰავა')+`<p class="t">VII ბჰავა <b>${SIGNS[V.h7]}</b>, მმართველი ${VN(VLORD[V.h7])}.</p>`;
+    const fam=[2,5,8].reduce((a,k)=>a+py.cnt[k],0),miss=[1,2,3,4,5,6,7,8,9].filter(k=>!py.cnt[k]);
+    h+=src('პითაგორა')+`<p class="t">ოჯახის ხაზი (2+5+8): ${fam} — ${fam>=5?'ოჯახი მთავარი ღირებულებაა':fam>=3?'ოჯახი მნიშვნელოვანია':'ოჯახის შექმნა შეგნებულ ძალისხმევას მოითხოვს'}.${miss.length?` შეავსებს პარტნიორი, რომლის კვადრატშიც ძლიერია: ${miss.map(k=>`<b>${k}</b> (${PYL[k]})`).join(', ')}.`:''}</p>`;
+    const pmatch={'Generator':'პროექტორი ან გენერატორი','Manifesting Generator':'პროექტორი ან მანიფესტირებადი გენერატორი','Projector':'გენერატორი ან მანიფესტირებადი გენერატორი','Manifestor':'პროექტორი ან გენერატორი','Reflector':'გენერატორი — მისი მდგრადობა გამყარებს'};
+    h+=src('ადამიანის დიზაინი')+`<p class="t">შენს ღია ცენტრებს (${Object.keys(HDC).filter(c=>!hd.centers.includes(c)).map(c=>HDC[c][0]).join(', ')||'არცერთი'}) განსაზღვრავს პარტნიორი — ეძებე ის, ვისაც ისინი განსაზღვრული აქვს, მაგრამ ნუ დაემორჩილები მის ენერგიას. ტიპით ბუნებრივად ერგება: <b>${pmatch[hd.type]}</b>.</p>`;
+    secs.push(['love','💞 პარტნიორი',card('ვინ შეგეფერება',h)]);}
+  /* ── health ── */
+  {let h=src('ბედის მატრიცა — ჯანმრთელობის რუქა (ჩაკრები)');
+    const CH=[['sahasrara','საჰასრარა'],['ajna','აჯნა'],['vishudha','ვიშუდჰა'],['anahata','ანაჰატა (გული)'],['manipura','მანიპურა'],['svadhistana','სვადჰისტანა'],['muladhara','მულადჰარა']];
+    const heavy=new Set([12,13,15,16,18]);
+    h+=`<ul class="l">${CH.map(([k,n])=>{const s=v['CHS_'+k],e=v['CHE_'+k],p=v['CHP_'+k],w=[e,p,s].some(x=>heavy.has(x));
+      return `<li><b>${n}</b> ${e}-${p}-${s}${w?` <span class="warn">· ყურადღება: ${ARCB[[e,p,s].find(x=>heavy.has(x))]}</span>`:''}</li>`;}).join('')}</ul>`;
+    h+=`<p class="t">კარმული კუდის (${v.B3}) ზონა: ${ARCB[v.B3]}. პიროვნების (${v.L3}) ზონა: ${ARCB[v.L3]}.</p>`;
+    if(known)h+=src('ასტროლოგია — VI სახლი')+`<p class="t">VI სახლი <b>${H[6].signs.map(s=>SIGNS[s]).join(', ')}</b> — ${H[6].signs.map(s=>SGN[s][0]).join('; ')}${H[6].pl.length?'. VI-ში: '+H[6].pl.map(b=>G(b)+' '+PN(b)).join(', '):''}. ASC ${SIGNS[asc]} — ${SGN[asc][0]}.</p>`;
+    h+=src('მზე')+`<p class="t">${SIGNS[sun]} — ${SGN[sun][0]}.</p>`;
+    h+=src('პითაგორა — ოთხიანები')+`<p class="t">${py.cnt[4]?String(4).repeat(py.cnt[4]):'4 არ არის'} — ${py.cnt[4]>=2?'კარგი ჯანმრთელობა და გამძლეობა':py.cnt[4]===1?'ნორმალური ჯანმრთელობა, საჭიროა მოვლა':'ჯანმრთელობა სუსტი წერტილია — პროფილაქტიკა აუცილებელია'}; ენერგია (2): ${py.cnt[2]||'არ არის'}.</p>`;
+    const open=Object.keys(HDC).filter(c=>!hd.centers.includes(c));
+    h+=src('ადამიანის დიზაინი — ღია ცენტრები')+(open.length?`<ul class="l">${open.map(c=>`<li><b>${HDC[c][0]}</b><small>${HDC[c][1]}</small></li>`).join('')}</ul>`:'<p class="t">ყველა ცენტრი განსაზღვრულია.</p>');
+    secs.push(['health','🩺 ჯანმრთელობა',card('ყურადღების ზონები',h+'<p class="t dim">ეს ეზოთერიკული სურათია და არა დიაგნოზი — ჯანმრთელობის საკითხებში მიმართე ექიმს.</p>')]);}
+  /* ── strengths / weaknesses ── */
+  {const ec=[0,0,0,0],mc=[0,0,0];for(const b of PLAN){const w=b==='Sun'||b==='Moon'?2:1;ec[sg(L[b])%4]+=w;mc[sg(L[b])%3]+=w;}if(known){ec[asc%4]+=2;mc[asc%3]+=2;}
+    const eMax=ec.indexOf(Math.max(...ec)),eMin=ec.indexOf(Math.min(...ec)),mMax=mc.indexOf(Math.max(...mc));
+    const big=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'].concat(known?['Asc']:[]);
+    const asps=aspectsOf(Object.assign({},L),big).filter(a=>a.orb<5);
+    const nm=b=>b==='Asc'?'ASC':G(b)+' '+PN(b);
+    const goodA=asps.filter(a=>(a.g===120||a.g===60||(a.g===0&&['Jupiter','Venus'].some(x=>x===a.a||x===a.b)))&&['Sun','Moon','Asc','Jupiter','Venus'].some(x=>x===a.a||x===a.b)).slice(0,5);
+    const hardA=asps.filter(a=>(a.g===90||a.g===180||(a.g===0&&['Saturn','Pluto','Mars','Neptune'].some(x=>x===a.a||x===a.b)))&&['Sun','Moon','Asc','Mercury','Venus'].some(x=>x===a.a||x===a.b)&&['Saturn','Pluto','Mars','Neptune','Uranus'].some(x=>x===a.a||x===a.b)).slice(0,5);
+    const strong=[1,2,3,4,5,6,7,8,9].filter(k=>py.cnt[k]>=3),miss=[1,2,3,4,5,6,7,8,9].filter(k=>!py.cnt[k]);
+    let s=src('ბედის მატრიცა')+`<p class="t">პიროვნება ${v.L3} <b>${ARC(v.L3).n}</b>: ${esc(ARC(v.L3).p)}. კომფორტის ზონა ${v.Cv} <b>${ARC(v.Cv).n}</b>: ${esc(ARC(v.Cv).p)}.</p>`;
+    s+=src('ასტროლოგია')+`<p class="t">დომინანტი: <b>${ELN[eMax]}</b> და <b>${MODN[mMax]}</b> ხარისხი. ${goodA.map(a=>`${nm(a.a)} ${a.gl} ${nm(a.b)}`).join(' · ')||''}</p>`;
+    s+=src('პითაგორა')+`<p class="t">${strong.length?strong.map(k=>`<b>${String(k).repeat(Math.min(py.cnt[k],5))}</b> ${PYL[k]}`).join(' · '):'ძლიერი (3+) უჯრა არ არის — ბალანსი'}</p>`;
+    s+=src('ადამიანის დიზაინი')+`<p class="t">განსაზღვრული ცენტრები: ${hd.centers.map(c=>HDC[c][0]).join(', ')||'არცერთი'} — ეს შენი მუდმივი, საიმედო ენერგიაა.</p>`;
+    let w=src('ბედის მატრიცა')+`<p class="t">ჩრდილი ${v.L3} ${ARC(v.L3).n}: ${esc(ARC(v.L3).m)}. კარმული კუდი ${v.B3} ${ARC(v.B3).n}: ${esc(ARC(v.B3).m)}.</p>`;
+    w+=src('ასტროლოგია')+`<p class="t">ყველაზე სუსტი ელემენტი: <b>${ELN[eMin]}</b>. ${hardA.map(a=>`${nm(a.a)} ${a.gl} ${nm(a.b)} <span class="dim">(${PKW[a.a==='Asc'?'Sun':a.a]} ↔ ${PKW[a.b==='Asc'?'Sun':a.b]})</span>`).join('<br>')}</p>`;
+    w+=src('პითაგორა — ცარიელი უჯრები')+(miss.length?`<ul class="l">${miss.map(k=>`<li><b>${k}</b> ${PYL[k]}<small>${PYLOW[k]}</small></li>`).join('')}</ul>`:'<p class="t">ცარიელი უჯრა არ არის.</p>');
+    w+=src('ადამიანის დიზაინი')+`<p class="t">არა-საკუთარი თემა: <b>${t[3]}</b> — ნიშანი, რომ სტრატეგიას არ მიჰყვები.</p>`;
+    secs.push(['sw','⚖ ძლიერი და სუსტი მხარეები',`<div class="grid2">${card('<span class="good">ძლიერი მხარეები</span>',s)}${card('<span class="warn">სუსტი მხარეები</span>',w)}</div>`]);}
+  /* ── advice ── */
+  {const nn=sg(L.Node);
+    let h=`<ul class="l">
+      <li><b>ცხოვრების მიმართულება — ☊ ${SIGNS[nn]}${known?`, ${SE.houseOf(S.cusps,L.Node)} სახლი`:''}</b><small>გაიზრდები: ${NODE[nn]}${known?' · სფერო: '+HOUSE[SE.houseOf(S.cusps,L.Node)]:''}. ძველი, მოსახერხებელი გზა (☋ ${SIGNS[(nn+6)%12]}) — ${NODE[(nn+6)%12]} — უკვე იცი, ნუ დარჩები მასში.</small></li>
+      <li><b>იღბლის კარი — ${G('Jupiter')} ${SIGNS[sg(L.Jupiter)]}${known?`, ${SE.houseOf(S.cusps,L.Jupiter)} სახლი`:''}</b><small>${SGN[sg(L.Jupiter)][4]}${known?' · '+HOUSE[SE.houseOf(S.cusps,L.Jupiter)]:''}${hasRx(S,'Jupiter')?' · ℞ — ზრდა შინაგანი, საკუთარი გზით':''}</small></li>
+      <li><b>ცხოვრების გაკვეთილი — ${G('Saturn')} ${SIGNS[sg(L.Saturn)]}${known?`, ${SE.houseOf(S.cusps,L.Saturn)} სახლი`:''}</b><small>სიმწიფე მოდის: ${SGN[sg(L.Saturn)][4]}${known?' · '+HOUSE[SE.houseOf(S.cusps,L.Saturn)]:''} — აქ შრომა ნელა, მაგრამ მყარად ანაზღაურდება.</small></li>
+      <li><b>ადამიანის დიზაინი — სტრატეგია და ავტორიტეტი</b><small>${t[1]}. ავტორიტეტი: ${HDA[hd.auth]}. სწორი ცხოვრების ნიშანი: <b>${t[2]}</b>.</small></li>
+      <li><b>ბედის მატრიცა — ამოცანა</b><small>კომფორტის ზონა (${v.Cv} ${ARC(v.Cv).n}): ${esc(ARC(v.Cv).task)}. დანიშნულება (${v.MISSION} ${ARC(v.MISSION).n}): ${esc(ARC(v.MISSION).v)}.</small></li>
+      <li><b>ვედური — სულის მაჩვენებელი</b><small>ატმაკარაკა ${VN(V.ak)} — ${PKW[V.ak]}: ეს არის სფერო, სადაც სული ყველაზე მეტს სწავლობს.</small></li>
+    </ul>`;
+    secs.push(['advice','🧭 რჩევები',card('როგორ იცხოვრო შენი რუქით',h)]);}
+  /* ── passport ── */
+  {const cells=[[1,4,7],[2,5,8],[3,6,9]];
+    const pg=`<div class="py">${cells.flat().map(k=>`<div class="${py.cnt[k]?'':'z'}">${py.cnt[k]?String(k).repeat(Math.min(py.cnt[k],5)):'—'}<small>${PYL[k]}</small></div>`).join('')}</div><p class="t" style="text-align:center">სამუშაო რიცხვები: ${py.w.join(' · ')}</p>`;
+    const mx=`<ul class="l">${[['L3','პიროვნება (დღე)'],['T3','ნიჭი (თვე)'],['R3','მატერიალური გაკვეთილი (წელი)'],['B3','კარმული გაკვეთილი'],['Cv','ცენტრი — კომფორტის ზონა'],['W1','პარტნიორი'],['W3','სამსახური, ფული']].map(([k,n])=>`<li><b>${v[k]} ${ARC(v[k]).n}</b> · ${n}<small>${esc(ARC(v[k]).p)}</small></li>`).join('')}</ul>`;
+    const as=`<ul class="l">${PLAN.concat(['Node']).map(b=>`<li>${G(b)} <b>${PN(b)}</b> ${ZS[sg(L[b])]} ${deg(L[b])} ${SIGNS[sg(L[b])]}${hasRx(S,b)?' ℞':''}${known?` · ${SE.houseOf(S.cusps,L[b])} სახლი`:''}</li>`).join('')}${known?`<li>ASC <b>${SIGNS[asc]}</b> ${deg(L.Asc)} · MC <b>${SIGNS[sg(L.MC)]}</b> ${deg(L.MC)}</li>`:''}</ul>`;
+    const hdl=`<ul class="l"><li><b>${t[0]}</b> · პროფილი ${hd.prof}</li><li>ავტორიტეტი: ${HDA[hd.auth].split(' — ')[0]}</li><li>არხები: ${hd.chans.join(', ')||'—'}</li><li>პიროვნების მზე: კარიბჭე ${hd.psun} · დიზაინის მზე: ${hd.dsun}</li></ul>`;
+    secs.push(['pass','🔢 სისტემების პასპორტი',`<div class="grid2">${card('პითაგორას კვადრატი',pg)}${card('ბედის მატრიცა',mx)}${card('ასტროლოგია',as)}${card('ადამიანის დიზაინი'+(known?'':' (დრო უცნობია — სავარაუდო)'),hdl)}</div>`]);}
+  $('out').innerHTML=secs.map(([id,t,b])=>`<section class="sec" id="s-${id}"><h2>${t}</h2>${b}</section>`).join('');
+  $('jump').innerHTML=secs.map(([id,t])=>`<button data-j="s-${id}">${t}</button>`).join('');
+  $('jump').querySelectorAll('button').forEach(b=>b.onclick=()=>$(b.dataset.j).scrollIntoView({behavior:'smooth',block:'start'}));
+  $('res').style.display='block';$('hero').scrollIntoView({behavior:'smooth',block:'start'});
+  try{localStorage.setItem('life_last',JSON.stringify({d:R.d,m:R.m,y:R.y,h:$('hh').value,mi:$('mi').value,tu:!known,place:$('place').value,nm:R.name,hs:$('hs').value}));}catch(e){}
+}
+$('tu').onchange=()=>{$('hh').disabled=$('mi').disabled=$('tu').checked;};
+$('run').onclick=run;
+try{const s=JSON.parse(localStorage.getItem('life_last')||'null');if(s){$('dd').value=s.d;$('mm').value=s.m;$('yy').value=s.y;$('hh').value=s.h;$('mi').value=s.mi;$('tu').checked=!!s.tu;$('tu').onchange();$('place').value=s.place||'თბილისი';$('nm').value=s.nm||'';if(s.hs)$('hs').value=s.hs;}}catch(e){}
+</script>
+</body>
+</html>

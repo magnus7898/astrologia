@@ -88,7 +88,8 @@ function cuspsArmc(th,lat,eps,code){
   const ascAt=(x,f)=>nrm(Math.atan2(cs(x),-(sn(x)*cs(e)+tn(f)*sn(e)))*R2D);   /* rising point, RAMC x, pole height f */
   const A1=(x,f)=>ascAt(x-90,f);                                             /* swisseph Asc1(x, f) */
   const mc=lamOf(th),asc=ascAt(th,lat),c=new Array(12);let fb=false;
-  const fill=(c11,c12,c2,c3)=>{c[0]=asc;c[9]=mc;c[10]=c11;c[11]=c12;c[1]=c2;c[2]=c3;};
+  const fill=(c11,c12,c2,c3)=>{c[0]=asc;c[9]=mc;c[10]=c11;c[11]=c12;c[1]=c2;c[2]=c3;
+    c[6]=nrm(asc+180);c[3]=nrm(mc+180);c[4]=nrm(c11+180);c[5]=nrm(c12+180);c[7]=nrm(c2+180);c[8]=nrm(c3+180);};
   const porph=()=>{const q1=nrm(asc-mc),q2=nrm(mc+180-asc);fill(nrm(mc+q1/3),nrm(mc+2*q1/3),nrm(asc+q2/3),nrm(asc+2*q2/3));};
   const eq=(start)=>{for(let i=0;i<12;i++)c[i]=nrm(start+30*i);};
   switch(code){
