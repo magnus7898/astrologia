@@ -129,6 +129,12 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
     <label>განედი<input id="lat" type="number" step="0.01" value="41.72"></label>
     <label>გრძედი<input id="lon" type="number" step="0.01" value="44.79"></label>
     <label>დროის სარტყელი (UTC±სთ)<input id="off" type="number" step="0.5" value="4"></label>
+    <label>სახლების სისტემა<select id="hsys">
+      <option value="P">პლაციდუსი</option><option value="K">კოხი</option><option value="W">მთლიანი ნიშნები (Whole Sign)</option>
+      <option value="E">თანაბარი (ASC-დან)</option><option value="D">თანაბარი (MC-დან)</option><option value="V">ფელოვი</option>
+      <option value="O">პორფირიუსი</option><option value="R">რეგიომონტანუსი</option><option value="C">კამპანუსი</option>
+      <option value="B">ალკაბიციუსი</option><option value="T">ტოპოცენტრული</option><option value="M">მორინუსი</option>
+      <option value="X">მერიდიანული</option><option value="S">შრიპატი</option><option value="N">0° ვერძიდან</option></select></label>
     <label>პერიოდი (წლიდან — წლამდე)<span class="pair"><input id="ya" type="number" value="-3000" min="-3000" max="9999"><span>—</span><input id="yb" type="number" value="9999" min="-3000" max="9999"></span></label>
   </div>
   <div class="sec-t">და — ნებისმიერი ნიშნით</div>
@@ -170,7 +176,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 და პითაგორას კვადრატი — ითვლება <b>ზუსტად, პერიოდის ყოველ დღეზე</b> (ნაგულისხმევად ძვ.წ. 3001 — 9999, დაახლ. 4,75 მილიონი დღე), შერჩევის გარეშე.
 <b>ადამიანის დიზაინი და ასტროლოგია</b> დაბადების წუთზეა დამოკიდებული — 13 000 წლის ყოველი წუთის რუქა (≈ 7 მილიარდი) ვერ გამოითვლება, ამიტომ
 აიღება 100 000 მომენტი, თანაბრად გადანაწილებული პერიოდზე (ან პირობის შესაბამის დღეებზე); რუქები ითვლება პარალელურად, კომპიუტერის ყველა ბირთვზე: HD — 26 აქტივაცია, ასტროლოგია — ტროპიკული, გეოცენტრული,
-ნამდვილი კვანძი, პლაციდუსის სახლები, ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°; დაბნელებები — ყველა მზისა და მთვარის დაბნელება ძვ.წ. 3001 — 10001 (Astronomy Engine): წინა დაბნელების ნიშანი და სახე, და რამდენი დღეა უახლოეს დაბნელებამდე. თუ პირობაში HD ან ასტროლოგიაა, ჯგუფი მოიძებნება ამ მომენტებიდან.
+ნამდვილი კვანძი, სახლები — არჩეული სისტემით (ნაგულისხმევად პლაციდუსი), ორბისი ☌☍ 8°, □△ 7°, ⚹ 5°; დაბნელებები — ყველა მზისა და მთვარის დაბნელება ძვ.წ. 3001 — 10001 (Astronomy Engine): წინა დაბნელების ნიშანი და სახე, და რამდენი დღეა უახლოეს დაბნელებამდე. თუ პირობაში HD ან ასტროლოგიაა, ჯგუფი მოიძებნება ამ მომენტებიდან.
 × — რამდენჯერ ხშირია ჯგუფში ჩვეულებრივთან შედარებით. პითაგორას კვადრატი ითვლება მხოლოდ ქრისტეს შემდეგ წლებზე.
 <b>პლანეტების პირობები</b> (ნიშნები, ასპექტები, კვანძი) ითვლება <b>ზუსტად</b> — მოიძებნება მთელი პერიოდის ყველა მომენტი, როცა სრულდება, შემთხვევითი შერჩევის გარეშე; დანარჩენი მომენტები ნაწილდება თანაბრად (ოქროს კვეთის მიმდევრობით), არა შემთხვევით, და დროის ლიმიტი არ არის.
 ეს დროის წილია და არა ადამიანების — შობადობა სეზონისა და საათის მიხედვით არ არის გათვალისწინებული.
@@ -322,7 +328,7 @@ const FAM=[
  {id:'gate',sys:'hd',label:'კარიბჭეები (აქტიური)',st:2,multi:true,vals:()=>seq(1,64,i=>'კარიბჭე '+i),get:S=>S.hd.gates},
  {id:'psun',sys:'hd',label:'პიროვნების მზის კარიბჭე',st:2,vals:()=>seq(1,64,i=>'☉ '+i),get:S=>S.hd.psun},
  {id:'sign',sys:'as',label:'პლანეტები ნიშნებში',st:1,heat:true,params:BODS.map(b=>[b[0],BN[b[0]]]),cols:ZS,vals:()=>SG,get:(S,p)=>sgn(S.L[p])},
- {id:'house',sys:'as',label:'პლანეტები სახლებში (პლაციდუსი)',st:1,heat:true,params:BOD.map(b=>[b[0],BN[b[0]]]),cols:seq(1,12).map(x=>x[1]),vals:()=>seq(1,12,i=>i+' სახლი'),get:(S,p)=>SE.houseOf(S.cusps,S.L[p])},
+ {id:'house',sys:'as',label:'პლანეტები სახლებში',st:1,heat:true,params:BOD.map(b=>[b[0],BN[b[0]]]),cols:seq(1,12).map(x=>x[1]),vals:()=>seq(1,12,i=>i+' სახლი'),get:(S,p)=>SE.houseOf(S.cusps,S.L[p])},
  ...EFAM,
  {id:'asp',sys:'as',label:'ასპექტები',st:1,heat:true,pair:true,params:PAIRS,cols:['☌','⚹','□','△','☍','—'],vals:()=>ASP,get:(S,p)=>{const [a,b]=p.split('-');return SE.aspect(S.L[a],S.L[b]);}},
 ];
@@ -359,7 +365,7 @@ function readCond(){
   return {fl:[...fl,...FL.filter(x=>CFM[x[0]]).map(x=>[...x])],extra:FL.length,year};
 }
 const yrTxt=y=>y<=0?`ძვ.წ. ${1-y}`:String(y);
-const placeName=()=>(PLACE_NAME?PLACE_NAME+' · ':`${$('lat').value}°, ${$('lon').value}° · `)+`UTC${(+$('off').value||0)>=0?'+':''}${+$('off').value||0}`;
+const placeName=()=>(PLACE_NAME?PLACE_NAME+' · ':`${$('lat').value}°, ${$('lon').value}° · `)+`UTC${(+$('off').value||0)>=0?'+':''}${+$('off').value||0}`+` · სახლები: ${$('hsys').selectedOptions[0].textContent}`;
 function dateLabel(c){const d=c.fl.find(x=>x[0]==='day:'),m=c.fl.find(x=>x[0]==='month:');
   const parts=[];if(d)parts.push(d[2]+' რიცხვი');if(m)parts.push(MON[m[2]-1]);if(c.year!==null)parts.push(yrTxt(c.year)+' წელი');
   return parts.length?'დაბადებული: '+parts.join(' · '):'';}
@@ -506,6 +512,7 @@ const AE_URL='https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.bro
 const WSRC=`self.onmessage=async e=>{const m=e.data;
   if(m.init){try{importScripts(...m.urls);await SE.init();postMessage({ready:1});}catch(err){postMessage({err:String(err)});}return;}
   const out=new Array(m.jds.length);
+  SE.HSYS=m.hsys||'P';
   for(let i=0;i<m.jds.length;i++){const S=SE.stage2(SE.stage1(SE.stage0(m.jds[i],m.off),m.lat,m.lon));out[i]={jd:S.jd,L:S.L,c:S.cusps,hd:S.hd};}
   postMessage({out});};`;
 let POOL=null;
@@ -533,7 +540,7 @@ async function charts(gen,P,onS,tok,prog){
     const send=w=>{if(stop||tok!==RUN){fin();return;}
       const jds=[];for(let i=0;i<BATCH;i++){const j=gen();if(j===null)break;jds.push(j);}
       if(!jds.length){stop=true;fin();return;}
-      active++;w.postMessage({jds,lat:P.lat,lon:P.lon,off:P.off});};
+      active++;w.postMessage({jds,lat:P.lat,lon:P.lon,off:P.off,hsys:P.hsys});};
     W.forEach(w=>{w.onmessage=e=>{active--;
       if(!stop&&tok===RUN){for(const r of e.data.out){const S=SE.stage0(r.jd,P.off);S.L=r.L;S.cusps=r.c;S.hd=r.hd;S.stage=2;done++;
           if(onS(S)===false){stop=true;break;}}
@@ -565,7 +572,7 @@ const passes=(F,S,st)=>F.every(q=>q.st!==st||(q.test(S)!==q.neg));
 function params(){
   let a=Math.round(+$('ya').value),b=Math.round(+$('yb').value);if(isNaN(a))a=-3000;if(isNaN(b))b=9999;if(a>b)[a,b]=[b,a];
   a=Math.max(-3000,a);b=Math.min(9999,b);
-  return {a,b,lat:+$('lat').value||0,lon:+$('lon').value||0,off:+$('off').value||0};
+  return {a,b,lat:+$('lat').value||0,lon:+$('lon').value||0,off:+$('off').value||0,hsys:$('hsys').value||'P'};
 }
 /* calendar: Julian before 15 Oct 1582 (astronomical years), Gregorian after */
 const leapY=y=>y<1582?(((y%4)+4)%4===0):(y%4===0&&(y%100!==0||y%400===0));
@@ -629,14 +636,14 @@ async function go(){
    if(d&&m&&d>[31,29,31,30,31,30,31,31,30,31,30,31][m-1]){$('msg').innerHTML=`<span class="bad">${d} ${MON[m-1]} არ არსებობს.</span>`;$('res').style.display='none';return;}}
   $('ya').value=P.a;$('yb').value=P.b;
   $('run').disabled=true;$('stop').hidden=false;
-  try{location.hash=encodeURIComponent(JSON.stringify({d:$('cd').value,m:$('cm').value,y:$('cy').value,f:FL,a:P.a,b:P.b,lat:P.lat,lon:P.lon,off:P.off,pl:PLACE_NAME,pq:$('place').value}));}catch(e){}
+  try{location.hash=encodeURIComponent(JSON.stringify({d:$('cd').value,m:$('cm').value,y:$('cy').value,f:FL,a:P.a,b:P.b,lat:P.lat,lon:P.lon,off:P.off,hs:P.hsys,pl:PLACE_NAME,pq:$('place').value}));}catch(e){}
   const bad=t=>{$('msg').innerHTML=`<span class="bad">${t}</span>`;$('res').style.display='none';};
   try{
     $('msg').textContent='⏳ ასტრონომიული ბიბლიოთეკა იტვირთება…';
-    await SE.init();if(typeof EXS!=='undefined')EXS.provide('node',SE.nodeL,0.32);
+    await SE.init();SE.HSYS=P.hsys;if(typeof EXS!=='undefined')EXS.provide('node',SE.nodeL,0.32);
     const j0=SE.calJD(P.a,1,1,0)-P.off/24,j1=SE.calJD(P.b+1,1,1,0)-P.off/24,span=j1-j0;
     /* ── "usual": every day exactly + NS moments ── */
-    const key=[P.a,P.b,P.lat,P.lon,P.off].join('|'),dkey=P.a+'|'+P.b;
+    const key=[P.a,P.b,P.lat,P.lon,P.off].join('|')+(P.hsys==='P'?'':'|'+P.hsys),dkey=P.a+'|'+P.b;
     if(key!==BASEKEY||!BASE){
       const B=newAcc(),hit=(await shipped(key))||lsGet('statsT|'+SIG+'|'+key),dhit=lsGet('statsD|'+SIG+'|'+dkey);
       if(dkey===BDKEY&&BDATE){for(const x of CFD){B.c[x.fid]=BDATE.c[x.fid];B.nn[x.fid]=BDATE.nn[x.fid];}B.days=BDATE.days;}
@@ -951,6 +958,7 @@ function heatHTML(f){
     if(s.d!=null)$('cd').value=s.d;if(s.m!=null)$('cm').value=s.m;if(s.y!=null)$('cy').value=s.y;
     if(Array.isArray(s.f))FL=s.f.filter(x=>Array.isArray(x)&&CFM[x[0]]);
     if(s.a!=null)$('ya').value=s.a;if(s.b!=null)$('yb').value=s.b;
+    if(s.hs&&SE.HOUSE_CODES.includes(s.hs))$('hsys').value=s.hs;
     if(s.lat!=null){$('lat').value=s.lat;$('lon').value=s.lon;$('off').value=s.off;PLACE_NAME=s.pl||'';$('place').value=s.pq||s.pl||'';PLACE_Q=$('place').value.trim();}
     }}catch(e){}
   drawRows();
