@@ -80,26 +80,64 @@ function designJD(jd,sl){
 function obliq(jd){const u=(jd-2451545)/3652500;
   const s=21.448+u*(-4680.93+u*(-1.55+u*(1999.25+u*(-51.38+u*(-249.67+u*(-39.05+u*(7.12+u*(27.87+u*(5.79+u*2.45)))))))));
   return 23+26/60+s/3600;}
-/* Placidus cusps (1..12 → index 0..11); beyond the polar circle → Porphyry */
-function houses(jd,lat,lon){
-  const t=aT(jd),ramc=nrm(A.SiderealTime(t)*15+lon),e=obliq(jd)*D2R,f=lat*D2R,r=ramc*D2R;
-  const mc=nrm(Math.atan2(Math.sin(r),Math.cos(r)*Math.cos(e))*R2D);
-  const asc=nrm(Math.atan2(Math.cos(r),-(Math.sin(r)*Math.cos(e)+Math.tan(f)*Math.sin(e)))*R2D);
-  const lamOf=ra=>nrm(Math.atan2(Math.sin(ra*D2R),Math.cos(ra*D2R)*Math.cos(e))*R2D);
-  let ok=Math.abs(lat)<66;
-  const cusp=(frac,above)=>{let ra=above?ramc+frac*90:ramc+180-frac*90,lam=0;
-    for(let i=0;i<40;i++){lam=lamOf(ra);const dec=Math.asin(Math.sin(e)*Math.sin(lam*D2R));
-      const x=-Math.tan(f)*Math.tan(dec);if(x<-1||x>1){ok=false;break;}
-      const sda=Math.acos(x)*R2D,nra=above?ramc+frac*sda:ramc+180-frac*(180-sda);
-      if(Math.abs(((nra-ra)%360+540)%360-180)<1e-6){ra=nra;break;}ra=nra;}
-    return lamOf(ra);};
-  const c=new Array(12);c[0]=asc;c[9]=mc;
-  if(ok){c[10]=cusp(1/3,true);c[11]=cusp(2/3,true);c[1]=cusp(2/3,false);c[2]=cusp(1/3,false);}
-  if(!ok){const q1=nrm(asc-mc),q2=nrm(mc+180-asc);   /* Porphyry */
-    c[10]=nrm(mc+q1/3);c[11]=nrm(mc+2*q1/3);c[1]=nrm(asc+q2/3);c[2]=nrm(asc+2*q2/3);}
-  c[3]=nrm(mc+180);c[4]=nrm(c[10]+180);c[5]=nrm(c[11]+180);c[6]=nrm(asc+180);c[7]=nrm(c[1]+180);c[8]=nrm(c[2]+180);
-  return {c,asc,mc,placidus:ok};
+/* ── house systems from RAMC, latitude, obliquity (all degrees) — formulas as in Swiss Ephemeris swehouse.c ── */
+function cuspsArmc(th,lat,eps,code){
+  const D2R=Math.PI/180,R2D=180/Math.PI,nrm=x=>((x%360)+360)%360;
+  const sn=x=>Math.sin(x*D2R),cs=x=>Math.cos(x*D2R),tn=x=>Math.tan(x*D2R),e=eps;
+  const lamOf=ra=>nrm(Math.atan2(sn(ra),cs(ra)*cs(e))*R2D);                 /* ecliptic point of right ascension ra */
+  const ascAt=(x,f)=>nrm(Math.atan2(cs(x),-(sn(x)*cs(e)+tn(f)*sn(e)))*R2D);   /* rising point, RAMC x, pole height f */
+  const A1=(x,f)=>ascAt(x-90,f);                                             /* swisseph Asc1(x, f) */
+  const mc=lamOf(th),asc=ascAt(th,lat),c=new Array(12);let fb=false;
+  const fill=(c11,c12,c2,c3)=>{c[0]=asc;c[9]=mc;c[10]=c11;c[11]=c12;c[1]=c2;c[2]=c3;};
+  const porph=()=>{const q1=nrm(asc-mc),q2=nrm(mc+180-asc);fill(nrm(mc+q1/3),nrm(mc+2*q1/3),nrm(asc+q2/3),nrm(asc+2*q2/3));};
+  const eq=(start)=>{for(let i=0;i<12;i++)c[i]=nrm(start+30*i);};
+  switch(code){
+    case 'P':{let ok=Math.abs(lat)<90-e;
+      const cusp=(frac,above)=>{let ra=above?th+frac*90:th+180-frac*90;
+        for(let i=0;i<60;i++){const dec=Math.asin(sn(e)*sn(lamOf(ra)))*R2D,x=-tn(lat)*tn(dec);if(x<-1||x>1){ok=false;break;}
+          const sda=Math.acos(x)*R2D,nra=above?th+frac*sda:th+180-frac*(180-sda);
+          if(Math.abs(((nra-ra)%360+540)%360-180)<1e-9){ra=nra;break;}ra=nra;}
+        return lamOf(ra);};
+      if(ok){const a=cusp(1/3,true),b=cusp(2/3,true),d=cusp(2/3,false),f=cusp(1/3,false);if(ok)fill(a,b,d,f);}
+      if(!ok){porph();fb=true;}break;}
+    case 'K':{const sina=sn(mc)*sn(e)/cs(lat);
+      if(Math.abs(sina)>1||Math.abs(lat)>=90-e){porph();fb=true;break;}
+      const cosa=Math.sqrt(1-sina*sina),cc=Math.atan(tn(lat)/cosa)*R2D,ad3=Math.asin(sn(cc)*sina)*R2D/3;
+      fill(A1(th+30-2*ad3,lat),A1(th+60-ad3,lat),A1(th+120+ad3,lat),A1(th+150+2*ad3,lat));break;}
+    case 'O':porph();break;
+    case 'R':{const f1=Math.atan(tn(lat)*0.5)*R2D,f2=Math.atan(tn(lat)*cs(30))*R2D;
+      fill(A1(th+30,f1),A1(th+60,f2),A1(th+120,f2),A1(th+150,f1));break;}
+    case 'C':{const f1=Math.asin(sn(lat)/2)*R2D,f2=Math.asin(Math.sqrt(3)/2*sn(lat))*R2D,cf=cs(lat);
+      const x1=Math.atan(Math.sqrt(3)/cf)*R2D,x2=Math.atan(1/Math.sqrt(3)/cf)*R2D;
+      fill(A1(th+90-x1,f1),A1(th+90-x2,f2),A1(th+90+x2,f2),A1(th+90+x1,f1));break;}
+    case 'T':{const f1=Math.atan(tn(lat)/3)*R2D,f2=Math.atan(tn(lat)*2/3)*R2D;
+      fill(A1(th+30,f1),A1(th+60,f2),A1(th+120,f2),A1(th+150,f1));break;}
+    case 'B':{const dek=Math.asin(sn(asc)*sn(e))*R2D,r=-tn(lat)*tn(dek);
+      if(Math.abs(r)>1){porph();fb=true;break;}
+      const sda=Math.acos(r)*R2D,sna=180-sda,sd3=sda/3,sn3=sna/3;
+      fill(lamOf(th+sd3),lamOf(th+2*sd3),lamOf(th+180-2*sn3),lamOf(th+180-sn3));break;}
+    case 'M':{for(let i=0;i<12;i++){const a=th+90+30*i;c[i]=nrm(Math.atan2(sn(a)*cs(e),cs(a))*R2D);}break;}
+    case 'X':{for(let i=0;i<12;i++)c[i]=lamOf(th+90+30*i);break;}
+    case 'E':eq(asc);break;
+    case 'D':eq(nrm(mc+90));break;
+    case 'W':eq(Math.floor(asc/30)*30);break;
+    case 'V':eq(nrm(asc-15));break;
+    case 'N':eq(0);break;
+    case 'S':{porph();const p=c.slice();for(let i=0;i<12;i++){const a=p[(i+11)%12],b=p[i];c[i]=nrm(a+nrm(b-a)/2);}break;}
+    default:return cuspsArmc(th,lat,eps,'P');
+  }
+  return {c,asc,mc,fb};
 }
+/* cusps (1..12 → index 0..11) in house system `code` (default SE.HSYS = Placidus);
+   Placidus / Koch / Alcabitius beyond the polar circle → Porphyry */
+SE.HSYS='P';
+SE.HOUSE_CODES='PKORCEDWVNBMTXS';
+function houses(jd,lat,lon,code){
+  const t=aT(jd),ramc=nrm(A.SiderealTime(t)*15+lon);
+  const h=cuspsArmc(ramc,lat,obliq(jd),code||SE.HSYS);
+  return {c:h.c,asc:h.asc,mc:h.mc,placidus:!h.fb,fallback:h.fb};
+}
+SE.cuspsArmc=cuspsArmc;
 function houseOf(c,L){for(let i=0;i<12;i++){const s=c[i],span=nrm(c[(i+1)%12]-s);if(nrm(L-s)<span)return i+1;}return 12;}
 SE.houses=houses;SE.houseOf=houseOf;
 
