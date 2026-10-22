@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>სტატიების რედაქტორი · MAGNUS</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=Noto+Sans+Georgian:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07060f;--surface:#0f0c1d;--raised:#171229;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--mid:#b3a68f;--dim:#7a6e5c;--border:rgba(201,168,76,.18);--border-h:rgba(201,168,76,.5);--ok:#5fcf8a;--bad:#e2685c}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Noto Sans Georgian',sans-serif;font-size:13.5px}
+button,input,select{font:inherit;color:inherit}
+.top{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface);flex-wrap:wrap}
+.top h1{font-family:Cinzel,serif;font-weight:400;font-size:15px;letter-spacing:2px;color:var(--gold-lt);margin:0 10px 0 0}
+.top a{color:var(--gold);text-decoration:none;font-size:12px}
+.sys{display:flex;gap:6px;flex-wrap:wrap}
+.sys button{background:none;border:1px solid var(--border);border-radius:16px;padding:5px 13px;cursor:pointer;color:var(--mid)}
+.sys button.on{background:rgba(201,168,76,.16);border-color:var(--gold);color:var(--gold-lt)}
+.sys button small{opacity:.7;margin-left:4px}
+.sp{flex:1}
+.btn{background:rgba(201,168,76,.1);border:1px solid var(--border-h);color:var(--gold-lt);border-radius:8px;padding:6px 12px;cursor:pointer}
+.btn:hover{background:rgba(201,168,76,.2)}.btn:disabled{opacity:.4;cursor:default}
+.btn.pri{background:linear-gradient(135deg,#a8842e,#c9a84c);color:#120e04;border-color:#c9a84c;font-weight:600}
+.btn.del{border-color:rgba(226,104,92,.5);color:#f0a59d;background:none}
+.main{display:grid;grid-template-columns:330px 1fr;height:calc(100% - 54px)}
+.side{border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0;background:var(--surface)}
+.side .f{padding:10px;display:flex;flex-direction:column;gap:7px;border-bottom:1px solid var(--border)}
+.side select,.side input{background:var(--raised);border:1px solid var(--border);border-radius:7px;padding:7px 9px;outline:none;width:100%}
+.chips{display:flex;gap:5px}
+.chips button{flex:1;background:none;border:1px solid var(--border);border-radius:12px;padding:3px 6px;font-size:11.5px;color:var(--mid);cursor:pointer}
+.chips button.on{border-color:var(--gold);color:var(--gold-lt)}
+.prog{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}.prog i{display:block;height:100%;background:linear-gradient(90deg,#4a90c8,var(--gold-lt))}
+.cnt{font-size:11px;color:var(--dim)}
+.list{overflow:auto;flex:1;min-height:0}
+.it{display:flex;gap:8px;align-items:baseline;padding:6px 12px;border-bottom:1px solid rgba(201,168,76,.06);cursor:pointer}
+.it:hover{background:rgba(201,168,76,.06)}.it.on{background:rgba(201,168,76,.15)}
+.it .d{width:8px;height:8px;border-radius:50%;flex:none;background:rgba(255,255,255,.12);margin-top:3px}
+.it .d.w{background:var(--ok)}.it .d.fl{background:#d9b34a}
+[hidden]{display:none!important}
+.it .l{flex:1;min-width:0}.it .l small{display:block;color:var(--dim);font-size:10.5px;font-family:monospace}
+.ed{display:flex;flex-direction:column;min-height:0;padding:14px 18px;gap:10px;overflow:auto}
+.crumb{font-size:12px;color:var(--dim)}.crumb b{color:var(--gold-lt);font-weight:600;font-size:15px;display:block;margin-top:3px}
+.crumb code{font-size:11px;color:var(--mid);background:var(--raised);padding:1px 6px;border-radius:5px}
+.ti{background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Noto Serif Georgian',serif;font-size:16px;color:var(--gold-lt);outline:none;width:100%}
+.ti:focus{border-color:var(--border-h)}
+.tb{display:flex;flex-wrap:wrap;gap:3px;padding:6px;background:var(--surface);border:1px solid var(--border);border-radius:8px 8px 0 0;border-bottom:none;position:sticky;top:-14px;z-index:2}
+.tb button,.tb select,.tb label{background:none;border:1px solid transparent;border-radius:5px;min-width:30px;height:30px;padding:0 7px;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.tb button:hover,.tb label:hover{border-color:var(--border-h);background:rgba(201,168,76,.08)}
+.tb select{border-color:var(--border);background:var(--raised);font-size:12px}
+.tb .sep{width:1px;background:var(--border);margin:3px 4px}
+.tb input[type=color]{width:0;height:0;opacity:0;position:absolute}
+.doc{min-height:360px;background:#fbf8f1;color:#1d1a14;border:1px solid var(--border);border-radius:0 0 8px 8px;padding:28px 34px;outline:none;font-family:'Noto Serif Georgian',serif;font-size:15.5px;line-height:1.75;overflow-wrap:anywhere}
+.doc h2{font-size:20px;margin:.6em 0 .3em}.doc h3{font-size:17px;margin:.6em 0 .3em}.doc p{margin:0 0 .7em}
+.doc blockquote{border-left:3px solid #c9a84c;margin:.5em 0;padding:.2em 0 .2em 14px;color:#4a4232}
+.doc a{color:#7a5a12}.doc table{border-collapse:collapse}.doc td,.doc th{border:1px solid #c8bca4;padding:4px 8px}
+.doc:empty::before{content:attr(data-ph);color:#9a917f}
+.foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#st{font-size:12px;color:var(--dim)}#st.ok{color:var(--ok)}#st.bad{color:var(--bad)}#st.dirty{color:#e8c95a}
+.hint{font-size:11.5px;color:var(--dim);line-height:1.6}
+.login{max-width:360px;margin:80px auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.login input{background:var(--raised);border:1px solid var(--border);border-radius:7px;padding:9px 11px;outline:none}
+.empty{color:var(--dim);text-align:center;margin-top:80px}
+@media(max-width:820px){.main{grid-template-columns:1fr;height:auto}.side{max-height:46vh}.ed{padding:12px}.doc{padding:18px 16px}}
+</style>
+</head>
+<body>
+<div id="app" hidden>
+<div class="top">
+  <h1>სტატიების რედაქტორი</h1>
+  <div class="sys" id="sys"></div>
+  <span class="sp"></span>
+  <button class="btn" id="exp" type="button" title="ყველა სტატია JSON ფაილად (რეზერვი)">⬇ ექსპორტი</button>
+  <label class="btn" title="JSON ფაილიდან აღდგენა">⬆ იმპორტი<input type="file" id="imp" accept=".json,application/json" hidden></label>
+  <a href="admin.html">← ადმინ-პანელი</a>
+</div>
+<div class="main">
+  <aside class="side">
+    <div class="f">
+      <select id="grp" aria-label="ჯგუფი"></select>
+      <input id="q" type="search" placeholder="🔎 ძებნა: სახელი ან კოდი (მაგ. 3-14-17, ლომი, 34-57)" autocomplete="off">
+      <div class="chips" id="flt"><button data-f="all" class="on">ყველა</button><button data-f="w">დაწერილი</button><button data-f="e">ცარიელი</button></div>
+      <div class="prog"><i id="pbar" style="width:0"></i></div>
+      <div class="cnt" id="cnt"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </aside>
+  <section class="ed" id="ed"><div class="empty">აირჩიე ჩანაწერი მარცხნივ</div></section>
+</div>
+</div>
+
+<div id="login" class="login" hidden>
+  <h1 style="font-family:Cinzel,serif;font-weight:400;color:var(--gold-lt);margin:0 0 6px;font-size:16px;letter-spacing:2px">MAGNUS · შესვლა</h1>
+  <input id="em" type="email" placeholder="ელ-ფოსტა" autocomplete="username">
+  <input id="pw" type="password" placeholder="პაროლი" autocomplete="current-password">
+  <button class="btn pri" id="lg" type="button">შესვლა</button>
+  <div class="hint" id="lmsg">საჭიროა ადმინისტრატორის ანგარიში.</div>
+</div>
+
+<script src="stats_engine.js"></script>
+<script src="matrix_combos.js"></script>
+<script src="matrix_boxes_addon.js"></script>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BACKEND='https://astrology-production-b165.up.railway.app';
+let TOKEN='';try{TOKEN=localStorage.getItem('magnus_admin_token')||'';}catch(e){}
+async function api(path,opt){opt=opt||{};
+  const r=await fetch(BACKEND+path,{...opt,headers:{'Content-Type':'application/json',...(TOKEN?{Authorization:'Bearer '+TOKEN}:{}),...(opt.headers||{})}});
+  if(r.status===401||r.status===422){showLogin('სესია ამოიწურა — შედი თავიდან.');throw new Error('auth');}
+  if(r.status===403){throw new Error('ადმინისტრატორის უფლება არ გაქვს');}
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||('HTTP '+r.status));return j;}
+
+/* ═══════════ catalogs: every possible key, with Georgian labels ═══════════ */
+const ARC=['','მაგი','მღვდელმთავარი','იმპერატრიცა','იმპერატორი','იერარქი','შეყვარებულები','ეტლი','სამართლიანობა','განდეგილი','ბედის ბორბალი','სიძლიერე',
+  'ჩამოხრჩობილი','ტრანსფორმაცია','ზომიერება','ეშმაკი','კოშკი','ვარსკვლავი','მთვარე','მზე','განსჯა','სამყარო','სულელი'];
+const SG=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(z=>z+'︎');
+const ROM=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+const BODY=[['Sun','☉','მზე'],['Moon','☽','მთვარე'],['Mercury','☿','მერკური'],['Venus','♀','ვენერა'],['Mars','♂','მარსი'],['Jupiter','♃','იუპიტერი'],['Saturn','♄','სატურნი'],
+  ['Uranus','♅','ურანი'],['Neptune','♆','ნეპტუნი'],['Pluto','♇','პლუტონი'],['Node','☊','ჩრდ. კვანძი'],['Chiron','⚷','ქირონი'],['Lilith','⚸','ლილიტი']];
+const ANG=[['ASC','AC','ასცენდენტი'],['MC','MC','შუაცა (MC)']];
+const ASP=[[0,'☌','შეერთება'],[60,'⚹','სექსტილი'],[90,'□','კვადრატი'],[120,'△','ტრინი'],[180,'☍','ოპოზიცია']];
+const bl=b=>`${b[1]}︎ ${b[2]}`;
+function catMatrix(){
+  const DB=window.MATRIX_DB||{},EX=new Set(['karmic_tail','cp_karmic_tail']);   /* exact-order zones (matrix_combos.js) */
+  const boxes=[...(typeof BOXES!=='undefined'?BOXES:[]),...(typeof COMPAT_BOXES!=='undefined'?COMPAT_BOXES.map(b=>({...b,cp:1})):[])];
+  /* every code the method-1 matrix can produce, per box */
+  const POS={};for(const b of boxes)if(!b.cp&&b.keys&&b.keys.length===3)POS[b.id]=b.keys.map(k=>k.replace(/^CH_(\w+)_E$/,'CHE_$1').replace(/^CH_(\w+)_S$/,'CHS_$1').replace(/^CH_(\w+)_P$/,'CHP_$1'));
+  const gen={};
+  if(window.SE&&SE.matrix)for(let d=1;d<=31;d++)for(let m=1;m<=12;m++)for(let y=1;y<=22;y++){const v=SE.matrix(d,m,y);
+    for(const id in POS){const n=POS[id].map(k=>v[k]);if(n.some(x=>!x))continue;(gen[id]=gen[id]||new Set()).add(n.join('-'));}}
+  const groups=[];
+  for(const b of boxes){const z=DB[b.id];const single=(b.keys||[]).length===1||(z&&z.singles&&!z.combos);
+    const lab=(b.cp?'შეთავსება · ':'')+b.title;
+    if(single){groups.push({id:b.id,label:lab+' · 1–22',items:Array.from({length:22},(_,i)=>({key:`${b.id}|s|${i+1}`,label:`${i+1} — ${ARC[i+1]}`,file:z&&z.singles&&z.singles[i+1]}))});continue;}
+    const fileCodes=z&&z.combos?Object.keys(z.combos):[],have=new Set(fileCodes),out=[...fileCodes];
+    for(const c of gen[b.id]||[]){const r=c.split('-').reverse().join('-');if(have.has(c)||(!EX.has(b.id)&&have.has(r)))continue;have.add(c);out.push(c);}
+    out.sort((a,b2)=>{const x=a.split('-').map(Number),y=b2.split('-').map(Number);return x[0]-y[0]||x[1]-y[1]||x[2]-y[2];});
+    groups.push({id:b.id,label:`${lab} · ${out.length} კომბ.`,combo:true,items:out.map(c=>({key:`${b.id}|c|${c}`,label:c+(z&&z.combos&&z.combos[c]&&z.combos[c].title?' — '+z.combos[c].title:''),file:z&&z.combos&&z.combos[c]}))});}
+  if(DB.ch_names&&DB.ch_names.combos)groups.push({id:'ch_names',label:'ჩაკრის სამეულების საერთო სახელები',combo:true,items:Object.keys(DB.ch_names.combos).map(c=>({key:`ch_names|c|${c}`,label:c+(DB.ch_names.combos[c].title?' — '+DB.ch_names.combos[c].title:''),file:DB.ch_names.combos[c]}))});
+  return groups;
+}
+function catPyth(){
+  const PYL={1:'ხასიათი, ნება',2:'ენერგია',3:'ინტერესი, მეცნიერება',4:'ჯანმრთელობა',5:'ლოგიკა, ინტუიცია',6:'შრომა',7:'იღბალი, ნიჭი',8:'პასუხისმგებლობა',9:'მეხსიერება, გონება'};
+  const LINES=[['ambition','ამბიცია (1+2+3)'],['money','ფული (4+5+6)'],['talent','ნიჭი (7+8+9)'],['purpose','მიზანდასახულობა (1+4+7)'],['family','ოჯახი (2+5+8)'],['stability','სტაბილურობა (3+6+9)'],['temperament','ტემპერამენტი (3+5+7)'],['spirit','სულიერება (1+5+9)']];
+  const g=[];
+  for(let d=1;d<=9;d++)g.push({id:'cell'+d,label:`უჯრა ${d} — ${PYL[d]}`,items:Array.from({length:7},(_,k)=>({key:`cell:${d}:${k}`,label:k===0?`${d} არ არის`:String(d).repeat(k)+(k===6?'+ (6 და მეტი)':'')}))});
+  for(const [id,n] of LINES)g.push({id:'line_'+id,label:'ხაზი — '+n,items:Array.from({length:11},(_,k)=>({key:`line:${id}:${k}`,label:k===10?'10 და მეტი':`ჯამი ${k}`}))});
+  g.push({id:'empty',label:'ცარიელი უჯრების რაოდენობა',items:Array.from({length:10},(_,k)=>({key:`empty:${k}`,label:`${k} ცარიელი უჯრა`}))});
+  g.push({id:'work',label:'სამუშაო რიცხვები',items:[1,2,3,4].flatMap(i=>Array.from({length:i%2?60:15},(_,k)=>({key:`work:${i}:${k+1}`,label:`${ROM[i]} სამუშაო რიცხვი = ${k+1}`})))});
+  return g;
+}
+function catAstro(){
+  const g=[],all=[...BODY,...ANG];
+  for(const b of BODY)g.push({id:'sign_'+b[0],label:`${bl(b)} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]}︎ ${b[2]} ${ZS[i]} ${s}ში`.replace('ში','ში')}))});
+  for(const b of ANG)g.push({id:'sign_'+b[0],label:`${b[2]} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]} ${ZS[i]} ${s}`}))});
+  for(const b of BODY)g.push({id:'house_'+b[0],label:`${bl(b)} სახლებში`,items:ROM.slice(1).map((r,i)=>({key:`house:${b[0]}:${i+1}`,label:`${b[1]}︎ ${b[2]} ${r} სახლში`}))});
+  for(let i=0;i<all.length;i++){const a=all[i],items=[];
+    for(let j=i+1;j<all.length;j++){const b=all[j];if(a[0]==='ASC'&&b[0]==='MC')continue;for(const [ang,gl,n] of ASP)items.push({key:`asp:${a[0]}:${b[0]}:${ang}`,label:`${a[1]} ${gl} ${b[1]} — ${a[2]} · ${b[2]}: ${n}`});}
+    if(items.length)g.push({id:'asp_'+a[0],label:`ასპექტები — ${a[2]}`,items});}
+  g.push({id:'cusp',label:'სახლის წვერო ნიშანში (12×12)',items:ROM.slice(1).flatMap((r,h)=>SG.map((s,i)=>({key:`cusp:${h+1}:${i}`,label:`${r} სახლი ${ZS[i]} ${s}`})))});
+  g.push({id:'ruler',label:'სახლის მმართველი სხვა სახლში (12×12)',items:ROM.slice(1).flatMap((r,h)=>ROM.slice(1).map((r2,k)=>({key:`ruler:${h+1}:${k+1}`,label:`${r} სახლის მმართველი ${r2} სახლში`})))});
+  return g;
+}
+function catHD(){
+  const TY=[['Generator','გენერატორი'],['Manifesting Generator','მანიფესტირებადი გენერატორი'],['Projector','პროექტორი'],['Manifestor','მანიფესტორი'],['Reflector','რეფლექტორი']];
+  const AU=[['emo','ემოციური'],['sac','საკრალური'],['spl','სპლენური'],['ego','ეგო'],['self','თვით-პროექცია'],['ment','მენტალური / გარემო'],['moon','მთვარის ციკლი']];
+  const PR=['1/3','1/4','2/4','2/5','3/5','3/6','4/6','4/1','5/1','5/2','6/2','6/3'];
+  const CE=[['Head','თავი'],['Ajna','აჯნა'],['Throat','ყელი'],['G','G · მე'],['Heart','გული · ეგო'],['Solar Plexus','მზის წნული'],['Spleen','ელენთა'],['Sacral','საკრალი'],['Root','ფესვი']];
+  const CH=['1-8','2-14','3-60','4-63','5-15','6-59','7-31','9-52','10-20','10-34','10-57','11-56','12-22','13-33','16-48','17-62','18-58','19-49','20-34','20-57','21-45','23-43','24-61','25-51','26-44','27-50','28-38','29-46','30-41','32-54','34-57','35-36','37-40','39-55','42-53','47-64'];
+  const CHN=(window.HDLIFE&&HDLIFE.CH)||{};
+  const T6=a=>a.flatMap(([b,l,r],i)=>[[`${i+1}:l`,`${i+1} ${b} — ${l}`],[`${i+1}:r`,`${i+1} ${b} — ${r}`]]);
+  const VAR={env:['გარემო',T6([['მღვიმეები','შერჩევითი','შერწყმული'],['ბაზრები','შიდა','გარე'],['სამზარეულოები','ნესტიანი','მშრალი'],['მთები','აქტიური','პასიური'],['ველები','ვიწრო','ფართო'],['სანაპიროები','ბუნებრივი','ხელოვნური']])],
+    dig:['კვება (Determination)',T6([['მადა','თანმიმდევრული','მონაცვლეობითი'],['გემო','ღია','დახურული'],['წყურვილი','ცხელი','ცივი'],['შეხება','მშვიდი','ნერვული'],['ხმა','მაღალი','დაბალი'],['სინათლე','პირდაპირი','არაპირდაპირი']])],
+    mot:['მოტივაცია',T6([['შიში','კომუნალისტი','სეპარატისტი'],['იმედი','თეისტი','ანტითეისტი'],['სურვილი','ლიდერი','მიმდევარი'],['მოთხოვნილება','ოსტატი','ახალბედა'],['დანაშაული','კონდიციონერი','კონდიციონირებული'],['უმანკოება','ობსერვატორი','დამკვირვებელი']])],
+    per:['პერსპექტივა',T6([['გადარჩენა','ფოკუსირებული','პერიფერიული'],['შესაძლებლობა','ფოკუსირებული','პერიფერიული'],['ძალა','ფოკუსირებული','პერიფერიული'],['სურვილი','ფოკუსირებული','პერიფერიული'],['ალბათობა','ფოკუსირებული','პერიფერიული'],['პირადული','ფოკუსირებული','პერიფერიული']])]};
+  const g=[{id:'type',label:'ტიპები',items:TY.map(([k,n])=>({key:`type:${k.replace(/ /g,'_')}`,label:n}))},
+    {id:'auth',label:'ავტორიტეტები',items:AU.map(([k,n])=>({key:`auth:${k}`,label:n}))},
+    {id:'profile',label:'პროფილები',items:PR.map(p=>({key:`profile:${p.replace('/','-')}`,label:'პროფილი '+p}))},
+    {id:'def',label:'განსაზღვრება',items:[[0,'განსაზღვრება არ არის'],[1,'ერთიანი'],[2,'გაყოფილი'],[3,'სამად გაყოფილი'],[4,'ოთხად გაყოფილი']].map(([k,n])=>({key:`def:${k}`,label:n}))},
+    {id:'center',label:'ცენტრები — განსაზღვრული / ღია',items:CE.flatMap(([k,n])=>[{key:`center:${k.replace(/ /g,'_')}:def`,label:`${n} — განსაზღვრული`},{key:`center:${k.replace(/ /g,'_')}:open`,label:`${n} — ღია`}])},
+    {id:'channel',label:'არხები · 36',items:CH.map(c=>({key:`channel:${c}`,label:`${c}${CHN[c]?' — '+CHN[c][0]:''}`}))},
+    {id:'gate',label:'კარიბჭეები · 64',items:Array.from({length:64},(_,i)=>({key:`gate:${i+1}`,label:`კარიბჭე ${i+1}`}))},
+    {id:'line',label:'კარიბჭის ხაზები · 384',items:Array.from({length:384},(_,i)=>({key:`line:${(i/6|0)+1}.${i%6+1}`,label:`კარიბჭე ${(i/6|0)+1}, ხაზი ${i%6+1}`}))},
+    {id:'sense',label:'გრძნობა (Sense / Cognition)',items:['ყნოსვა','გემო','გარეგანი ხედვა','შინაგანი ხედვა','გრძნობა','შეხება'].map((n,i)=>({key:`sense:${i+1}`,label:`${i+1} ${n}`}))},
+    {id:'cross',label:'ინკარნაციული ჯვრის კუთხე',items:[['right','მარჯვენა კუთხე (პერსონალური)'],['jx','იუქსტაპოზიცია'],['left','მარცხენა კუთხე (ტრანსპერსონალური)']].map(([k,n])=>({key:`cross:${k}`,label:n}))}];
+  for(const [k,[n,list]] of Object.entries(VAR))g.push({id:k,label:n,items:list.map(([c,l])=>({key:`${k}:${c}`,label:l}))});
+  return g;
+}
+const SYS=[['matrix','✦ ბედის მატრიცა',catMatrix],['pyth','▦ პითაგორა',catPyth],['astro','♈ ასტროლოგია',catAstro],['hd','◬ ადამიანის დიზაინი',catHD]];
+
+/* ═══════════ state ═══════════ */
+let SYSID='matrix',CAT=[],DATA={},GI=0,SEL=null,FLT='all',DIRTY=false,COUNTS={};
+const fileOf=it=>it&&it.file&&(it.file.title||it.file.text)?it.file:null;
+function allItems(){return CAT.flatMap((g,gi)=>g.items.map(it=>({...it,gi})));}
+function shown(){
+  const q=$('q').value.trim().toLowerCase();
+  let items=q?allItems().filter(it=>(it.label+' '+it.key).toLowerCase().includes(q)):(CAT[GI]?CAT[GI].items.map(it=>({...it,gi:GI})):[]);
+  if(FLT==='w')items=items.filter(it=>DATA[it.key]);if(FLT==='e')items=items.filter(it=>!DATA[it.key]);
+  return items;
+}
+function drawSys(){$('sys').innerHTML=SYS.map(([k,n])=>`<button data-s="${k}"${k===SYSID?' class="on"':''}>${n}<small>${COUNTS[k]!=null?COUNTS[k]:''}</small></button>`).join('');
+  $('sys').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(!confirmLeave())return;loadSys(b.dataset.s);});}
+function drawGroups(){$('grp').innerHTML=CAT.map((g,i)=>{const w=g.items.filter(it=>DATA[it.key]).length;return `<option value="${i}"${i===GI?' selected':''}>${esc(g.label)} — ${w}/${g.items.length}</option>`;}).join('');}
+function drawList(){
+  const items=shown(),tot=allItems().length,w=Object.keys(DATA).length;
+  $('cnt').textContent=`სისტემაში დაწერილია ${w} / ${tot}${$('q').value.trim()?` · ნაპოვნია ${items.length}`:''}`;
+  $('pbar').style.width=(tot?100*w/tot:0)+'%';
+  const MAX=1500;
+  $('list').innerHTML=items.slice(0,MAX).map(it=>`<div class="it${SEL&&SEL.key===it.key?' on':''}" data-k="${esc(it.key)}"><span class="d${DATA[it.key]?' w':fileOf(it)?' fl':''}" title="${DATA[it.key]?'დაწერილია':fileOf(it)?'ტექსტი მხოლოდ ფაილშია':'ცარიელი'}"></span><span class="l">${esc(it.label)}<small>${esc(it.key)}</small></span></div>`).join('')+(items.length>MAX?`<div class="hint" style="padding:10px">…კიდევ ${items.length-MAX} — დააზუსტე ძებნა</div>`:'')||'<div class="hint" style="padding:12px">ვერაფერი მოიძებნა</div>';
+  $('list').querySelectorAll('.it').forEach(el=>el.onclick=()=>{if(!confirmLeave())return;const it=allItems().find(x=>x.key===el.dataset.k);if(it)open(it);});
+}
+async function loadSys(id){
+  SYSID=id;SEL=null;DIRTY=false;GI=0;$('q').value='';
+  CAT=SYS.find(s=>s[0]===id)[2]();drawSys();drawGroups();
+  $('ed').innerHTML='<div class="empty">⏳ იტვირთება…</div>';$('list').innerHTML='';
+  try{DATA=await api('/api/articles?system='+id);}catch(e){DATA={};if(e.message!=='auth')$('ed').innerHTML=`<div class="empty" style="color:var(--bad)">ვერ ჩაიტვირთა: ${esc(e.message)}</div>`;}
+  COUNTS[id]=Object.keys(DATA).length;drawSys();drawGroups();drawList();
+  if(!SEL)$('ed').innerHTML=`<div class="empty">აირჩიე ჩანაწერი მარცხნივ<br><br><span class="hint">მწვანე წერტილი — დაწერილია · ყვითელი — ტექსტი მხოლოდ matrix_combos.js-შია (გახსნისას ჩაიტვირთება რედაქტირებისთვის) · ნაცრისფერი — ცარიელი</span></div>`;
+}
+
+/* ═══════════ editor ═══════════ */
+const TOOLS=[['undo','↶','გაუქმება (Ctrl+Z)'],['redo','↷','დაბრუნება (Ctrl+Y)'],'|',['bold','<b>B</b>','მსხვილი (Ctrl+B)'],['italic','<i>I</i>','დახრილი (Ctrl+I)'],['underline','<u>U</u>','ხაზგასმული (Ctrl+U)'],['strikeThrough','<s>S</s>','გადახაზული'],
+  ['superscript','x²','ზედა ინდექსი'],['subscript','x₂','ქვედა ინდექსი'],'|',['insertUnorderedList','•','მარკირებული სია'],['insertOrderedList','1.','დანომრილი სია'],['outdent','⇤','შეწევის მოხსნა'],['indent','⇥','შეწევა'],'|',
+  ['justifyLeft','⯇','მარცხნივ'],['justifyCenter','≡','ცენტრში'],['justifyRight','⯈','მარჯვნივ'],['justifyFull','☰','ორივე მხარეს'],'|',['link','🔗','ბმული'],['unlink','⛓','ბმულის მოხსნა'],['insertHorizontalRule','―','გამყოფი ხაზი'],['removeFormat','⌫','ფორმატის გასუფთავება']];
+function open(it){
+  SEL=it;GI=it.gi;drawGroups();
+  const a=DATA[it.key],f=fileOf(it),grp=CAT[it.gi];
+  const title=a?a.t:(f&&f.title)||'',html=a?a.h:(f&&f.text)||'';
+  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია matrix_combos.js-დან — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
+    <input class="ti" id="ti" placeholder="სათაური" value="${esc(title)}">
+    <div><div class="tb" id="tb">
+      <select id="blk" title="სტილი"><option value="p">ჩვეულებრივი</option><option value="h2">სათაური 1</option><option value="h3">სათაური 2</option><option value="blockquote">ციტატა</option></select>
+      <select id="fsz" title="ზომა"><option value="">ზომა</option><option value="2">პატარა</option><option value="3">ჩვეულებრივი</option><option value="4">დიდი</option><option value="5">ძალიან დიდი</option></select>
+      ${TOOLS.map(t=>t==='|'?'<span class="sep"></span>':`<button type="button" data-c="${t[0]}" title="${t[2]}">${t[1]}</button>`).join('')}
+      <label title="ტექსტის ფერი">🎨<input type="color" id="fc" value="#a2341e"></label><label title="მონიშვნის ფერი">🖍<input type="color" id="bc" value="#fff2a8"></label>
+    </div>
+    <div class="doc" id="doc" contenteditable="true" spellcheck="true" data-ph="დაწერე სტატია… (შეგიძლია ჩასვა Word-იდან)">${html}</div></div>
+    <div class="foot"><button class="btn pri" id="sv" type="button">💾 შენახვა</button><button class="btn" id="pv" type="button">◀ წინა</button><button class="btn" id="nx" type="button">შემდეგი ▶</button>
+      ${f?'<button class="btn" id="ff" type="button" title="matrix_combos.js-ის ტექსტის ჩატვირთვა">📄 ფაილის ტექსტი</button>':''}<button class="btn del" id="dl" type="button"${a?'':' disabled'}>🗑 წაშლა</button><span id="st"></span></div>
+    <div class="hint">Ctrl+S — შენახვა. ცარიელი სათაური და ტექსტი = წაშლა. ჩასმული Word-ის ტექსტი სუფთავდება (ფორმატირება რჩება). ${SYSID==='matrix'?'ბედის მატრიცის გვერდზე ტექსტი ავტომატურად გამოჩნდება (≈1 წუთში).':'ტექსტი ინახება ბაზაში და მიეწოდება საიტის გვერდებს /api/articles-ით.'}</div>`;
+  DIRTY=false;setSt('');
+  const doc=$('doc');document.execCommand('styleWithCSS',false,false);
+  doc.oninput=$('ti').oninput=()=>{DIRTY=true;setSt('შეუნახავი ცვლილებები','dirty');};
+  doc.addEventListener('paste',onPaste);
+  $('tb').querySelectorAll('button').forEach(b=>b.onmousedown=e=>{e.preventDefault();cmd(b.dataset.c);});
+  $('blk').onchange=e=>{doc.focus();document.execCommand('formatBlock',false,e.target.value);e.target.value='p';doc.oninput();};
+  $('fsz').onchange=e=>{if(e.target.value){doc.focus();document.execCommand('fontSize',false,e.target.value);doc.oninput();}e.target.value='';};
+  $('fc').oninput=e=>{doc.focus();document.execCommand('foreColor',false,e.target.value);doc.oninput();};
+  $('bc').oninput=e=>{doc.focus();document.execCommand('hiliteColor',false,e.target.value);doc.oninput();};
+  $('sv').onclick=save;$('dl').onclick=del;
+  $('pv').onclick=()=>step(-1);$('nx').onclick=()=>step(1);
+  if($('ff'))$('ff').onclick=()=>{$('ti').value=f.title||'';doc.innerHTML=f.text||'';doc.oninput();};
+  drawList();const on=$('list').querySelector('.it.on');if(on)on.scrollIntoView({block:'nearest'});
+}
+function cmd(c){const doc=$('doc');doc.focus();
+  if(c==='link'){const u=prompt('ბმული (https://…)','https://');if(u&&/^(https?:|mailto:|\/|#)/i.test(u))document.execCommand('createLink',false,u);}
+  else document.execCommand(c,false,null);doc.oninput();}
+function step(d){if(!confirmLeave())return;const items=shown(),i=items.findIndex(x=>SEL&&x.key===SEL.key);const n=items[i+d];if(n)open(n);}
+function setSt(t,c){const s=$('st');if(s){s.textContent=t;s.className=c||'';}}
+/* paste from Word / web: keep structure and basic formatting only */
+const KEEP=new Set(['P','BR','B','STRONG','I','EM','U','S','STRIKE','SUB','SUP','H1','H2','H3','H4','UL','OL','LI','BLOCKQUOTE','A','SPAN','DIV','FONT','HR','TABLE','THEAD','TBODY','TR','TD','TH']);
+function cleanNode(n,out){
+  for(const c of [...n.childNodes]){
+    if(c.nodeType===3){out.appendChild(document.createTextNode(c.textContent));continue;}
+    if(c.nodeType!==1)continue;
+    const t=c.tagName;if(/^(SCRIPT|STYLE|META|LINK|XML|O:P)$/i.test(t)||t.includes(':')){if(t==='O:P')continue;continue;}
+    if(!KEEP.has(t)){cleanNode(c,out);continue;}
+    const e=document.createElement(t==='H1'?'H2':t);
+    if(t==='A'&&/^(https?:|mailto:)/i.test(c.getAttribute('href')||''))e.setAttribute('href',c.getAttribute('href'));
+    const st=c.style;const al=st&&st.textAlign;if(al&&/^(center|right|justify)$/.test(al))e.style.textAlign=al;
+    if(st&&st.fontWeight&&(+st.fontWeight>=600||st.fontWeight==='bold'))e.style.fontWeight='bold';
+    if(st&&st.fontStyle==='italic')e.style.fontStyle='italic';
+    cleanNode(c,e);if(t==='SPAN'&&!e.getAttribute('style')){while(e.firstChild)out.appendChild(e.firstChild);continue;}
+    out.appendChild(e);}
+}
+function onPaste(ev){const cd=ev.clipboardData;if(!cd)return;const h=cd.getData('text/html');ev.preventDefault();
+  if(h){const tmp=document.createElement('div');tmp.innerHTML=h.replace(/<!--[\s\S]*?-->/g,'');const out=document.createElement('div');cleanNode(tmp,out);document.execCommand('insertHTML',false,out.innerHTML);}
+  else{const t=cd.getData('text/plain');document.execCommand('insertHTML',false,t.split(/\n{2,}/).map(p=>'<p>'+esc(p).replace(/\n/g,'<br>')+'</p>').join(''));}
+  $('doc').oninput();}
+async function save(){
+  if(!SEL)return;const title=$('ti').value.trim(),html=$('doc').innerHTML.trim();
+  setSt('⏳ ინახება…');$('sv').disabled=true;
+  try{const r=await api(`/api/admin/articles/${SYSID}/${encodeURIComponent(SEL.key)}`,{method:'PUT',body:JSON.stringify({title,html})});
+    if(r.deleted){delete DATA[SEL.key];setSt('ცარიელია — წაიშალა','ok');}else{DATA[SEL.key]={t:r.t,h:r.h,u:r.u};$('doc').innerHTML=r.h;setSt('✓ შენახულია '+new Date().toLocaleTimeString('ka-GE'),'ok');}
+    DIRTY=false;COUNTS[SYSID]=Object.keys(DATA).length;drawSys();drawGroups();drawList();$('dl').disabled=!DATA[SEL.key];
+  }catch(e){if(e.message!=='auth')setSt('✗ '+e.message,'bad');}
+  finally{const b=$('sv');if(b)b.disabled=false;}
+}
+async function del(){if(!SEL||!DATA[SEL.key]||!confirm('წავშალო ეს სტატია ბაზიდან?'))return;
+  try{await api(`/api/admin/articles/${SYSID}/${encodeURIComponent(SEL.key)}`,{method:'DELETE'});delete DATA[SEL.key];DIRTY=false;COUNTS[SYSID]=Object.keys(DATA).length;drawSys();drawGroups();open(SEL);setSt('წაიშალა','ok');}
+  catch(e){if(e.message!=='auth')setSt('✗ '+e.message,'bad');}}
+function confirmLeave(){return !DIRTY||confirm('შეუნახავი ცვლილებები დაიკარგება. გავაგრძელო?');}
+window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue='';}});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&SEL){e.preventDefault();save();}});
+$('grp').onchange=()=>{GI=+$('grp').value;$('q').value='';drawList();};
+$('q').oninput=drawList;
+$('flt').querySelectorAll('button').forEach(b=>b.onclick=()=>{FLT=b.dataset.f;$('flt').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawList();});
+$('exp').onclick=async()=>{try{const j=await api('/api/admin/articles/export');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(j,null,1)],{type:'application/json'}));
+  a.download='magnus_articles_'+new Date().toISOString().slice(0,10)+'.json';a.click();}catch(e){if(e.message!=='auth')alert(e.message);}};
+$('imp').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());const over=confirm('არსებული სტატიები გადაიწეროს? (OK — კი, Cancel — მხოლოდ ახლები)');
+  const r=await api('/api/admin/articles/import',{method:'POST',body:JSON.stringify({articles:j.articles||[],overwrite:over})});alert(`დაემატა ${r.added} · განახლდა ${r.updated} · გამოტოვდა ${r.skipped}`);loadSys(SYSID);}
+  catch(err){if(err.message!=='auth')alert('იმპორტი ვერ მოხერხდა: '+err.message);}e.target.value='';};
+
+/* ═══════════ login ═══════════ */
+function showLogin(msg){$('app').hidden=true;$('login').hidden=false;if(msg)$('lmsg').textContent=msg;}
+$('lg').onclick=async()=>{$('lmsg').textContent='⏳';
+  try{const r=await fetch(BACKEND+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('em').value.trim(),password:$('pw').value})});
+    const d=await r.json();if(!r.ok||!d.token)throw new Error(d.error||'შესვლა ვერ მოხერხდა');
+    TOKEN=d.token;try{localStorage.setItem('magnus_admin_token',TOKEN);}catch(e){}start();}catch(e){$('lmsg').textContent='✗ '+e.message;}};
+$('pw').onkeydown=e=>{if(e.key==='Enter')$('lg').click();};
+async function start(){
+  if(!TOKEN){showLogin();return;}
+  $('login').hidden=true;$('app').hidden=false;
+  try{const s=await fetch(BACKEND+'/api/articles/stats').then(r=>r.json());Object.assign(COUNTS,s);}catch(e){}
+  loadSys(SYSID);
+}
+start();
+</script>
+<script src="hd_life.js"></script>
+</body>
+</html>
