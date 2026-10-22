@@ -39,6 +39,30 @@
 .rbtns button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:4px 12px;font:inherit;font-size:12px;cursor:pointer}
 .rbtns button:hover{border-color:var(--border-h);color:var(--gold-lt)}
 #out{display:none}
+.el.heat{background:color-mix(in srgb,var(--cc) 78%,#0e0b1a);border-color:rgba(255,255,255,.15)}.el.heat .n{color:#fff;font-weight:600}
+.pview{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;font-size:13px;color:var(--ink-mid)}
+.pview select,.tl-row select{background:#141022;color:var(--ink);border:1px solid var(--border-h);border-radius:8px;padding:4px 8px;font:inherit;font-size:13px}
+#pleg{margin-top:8px}.pscale{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-mid)}.pscale i{flex:1;height:10px;border-radius:5px;max-width:420px}
+.ptop{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:12px;color:var(--ink-dim);margin-top:4px}.ptop button,.pbtn button,.ex button,.ttabs button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:12px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
+.ptop button b{color:var(--gold-lt);font-family:'Cinzel',serif}.ptop button:hover,.pbtn button:hover,.ex button:hover,.ttabs button:hover{border-color:var(--border-h);color:var(--gold-lt)}
+.pctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px;margin-bottom:4px}.pctl input[type=range]{width:260px;max-width:70vw;accent-color:var(--gold)}.pctl i{color:var(--ink-dim);font-style:normal}.pbtn{display:flex;flex-wrap:wrap;gap:4px}
+i.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 3px 0 6px;vertical-align:-1px}
+.ttabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.ttabs button{font-size:13px;padding:5px 12px}.ttabs button.on{background:rgba(201,168,76,.16);border-color:var(--gold);color:var(--gold-lt)}
+.tl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px;font-size:13px;color:var(--ink-mid)}
+.tin{flex:1;min-width:220px;background:#141022;color:var(--ink);border:1px solid var(--border-h);border-radius:8px;padding:8px 10px;font-family:'Cinzel',serif;font-size:15px}
+.tgo{background:rgba(201,168,76,.15);border:1px solid var(--gold);color:var(--gold-lt);border-radius:16px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
+.ex{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}.ex button{font-family:'Cinzel',serif}
+.eq.big{font-family:'Cinzel',serif;font-size:18px;color:var(--gold-lt);margin:8px 0;word-break:break-word}
+.terr{color:#f08a6a;font-size:13px;padding:8px 10px;border:1px solid rgba(240,138,106,.4);border-radius:8px;margin:6px 0}
+table.stq{border-collapse:collapse;width:100%;font-size:13px;margin:6px 0}.stq th{color:var(--ink-dim);font-weight:400;text-align:left;padding:4px 6px;border-bottom:1px solid var(--border)}
+.stq td{padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.05)}.stq tr.sep td{border-top:1px solid var(--border-h)}.stq tr.lim td{background:rgba(240,138,106,.1)}
+.stq input{width:110px;background:#141022;color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:3px 6px;font:inherit}
+.bar{display:inline-block;width:90px;height:7px;background:rgba(255,255,255,.07);border-radius:4px;vertical-align:middle;overflow:hidden}.bar i{display:block;height:100%}
+.oxv{display:flex;flex-wrap:wrap;gap:4px;align-items:flex-end;margin:10px 0}.oxa{position:relative;display:flex;flex-direction:column;align-items:center;padding:4px 8px;border-radius:8px;background:color-mix(in srgb,var(--cc) 25%,#0e0b1a);border:1px solid var(--cc)}
+.oxa small{color:var(--gold-lt);font-size:13px;font-weight:600}.oxa b{font-family:'Cinzel',serif;font-size:22px;color:#fff}.oxa i{position:absolute;right:3px;bottom:2px;font-size:10px;font-style:normal;color:var(--ink-mid)}.oxq{font-size:18px;color:var(--gold);align-self:flex-start}
+.solw{overflow-x:auto}table.sol{border-collapse:collapse;font-size:11.5px}.sol th{padding:3px 5px;color:var(--ink-mid);font-weight:400;white-space:nowrap}.sol td{width:26px;height:24px;text-align:center;color:#fff;cursor:pointer;border:1px solid #0e0b1a}.sol td:hover{outline:2px solid var(--gold)}
+.act{display:flex;flex-wrap:wrap;gap:2px;align-items:center;font-family:'Cinzel',serif}.act i{color:var(--ink-dim);font-style:normal}
+.ac{padding:3px 6px;border-radius:6px;font-size:13px;cursor:pointer;color:#fff}.ac.w{background:#8a3a4a}.ac.h{background:#a8662a}.ac.a{background:#5a6a2a}.ac.H{background:#3a5a8a}.ac.n{background:#3a3550;color:var(--gold-lt)}
 #info{position:fixed;inset:0;z-index:80;background:rgba(5,3,12,.72);display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 10px}
 #info.on{display:flex}
 .info-in{position:relative;width:min(1000px,100%);background:#120e20;border:1px solid var(--border-h);border-radius:14px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.7)}
@@ -100,8 +124,10 @@ details.more{margin-top:8px}details.more summary{cursor:pointer;color:var(--gold
 </header>
 
 <div class="panel">
+  <div class="pview" id="pview"></div>
   <div id="pt" aria-label="ელემენტების პერიოდული ცხრილი"></div>
   <div class="legend" id="legend"></div>
+  <div id="pleg"></div>
   <div class="hint" style="margin-top:6px">შეეხე ელემენტს — ყველა მახასიათებელი გაიხსნება. გადაათრიე ქვემოთ რეაქტორში — 2-დან 8 ელემენტამდე; „＋“ უჯრა ახალ ადგილს ამატებს. კატეგორიაზე დაჭერა ცხრილში მას გამოყოფს.</div>
 </div>
 
@@ -112,6 +138,7 @@ details.more{margin-top:8px}details.more summary{cursor:pointer;color:var(--gold
 </div>
 
 <div id="out"></div>
+<div class="panel" id="tools"></div>
 </div>
 <div id="tip"></div>
 
@@ -335,9 +362,10 @@ function bondInfo(A,B){
 const pt=$('pt');let HIDE=null;
 function drawTable(){
   const cells=[];for(let z=1;z<=118;z++){const [c,r]=pos(z);cells.push({z,c,r});}
-  let h='';for(const {z,c,r} of cells){const e=EL[z];
-    h+=`<div class="el${HIDE&&HIDE!==e.cat?' dim':''}" data-z="${z}" style="grid-column:${c};grid-row:${r>7?r+1:r};--cc:var(--c-${e.cat})" title="${e.z} ${e.sym} ${esc(e.ka)}"><span class="z">${z}</span><span class="s">${e.sym}</span><span class="n">${esc(e.ka)}</span></div>`;}
+  const hv=VIEW.p!=='cat';let h='';for(const {z,c,r} of cells){const e=EL[z];
+    h+=`<div class="el${HIDE&&HIDE!==e.cat?' dim':''}${hv?' heat':''}${SLOT.includes(z)?' sel':''}" data-z="${z}" style="grid-column:${c};grid-row:${r>7?r+1:r};--cc:${cellColor(e)}" title="${e.z} ${e.sym} ${esc(e.ka)}"><span class="z">${z}</span><span class="s">${e.sym}</span><span class="n">${cellLabel(e)}</span></div>`;}
   h+=`<div style="grid-column:3;grid-row:6;font-size:9px;color:var(--ink-dim);display:flex;align-items:center;justify-content:center">57–71</div><div style="grid-column:3;grid-row:7;font-size:9px;color:var(--ink-dim);display:flex;align-items:center;justify-content:center">89–103</div><div style="grid-row:8;grid-column:1/-1;height:6px"></div>`;
+  $('legend').style.display=hv?'none':'';
   pt.innerHTML=h;pt.querySelectorAll('.el').forEach(el=>el.addEventListener('pointerdown',startDrag));
   $('legend').innerHTML=Object.entries(CATN).map(([k,n])=>`<span data-k="${k}" class="${HIDE&&HIDE!==k?'off':''}"><i style="background:var(--c-${k})"></i>${n}</span>`).join('');
   $('legend').querySelectorAll('span').forEach(s=>s.onclick=()=>{HIDE=HIDE===s.dataset.k?null:s.dataset.k;drawTable();});
@@ -1049,11 +1077,222 @@ function showInfo(z){
 }
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&$('info')&&$('info').className==='on'){$('info').className='';document.body.style.overflow='';}});
 
+/* ═══════════ table coloured by a property ═══════════ */
+const XV=(e,i)=>{const x=EXT[e.z-1];return x?x[i]:null;};
+const PROPS={
+ cat:{n:'კატეგორია'},
+ en:{n:'ელექტროუარყოფითობა',v:e=>e.en,d:2,u:'',hint:'მარჯვნივ და ზემოთ იზრდება — ფტორი ყველაზე „ხარბია“ ელექტრონებზე.'},
+ m:{n:'ატომური მასა',v:e=>e.m,d:1,u:' u',hint:'რიგითი ნომრის ზრდასთან ერთად იზრდება.'},
+ r:{n:'ატომის რადიუსი',v:e=>XV(e,5)||XV(e,6),d:0,u:' პმ',hint:'ქვემოთ და მარცხნივ იზრდება — ახალი შრეები; პერიოდში მცირდება, რადგან ბირთვი ძლიერად იზიდავს.'},
+ ie:{n:'1-ლი იონიზაციის ენერგია',v:e=>{const a=XV(e,10);return a&&a.length?a[0]:null;},d:0,u:' კჯ/მოლ',hint:'რამდენი ენერგიაა საჭირო ერთი ელექტრონის მოსაგლეჯად — ინერტულ აირებთან მაქსიმუმი, ტუტე ლითონებთან მინიმუმი.'},
+ ea:{n:'ელექტრონისადმი სწრაფვა',v:e=>XV(e,4),d:1,u:' კჯ/მოლ',hint:'რამდენი ენერგია გამოიყოფა ელექტრონის მიერთებისას — ჰალოგენებთან მაქსიმუმი.'},
+ den:{n:'სიმკვრივე',v:e=>{const d=XV(e,2);return d==null?null:e.st==='g'?d/1000:d;},d:3,u:' გ/სმ³',log:1,hint:'ყველაზე მკვრივია ოსმიუმი და ირიდიუმი (≈22.6 გ/სმ³).'},
+ mp:{n:'დნობის ტემპერატურა',v:e=>XV(e,0)==null?null:XV(e,0)-273.15,d:0,u:' °C',hint:'ვოლფრამი და ნახშირბადი — ყველაზე ცეცხლგამძლე; ჰელიუმი ჩვეულებრივ წნევაზე საერთოდ არ მყარდება.'},
+ bp:{n:'დუღილის ტემპერატურა',v:e=>XV(e,1)==null?null:XV(e,1)-273.15,d:0,u:' °C'},
+ mh:{n:'მოლური სითბოტევადობა',v:e=>XV(e,3),d:1,u:' ჯ/(მოლ·K)',hint:'დიულონგ-პტის კანონი: მყარი ლითონების უმეტესობასთან ≈25 ჯ/(მოლ·K).'},
+ val:{n:'გარე შრის ელექტრონები',v:e=>{const s=shells(e.z);return s[s.length-1];},d:0,u:'',hint:'ერთ ჯგუფში ერთნაირია — ამიტომ აქვთ მსგავსი ქიმია.'},
+ ox:{n:'მაქსიმალური ჟანგვის ხარისხი',v:e=>e.ox.length?Math.max(...e.ox):null,d:0,u:'',hint:'ხშირად ჯგუფის ნომერს ემთხვევა (Cl +7, Mn +7, Os +8).'},
+ st:{n:'მდგომარეობა ტემპერატურაზე…'},
+ block:{n:'ბლოკი (s · p · d · f)'},
+ radio:{n:'რადიოაქტიურობა'}
+};
+let VIEW={p:'cat',T:20};
+const HEAT=['#2b1a5a','#4b3596','#8a4aa8','#c94c7a','#e8803c','#f2c94c','#f7ef9a'];
+function heat(t){t=Math.max(0,Math.min(1,t));const k=t*(HEAT.length-1),i=Math.min(HEAT.length-2,Math.floor(k)),f=k-i;
+  const a=HEAT[i].match(/\w\w/g).map(h=>parseInt(h,16)),b=HEAT[i+1].match(/\w\w/g).map(h=>parseInt(h,16));
+  return '#'+a.map((v,j)=>Math.round(v+(b[j]-v)*f).toString(16).padStart(2,'0')).join('');}
+function stateAt(e,Tc){const T=Tc+273.15,m=XV(e,0),b=XV(e,1);if(m==null&&b==null)return null;if(b!=null&&T>=b)return 'g';if(m!=null&&T>=m)return 'l';return 's';}
+const STC={s:['#5a78c0','მყარი'],l:['#2fb4c8','სითხე'],g:['#e8903c','აირი']},BLC={s:'#e8705a',p:'#e8c95a',d:'#5a9ae8',f:'#9a6ae8'};
+let RANK=null;
+function viewPrep(){RANK=null;const P=PROPS[VIEW.p];if(!P||!P.v)return;
+  const vals=EL.slice(1).map(e=>[e,P.v(e)]).filter(([,v])=>v!=null&&isFinite(v));
+  const sorted=vals.map(([,v])=>v).sort((a,b)=>a-b);
+  RANK={map:new Map(vals),pct:v=>{let lo=0,hi=sorted.length;while(lo<hi){const m=(lo+hi)>>1;if(sorted[m]<v)lo=m+1;else hi=m;}return sorted.length>1?lo/(sorted.length-1):0.5;},vals,min:sorted[0],max:sorted[sorted.length-1]};}
+function cellColor(e){const p=VIEW.p;
+  if(p==='cat')return `var(--c-${e.cat})`;
+  if(p==='st'){const s=stateAt(e,VIEW.T);return s?STC[s][0]:'#444';}
+  if(p==='block')return BLC[XV(e,15)]||'#444';
+  if(p==='radio')return e.radio?'#7fe05a':'#3a3550';
+  const v=RANK&&RANK.map.get(e);return v==null?'#2a2638':heat(RANK.pct(v));}
+function cellLabel(e){const p=VIEW.p,P=PROPS[p];
+  if(p==='cat')return esc(e.ka);
+  if(p==='st'){const s=stateAt(e,VIEW.T);return s?STC[s][1]:'?';}
+  if(p==='block')return (XV(e,15)||'?')+'-ბლოკი';
+  if(p==='radio')return e.radio?'☢':'სტაბილური';
+  const v=RANK&&RANK.map.get(e);return v==null?'—':f1(v,Math.abs(v)<1&&P.d>0?Math.max(P.d,3):P.d);}
+function viewLegend(){
+  const P=PROPS[VIEW.p],box=$('pleg');if(!box)return;
+  if(VIEW.p==='cat'){box.innerHTML='';return;}
+  let h='';
+  if(VIEW.p==='st'){const c={s:0,l:0,g:0};EL.slice(1).forEach(e=>{const s=stateAt(e,VIEW.T);if(s)c[s]++;});
+    h=`<div class="pctl"><label>ტემპერატურა: <b id="pTv">${VIEW.T} °C</b> <i id="pTk">(${(VIEW.T+273.15).toFixed(0)} K)</i> <input type="range" id="pT" min="-273" max="6000" step="1" value="${VIEW.T}"></label>
+      <span class="pbtn">${[[-273,'აბსოლუტური ნული'],[-196,'თხევადი აზოტი'],[20,'ოთახი'],[100,'წყლის დუღილი'],[1538,'რკინა დნება'],[5500,'მზის ზედაპირი']].map(([t,n])=>`<button data-t="${t}">${n}</button>`).join('')}</span></div>
+      <div class="hint">${Object.entries(STC).map(([k,[cl,n]])=>`<i class="sw" style="background:${cl}"></i>${n}: <b id="pc_${k}">${c[k]}</b>`).join(' · ')} · <i class="sw" style="background:#444"></i>უცნობი</div>`;}
+  else if(VIEW.p==='block')h=`<div class="hint">${Object.entries(BLC).map(([k,c])=>`<i class="sw" style="background:${c}"></i>${k}-ბლოკი`).join(' · ')} — რომელ ორბიტალს ავსებს ბოლო ელექტრონი. s-ბლოკი: ტუტე და ტუტემიწა ლითონები; p: არალითონების უმეტესობა; d: გარდამავალი ლითონები; f: ლანთანოიდები და აქტინოიდები.</div>`;
+  else if(VIEW.p==='radio')h=`<div class="hint"><i class="sw" style="background:#7fe05a"></i>რადიოაქტიური — მდგრადი იზოტოპი არ გააჩნია (ტექნეციუმი, პრომეთიუმი და ბისმუტის შემდეგ ყველა). ${EL.slice(1).filter(e=>e.radio).length} ელემენტი.</div>`;
+  else{const top=[...RANK.vals].sort((a,b)=>b[1]-a[1]);const chip=([e,v])=>`<button data-z="${e.z}"><b>${e.sym}</b> ${f1(v,P.d)}</button>`;
+    h=`<div class="pscale"><span>${f1(RANK.min,P.d)}${P.u}</span><i style="background:linear-gradient(90deg,${HEAT.join(',')})"></i><span>${f1(RANK.max,P.d)}${P.u}</span></div>
+      <div class="hint" style="margin:4px 0">ფერი — რანგის მიხედვით (ცნობილი მნიშვნელობა აქვს ${RANK.vals.length} ელემენტს). ${P.hint||''}</div>
+      <div class="ptop"><span>▲ ყველაზე მაღალი:</span>${top.slice(0,6).map(chip).join('')}</div><div class="ptop"><span>▼ ყველაზე დაბალი:</span>${top.slice(-6).reverse().map(chip).join('')}</div>`;}
+  box.innerHTML=h;
+  box.querySelectorAll('.ptop button').forEach(b=>b.onclick=()=>showInfo(+b.dataset.z));
+  const r=$('pT'),setT=t=>{VIEW.T=t;r.value=t;drawTable();$('pTv').textContent=t+' °C';$('pTk').textContent='('+(t+273.15).toFixed(0)+' K)';
+    const c={s:0,l:0,g:0};EL.slice(1).forEach(e=>{const s=stateAt(e,t);if(s)c[s]++;});for(const k in c)$('pc_'+k).textContent=c[k];};
+  if(r)r.oninput=()=>setT(+r.value);
+  box.querySelectorAll('.pbtn button').forEach(b=>b.onclick=()=>setT(+b.dataset.t));
+}
+function viewInit(){const s=$('pview');if(!s)return;
+  s.innerHTML=`<label>🎨 ცხრილის ფერი: <select id="psel">${Object.entries(PROPS).map(([k,p])=>`<option value="${k}">${p.n}</option>`).join('')}</select></label>`;
+  $('psel').onchange=ev=>{VIEW.p=ev.target.value;viewPrep();drawTable();viewLegend();};}
+
+/* ═══════════ tools ═══════════ */
+/* exact fractions for the equation balancer */
+const FR=(n,d=1)=>{if(d<0){n=-n;d=-d;}const g=gcd(Math.abs(n),Math.abs(d))||1;return [n/g,d/g];};
+const fsub=(a,b)=>FR(a[0]*b[1]-b[0]*a[1],a[1]*b[1]),fmul=(a,b)=>FR(a[0]*b[0],a[1]*b[1]),fdiv=(a,b)=>FR(a[0]*b[1],a[1]*b[0]);
+function splitSide(s){return s.split(/\s*\+\s*/).map(x=>x.trim()).filter(Boolean).map(x=>x.replace(/^\d+\s*/,'').replace(/[↑↓]/g,''));}
+function balanceEq(str){
+  const sides=str.split(/\s*(?:=|→|->|⇌|⟶)\s*/);if(sides.length!==2)throw 'მხარეები გაყავი „=“ ან „→“ ნიშნით.';
+  const L=splitSide(sides[0]),Rt=splitSide(sides[1]);if(!L.length||!Rt.length)throw 'ორივე მხარეს მინიმუმ ერთი ნივთიერება უნდა იყოს.';
+  const sp=[...L,...Rt],cn=sp.map(f=>elemCounts(f));
+  for(let i=0;i<sp.length;i++){const ks=Object.keys(cn[i]);if(!ks.length)throw `„${sp[i]}“ — ფორმულა ვერ წავიკითხე.`;const bad=ks.filter(k=>!BY[k]);if(bad.length)throw `უცნობი ელემენტი: ${bad.join(', ')} (${sp[i]}). დიდი/პატარა ასოები: Co ≠ CO.`;}
+  const els=[...new Set(cn.flatMap(c=>Object.keys(c)))];
+  for(const e of els){const l=cn.slice(0,L.length).some(c=>c[e]),r=cn.slice(L.length).some(c=>c[e]);if(!l||!r)throw `${e} მხოლოდ ${l?'მარცხენა':'მარჯვენა'} მხარესაა — განტოლება ვერ გათანაბრდება.`;}
+  const n=sp.length,A=els.map(e=>sp.map((_,j)=>FR((cn[j][e]||0)*(j<L.length?1:-1))));
+  const piv=[];let r=0;
+  for(let c=0;c<n&&r<A.length;c++){let k=r;while(k<A.length&&A[k][c][0]===0)k++;if(k===A.length)continue;[A[r],A[k]]=[A[k],A[r]];
+    const p=A[r][c];A[r]=A[r].map(x=>fdiv(x,p));
+    for(let i=0;i<A.length;i++)if(i!==r&&A[i][c][0]!==0){const f=A[i][c];A[i]=A[i].map((x,j)=>fsub(x,fmul(f,A[r][j])));}
+    piv.push(c);r++;}
+  const free=[...Array(n).keys()].filter(c=>!piv.includes(c));
+  if(free.length===0)throw 'ასეთი რეაქცია ატომების შენახვის კანონით შეუძლებელია.';
+  if(free.length>1)throw 'განტოლება ცალსახად არ თანაბრდება — ეს რამდენიმე დამოუკიდებელი რეაქციაა. დაამატე ან ამოიღე ნივთიერება.';
+  const fc=free[0],x=Array(n).fill(null);x[fc]=FR(1);piv.forEach((c,i)=>x[c]=FR(-A[i][fc][0],A[i][fc][1]));
+  const den=x.reduce((a,f)=>lcm(a,f[1]),1);let k=x.map(f=>f[0]*den/f[1]);
+  if(k.every(v=>v<=0))k=k.map(v=>-v);if(k.some(v=>v<=0))throw 'დადებითი კოეფიციენტები ვერ მოიძებნა — შეამოწმე ნივთიერებები და მხარეები.';
+  const g=k.reduce((a,v)=>gcd(a,v),0);k=k.map(v=>v/g);
+  return {L,R:Rt,sp,k,els,cn,nl:L.length};
+}
+const coefTxt=(k,f)=>(k>1?k:'')+f;
+function eqTool(){
+  return `<div class="tl-row"><input id="eqIn" class="tin" value="KMnO4 + HCl = KCl + MnCl2 + Cl2 + H2O" spellcheck="false" autocomplete="off"><button id="eqGo" class="tgo">⚖ გათანაბრება</button></div>
+  <div class="ex">${['Fe + O2 = Fe2O3','C3H8 + O2 = CO2 + H2O','C6H12O6 + O2 = CO2 + H2O','Al + H2SO4 = Al2(SO4)3 + H2','Cu + HNO3 = Cu(NO3)2 + NO + H2O','Ca3(PO4)2 + SiO2 + C = CaSiO3 + P4 + CO','NH3 + O2 = NO + H2O','K4[Fe(CN)6] + H2SO4 + H2O = K2SO4 + FeSO4 + (NH4)2SO4 + CO'].map(s=>`<button>${esc(s)}</button>`).join('')}</div>
+  <div id="eqOut"></div><div class="hint">ჩაწერე ნივთიერებები კოეფიციენტების გარეშე; მხარეები გაყავი „=“ ნიშნით. ფრჩხილები და კრისტალჰიდრატები (CuSO4·5H2O) მუშაობს. შემდეგ ჩაწერე ნებისმიერი საწყისი ნივთიერების მასა — დაითვლის დანარჩენს და შემზღუდველ რეაგენტს.</div>`;}
+function eqRun(){
+  const out=$('eqOut');let B;try{B=balanceEq($('eqIn').value);}catch(e){out.innerHTML=`<div class="terr">${esc(String(e))}</div>`;return;}
+  const side=(a,b)=>B.sp.slice(a,b).map((f,i)=>coefTxt(B.k[a+i],f)).join(' + ');
+  const Ms=B.sp.map(f=>massOf(f));
+  let h=`<div class="eq big">${eqFmt(side(0,B.nl)+' → '+side(B.nl,B.sp.length))}</div>
+   <div class="hint" style="margin:4px 0 8px">ატომების შემოწმება: ${B.els.map(e=>{const s=(a,b)=>B.cn.slice(a,b).reduce((t,c,i)=>t+(c[e]||0)*B.k[a+i],0);return `<b>${e}</b> ${s(0,B.nl)} = ${s(B.nl,B.sp.length)}`;}).join(' · ')} ✓</div>
+   <table class="stq"><tr><th></th><th>ნივთიერება</th><th>კოეფ.</th><th>M, გ/მოლ</th><th>მასა, გ</th><th>მოლი</th></tr>
+   ${B.sp.map((f,i)=>`<tr${i===B.nl?' class="sep"':''}><td>${i<B.nl?'რეაგენტი':'პროდუქტი'}</td><td class="cf">${fmt(f)}</td><td>${B.k[i]}</td><td>${Ms[i].toFixed(2)}</td><td>${i<B.nl?`<input type="number" min="0" step="any" data-i="${i}" placeholder="გ">`:`<span data-o="${i}">—</span>`}</td><td data-n="${i}">—</td></tr>`).join('')}</table><div id="stqNote" class="hint"></div>`;
+  out.innerHTML=h;
+  const recalc=()=>{const ins=[...out.querySelectorAll('input[data-i]')],given=ins.filter(x=>x.value!==''&&+x.value>0);
+    out.querySelectorAll('tr').forEach(t=>t.classList.remove('lim'));
+    if(!given.length){out.querySelectorAll('[data-o]').forEach(s=>s.textContent='—');out.querySelectorAll('[data-n]').forEach(s=>s.textContent='—');$('stqNote').textContent='';return;}
+    let ext=Infinity,lim=-1;for(const g of given){const i=+g.dataset.i,e=(+g.value/Ms[i])/B.k[i];if(e<ext){ext=e;lim=i;}}
+    B.sp.forEach((f,i)=>{const mol=ext*B.k[i],gr=mol*Ms[i];out.querySelector(`[data-n="${i}"]`).textContent=mol.toPrecision(4);
+      const o=out.querySelector(`[data-o="${i}"]`);if(o)o.textContent=gr.toPrecision(4);
+      const inp=out.querySelector(`input[data-i="${i}"]`);if(inp&&!(inp.value!==''&&+inp.value>0))inp.placeholder=gr.toPrecision(4)+' (საჭირო)';});
+    out.querySelector(`input[data-i="${lim}"]`).closest('tr').classList.add('lim');
+    const ex=given.filter(g=>+g.dataset.i!==lim).map(g=>{const i=+g.dataset.i,used=ext*B.k[i]*Ms[i];return `${B.sp[i]}: ჭარბადაა ${(+g.value-used).toPrecision(4)} გ`;});
+    $('stqNote').innerHTML=`შემზღუდველი რეაგენტი: <b>${esc(B.sp[lim])}</b> — ის პირველი ილევა და განსაზღვრავს პროდუქტის რაოდენობას.${ex.length?' '+esc(ex.join('; ')):''}`;};
+  out.querySelectorAll('input[data-i]').forEach(x=>x.oninput=recalc);
+}
+/* molar mass */
+function mmTool(){return `<div class="tl-row"><input id="mmIn" class="tin" value="CuSO4·5H2O" spellcheck="false" autocomplete="off"></div><div class="ex">${['H2O','C6H12O6','Ca(OH)2','Al2(SO4)3','K4[Fe(CN)6]','C8H10N4O2','(NH4)3PO4'].map(s=>`<button>${s}</button>`).join('')}</div><div id="mmOut"></div>`;}
+function mmRun(){const f=$('mmIn').value.trim(),c=elemCounts(f),ks=Object.keys(c),out=$('mmOut');
+  if(!ks.length){out.innerHTML='';return;}const bad=ks.filter(k=>!BY[k]);if(bad.length){out.innerHTML=`<div class="terr">უცნობი ელემენტი: ${esc(bad.join(', '))}</div>`;return;}
+  const M=massOf(f),atoms=Object.values(c).reduce((a,b)=>a+b,0);
+  out.innerHTML=`<div class="eq big">${fmt(f)} — ${M.toFixed(3)} გ/მოლ</div><div class="hint">${atoms} ატომი ფორმულაში · 1 მოლი = 6.022·10²³ ფორმულური ერთეული = ${M.toFixed(2)} გ · 1 გ = ${(1/M).toPrecision(4)} მოლი</div>
+   <table class="stq"><tr><th>ელემენტი</th><th>ატომი</th><th>მასა</th><th>მასური წილი</th></tr>${ks.map(k=>{const m=BY[k].m*c[k],p=m/M*100;return `<tr><td><b>${k}</b> ${esc(BY[k].ka)}</td><td>${c[k]}</td><td>${m.toFixed(3)}</td><td><span class="bar"><i style="width:${p}%;background:var(--c-${BY[k].cat})"></i></span> ${p.toFixed(2)}%</td></tr>`;}).join('')}</table>`;}
+/* oxidation states */
+function oxStates(f,q){
+  const c=elemCounts(f),ks=Object.keys(c);if(!ks.length)throw 'ფორმულა ვერ წავიკითხე.';const bad=ks.filter(k=>!BY[k]);if(bad.length)throw 'უცნობი ელემენტი: '+bad.join(', ');
+  if(ks.length===1)return {res:{[ks[0]]:FR(q,c[ks[0]])},why:{[ks[0]]:'მარტივი ნივთიერება — ჟანგვის ხარისხი 0'+(q?' (იონში მუხტი იყოფა ატომებზე)':'')}};
+  const fix={},why={},has=s=>c[s]!=null,un=()=>ks.filter(k=>!(k in fix));
+  const nonmetal=ks.some(k=>!BY[k].metal&&k!=='H');
+  const rules=[['F',-1,'ყველაზე ელექტროუარყოფითი — ყოველთვის −1'],...['Li','Na','K','Rb','Cs','Fr'].map(s=>[s,1,'ტუტე ლითონი — ყოველთვის +1']),...['Be','Mg','Ca','Sr','Ba','Ra'].map(s=>[s,2,'ტუტემიწა ლითონი — ყოველთვის +2']),['Al',3,'ალუმინი — +3'],['Zn',2,'თუთია — +2'],
+    ['H',nonmetal?1:-1,nonmetal?'არალითონებთან წყალბადი +1-ია':'ლითონის ჰიდრიდში წყალბადი −1-ია'],['O',has('F')?2:-2,has('F')?'ფტორთან ჟანგბადი დადებითია (+2)':'ჟანგბადი ჩვეულებრივ −2-ია'],
+    ...['Cl','Br','I'].map(s=>[s,-1,'ჰალოგენი ჟანგბადის გარეშე — −1']),['S',-2,'გოგირდი სულფიდში — −2'],['N',-3,'აზოტი ნიტრიდში/ამიაკში — −3'],['P',-3,'ფოსფორი ფოსფიდში — −3'],['C',-4,'ნახშირბადი კარბიდში — −4']];
+  for(const [s,v,w] of rules){if(un().length<=1)break;if(has(s)&&!(s in fix)){fix[s]=FR(v);why[s]=w;}}
+  const u=un(),sumFixed=Object.entries(fix).reduce((a,[s,v])=>a+v[0]/v[1]*c[s],0);
+  if(u.length===1){const s=u[0];fix[s]=FR(Math.round((q-sumFixed)*1e6),c[s]*1e6);why[s]=`დანარჩენიდან: ჯამი უნდა იყოს ${q} → (${q} − (${+sumFixed.toFixed(3)})) / ${c[s]}`;}
+  else if(u.length>1)throw 'ორზე მეტი უცნობი — ცალსახად ვერ განისაზღვრება.';
+  else{const tot=sumFixed;if(Math.abs(tot-q)>1e-9)throw `წესებით ჯამი ${tot} გამოდის, მუხტი კი ${q} — ფორმულა უჩვეულოა (მაგ. პეროქსიდი ან სუპეროქსიდი).`;}
+  return {res:fix,why};
+}
+function oxTool(){return `<div class="tl-row"><input id="oxIn" class="tin" value="K2Cr2O7" spellcheck="false" autocomplete="off"><label class="hint">მუხტი <input id="oxQ" type="number" value="0" step="1" style="width:56px"></label></div>
+  <div class="ex">${[['KMnO4',0],['H2O2',0],['Fe3O4',0],['NH4',1],['SO4',-2],['Cr2O7',-2],['NaH',0],['OF2',0],['CH3COOH',0],['Na2S2O3',0]].map(([f,q])=>`<button data-q="${q}">${f}${q?(q>0?'⁺':'²⁻'.slice(q===-1?1:0)):''}</button>`).join('')}</div><div id="oxOut"></div>
+  <div class="hint">ჟანგვის ხარისხი — ატომის პირობითი მუხტი, თითქოს ყველა ბმა იონური იყოს. ელემენტი, რომელიც ფორმულაში რამდენჯერმე სხვადასხვა გარემოშია (NH4NO3), საშუალო მნიშვნელობას იღებს.</div>`;}
+function oxRun(){const out=$('oxOut');let r;const f=$('oxIn').value.trim(),q=+$('oxQ').value||0;
+  try{r=oxStates(f,q);}catch(e){out.innerHTML=`<div class="terr">${esc(String(e))}</div>`;return;}
+  const show=v=>{const x=v[0]/v[1];const t=v[1]===1?(x>0?'+'+x:String(x)):(x>0?'+':'−')+Math.abs(v[0])+'/'+v[1];return t;};
+  out.innerHTML=`<div class="oxv">${Object.entries(elemCounts(f)).map(([s,n])=>`<div class="oxa" style="--cc:var(--c-${BY[s].cat})"><small>${show(r.res[s])}</small><b>${s}</b>${n>1?`<i>${n}</i>`:''}</div>`).join('')}${q?`<div class="oxq">${q>0?'+':'−'}${Math.abs(q)>1?Math.abs(q):''}</div>`:''}</div>
+   <table class="stq">${Object.keys(r.res).map(s=>`<tr><td><b>${s}</b></td><td class="cf">${show(r.res[s])}${r.res[s][1]!==1?' <span class="hint">(საშუალო)</span>':''}</td><td class="hint">${esc(r.why[s]||'')}</td></tr>`).join('')}</table>`;}
+/* solubility table */
+const SCAT=[['H','H⁺'],['NH4','NH₄⁺'],['Li','Li⁺'],['Na','Na⁺'],['K','K⁺'],['Mg','Mg²⁺'],['Ca','Ca²⁺'],['Sr','Sr²⁺'],['Ba','Ba²⁺'],['Al','Al³⁺'],['Cr','Cr³⁺'],['Mn','Mn²⁺'],['Fe2','Fe²⁺'],['Fe3','Fe³⁺'],['Co','Co²⁺'],['Ni','Ni²⁺'],['Cu','Cu²⁺'],['Zn','Zn²⁺'],['Ag','Ag⁺'],['Hg','Hg²⁺'],['Sn','Sn²⁺'],['Pb','Pb²⁺']];
+const SAN=[['OH','OH⁻'],['F','F⁻'],['Cl','Cl⁻'],['Br','Br⁻'],['I','I⁻'],['S','S²⁻'],['SO3','SO₃²⁻'],['SO4','SO₄²⁻'],['NO3','NO₃⁻'],['PO4','PO₄³⁻'],['CO3','CO₃²⁻'],['SiO3','SiO₃²⁻'],['CH3COO','CH₃COO⁻']];
+function sol2(c,a){
+  const alk=['Li','Na','K','NH4'].includes(c),s=c.replace(/\d/g,'');
+  if(a==='NO3')return 'R';
+  if(c==='H'){if(a==='OH')return '-';if(a==='SiO3')return 'N';if(a==='S'||a==='SO3'||a==='CO3')return 'M';return 'R';}
+  if(alk){if(a==='F'&&c==='Li')return 'M';if(a==='PO4'&&c==='Li')return 'M';if(a==='CO3'&&c==='Li')return 'M';return 'R';}
+  if(a==='CH3COO')return c==='Ag'?'M':'R';
+  if(a==='OH'){if(c==='Ba')return 'R';if(c==='Ca'||c==='Sr')return 'M';if(c==='Ag'||c==='Hg')return '-';return 'N';}
+  if(['Cl','Br','I'].includes(a)){if(c==='Ag')return 'N';if(c==='Pb')return a==='I'?'N':'M';if(c==='Hg')return a==='Cl'?'R':a==='Br'?'M':'N';if(c==='Fe3'&&a==='I')return '-';if(c==='Cu'&&a==='I')return '-';return 'R';}
+  if(a==='F')return ['Mg','Ca','Sr','Ba','Pb'].includes(c)?'N':['Ag','Sn','Hg','Al','Fe3','Cr','Mn','Co','Ni','Cu','Zn','Fe2'].includes(c)?(c==='Ag'||c==='Sn'||c==='Hg'?'R':'M'):'R';
+  if(a==='S'){if(['Mg','Ca','Sr','Ba'].includes(c))return 'R';if(['Al','Cr','Fe3'].includes(c))return '-';return 'N';}
+  if(a==='SO3'){if(['Al','Cr','Fe3','Cu','Hg','Sn'].includes(c))return '-';return c==='Mg'?'M':'N';}
+  if(a==='SO4'){if(['Ba','Sr','Pb'].includes(c))return 'N';if(['Ca','Ag','Hg'].includes(c))return 'M';return 'R';}
+  if(a==='CO3'){if(['Al','Cr','Fe3','Sn','Cu','Hg'].includes(c))return '-';return 'N';}
+  if(a==='SiO3'){if(['Al','Cr','Fe3','Hg','Ag','Sn','Cu'].includes(c))return '-';return 'N';}
+  if(a==='PO4')return 'N';
+  return '?';}
+const SOLC={R:['ხ','#3a8a5a','ხსნადი'],M:['მ','#a8862a','მცირედ ხსნადი'],N:['უ','#8a3a4a','უხსნადი — ნალექი'],'-':['—','#3a3550','არ არსებობს ან წყალში იშლება']};
+function solTool(){
+  return `<div class="hint" style="margin-bottom:6px">${Object.values(SOLC).map(([l,c,n])=>`<i class="sw" style="background:${c}"></i><b>${l}</b> ${n}`).join(' · ')} · შეეხე უჯრას — ნაერთის ფორმულა.</div>
+  <div class="solw"><table class="sol"><tr><th></th>${SCAT.map(([,l])=>`<th>${l}</th>`).join('')}</tr>
+  ${SAN.map(([a,al])=>`<tr><th>${al}</th>${SCAT.map(([c])=>{const v=sol2(c,a),C=SOLC[v]||['?','#333'];return `<td style="background:${C[1]}" data-c="${c}" data-a="${a}">${C[0]}</td>`;}).join('')}</tr>`).join('')}</table></div><div id="solOut" class="hint" style="margin-top:6px"></div>`;}
+const QCAT={H:1,NH4:1,Li:1,Na:1,K:1,Mg:2,Ca:2,Sr:2,Ba:2,Al:3,Cr:3,Mn:2,Fe2:2,Fe3:3,Co:2,Ni:2,Cu:2,Zn:2,Ag:1,Hg:2,Sn:2,Pb:2},QAN={OH:1,F:1,Cl:1,Br:1,I:1,S:2,SO3:2,SO4:2,NO3:1,PO4:3,CO3:2,SiO3:2,CH3COO:1};
+function saltF(c,a){const q=QCAT[c],p=QAN[a],g=gcd(q,p),x=p/g,y=q/g,cs=c==='NH4'?'NH4':c.replace(/\d$/,''),poly=!['F','Cl','Br','I','S'].includes(a);
+  const cf=cs==='NH4'&&x>1?`(NH4)${x}`:cs+(x>1?x:''),af=y>1?(poly?`(${a})${y}`:a+y):a;return cf+af;}
+/* activity series */
+const ACT=['Li','K','Ba','Sr','Ca','Na','Mg','Al','Mn','Zn','Cr','Fe','Cd','Co','Ni','Sn','Pb','H','Cu','Hg','Ag','Pt','Au'];
+const AQ={Li:1,K:1,Ba:2,Sr:2,Ca:2,Na:1,Mg:2,Al:3,Mn:2,Zn:2,Cr:3,Fe:2,Cd:2,Co:2,Ni:2,Sn:2,Pb:2,Cu:2,Hg:2,Ag:1,Pt:2,Au:3};
+const nitr=s=>AQ[s]>1?`${s}(NO3)${AQ[s]}`:`${s}NO3`;
+function actTool(){
+  const zone=s=>{const i=ACT.indexOf(s);return i<=5?'w':i<=7?'h':i<ACT.indexOf('H')?'a':s==='H'?'H':'n';};
+  return `<div class="act">${ACT.map(s=>`<span class="ac ${zone(s)}" data-s="${s}">${s}</span>`).join('<i>›</i>')}</div>
+  <div class="hint" style="margin:6px 0"><span class="ac w">■</span> ცივ წყალთანაც რეაგირებს · <span class="ac h">■</span> ცხელ წყალთან/ორთქლთან · <span class="ac a">■</span> მჟავებიდან წყალბადს აძევებს · <span class="ac n">■</span> წყალბადის შემდეგ — განზავებული მჟავები ვერ ხსნის. მარცხნივ მდგომი ლითონი მარჯვნივ მდგომს მარილიდან აძევებს.</div>
+  <div class="tl-row"><label>ლითონი <select id="acA">${ACT.filter(s=>s!=='H').map(s=>`<option${s==='Zn'?' selected':''}>${s}</option>`).join('')}</select></label>
+   <label>+ მარილი/მჟავა <select id="acB">${ACT.map(s=>`<option${s==='Cu'?' selected':''} value="${s}">${s==='H'?'HCl (მჟავა)':nitr(s)}</option>`).join('')}</select></label></div><div id="acOut"></div>`;}
+function actRun(){const A=$('acA').value,B=$('acB').value,out=$('acOut'),ia=ACT.indexOf(A),ib=ACT.indexOf(B);
+  if(A===B){out.innerHTML='<div class="hint">ერთი და იგივე ლითონი — რეაქცია არ არის.</div>';return;}
+  if(ia>ib){out.innerHTML=`<div class="terr">✕ რეაქცია არ მიმდინარეობს: ${A} აქტივობის რიგში ${B==='H'?'წყალბადის':B+'-ის'} შემდეგ დგას — ${B==='H'?'მჟავიდან წყალბადს ვერ აძევებს.':'უფრო ნაკლებად აქტიურია.'}</div>`;return;}
+  let s=B==='H'?`${A} + HCl = ${AQ[A]>1?A+'Cl'+AQ[A]:A+'Cl'} + H2`:`${A} + ${nitr(B)} = ${nitr(A)} + ${B}`,eq;
+  try{const r=balanceEq(s);eq=r.sp.slice(0,r.nl).map((f,i)=>coefTxt(r.k[i],f)).join(' + ')+' → '+r.sp.slice(r.nl).map((f,i)=>coefTxt(r.k[r.nl+i],f)).join(' + ');}catch(e){eq=s;}
+  const ws=ia<=5?` ${A} ისე აქტიურია, რომ ხსნარში ჯერ წყალთან რეაგირებს (${A} + H2O → ჰიდროქსიდი + H2) — ლითონის გამოყოფა პრაქტიკულად არ ხდება.`:'';
+  out.innerHTML=`<div class="eq big">${eqFmt(eq+(B==='H'?'↑':''))}</div><div class="hint">${A} აქტიურია ${B==='H'?'წყალბადზე':B+'-ზე'}: ელექტრონებს გასცემს (იჟანგება ${A}⁰ → ${A}${AQ[A]>1?SUPN(AQ[A]):''}⁺), ${B==='H'?'H⁺ აღდგება H₂-მდე':B+' კი აღდგება ლითონამდე'}.${ws}</div>`;}
+const TOOLS=[['eq','⚖ განტოლება და სტექიომეტრია',eqTool,eqRun],['mm','🧮 მოლური მასა',mmTool,mmRun],['ox','± ჟანგვის ხარისხი',oxTool,oxRun],['sol','💧 ხსნადობის ცხრილი',solTool,null],['act','⚡ ლითონების აქტივობის რიგი',actTool,actRun]];
+let TOOL='eq';
+function drawTools(){const box=$('tools');if(!box)return;const T=TOOLS.find(t=>t[0]===TOOL);
+  box.innerHTML=`<h3>🔬 ქიმიის ინსტრუმენტები</h3><div class="ttabs">${TOOLS.map(([k,n])=>`<button data-t="${k}" class="${k===TOOL?'on':''}">${n}</button>`).join('')}</div><div class="tbody">${T[2]()}</div>`;
+  box.querySelectorAll('.ttabs button').forEach(b=>b.onclick=()=>{TOOL=b.dataset.t;drawTools();});
+  const run=T[3];
+  if(TOOL==='eq'){$('eqGo').onclick=run;$('eqIn').onkeydown=e=>{if(e.key==='Enter')run();};box.querySelectorAll('.ex button').forEach(b=>b.onclick=()=>{$('eqIn').value=b.textContent;run();});}
+  if(TOOL==='mm'){$('mmIn').oninput=run;box.querySelectorAll('.ex button').forEach(b=>b.onclick=()=>{$('mmIn').value=b.textContent;run();});}
+  if(TOOL==='ox'){$('oxIn').oninput=run;$('oxQ').oninput=run;box.querySelectorAll('.ex button').forEach(b=>b.onclick=()=>{$('oxIn').value=b.textContent.replace(/[⁺²⁻]/g,'');$('oxQ').value=b.dataset.q;run();});}
+  if(TOOL==='act'){$('acA').onchange=run;$('acB').onchange=run;box.querySelectorAll('.act .ac').forEach(s=>s.onclick=()=>{const v=s.dataset.s;if(v!=='H'&&BY[v])showInfo(BY[v].z);});}
+  if(TOOL==='sol')box.querySelectorAll('.sol td').forEach(td=>td.onclick=()=>{const c=td.dataset.c,a=td.dataset.a,v=sol2(c,a),f=saltF(c,a);
+    $('solOut').innerHTML=v==='-'?`${esc(f)} — წყალხსნარში არ არსებობს (ჰიდროლიზდება ან იშლება).`:`<b class="cf" style="color:var(--gold-lt);font-size:15px">${fmt(f)}</b> — ${SOLC[v][2]}${v==='N'?' · ხსნარების შერევისას ნალექად გამოიყოფა':''}.`;});
+  if(run)run();
+}
+
 /* tooltip */
 pt.addEventListener('mousemove',ev=>{const el=ev.target.closest('.el');const tip=$('tip');if(!el||DRAG){tip.style.display='none';return;}const e=EL[+el.dataset.z];
   tip.innerHTML=`<b>${e.z} ${e.sym} — ${esc(e.ka)}</b><br>${CATN[e.cat]} · ${e.m}<br><span class="cf">${cfgText(e.z)}</span>`;tip.style.display='block';tip.style.left=Math.min(innerWidth-250,ev.clientX+14)+'px';tip.style.top=(ev.clientY+14)+'px';});
 pt.addEventListener('mouseleave',()=>{$('tip').style.display='none';});
-drawTable();drawSlots();
+viewInit();drawTable();drawSlots();drawTools();
 </script>
 </body>
 </html>
