@@ -272,6 +272,7 @@ input::placeholder{color:rgba(155,168,184,.35)}
   <div class="tithi-info" id="tithiInfo"></div>
 </div>
 
+<script src="articles.js"></script>
 <script>
 const BACKEND = 'https://astrology-production-b165.up.railway.app';
 
@@ -413,6 +414,12 @@ async function calculate() {
   }
 }
 
+if (window.ART) ART.load('lunar').then(() => { if (window._lastMoon) renderLunarText(window._lastMoon); });
+function renderLunarText(d) {
+    const ld = (d.tithi != null) ? d.tithi : d.lunar_day, t = MOON_DAYS[ld], a = ART.get('lunar', 'day:' + ld);
+    if (a && a.t) document.getElementById('lunarDayTitle').textContent = a.t;
+    if (a && a.h) document.getElementById('tithiInfo').innerHTML = a.h;
+}
 function renderMoon(d) {
     document.getElementById('moonEmoji').textContent   = d.emoji;
     document.getElementById('moonPhase').textContent   = PHASES_KA[d.phase] || d.phase;
@@ -422,9 +429,11 @@ function renderMoon(d) {
     document.getElementById('lunarDayNum').textContent = ld || '—';
 
     // Moon day name (symbol) + info, from the MOON_DAYS table
-    const t = MOON_DAYS[ld];
-    document.getElementById('lunarDayTitle').textContent = t ? t.name : '—';
-    document.getElementById('tithiInfo').innerHTML       = (t && t.info) ? t.info : '';
+    // admin-panel texts (admin_articles.html → ☽ მთვარის დღეები) override the built-in table
+    const t = MOON_DAYS[ld], a = window.ART ? ART.get('lunar', 'day:' + ld) : null;
+    document.getElementById('lunarDayTitle').textContent = (a && a.t) || (t ? t.name : '—');
+    document.getElementById('tithiInfo').innerHTML       = (a && a.h) || ((t && t.info) ? t.info : '');
+    window._lastMoon = d;
 
     // ── ZET-style percent complete + progress bar ──
     if (d.tithi_pct != null) {

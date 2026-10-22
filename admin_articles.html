@@ -190,7 +190,14 @@ function catHD(){
   for(const [k,[n,list]] of Object.entries(VAR))g.push({id:k,label:n,items:list.map(([c,l])=>({key:`${k}:${c}`,label:l}))});
   return g;
 }
-const SYS=[['matrix','✦ ბედის მატრიცა',catMatrix],['pyth','▦ პითაგორა',catPyth],['astro','♈ ასტროლოგია',catAstro],['hd','◬ ადამიანის დიზაინი',catHD]];
+/* lunar days (moon.html) — titles as in MOON_DAYS there */
+const MOON_NAMES={1:"ლამპარი",2:"უხვობის რქა",3:"ლეოპარდი",4:"შემეცნების ხე",5:"ერთრქა",6:"წერო",7:"ქარის ვარდი",8:"ფენიქსი",9:"ღამურა",10:"შადრევანი",11:"გვირგვინი",12:"გული",13:"ბორბალი",14:"საყვირი",15:"გველი",16:"პეპელა",17:"ზარი",18:"სარკე",19:"ობობა",20:"არწივი",21:"ცხენი",22:"სპილო",23:"ნიანგი",24:"დათვი",25:"კუ",26:"გომბეშო",27:"სამკაპი",28:"ლოტოსი",29:"რვაფეხა",30:"ოქროს გედი"};
+function catLunar(){
+  const d=n=>({key:`day:${n}`,label:`${n} — ${MOON_NAMES[n]}`,file:{title:MOON_NAMES[n],text:''}});
+  return [{id:'days1',label:'მთვარის დღეები 1–15 (მზარდი)',items:Array.from({length:15},(_,i)=>d(i+1))},
+          {id:'days2',label:'მთვარის დღეები 16–30 (კლებადი)',items:Array.from({length:15},(_,i)=>d(i+16))}];
+}
+const SYS=[['matrix','✦ ბედის მატრიცა',catMatrix],['pyth','▦ პითაგორა',catPyth],['astro','♈ ასტროლოგია',catAstro],['hd','◬ ადამიანის დიზაინი',catHD],['lunar','☽ მთვარის დღეები',catLunar]];
 
 /* ═══════════ state ═══════════ */
 let SYSID='matrix',CAT=[],DATA={},GI=0,SEL=null,FLT='all',DIRTY=false,COUNTS={};
