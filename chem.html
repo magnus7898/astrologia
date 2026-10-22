@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ქიმიის ლაბორატორია · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<style>
+:root{--glow:rgba(224,160,48,.12);--c-alkali:#e0605a;--c-alkaline:#e8975a;--c-transition:#c9a84c;--c-post:#7fb0a0;--c-metalloid:#5fb8c8;--c-nonmetal:#6fcf8a;--c-halogen:#b7d85c;--c-noble:#9a84e0;--c-lanthanide:#e07ab0;--c-actinide:#c06ad0;--c-unknown:#6d6253}
+.page{max-width:1100px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2.5px;color:var(--gold);margin-bottom:8px;text-transform:uppercase}
+.hint{font-size:11.5px;color:var(--ink-dim);line-height:1.6}
+/* periodic table */
+#pt{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:2px;user-select:none;-webkit-user-select:none}
+.el{position:relative;aspect-ratio:1/1.12;border-radius:4px;border:1px solid rgba(255,255,255,.08);background:color-mix(in srgb,var(--cc) 22%,#0e0b1a);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:grab;touch-action:none;overflow:hidden;transition:transform .08s}
+.el:hover{transform:scale(1.12);z-index:3;border-color:var(--cc)}
+.el .z{position:absolute;top:1px;left:3px;font-size:clamp(5px,.75vw,9px);color:rgba(255,255,255,.55)}
+.el .s{font-family:'Cinzel',serif;font-weight:600;font-size:clamp(8px,1.45vw,17px);color:#fff;line-height:1}
+.el .n{font-size:clamp(4px,.62vw,8px);color:rgba(255,255,255,.65);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;padding:0 1px}
+.el.dim{opacity:.25}.el.sel{outline:2px solid #fff;outline-offset:1px}
+.gap{grid-column:span 1}
+.legend{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:11px;color:var(--ink-mid)}
+.legend span{display:inline-flex;align-items:center;gap:4px;cursor:pointer}.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend span.off{opacity:.35}
+.ghost{position:fixed;pointer-events:none;z-index:99;width:54px;height:60px;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-weight:600;font-size:22px;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.6);transform:translate(-50%,-60%)}
+/* reactor */
+.reactor{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:14px 8px}
+.slot{width:104px;height:116px;border:2px dashed var(--border-h);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  color:var(--ink-dim);font-size:11.5px;text-align:center;transition:all .15s;background:rgba(255,255,255,.02)}
+.slot.over{border-color:var(--gold-lt);background:rgba(201,168,76,.12);transform:scale(1.05)}
+.slot.full{border-style:solid;background:color-mix(in srgb,var(--cc) 25%,#0e0b1a);border-color:var(--cc);color:#fff;cursor:pointer}
+.slot .S{font-family:'Cinzel',serif;font-size:34px;font-weight:600;line-height:1}.slot .Z{font-size:10px;opacity:.7}.slot .N{font-size:12px}
+.plus{font-family:'Cinzel',serif;font-size:28px;color:var(--gold)}
+.rbtns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.rbtns button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:4px 12px;font:inherit;font-size:12px;cursor:pointer}
+.rbtns button:hover{border-color:var(--border-h);color:var(--gold-lt)}
+#out{display:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.card2{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:rgba(0,0,0,.18)}
+.card2 .hd{display:flex;align-items:center;gap:10px}
+.card2 .big{font-family:'Cinzel',serif;font-size:30px;font-weight:600;width:52px;height:56px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;background:color-mix(in srgb,var(--cc) 35%,#0e0b1a);border:1px solid var(--cc)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:12.5px;margin-top:8px}.kv b{color:var(--ink-dim);font-weight:400}
+.cf{font-family:'Cinzel',serif;letter-spacing:.5px}
+.bond{font-size:13.5px;line-height:1.7;padding:8px 12px;border-radius:8px;background:rgba(201,168,76,.07);border:1px solid var(--border)}
+.bond b{color:var(--gold-lt)}
+.cmp{border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-top:10px;background:rgba(0,0,0,.15)}
+.cmp .f{font-family:'Cinzel',serif;font-size:24px;color:var(--gold-lt)}
+.cmp .nm{font-size:14px;color:var(--ink);margin-left:8px}
+.cmp .eq{font-family:'Cinzel',serif;font-size:15px;color:#e8e0cc;margin:6px 0;letter-spacing:.3px}
+.cmp .meta{font-size:12px;color:var(--ink-mid);line-height:1.6}
+.tag{display:inline-block;font-size:10.5px;padding:1px 8px;border-radius:9px;border:1px solid;margin:2px 4px 2px 0}
+.tag.r{color:#7fd8a8;border-color:rgba(127,216,168,.5)}.tag.p{color:#e8c95a;border-color:rgba(232,201,90,.5)}.tag.w{color:#f08a6a;border-color:rgba(240,138,106,.5)}
+.tag.t{color:var(--ink-mid);border-color:var(--border)}
+.mol{display:flex;justify-content:center;margin-top:6px}.mol svg{max-width:100%;height:auto}
+.anim{display:flex;justify-content:center}
+.chain .ctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:8px}
+.chain .ctl button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:4px 11px;font:inherit;font-size:12px;cursor:pointer}
+.chain .ctl button.on{background:rgba(201,168,76,.16);border-color:var(--gold);color:var(--gold-lt)}
+.chain input[type=range]{accent-color:var(--gold);width:200px}
+#tip{position:fixed;z-index:50;pointer-events:none;background:#141022;border:1px solid var(--border-h);border-radius:8px;padding:6px 9px;font-size:12px;display:none;max-width:240px}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <a class="back" href="games.html">← თამაშები</a>
+  <div class="cellno">3</div>
+  <h1>ქიმიის ლაბორატორია</h1>
+  <div class="sub">მენდელეევის ცხრილი · რეაქციები · მოლეკულები · ჯაჭვები</div>
+</header>
+
+<div class="panel">
+  <div id="pt" aria-label="ელემენტების პერიოდული ცხრილი"></div>
+  <div class="legend" id="legend"></div>
+  <div class="hint" style="margin-top:6px">გადაათრიე ელემენტი ქვემოთ რეაქტორში (ან უბრალოდ შეეხე). კატეგორიაზე დაჭერა ცხრილში მას გამოყოფს.</div>
+</div>
+
+<div class="panel">
+  <h3>⚗ რეაქტორი</h3>
+  <div class="reactor"><div class="slot" id="sA" data-s="0">ჩააგდე<br>ელემენტი</div><div class="plus">+</div><div class="slot" id="sB" data-s="1">ჩააგდე<br>ელემენტი</div></div>
+  <div class="rbtns"><button id="swap" type="button">⇄ გაცვლა</button><button id="clr" type="button">✕ გასუფთავება</button><button id="rnd" type="button">🎲 შემთხვევითი წყვილი</button></div>
+</div>
+
+<div id="out"></div>
+</div>
+<div id="tip"></div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* ═══════════ elements: Z, symbol, Georgian name, mass, Pauling EN, common oxidation states, state at 20 °C ═══════════ */
+const RAW=`H წყალბადი 1.008 2.20 +1,-1 g|He ჰელიუმი 4.0026 - 0 g|Li ლითიუმი 6.94 0.98 +1 s|Be ბერილიუმი 9.0122 1.57 +2 s|B ბორი 10.81 2.04 +3 s|C ნახშირბადი 12.011 2.55 +4,+2,-4 s|N აზოტი 14.007 3.04 -3,+5,+4,+3,+2,+1 g|O ჟანგბადი 15.999 3.44 -2 g|F ფთორი 18.998 3.98 -1 g|Ne ნეონი 20.180 - 0 g|
+Na ნატრიუმი 22.990 0.93 +1 s|Mg მაგნიუმი 24.305 1.31 +2 s|Al ალუმინი 26.982 1.61 +3 s|Si სილიციუმი 28.085 1.90 +4,-4 s|P ფოსფორი 30.974 2.19 +5,+3,-3 s|S გოგირდი 32.06 2.58 -2,+6,+4 s|Cl ქლორი 35.45 3.16 -1,+1,+3,+5,+7 g|Ar არგონი 39.948 - 0 g|
+K კალიუმი 39.098 0.82 +1 s|Ca კალციუმი 40.078 1.00 +2 s|Sc სკანდიუმი 44.956 1.36 +3 s|Ti ტიტანი 47.867 1.54 +4,+3 s|V ვანადიუმი 50.942 1.63 +5,+4,+3,+2 s|Cr ქრომი 51.996 1.66 +3,+6,+2 s|Mn მანგანუმი 54.938 1.55 +2,+4,+7 s|Fe რკინა 55.845 1.83 +3,+2 s|Co კობალტი 58.933 1.88 +2,+3 s|Ni ნიკელი 58.693 1.91 +2 s|Cu სპილენძი 63.546 1.90 +2,+1 s|Zn თუთია 65.38 1.65 +2 s|Ga გალიუმი 69.723 1.81 +3 s|Ge გერმანიუმი 72.630 2.01 +4,+2 s|As დარიშხანი 74.922 2.18 +3,+5,-3 s|Se სელენი 78.971 2.55 -2,+4,+6 s|Br ბრომი 79.904 2.96 -1,+1,+5 l|Kr კრიპტონი 83.798 3.00 0,+2 g|
+Rb რუბიდიუმი 85.468 0.82 +1 s|Sr სტრონციუმი 87.62 0.95 +2 s|Y იტრიუმი 88.906 1.22 +3 s|Zr ცირკონიუმი 91.224 1.33 +4 s|Nb ნიობიუმი 92.906 1.6 +5,+3 s|Mo მოლიბდენი 95.95 2.16 +6,+4 s|Tc ტექნეციუმი 98 1.9 +7,+4 s|Ru რუთენიუმი 101.07 2.2 +3,+4 s|Rh როდიუმი 102.91 2.28 +3 s|Pd პალადიუმი 106.42 2.20 +2,+4 s|Ag ვერცხლი 107.87 1.93 +1 s|Cd კადმიუმი 112.41 1.69 +2 s|In ინდიუმი 114.82 1.78 +3 s|Sn კალა 118.71 1.96 +4,+2 s|Sb სტიბიუმი 121.76 2.05 +3,+5,-3 s|Te ტელური 127.60 2.1 -2,+4,+6 s|I იოდი 126.90 2.66 -1,+1,+5,+7 s|Xe ქსენონი 131.29 2.6 0,+2,+4,+6 g|
+Cs ცეზიუმი 132.91 0.79 +1 s|Ba ბარიუმი 137.33 0.89 +2 s|La ლანთანი 138.91 1.10 +3 s|Ce ცერიუმი 140.12 1.12 +3,+4 s|Pr პრაზეოდიმი 140.91 1.13 +3 s|Nd ნეოდიმი 144.24 1.14 +3 s|Pm პრომეთიუმი 145 1.13 +3 s|Sm სამარიუმი 150.36 1.17 +3,+2 s|Eu ევროპიუმი 151.96 1.2 +3,+2 s|Gd გადოლინიუმი 157.25 1.2 +3 s|Tb ტერბიუმი 158.93 1.1 +3 s|Dy დისპროზიუმი 162.50 1.22 +3 s|Ho ჰოლმიუმი 164.93 1.23 +3 s|Er ერბიუმი 167.26 1.24 +3 s|Tm თულიუმი 168.93 1.25 +3 s|Yb იტერბიუმი 173.05 1.1 +3,+2 s|Lu ლუტეციუმი 174.97 1.27 +3 s|Hf ჰაფნიუმი 178.49 1.3 +4 s|Ta ტანტალი 180.95 1.5 +5 s|W ვოლფრამი 183.84 2.36 +6,+4 s|Re რენიუმი 186.21 1.9 +7,+4 s|Os ოსმიუმი 190.23 2.2 +4,+8 s|Ir ირიდიუმი 192.22 2.20 +3,+4 s|Pt პლატინა 195.08 2.28 +2,+4 s|Au ოქრო 196.97 2.54 +3,+1 s|Hg ვერცხლისწყალი 200.59 2.00 +2,+1 l|Tl თალიუმი 204.38 1.62 +1,+3 s|Pb ტყვია 207.2 2.33 +2,+4 s|Bi ბისმუტი 208.98 2.02 +3 s|Po პოლონიუმი 209 2.0 +4,+2 s|At ასტატი 210 2.2 -1,+1 s|Rn რადონი 222 2.2 0,+2 g|
+Fr ფრანციუმი 223 0.7 +1 s|Ra რადიუმი 226 0.9 +2 s|Ac აქტინიუმი 227 1.1 +3 s|Th თორიუმი 232.04 1.3 +4 s|Pa პროტაქტინიუმი 231.04 1.5 +5 s|U ურანი 238.03 1.38 +6,+4 s|Np ნეპტუნიუმი 237 1.36 +5 s|Pu პლუტონიუმი 244 1.28 +4 s|Am ამერიციუმი 243 1.13 +3 s|Cm კიურიუმი 247 1.28 +3 s|Bk ბერკლიუმი 247 1.3 +3 s|Cf კალიფორნიუმი 251 1.3 +3 s|Es აინშტაინიუმი 252 1.3 +3 s|Fm ფერმიუმი 257 1.3 +3 s|Md მენდელევიუმი 258 1.3 +3 s|No ნობელიუმი 259 1.3 +2 s|Lr ლოურენსიუმი 266 1.3 +3 s|
+Rf რეზერფორდიუმი 267 - +4 ?|Db დუბნიუმი 268 - +5 ?|Sg სიბორგიუმი 269 - +6 ?|Bh ბორიუმი 270 - +7 ?|Hs ჰასიუმი 277 - +8 ?|Mt მეიტნერიუმი 278 - - ?|Ds დარმშტადტიუმი 281 - - ?|Rg რენტგენიუმი 282 - - ?|Cn კოპერნიციუმი 285 - - ?|Nh ნიჰონიუმი 286 - - ?|Fl ფლეროვიუმი 289 - - ?|Mc მოსკოვიუმი 290 - - ?|Lv ლივერმორიუმი 293 - - ?|Ts ტენესინი 294 - - ?|Og ოგანესონი 294 - - ?`;
+const EL=[null];
+RAW.split('|').map(s=>s.trim()).filter(Boolean).forEach((s,i)=>{const [sym,ka,m,en,ox,st]=s.split(' ');
+  EL.push({z:i+1,sym,ka,m:+m,en:en==='-'?null:+en,ox:ox==='-'?[]:ox.split(',').map(Number),st});});
+const BY={};EL.slice(1).forEach(e=>BY[e.sym]=e);
+const CAT=z=>[3,11,19,37,55,87].includes(z)?'alkali':[4,12,20,38,56,88].includes(z)?'alkaline':z>=57&&z<=71?'lanthanide':z>=89&&z<=103?'actinide':
+  [2,10,18,36,54,86,118].includes(z)?'noble':[9,17,35,53,85,117].includes(z)?'halogen':[1,6,7,8,15,16,34].includes(z)?'nonmetal':[5,14,32,33,51,52].includes(z)?'metalloid':
+  [13,31,49,50,81,82,83,84,113,114,115,116].includes(z)?'post':(z>=21&&z<=30)||(z>=39&&z<=48)||(z>=72&&z<=80)||(z>=104&&z<=112)?'transition':'unknown';
+const CATN={alkali:'ტუტე ლითონები',alkaline:'ტუტემიწა ლითონები',transition:'გარდამავალი ლითონები',post:'სხვა ლითონები',metalloid:'ნახევრადლითონები',nonmetal:'არალითონები',
+  halogen:'ჰალოგენები',noble:'ინერტული აირები',lanthanide:'ლანთანოიდები',actinide:'აქტინოიდები',unknown:'უცნობი თვისებები'};
+const METAL=c=>['alkali','alkaline','transition','post','lanthanide','actinide'].includes(c);
+EL.slice(1).forEach(e=>{e.cat=CAT(e.z);e.metal=METAL(e.cat);e.radio=e.z===43||e.z===61||e.z>=84;e.synth=e.z>=99;});
+/* position in the table */
+function pos(z){
+  if(z>=57&&z<=71)return [z-57+3,9];if(z>=89&&z<=103)return [z-89+3,10];
+  const P=[[1,2],[3,10],[11,18],[19,36],[37,54],[55,86],[87,118]];let p=P.findIndex(([a,b])=>z>=a&&z<=b),st=P[p][0],i=z-st;
+  if(p===0)return [z===1?1:18,1];
+  if(p<=2)return [i<2?i+1:i+11,p+1];
+  if(p<=4)return [i+1,p+1];
+  /* periods 6, 7: La/Ac rows taken out */
+  if(i<2)return [i+1,p+1];return [i-14+1,p+1];
+}
+/* electron configuration (Madelung order + the known exceptions) */
+const ORB=['1s','2s','2p','3s','3p','4s','3d','4p','5s','4d','5p','6s','4f','5d','6p','7s','5f','6d','7p'],CAP={s:2,p:6,d:10,f:14};
+const EXC={24:{'4s':1,'3d':5},29:{'4s':1,'3d':10},41:{'5s':1,'4d':4},42:{'5s':1,'4d':5},44:{'5s':1,'4d':7},45:{'5s':1,'4d':8},46:{'5s':0,'4d':10},47:{'5s':1,'4d':10},
+  57:{'4f':0,'5d':1},58:{'4f':1,'5d':1},64:{'4f':7,'5d':1},78:{'6s':1,'5d':9},79:{'6s':1,'5d':10},89:{'5f':0,'6d':1},90:{'5f':0,'6d':2},91:{'5f':2,'6d':1},92:{'5f':3,'6d':1},93:{'5f':4,'6d':1},96:{'5f':7,'6d':1}};
+function config(z){const o={};let n=z;for(const s of ORB){const c=Math.min(n,CAP[s[1]]);if(c>0)o[s]=c;n-=c;if(n<=0)break;}
+  if(EXC[z]){for(const k in EXC[z])o[k]=EXC[z][k];let tot=Object.values(o).reduce((a,b)=>a+b,0);/* rebalance onto last ns */ if(tot!==z){}}
+  return o;}
+const SUP='⁰¹²³⁴⁵⁶⁷⁸⁹',SUB='₀₁₂₃₄₅₆₇₈₉';const sup=n=>String(n).split('').map(c=>SUP[c]).join(''),sub=s=>String(s).replace(/\d/g,d=>SUB[d]);
+function cfgText(z){const o=config(z),nob=[2,10,18,36,54,86].filter(x=>x<z).pop();let pre='',skip=new Set();
+  if(nob){pre=`[${EL[nob].sym}] `;Object.keys(config(nob)).forEach(k=>skip.add(k));}
+  return pre+ORB.filter(k=>o[k]&&!(skip.has(k)&&o[k]===config(nob)[k])).map(k=>k+sup(o[k])).join(' ');}
+function shells(z){const o=config(z),sh=[];for(const k in o){const n=+k[0];sh[n-1]=(sh[n-1]||0)+o[k];}const a=Array.from(sh,x=>x||0);while(a.length>1&&!a[a.length-1])a.pop();return a;}
+const valence=e=>{const s=shells(e.z);return s[s.length-1];};
+
+/* ═══════════ curated reactions (real compounds; key: symbols sorted by Z) ═══════════
+   [formula, Georgian name, equation, note, flags]   flags: d=dangerous/toxic, b=bond order override 'A-B:n', g=structure id */
+const R={
+ 'H|H':[['H2','წყალბადის მოლეკულა','H + H → H2','ყველაზე მარტივი მოლეკულა: ორ ატომს ერთი საერთო ელექტრონული წყვილი აქვს.']],
+ 'H|C':[['CH4','მეთანი','C + 2H2 → CH4','ბუნებრივი აირის ძირითადი ნაწილი. ნახშირბადისა და წყალბადის უსასრულო ჯაჭვები — ქვემოთ.','chain']],
+ 'H|N':[['NH3','ამიაკი','N2 + 3H2 ⇌ 2NH3','ჰაბერ-ბოშის პროცესი: რკინის კატალიზატორი, ≈450 °C, ≈200 ატმ. სასუქების საფუძველი.'],['N2H4','ჰიდრაზინი','2NH3 + [O] → N2H4 + H2O','ძლიერ ტოქსიკური, სარაკეტო საწვავი.','d','hydrazine']],
+ 'H|O':[['H2O','წყალი','2H2 + O2 → 2H2O','ძლიერ ეგზოთერმული — წყალბად-ჟანგბადის ნარევი ფეთქებადია („მგრგვინავი აირი“).'],['H2O2','წყალბადის ზეჟანგი','H2 + O2 → H2O2 (კატალიზატორზე)','ჟანგვის ძლიერი აგენტი; სუსტი ხსნარი — ანტისეპტიკი.','','peroxide']],
+ 'H|F':[['HF','წყალბადის ფტორიდი','H2 + F2 → 2HF','ფეთქებადი რეაქცია სიბნელეშიც. ხსნარი მინას ჭამს.','d']],
+ 'H|Na':[['NaH','ნატრიუმის ჰიდრიდი','2Na + H2 → 2NaH','იონური ჰიდრიდი: H⁻ იონი.']],
+ 'H|Si':[['SiH4','სილანი','Si + 2H2 → SiH4 (არაპირდაპირი გზით)','ჰაერზე თვითაალდება. სილიციუმის ჯაჭვები — ქვემოთ.','chain']],
+ 'H|P':[['PH3','ფოსფინი','2P + 3H2 → 2PH3','ძლიერ ტოქსიკური აირი.','d']],
+ 'H|S':[['H2S','გოგირდწყალბადი','H2 + S → H2S','ლაყე კვერცხის სუნი, ტოქსიკური.','d']],
+ 'H|Cl':[['HCl','წყალბადის ქლორიდი','H2 + Cl2 → 2HCl (სინათლეზე)','წყალში — მარილმჟავა (კუჭის წვენშიც არის).']],
+ 'H|Br':[['HBr','წყალბადის ბრომიდი','H2 + Br2 → 2HBr']],
+ 'H|I':[['HI','წყალბადის იოდიდი','H2 + I2 ⇌ 2HI','შექცევადი რეაქცია — კლასიკური ქიმიური წონასწორობა.']],
+ 'Li|H':[['LiH','ლითიუმის ჰიდრიდი','2Li + H2 → 2LiH']],
+ 'H|Ca':[['CaH2','კალციუმის ჰიდრიდი','Ca + H2 → CaH2']],
+ 'B|H':[['B2H6','დიბორანი','2B + 3H2 → B2H6 (არაპირდაპირი გზით)','„სამცენტრიანი“ ბმები — ორი H ხიდი ბორის ატომებს შორის.','d']],
+ 'C|C':[['C','ალმასი','—','ყოველი C ოთხ C-სთან — სამგანზომილებიანი ბადე; უმაგრესი ბუნებრივი ნივთიერება.'],['C','გრაფიტი','—','ექვსკუთხა ფენები; ფენებს შორის სუსტი ბმა — ფანქრის გული.'],['C60','ფულერენი','—','„ფეხბურთის ბურთი“ — 60 ატომი, 12 ხუთკუთხედი და 20 ექვსკუთხედი.']],
+ 'N|N':[['N2','აზოტის მოლეკულა','N + N → N2','სამმაგი ბმა — ერთ-ერთი უძლიერესი; ჰაერის 78%.']],
+ 'O|O':[['O2','ჟანგბადი','O + O → O2','ორმაგი ბმა; ჰაერის 21%.'],['O3','ოზონი','3O2 → 2O3 (ელვა, ულტრაიისფერი)','ოზონის შრე ულტრაიისფერისგან გვიცავს.','','ozone']],
+ 'F|F':[['F2','ფთორი','F + F → F2','ყველაზე აქტიური ელემენტი.','d']],
+ 'Cl|Cl':[['Cl2','ქლორი','Cl + Cl → Cl2','მომწვანო-ყვითელი ტოქსიკური აირი.','d']],
+ 'Br|Br':[['Br2','ბრომი','Br + Br → Br2','ერთადერთი თხევადი არალითონი.']],
+ 'I|I':[['I2','იოდი','I + I → I2','გაცხელებით ისფერ ორთქლად აქროლდება (სუბლიმაცია).']],
+ 'P|P':[['P4','თეთრი ფოსფორი','4P → P4','ოთხწახნაგა მოლეკულა; ჰაერზე ანათებს და თვითაალდება.','d']],
+ 'S|S':[['S8','გოგირდის რგოლი','8S → S8','რვაწევრიანი „გვირგვინის“ რგოლი.']],
+ 'C|N':[['C2N2','ციანოგენი','2C + N2 → C2N2 (ძალიან მაღალ ტემპერატურაზე)','ძლიერ ტოქსიკური.','d']],
+ 'C|O':[['CO2','ნახშირორჟანგი','C + O2 → CO2','წვის პროდუქტი; მცენარეები ფოტოსინთეზში შთანთქავენ.'],['CO','ნახშირჟანგი (მხუთავი აირი)','2C + O2 → 2CO (ჟანგბადის ნაკლებობისას)','უფერო, უსუნო, ძლიერ ტოქსიკური.','d b:C-O:3']],
+ 'C|F':[['CF4','ნახშირბადის ტეტრაფტორიდი','C + 2F2 → CF4'],['C2F4','ტეტრაფტორეთილენი','—','ტეფლონის (PTFE) მონომერი.']],
+ 'C|S':[['CS2','ნახშირბადის დისულფიდი','C + 2S → CS2 (≈900 °C)','აქროლადი, ადვილად აალებადი.','d']],
+ 'C|Cl':[['CCl4','ნახშირბადის ტეტრაქლორიდი','CH4 + 4Cl2 → CCl4 + 4HCl','ძველი გამხსნელი, ტოქსიკური.','d']],
+ 'C|Si':[['SiC','სილიციუმის კარბიდი (კარბორუნდი)','Si + C → SiC (≈2000 °C)','ალმასის მსგავსი სიმაგრე — აბრაზივი.']],
+ 'C|Ca':[['CaC2','კალციუმის კარბიდი','CaO + 3C → CaC2 + CO','წყალთან აცეტილენს (C2H2) იძლევა.']],
+ 'C|Fe':[['Fe3C','ცემენტიტი','3Fe + C → Fe3C','ფოლადი და თუჯი = რკინა + ნახშირბადი: ცემენტიტი მათ სიმაგრეს აძლევს.']],
+ 'C|W':[['WC','ვოლფრამის კარბიდი','W + C → WC','საჭრელი იარაღების მასალა.']],
+ 'N|O':[['NO','აზოტის მონოქსიდი','N2 + O2 → 2NO (ელვა, ≈3000 °C)','ორგანიზმში სასიგნალო მოლეკულაა.'],['NO2','აზოტის დიოქსიდი','2NO + O2 → 2NO2','მურა, ტოქსიკური აირი — სმოგის ნაწილი.','d'],['N2O','აზოტის ქვეჟანგი („სიცილის აირი“)','NH4NO3 → N2O + 2H2O (გაცხელებით)','ანესთეზიაში გამოიყენება.']],
+ 'N|F':[['NF3','აზოტის ტრიფტორიდი','N2 + 3F2 → 2NF3']],
+ 'Li|N':[['Li3N','ლითიუმის ნიტრიდი','6Li + N2 → 2Li3N','ლითიუმი აზოტთან ოთახის ტემპერატურაზეც რეაგირებს — იშვიათობაა.']],
+ 'N|Mg':[['Mg3N2','მაგნიუმის ნიტრიდი','3Mg + N2 → Mg3N2 (ჰაერზე წვისას)']],
+ 'B|N':[['BN','ბორის ნიტრიდი','2B + N2 → 2BN','გრაფიტისა და ალმასის „ორეული“ — ზოგი ფორმა ალმასზე მაგარია.']],
+ 'N|Al':[['AlN','ალუმინის ნიტრიდი','2Al + N2 → 2AlN']],
+ 'N|Si':[['Si3N4','სილიციუმის ნიტრიდი','3Si + 2N2 → Si3N4','კერამიკა ძრავებისთვის.']],
+ 'N|Ti':[['TiN','ტიტანის ნიტრიდი','2Ti + N2 → 2TiN','ოქროსფერი მაგარი საფარი.']],
+ 'O|F':[['OF2','ჟანგბადის დიფტორიდი','2F2 + 2NaOH → OF2 + 2NaF + H2O','ერთადერთი ნაერთი, სადაც ჟანგბადი დადებითია (+2).','d']],
+ 'Li|O':[['Li2O','ლითიუმის ოქსიდი','4Li + O2 → 2Li2O']],
+ 'Be|O':[['BeO','ბერილიუმის ოქსიდი','2Be + O2 → 2BeO','ტოქსიკური მტვერი.','d']],
+ 'B|O':[['B2O3','ბორის ოქსიდი','4B + 3O2 → 2B2O3','ბოროსილიკატური მინის ნაწილი.']],
+ 'O|Na':[['Na2O','ნატრიუმის ოქსიდი','4Na + O2 → 2Na2O'],['Na2O2','ნატრიუმის პეროქსიდი','2Na + O2 → Na2O2 (ჰაერზე წვისას)']],
+ 'O|Mg':[['MgO','მაგნიუმის ოქსიდი','2Mg + O2 → 2MgO','კაშკაშა თეთრი ალი — ძველი ფოტოგრაფიული „ბლიცი“.']],
+ 'O|Al':[['Al2O3','ალუმინის ოქსიდი (კორუნდი)','4Al + 3O2 → 2Al2O3','თხელი ფენა ალუმინს ჟანგისგან იცავს; ლალი და საფირონი — კორუნდია.']],
+ 'O|Si':[['SiO2','სილიციუმის დიოქსიდი (კვარცი, ქვიშა)','Si + O2 → SiO2','ატომური ბადე: ყოველი Si ოთხ O-სთან.']],
+ 'O|P':[['P4O10','ფოსფორის(V) ოქსიდი','P4 + 5O2 → P4O10','წყალს ხარბად შთანთქავს.'],['P4O6','ფოსფორის(III) ოქსიდი','P4 + 3O2 → P4O6 (ჟანგბადის ნაკლებობისას)']],
+ 'O|S':[['SO2','გოგირდის დიოქსიდი','S + O2 → SO2','მჟავე წვიმების მიზეზი.','d'],['SO3','გოგირდის ტრიოქსიდი','2SO2 + O2 ⇌ 2SO3 (V2O5 კატალიზატორი)','გოგირდმჟავას წარმოების საფეხური.','d']],
+ 'O|Cl':[['ClO2','ქლორის დიოქსიდი','—','წყლის დეზინფექცია.','d'],['Cl2O','დიქლორის მონოქსიდი','2Cl2 + HgO → Cl2O + HgCl2','d']],
+ 'O|K':[['K2O','კალიუმის ოქსიდი','4K + O2 → 2K2O'],['KO2','კალიუმის სუპეროქსიდი','K + O2 → KO2','ჟანგბადის წყარო სასუნთქ აპარატებში.']],
+ 'O|Ca':[['CaO','კალციუმის ოქსიდი (ჩაუმქრალი კირი)','2Ca + O2 → 2CaO','წყალთან — ჩამქრალი კირი Ca(OH)2, ბევრი სითბოთი.']],
+ 'O|Ti':[['TiO2','ტიტანის დიოქსიდი','Ti + O2 → TiO2','თეთრი პიგმენტი — საღებავები, კბილის პასტა, მზის კრემი.']],
+ 'O|Cr':[['Cr2O3','ქრომის(III) ოქსიდი','4Cr + 3O2 → 2Cr2O3','მწვანე პიგმენტი; უჟანგავი ფოლადის დამცავი ფენა.']],
+ 'O|Mn':[['MnO2','მანგანუმის დიოქსიდი','Mn + O2 → MnO2','ბატარეების კათოდი.']],
+ 'O|Fe':[['Fe2O3','რკინის(III) ოქსიდი (ჟანგი)','4Fe + 3O2 → 2Fe2O3','ჟანგი = Fe2O3·nH2O, წყლისა და ჟანგბადის ერთად მოქმედებით.'],['Fe3O4','მაგნეტიტი','3Fe + 2O2 → Fe3O4','ბუნებრივი მაგნიტი.'],['FeO','რკინის(II) ოქსიდი','2Fe + O2 → 2FeO']],
+ 'O|Cu':[['CuO','სპილენძის(II) ოქსიდი','2Cu + O2 → 2CuO','შავი'],['Cu2O','სპილენძის(I) ოქსიდი','4Cu + O2 → 2Cu2O','წითელი']],
+ 'O|Zn':[['ZnO','თუთიის ოქსიდი','2Zn + O2 → 2ZnO','მალამოები, მზის კრემი.']],
+ 'O|Ag':[['Ag2O','ვერცხლის ოქსიდი','4Ag + O2 → 2Ag2O (მხოლოდ ზეწოლით)','ვერცხლი ჰაერზე თითქმის არ იჟანგება — შავდება გოგირდისგან (Ag2S).']],
+ 'O|Sn':[['SnO2','კალის დიოქსიდი','Sn + O2 → SnO2','კასიტერიტი — კალის მადანი.']],
+ 'O|Hg':[['HgO','ვერცხლისწყლის(II) ოქსიდი','2Hg + O2 ⇌ 2HgO','პრისტლიმ 1774-ში ამ ნაერთის გაცხელებით აღმოაჩინა ჟანგბადი.','d']],
+ 'O|Pb':[['PbO','ტყვიის(II) ოქსიდი','2Pb + O2 → 2PbO','d'],['PbO2','ტყვიის(IV) ოქსიდი','—','აკუმულატორის ფირფიტები.','d']],
+ 'O|Au':[],'O|Pt':[],
+ 'F|Na':[['NaF','ნატრიუმის ფტორიდი','2Na + F2 → 2NaF','კბილის პასტაში — მინანქარს აძლიერებს.']],
+ 'F|Ca':[['CaF2','კალციუმის ფტორიდი (ფლუორიტი)','Ca + F2 → CaF2','ულტრაიისფერში ანათებს — სიტყვა „ფლუორესცენცია“ აქედანაა.']],
+ 'F|S':[['SF6','გოგირდის ჰექსაფტორიდი','S + 3F2 → SF6','ინერტული აირი მაღალი ძაბვის ელექტროტექნიკაში.']],
+ 'F|Cl':[['ClF3','ქლორის ტრიფტორიდი','Cl2 + 3F2 → 2ClF3','უკიდურესად აგრესიული — ქვიშასაც კი წვავს.','d']],
+ 'F|Br':[['BrF3','ბრომის ტრიფტორიდი','Br2 + 3F2 → 2BrF3','d']],
+ 'F|Kr':[['KrF2','კრიპტონის დიფტორიდი','Kr + F2 → KrF2 (−196 °C, განმუხტვა)','კრიპტონის თითქმის ერთადერთი ნაერთი.']],
+ 'F|Xe':[['XeF2','ქსენონის დიფტორიდი','Xe + F2 → XeF2 (სინათლეზე)','1962 წლამდე ეგონათ, რომ ინერტული აირები საერთოდ არ რეაგირებს.'],['XeF4','ქსენონის ტეტრაფტორიდი','Xe + 2F2 → XeF4 (400 °C)'],['XeF6','ქსენონის ჰექსაფტორიდი','Xe + 3F2 → XeF6 (ზეწოლით)']],
+ 'O|Xe':[['XeO3','ქსენონის ტრიოქსიდი','XeF6 + 3H2O → XeO3 + 6HF','არასტაბილური, ფეთქებადი.','d']],
+ 'Na|Cl':[['NaCl','ნატრიუმის ქლორიდი (სუფრის მარილი)','2Na + Cl2 → 2NaCl','ძლიერ ეგზოთერმული: რბილი ლითონი + მომწამვლელი აირი = საკვები მარილი.']],
+ 'Li|Cl':[['LiCl','ლითიუმის ქლორიდი','2Li + Cl2 → 2LiCl']],
+ 'Mg|Cl':[['MgCl2','მაგნიუმის ქლორიდი','Mg + Cl2 → MgCl2','ზღვის წყალშია; მაგნიუმის მისაღებად.']],
+ 'Al|Cl':[['AlCl3','ალუმინის ქლორიდი','2Al + 3Cl2 → 2AlCl3','ორთქლში დიმერია: Al2Cl6.']],
+ 'Si|Cl':[['SiCl4','სილიციუმის ტეტრაქლორიდი','Si + 2Cl2 → SiCl4','ზესუფთა სილიციუმის (ჩიპების) წარმოების საფეხური.']],
+ 'P|Cl':[['PCl3','ფოსფორის ტრიქლორიდი','2P + 3Cl2 → 2PCl3','d'],['PCl5','ფოსფორის პენტაქლორიდი','PCl3 + Cl2 → PCl5','d']],
+ 'S|Cl':[['S2Cl2','დიგოგირდის დიქლორიდი','2S + Cl2 → S2Cl2','d']],
+ 'Cl|K':[['KCl','კალიუმის ქლორიდი','2K + Cl2 → 2KCl','კალიუმიანი სასუქი.']],
+ 'Cl|Ca':[['CaCl2','კალციუმის ქლორიდი','Ca + Cl2 → CaCl2','ზამთარში გზებზე ყინულის წინააღმდეგ.']],
+ 'Cl|Fe':[['FeCl3','რკინის(III) ქლორიდი','2Fe + 3Cl2 → 2FeCl3','ქლორი რკინას ყოველთვის +3-მდე ჟანგავს.'],['FeCl2','რკინის(II) ქლორიდი','Fe + 2HCl → FeCl2 + H2']],
+ 'Cl|Cu':[['CuCl2','სპილენძის(II) ქლორიდი','Cu + Cl2 → CuCl2','ალს მწვანე-ცისფრად აფერადებს.']],
+ 'Cl|Zn':[['ZnCl2','თუთიის ქლორიდი','Zn + Cl2 → ZnCl2']],
+ 'Cl|Ag':[['AgCl','ვერცხლის ქლორიდი','2Ag + Cl2 → 2AgCl','სინათლეზე მუქდება — ფოტოგრაფიის საფუძველი.']],
+ 'Cl|I':[['ICl','იოდის მონოქლორიდი','I2 + Cl2 → 2ICl']],
+ 'K|Br':[['KBr','კალიუმის ბრომიდი','2K + Br2 → 2KBr']],
+ 'Br|Ag':[['AgBr','ვერცხლის ბრომიდი','2Ag + Br2 → 2AgBr','ფოტოფირის სინათლემგრძნობიარე ნივთიერება.']],
+ 'K|I':[['KI','კალიუმის იოდიდი','2K + I2 → 2KI','იოდირებულ მარილშია.']],
+ 'Na|S':[['Na2S','ნატრიუმის სულფიდი','2Na + S → Na2S']],
+ 'S|Fe':[['FeS','რკინის(II) სულფიდი','Fe + S → FeS (გაცხელებით)','კლასიკური სასკოლო ცდა: ნარევი → ახალი ნივთიერება.'],['FeS2','პირიტი („ბრიყვის ოქრო“)','—','ოქროსფერი კრისტალები.']],
+ 'S|Cu':[['CuS','სპილენძის(II) სულფიდი','Cu + S → CuS'],['Cu2S','სპილენძის(I) სულფიდი','2Cu + S → Cu2S (გაცხელებით)']],
+ 'S|Zn':[['ZnS','თუთიის სულფიდი','Zn + S → ZnS','ლუმინოფორი — ძველ ეკრანებში ანათებდა.']],
+ 'S|Ag':[['Ag2S','ვერცხლის სულფიდი','4Ag + 2H2S + O2 → 2Ag2S + 2H2O','ამიტომ შავდება ვერცხლი.']],
+ 'S|Hg':[['HgS','ვერცხლისწყლის სულფიდი (კინოვარი)','Hg + S → HgS','წითელი პიგმენტი; ტოქსიკური.','d']],
+ 'S|Pb':[['PbS','ტყვიის სულფიდი (გალენიტი)','Pb + S → PbS','ტყვიის მთავარი მადანი; პირველი რადიოების დეტექტორი.','d']],
+ /* alloys */
+ 'Fe|Ni':[['FeNi','ინვარი (შენადნობი)','—','გაცხელებით თითქმის არ ფართოვდება — ზუსტი საათები, ხელსაწყოები.']],
+ 'Cr|Fe':[['FeCr','ქრომიანი ფოლადი','—','10.5%-ზე მეტი ქრომი + ნიკელი = უჟანგავი ფოლადი.']],
+ 'Cu|Zn':[['CuZn','თითბერი (ლატუნი)','—','ოქროსფერი შენადნობი — მუსიკალური საკრავები, ონკანები.']],
+ 'Cu|Sn':[['CuSn','ბრინჯაო','—','კაცობრიობის პირველი დიდი შენადნობი — ბრინჯაოს ხანა (≈3300 ძვ.წ.).']],
+ 'Al|Cu':[['AlCu','დურალუმინი','—','მსუბუქი და მაგარი — თვითმფრინავები.']],
+ 'Ag|Au':[['AuAg','ელექტრუმი','—','ბუნებრივი შენადნობი — პირველი მონეტები (ლიდია, VII ს. ძვ.წ.).']],
+ 'Sn|Pb':[['PbSn','სარჩილი','—','დაბალ ტემპერატურაზე დნება.','d']],
+ 'Au|Hg':[['AuHg','ოქროს ამალგამა','—','ვერცხლისწყალი ოქროს „ხსნის“ — ძველად ოქროს მოპოვება.','d']],
+ 'Ag|Hg':[['AgHg','ვერცხლის ამალგამა','—','ძველი კბილის ბჟენი.','d']],
+ 'Na|K':[['NaK','ნატრიუმ-კალიუმის შენადნობი','—','ოთახის ტემპერატურაზე თხევადი ლითონი.','d']],
+};
+/* keys normalised to Z order; a bare 'd' in the note slot means dangerous */
+{const T={};for(const k in R){const [a,b]=k.split('|');const kk=[a,b].sort((x,y)=>BY[x].z-BY[y].z).join('|');T[kk]=(T[kk]||[]).concat(R[k].map(r=>r[3]==='d'?[r[0],r[1],r[2],'','d',r[5]]:r));}for(const k in R)delete R[k];Object.assign(R,T);}
+/* special structures (atoms [symbol,x,y], bonds [i,j,order]) */
+const GEO={
+  peroxide:{a:[['H',-75,-30],['O',-28,0],['O',28,0],['H',75,30]],b:[[0,1,1],[1,2,1],[2,3,1]]},
+  hydrazine:{a:[['H',-80,-35],['H',-80,35],['N',-28,0],['N',28,0],['H',80,-35],['H',80,35]],b:[[0,2,1],[1,2,1],[2,3,1],[3,4,1],[3,5,1]]},
+  ozone:{a:[['O',-55,20],['O',0,-12],['O',55,20]],b:[[0,1,2],[1,2,1]]}
+};
+const ANION={O:'ოქსიდი',F:'ფტორიდი',Cl:'ქლორიდი',Br:'ბრომიდი',I:'იოდიდი',S:'სულფიდი',Se:'სელენიდი',Te:'ტელურიდი',N:'ნიტრიდი',P:'ფოსფიდი',As:'არსენიდი',C:'კარბიდი',Si:'სილიციდი',B:'ბორიდი',H:'ჰიდრიდი',Sb:'სტიბიდი',Ge:'გერმანიდი',At:'ასტატიდი'};
+const ROMAN=['','I','II','III','IV','V','VI','VII','VIII'];
+const DIAT=new Set(['H','N','O','F','Cl','Br','I']);
+const gen=w=>w.endsWith('ი')?w.slice(0,-1)+'ის':w.endsWith('ა')?w.slice(0,-1)+'ის':w+'ს';
+const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a/gcd(a,b)*b;
+/* formula parsing: 'Fe2O3' → [['Fe',2],['O',3]] */
+function parseF(f){const o=[];f.replace(/([A-Z][a-z]?)(\d*)/g,(m,s,n)=>{o.push([s,n?+n:1]);return m;});return o;}
+const molMass=f=>parseF(f).reduce((a,[s,n])=>a+(BY[s]?BY[s].m*n:0),0);
+/* predicted binary compounds from oxidation states */
+function predict(A,B){
+  if(A===B){if(A.cat==='noble')return {none:'ინერტული აირი — ერთატომიანია, მოლეკულას არ ქმნის.'};
+    if(A.metal)return {list:[{f:A.sym,n:`მეტალური ${A.ka}`,eq:'—',note:'ლითონის ატომები კრისტალურ მესერს ქმნიან, რომელშიც ელექტრონები თავისუფლად მოძრაობენ („ელექტრონული აირი“).',pred:1,type:'metal'}]};
+    if(DIAT.has(A.sym))return {list:[{f:A.sym+'2',n:`${A.ka}ს მოლეკულა`,eq:`${A.sym} + ${A.sym} → ${A.sym}2`,pred:1}]};
+    return {list:[{f:A.sym,n:`${A.ka} (ატომური ბადე)`,eq:'—',note:'ატომები ერთმანეთს ქსელად უკავშირდება.',pred:1}]};}
+  if(A.cat==='noble'||B.cat==='noble')return {none:`${A.cat==='noble'?A.ka:B.ka} ინერტული აირია: გარე შრე სავსეა, ელექტრონის გაცემა ან მიღება არ სჭირდება — ჩვეულებრივ პირობებში ნაერთს არ ქმნის.`};
+  if(A.synth||B.synth)return {none:'ზემძიმე სინთეზური ელემენტია: მიღებულია მხოლოდ რამდენიმე ატომი, რომლებიც წამებში ან წუთებში იშლება — მისი ქიმია პრაქტიკულად შეუსწავლელია.'};
+  if(A.metal&&B.metal)return {list:[{f:A.sym+B.sym,n:`${gen(A.ka)} და ${gen(B.ka)} შენადნობი`,eq:'—',note:'ორი ლითონი ქიმიურ ნაერთს იშვიათად ქმნის — ძირითადად შენადნობს ან ინტერმეტალურ ფაზას (გამდნარი ლითონების შერევით).',pred:1,type:'metal'}]};
+  /* the more electronegative one takes its negative state */
+  let [P,N]=(A.en||0)<=(B.en||0)?[A,B]:[B,A];
+  const neg=N.ox.filter(x=>x<0)[0];
+  if(neg==null){if(!P.ox.some(x=>x<0)&&N.ox.some(x=>x>0))return {none:'ორივე ელემენტი მხოლოდ დადებით ჟანგვის ხარისხს ავლენს — მარტივი ბინარული ნაერთი მოსალოდნელი არ არის.'};}
+  const nv=neg!=null?-neg:2;
+  /* second-period atoms cannot expand their octet: N, C, B, O bond only up to their valence */
+  const CAPV={B:3,C:4,N:3,O:2};
+  const posStates=P.ox.filter(x=>x>0&&!(CAPV[P.sym]&&x>CAPV[P.sym])).slice(0,P.metal?2:3);
+  if(!posStates.length)return {none:'ამ წყვილისთვის მდგრადი ნაერთი ცნობილი არ არის.'};
+  const out=[];
+  for(const pv of posStates){const g=gcd(pv,nv);const x=nv/g,y=pv/g;const f=`${P.sym}${x>1?x:''}${N.sym}${y>1?y:''}`;
+    const nm=ANION[N.sym]?`${gen(P.ka)}${posStates.length>1||P.cat==='transition'?'('+ROMAN[pv]+')':''} ${ANION[N.sym]}`:`${P.ka}-${N.ka} (${P.sym}⁺${pv>1?pv:''})`;
+    out.push({f,n:nm,eq:balance(P.sym,x,N.sym,y),pred:1,ox:[pv,-nv]});}
+  return {list:out};
+}
+function balance(a,x,b,y){const ka=DIAT.has(a)?2:1,kb=DIAT.has(b)?2:1;
+  const c=lcm(ka/gcd(x,ka),kb/gcd(y,kb)),na=c*x/ka,nb=c*y/kb;const f=`${a}${x>1?x:''}${b}${y>1?y:''}`;
+  const t=(n,s)=>`${n>1?n:''}${s}`;return `${t(na,a+(ka>1?'2':''))} + ${t(nb,b+(kb>1?'2':''))} → ${t(c,f)}`;}
+const fmt=f=>esc(f).replace(/([A-Za-z\)])(\d+)/g,(m,a,n)=>a+sub(n));
+const eqFmt=s=>esc(s).replace(/([A-Za-z\)\]])(\d+)/g,(m,a,n)=>a+sub(n));
+
+/* ═══════════ bond type ═══════════ */
+function bondInfo(A,B){
+  if(A.cat==='noble'||B.cat==='noble')return ['არ არის','—'];
+  if(A.metal&&B.metal)return ['მეტალური ბმა','ლითონის ატომები ვალენტურ ელექტრონებს საერთო „ღრუბელში“ ტოვებენ.'];
+  const d=Math.abs((A.en||0)-(B.en||0));
+  if(A===B)return [A.metal?'მეტალური ბმა':'არაპოლარული კოვალენტური',A.metal?'საერთო ელექტრონული ღრუბელი.':'ერთნაირი ატომები ელექტრონებს თანაბრად იზიარებენ.'];
+  if(d>=1.7)return ['იონური ბმა',`ΔEN = ${d.toFixed(2)} ≥ 1.7: ${((A.en||0)<(B.en||0)?A:B).ka} ელექტრონებს გასცემს და დადებით იონად იქცევა, ${((A.en||0)<(B.en||0)?B:A).ka} — იღებს და უარყოფით იონად; იონები ერთმანეთს ელექტროსტატიკურად იზიდავს.`];
+  if(d>=0.4)return ['პოლარული კოვალენტური',`ΔEN = ${d.toFixed(2)}: ელექტრონული წყვილი საერთოა, მაგრამ ${((A.en||0)>(B.en||0)?A:B).ka}სკენაა გადახრილი (ნაწილობრივი მუხტები δ⁺ და δ⁻).`];
+  return ['არაპოლარული კოვალენტური',`ΔEN = ${d.toFixed(2)} < 0.4: ელექტრონები თითქმის თანაბრად ნაწილდება.`];
+}
+
+/* ═══════════ table ═══════════ */
+const pt=$('pt');let HIDE=null;
+function drawTable(){
+  const cells=[];for(let z=1;z<=118;z++){const [c,r]=pos(z);cells.push({z,c,r});}
+  let h='';for(const {z,c,r} of cells){const e=EL[z];
+    h+=`<div class="el${HIDE&&HIDE!==e.cat?' dim':''}" data-z="${z}" style="grid-column:${c};grid-row:${r>7?r+1:r};--cc:var(--c-${e.cat})" title="${e.z} ${e.sym} ${esc(e.ka)}"><span class="z">${z}</span><span class="s">${e.sym}</span><span class="n">${esc(e.ka)}</span></div>`;}
+  h+=`<div style="grid-column:3;grid-row:6;font-size:9px;color:var(--ink-dim);display:flex;align-items:center;justify-content:center">57–71</div><div style="grid-column:3;grid-row:7;font-size:9px;color:var(--ink-dim);display:flex;align-items:center;justify-content:center">89–103</div><div style="grid-row:8;grid-column:1/-1;height:6px"></div>`;
+  pt.innerHTML=h;pt.querySelectorAll('.el').forEach(el=>el.addEventListener('pointerdown',startDrag));
+  $('legend').innerHTML=Object.entries(CATN).map(([k,n])=>`<span data-k="${k}" class="${HIDE&&HIDE!==k?'off':''}"><i style="background:var(--c-${k})"></i>${n}</span>`).join('');
+  $('legend').querySelectorAll('span').forEach(s=>s.onclick=()=>{HIDE=HIDE===s.dataset.k?null:s.dataset.k;drawTable();});
+}
+/* drag and drop (mouse + touch); a tap places into the first free slot */
+let DRAG=null;const SLOT=[null,null];
+function startDrag(ev){
+  const z=+ev.currentTarget.dataset.z,e=EL[z];ev.preventDefault();
+  DRAG={z,x0:ev.clientX,y0:ev.clientY,moved:false,ghost:null,id:ev.pointerId};
+  const move=m=>{if(m.pointerId!==DRAG.id)return;const dx=m.clientX-DRAG.x0,dy=m.clientY-DRAG.y0;
+    if(!DRAG.moved&&Math.hypot(dx,dy)>6){DRAG.moved=true;const g=document.createElement('div');g.className='ghost';g.style.background=`color-mix(in srgb,var(--c-${e.cat}) 55%,#0e0b1a)`;g.innerHTML=`${e.sym}<span style="font-size:9px;font-family:inherit;font-weight:400">${z}</span>`;document.body.appendChild(g);DRAG.ghost=g;}
+    if(DRAG.ghost){DRAG.ghost.style.left=m.clientX+'px';DRAG.ghost.style.top=m.clientY+'px';const t=slotAt(m.clientX,m.clientY);[$('sA'),$('sB')].forEach((s,i)=>s.classList.toggle('over',t===i));}};
+  const up=u=>{if(u.pointerId!==DRAG.id)return;window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);
+    [$('sA'),$('sB')].forEach(s=>s.classList.remove('over'));
+    if(DRAG.ghost){DRAG.ghost.remove();const t=slotAt(u.clientX,u.clientY);if(t!=null)put(t,z);}
+    else put(SLOT[0]==null?0:SLOT[1]==null?1:1,z);
+    DRAG=null;};
+  window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);
+}
+function slotAt(x,y){for(const [i,id] of [[0,'sA'],[1,'sB']]){const r=$(id).getBoundingClientRect();if(x>=r.left-12&&x<=r.right+12&&y>=r.top-12&&y<=r.bottom+12)return i;}return null;}
+function put(i,z){SLOT[i]=z;drawSlots();react();}
+function drawSlots(){[$('sA'),$('sB')].forEach((s,i)=>{const z=SLOT[i];if(!z){s.className='slot';s.innerHTML='ჩააგდე<br>ელემენტი';s.style.removeProperty('--cc');return;}
+  const e=EL[z];s.className='slot full';s.style.setProperty('--cc',`var(--c-${e.cat})`);s.innerHTML=`<span class="Z">${z}</span><span class="S">${e.sym}</span><span class="N">${esc(e.ka)}</span>`;
+  s.onclick=()=>{SLOT[i]=null;drawSlots();react();};});
+  pt.querySelectorAll('.el').forEach(el=>el.classList.toggle('sel',SLOT.includes(+el.dataset.z)));}
+$('swap').onclick=()=>{SLOT.reverse();drawSlots();react();};
+$('clr').onclick=()=>{SLOT[0]=SLOT[1]=null;drawSlots();react();};
+$('rnd').onclick=()=>{const keys=Object.keys(R).filter(k=>R[k].length);const k=keys[Math.floor(Math.random()*keys.length)].split('|');SLOT[0]=BY[k[0]].z;SLOT[1]=BY[k[1]].z;drawSlots();react();};
+
+/* ═══════════ molecule drawing ═══════════ */
+const BVAL={H:1,B:3,C:4,N:3,O:2,F:1,Si:4,P:3,S:2,Cl:1,Br:1,I:1,Se:2,As:3,Ge:4,Xe:2};
+const LONE={O:2,S:2,N:1,P:1,Se:2,As:1,Xe:3,Cl:3,Br:3,I:3,F:3};
+function atomSVG(s,x,y,r){const e=BY[s];return `<circle cx="${x}" cy="${y}" r="${r}" fill="color-mix(in srgb,var(--c-${e.cat}) 45%,#141022)" stroke="var(--c-${e.cat})" stroke-width="1.5"/><text x="${x}" y="${y+5}" text-anchor="middle" font-family="Cinzel,serif" font-size="${r>16?15:12}" fill="#fff" font-weight="600">${s}</text>`;}
+function bondSVG(x1,y1,x2,y2,o){const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy),nx=-dy/L*4,ny=dx/L*4;let s='';
+  const offs=o===1?[0]:o===2?[-1,1]:[-1.6,0,1.6];for(const k of offs)s+=`<line x1="${x1+nx*k}" y1="${y1+ny*k}" x2="${x2+nx*k}" y2="${y2+ny*k}" stroke="#d8cfb8" stroke-width="2"/>`;return s;}
+function drawGeo(G){const W=260,H=150,cx=W/2,cy=H/2;let s='';for(const [i,j,o] of G.b){const a=G.a[i],b=G.a[j];s+=bondSVG(cx+a[1],cy+a[2],cx+b[1],cy+b[2],o);}
+  for(const a of G.a)s+=atomSVG(a[0],cx+a[1],cy+a[2],16);return `<svg viewBox="0 0 ${W} ${H}" width="${W}">${s}</svg>`;}
+function molecule(c,type){
+  if(c.g&&GEO[c.g])return drawGeo(GEO[c.g]);
+  const p=parseF(c.f);if(!p.length)return '';
+  if(type==='ionic'||type==='metal')return lattice(p,type);
+  if(p.length===1){const [s,n]=p[0];if(n===2){const o=BVAL[s]||1;return drawGeo({a:[[s,-34,0],[s,34,0]],b:[[0,1,o]]});}return '';}
+  if(p.length!==2)return '';
+  let [[a,na],[b,nb]]=p;
+  if(na===1&&nb===1){let o=Math.min(BVAL[a]||1,BVAL[b]||1);const m=(c.flags||'').match(/b:\w+-\w+:(\d)/);if(m)o=+m[1];return drawGeo({a:[[a,-38,0],[b,38,0]],b:[[0,1,o]]});}
+  /* centre = the single atom (or the less electronegative) */
+  let C,L,n;if(na===1){C=a;L=b;n=nb;}else if(nb===1){C=b;L=a;n=na;}else return '';
+  if(n>6)return '';
+  const lone=Math.max(0,LONE[C]!=null?Math.min(LONE[C],Math.round(((BY[C]&&valence(BY[C]))-n*Math.min(BVAL[L]||1,Math.floor((BVAL[C]||n)/n)))/2)):0);
+  const bo=Math.max(1,Math.min(BVAL[L]||1,Math.floor((BVAL[C]||n)/n)));
+  /* VSEPR-ish angles */
+  const tot=n+lone;const ANG={1:[0],2:[0,180],3:[90,210,330],4:[45,135,225,315],5:[90,162,234,306,18],6:[0,60,120,180,240,300]};
+  let ang=(ANG[tot]||ANG[n]).slice(0,n);if(n===2&&lone>0)ang=tot===5?[0,180]:[142,38];if(n===4&&tot===6)ang=[0,90,180,270];
+  const R=58,atoms=[[C,0,0]],bonds=[];ang.forEach((g,i)=>{atoms.push([L,Math.round(R*Math.cos(g*Math.PI/180)),Math.round(-R*Math.sin(g*Math.PI/180)*0.85)]);bonds.push([0,i+1,bo]);});
+  let svg=drawGeo({a:atoms,b:bonds});
+  if(lone)svg=svg.replace('</svg>',`<text x="130" y="${n===2?104:30}" text-anchor="middle" font-size="10" fill="#b3a68f">${':'.repeat(lone)} ${lone} თავისუფალი წყვილი</text></svg>`);
+  return svg;
+}
+function lattice(p,type){const W=260,H=150;let s='';
+  if(type==='metal'||p.length<2){const syms=p.map(x=>x[0]);for(let r=0;r<4;r++)for(let c=0;c<7;c++){const sy=syms[(r+c)%syms.length];s+=atomSVG(sy,26+c*35,26+r*33,13);}
+    for(let k=0;k<14;k++)s+=`<circle cx="${18+Math.random()*224}" cy="${14+Math.random()*120}" r="2" fill="#7fd8ff" opacity=".8"/>`;
+    return `<svg viewBox="0 0 ${W} ${H}" width="${W}">${s}<text x="130" y="146" text-anchor="middle" font-size="10" fill="#b3a68f">ლითონის მესერი · ცისფერი — თავისუფალი ელექტრონები</text></svg>`;}
+  const [[a,na],[b,nb]]=p,ea=BY[a],eb=BY[b];const posA=(ea.en||0)<(eb.en||0);const cat=posA?a:b,an=posA?b:a,nc=posA?na:nb,nn=posA?nb:na;
+  const seq=[];for(let i=0;i<nc;i++)seq.push(cat);for(let i=0;i<nn;i++)seq.push(an);
+  let k=0;for(let r=0;r<4;r++)for(let c=0;c<7;c++){const sy=seq[(k++)%seq.length];const x=24+c*35,y=24+r*33;s+=atomSVG(sy,x,y,13);
+    s+=`<text x="${x+11}" y="${y-8}" font-size="10" fill="${sy===cat?'#ff9a8a':'#8ab8ff'}">${sy===cat?'+':'−'}</text>`;}
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}">${s}<text x="130" y="146" text-anchor="middle" font-size="10" fill="#b3a68f">იონური კრისტალი · ${cat}⁺ და ${an}⁻ იონები (თანაფარდობა ${nc}:${nn})</text></svg>`;}
+
+/* ═══════════ animated atoms (Bohr model): electron transfer or sharing ═══════════ */
+let RAF=null;
+function bohr(A,B,kind,give){
+  cancelAnimationFrame(RAF);
+  const W=320,H=170,host=document.getElementById('bohr');if(!host)return;
+  const sa=shells(A.z),sb=shells(B.z);
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="${W}" id="bsv"></svg>`;const svg=$('bsv');
+  const t0=performance.now();
+  const frame=t=>{const T=((t-t0)/1000)%6,ph=Math.min(1,Math.max(0,(T-1)/2.5));
+    const sep=kind==='cov'?120-40*ph:140;const xa=W/2-sep/2,xb=W/2+sep/2,y=H/2;let s='';
+    const drawAtom=(x,sh,e,lost,gain)=>{let o=`<circle cx="${x}" cy="${y}" r="9" fill="color-mix(in srgb,var(--c-${e.cat}) 70%,#141022)"/><text x="${x}" y="${y+4}" text-anchor="middle" font-size="10" fill="#fff" font-family="Cinzel">${e.sym}</text>`;
+      const vis=sh.slice(-3),base=sh.length-vis.length;
+      vis.forEach((n,i)=>{const r=18+i*13;o+=`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="rgba(201,168,76,.25)"/>`;
+        let cnt=n;const outer=i===vis.length-1;if(outer)cnt=n-lost;
+        for(let k=0;k<cnt;k++){const g=k/Math.max(cnt,1)*Math.PI*2+t/1000*(0.6/(i+1));o+=`<circle cx="${x+r*Math.cos(g)}" cy="${y+r*Math.sin(g)}" r="2.6" fill="#7fd8ff"/>`;}});
+      return o;};
+    const rA=18+(Math.min(3,sa.length)-1)*13,rB=18+(Math.min(3,sb.length)-1)*13;
+    if(kind==='ion'){const n=give,moving=ph<1;
+      s+=drawAtom(xa,sa,A,n,0)+drawAtom(xb,sb,B,0,0);
+      for(let k=0;k<n;k++){const px=xa+rA+(xb-rB-(xa+rA))*ph,py=y-12+k*8;s+=`<circle cx="${px}" cy="${py}" r="3" fill="${moving?'#ffd27f':'#7fd8ff'}"/>`;}
+      if(ph>=1)s+=`<text x="${xa}" y="${y-rA-8}" text-anchor="middle" fill="#ff9a8a" font-size="13">+${n>1?n:''}</text><text x="${xb}" y="${y-rB-8}" text-anchor="middle" fill="#8ab8ff" font-size="13">−${n>1?n:''}</text>`;}
+    else if(kind==='cov'){s+=drawAtom(xa,sa,A,ph>0.9?1:0,0)+drawAtom(xb,sb,B,ph>0.9?1:0,0);
+      if(ph>0.9){const mx=(xa+xb)/2;s+=`<circle cx="${mx-4}" cy="${y-3}" r="3" fill="#ffd27f"/><circle cx="${mx+4}" cy="${y+3}" r="3" fill="#ffd27f"/><text x="${mx}" y="${y+40}" text-anchor="middle" font-size="10" fill="#ffd27f">საერთო წყვილი</text>`;}}
+    else s+=drawAtom(xa,sa,A,0,0)+drawAtom(xb,sb,B,0,0);
+    svg.innerHTML=s;RAF=requestAnimationFrame(frame);};
+  RAF=requestAnimationFrame(frame);
+}
+
+/* ═══════════ chains (C–H, Si–H) ═══════════ */
+const ALK=['','მეთ','ეთ','პროპ','ბუტ','პენტ','ჰექს','ჰეპტ','ოქტ','ნონ','დეკ','უნდეკ','დოდეკ'];
+let CH={kind:'ane',n:4,el:'C'};
+function chainHTML(){
+  const n=CH.n,el=CH.el,k=CH.kind;
+  let H=k==='ane'?2*n+2:k==='ene'?2*n:k==='yne'?2*n-2:k==='cyc'?2*n:6,N=k==='benz'?6:n;
+  const f=`${el}${N>1?N:''}H${H}`;
+  const nm=el==='Si'?(n===1?'სილანი':['','','დი','ტრი','ტეტრა','პენტა','ჰექსა','ჰეპტა','ოქტა','ნონა','დეკა'][n]+'სილანი'):k==='benz'?'ბენზოლი':k==='cyc'?'ციკლო'+ALK[n]+'ანი':ALK[n]+(k==='ane'?'ანი':k==='ene'?'ენი':'ინი');
+  const st=el==='Si'?'':N<=4?'აირი':N<=16?'სითხე':'მყარი';
+  return `<div class="ctl">${el==='C'?['ane','ალკანები CₙH₂ₙ₊₂','ene','ალკენები CₙH₂ₙ','yne','ალკინები CₙH₂ₙ₋₂','cyc','ციკლოალკანები','benz','ბენზოლი'].reduce((a,x,i,arr)=>i%2?a:a+`<button data-k="${x}" class="${k===x?'on':''}">${arr[i+1]}</button>`,''):''}
+    ${k!=='benz'?`<label class="hint">ატომი: <b style="color:var(--gold-lt)">${n}</b> <input type="range" id="chn" min="${k==='ane'?1:k==='cyc'?3:2}" max="${el==='Si'?8:12}" value="${n}"></label>`:''}</div>
+    <div class="cmp"><span class="f">${fmt(f)}</span><span class="nm">${esc(nm)}</span><div class="meta">მოლური მასა ${molMass(f).toFixed(2)} გ/მოლი${st?' · ოთახის ტემპერატურაზე: '+st:''}${k==='benz'?' · არომატული რგოლი: 6 ელექტრონი მთელ რგოლზეა გადანაწილებული':''}</div>
+    <div class="mol">${chainSVG()}</div></div>`;
+}
+function chainSVG(){
+  const n=CH.k==='benz'?6:CH.n,el=CH.el,k=CH.kind,full=n<=8&&k!=='cyc'&&k!=='benz';
+  if(k==='cyc'||k==='benz'){const N=k==='benz'?6:n,R=48,cx=150,cy=85;let s='';const P=[];for(let i=0;i<N;i++){const g=-Math.PI/2+i*2*Math.PI/N;P.push([cx+R*Math.cos(g),cy+R*Math.sin(g)]);}
+    for(let i=0;i<N;i++){const [x1,y1]=P[i],[x2,y2]=P[(i+1)%N];s+=bondSVG(x1,y1,x2,y2,k==='benz'&&i%2===0?2:1);}
+    for(let i=0;i<N;i++){const [x,y]=P[i],hx=cx+(R+30)*(x-cx)/R,hy=cy+(R+30)*(y-cy)/R;s+=bondSVG(x,y,hx,hy,1)+atomSVG('H',hx,hy,9);if(k!=='benz'){const hx2=cx+(R+30)*(x-cx)/R+((y-cy)/R)*14,hy2=cy+(R+30)*(y-cy)/R-((x-cx)/R)*14;}}
+    for(const [x,y] of P)s+=atomSVG(el,x,y,13);
+    if(k==='benz')s+=`<circle cx="${cx}" cy="${cy}" r="${R*0.55}" fill="none" stroke="#ffd27f" stroke-dasharray="3 3"/>`;
+    return `<svg viewBox="0 0 300 175" width="300">${s}</svg>`;}
+  const dx=full?44:30,W=Math.max(220,n*dx+80),y0=80;let s='';const X=i=>40+i*dx;
+  for(let i=0;i<n-1;i++){const o=(k==='ene'&&i===0)||(k==='yne'&&i===0)?(k==='ene'?2:3):1;s+=bondSVG(X(i),y0,X(i+1),y0,o);}
+  if(full){for(let i=0;i<n;i++){let h=4-(i>0?1:0)-(i<n-1?1:0);if(k==='ene'&&(i===0||i===1))h-=1;if(k==='yne'&&(i===0||i===1))h-=2;
+      const spots=[[0,-36],[0,36],[-34,0],[34,0]].filter(([sx])=>!(sx<0&&i>0)&&!(sx>0&&i<n-1));
+      for(let j=0;j<h&&j<spots.length;j++){const [sx,sy]=spots[j];s+=bondSVG(X(i),y0,X(i)+sx,y0+sy,1)+atomSVG('H',X(i)+sx,y0+sy,9);}}}
+  for(let i=0;i<n;i++)s+=atomSVG(el,X(i),y0,13);
+  if(!full)s+=`<text x="${W/2}" y="${y0+40}" text-anchor="middle" font-size="10" fill="#b3a68f">ჩონჩხი — წყალბადები ნაგულისხმევია</text>`;
+  return `<svg viewBox="0 0 ${W} 160" width="${Math.min(W,900)}">${s}</svg>`;
+}
+function wireChain(){const box=$('chain');if(!box)return;box.querySelectorAll('.ctl button').forEach(b=>b.onclick=()=>{CH.kind=b.dataset.k;if(CH.kind==='cyc'&&CH.n<3)CH.n=6;if((CH.kind==='ene'||CH.kind==='yne')&&CH.n<2)CH.n=2;box.innerHTML=chainHTML();wireChain();});
+  const r=$('chn');if(r)r.oninput=()=>{CH.n=+r.value;box.innerHTML=chainHTML();wireChain();};}
+
+/* ═══════════ reaction panel ═══════════ */
+function elCard(e){return `<div class="card2"><div class="hd"><div class="big" style="--cc:var(--c-${e.cat})">${e.sym}</div><div><b style="font-size:16px">${esc(e.ka)}</b><div class="hint">${CATN[e.cat]}${e.radio?' · ☢ რადიოაქტიური':''}</div></div></div>
+  <div class="kv"><b>რიგითი ნომერი</b><span>${e.z}</span><b>ატომური მასა</b><span>${e.m}</span><b>ელექტრონული კონფიგ.</b><span class="cf">${cfgText(e.z)}</span><b>შრეები</b><span>${shells(e.z).join(' · ')}</span>
+  <b>ელექტროუარყოფითობა</b><span>${e.en??'—'}</span><b>ჟანგვის ხარისხები</b><span>${e.ox.length?e.ox.map(x=>x>0?'+'+x:x).join(', '):'—'}</span><b>მდგომარეობა 20 °C-ზე</b><span>${{g:'აირი',l:'სითხე',s:'მყარი','?':'უცნობი'}[e.st]}</span></div></div>`;}
+function react(){
+  const out=$('out');cancelAnimationFrame(RAF);
+  const [za,zb]=SLOT;if(!za&&!zb){out.style.display='none';return;}
+  out.style.display='block';
+  if(!za||!zb){const e=EL[za||zb];out.innerHTML=`<div class="panel"><h3>ელემენტი</h3>${elCard(e)}<p class="hint" style="margin-top:8px">ჩააგდე მეორე ელემენტიც (ან იგივე) რეაქციის სანახავად.</p></div>`;return;}
+  let A=EL[za],B=EL[zb];const key=[A,B].sort((x,y)=>x.z-y.z).map(e=>e.sym).join('|');
+  const [bt,bd]=bondInfo(A,B);
+  let list=[],none=null,curated=false;
+  if(R[key]!==undefined){curated=true;list=R[key].map(r=>({f:r[0],n:r[1],eq:r[2],note:r[3]||'',flags:r[4]||'',g:r[5]||(r[4]&&!/^(d|chain|b:)/.test(r[4])?r[4]:'')}));
+    list.forEach(c=>{if(c.flags==='chain')c.chain=1;});if(!list.length)none=`${A.metal?A.ka:B.ka} კეთილშობილი ლითონია — ჟანგბადთან პირდაპირ არ რეაგირებს (ამიტომაა ოქრო და პლატინა მარადიული).`;}
+  else{const p=predict(A,B);if(p.none)none=p.none;else list=p.list;}
+  const ionic=bt==='იონური ბმა',type=bt==='მეტალური ბმა'?'metal':ionic?'ionic':'cov';
+  /* animation choice */
+  let give=1;if(ionic){const P=(A.en||0)<(B.en||0)?A:B;give=Math.max(1,Math.min(3,(P.ox.find(x=>x>0)||1)));if((A.en||0)>(B.en||0))[A,B]=[B,A];}
+  let h=`<div class="panel"><h3>⚗ ${esc(A.ka)} + ${esc(B.ka)}</h3><div class="grid2">${elCard(A)}${elCard(B)}</div>
+    <div class="bond" style="margin-top:10px"><b>ბმის ტიპი: ${bt}</b><br>${bd}</div>
+    <div class="anim" id="bohr" style="margin-top:6px"></div>`;
+  if(none)h+=`<div class="cmp"><span class="tag t">რეაქცია არ მიმდინარეობს</span><div class="meta" style="margin-top:4px">${esc(none)}</div></div>`;
+  for(const c of list){const mm=molMass(c.f);
+    h+=`<div class="cmp"><div><span class="f">${fmt(c.f)}</span><span class="nm">${esc(c.n)}</span></div>
+      <div>${c.pred?'<span class="tag p">პროგნოზი ჟანგვის ხარისხებით</span>':'<span class="tag r">რეალური ნაერთი</span>'}${/\bd\b/.test(c.flags||'')?'<span class="tag w">⚠ საშიში / ტოქსიკური</span>':''}<span class="tag t">${type==='metal'?'შენადნობი':ionic?'იონური':'მოლეკულური / კოვალენტური'}</span>${mm?`<span class="tag t">${mm.toFixed(2)} გ/მოლი</span>`:''}</div>
+      ${c.eq&&c.eq!=='—'?`<div class="eq">${eqFmt(c.eq)}</div>`:''}${c.note?`<div class="meta">${esc(c.note)}</div>`:''}
+      <div class="mol">${molecule(c,c.type||type)}</div></div>`;}
+  if(list.some(c=>c.chain)){CH.el=key==='H|Si'?'Si':'C';if(CH.el==='Si')CH.kind='ane';
+    h+=`<div class="panel" style="margin-top:12px;background:rgba(0,0,0,.12)"><h3>⛓ ${CH.el==='C'?'ნახშირბადის':'სილიციუმის'} ჯაჭვები — მოლეკულური დონე</h3><div class="hint" style="margin-bottom:8px">${CH.el==='C'?'ნახშირბადი თავის თავთან გრძელ ჯაჭვებს და რგოლებს ქმნის — აქედან იწყება ორგანული ქიმია და სიცოცხლე. აირჩიე ტიპი და ჯაჭვის სიგრძე.':'სილიციუმიც ქმნის ჯაჭვებს (სილანებს), მაგრამ ისინი ბევრად ნაკლებად მდგრადია, ვიდრე ნახშირბადისა.'}</div><div class="chain" id="chain">${chainHTML()}</div></div>`;}
+  h+=`<p class="hint" style="margin-top:10px">${curated?'რეალური ნაერთები — სასწავლო მონაცემებით.':'ამ წყვილისთვის ნაერთები ნაწინასწარმეტყველებია ტიპური ჟანგვის ხარისხებით — ზოგი ნაერთი რეალურად შეიძლება არ არსებობდეს ან სხვა შემადგენლობით იყოს.'} ⚠ ქიმიური ცდები მხოლოდ ლაბორატორიაში, სპეციალისტის ზედამხედველობით.</p></div>`;
+  out.innerHTML=h;wireChain();
+  bohr(A,B,type==='metal'||none?'none':ionic?'ion':'cov',give);
+  const r=out.getBoundingClientRect();if(r.top>innerHeight*0.6)out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+/* tooltip */
+pt.addEventListener('mousemove',ev=>{const el=ev.target.closest('.el');const tip=$('tip');if(!el||DRAG){tip.style.display='none';return;}const e=EL[+el.dataset.z];
+  tip.innerHTML=`<b>${e.z} ${e.sym} — ${esc(e.ka)}</b><br>${CATN[e.cat]} · ${e.m}<br><span class="cf">${cfgText(e.z)}</span>`;tip.style.display='block';tip.style.left=Math.min(innerWidth-250,ev.clientX+14)+'px';tip.style.top=(ev.clientY+14)+'px';});
+pt.addEventListener('mouseleave',()=>{$('tip').style.display='none';});
+drawTable();drawSlots();
+</script>
+</body>
+</html>
