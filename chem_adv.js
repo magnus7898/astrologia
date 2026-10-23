@@ -14,7 +14,7 @@ const COL={gold:'#c9a84c',gl:'#ecd59a',ink:'#efe6d4',mid:'#b3a68f',dim:'#6d6253'
 const TOP=[];const reg=t=>TOP.push(t);
 let CUR=null,STOPS=[],VIS=true;
 function stopAll(){STOPS.forEach(f=>{try{f();}catch(e){}});STOPS=[];}
-function anim(fn){let on=true,last=performance.now();const f=t=>{if(!on)return;const dt=Math.min(0.05,(t-last)/1000);last=t;if(VIS&&!document.hidden)fn(dt,t/1000);requestAnimationFrame(f);};requestAnimationFrame(f);STOPS.push(()=>on=false);}
+function anim(fn){let on=true,last=performance.now();const f=t=>{if(!on)return;const dt=Math.max(0,Math.min(0.05,(t-last)/1000));last=t;if(VIS&&!document.hidden)fn(dt,t/1000);requestAnimationFrame(f);};requestAnimationFrame(f);STOPS.push(()=>on=false);}
 function canvas(host,w,h){const c=document.createElement('canvas'),d=Math.min(2,window.devicePixelRatio||1);c.width=w*d;c.height=h*d;c.style.width='100%';c.style.maxWidth=w+'px';c.style.aspectRatio=w+' / '+h;c.className='acv';
   host.appendChild(c);const g=c.getContext('2d');g.scale(d,d);g.W=w;g.H=h;c.g=g;c.pt=ev=>{const r=c.getBoundingClientRect();return [(ev.clientX-r.left)*w/r.width,(ev.clientY-r.top)*h/r.height];};return c;}
 /* slider: html + binding */
