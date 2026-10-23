@@ -51,6 +51,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,6v
 .tools button.on{border-color:var(--gold);background:rgba(201,168,76,.14);color:var(--gold-lt)}
 .mode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
 .mode button{border:1px solid var(--border-h);background:var(--raised);color:var(--ink-mid);border-radius:10px;padding:10px;font:inherit;font-size:13px;cursor:pointer;touch-action:manipulation}
+.mhint{font-size:11px;color:var(--ink-dim);text-align:center;margin-top:5px}@media(hover:none){.mhint{display:none}}
 .mode button.on{border-color:var(--gold);color:#120c02;background:linear-gradient(135deg,#8a6a24,#c9a84c);font-weight:600}
 .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;
   background:rgba(11,9,24,.95);border-radius:8px;z-index:3;min-height:240px}
@@ -93,6 +94,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,6v
   <div class="overlay" id="ov" hidden></div>
 </div>
 <div class="mode"><button id="m-fill" class="on">■ შევსება</button><button id="m-x">× ცარიელი</button></div>
+<div class="mhint">მაუსი: მარცხენა — რეჟიმით · მარჯვენა — ×</div>
 <div class="tools">
   <button id="t-undo"><b>↶</b>უკან</button>
   <button id="t-hint"><b>💡</b>მინიშნება</button>
@@ -191,7 +193,8 @@ N.addEventListener('pointerdown',e=>{
   const el=e.target.closest('.cell');if(!el||!S||S.done)return;e.preventDefault();
   const i=+el.dataset.i,cur=S.state[i];
   hist.push(S.state.slice());if(hist.length>300)hist.shift();
-  const val=cur===mode?0:mode;            /* tapping the same mark clears it */
+  const m=e.button===2?2:mode;            /* right mouse button always marks × */
+  const val=cur===m?0:m;                  /* tapping the same mark clears it */
   drag={id:e.pointerId,val,r:(i/S.W)|0,c:i%S.W,axis:null,last:i};
   try{N.setPointerCapture(e.pointerId);}catch(_){}
   setCell(i,val);render();
