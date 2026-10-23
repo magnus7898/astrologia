@@ -766,6 +766,238 @@ const items=[...BASIC.map(f=>['საბაზისო სტექიომე
   $('rfQ').oninput=draw;draw();
  }});
 
+
+/* ═══════════════════ WORKED EXAMPLES for the formula cards ═══════════════════
+   Each .af card whose formula matches an entry gets a „▶ მაგალითი“ button: a real problem with
+   editable numbers, the solution revealed step by step, and a small animation (graph that draws
+   itself, a photon of the right colour, a pH pointer, a gas box, or bars).                          */
+const nf=(x,d=4)=>{if(x==null||!isFinite(x))return '—';const a=Math.abs(x);if(a!==0&&(a>=1e5||a<1e-3))return fmtN(x,d);return String(+x.toPrecision(d));};
+const V_=(x)=>`<span class="xv">${x}</span>`;           /* a substituted value, highlighted */
+const ANS=(s)=>`<span class="xa">${s}</span>`;           /* the answer */
+const LN10=Math.LN10,lg=Math.log10,HB=1.054571817e-34,ME=9.1093837e-31;
+const EX=[];const ex=(m,t,inp,steps,viz)=>EX.push({m,t,inp,steps,viz});
+/* ── basic stoichiometry ── */
+ex(/^n=m\/M/,'რამდენი მოლი და რამდენი მოლეკულაა 36 გ წყალში?',[['m','მასა m','გ',36],['M','მოლური მასა M','გ/მოლ',18.015]],
+ v=>{const n=v.m/v.M;return [`n = m / M`,`n = ${V_(v.m)} / ${V_(v.M)}`,ANS(`n = ${nf(n)} მოლი`),`N = n·N<sub>A</sub> = ${nf(n)} · 6.022·10²³ = ${ANS(nf(n*NA)+' მოლეკულა')}`];},{t:'plot',x:'m',r:[0,200],f:v=>v.m/v.M,xl:'m, გ',yl:'n, მოლი'});
+ex(/^M=ΣAr/,'გამოთვალე ნივთიერების მოლური მასა',[['f','ფორმულა','','C6H12O6','text']],
+ v=>{const c=elemCounts(v.f),ks=Object.keys(c).filter(k=>BY[k]);if(!ks.length)return ['ფორმულა ვერ წავიკითხე'];const M=ks.reduce((s,k)=>s+BY[k].m*c[k],0);
+  return [`M = Σ A<sub>r</sub>·n`,ks.map(k=>`${V_(c[k])}·${BY[k].m} (${k})`).join(' + '),ANS(`M = ${M.toFixed(3)} გ/მოლ`)];},{t:'bar',parts:v=>{const c=elemCounts(v.f);return Object.keys(c).filter(k=>BY[k]).map(k=>[k,BY[k].m*c[k],cpk(k)]);}});
+ex(/^ω\(E\)=/,'რკინის მასური წილი ჟანგში (Fe₂O₃)',[['f','ფორმულა','','Fe2O3','text'],['e','ელემენტი','','Fe','text']],
+ v=>{const c=elemCounts(v.f),M=Object.keys(c).reduce((s,k)=>s+(BY[k]?BY[k].m*c[k]:0),0),e=BY[v.e];if(!e||!c[v.e])return ['ელემენტი ფორმულაში არ არის'];const w=e.m*c[v.e]/M*100;
+  return [`ω(${v.e}) = n·A<sub>r</sub>(${v.e}) / M · 100%`,`M(${v.f}) = ${M.toFixed(2)} გ/მოლ`,`ω = ${V_(c[v.e])}·${e.m} / ${M.toFixed(2)} · 100%`,ANS(`ω(${v.e}) = ${w.toFixed(2)}%`),`ე.ი. 1 ტონა მადნიდან მაქსიმუმ ${(w*10).toFixed(0)} კგ ${v.e}`];},
+ {t:'bar',parts:v=>{const c=elemCounts(v.f);return Object.keys(c).filter(k=>BY[k]).map(k=>[k,BY[k].m*c[k],cpk(k)]);}});
+ex(/^η=mპრაქტ/,'თეორიულად 10 გ პროდუქტი უნდა მიგვეღო, მივიღეთ 8.5 გ',[['p','მიღებული','გ',8.5],['t','თეორიული','გ',10]],
+ v=>[`η = m<sub>პრაქტ.</sub> / m<sub>თეორ.</sub> · 100%`,`η = ${V_(v.p)} / ${V_(v.t)} · 100%`,ANS(`η = ${(v.p/v.t*100).toFixed(1)}%`)],{t:'bar',parts:v=>[['მიღებული',v.p,COL.green],['დანაკარგი',Math.max(0,v.t-v.p),COL.red]]});
+ex(/^D=M₁\/M₂/,'რამდენჯერ მძიმეა CO₂ ჰაერზე? (ჰაერი M = 29)',[['a','M₁ (აირი)','გ/მოლ',44.01],['b','M₂ (ჰაერი)','გ/მოლ',29]],
+ v=>{const D=v.a/v.b;return [`D = M₁ / M₂`,`D = ${V_(v.a)} / ${V_(v.b)}`,ANS(`D = ${D.toFixed(3)}`),D>1?'D > 1 → აირი ჰაერზე მძიმეა, იატაკთან გროვდება (CO₂ სარდაფებში, ღვინის ქვევრებთან — საშიშია!)':'D < 1 → აირი ჰაერზე მსუბუქია და ზემოთ ადის'];},{t:'bar',parts:v=>[['აირი',v.a,COL.gold],['ჰაერი',v.b,COL.blue]]});
+/* ── atom ── */
+ex(/^En=−13\.6eV/,'ელექტრონის ენერგია წყალბადის ატომის n-ე დონეზე',[['Z','Z (ბირთვის მუხტი)','',1,1],['n','n (დონე)','',2,1]],
+ v=>{const E=-13.6*v.Z*v.Z/(v.n*v.n);return [`E<sub>n</sub> = −13.6 eV · Z² / n²`,`E = −13.6 · ${V_(v.Z)}² / ${V_(v.n)}² = −13.6 · ${v.Z*v.Z} / ${v.n*v.n}`,ANS(`E = ${E.toFixed(3)} eV`)+` = ${(E*96.485).toFixed(1)} კჯ/მოლ`,`ამ დონიდან ელექტრონის მოსაგლეჯად საჭიროა ${(-E).toFixed(3)} eV`];},
+ {t:'plot',x:'n',r:[1,8],f:v=>-13.6*v.Z*v.Z/(v.n*v.n),xl:'n',yl:'E, eV'});
+ex(/^rn=n²·a0\/Z/,'ბორის ორბიტის რადიუსი',[['n','n','',3,1],['Z','Z','',1,1]],
+ v=>{const r=v.n*v.n*52.918/v.Z;return [`r<sub>n</sub> = n² · a<sub>0</sub> / Z`,`r = ${V_(v.n)}² · 52.918 / ${V_(v.Z)}`,ANS(`r = ${r.toFixed(1)} პმ`)+` = ${(r/100).toFixed(3)} Å`,`ზრდა n²-ით: n=1 → 53 პმ, n=2 → 212 პმ, n=3 → 476 პმ`];},{t:'plot',x:'n',r:[1,7],f:v=>v.n*v.n*52.918/v.Z,xl:'n',yl:'r, პმ'});
+ex(/^1\/λ=RH/,'რა ფერის სინათლეს ასხივებს წყალბადი n₂ → n₁ გადასვლისას?',[['a','n₁ (ქვედა)','',2,1],['b','n₂ (ზედა)','',3,1]],
+ v=>{if(v.b<=v.a)return ['n₂ უნდა იყოს n₁-ზე მეტი'];const inv=RH*(1/(v.a*v.a)-1/(v.b*v.b)),L=1e9/inv;return [`1/λ = R<sub>H</sub> · (1/n₁² − 1/n₂²)`,`1/λ = 1.0968·10⁷ · (1/${V_(v.a)}² − 1/${V_(v.b)}²) = ${nf(inv)} მ⁻¹`,ANS(`λ = ${L.toFixed(1)} ნმ`),L<380?'ულტრაიისფერი — თვალით უხილავი':L<=750?'ხილული სინათლე':'ინფრაწითელი — თვალით უხილავი'];},{t:'photon',l:v=>1e9/(RH*(1/(v.a*v.a)-1/(v.b*v.b)))});
+ex(/^ΔE=hν=hc\/λ/,'რა ენერგია აქვს მწვანე ფოტონს (530 ნმ)?',[['l','ტალღის სიგრძე λ','ნმ',530]],
+ v=>{const E=H_PL*C_L/(v.l*1e-9);return [`E = h·c / λ`,`E = 6.626·10⁻³⁴ · 2.998·10⁸ / (${V_(v.l)}·10⁻⁹)`,ANS(`E = ${nf(E)} ჯ = ${(E/EV).toFixed(3)} eV`),`ერთ მოლ ფოტონზე: ${(E*NA/1000).toFixed(1)} კჯ/მოლ · სიხშირე ν = ${nf(C_L/(v.l*1e-9))} ჰც`];},{t:'photon',l:v=>v.l});
+ex(/^λ=h\/\(mv\)/,'ელექტრონის ტალღის სიგრძე (დე ბროილი)',[['v','სიჩქარე v','მ/წმ',2.2e6],['m','მასა m','კგ',9.109e-31]],
+ v=>{const L=H_PL/(v.m*v.v);return [`λ = h / (m·v)`,`λ = 6.626·10⁻³⁴ / (${V_(nf(v.m))} · ${V_(nf(v.v))})`,ANS(`λ = ${nf(L)} მ = ${nf(L*1e12)} პმ`),L>1e-11?'ატომის ზომისაა — ამიტომ ელექტრონი ატომში ტალღასავით იქცევა':'ძალიან მცირეა — ტალღური თვისებები შეუმჩნეველია'];},{t:'plot',x:'v',r:[1e5,5e6],f:v=>H_PL/(v.m*v.v)*1e12,xl:'v, მ/წმ',yl:'λ, პმ'});
+ex(/^Δx·Δp≥ħ\/2/,'ელექტრონი 100 პმ ზომის ატომშია — რამდენად გაურკვეველია მისი სიჩქარე?',[['x','Δx','პმ',100],['m','მასა','კგ',9.109e-31]],
+ v=>{const dv=HB/(2*v.m*v.x*1e-12);return [`Δv ≥ ħ / (2·m·Δx)`,`Δv ≥ 1.0546·10⁻³⁴ / (2 · ${V_(nf(v.m))} · ${V_(v.x)}·10⁻¹²)`,ANS(`Δv ≥ ${nf(dv)} მ/წმ`),`ეს ${(dv/1000).toFixed(0)} კმ/წმ-ია — ამიტომ ელექტრონს ზუსტი ორბიტა არ აქვს, მხოლოდ ალბათობის ღრუბელი`];},{t:'plot',x:'x',r:[20,500],f:v=>HB/(2*v.m*v.x*1e-12)/1000,xl:'Δx, პმ',yl:'Δv, კმ/წმ'});
+ex(/^E=hν−Aგამ/,'ულტრაიისფერი სინათლე ეცემა ნატრიუმს (გამოსვლის მუშაობა 2.28 eV)',[['l','λ','ნმ',250],['A','A (გამოსვლის მუშაობა)','eV',2.28]],
+ v=>{const E=1239.84/v.l,K=E-v.A;return [`E<sub>k</sub> = hν − A`,`hν = 1239.84 / ${V_(v.l)} = ${E.toFixed(3)} eV`,`E<sub>k</sub> = ${E.toFixed(3)} − ${V_(v.A)}`,K>0?ANS(`E<sub>k</sub> = ${K.toFixed(3)} eV`)+` → ელექტრონი ამოფრინდება, სიჩქარით ${nf(Math.sqrt(2*K*EV/ME))} მ/წმ`:ANS('ელექტრონი არ ამოფრინდება')+` — ფოტონის ენერგია მცირეა, სინათლე რაც არ უნდა ძლიერი იყოს (ზღვარი λ < ${(1239.84/v.A).toFixed(0)} ნმ)`];},{t:'photon',l:v=>v.l});
+ex(/^μ=√\(n\(n\+2\)\)/,'Fe³⁺ იონს 5 გაუწყვილებელი ელექტრონი აქვს',[['n','გაუწყვილებელი e⁻','',5,1]],
+ v=>[`μ = √(n(n+2)) μ<sub>B</sub>`,`μ = √(${V_(v.n)}·${v.n+2}) = √${v.n*(v.n+2)}`,ANS(`μ = ${Math.sqrt(v.n*(v.n+2)).toFixed(2)} μ<sub>B</sub>`),v.n?'პარამაგნიტური — მაგნიტურ ველში იზიდება':'დიამაგნიტური'],{t:'plot',x:'n',r:[0,7],f:v=>Math.sqrt(v.n*(v.n+2)),xl:'n',yl:'μ, μB'});
+ex(/^ბმისჯერადობა=/,'O₂: 10 ბმის და 6 ანტიბმის ელექტრონი',[['b','ბმის e⁻','',10,1],['a','ანტიბმის e⁻','',6,1]],
+ v=>{const o=(v.b-v.a)/2;return [`ჯერადობა = (N<sub>ბმის</sub> − N<sub>ანტიბმის</sub>) / 2`,`= (${V_(v.b)} − ${V_(v.a)}) / 2`,ANS(`ჯერადობა = ${o}`),o<=0?'მოლეკულა არ არსებობს':o===1?'ერთმაგი ბმა':o===2?'ორმაგი ბმა':o===3?'სამმაგი ბმა — ძალიან მტკიცე':'ნაწილობრივი ბმა'];},{t:'bar',parts:v=>[['ბმის',v.b,COL.gold],['ანტიბმის',v.a,COL.violet]]});
+/* ── gases ── */
+ex(/^pV=nRT/,'რა მოცულობას იკავებს 2 მოლი ჟანგბადი 25 °C-ზე და 1 ატმ წნევაზე?',[['n','n','მოლი',2],['T','T','K',298.15],['p','p','კპა',101.325]],
+ v=>{const V=v.n*R_GAS*v.T/v.p;return [`V = n·R·T / p`,`V = ${V_(v.n)} · 8.314 · ${V_(v.T)} / ${V_(v.p)}`,ANS(`V = ${V.toFixed(2)} ლ`),`ეს ≈ ${(V/v.n).toFixed(1)} ლ ერთ მოლზე`];},{t:'gas',n:v=>v.n,T:v=>v.T,V:v=>v.n*R_GAS*v.T/v.p});
+ex(/^p₁V₁=p₂V₂/,'შპრიცში 10 მლ ჰაერია 100 კპა-ზე. დგუში მიაწექი 250 კპა-მდე',[['p1','p₁','კპა',100],['V1','V₁','მლ',10],['p2','p₂','კპა',250]],
+ v=>[`V₂ = p₁V₁ / p₂`,`V₂ = ${V_(v.p1)} · ${V_(v.V1)} / ${V_(v.p2)}`,ANS(`V₂ = ${nf(v.p1*v.V1/v.p2)} მლ`),'წნევა გაიზარდა → მოცულობა იმდენჯერვე შემცირდა (T მუდმივია)'],{t:'plot',x:'p2',r:[20,500],f:v=>v.p1*v.V1/v.p2,xl:'p₂, კპა',yl:'V₂, მლ'});
+ex(/^V\/T=const/,'ბუშტი 5 ლ-ია 0 °C-ზე. რამდენი იქნება 100 °C-ზე?',[['V1','V₁','ლ',5],['T1','T₁','K',273.15],['T2','T₂','K',373.15]],
+ v=>[`V₂ = V₁ · T₂ / T₁`,`V₂ = ${V_(v.V1)} · ${V_(v.T2)} / ${V_(v.T1)}`,ANS(`V₂ = ${nf(v.V1*v.T2/v.T1)} ლ`),'ტემპერატურა ყოველთვის კელვინებში!'],{t:'plot',x:'T2',r:[50,600],f:v=>v.V1*v.T2/v.T1,xl:'T₂, K',yl:'V₂, ლ'});
+ex(/^p\/T=const/,'საბურავში 220 კპა-ია 20 °C-ზე. მზეზე გაცხელდა 55 °C-მდე',[['p1','p₁','კპა',220],['T1','T₁','K',293.15],['T2','T₂','K',328.15]],
+ v=>[`p₂ = p₁ · T₂ / T₁`,`p₂ = ${V_(v.p1)} · ${V_(v.T2)} / ${V_(v.T1)}`,ANS(`p₂ = ${nf(v.p1*v.T2/v.T1)} კპა`),`მომატება ${nf(v.p1*v.T2/v.T1-v.p1)} კპა`],{t:'plot',x:'T2',r:[200,400],f:v=>v.p1*v.T2/v.T1,xl:'T₂, K',yl:'p₂, კპა'});
+ex(/^p=Σpi/,'ჟანგბადის ნაწილობრივი წნევა ზღვის დონეზე და ევერესტზე',[['x','x(O₂)','',0.21],['p','ჯამური p','კპა',101.325]],
+ v=>[`p(O₂) = x(O₂) · p`,`p(O₂) = ${V_(v.x)} · ${V_(v.p)}`,ANS(`p(O₂) = ${nf(v.x*v.p)} კპა`),`ევერესტზე (p ≈ 33.7 კპა): ${(v.x*33.7).toFixed(1)} კპა — სამჯერ ნაკლები ჟანგბადი ყოველ ჩასუნთქვაზე`],{t:'bar',parts:v=>[['O₂',v.x*v.p,COL.red],['დანარჩენი',(1-v.x)*v.p,COL.blue]]});
+ex(/^⟨Ek⟩=3\/2·kBT/,'მოლეკულის საშუალო კინეტიკური ენერგია ოთახის ტემპერატურაზე',[['T','T','K',298]],
+ v=>{const E=1.5*KB*v.T;return [`⟨E<sub>k</sub>⟩ = 3/2 · k<sub>B</sub> · T`,`= 1.5 · 1.381·10⁻²³ · ${V_(v.T)}`,ANS(`⟨E<sub>k</sub>⟩ = ${nf(E)} ჯ = ${(E/EV).toFixed(4)} eV`),`ერთ მოლზე: ${(E*NA/1000).toFixed(2)} კჯ`];},{t:'gas',n:()=>1,T:v=>v.T,V:()=>24});
+ex(/^vrms=√\(3RT\/M\)/,'რა სიჩქარით მოძრაობს აზოტის მოლეკულა ჰაერში?',[['M','M','გ/მოლ',28.014],['T','T','K',298]],
+ v=>{const M=v.M/1000;return [`v<sub>rms</sub> = √(3RT / M)`,`= √(3 · 8.314 · ${V_(v.T)} / ${V_(v.M)}·10⁻³)`,ANS(`v<sub>rms</sub> = ${Math.sqrt(3*R_GAS*v.T/M).toFixed(0)} მ/წმ`)+` ≈ ${(Math.sqrt(3*R_GAS*v.T/M)*3.6).toFixed(0)} კმ/სთ`,`v̄ = ${Math.sqrt(8*R_GAS*v.T/(Math.PI*M)).toFixed(0)} · v<sub>p</sub> = ${Math.sqrt(2*R_GAS*v.T/M).toFixed(0)} მ/წმ`];},
+ {t:'plot',x:'T',r:[50,1500],f:v=>Math.sqrt(3*R_GAS*v.T/(v.M/1000)),xl:'T, K',yl:'v, მ/წმ'});
+ex(/^r₁\/r₂=√\(M₂\/M₁\)/,'რამდენჯერ სწრაფად დიფუნდირებს H₂ ვიდრე O₂?',[['a','M₁','გ/მოლ',2.016],['b','M₂','გ/მოლ',31.998]],
+ v=>[`r₁ / r₂ = √(M₂ / M₁)`,`= √(${V_(v.b)} / ${V_(v.a)})`,ANS(`r₁/r₂ = ${Math.sqrt(v.b/v.a).toFixed(3)}`),'მსუბუქი აირი უფრო სწრაფად „იპარება“ — ამიტომაც იშვება ჰელიუმიანი ბუშტი'],{t:'bar',parts:v=>[['აირი 1',Math.sqrt(1/v.a),COL.cyan],['აირი 2',Math.sqrt(1/v.b),COL.red]]});
+ex(/^\(p\+a·n²\/V²\)/,'1 მოლი CO₂ 0.5 ლ ბალონში 300 K-ზე: რეალური და იდეალური წნევა',[['n','n','მოლი',1],['V','V','ლ',0.5],['T','T','K',300],['a','a','ლ²·ბარი/მოლ²',3.64],['b','b','ლ/მოლ',0.04267]],
+ v=>{const R=0.08314,pi=v.n*R*v.T/v.V,pr=v.n*R*v.T/(v.V-v.n*v.b)-v.a*v.n*v.n/(v.V*v.V);return [`p = nRT/(V − nb) − a·n²/V²`,`= ${V_(v.n)}·0.08314·${V_(v.T)} / (${V_(v.V)} − ${v.n}·${V_(v.b)}) − ${V_(v.a)}·${v.n}²/${v.V}²`,ANS(`p<sub>რეალ.</sub> = ${pr.toFixed(2)} ბარი`),`იდეალური აირი: p = nRT/V = ${pi.toFixed(2)} ბარი → სხვაობა ${((pi-pr)/pi*100).toFixed(1)}% (მოლეკულების მიზიდულობა)`];},
+ {t:'bar',parts:v=>{const R=0.08314;return [['იდეალური',v.n*R*v.T/v.V,COL.blue],['რეალური',v.n*R*v.T/(v.V-v.n*v.b)-v.a*v.n*v.n/(v.V*v.V),COL.gold]];}});
+ex(/^Vm=22\.414/,'ნორმალურ პირობებში 44.8 ლ აირი — რამდენი მოლია?',[['V','V','ლ',44.8]],
+ v=>[`n = V / V<sub>m</sub>`,`n = ${V_(v.V)} / 22.414`,ANS(`n = ${nf(v.V/22.414)} მოლი`),`თუ ეს CO₂-ია: m = ${nf(v.V/22.414*44.01)} გ`],{t:'gas',n:v=>v.V/22.414,T:()=>273,V:v=>v.V});
+/* ── kinetics ── */
+ex(/^k=A·e/,'არენიუსი: A = 10¹³ წმ⁻¹, Eₐ = 100 კჯ/მოლ',[['A','A','წმ⁻¹',1e13],['E','Eₐ','კჯ/მოლ',100],['T','T','K',298]],
+ v=>{const k=v.A*Math.exp(-v.E*1000/(R_GAS*v.T));return [`k = A · e<sup>−Eₐ/RT</sup>`,`Eₐ/RT = ${V_(v.E)}000 / (8.314 · ${V_(v.T)}) = ${(v.E*1000/(R_GAS*v.T)).toFixed(2)}`,ANS(`k = ${nf(k)} წმ⁻¹`),`ნახევარდაშლა (1 რიგი): t½ = ln2/k = ${nf(Math.LN2/k)} წმ${Math.LN2/k>86400?` ≈ ${nf(Math.LN2/k/86400)} დღე`:''}`];},
+ {t:'plot',x:'T',r:[250,500],f:v=>lg(v.A*Math.exp(-v.E*1000/(R_GAS*v.T))),xl:'T, K',yl:'lg k'});
+ex(/^ln\(k₂\/k₁\)=\(Eₐ\/R\)/,'რამდენჯერ ჩქარდება რეაქცია 25 °C-დან 35 °C-მდე (Eₐ = 50 კჯ/მოლ)?',[['E','Eₐ','კჯ/მოლ',50],['a','T₁','K',298.15],['b','T₂','K',308.15]],
+ v=>{const x=v.E*1000/R_GAS*(1/v.a-1/v.b);return [`ln(k₂/k₁) = (Eₐ/R)·(1/T₁ − 1/T₂)`,`= (${V_(v.E)}000 / 8.314) · (1/${V_(v.a)} − 1/${V_(v.b)}) = ${x.toFixed(3)}`,ANS(`k₂/k₁ = e<sup>${x.toFixed(3)}</sup> = ${Math.exp(x).toFixed(2)}`),'ამიტომაა საკვები მაცივარში დიდხანს ვარგისი'];},{t:'plot',x:'b',r:[280,380],f:v=>Math.exp(v.E*1000/R_GAS*(1/v.a-1/v.b)),xl:'T₂, K',yl:'k₂/k₁'});
+ex(/^γ=kT\+10/,'γ = 2. რამდენჯერ ჩქარდება რეაქცია 30 °C-ით გაცხელებისას?',[['g','γ','',2],['d','ΔT','°C',30]],
+ v=>[`k₂/k₁ = γ<sup>ΔT/10</sup>`,`= ${V_(v.g)}<sup>${V_(v.d)}/10</sup> = ${v.g}<sup>${v.d/10}</sup>`,ANS(`× ${nf(Math.pow(v.g,v.d/10))}`)],{t:'plot',x:'d',r:[0,100],f:v=>Math.pow(v.g,v.d/10),xl:'ΔT, °C',yl:'×'});
+const ORD=o=>(v)=>{const A0=v.A,k=v.k,t=v.t;const A=o===0?Math.max(0,A0-k*t):o===1?A0*Math.exp(-k*t):1/(1/A0+k*t),th=o===0?A0/(2*k):o===1?Math.LN2/k:1/(k*A0);
+  return [o===0?`[A] = [A]₀ − k·t`:o===1?`[A] = [A]₀ · e<sup>−kt</sup>`:`1/[A] = 1/[A]₀ + k·t`,o===0?`= ${V_(A0)} − ${V_(k)}·${V_(t)}`:o===1?`= ${V_(A0)} · e<sup>−${V_(k)}·${V_(t)}</sup>`:`= 1/${V_(A0)} + ${V_(k)}·${V_(t)}`,ANS(`[A] = ${nf(A)} M`),`t½ = ${o===0?'[A]₀/2k':o===1?'ln2/k':'1/(k[A]₀)'} = ${nf(th)} წმ · დარჩა ${(A/A0*100).toFixed(1)}%`];};
+const ordInp=[['A','[A]₀','M',1],['k','k','',0.1],['t','t','წმ',10]];
+ex(/^0რიგი/,'0 რიგის რეაქცია (მაგ. ალკოჰოლის დაშლა ღვიძლში)',[['A','[A]₀','M',1],['k','k','',0.1],['t','t','წმ',4]],ORD(0),{t:'plot',x:'t',r:[0,20],f:v=>Math.max(0,v.A-v.k*v.t),xl:'t',yl:'[A]'});
+ex(/^1რიგი/,'1 რიგის რეაქცია (რადიოაქტიური დაშლა, წამლის გამოყოფა)',ordInp,ORD(1),{t:'plot',x:'t',r:[0,50],f:v=>v.A*Math.exp(-v.k*v.t),xl:'t',yl:'[A]'});
+ex(/^2რიგი/,'2 რიგის რეაქცია (2NO₂ → 2NO + O₂)',ordInp,ORD(2),{t:'plot',x:'t',r:[0,100],f:v=>1/(1/v.A+v.k*v.t),xl:'t',yl:'[A]'});
+/* ── equilibrium ── */
+ex(/^aA\+bB⇌cC\+dD/,'N₂ + 3H₂ ⇌ 2NH₃ წონასწორობაში: [N₂] = 0.5, [H₂] = 1.5, [NH₃] = 0.2 M',[['n','[N₂]','M',0.5],['h','[H₂]','M',1.5],['a','[NH₃]','M',0.2]],
+ v=>{const K=v.a*v.a/(v.n*Math.pow(v.h,3));return [`K = [NH₃]² / ([N₂]·[H₂]³)`,`K = ${V_(v.a)}² / (${V_(v.n)} · ${V_(v.h)}³) = ${nf(v.a*v.a)} / ${nf(v.n*Math.pow(v.h,3))}`,ANS(`K = ${nf(K)}`),K<1?'K < 1 → წონასწორობაში რეაგენტები ჭარბობს':'K > 1 → წონასწორობაში პროდუქტები ჭარბობს'];},{t:'bar',parts:v=>[['N₂',v.n,COL.blue],['H₂',v.h,'#e8e8f0'],['NH₃',v.a,COL.gold]]});
+ex(/^ΔG°=−RT·lnK/,'K = 10⁵ 25 °C-ზე — რამდენია ΔG°?',[['K','K','',1e5],['T','T','K',298.15]],
+ v=>{const G=-R_GAS*v.T*Math.log(v.K)/1000;return [`ΔG° = −R·T·lnK`,`= −8.314 · ${V_(v.T)} · ln(${V_(nf(v.K))}) = −8.314 · ${v.T} · ${Math.log(v.K).toFixed(3)}`,ANS(`ΔG° = ${G.toFixed(2)} კჯ/მოლ`),G<0?'ΔG° < 0 → სტანდარტულ პირობებში რეაქცია თავისთავადია':'ΔG° > 0 → სტანდარტულ პირობებში არ მიდის'];},{t:'plot',x:'K',r:[0.001,1e6],log:1,f:v=>-R_GAS*v.T*Math.log(v.K)/1000,xl:'K (ლოგ.)',yl:'ΔG°, კჯ'});
+ex(/^ΔG=ΔG°\+RT·lnQ/,'ΔG° = −20 კჯ/მოლ, მაგრამ პროდუქტი უკვე ბევრია: Q = 10⁴',[['G','ΔG°','კჯ/მოლ',-20],['Q','Q','',1e4],['T','T','K',298.15]],
+ v=>{const G=v.G+R_GAS*v.T*Math.log(v.Q)/1000;return [`ΔG = ΔG° + R·T·lnQ`,`= ${V_(v.G)} + 8.314·${V_(v.T)}·ln(${V_(nf(v.Q))})/1000`,ANS(`ΔG = ${G.toFixed(2)} კჯ/მოლ`),G<0?'ΔG < 0 → რეაქცია წინ მიდის':G>0?'ΔG > 0 → ახლა რეაქცია უკან მიდის (Q > K)':'წონასწორობა'];},{t:'plot',x:'Q',r:[1e-3,1e8],log:1,f:v=>v.G+R_GAS*v.T*Math.log(v.Q)/1000,xl:'Q (ლოგ.)',yl:'ΔG'});
+ex(/^ln\(K₂\/K₁\)=−/,'ჰაბერის რეაქცია: K = 6.8·10⁵ 298 K-ზე, ΔH = −92.2 კჯ. რამდენია K 700 K-ზე?',[['K','K₁','',6.8e5],['a','T₁','K',298],['b','T₂','K',700],['H','ΔH°','კჯ/მოლ',-92.2]],
+ v=>{const x=-v.H*1000/R_GAS*(1/v.b-1/v.a),K2=v.K*Math.exp(x);return [`ln(K₂/K₁) = −(ΔH°/R)·(1/T₂ − 1/T₁)`,`= −(${V_(v.H)}000/8.314)·(1/${V_(v.b)} − 1/${V_(v.a)}) = ${x.toFixed(3)}`,ANS(`K₂ = ${nf(K2)}`),v.H<0?'ეგზოთერმული: გაცხელებით K მცირდება — მაგრამ სიჩქარისთვის მაინც ცხელდება (კომპრომისი ~450 °C)':'ენდოთერმული: გაცხელებით K იზრდება'];},
+ {t:'plot',x:'b',r:[250,900],f:v=>lg(v.K*Math.exp(-v.H*1000/R_GAS*(1/v.b-1/v.a))),xl:'T₂, K',yl:'lg K₂'});
+ex(/^Kp=Kc\(RT\)/,'N₂ + 3H₂ ⇌ 2NH₃ (Δn = 2 − 4 = −2), Kc = 0.5, T = 500 K',[['K','Kc','',0.5],['T','T','K',500],['d','Δn','',-2,1]],
+ v=>{const Kp=v.K*Math.pow(0.08206*v.T,v.d);return [`K<sub>p</sub> = K<sub>c</sub>·(RT)<sup>Δn</sup>`,`= ${V_(v.K)} · (0.08206 · ${V_(v.T)})<sup>${V_(v.d)}</sup>`,ANS(`K<sub>p</sub> = ${nf(Kp)}`)];},{t:'plot',x:'T',r:[300,1000],f:v=>lg(v.K*Math.pow(0.08206*v.T,v.d)),xl:'T, K',yl:'lg Kp'});
+/* ── acids & bases ── */
+ex(/^pH=−lg\[H⁺\]/,'[H⁺] = 10⁻³ M (როგორც ღვინოში). რამდენია pH და pOH?',[['h','[H⁺]','M',1e-3]],
+ v=>{const p=-lg(v.h);return [`pH = −lg[H⁺]`,`pH = −lg(${V_(nf(v.h))})`,ANS(`pH = ${p.toFixed(2)}`),`pOH = 14 − ${p.toFixed(2)} = ${(14-p).toFixed(2)} · [OH⁻] = ${nf(1e-14/v.h)} M · ${p<7?'მჟავე':p>7?'ტუტე':'ნეიტრალური'}`];},{t:'ph',p:v=>-lg(v.h)});
+ex(/^Kw=\[H⁺\]\[OH⁻\]/,'[OH⁻] = 10⁻⁴ M. რამდენია [H⁺] და pH?',[['o','[OH⁻]','M',1e-4]],
+ v=>[`[H⁺] = K<sub>w</sub> / [OH⁻]`,`= 10⁻¹⁴ / ${V_(nf(v.o))}`,ANS(`[H⁺] = ${nf(1e-14/v.o)} M`),`pH = ${(14+lg(v.o)).toFixed(2)}`],{t:'ph',p:v=>14+lg(v.o)});
+ex(/^HA⇌H⁺\+A⁻:Ka/,'0.1 M ძმარმჟავაში 1.32·10⁻³ M H⁺-ია. გამოთვალე Ka',[['C','C','M',0.1],['h','[H⁺]','M',1.32e-3]],
+ v=>{const Ka=v.h*v.h/(v.C-v.h);return [`K<sub>a</sub> = [H⁺][A⁻] / [HA] = x² / (C − x)`,`= ${V_(nf(v.h))}² / (${V_(v.C)} − ${nf(v.h)})`,ANS(`K<sub>a</sub> = ${nf(Ka)}`),`pK<sub>a</sub> = ${(-lg(Ka)).toFixed(2)}`];},{t:'ph',p:v=>-lg(v.h)});
+ex(/^\[H⁺\]≈√\(Ka·C\)/,'0.1 M ძმარმჟავის pH (Ka = 1.75·10⁻⁵)',[['K','Ka','',1.75e-5],['C','C','M',0.1]],
+ v=>{const h=Math.sqrt(v.K*v.C);return [`[H⁺] ≈ √(K<sub>a</sub> · C)`,`= √(${V_(nf(v.K))} · ${V_(v.C)})`,ANS(`[H⁺] = ${nf(h)} M → pH = ${(-lg(h)).toFixed(2)}`),`იგივე კონცენტრაციის HCl-ს pH = ${(-lg(v.C)).toFixed(2)} — სუსტი მჟავა ${(v.C/h).toFixed(0)}-ჯერ ნაკლებ H⁺-ს იძლევა`];},{t:'ph',p:v=>-lg(Math.sqrt(v.K*v.C))});
+ex(/^pH=pKa\+lg/,'აცეტატური ბუფერი: 0.2 M CH₃COONa + 0.1 M CH₃COOH',[['p','pKa','',4.76],['a','[A⁻]','M',0.2],['h','[HA]','M',0.1]],
+ v=>{const p=v.p+lg(v.a/v.h);return [`pH = pK<sub>a</sub> + lg([A⁻]/[HA])`,`= ${V_(v.p)} + lg(${V_(v.a)}/${V_(v.h)})`,ANS(`pH = ${p.toFixed(2)}`),'სისხლის ბუფერი (HCO₃⁻/H₂CO₃) ასე ინარჩუნებს pH 7.4-ს'];},{t:'ph',p:v=>v.p+lg(v.a/v.h)});
+ex(/^Ka·Kb=Kw/,'NH₄⁺-ის Ka = 5.6·10⁻¹⁰. რამდენია ამიაკის Kb?',[['K','Ka','',5.6e-10]],
+ v=>[`K<sub>b</sub> = K<sub>w</sub> / K<sub>a</sub>`,`= 10⁻¹⁴ / ${V_(nf(v.K))}`,ANS(`K<sub>b</sub> = ${nf(1e-14/v.K)}`),`pK<sub>a</sub> + pK<sub>b</sub> = ${(-lg(v.K)).toFixed(2)} + ${(14+lg(v.K)).toFixed(2)} = 14`]);
+ex(/^n\(H⁺\)=n\(OH⁻\)/,'25 მლ 0.1 M HCl-ის გასანეიტრალებლად რამდენი 0.125 M NaOH სჭირდება?',[['Ca','C(მჟავა)','M',0.1],['Va','V(მჟავა)','მლ',25],['Cb','C(ტუტე)','M',0.125]],
+ v=>[`C₁·V₁ = C₂·V₂ → V₂ = C₁V₁ / C₂`,`V₂ = ${V_(v.Ca)} · ${V_(v.Va)} / ${V_(v.Cb)}`,ANS(`V(NaOH) = ${nf(v.Ca*v.Va/v.Cb)} მლ`),`n(H⁺) = n(OH⁻) = ${nf(v.Ca*v.Va/1000)} მოლი`],{t:'plot',x:'Cb',r:[0.02,0.5],f:v=>v.Ca*v.Va/v.Cb,xl:'C(NaOH), M',yl:'V, მლ'});
+ex(/^α=√\(Ka\/C\)/,'ძმარმჟავას დისოციაციის ხარისხი განზავებისას',[['K','Ka','',1.75e-5],['C','C','M',0.01]],
+ v=>{const a=Math.sqrt(v.K/v.C);return [`α = √(K<sub>a</sub> / C)`,`= √(${V_(nf(v.K))} / ${V_(v.C)})`,ANS(`α = ${(a*100).toFixed(2)}%`),'განზავებისას α იზრდება — ოსტვალდის კანონი'];},{t:'plot',x:'C',r:[0.0005,0.5],f:v=>Math.sqrt(v.K/v.C)*100,xl:'C, M',yl:'α, %'});
+/* ── electrochemistry ── */
+ex(/^E°უჯრ\./,'დანიელის ელემენტი: Zn | Zn²⁺ ‖ Cu²⁺ | Cu',[['c','E° კათოდი (Cu)','ვ',0.34],['a','E° ანოდი (Zn)','ვ',-0.76]],
+ v=>{const E=v.c-v.a;return [`E° = E°<sub>კათოდი</sub> − E°<sub>ანოდი</sub>`,`= ${V_(v.c)} − (${V_(v.a)})`,ANS(`E° = ${E.toFixed(2)} ვ`),E>0?'E° > 0 → ელემენტი მუშაობს თავისით':'E° < 0 → ელექტროდები შეცვალე'];},{t:'bar',parts:v=>[['კათოდი',Math.max(0,v.c+3.1),COL.blue],['ანოდი',Math.max(0,v.a+3.1),COL.red]]});
+ex(/^E=E°−\(RT\/nF\)/,'Zn–Cu ელემენტი: [Zn²⁺] = 1 M, [Cu²⁺] = 0.01 M',[['E','E°','ვ',1.10],['n','n','',2,1],['p','[Zn²⁺] (პროდ.)','M',1],['r','[Cu²⁺] (რეაგ.)','M',0.01]],
+ v=>{const Q=v.p/v.r,E=v.E-0.05916/v.n*lg(Q);return [`E = E° − (0.0592/n)·lgQ, Q = [Zn²⁺]/[Cu²⁺]`,`Q = ${V_(v.p)}/${V_(v.r)} = ${nf(Q)}`,`E = ${V_(v.E)} − (0.0592/${V_(v.n)})·lg(${nf(Q)})`,ANS(`E = ${E.toFixed(3)} ვ`),'ბატარეის „დაჯდომა“: რეაგენტი ილევა → Q იზრდება → ძაბვა ეცემა'];},{t:'plot',x:'r',r:[1e-4,2],log:1,f:v=>v.E-0.05916/v.n*lg(v.p/v.r),xl:'[Cu²⁺] (ლოგ.)',yl:'E, ვ'});
+ex(/^ΔG°=−nFE°/,'დანიელის ელემენტის ΔG° (n = 2, E° = 1.10 ვ)',[['n','n','',2,1],['E','E°','ვ',1.10]],
+ v=>[`ΔG° = −n·F·E°`,`= −${V_(v.n)} · 96485 · ${V_(v.E)}`,ANS(`ΔG° = ${(-v.n*F_C*v.E/1000).toFixed(1)} კჯ/მოლ`),'ეს ენერგია გარდაიქმნება ელექტრულ მუშაობად']);
+ex(/^lgK=nE°\/0\.0592/,'რამდენია Zn + Cu²⁺ ⇌ Zn²⁺ + Cu-ის წონასწორობის მუდმივა?',[['n','n','',2,1],['E','E°','ვ',1.10]],
+ v=>{const l=v.n*v.E/0.05916;return [`lgK = n·E° / 0.0592`,`= ${V_(v.n)} · ${V_(v.E)} / 0.0592 = ${l.toFixed(2)}`,ANS(`K = 10<sup>${l.toFixed(1)}</sup>`),'რეაქცია პრაქტიკულად ბოლომდე მიდის'];});
+ex(/^m=\(I·t·M\)\/\(n·F\)/,'სპილენძის დაფარვა: 2 ა დენი 30 წუთი, Cu²⁺',[['I','I','ა',2],['t','t','წთ',30],['M','M','გ/მოლ',63.546],['n','n','',2,1]],
+ v=>{const m=v.I*v.t*60*v.M/(v.n*F_C);return [`m = I·t·M / (n·F)`,`= ${V_(v.I)} · ${V_(v.t)}·60 · ${V_(v.M)} / (${V_(v.n)} · 96485)`,ANS(`m = ${m.toFixed(3)} გ`),`ალუმინის (Al³⁺, M = 26.98) იგივე დენით: ${(v.I*v.t*60*26.98/(3*F_C)).toFixed(3)} გ`];},{t:'plot',x:'t',r:[0,180],f:v=>v.I*v.t*60*v.M/(v.n*F_C),xl:'t, წთ',yl:'m, გ'});
+ex(/^Q=I·t/,'ტელეფონის დამტენი: 0.5 ა 1 საათი',[['I','I','ა',0.5],['t','t','წმ',3600]],
+ v=>{const Q=v.I*v.t;return [`Q = I · t`,`= ${V_(v.I)} · ${V_(v.t)}`,ANS(`Q = ${nf(Q)} კ`)+` = ${(Q/3.6).toFixed(0)} მა·სთ`,`ელექტრონი: Q/e = ${nf(Q/EV)} · მოლი e⁻: ${nf(Q/F_C)}`];});
+/* ── thermodynamics ── */
+ex(/^ΔG=ΔH−T·ΔS/,'კირქვის დაშლა CaCO₃ → CaO + CO₂ (ΔH = 178.3 კჯ, ΔS = 160.5 ჯ/K)',[['H','ΔH','კჯ/მოლ',178.3],['S','ΔS','ჯ/(მოლ·K)',160.5],['T','T','K',298]],
+ v=>{const G=v.H-v.T*v.S/1000;return [`ΔG = ΔH − T·ΔS`,`= ${V_(v.H)} − ${V_(v.T)} · ${V_(v.S)}/1000`,ANS(`ΔG = ${G.toFixed(1)} კჯ/მოლ`),G<0?'თავისთავადია':`არ მიდის — საჭიროა T > ${(v.H*1000/v.S).toFixed(0)} K (კირის ღუმელი)`];},{t:'plot',x:'T',r:[0,2000],f:v=>v.H-v.T*v.S/1000,xl:'T, K',yl:'ΔG, კჯ'});
+ex(/^Tგადასვლის=ΔH\/ΔS/,'რა ტემპერატურაზე ხდება CaCO₃-ის დაშლა თავისთავადი?',[['H','ΔH','კჯ/მოლ',178.3],['S','ΔS','ჯ/(მოლ·K)',160.5]],
+ v=>{const T=v.H*1000/v.S;return [`T = ΔH / ΔS`,`= ${V_(v.H)}000 / ${V_(v.S)}`,ANS(`T = ${T.toFixed(0)} K = ${(T-273.15).toFixed(0)} °C`)];},{t:'plot',x:'H',r:[10,400],f:v=>v.H*1000/v.S,xl:'ΔH, კჯ',yl:'T, K'});
+ex(/^ΔH°რ=ΣΔH°f/,'მეთანის წვა: CH₄ + 2O₂ → CO₂ + 2H₂O(ს)',[['c','ΔH°f(CO₂)','კჯ/მოლ',-393.5],['w','ΔH°f(H₂O)','კჯ/მოლ',-285.8],['m','ΔH°f(CH₄)','კჯ/მოლ',-74.8]],
+ v=>{const H=v.c+2*v.w-v.m;return [`ΔH = [ΔH°f(CO₂) + 2·ΔH°f(H₂O)] − [ΔH°f(CH₄) + 2·0]`,`= [${V_(v.c)} + 2·(${V_(v.w)})] − (${V_(v.m)})`,ANS(`ΔH = ${H.toFixed(1)} კჯ/მოლ`),`1 მ³ ბუნებრივ აირზე (≈ 40.9 მოლი): ${(H*40.9/1000).toFixed(1)} მჯ სითბო`];},{t:'bar',parts:v=>[['პროდუქტები',-(v.c+2*v.w),COL.cyan],['რეაგენტები',-v.m,COL.gold]]});
+ex(/^ΔU=q\+w/,'აირმა შთანთქა 500 ჯ სითბო და გაფართოებისას შეასრულა 200 ჯ მუშაობა',[['q','q (შთანთქმული)','ჯ',500],['w','w (სისტემაზე)','ჯ',-200]],
+ v=>[`ΔU = q + w`,`= ${V_(v.q)} + (${V_(v.w)})`,ANS(`ΔU = ${v.q+v.w} ჯ`),'სისტემის მიერ შესრულებული მუშაობა w-ში უარყოფითია']);
+ex(/^S=kB·lnW/,'1 მოლი აირი ორჯერ დიდ მოცულობაში ფართოვდება',[['n','n','მოლი',1],['r','V₂/V₁','',2]],
+ v=>[`W₂/W₁ = (V₂/V₁)<sup>N</sup> → ΔS = k<sub>B</sub>·N·ln(V₂/V₁) = nR·ln(V₂/V₁)`,`ΔS = ${V_(v.n)} · 8.314 · ln(${V_(v.r)})`,ANS(`ΔS = ${(v.n*R_GAS*Math.log(v.r)).toFixed(2)} ჯ/K`),'მიკრომდგომარეობების რიცხვი ' + (v.r>1?'იზრდება':'მცირდება')+` 2<sup>6·10²³</sup>-ჯერ — უკან დაბრუნება პრაქტიკულად შეუძლებელია`],{t:'plot',x:'r',r:[1,10],f:v=>v.n*R_GAS*Math.log(v.r),xl:'V₂/V₁',yl:'ΔS, ჯ/K'});
+ex(/^ΔS=qშექც\.\/T/,'1 მოლი ყინულის დნობა 0 °C-ზე (ΔH = 6.01 კჯ)',[['q','q','ჯ',6010],['T','T','K',273.15]],
+ v=>[`ΔS = q / T`,`= ${V_(v.q)} / ${V_(v.T)}`,ANS(`ΔS = ${(v.q/v.T).toFixed(2)} ჯ/K`),'მოწესრიგებული კრისტალი → მოუწესრიგებელი სითხე: ენტროპია იზრდება']);
+ex(/^q=m·c·ΔT/,'ჭიქა ჩაი: 250 გ წყალი 20-დან 95 °C-მდე',[['m','m','გ',250],['c','c','ჯ/(გ·K)',4.184],['d','ΔT','K',75]],
+ v=>{const q=v.m*v.c*v.d;return [`q = m · c · ΔT`,`= ${V_(v.m)} · ${V_(v.c)} · ${V_(v.d)}`,ANS(`q = ${(q/1000).toFixed(2)} კჯ`),`2 კვტ ჩაიდანით: ${(q/2000).toFixed(0)} წამი · ${(q/4184).toFixed(1)} კკალ`];},{t:'plot',x:'d',r:[0,100],f:v=>v.m*v.c*v.d/1000,xl:'ΔT, K',yl:'q, კჯ'});
+/* ── radioactivity ── */
+ex(/^N=N₀·e−λt/,'100 გ ¹⁴C (t½ = 5730 წ) — რამდენი დარჩება 10 000 წლის შემდეგ?',[['N','N₀','გ',100],['h','t½','წ',5730],['t','t','წ',10000]],
+ v=>{const N=v.N*Math.pow(0.5,v.t/v.h);return [`N = N₀ · (½)<sup>t/t½</sup>`,`= ${V_(v.N)} · (½)<sup>${V_(v.t)}/${V_(v.h)}</sup> = ${v.N} · (½)<sup>${(v.t/v.h).toFixed(3)}</sup>`,ANS(`N = ${nf(N)} გ`),`დაიშალა ${(100-N/v.N*100).toFixed(1)}%`];},{t:'plot',x:'t',r:[0,30000],f:v=>v.N*Math.pow(0.5,v.t/v.h),xl:'t, წ',yl:'N, გ'});
+ex(/^λ=ln2\/t½/,'¹³¹I-ის დაშლის მუდმივა (t½ = 8.02 დღე)',[['h','t½','დღე',8.02]],
+ v=>[`λ = ln2 / t½`,`= 0.6931 / ${V_(v.h)}`,ANS(`λ = ${nf(Math.LN2/v.h)} დღე⁻¹`)+` = ${nf(Math.LN2/(v.h*86400))} წმ⁻¹`,`ყოველდღე იშლება ${((1-Math.exp(-Math.LN2/v.h))*100).toFixed(2)}%`]);
+ex(/^A=λ·N/,'1 გ რადიუმ-226-ის აქტივობა (t½ = 1600 წ)',[['m','m','გ',1],['M','M','გ/მოლ',226],['h','t½','წ',1600]],
+ v=>{const N=v.m/v.M*NA,l=Math.LN2/(v.h*365.25*86400),A=l*N;return [`A = λ·N, λ = ln2/t½, N = (m/M)·N<sub>A</sub>`,`N = ${V_(v.m)}/${V_(v.M)} · 6.022·10²³ = ${nf(N)}`,`λ = 0.6931 / (${V_(v.h)} · 3.156·10⁷ წმ) = ${nf(l)} წმ⁻¹`,ANS(`A = ${nf(A)} ბკ`),`= ${(A/3.7e10).toFixed(3)} კიური (1 Ci სწორედ 1 გ რადიუმით განისაზღვრა)`];});
+ex(/^t=\(t½\/ln2\)/,'ძვალში ¹⁴C-ის 25% დარჩა. რამდენი წლისაა?',[['p','დარჩენილი','%',25],['h','t½','წ',5730]],
+ v=>{const t=v.h/Math.LN2*Math.log(100/v.p);return [`t = (t½/ln2) · ln(N₀/N)`,`= (${V_(v.h)}/0.6931) · ln(100/${V_(v.p)})`,ANS(`t = ${Math.round(t).toLocaleString('en').replace(/,/g,' ')} წელი`)];},{t:'plot',x:'p',r:[1,100],f:v=>v.h/Math.LN2*Math.log(100/v.p),xl:'დარჩა, %',yl:'ასაკი, წ'});
+ex(/^E=Δm·c²/,'ჰელიუმ-4-ის ბმის ენერგია: 2p + 2n − ⁴He ბირთვი = 0.030376 u',[['d','Δm','u',0.030376],['A','ნუკლონი','',4,1]],
+ v=>{const E=v.d*931.494;return [`E = Δm · c², 1 u = 931.494 მევ`,`= ${V_(v.d)} · 931.494`,ANS(`E = ${E.toFixed(2)} მევ`)+` · ერთ ნუკლონზე ${(E/v.A).toFixed(2)} მევ`,`1 მოლზე: ${nf(E*1.602e-13*NA/1000)} კჯ — ქიმიურ რეაქციაზე მილიონჯერ მეტი`];},{t:'bar',parts:v=>[['ნუკლონები ცალ-ცალკე',4.031882,COL.gold],['ბირთვი',4.031882-v.d,COL.cyan]]});
+/* ── structure ── */
+ex(/^μ=q·d/,'HCl: ნაწილობრივი მუხტი 0.18e, ბმის სიგრძე 127 პმ',[['q','δ','e',0.18],['d','d','პმ',127]],
+ v=>{const mu=v.q*EV*v.d*1e-12/3.33564e-30;return [`μ = q · d, 1 D = 3.336·10⁻³⁰ კ·მ`,`= ${V_(v.q)}·1.602·10⁻¹⁹ · ${V_(v.d)}·10⁻¹²`,ANS(`μ = ${mu.toFixed(2)} D`),`სრულად იონური იქნებოდა: ${(EV*v.d*1e-12/3.33564e-30).toFixed(2)} D → ბმა ${(v.q*100).toFixed(0)}% იონურია`];});
+ex(/^ρ=Z·M\/\(NA·a³\)/,'სპილენძი (FCC): a = 361.49 პმ, Z = 4',[['Z','Z','',4,1],['M','M','გ/მოლ',63.546],['a','a','პმ',361.49]],
+ v=>{const r=v.Z*v.M/(NA*Math.pow(v.a*1e-10,3));return [`ρ = Z·M / (N<sub>A</sub>·a³)`,`= ${V_(v.Z)}·${V_(v.M)} / (6.022·10²³ · (${V_(v.a)}·10⁻¹⁰ სმ)³)`,ANS(`ρ = ${r.toFixed(3)} გ/სმ³`)];});
+ex(/^η=Z·\(4\/3\)πr³/,'წახნაგცენტრირებული უჯრედი: Z = 4, r = a√2/4',[['Z','Z','',4,1],['k','r/a','',0.35355]],
+ v=>{const e=v.Z*4/3*Math.PI*Math.pow(v.k,3);return [`η = Z · (4/3)π r³ / a³`,`= ${V_(v.Z)} · 4.18879 · ${V_(v.k)}³`,ANS(`η = ${(e*100).toFixed(1)}%`),`სიცარიელე: ${(100-e*100).toFixed(1)}%`];},{t:'bar',parts:v=>{const e=v.Z*4/3*Math.PI*Math.pow(v.k,3);return [['ატომები',e,COL.gold],['სიცარიელე',Math.max(0,1-e),'#3a3550']];}});
+ex(/^nλ=2d·sinθ/,'რენტგენი Cu Kα (λ = 154.06 პმ), არეკვლა 21.7°-ზე',[['n','n','',1,1],['l','λ','პმ',154.06],['t','θ','°',21.7]],
+ v=>{const d=v.n*v.l/(2*Math.sin(v.t*Math.PI/180));return [`d = nλ / (2·sinθ)`,`= ${V_(v.n)} · ${V_(v.l)} / (2 · sin ${V_(v.t)}°)`,ANS(`d = ${d.toFixed(1)} პმ`),'სიბრტყეთა შორის მანძილი — ასე „ნახეს“ დნმ-ის ორმაგი სპირალი (1952)'];},{t:'plot',x:'t',r:[5,80],f:v=>v.n*v.l/(2*Math.sin(v.t*Math.PI/180)),xl:'θ, °',yl:'d, პმ'});
+/* ── organic ── */
+ex(/^CₙH₂ₙ₊₂\+/,'ოქტანის (ბენზინი) წვა',[['n','n (C ატომი)','',8,1]],
+ v=>{let a=1,o=(3*v.n+1)/2,c=v.n,w=v.n+1;if(o%1){a*=2;o*=2;c*=2;w*=2;}const M=12.011*v.n+1.008*(2*v.n+2);
+  return [`C<sub>n</sub>H<sub>2n+2</sub> + (3n+1)/2 O₂ → nCO₂ + (n+1)H₂O`,`n = ${V_(v.n)}: (3·${v.n}+1)/2 = ${(3*v.n+1)/2}`,ANS(`${a>1?a:''}C${v.n}H${2*v.n+2} + ${o}O₂ → ${c}CO₂ + ${w}H₂O`),`1 კგ საწვავი → ${(v.n*44.01/M).toFixed(2)} კგ CO₂`];},{t:'bar',parts:v=>{const M=12.011*v.n+1.008*(2*v.n+2);return [['საწვავი',1,COL.gold],['CO₂',v.n*44.01/M,'#888'],['H₂O',(v.n+1)*18.015/M,COL.cyan]];}});
+ex(/^DBE=/,'ბენზოლი C₆H₆ — რამდენი რგოლი + π-ბმაა?',[['C','C','',6,1],['H','H','',6,1],['N','N','',0,1],['X','X (ჰალოგ.)','',0,1]],
+ v=>{const d=(2*v.C+2+v.N-v.H-v.X)/2;return [`DBE = (2C + 2 + N − H − X) / 2`,`= (2·${V_(v.C)} + 2 + ${V_(v.N)} − ${V_(v.H)} − ${V_(v.X)}) / 2`,ANS(`DBE = ${d}`),d===4&&v.C>=6?'ბენზოლის რგოლი: 1 რგოლი + 3 π-ბმა':d===0?'ნაჯერი, რგოლის გარეშე':'რგოლები + ორმაგი/სამმაგი ბმები ჯამში'];});
+/* ── solutions ── */
+ex(/^C=n\/V\(მოლ\/ლ\)/,'5.85 გ NaCl წყალში, ხსნარის მოცულობა 500 მლ',[['m','m','გ',5.85],['M','M','გ/მოლ',58.44],['V','V','ლ',0.5]],
+ v=>[`C = n / V = (m/M) / V`,`= (${V_(v.m)}/${V_(v.M)}) / ${V_(v.V)}`,ANS(`C = ${nf(v.m/v.M/v.V)} მოლ/ლ`)],{t:'plot',x:'m',r:[0,60],f:v=>v.m/v.M/v.V,xl:'m, გ',yl:'C, M'});
+ex(/^ω=mნივთ\./,'20 გ შაქარი 180 გ წყალში',[['s','ნივთიერება','გ',20],['w','წყალი','გ',180]],
+ v=>[`ω = m<sub>ნივთ.</sub> / (m<sub>ნივთ.</sub> + m<sub>წყალი</sub>) · 100%`,`= ${V_(v.s)} / (${v.s} + ${V_(v.w)}) · 100%`,ANS(`ω = ${(v.s/(v.s+v.w)*100).toFixed(2)}%`)],{t:'bar',parts:v=>[['ნივთიერება',v.s,COL.gold],['წყალი',v.w,COL.blue]]});
+ex(/^C₁V₁=C₂V₂/,'12 M კონცენტრირებული HCl-დან 500 მლ 1 M ხსნარი',[['a','C₁','M',12],['c','C₂','M',1],['d','V₂','მლ',500]],
+ v=>{const V1=v.c*v.d/v.a;return [`V₁ = C₂·V₂ / C₁`,`= ${V_(v.c)} · ${V_(v.d)} / ${V_(v.a)}`,ANS(`V₁ = ${nf(V1)} მლ`),`აიღე ${nf(V1)} მლ მჟავა + ${nf(v.d-V1)} მლ წყალი (მჟავა წყალში ასხი, არა პირიქით!)`];},{t:'bar',parts:v=>[['მჟავა',v.c*v.d/v.a,COL.red],['წყალი',v.d-v.c*v.d/v.a,COL.blue]]});
+ex(/^ΔTდუღ\.=i·Kb·b/,'1 მოლი NaCl 1 კგ წყალში — დუღილის ტემპერატურა',[['i','i','',2],['K','Kb','K·კგ/მოლ',0.512],['b','b','მოლ/კგ',1]],
+ v=>[`ΔT = i · K<sub>b</sub> · b`,`= ${V_(v.i)} · ${V_(v.K)} · ${V_(v.b)}`,ANS(`ΔT = +${(v.i*v.K*v.b).toFixed(3)} °C → დუღს ${(100+v.i*v.K*v.b).toFixed(2)} °C-ზე`),'მაკარონის წყალში მარილი ფაქტობრივად ტემპერატურას თითქმის არ ცვლის'],{t:'plot',x:'b',r:[0,5],f:v=>100+v.i*v.K*v.b,xl:'b',yl:'t, °C'});
+ex(/^ΔTგაყ\.=i·Kf·b/,'გზის მარილი: CaCl₂ (i = 3), 2 მოლ/კგ',[['i','i','',3],['K','Kf','K·კგ/მოლ',1.86],['b','b','მოლ/კგ',2]],
+ v=>[`ΔT = i · K<sub>f</sub> · b`,`= ${V_(v.i)} · ${V_(v.K)} · ${V_(v.b)}`,ANS(`ΔT = −${(v.i*v.K*v.b).toFixed(2)} °C → იყინება ${(-v.i*v.K*v.b).toFixed(1)} °C-ზე`),'ამიტომ ყინული მარილიან გზაზე დნება'],{t:'plot',x:'b',r:[0,5],f:v=>-v.i*v.K*v.b,xl:'b',yl:'t, °C'});
+ex(/^π=i·C·R·T/,'ფიზიოლოგიური ხსნარი: 0.154 M NaCl, 37 °C',[['i','i','',2],['C','C','M',0.154],['T','T','K',310.15]],
+ v=>{const p=v.i*v.C*0.08206*v.T;return [`π = i · C · R · T`,`= ${V_(v.i)} · ${V_(v.C)} · 0.08206 · ${V_(v.T)}`,ANS(`π = ${p.toFixed(2)} ატმ`),'სისხლთან იზოტონურია (~7.7 ატმ) — ერითროციტები არც იბერება, არც იჭმუჭნება'];},{t:'plot',x:'C',r:[0,0.6],f:v=>v.i*v.C*0.08206*v.T,xl:'C, M',yl:'π, ატმ'});
+ex(/^p=xგამხს\.·p°/,'წყლის ორთქლის წნევა 25 °C-ზე 3.17 კპა; ხსნარში წყლის წილი 0.9',[['x','x(წყალი)','',0.9],['p','p°','კპა',3.17]],
+ v=>[`p = x · p°`,`= ${V_(v.x)} · ${V_(v.p)}`,ANS(`p = ${(v.x*v.p).toFixed(3)} კპა`),`დაწევა ${((1-v.x)*100).toFixed(0)}%-ით`],{t:'plot',x:'x',r:[0,1],f:v=>v.x*v.p,xl:'x',yl:'p, კპა'});
+ex(/^C=kH·p/,'გაზიან სასმელში CO₂ 2.5 ატმ წნევითაა (kH = 0.034 მოლ/(ლ·ატმ))',[['k','kH','მოლ/(ლ·ატმ)',0.034],['p','p','ატმ',2.5]],
+ v=>{const C=v.k*v.p;return [`C = k<sub>H</sub> · p`,`= ${V_(v.k)} · ${V_(v.p)}`,ANS(`C = ${C.toFixed(4)} მოლ/ლ`)+` = ${(C*44.01).toFixed(2)} გ/ლ`,`გახსნისას (p(CO₂) ≈ 0.0004 ატმ) ხსნადობა ${(v.p/0.0004).toFixed(0)}-ჯერ ეცემა — ამიტომ შუშხუნებს`];},{t:'plot',x:'p',r:[0,5],f:v=>v.k*v.p*44.01,xl:'p, ატმ',yl:'გ/ლ'});
+
+/* ── example panel: inputs, animated steps, visual ── */
+function exViz(box,e,getV){
+  const vz=e.viz;if(!vz)return;const c=canvas(box,360,170),g=c.g;let t0=performance.now()/1000,P=[];
+  const replay=()=>{t0=performance.now()/1000;P=[];if(vz.t==='gas'){const v=getV(),n=clamp(Math.round(vz.n(v)*12),3,90);for(let i=0;i<n;i++)P.push([Math.random(),Math.random(),Math.random()*TAU]);}};replay();c.replay=replay;
+  anim((dt,T)=>{const v=getV(),p=clamp(T-t0,0,1.2)/1.2;g.clearRect(0,0,g.W,g.H);
+    if(vz.t==='plot'){const [a,b]=vz.r,N=120,X=k=>vz.log?Math.pow(10,lg(a)+(lg(b)-lg(a))*k/N):a+(b-a)*k/N;const ys=[];
+      for(let k=0;k<=N;k++){const w={...v};w[vz.x]=X(k);ys.push(vz.f(w));}const ok=ys.filter(isFinite);if(!ok.length)return;
+      let lo=Math.min(...ok),hi=Math.max(...ok);if(lo===hi){lo-=1;hi+=1;}const pad=(hi-lo)*0.1,lo0=lo;lo-=pad;hi+=pad;if(lo0>=0&&lo<0)lo=0;
+      const Pl=plot(g,{x:[0,N],y:[lo,hi],xl:vz.xl,yl:vz.yl,m:[10,10,24,34]});
+      g.fillStyle=COL.dim;g.font='9px sans-serif';g.textAlign='center';const pf=x=>{const a2=Math.abs(x);return a2&&(a2>=1e5||a2<1e-3)?x.toExponential(1):String(+x.toPrecision(3));};g.fillText(pf(a),Pl.X(0),Pl.y0+Pl.h+11);g.fillText(pf(b),Pl.X(N),Pl.y0+Pl.h+11);g.textAlign='right';g.fillText(String(+hi.toPrecision(3)),Pl.x0-3,Pl.y0+8);g.fillText(String(+lo.toPrecision(3)),Pl.x0-3,Pl.y0+Pl.h);
+      g.beginPath();let st=false;for(let k=0;k<=N*p&&k<=N;k++){if(!isFinite(ys[k]))continue;const x=Pl.X(k),y=Pl.Y(ys[k]);st?g.lineTo(x,y):g.moveTo(x,y);st=true;}g.strokeStyle=COL.gold;g.lineWidth=2.2;g.stroke();
+      const cur=v[vz.x],kk=vz.log?(lg(cur)-lg(a))/(lg(b)-lg(a))*N:(cur-a)/(b-a)*N,yv=vz.f(v);
+      if(p>=1&&isFinite(yv)&&kk>=0&&kk<=N){const x=Pl.X(kk),y=Pl.Y(yv),pu=1+0.35*Math.sin(T*5);g.strokeStyle='rgba(127,216,255,.5)';g.setLineDash([3,3]);g.beginPath();g.moveTo(x,Pl.y0+Pl.h);g.lineTo(x,y);g.lineTo(Pl.x0,y);g.stroke();g.setLineDash([]);
+        g.fillStyle='#7fd8ff';g.beginPath();g.arc(x,y,4.5*pu,0,TAU);g.fill();g.fillStyle='#fff';g.font='600 11px sans-serif';g.textAlign=x>g.W*0.6?'right':'left';g.fillText(String(+yv.toPrecision(4)),x+(x>g.W*0.6?-8:8),y-8);}}
+    else if(vz.t==='photon'){const L=vz.l(v);if(!isFinite(L))return;const col=L>=380&&L<=750?wlRGB(L):L<380?'#b080ff':'#a04040',wl=clamp(L/12,8,90);
+      g.fillStyle=COL.mid;g.font='11px sans-serif';g.textAlign='left';g.fillText(`λ = ${L.toFixed(1)} ნმ ${L<380?'(UV — უხილავი)':L>750?'(IR — უხილავი)':''}`,10,18);
+      g.strokeStyle=col;g.lineWidth=3;g.shadowColor=col;g.shadowBlur=12;g.beginPath();const head=p*g.W;for(let x=0;x<=head;x+=2){const y=95+Math.sin((x/wl-T*2)*TAU)*28*Math.min(1,(head-x)/40+0.2);x?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.shadowBlur=0;
+      g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1;g.beginPath();g.moveTo(40,145);g.lineTo(40+wl,145);g.stroke();g.fillStyle=COL.dim;g.fillText('↔ λ (მასშტაბით)',44+wl,149);
+      for(let w=380;w<=750;w+=2){g.fillStyle=wlRGB(w);g.fillRect(200+(w-380)/370*150,150,2,10);}if(L>=380&&L<=750){g.fillStyle='#fff';g.fillRect(200+(L-380)/370*150-1,146,2,18);}}
+    else if(vz.t==='ph'){const pH=vz.p(v);for(let x=0;x<=320;x++){const c2=x/320*14,u=uni(c2);g.fillStyle=`rgb(${u.join(',')})`;g.fillRect(20+x,70,1.5,30);}
+      g.fillStyle='#fff';g.font='10px sans-serif';g.textAlign='center';for(let k=0;k<=14;k+=2)g.fillText(k,20+k/14*320,115);
+      const cur=lerp(7,clamp(pH,0,14),Math.min(1,p*1.2)),x=20+cur/14*320;g.fillStyle='#fff';g.beginPath();g.moveTo(x,66);g.lineTo(x-7,52);g.lineTo(x+7,52);g.fill();g.font='600 15px Cinzel,serif';g.fillText('pH '+cur.toFixed(2),x,44);
+      g.fillStyle=COL.mid;g.font='11px sans-serif';g.fillText(pH<7?'მჟავე':pH>7?'ტუტე':'ნეიტრალური',x,140);}
+    else if(vz.t==='gas'){const Vv=vz.V(v),Tv=vz.T(v),w=clamp(80+Vv*6,90,330),sp=0.12*Math.sqrt(Tv/300);g.strokeStyle='rgba(201,168,76,.6)';g.lineWidth=2;g.strokeRect(14,24,w,130);g.fillStyle=COL.gold;g.fillRect(14+w-3,24,6,130);
+      for(const q of P){q[0]+=Math.cos(q[2])*sp*dt*3;q[1]+=Math.sin(q[2])*sp*dt*3*1.6;if(q[0]<0||q[0]>1){q[2]=Math.PI-q[2];q[0]=clamp(q[0],0,1);}if(q[1]<0||q[1]>1){q[2]=-q[2];q[1]=clamp(q[1],0,1);}
+        g.fillStyle=`hsl(${220-clamp(Tv/1000,0,1)*200},80%,62%)`;g.beginPath();g.arc(18+q[0]*(w-10),28+q[1]*122,3,0,TAU);g.fill();}
+      g.fillStyle=COL.mid;g.font='11px sans-serif';g.textAlign='left';g.fillText(`V ≈ ${nf(Vv)} ლ · T = ${nf(Tv)} K`,14,16);}
+    else if(vz.t==='bar'){const parts=vz.parts(v).filter(x=>isFinite(x[1])&&x[1]>=0),tot=parts.reduce((s,x)=>s+x[1],0)||1,mx=Math.max(...parts.map(x=>x[1]),1e-9);
+      const bh=Math.min(26,130/Math.max(1,parts.length));parts.forEach(([l,val,col],i)=>{const y=14+i*(bh+8),w=(g.W-150)*val/mx*Math.min(1,p*1.3);g.fillStyle=col;g.globalAlpha=0.85;g.fillRect(110,y,w,bh);g.globalAlpha=1;
+        g.fillStyle=COL.ink;g.font='11px sans-serif';g.textAlign='right';g.fillText(l,104,y+bh/2+4);g.textAlign='left';g.fillText(`${+val.toPrecision(4)} (${(val/tot*100).toFixed(1)}%)`,114+w,y+bh/2+4);});}
+  });
+}
+function openEx(af,e){
+  const host=af.closest('.afx');let box=af.nextElementSibling;if(box&&box.classList.contains('exbox')){box.remove();af.classList.remove('exon');return;}
+  host.querySelectorAll('.exbox').forEach(b=>b.remove());host.querySelectorAll('.exon').forEach(b=>b.classList.remove('exon'));af.classList.add('exon');
+  box=document.createElement('div');box.className='exbox';af.after(box);
+  box.innerHTML=`<div class="exq">📝 ${e.t}</div><div class="exin">${e.inp.map(([k,l,u,d,s])=>`<label><span>${l}${u?` <i>${u}</i>`:''}</span><input data-k="${k}" ${s==='text'?'type="text"':`type="number" step="${s===1?1:'any'}"`} value="${d}"></label>`).join('')}<button class="exre">↻ თავიდან</button></div>
+    <div class="exw"><div class="exs"></div><div class="exv"></div></div>`;
+  const getV=()=>{const v={};box.querySelectorAll('.exin input').forEach(i=>{v[i.dataset.k]=i.type==='text'?i.value.trim():+i.value;});return v;};
+  const show=(animate)=>{let st;try{st=e.steps(getV());}catch(err){st=['შეცდომა: '+esc(err.message)];}
+    box.querySelector('.exs').innerHTML=st.map((s,i)=>`<div class="exst${animate?' exa':''}" style="animation-delay:${animate?i*0.55:0}s"><b>${i+1}</b><span>${s}</span></div>`).join('');};
+  exViz(box.querySelector('.exv'),e,getV);const cv=box.querySelector('.exv canvas');
+  box.querySelectorAll('.exin input').forEach(i=>i.addEventListener('input',()=>{show(false);}));
+  box.querySelector('.exre').onclick=()=>{show(true);if(cv&&cv.replay)cv.replay();};
+  show(true);
+}
+const normF=t=>t.replace(/\s+/g,'');
+function attachEx(root){root.querySelectorAll('.af:not([data-ex])').forEach(af=>{af.dataset.ex='0';const ff=af.querySelector('.ff');if(!ff)return;const s=normF(ff.textContent);
+  const e=EX.find(x=>x.m.test(s));if(!e)return;af.dataset.ex='1';const b=document.createElement('button');b.className='exbtn';b.innerHTML='▶ მაგალითი';b.onclick=()=>openEx(af,e);af.appendChild(b);});}
+const exObs=new MutationObserver(()=>{const b=document.getElementById('advBody');if(b)attachEx(b);});
 /* ═══════════════════ mount ═══════════════════ */
 /* collect each topic's formulas for the reference (read from its own built HTML once) */
 function harvest(){const tmp=document.createElement('div');tmp.style.display='none';document.body.appendChild(tmp);
@@ -777,6 +1009,7 @@ function mount(){
   new IntersectionObserver(es=>{VIS=es[0].isIntersecting;}).observe(host);
   host.innerHTML=`<h3>📘 ქიმიის ენციკლოპედია — თეორია, ანიმაციები, ფორმულები</h3><div class="atop">${TOP.map((t,i)=>`<button data-i="${i}"><i>${t.ico}</i><b>${t.t}</b><small>${t.s}</small></button>`).join('')}</div><div id="advBody"></div>`;
   const body=$('advBody');
+  exObs.observe(body,{childList:true,subtree:true});
   const open=i=>{stopAll();body.innerHTML='';host.querySelectorAll('.atop button').forEach((b,j)=>b.classList.toggle('on',j===i));const t=TOP[i];
     if(t.id==='ref'&&!TOP.every(x=>x.id==='ref'||x.fx))harvest();
     body.innerHTML=`<div class="ahead"><span>${t.ico}</span> ${t.t}</div><div class="abody"></div>`;try{t.build(body.querySelector('.abody'));}catch(e){body.querySelector('.abody').innerHTML='<div class="terr">შეცდომა: '+esc(e.message)+'</div>';console.error(e);}

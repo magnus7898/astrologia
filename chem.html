@@ -40,6 +40,20 @@
 .rbtns button:hover{border-color:var(--border-h);color:var(--gold-lt)}
 #out{display:none}
 /* encyclopedia (chem_adv.js) */
+.af{position:relative}.af.exon{border-left-color:#7fd8ff;background:rgba(127,216,255,.06)}
+.exbtn{margin-top:6px;background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.5);color:var(--gold-lt);border-radius:12px;padding:2px 10px;font:inherit;font-size:11.5px;cursor:pointer}
+.exbtn:hover{background:rgba(201,168,76,.25)}
+.exbox{grid-column:1/-1;text-align:left;border:1px solid rgba(127,216,255,.35);border-radius:10px;padding:10px 12px;background:rgba(10,20,40,.35);animation:exin .35s ease}
+@keyframes exin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.exq{font-size:13.5px;color:var(--gold-lt);margin-bottom:8px}
+.exin{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:8px;font-size:11.5px;color:var(--ink-mid)}.exin label{display:flex;flex-direction:column;gap:2px}.exin label i{font-style:normal;color:var(--ink-dim)}
+.exin input{width:110px;background:#141022;color:var(--ink);border:1px solid var(--border-h);border-radius:7px;padding:4px 7px;font:inherit;font-size:13px}
+.exre{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:12px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+.exw{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start}
+.exst{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.07);font-family:'Times New Roman',serif;font-size:15px;color:#f3e7c6}
+.exst b{flex:none;width:20px;height:20px;border-radius:50%;background:rgba(201,168,76,.18);color:var(--gold);font:600 11px sans-serif;display:flex;align-items:center;justify-content:center}
+.exst.exa{opacity:0;animation:exstep .5s ease forwards}@keyframes exstep{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+.xv{color:#7fd8ff;font-weight:600}.xa{color:#1a1206;background:linear-gradient(135deg,#c9a84c,#ecd59a);padding:1px 8px;border-radius:6px;font-weight:700;box-shadow:0 0 12px rgba(201,168,76,.45)}
 .atop{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:14px}
 .atop button{display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:8px;text-align:left;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer;color:var(--ink);font:inherit}
 .atop button i{grid-row:1/3;font-style:normal;font-size:22px;display:flex;align-items:center;justify-content:center;color:var(--gold)}.atop button b{font-size:13px;font-weight:600}.atop button small{font-size:10.5px;color:var(--ink-dim);line-height:1.3}
