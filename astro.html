@@ -2921,214 +2921,59 @@ function drawWheel(data1,data2,dualAsp){
     const present=Object.keys(data.planets);
     const trueA={};
     for(const n of present)trueA[n]=e2s(data.planets[n].degree,asc);
-    const sorted=[...present].sort((a,b)=>trueA[a]-trueA[b]);
     const dispA={};
-    for(const n of present)dispA[n]=trueA[n];
-    /* glyphs alone need 18/22px of arc; with the "15°42' ♌" labels
-       underneath they need more, so widen the spread when they are on */
-    const _w0=(typeof window!=='undefined'?window.innerWidth:1200);
-    /* Boost capped at 1.6: at 2.2 each "15°42' ♌" label ate 13.7° of arc, so
-       13 bodies wanted half the ring and collided. On narrow screens the sign
-       glyph is dropped too — the wheel already shows the sign. */
-    const _narrow=_w0<560;
+    /* ── layout ─────────────────────────────────────────────────────────
+       Every body is one radial COLUMN: glyph on the ring, then its degree and
+       its sign glyph stacked straight outward, close to the planet. Each
+       column owns its own slice of arc, so nothing can overlap and no
+       connecting lines are needed. Box sizes depend on the angle: at the
+       left/right of the wheel text runs radially, at the top/bottom across.
+       Crowded bodies are spread by weighted clusters: the main planets are
+       heavy and stay at their true longitude, while fictitious points
+       (nodes, Lilith, Selena, Vertex, Fortune) and asteroids are light and
+       move out of the way. AC / MC badges are fixed obstacles. */
+    const _w0=(typeof window!=='undefined'?window.innerWidth:1200),_narrow=_w0<560;
     const _b0=Math.min(_narrow?2.1:1.6,Math.max(1,780/Math.max(320,_w0-24)));
-    /* Every point needs its own width. A single fixed gap was sized for
-       one-character glyphs (☉ ♀), so AC / MC / Vx — two characters wide —
-       and the degree label under them ran into their neighbours. Measure
-       each item and separate any two by the sum of their half-widths. */
-    const _fsGlyph=isInner?12:18;
-    const _fsDeg=(isInner?6:7)*_b0;
-    function itemWidth(n){
-      const s=(PI[n]||{}).sym||'?';
-      let w=(s==='SEL')?_fsGlyph*0.8:_fsGlyph*(0.62+Math.max(0,s.length-1)*0.58);
-      if(SHOW_DEGREES&&!isInner){
-        const pd=data.planets[n];
-        if(pd&&pd.degree!=null){
-          /* on a phone the label must be SHORT, not just small: whole
-             degrees only, no minutes, no sign glyph. 6 chars -> 3 halves
-             the arc each body needs. */
-          const dt=_narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);
-          /* degree + its sign glyph */
-          w=Math.max(w, dt.length*_fsDeg*0.52 + _fsDeg*0.24 + _fsDeg*1.15);
-        }
-      }
-      return w+(isInner?4:6);
+    const _fs=(isInner?6:7)*_b0,_gR=isInner?7:11,_showLbl=SHOW_DEGREES&&!isInner;
+    const _degTxt=n=>{const pd=data.planets[n];return _narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);};
+    const _hasLbl=n=>_showLbl&&data.planets[n]&&data.planets[n].sign_degree!=null;
+    const _boxes=n=>{const s=(PI[n]||{}).sym||'?';
+      const gw=(s==='sun'||s==='SEL'||s.length<2)?_gR*2:_gR*2*(0.62+0.55*(s.length-1));
+      const B=[[gw+(data.planets[n].retrograde?8:2),_gR*2]];
+      if(_hasLbl(n)){B.push([_degTxt(n).length*_fs*0.56+2,_fs*1.15]);B.push([_fs*1.3,_fs*1.3]);}
+      return B;};
+    const _ext=(b,a)=>{const c=Math.abs(Math.cos(a)),sn=Math.abs(Math.sin(a));return {rad:c*b[0]+sn*b[1],tan:sn*b[0]+c*b[1]};};
+    const MAIN=['მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
+    const _wt=n=>n==='მზე'||n==='მთვარე'?60:n==='AC'||n==='MC'?1e6:MAIN.includes(n)?40:(n==='ჩრდ. კვანძი'||n==='სამხ. კვანძი'||n==='ქირონი')?6:1;
+    const items=present.map(n=>{const ex=_boxes(n).map(b=>_ext(b,trueA[n]));return {n,t:trueA[n],w:(Math.max(...ex.map(e=>e.tan))+(isInner?3:5))/Rg,wt:_wt(n)};});
+    if(!isInner&&!data._timeUnknown){
+      if(data.asc!=null&&!present.includes('AC'))items.push({n:'#AC',t:e2s(data.asc,asc),w:34/Rg,wt:1e6});
+      if(data.mc!=null&&!present.includes('MC'))items.push({n:'#MC',t:e2s(data.mc,asc),w:42/Rg,wt:1e6});
     }
-    const _wid={};
-    for(const n of present)_wid[n]=itemWidth(n);
-
-    /* A body with its degree label claims ~38px of arc, so six of them in a
-       stellium would be pushed across 44° — far from where they really are.
-       Stagger neighbours onto two label rings instead: each ring then holds
-       every other body, halving the crowding and keeping glyphs near their
-       true longitude. _ring[n] = 0 (inner) or 1 (outer). */
-    /* Three label rings, spaced by the font size, plus a genuine RECTANGLE
-       collision pass. An arc-only test is not enough: labels on different
-       rings sit at nearly the same angle and are separated only radially,
-       so with boosted mobile text they still overlapped. */
-    const _ringGap=Math.max(isInner?12:15,_fsDeg*1.55);
-    const _base=(isInner?15:24);
-    const _ringOff=[_base,_base+_ringGap,_base+_ringGap*2,_base+_ringGap*3];
-    const _labelH=_fsDeg*1.3;
-    window._lblRingOff=_ringOff;
-
-    const _ring={};
-    {
-      let prev=null;
-      for(const n of sorted){
-        if(prev===null){_ring[n]=0;prev=n;continue;}
-        let d=Math.abs(dispA[n]-dispA[prev]);
-        if(d>Math.PI)d=2*Math.PI-d;
-        _ring[n]=(d*Rg < (_wid[n]+_wid[prev])/2) ? (_ring[prev]+1)%4 : 0;
-        prev=n;
+    (function spread(L0){
+      const n=L0.length;if(!n)return;L0.forEach(i=>{i.a=i.t;});if(n<2)return;
+      const S=[...L0].sort((x,y)=>x.t-y.t);
+      let gi=0,gm=-1;for(let i=0;i<n;i++){const nx=i===n-1?S[0].t+2*Math.PI:S[i+1].t,g=nx-S[i].t;if(g>gm){gm=g;gi=i;}}
+      const L=[];for(let k=1;k<=n;k++)L.push(S[(gi+k)%n]);
+      let prev=-Infinity;for(const it of L){let u=it.t;while(u<prev)u+=2*Math.PI;it.u=u;prev=u;}
+      const place=c=>{let off=0,sw=0,sx=0;const offs=c.map((it,k)=>{if(k)off+=(c[k-1].w+it.w)/2;return off;});
+        c.forEach((it,k)=>{sw+=it.wt;sx+=it.wt*(it.u-offs[k]);});const a0=sx/sw;c.forEach((it,k)=>{it.a=a0+offs[k];});};
+      let C=L.map(it=>[it]);C.forEach(place);
+      for(let guard=0;guard<400;guard++){
+        let merged=false;
+        for(let k=0;k+1<C.length;k++){const x=C[k][C[k].length-1],y=C[k+1][0];
+          if(y.a-x.a<(x.w+y.w)/2-1e-9){C.splice(k,2,[...C[k],...C[k+1]]);place(C[k]);merged=true;break;}}
+        if(merged)continue;
+        if(C.length>1){const A=C[C.length-1],B=C[0],x=A[A.length-1],y=B[0];
+          if(y.a+2*Math.PI-x.a<(x.w+y.w)/2-1e-9){B.forEach(it=>{it.u+=2*Math.PI;});C.shift();C[C.length-1]=[...C[C.length-1],...B];place(C[C.length-1]);continue;}}
+        break;
       }
-    }
-
-    /* angular spread: same ring needs full width, different rings only glyphs */
-    for(let it=0;it<600;it++){
-      let moved=false;
-      for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
-        const a=sorted[i],b=sorted[j];
-        /* Different rings still need the GLYPHS to clear: they sit on the
-           same radius whatever their label does. 13/17px was narrower than
-           a glyph (14/22px wide), so symbols overlapped even though the
-           labels were fine — which is what was still visible on the wheel. */
-        const _glyphGap=(isInner?15:24);
-        const need=((_ring[a]===_ring[b])?Math.max(_glyphGap,(_wid[a]+_wid[b])/2)
-                                         :_glyphGap)/Rg;
-        let d=dispA[b]-dispA[a];
-        while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
-        if(Math.abs(d)<need&&Math.abs(d)>0.0001){
-          const push=(need-Math.abs(d))/2,dir=d>0?1:-1;
-          dispA[a]-=push*dir;dispA[b]+=push*dir;moved=true;
-        }
-      }
-      if(!moved)break;
-    }
-
-    /* Glyph separation and label placement affect each other: moving a
-       body to free a label slot can push two symbols together, and pushing
-       symbols apart invalidates label slots. So run both to a fixed point
-       instead of once each. */
-    const _glyphPass=()=>{
-      const gGap=(isInner?19:26)/Rg;   /* glyph is 14/22px wide; leave real air */
-      let changed=false;
-      for(let it=0;it<300;it++){
-        let moved=false;
-        for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){
-          const a=sorted[i],b=sorted[j];
-          let d=dispA[b]-dispA[a];
-          while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
-          if(Math.abs(d)<gGap&&Math.abs(d)>1e-6){
-            const push=(gGap-Math.abs(d))/2,dir=d>0?1:-1;
-            dispA[a]-=push*dir;dispA[b]+=push*dir;moved=true;changed=true;
-          }
-        }
-        if(!moved)break;
-      }
-      return changed;
-    };
-    _glyphPass();
-
-    /* ── label placement sweep ──────────────────────────────────────
-       The previous pass moved a clashing label to another ring but only
-       re-tested it against the ONE label it clashed with, so it happily
-       landed on a ring another label already occupied. Instead: walk the
-       bodies in angular order and, for each, take the first ring whose
-       box hits NOTHING already placed. If all four rings are taken, nudge
-       it forward angularly and try again. Each item is checked against
-       every placed item, so the result is collision-free by construction. */
-    const _labelSweep=()=>{
-      const boxOf=(n,ring,ang)=>{
-        const R=Rg+_ringOff[ring];
-        return {x:CX+Math.cos(ang)*R,y:CY+Math.sin(ang)*R,
-                w:_wid[n]-(isInner?4:6),h:_labelH};
-      };
-      const hit=(p,q)=>Math.abs(p.x-q.x)<(p.w+q.w)/2+1 &&
-                       Math.abs(p.y-q.y)<(p.h+q.h)/2+1;
-      /* ── keep labels off the AC / MC markers ──────────────────────
-         A planet sitting on an angle had its label land on the AC or MC
-         badge. Push it to its OWN side of the cusp instead: a body in the
-         9th house (before the MC) moves one way, a body in the 10th (after
-         it) moves the other, so the label always sits in the house the
-         planet actually occupies and the badge stays clear. Same for the
-         AC between the 12th and 1st. */
-      {
-        const cusps=[];
-        if(!data._timeUnknown){
-          if(data.asc!=null)cusps.push(e2s(data.asc,asc));
-          if(data.mc!=null) cusps.push(e2s(data.mc,asc));
-        }
-        const CLEAR=(isInner?26:30)/Rg;          /* half the badge plus a margin */
-        for(const n of sorted){
-          if(n==='AC'||n==='MC')continue;        /* the markers themselves */
-          for(const c of cusps){
-            let d=dispA[n]-c;
-            while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
-            if(Math.abs(d)<CLEAR){
-              /* sign of d says which side of the cusp — i.e. which house */
-              const dir=d===0?1:Math.sign(d);
-              dispA[n]=c+dir*CLEAR;
-            }
-          }
-        }
-      }
-
-      /* Seed the occupancy list with everything already on the wheel: each
-         planet glyph and the AC / MC badges. Previously only labels were
-         checked against each other, so a label could land squarely on a
-         planet symbol or an angle marker. */
-      const placed=[];
-      const _glyphR=isInner?7:11;
-      for(const n of sorted){
-        placed.push({x:CX+Math.cos(dispA[n])*Rg,y:CY+Math.sin(dispA[n])*Rg,
-                     w:_glyphR*2,h:_glyphR*2});
-      }
-      if(!data._timeUnknown){
-        const badge=isInner?15:22;
-        [data.asc,data.mc].forEach(d=>{
-          if(d==null)return;
-          const a=e2s(d,asc);
-          placed.push({x:CX+Math.cos(a)*Rg,y:CY+Math.sin(a)*Rg,w:badge*2,h:badge*2});
-        });
-      }
-      /* Within a crowded run the rings should climb in longitude order, so a
-         stack reads outward as the planets read around the wheel instead of
-         zig-zagging. Sorting by angle gives exactly that: each new label
-         takes the innermost free ring, so neighbours step outwards in turn. */
-      const order=[...sorted].sort((a,b)=>dispA[a]-dispA[b]);
-      for(const n of order){
-        let done=false;
-        for(let attempt=0;attempt<24&&!done;attempt++){
-          for(let r=0;r<4;r++){
-            const bx=boxOf(n,r,dispA[n]);
-            if(!placed.some(p=>hit(p,bx))){
-              _ring[n]=r;placed.push(bx);done=true;break;
-            }
-          }
-          if(!done){
-            /* every ring blocked at this angle: step around the wheel */
-            dispA[n]+=(_wid[n]*0.45)/Rg;
-          }
-        }
-        if(!done){                       /* pathological: park it outermost */
-          _ring[n]=3;placed.push(boxOf(n,3,dispA[n]));
-        }
-      }
-    };
-    if(SHOW_DEGREES&&!isInner)_labelSweep();
-
-    /* alternate until neither pass wants to move anything */
-    for(let round=0;round<14;round++){
-      if(!_glyphPass())break;          /* glyphs clear -> label slots valid */
-      if(SHOW_DEGREES&&!isInner)_labelSweep();   /* re-place labels around the new angles */
-    }
-    /* Whatever happens, glyphs must never touch: run the separation once more
-       as the final word. Labels hang off their glyph, so they travel with it
-       and their relative placement (already collision-free) is preserved. */
-    _glyphPass();
-
-    window._lblRing=_ring;
+    })(items);
+    for(const it of items)if(it.n[0]!=='#')dispA[it.n]=it.a;
+    /* radial positions of each column's degree and sign, from the final angle */
+    const _col={};
+    for(const n of present){const a=dispA[n],B=_boxes(n),ex=B.map(b=>_ext(b,a));let r=Rg;const rs=[Rg];
+      for(let k=1;k<B.length;k++){r+=ex[k-1].rad/2+(k===1?2:1)+ex[k].rad/2;rs.push(r);}_col[n]=rs;}
     for(const name of present){
       const info=PI[name]||{sym:'?',color:'#fff'};
       const tA=trueA[name];
@@ -3145,7 +2990,7 @@ function drawWheel(data1,data2,dualAsp){
       const tickR1=isInner?R_iz_out:R1+1,tickR2=isInner?R_iz_out+6:R1+9;
       el('line',{x1:CX+Math.cos(tA)*tickR1,y1:CY+Math.sin(tA)*tickR1,x2:CX+Math.cos(tA)*tickR2,y2:CY+Math.sin(tA)*tickR2,stroke:color,'stroke-width':1.5},svg);
       el('circle',{cx:CX+Math.cos(tA)*tickR1,cy:CY+Math.sin(tA)*tickR1,r:1.8,fill:color},svg);
-      if(wasMoved)el('line',{x1:CX+Math.cos(tA)*(tickR2),y1:CY+Math.sin(tA)*(tickR2),x2:gxy.x,y2:gxy.y,stroke:color,'stroke-width':.5,opacity:.4,'stroke-dasharray':'2 2'},svg);
+      /* no connector lines: the tick on the ring marks the true degree */
       const fsz=isInner?12:18;
       if(name==='მზე'&&!isInner){
         const sg2=el('g',{},svg);
@@ -3169,51 +3014,14 @@ function drawWheel(data1,data2,dualAsp){
       }else{
         txt(svg,info.sym,gxy.x,gxy.y,{fill:symColor,'font-size':fsz,'font-family':'serif'});
       }
-      /* degree label, placed radially outside the glyph so it never sits on
-         the wheel, the ticks or a neighbouring planet */
-      if(SHOW_DEGREES&&!isInner){
-        const pd=data.planets[name];
-        if(pd&&pd.sign_degree!=null){
-          const ang=dispA[name];   /* same angle as the glyph, always */
-          const _r=(window._lblRing&&window._lblRing[name])||0;
-          /* dR/dx/dy computed below, once the font size is known */
-          /* degree + its zodiac glyph, side by side and always horizontal */
-          const si=Math.floor(((pd.degree%360)+360)%360/30)%12;
-          /* sized so the whole "15° ♌" label fits inside MINGAP, the arc the
-             glyph spreader guarantees between two planets (22px / 18px) */
-          /* the wheel is scaled to fit the screen, so a fixed viewBox size
-             shrinks on phones. Scale the label up by the same factor to keep
-             it readable (capped so it never dominates on desktop). */
-          const _w=(typeof window!=='undefined'?window.innerWidth:1200);
-          const narrow=_w<560;
-          const _boost=Math.min(narrow?2.1:1.6,Math.max(1,780/Math.max(320,_w-24)));
-          const fs=(isInner?6:7)*_boost;
-          /* ring separation must exceed the label height, which grows with the
-             mobile boost — a fixed 14px was too little at 2.1x (label ~14.7px) */
-
-          const _offs=window._lblRingOff||[isInner?15:24];
-          const dR=Rg+(_offs[_r]!==undefined?_offs[_r]:_offs[0]);
-          const dx=CX+Math.cos(ang)*dR, dy=CY+Math.sin(ang)*dR;
-          /* Degrees only. Every planet in a stellium repeats the same sign
-             glyph and the wheel's sign band already shows it, so it was
-             duplication that inflated each label by a third — which is what
-             forced clusters onto four separate rings. */
-          const degTxt=narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);
-          /* a hairline from the glyph to its own label, so a stacked cluster
-             stays legible: you can always see which degree belongs to which
-             planet without counting positions */
-          if(_r>0||Math.hypot(dx-gxy.x,dy-gxy.y)>fs*2.2){
-            el('line',{x1:gxy.x,y1:gxy.y,x2:dx,y2:dy,
-              stroke:symColor,'stroke-width':.5,opacity:.28},svg);
-          }
-          /* degree and its sign glyph, side by side, centred on the slot */
-          const wDeg=degTxt.length*fs*0.52, wSym=fs*1.15, gapS=fs*0.24;
-          const totalW=wDeg+gapS+wSym;
-          txt(svg,degTxt,dx-totalW/2+wDeg/2,dy,
-            {fill:symColor,'font-size':fs,'font-family':'Cinzel,serif',opacity:.92});
-          txt(svg,ZSYM[si],dx+totalW/2-wSym/2,dy,
-            {fill:ZCOL[si],'font-size':fs*1.1,'font-family':'serif',opacity:.95});
-        }
+      /* degree and sign, stacked outward in the planet's own column */
+      if(_hasLbl(name)){
+        const pd=data.planets[name],ang=dispA[name],rs=_col[name];
+        const si=Math.floor(((pd.degree%360)+360)%360/30)%12;
+        txt(svg,_degTxt(name),CX+Math.cos(ang)*rs[1],CY+Math.sin(ang)*rs[1],
+          {fill:symColor,'font-size':_fs,'font-family':'Cinzel,serif',opacity:.92});
+        txt(svg,ZSYM[si],CX+Math.cos(ang)*rs[2],CY+Math.sin(ang)*rs[2],
+          {fill:ZCOL[si],'font-size':_fs*1.15,'font-family':'serif',opacity:.95});
       }
       if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
       // Hover hit area for aspect highlighting
