@@ -887,6 +887,46 @@
       <div class="card-sub">Enneagram · Dosha · Socionics</div>
     </a>
 
+    <a class="card c-astro" href="chem.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4h8M13.5 4v8L6 25.5A2 2 0 0 0 7.8 28.5h16.4A2 2 0 0 0 26 25.5L18.5 12V4"/><path d="M9 21h14" opacity=".5"/><circle cx="14" cy="24.5" r="1.1" fill="currentColor"/><circle cx="18.5" cy="23" r=".8" fill="currentColor"/></svg>
+      </div>
+      <div class="card-title">ქიმიის ლაბორატორია</div>
+      <div class="card-sub">Periodic Table · Reactions · Encyclopedia</div>
+    </a>
+
+    <a class="card c-freq" href="phys.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="16" cy="16" rx="12" ry="4.6"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(120 16 16)"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg>
+      </div>
+      <div class="card-title">ფიზიკის ლაბორატორია</div>
+      <div class="card-sub">Mechanics · Waves · Astrophysics · Quantum</div>
+    </a>
+
+    <a class="card c-pyth" href="math.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27h22M5 27V5" opacity=".55"/><path d="M6 24c4-14 8-14 10-8s6 6 10-10"/><path d="M20 6l2 3M24 6l-2 3" opacity=".7"/><text x="7" y="11" font-size="7" fill="currentColor" stroke="none" font-family="serif">π</text></svg>
+      </div>
+      <div class="card-title">მათემატიკის ლაბორატორია</div>
+      <div class="card-sub">Graphs · Trigonometry · Geometry · Matrices</div>
+    </a>
+
+    <a class="card c-name" href="sciencegames.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="24" height="24" rx="2"/><path d="M12 4v24M20 4v24M4 12h24M4 20h24" opacity=".5"/><circle cx="8" cy="8" r="1.4" fill="currentColor"/><path d="M14.5 14.5l3 3M17.5 14.5l-3 3"/><path d="M22 25l2.5-4 2 3" /></svg>
+      </div>
+      <div class="card-title">სამეცნიერო თამაშები</div>
+      <div class="card-sub">Chemistry · Physics · Math games</div>
+    </a>
+
   </div>
 
   <footer><span>&#10022; &nbsp; omnia ex uno &nbsp; &#10022;</span></footer>
@@ -937,6 +977,9 @@
      members:['compat.html'],label:{}},
     {key:'health',title:'ჯანმრთელობა',sub:'Breathing · Sleep · Memory · Meditation…',css:'c-name',art:'breath.html',
      members:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','cold.html','fasting.html','rhythm.html'],label:{},always:true},
+    {key:'science',title:'მეცნიერებები',sub:'ქიმია · ფიზიკა · მათემატიკა',css:'c-astro',art:'phys.html',
+     sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="16" cy="16" rx="12" ry="4.6"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(120 16 16)"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg>',
+     members:['chem.html','phys.html','math.html','sciencegames.html'],label:{},always:true},
     {key:'games',title:'თამაშები',sub:'პითაგორას კვადრატი · 9 უჯრა',css:'c-pyth',art:'intuition.html',href:'games.html',count:9,
      members:['intuition.html','memory.html','logic.html','hardest.html'],label:{},always:true},
     {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
@@ -1045,7 +1088,7 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','vedictrop.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','vedictrop.html','chem.html','phys.html','math.html','sciencegames.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       /* a kept new tile sits next to its sibling, not at the very end */
       const AFTER={'vedictrop.html':'vedic.html'};
       for(const [h,sib] of Object.entries(AFTER)){const t=[...frag.children].find(x=>x.getAttribute('href')===h),b=[...frag.children].find(x=>x.getAttribute('href')===sib);
