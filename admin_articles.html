@@ -155,7 +155,7 @@ function catPyth(){
 }
 function catAstro(){
   const g=[],all=[...BODY,...ANG];
-  for(const b of BODY)g.push({id:'sign_'+b[0],label:`${bl(b)} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]}︎ ${b[2]} ${ZS[i]} ${s}ში`.replace('ში','ში')}))});
+  for(const b of BODY)g.push({id:'sign_'+b[0],label:`${bl(b)} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]}︎ ${b[2]} ${ZS[i]} ${s.endsWith('ი')?s.slice(0,-1)+'ში':s+'ში'}`}))});
   for(const b of ANG)g.push({id:'sign_'+b[0],label:`${b[2]} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]} ${ZS[i]} ${s}`}))});
   for(const b of BODY)g.push({id:'house_'+b[0],label:`${bl(b)} სახლებში`,items:ROM.slice(1).map((r,i)=>({key:`house:${b[0]}:${i+1}`,label:`${b[1]}︎ ${b[2]} ${r} სახლში`}))});
   for(let i=0;i<all.length;i++){const a=all[i],items=[];
@@ -323,7 +323,11 @@ async function start(){
   if(!TOKEN){showLogin();return;}
   $('login').hidden=true;$('app').hidden=false;
   try{const s=await fetch(BACKEND+'/api/articles/stats').then(r=>r.json());Object.assign(COUNTS,s);}catch(e){}
-  loadSys(SYSID);
+  /* deep link from article.html: ?sys=astro&key=sign:Sun:0 */
+  const q=new URLSearchParams(location.search),qs=q.get('sys'),qk=q.get('key');
+  if(qs&&SYS.some(x=>x[0]===qs))SYSID=qs;
+  await loadSys(SYSID);
+  if(qk){const it=allItems().find(x=>x.key===qk);if(it){open(it);drawList();}}
 }
 start();
 </script>

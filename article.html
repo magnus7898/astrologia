@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07060f;--surface:#0e0b1a;--border:rgba(201,168,76,.22);--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#1d1638,#07060f 60%) fixed;color:var(--ink);font-family:'Noto Serif Georgian',serif;line-height:1.75}
+.page{max-width:820px;margin:0 auto;padding:28px 18px 60px}
+.top{font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;text-align:center}
+h1{font-family:'Noto Serif Georgian',serif;font-weight:600;font-size:clamp(24px,5vw,34px);color:var(--gold-lt);text-align:center;margin:8px 0 4px}
+.sub{text-align:center;color:var(--ink-mid);font-size:13px;margin-bottom:22px}
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+.sec h2{font-size:19px;font-weight:600;color:var(--gold-lt);margin:0 0 8px;display:flex;gap:10px;align-items:center}
+.sec h2 .g{font-family:serif;font-size:24px;color:var(--gold)}
+.txt{font-size:15.5px}.txt p{margin:0 0 10px}.txt img{max-width:100%}
+.empty{color:var(--ink-dim);font-style:italic;font-size:14px}
+.edit{display:inline-block;margin-top:10px;font-size:12px;color:var(--gold);text-decoration:none;border:1px solid var(--border);border-radius:12px;padding:3px 10px}
+.edit:hover{border-color:var(--gold)}
+.close{display:block;margin:22px auto 0;background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:16px;padding:6px 16px;font:inherit;font-size:13px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top" id="top">MAGNUS</div>
+  <h1 id="h1">…</h1>
+  <div class="sub" id="sub"></div>
+  <div id="list"></div>
+  <button class="close" onclick="window.close()">✕ დახურვა</button>
+</div>
+<script src="articles.js"></script>
+<script>
+/* article.html?s=<system>&k=<key>[,<key>…]&h=<title>[|<title>…]&t=<page title>&c=<context>
+   Shows the texts written in admin_articles.html for the given keys. */
+const Q=new URLSearchParams(location.search),SYS=Q.get('s')||'astro',KEYS=(Q.get('k')||'').split(',').filter(Boolean),HS=(Q.get('h')||'').split('|'),T=Q.get('t')||HS[0]||'',CTX=Q.get('c')||'';
+const SYSN={astro:'ასტროლოგია',matrix:'ბედის მატრიცა',pyth:'პითაგორა',hd:'ადამიანის დიზაინი',lunar:'მთვარის დღეები'};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+document.title=(T?T+' · ':'')+'MAGNUS';
+document.getElementById('top').textContent='MAGNUS · '+(SYSN[SYS]||SYS);
+document.getElementById('h1').textContent=T||'—';
+document.getElementById('sub').textContent=CTX;
+let admin=false;try{admin=!!localStorage.getItem('magnus_admin_token');}catch(e){}
+function draw(){
+  document.getElementById('list').innerHTML=KEYS.map((k,i)=>{const a=ART.get(SYS,k),h=HS[i]||k;
+    const m=h.match(/^(\S+)\s+(.*)$/),glyph=m&&/[^Ⴀ-ჿa-zA-Z0-9]/.test(m[1])&&m[1].length<=3?m[1]:'';
+    return `<div class="sec"><h2>${glyph?`<span class="g">${esc(glyph)}</span>`:''}${esc(a&&a.t?a.t:(glyph?m[2]:h))}</h2>
+      ${a&&a.h?`<div class="txt">${a.h}</div>`:`<div class="empty">ამ მდებარეობის აღწერა ჯერ არ დაწერილა.</div>`}
+      ${admin?`<a class="edit" href="admin_articles.html?sys=${encodeURIComponent(SYS)}&key=${encodeURIComponent(k)}" target="_blank">✏ ${a?'რედაქტირება':'დაწერე'}</a>`:''}</div>`;}).join('')||'<div class="sec empty">არაფერია მითითებული.</div>';
+}
+draw();ART.load(SYS).then(draw);
+</script>
+</body>
+</html>
