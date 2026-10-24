@@ -4,6 +4,7 @@
 (function(){
 'use strict';
 const EN={'მზე':'Sun','მთვარე':'Moon','მერკური':'Mercury','ვენერა':'Venus','მარსი':'Mars','იუპიტერი':'Jupiter','სატურნი':'Saturn','ურანი':'Uranus','ნეპტუნი':'Neptune','პლუტონი':'Pluto','ჩრდ. კვანძი':'Node','ქირონი':'Chiron','ლილიტი':'Lilith','AC':'ASC','MC':'MC'};
+const XP={'თეთრი მთვარე':'Selena','ბედის ვარსკვლავი':'Fortune','ვერტექსი':'Vertex'};   /* sign/house keys only */
 const ORDER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','Node','Chiron','Lilith','ASC','MC'];
 const ANG={'შეერთება':0,'სექსტილი':60,'კვადრატი':90,'ტრინი':120,'ოპოზიცია':180,'კვინკონსი':150};
 const SG=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
@@ -18,7 +19,7 @@ function openArt(keys,heads,title,ctx){
 }
 function ctxName(isB){const n=document.getElementById(isB?'planet-b-title':'planet-table-title');return n?n.textContent.replace(/^🪐\s*/,'').replace(/\s*—\s*პლანეტები$/,'').replace(/^პლანეტები$/,''):'';}
 function openPlanet(name,pd,isB){
-  if(!pd)return;const en=EN[name],si=signOf(pd.degree),h=+pd.house||0,g=sym(name);
+  if(!pd)return;const en=EN[name]||XP[name],si=signOf(pd.degree),h=+pd.house||0,g=sym(name);
   const keys=[],heads=[];
   if(en){keys.push(`sign:${en}:${si}`);heads.push(`${g} ${name} ${loc(SG[si])}`);
     if(h&&en!=='ASC'&&en!=='MC'){keys.push(`house:${en}:${h}`);heads.push(`${g} ${name} ${ROM[h]} სახლში`);}}

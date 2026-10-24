@@ -101,6 +101,8 @@ button,input,select{font:inherit;color:inherit}
 <script src="stats_engine.js"></script>
 <script src="matrix_combos.js"></script>
 <script src="matrix_boxes_addon.js"></script>
+<script src="magnus-interp.js"></script>
+<script src="interp_bridge.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -121,9 +123,11 @@ const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓
 const ROM=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 const BODY=[['Sun','☉','მზე'],['Moon','☽','მთვარე'],['Mercury','☿','მერკური'],['Venus','♀','ვენერა'],['Mars','♂','მარსი'],['Jupiter','♃','იუპიტერი'],['Saturn','♄','სატურნი'],
   ['Uranus','♅','ურანი'],['Neptune','♆','ნეპტუნი'],['Pluto','♇','პლუტონი'],['Node','☊','ჩრდ. კვანძი'],['Chiron','⚷','ქირონი'],['Lilith','⚸','ლილიტი']];
+const BODY_X=[['Selena','⚪','თეთრი მთვარე'],['Fortune','⊕','ბედის ვარსკვლავი'],['Vertex','Vx','ვერტექსი']];   /* sign/house only */
 const ANG=[['ASC','AC','ასცენდენტი'],['MC','MC','შუაცა (MC)']];
 const ASP=[[0,'☌','შეერთება'],[60,'⚹','სექსტილი'],[90,'□','კვადრატი'],[120,'△','ტრინი'],[180,'☍','ოპოზიცია']];
 const bl=b=>`${b[1]}︎ ${b[2]}`;
+const IFILE=k=>{const a=window.MAGNUS_INTERP&&MAGNUS_INTERP.forKey&&MAGNUS_INTERP.forKey(k);return a?{title:a.t,text:a.h}:null;};   /* built-in texts (magnus-interp.js) */
 function catMatrix(){
   const DB=window.MATRIX_DB||{},EX=new Set(['karmic_tail','cp_karmic_tail']);   /* exact-order zones (matrix_combos.js) */
   const boxes=[...(typeof BOXES!=='undefined'?BOXES:[]),...(typeof COMPAT_BOXES!=='undefined'?COMPAT_BOXES.map(b=>({...b,cp:1})):[])];
@@ -155,9 +159,9 @@ function catPyth(){
 }
 function catAstro(){
   const g=[],all=[...BODY,...ANG];
-  for(const b of BODY)g.push({id:'sign_'+b[0],label:`${bl(b)} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]}︎ ${b[2]} ${ZS[i]} ${s.endsWith('ი')?s.slice(0,-1)+'ში':s+'ში'}`}))});
+  for(const b of [...BODY,...BODY_X])g.push({id:'sign_'+b[0],label:`${bl(b)} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]}︎ ${b[2]} ${ZS[i]} ${s.endsWith('ი')?s.slice(0,-1)+'ში':s+'ში'}`,file:IFILE(`sign:${b[0]}:${i}`)}))});
   for(const b of ANG)g.push({id:'sign_'+b[0],label:`${b[2]} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]} ${ZS[i]} ${s}`}))});
-  for(const b of BODY)g.push({id:'house_'+b[0],label:`${bl(b)} სახლებში`,items:ROM.slice(1).map((r,i)=>({key:`house:${b[0]}:${i+1}`,label:`${b[1]}︎ ${b[2]} ${r} სახლში`}))});
+  for(const b of [...BODY,...BODY_X])g.push({id:'house_'+b[0],label:`${bl(b)} სახლებში`,items:ROM.slice(1).map((r,i)=>({key:`house:${b[0]}:${i+1}`,label:`${b[1]}︎ ${b[2]} ${r} სახლში`,file:IFILE(`house:${b[0]}:${i+1}`)}))});
   for(let i=0;i<all.length;i++){const a=all[i],items=[];
     for(let j=i+1;j<all.length;j++){const b=all[j];if(a[0]==='ASC'&&b[0]==='MC')continue;for(const [ang,gl,n] of ASP)items.push({key:`asp:${a[0]}:${b[0]}:${ang}`,label:`${a[1]} ${gl} ${b[1]} — ${a[2]} · ${b[2]}: ${n}`});}
     if(items.length)g.push({id:'asp_'+a[0],label:`ასპექტები — ${a[2]}`,items});}
@@ -237,7 +241,7 @@ function open(it){
   SEL=it;GI=it.gi;drawGroups();
   const a=DATA[it.key],f=fileOf(it),grp=CAT[it.gi];
   const title=a?a.t:(f&&f.title)||'',html=a?a.h:(f&&f.text)||'';
-  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია matrix_combos.js-დან — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
+  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია ფაილიდან — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
     <input class="ti" id="ti" placeholder="სათაური" value="${esc(title)}">
     <div><div class="tb" id="tb">
       <select id="blk" title="სტილი"><option value="p">ჩვეულებრივი</option><option value="h2">სათაური 1</option><option value="h3">სათაური 2</option><option value="blockquote">ციტატა</option></select>
@@ -247,7 +251,7 @@ function open(it){
     </div>
     <div class="doc" id="doc" contenteditable="true" spellcheck="true" data-ph="დაწერე სტატია… (შეგიძლია ჩასვა Word-იდან)">${html}</div></div>
     <div class="foot"><button class="btn pri" id="sv" type="button">💾 შენახვა</button><button class="btn" id="pv" type="button">◀ წინა</button><button class="btn" id="nx" type="button">შემდეგი ▶</button>
-      ${f?'<button class="btn" id="ff" type="button" title="matrix_combos.js-ის ტექსტის ჩატვირთვა">📄 ფაილის ტექსტი</button>':''}<button class="btn del" id="dl" type="button"${a?'':' disabled'}>🗑 წაშლა</button><span id="st"></span></div>
+      ${f?'<button class="btn" id="ff" type="button" title="ფაილის ტექსტის ჩატვირთვა">📄 ფაილის ტექსტი</button>':''}<button class="btn del" id="dl" type="button"${a?'':' disabled'}>🗑 წაშლა</button><span id="st"></span></div>
     <div class="hint">Ctrl+S — შენახვა. ცარიელი სათაური და ტექსტი = წაშლა. ჩასმული Word-ის ტექსტი სუფთავდება (ფორმატირება რჩება). ${SYSID==='matrix'?'ბედის მატრიცის გვერდზე ტექსტი ავტომატურად გამოჩნდება (≈1 წუთში).':'ტექსტი ინახება ბაზაში და მიეწოდება საიტის გვერდებს /api/articles-ით.'}</div>`;
   DIRTY=false;setSt('');
   const doc=$('doc');document.execCommand('styleWithCSS',false,false);
