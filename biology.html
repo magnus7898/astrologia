@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ბიოლოგია · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="games.css">
+<link rel="stylesheet" href="sci.css">
+<style>:root{--glow:rgba(111,207,138,.14)}</style>
+<script src="sci_path.js"></script>
+</head>
+<body>
+<div class="page sp-page">
+<header>
+  <a class="back" href="index.html?g=science">← მეცნიერებები</a>
+  <h1>ბიოლოგია</h1>
+  <div class="sub">ნულიდან გმირამდე · უჯრედიდან CRISPR-მდე</div>
+</header>
+<nav class="subnav" id="subnav"><a href="math.html" data-k="math" style="--sn:#a585ef"><i>∑</i>მათემატიკა<span class="pc"></span></a><a href="phys.html" data-k="phys" style="--sn:#5fc8d8"><i>⚛</i>ფიზიკა<span class="pc"></span></a><a href="chem.html" data-k="chem" style="--sn:#e0a030"><i>⚗</i>ქიმია<span class="pc"></span></a><a href="biology.html" data-k="bio" style="--sn:#6fcf8a"><i>🧬</i>ბიოლოგია<span class="pc"></span></a><a href="sciencegames.html" data-k="games" style="--sn:#e2685c"><i>🎮</i>თამაშები</a></nav>
+<script>(function(){const f=(location.pathname.split('/').pop()||'').split('.')[0],m={math:'math',phys:'phys',chem:'chem',biology:'bio'};document.querySelectorAll('#subnav a').forEach(a=>{if(a.dataset.k===m[f])a.classList.add('on');const pc=a.querySelector('.pc');if(pc&&window.SCIPATH){const p=SCIPATH.progress(a.dataset.k);if(p.done)pc.textContent=p.done+' ✓';}});})();</script>
+
+<div id="biop"></div>
+</div>
+<script src="sci_kit.js"></script>
+<script src="bio_lab.js"></script>
+</body>
+</html>

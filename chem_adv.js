@@ -1140,6 +1140,7 @@ function harvest(){const tmp=document.createElement('div');tmp.style.display='no
     const last=[...tmp.querySelectorAll('.acard')].pop();t.fx=last?[...last.querySelectorAll('.af')].map(a=>[a.querySelector('.ff').innerHTML,(a.querySelector('.fd')||{}).innerHTML||'']):[];tmp.innerHTML='';}
   tmp.remove();}
 function mount(){
+  if(window.CHEMADV_NOMOUNT)return;
   const tools=$('tools');if(!tools)return;const host=document.createElement('div');host.className='panel';host.id='adv';tools.after(host);
   new IntersectionObserver(es=>{VIS=es[0].isIntersecting;}).observe(host);
   host.innerHTML=`<h3>📘 ქიმიის ენციკლოპედია — თეორია, ანიმაციები, ფორმულები</h3><div class="atop">${TOP.map((t,i)=>`<button data-i="${i}"><i>${t.ico}</i><b>${t.t}</b><small>${t.s}</small></button>`).join('')}</div><div id="advBody"></div>`;
@@ -1153,6 +1154,6 @@ function mount(){
   let first=0;try{const k=localStorage.getItem('chem_adv_topic');const i=TOP.findIndex(t=>t.id===k);if(i>=0)first=i;}catch(e){}
   open(first);
 }
-window.CHEMADV={TOP,open:id=>{const i=TOP.findIndex(t=>t.id===id);if(i>=0)document.querySelectorAll('#adv .atop button')[i].click();},balanceStops:()=>STOPS.length,phOf,sampleOrbital,cellAtoms};
+window.CHEMADV={build:(id,el)=>{stopAll();const t=TOP.find(x=>x.id===id);if(!t)return;if(t.id==='ref'&&!TOP.every(x=>x.id==='ref'||x.fx))harvest();t.build(el);},stop:stopAll,decorate:el=>attachEx(el),TOP,open:id=>{const i=TOP.findIndex(t=>t.id===id);if(i>=0)document.querySelectorAll('#adv .atop button')[i].click();},balanceStops:()=>STOPS.length,phOf,sampleOrbital,cellAtoms};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();

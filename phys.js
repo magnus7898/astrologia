@@ -697,6 +697,7 @@ function harvest(){const tmp=document.createElement('div');tmp.style.display='no
     const last=[...tmp.querySelectorAll('.acard')].pop();t.fx=last?[...last.querySelectorAll('.af')].map(a=>[a.querySelector('.ff').innerHTML,(a.querySelector('.fd')||{}).innerHTML||'',a.dataset.xi!=null?XPS[+a.dataset.xi]:null]):[];tmp.innerHTML='';}
   tmp.remove();}
 function mount(){
+  if(window.PHYS_NOMOUNT)return;
   const host=$('phys');if(!host)return;
   new IntersectionObserver(es=>{VIS=es[0].isIntersecting;}).observe(host);
   const GR=[['მექანიკა და ტალღები',['proj','energy','coll','osc','waves']],['სინათლე, ელექტრობა, სითბო',['optics','efield','magnet','heat']],['ასტროფიზიკა',['orbit','stars','bh','cosmo']],['თანამედროვე ფიზიკა და „მეტა“',['rel','quant','chaos','pref']]];
@@ -710,6 +711,6 @@ function mount(){
   let first=0;try{const k=localStorage.getItem('phys_topic');const i=TOP.findIndex(t=>t.id===k);if(i>=0)first=i;}catch(e){}
   open(first);
 }
-window.PHYS={TOP,open:id=>{const i=TOP.findIndex(t=>t.id===id);if(i>=0)document.querySelector(`#phys .atop button[data-i="${i}"]`).click();},stops:()=>STOPS.length};
+window.PHYS={build:(id,el)=>{stopAll();const t=TOP.find(x=>x.id===id);if(!t)return;if(t.id==='pref'&&!TOP.every(x=>x.id==='pref'||x.fx))harvest();t.build(el);},stop:stopAll,decorate:el=>{attachXpP(el);if(window.__physEx)window.__physEx(el);},TOP,open:id=>{const i=TOP.findIndex(t=>t.id===id);if(i>=0)document.querySelector(`#phys .atop button[data-i="${i}"]`).click();},stops:()=>STOPS.length};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
