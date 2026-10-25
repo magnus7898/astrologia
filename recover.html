@@ -45,9 +45,9 @@ const read=k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}
 let TOKEN='';try{TOKEN=localStorage.getItem('magnus_admin_token')||'';}catch(e){}
 const found={};
 for(const s of Object.keys(SYS)){
-  const a=read('magnus_art_'+s)||{},b=read('magnus_art_'+s+'_bak')||{};
-  /* merge both copies; for a key present in both keep the newer edit */
-  const m={...b};for(const [k,v] of Object.entries(a)){if(!m[k]||String(v.u||'')>=String(m[k].u||''))m[k]=v;}
+  const a=read('magnus_art_'+s)||{},b=read('magnus_art_'+s+'_bak')||{},c=read('magnus_admin_bak_'+s)||{};
+  /* merge all copies (site cache, its backup, the editor's own copy); for a key present twice keep the newer edit */
+  const m={...b};for(const [k,v] of [...Object.entries(a),...Object.entries(c)]){if(!m[k]||String(v.u||'')>=String(m[k].u||''))m[k]=v;}
   for(const k of Object.keys(m))if(!m[k]||!(m[k].h||m[k].t))delete m[k];
   found[s]=m;}
 const total=Object.values(found).reduce((n,m)=>n+Object.keys(m).length,0);

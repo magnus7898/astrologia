@@ -235,6 +235,11 @@ const SYS=[['matrix','✦ ბედის მატრიცა',catMatrix],['py
 
 /* ═══════════ state ═══════════ */
 let SYSID='matrix',CAT=[],DATA={},GI=0,SEL=null,FLT='all',DIRTY=false,COUNTS={};
+/* local safety copy of every text this browser saved or loaded (magnus_admin_bak_<system>) — recover.html restores from it */
+const BAK={get(s){try{return JSON.parse(localStorage.getItem('magnus_admin_bak_'+s)||'{}');}catch(e){return {};}},
+  put(s,m){try{localStorage.setItem('magnus_admin_bak_'+s,JSON.stringify(m));}catch(e){}},
+  set(s,k,v){const m=BAK.get(s);if(v)m[k]=v;else delete m[k];BAK.put(s,m);},
+  merge(s,d){const m=BAK.get(s);let ch=0;for(const [k,v] of Object.entries(d||{}))if(!m[k]||String(v.u||'')>String(m[k].u||'')){m[k]=v;ch=1;}if(ch)BAK.put(s,m);}};
 const fileOf=it=>{if(!it)return null;const f=it.file&&(it.file.title||it.file.text)?it.file:null;
   /* matrix combo with no text of its own → the common base text (common|c|<code>) */
   if(f&&f.text)return f;
@@ -267,7 +272,7 @@ async function loadSys(id){
   SYSID=id;SEL=null;DIRTY=false;GI=0;$('q').value='';
   CAT=SYS.find(s=>s[0]===id)[2]();drawSys();drawGroups();
   $('ed').innerHTML='<div class="empty">⏳ იტვირთება…</div>';$('list').innerHTML='';
-  try{DATA=await api('/api/articles?system='+id);}catch(e){DATA={};if(e.message!=='auth')$('ed').innerHTML=`<div class="empty" style="color:var(--bad)">ვერ ჩაიტვირთა: ${esc(e.message)}</div>`;}
+  try{DATA=await api('/api/articles?system='+id);BAK.merge(id,DATA);}catch(e){DATA={};if(e.message!=='auth')$('ed').innerHTML=`<div class="empty" style="color:var(--bad)">ვერ ჩაიტვირთა: ${esc(e.message)}</div>`;}
   /* ★ items in reverse-equal zones: edit whichever order already has the text */
   for(const g of CAT)for(const it of g.items)if(it.alt&&!DATA[it.key]&&DATA[it.alt]){const k=it.key;it.key=it.alt;it.alt=k;}
   COUNTS[id]=Object.keys(DATA).length;drawSys();drawGroups();drawList();
@@ -337,13 +342,13 @@ async function save(){
   if(!SEL)return;const title=$('ti').value.trim(),html=$('doc').innerHTML.trim();
   setSt('⏳ ინახება…');$('sv').disabled=true;
   try{const r=await api(`/api/admin/articles/${SYSID}/${encodeURIComponent(SEL.key)}`,{method:'PUT',body:JSON.stringify({title,html})});
-    if(r.deleted){delete DATA[SEL.key];setSt('ცარიელია — წაიშალა','ok');}else{DATA[SEL.key]={t:r.t,h:r.h,u:r.u};$('doc').innerHTML=r.h;setSt('✓ შენახულია '+new Date().toLocaleTimeString('ka-GE'),'ok');}
+    if(r.deleted){delete DATA[SEL.key];BAK.set(SYSID,SEL.key,null);setSt('ცარიელია — წაიშალა','ok');}else{DATA[SEL.key]={t:r.t,h:r.h,u:r.u};BAK.set(SYSID,SEL.key,DATA[SEL.key]);$('doc').innerHTML=r.h;setSt('✓ შენახულია '+new Date().toLocaleTimeString('ka-GE'),'ok');}
     DIRTY=false;COUNTS[SYSID]=Object.keys(DATA).length;drawSys();drawGroups();drawList();$('dl').disabled=!DATA[SEL.key];
   }catch(e){if(e.message!=='auth')setSt('✗ '+e.message,'bad');}
   finally{const b=$('sv');if(b)b.disabled=false;}
 }
 async function del(){if(!SEL||!DATA[SEL.key]||!confirm('წავშალო ეს სტატია ბაზიდან?'))return;
-  try{await api(`/api/admin/articles/${SYSID}/${encodeURIComponent(SEL.key)}`,{method:'DELETE'});delete DATA[SEL.key];DIRTY=false;COUNTS[SYSID]=Object.keys(DATA).length;drawSys();drawGroups();open(SEL);setSt('წაიშალა','ok');}
+  try{await api(`/api/admin/articles/${SYSID}/${encodeURIComponent(SEL.key)}`,{method:'DELETE'});BAK.set(SYSID,SEL.key,null);delete DATA[SEL.key];DIRTY=false;COUNTS[SYSID]=Object.keys(DATA).length;drawSys();drawGroups();open(SEL);setSt('წაიშალა','ok');}
   catch(e){if(e.message!=='auth')setSt('✗ '+e.message,'bad');}}
 function confirmLeave(){return !DIRTY||confirm('შეუნახავი ცვლილებები დაიკარგება. გავაგრძელო?');}
 window.addEventListener('beforeunload',e=>{if(DIRTY){e.preventDefault();e.returnValue='';}});
