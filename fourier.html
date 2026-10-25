@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ფურიეს ეპიციკლები · MAGNUS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one blueprint sheet. Plot canvas on the left (x-chain across the top, y-chain down the side),
+   instrument panel on the right; stacks to one column on phones. Single deliberate dark theme. */
+:root{
+  --paper:#0b0816;        /* blueprint ground */
+  --paper-2:#141022;      /* panel */
+  --grid:rgba(165,133,239,.06);
+  --line:#d6c6ff;         /* chalk-blue linework */
+  --line-dim:rgba(201,168,76,.24);
+  --ink:#efe6d4;
+  --ink-dim:#b3a68f;
+  --pen:#ecd59a;          /* the traced curve */
+  --xc:#5fc8d8;           /* x-chain accent */
+  --yc:#a585ef;           /* y-chain accent */
+  --f-display:'Cinzel','Noto Serif Georgian',Georgia,serif;
+  --f-body:'Noto Serif Georgian',Georgia,serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:var(--f-body);font-size:14px;line-height:1.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 32px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px;border-bottom:1px solid var(--line-dim);padding-bottom:10px}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4.4vw,44px);line-height:1.05;margin:0;letter-spacing:.2px;text-wrap:balance}
+h1 i{color:var(--pen);font-style:normal}
+.back{font-size:13px;color:var(--pen);text-decoration:none}
+.stamp{font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-dim)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
+.sheet{position:relative;border:1px solid var(--line-dim);background:rgba(11,8,22,.7);min-width:0}
+canvas{display:block;width:100%;aspect-ratio:1/1;max-width:100%;touch-action:none}
+.sheet .tag{position:absolute;font-family:var(--f-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;pointer-events:none}
+.tag.x{top:8px;right:10px;color:var(--xc)}
+.tag.y{bottom:8px;left:10px;color:var(--yc);writing-mode:vertical-rl;transform:rotate(180deg)}
+.drawhint{position:absolute;inset:auto 10px 10px auto;font-family:var(--f-mono);font-size:12px;color:var(--pen);background:var(--paper);border:1px solid var(--pen);padding:4px 8px}
+.panel{background:var(--paper-2);border:1px solid var(--line-dim);display:grid;grid-template-columns:minmax(0,1fr);min-width:0}
+.sec{padding:14px 16px;border-bottom:1px solid var(--line-dim);display:grid;grid-template-columns:minmax(0,1fr);gap:10px;min-width:0}
+.sec>*{min-width:0}
+.sec:last-child{border-bottom:0}
+.lbl{font-family:var(--f-mono);font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-dim)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 13px var(--f-body);color:var(--ink);background:transparent;border:1px solid var(--line-dim);padding:5px 10px;cursor:pointer}
+.chip:hover{border-color:var(--line)}
+.chip[aria-pressed="true"]{border-color:var(--pen);color:var(--pen)}
+.chip.draw{border-style:dashed}
+.up{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:12px;color:var(--ink-dim)}
+.up .btn{display:inline-block}
+.sheet.drop{outline:2px dashed var(--pen);outline-offset:-6px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--pen);outline-offset:2px}
+.row{display:flex;align-items:center;gap:10px}
+.row label{flex:0 0 74px;font-size:13px;color:var(--ink-dim)}
+.row input[type=range]{flex:1;min-width:0;accent-color:var(--pen)}
+.row output{flex:0 0 76px;text-align:right;font-family:var(--f-mono);font-size:12px;font-variant-numeric:tabular-nums}
+.toggles{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--ink-dim)}
+.toggles label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--pen)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:600 13px var(--f-body);background:var(--pen);color:#1a1408;border:0;padding:7px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line-dim)}
+.eq{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.eq>*{min-width:0}
+.eq input{width:100%}
+.eq .f{display:flex;align-items:center;gap:8px}
+.eq .f span{flex:0 0 38px;font-family:var(--f-display);font-style:italic;font-size:18px}
+.eq input{flex:1;min-width:0;font:13px var(--f-mono);color:var(--ink);background:var(--paper);border:1px solid var(--line-dim);padding:6px 8px}
+.eq .rng{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink-dim)}
+.eq .rng input{flex:1}
+.err{color:var(--yc);font-size:12px;min-height:1em}
+.terms{white-space:normal;word-break:break-word;font-family:var(--f-mono);font-size:12px;line-height:1.7;font-variant-numeric:tabular-nums}
+.terms b{font-weight:500}
+.terms .x{color:var(--xc)}.terms .y{color:var(--yc)}
+.note{font-size:13px;color:var(--ink-dim);max-width:65ch;margin:0}
+.note em{font-family:var(--f-display);font-size:16px;color:var(--ink)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div><a class="back" href="math.html">← მათემატიკა</a><h1>ფურიეს <i>ეპიციკლები</i></h1></div>
+    <span class="stamp" id="stamp">ბოლო ფორმა · N = 300 წერტილი</span>
+  </header>
+
+  <div class="main">
+    <div class="sheet">
+      <canvas id="cv" aria-label="ფურიეს ეპიციკლებით ხატვა"></canvas>
+      <span class="tag x">x(t) · ზედა ჯაჭვი</span>
+      <span class="tag y">y(t) · გვერდითი ჯაჭვი</span>
+      <span class="drawhint" id="drawhint" hidden>დახატე ჩაკეტილი ფორმა — აუშვი თითი</span>
+    </div>
+
+    <div class="panel">
+      <div class="sec">
+        <div class="lbl">ფორმა</div>
+        <div class="chips" id="chips"></div>
+        <div class="up"><label class="btn ghost" for="file" tabindex="0" id="fileBtn">⬆ სურათის ატვირთვა</label><input type="file" id="file" accept="image/*" hidden><span>ან ჩააგდე / ჩასვი სურათი. საუკეთესოდ გამოდის სილუეტი და ლოგო.</span></div>
+        <div id="imgctl" hidden>
+          <div class="row"><label for="thr">ზღვარი</label><input type="range" id="thr" min="1" max="254" value="128"><output id="thrOut">128</output></div>
+          <div class="toggles"><label><input type="checkbox" id="inv"> ინვერსია</label><label><input type="checkbox" id="showImg" checked> სურათის ჩვენება</label></div>
+        </div>
+        <div class="err" id="imgErr"></div>
+      </div>
+
+      <div class="sec">
+        <div class="row"><label for="circles">წრეები</label><input type="range" id="circles" min="1" max="300" value="300"><output id="circlesOut">300</output></div>
+        <div class="row"><label for="speed">სიჩქარე</label><input type="range" id="speed" min="0.25" max="6" step="0.25" value="1.5"><output id="speedOut">1.5×</output></div>
+        <div class="toggles">
+          <label><input type="checkbox" id="showCircles" checked> წრეები</label>
+          <label><input type="checkbox" id="showGhost" checked> ორიგინალი</label>
+          <label><input type="checkbox" id="showGuides" checked> დამხმარე ხაზები</label>
+        </div>
+        <div class="btns">
+          <button class="btn" id="play" type="button">პაუზა</button>
+          <button class="btn ghost" id="restart" type="button">თავიდან</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="lbl">შენი განტოლება</div>
+        <div class="eq">
+          <div class="f"><span>x(t)</span><input id="ex" value="cos(t) + cos(6*t)/2 + sin(14*t)/3" spellcheck="false"></div>
+          <div class="f"><span>y(t)</span><input id="ey" value="sin(t) + sin(6*t)/2 + cos(14*t)/3" spellcheck="false"></div>
+          <div class="rng">t-დან <input id="t0" value="0" spellcheck="false"> -მდე <input id="t1" value="2*PI" spellcheck="false"></div>
+          <div class="btns"><button class="btn ghost" id="applyEq" type="button">დახატე განტოლება</button></div>
+          <div class="err" id="err"></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="lbl">უდიდესი წევრები</div>
+        <div class="terms" id="terms"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="note"><em>ზედა ჯაჭვი</em> ხატავს x(t)-ს, <em>გვერდითი ჯაჭვი</em> — y(t)-ს. ყოველი წრე ფურიეს ერთი წევრია: რადიუსი, რომელიც მთელი რიცხვის სიჩქარით ბრუნავს. ზედა ჯაჭვის ბოლოდან ეშვება ვერტიკალური ხაზი, გვერდითისიდან — ჰორიზონტალური; კალამი მათ გადაკვეთაზეა. შეამცირე წრეების რაოდენობა და ნახე, როგორ იკრიბება ფორმა უდიდესი წევრებისგან: გლუვ ფორმას რამდენიმე წრე ჰყოფნის, მკვეთრ კუთხეებს — ასობით.</p>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const {sin,cos,PI,exp,sqrt,atan2,hypot,abs,min,max}=Math;
+const TAU=2*PI, N=300;
+const $=id=>document.getElementById(id);
+const cv=$('cv'),cx=cv.getContext('2d');
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C={paper:css('--paper'),line:css('--line'),dim:css('--line-dim'),pen:css('--pen'),xc:css('--xc'),yc:css('--yc'),ink:css('--ink')};
+
+/* ── shapes ─────────────────────────────────────────── */
+const param=(f,a,b,n=900)=>Array.from({length:n},(_,i)=>f(a+(b-a)*i/n));
+function catmull(p,seg=14){const o=[];for(let i=0;i<p.length-1;i++){const p0=p[max(i-1,0)],p1=p[i],p2=p[i+1],p3=p[min(i+2,p.length-1)];
+  for(let s=0;s<seg;s++){const t=s/seg,t2=t*t,t3=t2*t;o.push([0,1].map(k=>.5*((2*p1[k])+(-p0[k]+p2[k])*t+(2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t2+(-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t3)));}}
+  o.push(p[p.length-1]);return o;}
+function pin(){ /* bowling pin: right half profile top→bottom, mirrored */
+  const half=[[0,-1],[.13,-.985],[.23,-.92],[.285,-.8],[.28,-.66],[.22,-.5],[.155,-.35],[.15,-.24],[.2,-.1],[.31,.08],[.4,.27],[.43,.45],[.41,.62],[.35,.8],[.27,.95],[.24,1]];
+  const r=catmull(half);const base=[[.12,1],[0,1],[-.12,1]];
+  return [...r,...base,...r.slice().reverse().map(([x,y])=>[-x,y])];}
+const polygon=v=>{const o=[];for(let i=0;i<v.length;i++){const a=v[i],b=v[(i+1)%v.length];for(let s=0;s<40;s++)o.push([a[0]+(b[0]-a[0])*s/40,a[1]+(b[1]-a[1])*s/40]);}return o;};
+const SHAPES={
+  pin:{name:'ბოულინგის კეგლი',pts:pin},
+  heart:{name:'გული',pts:()=>param(t=>[16*sin(t)**3,-(13*cos(t)-5*cos(2*t)-2*cos(3*t)-cos(4*t))],0,TAU)},
+  pentagram:{name:'პენტაგრამა',pts:()=>polygon(Array.from({length:5},(_,i)=>{const a=-PI/2+i*4*PI/5;return [cos(a),sin(a)];}))},
+  square:{name:'კვადრატი',pts:()=>polygon([[-1,-1],[1,-1],[1,1],[-1,1]])},
+  trefoil:{name:'სამფოთლა კვანძი',pts:()=>param(t=>[sin(t)+2*sin(2*t),-(cos(t)-2*cos(2*t))],0,TAU)},
+  spiro:{name:'სპიროგრაფი',pts:()=>param(t=>[2*cos(t)+5*cos(2*t/3),2*sin(t)-5*sin(2*t/3)],0,6*PI,1400)},
+  butterfly:{name:'პეპელა',pts:()=>param(t=>{const r=exp(cos(t))-2*cos(4*t)-sin(t/12)**5;return [r*sin(t),-r*cos(t)];},0,12*PI,3000)},
+  note:{name:'ნოტი',pts:()=>{ /* filled note head + stem + flag, traced as one outline */
+    const head=param(t=>[-.45+.32*cos(t)*cos(-.45)-.22*sin(t)*sin(-.45),.62+.32*cos(t)*sin(-.45)+.22*sin(t)*cos(-.45)],0,TAU,200);
+    const k=head.reduce((b,p,i)=>p[0]>head[b][0]?i:b,0);const h=[...head.slice(k),...head.slice(0,k)];
+    const stem=[[-.16,.55],[-.16,-.95]];const flag=catmull([[-.16,-.95],[.05,-.7],[.38,-.45],[.42,-.1],[.3,.15],[.36,-.15],[.26,-.4],[-.06,-.55],[-.08,-.5]],10);
+    return [...h,...stem,...flag,[-.08,.55]];}}
+};
+
+/* ── geometry helpers ───────────────────────────────── */
+function resample(pts,n){
+  const P=pts.filter(p=>isFinite(p[0])&&isFinite(p[1]));if(P.length<2)return null;
+  const L=[0];for(let i=1;i<=P.length;i++){const a=P[i-1],b=P[i%P.length];L.push(L[i-1]+hypot(b[0]-a[0],b[1]-a[1]));}
+  const tot=L[L.length-1];if(!tot)return null;const out=[];let j=0;
+  for(let i=0;i<n;i++){const d=i*tot/n;while(L[j+1]<d)j++;const a=P[j],b=P[(j+1)%P.length],s=(d-L[j])/((L[j+1]-L[j])||1);out.push([a[0]+(b[0]-a[0])*s,a[1]+(b[1]-a[1])*s]);}
+  return out;}
+let NORM=null;
+function normalize(pts){ /* centre on bbox, scale so the larger side is 2 (−1…1) */
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(const [x,y] of pts){x0=min(x0,x);x1=max(x1,x);y0=min(y0,y);y1=max(y1,y);}
+  const s=2/max(x1-x0,y1-y0,1e-9),mx=(x0+x1)/2,my=(y0+y1)/2;NORM={s,mx,my};return pts.map(([x,y])=>[(x-mx)*s,(y-my)*s]);}
+function dft(v){const n=v.length,o=[];
+  for(let k=0;k<n;k++){let re=0,im=0;for(let j=0;j<n;j++){const a=TAU*k*j/n;re+=v[j]*cos(a);im-=v[j]*sin(a);}
+    re/=n;im/=n;o.push({freq:k<=n/2?k:k-n,amp:hypot(re,im),phase:atan2(im,re)});}
+  return o.sort((a,b)=>b.amp-a.amp);}
+
+/* ── state ───────────────────────────────────────────── */
+let target=[],FX=[],FY=[],t=0,trail=[],playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,current='pin',drawing=null,drawMode=false;
+function load(pts,label){
+  const r=resample(pts,N);if(!r)return false;target=normalize(r);
+  FX=dft(target.map(p=>p[0]));FY=dft(target.map(p=>p[1]));t=0;trail=[];
+  $('stamp').textContent=`${label} · N = ${N} წერტილი`;showTerms();return true;}
+
+/* ── layout ──────────────────────────────────────────── */
+let W=0,H=0,dpr=1,G={};
+function layout(){
+  const r=cv.getBoundingClientRect();dpr=window.devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);
+  const band=W*.34,R=(W-band)*.36;
+  G={R,box:{x:band,y:band,w:W-band,h:H-band},cx:band+(W-band)/2,cy:band+(H-band)/2,topY:band*.5,sideX:band*.5};}
+new ResizeObserver(()=>{layout();if(!playing)frame(false);}).observe(cv);
+
+/* ── drawing ─────────────────────────────────────────── */
+function chain(ox,oy,F,rot,M,color,show){
+  let x=ox,y=oy;
+  for(let i=0;i<M;i++){const c=F[i],r=c.amp*G.R;if(c.freq===0&&false)continue;const px=x,py=y,a=c.freq*t+c.phase+rot;x+=r*cos(a);y+=r*sin(a);
+    if(show&&r>.4){cx.strokeStyle=C.dim;cx.lineWidth=1;cx.beginPath();cx.arc(px,py,r,0,TAU);cx.stroke();
+      cx.strokeStyle=i<1?color:C.line;cx.globalAlpha=i<1?1:.75;cx.beginPath();cx.moveTo(px,py);cx.lineTo(x,y);cx.stroke();cx.globalAlpha=1;}}
+  cx.fillStyle=color;cx.beginPath();cx.arc(x,y,3,0,TAU);cx.fill();return [x,y];}
+function frame(advance=true){
+  cx.fillStyle=C.paper;cx.fillRect(0,0,W,H);
+  const M=+$('circles').value;
+  /* box frame + axes */
+  cx.strokeStyle=C.dim;cx.lineWidth=1;cx.setLineDash([2,4]);cx.beginPath();cx.moveTo(G.box.x,0);cx.lineTo(G.box.x,H);cx.moveTo(0,G.box.y);cx.lineTo(W,G.box.y);cx.stroke();cx.setLineDash([]);
+  if(IMG&&current==='img'&&$('showImg').checked&&NORM){const k=NORM.s*G.R;cx.save();cx.beginPath();cx.rect(G.box.x,G.box.y,G.box.w,G.box.h);cx.clip();cx.globalCompositeOperation='multiply';cx.globalAlpha=.55;cx.drawImage(IMG.cv,G.cx-NORM.mx*k,G.cy-NORM.my*k,IMG.w*k,IMG.h*k);cx.restore();}
+  if($('showGhost').checked&&target.length){cx.strokeStyle=C.dim;cx.lineWidth=1.2;cx.beginPath();target.forEach(([x,y],i)=>{const X=G.cx+x*G.R,Y=G.cy+y*G.R;i?cx.lineTo(X,Y):cx.moveTo(X,Y);});cx.closePath();cx.stroke();}
+  if(drawing){cx.strokeStyle=C.pen;cx.lineWidth=2;cx.beginPath();drawing.forEach(([x,y],i)=>i?cx.lineTo(x,y):cx.moveTo(x,y));cx.stroke();return;}
+  if(!FX.length)return;
+  const show=$('showCircles').checked;
+  const [tx]=chain(G.cx,G.topY,FX,0,M,C.xc,show);
+  const [,sy]=chain(G.sideX,G.cy,FY,PI/2,M,C.yc,show);
+  const pen=[tx,sy];
+  if($('showGuides').checked){
+    cx.setLineDash([4,4]);cx.lineWidth=1;
+    cx.strokeStyle=C.xc;cx.globalAlpha=.6;cx.beginPath();cx.moveTo(tx,G.topY);cx.lineTo(tx,pen[1]);cx.stroke();
+    cx.strokeStyle=C.yc;cx.beginPath();cx.moveTo(G.sideX,sy);cx.lineTo(pen[0],sy);cx.stroke();cx.globalAlpha=1;cx.setLineDash([]);}
+  if(advance)trail.push([(pen[0]-G.cx)/G.R,(pen[1]-G.cy)/G.R]);
+  cx.strokeStyle=C.pen;cx.lineWidth=2;cx.lineJoin='round';cx.beginPath();
+  trail.forEach(([x,y],i)=>{const X=G.cx+x*G.R,Y=G.cy+y*G.R;i?cx.lineTo(X,Y):cx.moveTo(X,Y);});cx.stroke();
+  cx.fillStyle=C.pen;cx.beginPath();cx.arc(pen[0],pen[1],4,0,TAU);cx.fill();
+}
+let acc=0;
+function tick(){
+  if(playing&&!drawing){acc+=+$('speed').value;
+    while(acc>=1){acc-=1;frame(true);t+=TAU/N;if(t>=TAU-1e-9){t=0;trail=[];}}
+    frame(false);}
+  requestAnimationFrame(tick);}
+
+/* ── term readout ───────────────────────────────────── */
+const fmt=(c,v)=>{const f=c.freq,s=f===0?'':`${f<0?'−':''}${abs(f)===1?'':abs(f)}t`;const ph=c.phase,ps=s?` ${ph<0?'−':'+'} ${abs(ph).toFixed(2)}`:'';
+  return f===0?`${(c.amp*Math.sign(cos(c.phase))).toFixed(3)}`:`${c.amp.toFixed(3)}·cos(${s}${ps})`;};
+function showTerms(){
+  const top=F=>F.filter(c=>c.amp>1e-4).slice(0,4).map(fmt).join(' + ')+(F.filter(c=>c.amp>1e-4).length>4?' + …':'');
+  $('terms').innerHTML=`<div class="x"><b>x(t)</b> ≈ ${top(FX)}</div><div class="y"><b>y(t)</b> ≈ ${top(FY)}</div>`;}
+
+/* ── picture → outline ──────────────────────────────── */
+let IMG=null;
+function otsu(g,use){const hist=new Array(256).fill(0);let n=0;for(let i=0;i<g.length;i++)if(use[i]){hist[g[i]]++;n++;}
+  let sum=0;for(let i=0;i<256;i++)sum+=i*hist[i];let sB=0,wB=0,best=0,th=128;
+  for(let i=0;i<256;i++){wB+=hist[i];if(!wB)continue;const wF=n-wB;if(!wF)break;sB+=i*hist[i];const mB=sB/wB,mF=(sum-sB)/wF,v=wB*wF*(mB-mF)**2;if(v>best){best=v;th=i;}}return th;}
+function loadPicture(f){
+  $('imgErr').textContent='';if(!f||!/^image\//.test(f.type)){$('imgErr').textContent='ეს ფაილი სურათი არ არის. გამოიყენე PNG, JPG, GIF, WebP ან SVG.';return;}
+  const url=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{try{prepPicture(im);}finally{URL.revokeObjectURL(url);}};
+  im.onerror=()=>{URL.revokeObjectURL(url);$('imgErr').textContent='სურათი ვერ წავიკითხე. სცადე PNG ან JPG.';};
+  im.src=url;}
+function prepPicture(im){
+  const S=360,k=min(1,S/max(im.naturalWidth||im.width,im.naturalHeight||im.height)),w=max(8,Math.round((im.naturalWidth||im.width)*k)),h=max(8,Math.round((im.naturalHeight||im.height)*k));
+  const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.drawImage(im,0,0,w,h);
+  const d=g.getImageData(0,0,w,h).data,gray=new Uint8Array(w*h),alpha=new Uint8Array(w*h);let clear=0;
+  for(let i=0;i<w*h;i++){const a=d[i*4+3];alpha[i]=a;if(a<128)clear++;gray[i]=Math.round((.299*d[i*4]+.587*d[i*4+1]+.114*d[i*4+2])*a/255+255*(1-a/255));}
+  IMG={cv:c,w,h,gray,alpha,hasAlpha:clear>w*h*.02};
+  const th=otsu(gray,alpha.map(a=>a>=128?1:0));$('thr').value=th;$('thrOut').textContent=th;
+  /* if most of the border counts as "shape", the subject is light on dark: invert */
+  let b=0,bn=0;const fg0=i=>IMG.hasAlpha?alpha[i]>=128:gray[i]<th;
+  for(let x=0;x<w;x++){b+=fg0(x)+fg0((h-1)*w+x);bn+=2;}for(let y=0;y<h;y++){b+=fg0(y*w)+fg0(y*w+w-1);bn+=2;}
+  $('inv').checked=!IMG.hasAlpha&&b>bn/2;
+  $('thr').disabled=IMG.hasAlpha;$('imgctl').hidden=false;tracePicture();}
+function tracePicture(){
+  if(!IMG)return;const {w,h,gray,alpha,hasAlpha}=IMG,th=+$('thr').value,inv=$('inv').checked;
+  const m=new Uint8Array(w*h);for(let i=0;i<w*h;i++){let f=hasAlpha?alpha[i]>=128:gray[i]<th;if(inv)f=!f;m[i]=f?1:0;}
+  /* largest connected region */
+  const lab=new Int32Array(w*h),st=[];let best=0,bestL=0,L=0;
+  for(let i=0;i<w*h;i++){if(!m[i]||lab[i])continue;L++;let n=0;st.push(i);lab[i]=L;
+    while(st.length){const j=st.pop();n++;const x=j%w,y=(j-x)/w;
+      if(x>0&&m[j-1]&&!lab[j-1]){lab[j-1]=L;st.push(j-1);}if(x<w-1&&m[j+1]&&!lab[j+1]){lab[j+1]=L;st.push(j+1);}
+      if(y>0&&m[j-w]&&!lab[j-w]){lab[j-w]=L;st.push(j-w);}if(y<h-1&&m[j+w]&&!lab[j+w]){lab[j+w]=L;st.push(j+w);}}
+    if(n>best){best=n;bestL=L;}}
+  if(best<30){$('imgErr').textContent='მკაფიო ფორმა ვერ ვიპოვე. შეცვალე ზღვარი ან ჩართე ინვერსია.';return;}
+  const at=(x,y)=>x>=0&&y>=0&&x<w&&y<h&&lab[y*w+x]===bestL;
+  let s0=0;while(lab[s0]!==bestL)s0++;const sx=s0%w,sy=(s0-sx)/w;
+  /* Moore-neighbour boundary trace */
+  const D=[[-1,0],[-1,-1],[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1]];
+  let x=sx,y=sy,b=0,f0=-1;const out=[[x,y]];
+  for(let step=0;step<w*h*4;step++){
+    let fd=-1;for(let i=1;i<=8;i++){const d=(b+i)%8;if(at(x+D[d][0],y+D[d][1])){fd=d;break;}}
+    if(fd<0)break;if(step===0)f0=fd;else if(x===sx&&y===sy&&fd===f0)break;
+    const pd=(fd+7)%8,bx=x+D[pd][0],by=y+D[pd][1];x+=D[fd][0];y+=D[fd][1];
+    b=D.findIndex(([dx,dy])=>x+dx===bx&&y+dy===by);if(b<0)b=0;out.push([x,y]);}
+  if(out.length<20){$('imgErr').textContent='კონტური ძალიან პატარაა. შეცვალე ზღვარი ან ჩართე ინვერსია.';return;}
+  /* light smoothing so pixel stair-steps don't become high-frequency circles */
+  const n=out.length,sm=out.map((_,i)=>{let ax=0,ay=0;for(let k=-2;k<=2;k++){const p=out[(i+k+n)%n];ax+=p[0];ay+=p[1];}return [ax/5,ay/5];});
+  stopDraw();if(load(sm,'შენი სურათი')){current='img';markChip('img');$('imgErr').textContent='';}}
+
+/* ── controls ───────────────────────────────────────── */
+const chips=$('chips');
+function markChip(k){chips.querySelectorAll('.chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k?'true':'false'));}
+for(const [k,s] of Object.entries(SHAPES)){const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.k=k;b.textContent=s.name;
+  b.onclick=()=>{stopDraw();load(s.pts(),s.name);current=k;markChip(k);$('imgErr').textContent='';};chips.appendChild(b);}
+const db=document.createElement('button');db.type='button';db.className='chip draw';db.dataset.k='draw';db.textContent='✎ დახატე შენ';
+db.onclick=()=>{drawMode=true;markChip('draw');$('drawhint').hidden=false;FX=[];FY=[];target=[];trail=[];frame(false);};chips.appendChild(db);
+function stopDraw(){drawMode=false;drawing=null;$('drawhint').hidden=true;}
+const pos=e=>{const r=cv.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];};
+cv.addEventListener('pointerdown',e=>{if(!drawMode)return;cv.setPointerCapture(e.pointerId);drawing=[pos(e)];frame(false);});
+cv.addEventListener('pointermove',e=>{if(!drawing)return;drawing.push(pos(e));frame(false);});
+cv.addEventListener('pointerup',()=>{if(!drawing)return;const pts=drawing;drawing=null;
+  if(pts.length>8&&load(pts,'შენი ნახატი')){current='draw';drawMode=false;$('drawhint').hidden=true;}else frame(false);});
+
+$('circles').max=N;
+$('file').onchange=e=>{loadPicture(e.target.files[0]);e.target.value='';};
+$('fileBtn').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('file').click();}};
+$('thr').oninput=e=>{$('thrOut').textContent=e.target.value;tracePicture();};
+$('inv').onchange=tracePicture;$('showImg').onchange=()=>{if(!playing)frame(false);};
+const sheet=document.querySelector('.sheet');
+sheet.addEventListener('dragover',e=>{e.preventDefault();sheet.classList.add('drop');});
+sheet.addEventListener('dragleave',()=>sheet.classList.remove('drop'));
+sheet.addEventListener('drop',e=>{e.preventDefault();sheet.classList.remove('drop');const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)loadPicture(f);});
+document.addEventListener('paste',e=>{if(e.target&&e.target.tagName==='INPUT')return;const f=[...((e.clipboardData&&e.clipboardData.files)||[])].find(f=>/^image\//.test(f.type));if(f){e.preventDefault();loadPicture(f);}});
+$('circles').oninput=e=>{$('circlesOut').textContent=e.target.value;trail=[];t=0;if(!playing)frame(false);};
+$('speed').oninput=e=>{$('speedOut').textContent=e.target.value+'×';};
+['showCircles','showGhost','showGuides'].forEach(id=>$(id).onchange=()=>{if(!playing)frame(false);});
+const syncPlay=()=>{$('play').textContent=playing?'პაუზა':'გაშვება';};
+$('play').onclick=()=>{playing=!playing;syncPlay();if(!playing)frame(false);};
+$('restart').onclick=()=>{t=0;trail=[];if(!playing)frame(false);};
+function evalExpr(src){return new Function('t',`with(Math){return (${src});}`);}
+$('applyEq').onclick=()=>{
+  try{const fx=evalExpr($('ex').value),fy=evalExpr($('ey').value),a=evalExpr($('t0').value)(0),b=evalExpr($('t1').value)(0);
+    if(!(isFinite(a)&&isFinite(b)&&b>a))throw new Error('t-ს „-მდე“ უნდა იყოს „-დან“-ზე მეტი');
+    const pts=param(t=>[fx(t),-fy(t)],a,b,2000); /* screen y points down, so flip y to keep maths orientation */
+    if(!pts.some(p=>isFinite(p[0])&&isFinite(p[1])))throw new Error('ფორმულა რიცხვებს არ იძლევა');
+    stopDraw();if(!load(pts,'შენი განტოლება'))throw new Error('მრუდს სიგრძე არ აქვს');current='eq';markChip('');$('err').textContent='';
+  }catch(e){$('err').textContent='ვერ დავხატე: '+e.message+'. გამოიყენე t, sin, cos, PI, exp, sqrt, abs, ** …';}};
+
+/* ── start ──────────────────────────────────────────── */
+layout();load(SHAPES.pin.pts(),SHAPES.pin.name);markChip('pin');syncPlay();
+if(!playing){ /* reduced motion: show the finished curve at rest */
+  const M=+$('circles').value;for(let i=0;i<N;i++){t=i*TAU/N;frame(true);}t=0;}
+frame(false);requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
