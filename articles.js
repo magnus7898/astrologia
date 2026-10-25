@@ -39,12 +39,15 @@ const ART={
     /* common base (admin ★): fills every combo zone where that code has no text of its own */
     const EXZ=(typeof EXACT_ORDER_ZONES!=='undefined')?EXACT_ORDER_ZONES:new Set(['karmic_tail','cp_karmic_tail']);
     const empty=e=>!e||!String(e.text||'').replace(/<[^>]+>|&nbsp;|\s/g,'');
+    const CN=DB.ch_names&&DB.ch_names.combos;
     for(const [zone,z] of Object.entries(DB)){
       if(!z||!z.combos||zone==='ch_names')continue;
       for(const [code,a] of common){
         const r=code.split('-').reverse().join('-');
         const key=(!EXZ.has(zone)&&!z.combos[code]&&z.combos[r])?r:code,e=z.combos[key];
         if(!empty(e))continue;
+        /* chakra boxes: your chakra list (ch_names) wins over the general common text */
+        if(/^ch_/.test(zone)&&CN&&(!empty(CN[key])||!empty(CN[key.split('-').reverse().join('-')])))continue;
         z.combos[key]={title:(e&&e.title)||a.t||'',text:a.h||'',_c:1,_f:!!e,_ft:e?e.title||'':''};
       }
     }
