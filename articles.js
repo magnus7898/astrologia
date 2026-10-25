@@ -4,6 +4,7 @@
    refreshes them in the background.
    On matrix.html (MATRIX_DB present) the matrix texts are laid over matrix_combos.js:
      <zone>|c|<a-b-c> → MATRIX_DB[zone].combos[code]   ·   <zone>|s|<n> → MATRIX_DB[zone].singles[n]
+     common|c|<a-b-c> → every combo zone whose own text for that code is empty (admin ★ base)
    Load it right after matrix_combos.js.                                                     */
 (function(){
 'use strict';
@@ -25,11 +26,27 @@ const ART={
   _apply(s){
     if(s!=='matrix')return;
     const DB=(typeof MATRIX_DB!=='undefined')?MATRIX_DB:window.MATRIX_DB;if(!DB)return;
+    /* undo earlier common fills, so a re-apply sees the file state again */
+    for(const z of Object.values(DB))if(z&&z.combos)for(const k in z.combos){const e=z.combos[k];if(e&&e._c){if(e._f)z.combos[k]={title:e._ft||'',text:''};else delete z.combos[k];}}
+    const common=[];
     for(const [k,a] of Object.entries(MEM.matrix||{})){
       const [zone,kind,code]=k.split('|');if(!zone||!code)continue;
+      if(zone==='common'){if(kind==='c'&&(a.h||a.t))common.push([code,a]);continue;}
       const z=DB[zone]||(DB[zone]={});
       const box=kind==='s'?(z.singles||(z.singles={})):(z.combos||(z.combos={}));
       box[code]={title:a.t||'',text:a.h||''};
+    }
+    /* common base (admin ★): fills every combo zone where that code has no text of its own */
+    const EXZ=(typeof EXACT_ORDER_ZONES!=='undefined')?EXACT_ORDER_ZONES:new Set(['karmic_tail','cp_karmic_tail']);
+    const empty=e=>!e||!String(e.text||'').replace(/<[^>]+>|&nbsp;|\s/g,'');
+    for(const [zone,z] of Object.entries(DB)){
+      if(!z||!z.combos||zone==='ch_names')continue;
+      for(const [code,a] of common){
+        const r=code.split('-').reverse().join('-');
+        const key=(!EXZ.has(zone)&&!z.combos[code]&&z.combos[r])?r:code,e=z.combos[key];
+        if(!empty(e))continue;
+        z.combos[key]={title:(e&&e.title)||a.t||'',text:a.h||'',_c:1,_f:!!e,_ft:e?e.title||'':''};
+      }
     }
   }
 };

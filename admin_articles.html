@@ -143,7 +143,18 @@ function catMatrix(){
     const fileCodes=z&&z.combos?Object.keys(z.combos):[],have=new Set(fileCodes),out=[...fileCodes];
     for(const c of gen[b.id]||[]){const r=c.split('-').reverse().join('-');if(have.has(c)||(!EX.has(b.id)&&have.has(r)))continue;have.add(c);out.push(c);}
     out.sort((a,b2)=>{const x=a.split('-').map(Number),y=b2.split('-').map(Number);return x[0]-y[0]||x[1]-y[1]||x[2]-y[2];});
-    groups.push({id:b.id,label:`${lab} · ${out.length} კომბ.`,combo:true,items:out.map(c=>({key:`${b.id}|c|${c}`,label:c+(z&&z.combos&&z.combos[c]&&z.combos[c].title?' — '+z.combos[c].title:''),file:z&&z.combos&&z.combos[c]}))});}
+    groups.push({id:b.id,label:`${lab} · ${out.length} კომბ.`,combo:true,items:out.map(c=>({key:`${b.id}|c|${c}`,label:c+(z&&z.combos&&z.combos[c]&&z.combos[c].title?' — '+z.combos[c].title:''),file:z&&z.combos&&z.combos[c],zone:b.id,code:c}))});}
+  /* ── common base: one text per code, shown in every combo zone that has no text of its own ──
+     key common|c|<code>. Reverse codes are merged unless an exact-order zone needs both. */
+  const EXZ=(typeof EXACT_ORDER_ZONES!=='undefined')?EXACT_ORDER_ZONES:EX,rv=c=>c.split('-').reverse().join('-');
+  const use={},ex=new Set(),ttl={};
+  for(const g of groups)if(g.combo)for(const it of g.items){(use[it.code]=use[it.code]||new Set()).add(g.id);if(EXZ.has(g.id))ex.add(it.code);
+    const t=it.file&&it.file.title;if(t&&!ttl[it.code])ttl[it.code]=t;}
+  for(const c of Object.keys(use)){const r=rv(c);if(r===c||!use[r]||!use[c]||ex.has(c)||ex.has(r))continue;const k=c<r?c:r,o=k===c?r:c;use[o].forEach(z=>use[k].add(z));delete use[o];if(!ttl[k]&&ttl[o])ttl[k]=ttl[o];}
+  const ckOf=(zone,c)=>use[c]?`common|c|${c}`:(!EXZ.has(zone)&&use[rv(c)]?`common|c|${rv(c)}`:null);
+  for(const g of groups)if(g.combo)for(const it of g.items)it.ck=ckOf(g.id,it.code);
+  const cc=Object.keys(use).sort((a,b2)=>{const x=a.split('-').map(Number),y=b2.split('-').map(Number);return x[0]-y[0]||x[1]-y[1]||x[2]-y[2];});
+  groups.unshift({id:'common',label:`★ საერთო ბაზა — ყველა ზონა · ${cc.length} კომბ.`,combo:true,items:cc.map(c=>({key:`common|c|${c}`,label:`${c}${ttl[c]?' — '+ttl[c]:''} · ${use[c].size} ზონა`,common:1}))});
   if(DB.ch_names&&DB.ch_names.combos)groups.push({id:'ch_names',label:'ჩაკრის სამეულების საერთო სახელები',combo:true,items:Object.keys(DB.ch_names.combos).map(c=>({key:`ch_names|c|${c}`,label:c+(DB.ch_names.combos[c].title?' — '+DB.ch_names.combos[c].title:''),file:DB.ch_names.combos[c]}))});
   return groups;
 }
@@ -205,7 +216,10 @@ const SYS=[['matrix','✦ ბედის მატრიცა',catMatrix],['py
 
 /* ═══════════ state ═══════════ */
 let SYSID='matrix',CAT=[],DATA={},GI=0,SEL=null,FLT='all',DIRTY=false,COUNTS={};
-const fileOf=it=>it&&it.file&&(it.file.title||it.file.text)?it.file:null;
+const fileOf=it=>{if(!it)return null;const f=it.file&&(it.file.title||it.file.text)?it.file:null;
+  /* matrix combo with no text of its own → the common base text (common|c|<code>) */
+  const c=it.ck&&DATA[it.ck];if(c&&(c.h||c.t)&&!(f&&f.text))return {title:(f&&f.title)||c.t||'',text:c.h||'',src:'common'};
+  return f;};
 function allItems(){return CAT.flatMap((g,gi)=>g.items.map(it=>({...it,gi})));}
 function shown(){
   const q=$('q').value.trim().toLowerCase();
@@ -241,7 +255,7 @@ function open(it){
   SEL=it;GI=it.gi;drawGroups();
   const a=DATA[it.key],f=fileOf(it),grp=CAT[it.gi];
   const title=a?a.t:(f&&f.title)||'',html=a?a.h:(f&&f.text)||'';
-  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია ფაილიდან — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
+  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია '+(f.src==='common'?'საერთო ბაზიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':'ფაილიდან')+' — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
     <input class="ti" id="ti" placeholder="სათაური" value="${esc(title)}">
     <div><div class="tb" id="tb">
       <select id="blk" title="სტილი"><option value="p">ჩვეულებრივი</option><option value="h2">სათაური 1</option><option value="h3">სათაური 2</option><option value="blockquote">ციტატა</option></select>
