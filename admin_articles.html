@@ -37,7 +37,7 @@ button,input,select{font:inherit;color:inherit}
 .it{display:flex;gap:8px;align-items:baseline;padding:6px 12px;border-bottom:1px solid rgba(201,168,76,.06);cursor:pointer}
 .it:hover{background:rgba(201,168,76,.06)}.it.on{background:rgba(201,168,76,.15)}
 .it .d{width:8px;height:8px;border-radius:50%;flex:none;background:rgba(255,255,255,.12);margin-top:3px}
-.it .d.w{background:var(--ok)}.it .d.fl{background:#d9b34a}
+.it .d.w{background:var(--ok)}.it .d.fl{background:#d9b34a}.it .d.in{background:#6fb3e0}
 [hidden]{display:none!important}
 .it .l{flex:1;min-width:0}.it .l small{display:block;color:var(--dim);font-size:10.5px;font-family:monospace}
 .ed{display:flex;flex-direction:column;min-height:0;padding:14px 18px;gap:10px;overflow:auto}
@@ -168,6 +168,9 @@ function catMatrix(){
     const nm=(ORD.find(o=>o[0]===g.id)||[0,g.label.replace(/ · \d+ კომბ\.$/,'')])[1];
     return {id:'common_'+g.id,label:`★ ${nm} · ${items.length} კომბ.`,combo:true,items};}).filter(g=>g.items.length);
   const inOrd=g=>rank(g.id.replace(/^common_/,''))<ORD.length;
+  /* ★ item → the zone items that read it, so a text already written in a zone shows here too */
+  const zk={};for(const g of zoneG)for(const it of g.items)for(const k of [it.ck,it.ckr])if(k)(zk[k]=zk[k]||[]).push(it.key);
+  for(const g of star)for(const it of g.items)it.zs=[...new Set([...(zk[it.key]||[]),...(it.alt&&zk[it.alt]||[])])];
   const out=star.filter(inOrd),rest=star.filter(g=>!inOrd(g));
   if(DB.ch_names&&DB.ch_names.combos)out.push({id:'ch_names',label:'★ ჩაკრების საერთო კომბინაციები',combo:true,items:Object.keys(DB.ch_names.combos).map(c=>({key:`ch_names|c|${c}`,code:c,label:c+(DB.ch_names.combos[c].title?' — '+DB.ch_names.combos[c].title:''),file:DB.ch_names.combos[c]}))});
   /* chakra boxes: your chakra list (ch_names) comes before the general common text */
@@ -237,23 +240,27 @@ const fileOf=it=>{if(!it)return null;const f=it.file&&(it.file.title||it.file.te
   if(f&&f.text)return f;
   if(it.cn){const CN=(window.MATRIX_DB||{}).ch_names,cf=CN&&CN.combos||{};for(const k of it.cn){const d=DATA[k],fc=cf[k.split('|')[2]],h=(d&&d.h)||(fc&&fc.text);if(h)return {title:(f&&f.title)||(d&&d.t)||(fc&&fc.title)||'',text:h,src:'ch_names'};}}
   for(const k of [it.ck,it.ckr]){const c=k&&DATA[k];if(c&&(c.h||c.t))return {title:(f&&f.title)||c.t||'',text:c.h||'',src:'common'};}
+  if(it.zs){for(const k of [it.alt,...it.zs]){const d=k&&DATA[k];if(d&&d.h)return {title:d.t||'',text:d.h,src:'zone',from:k};}}
   return f;};
+/* text state of an item: w = its own text · in = shows a text written elsewhere · fl = text in the file · '' = no text (a title alone is not text) */
+const stateOf=it=>{if(DATA[it.key])return 'w';const f=fileOf(it);if(!f||!f.text)return '';return f.src?'in':'fl';};
+const ST_T={w:'დაწერილია',in:'ტექსტი სხვაგანაა დაწერილი და აქაც ჩანს',fl:'ტექსტი მხოლოდ ფაილშია','':'ცარიელი'};
 function allItems(){return CAT.flatMap((g,gi)=>g.items.map(it=>({...it,gi})));}
 function shown(){
   const q=$('q').value.trim().toLowerCase();
   let items=q?allItems().filter(it=>(it.label+' '+it.key).toLowerCase().includes(q)):(CAT[GI]?CAT[GI].items.map(it=>({...it,gi:GI})):[]);
-  if(FLT==='w')items=items.filter(it=>DATA[it.key]);if(FLT==='e')items=items.filter(it=>!DATA[it.key]);
+  if(FLT==='w')items=items.filter(it=>DATA[it.key]);if(FLT==='e')items=items.filter(it=>!stateOf(it));
   return items;
 }
 function drawSys(){$('sys').innerHTML=SYS.map(([k,n])=>`<button data-s="${k}"${k===SYSID?' class="on"':''}>${n}<small>${COUNTS[k]!=null?COUNTS[k]:''}</small></button>`).join('');
   $('sys').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(!confirmLeave())return;loadSys(b.dataset.s);});}
-function drawGroups(){$('grp').innerHTML=CAT.map((g,i)=>{const w=g.items.filter(it=>DATA[it.key]).length;return `<option value="${i}"${i===GI?' selected':''}>${esc(g.label)} — ${w}/${g.items.length}</option>`;}).join('');}
+function drawGroups(){$('grp').innerHTML=CAT.map((g,i)=>{let w=0,n=0;for(const it of g.items){const s=stateOf(it);if(s==='w')w++;else if(s)n++;}return `<option value="${i}"${i===GI?' selected':''}>${esc(g.label)} — ${w}${n?' (+'+n+' სხვაგან)':''}/${g.items.length}</option>`;}).join('');}
 function drawList(){
   const items=shown(),tot=allItems().length,w=Object.keys(DATA).length;
   $('cnt').textContent=`სისტემაში დაწერილია ${w} / ${tot}${$('q').value.trim()?` · ნაპოვნია ${items.length}`:''}`;
   $('pbar').style.width=(tot?100*w/tot:0)+'%';
   const MAX=1500;
-  $('list').innerHTML=items.slice(0,MAX).map(it=>`<div class="it${SEL&&SEL.key===it.key?' on':''}" data-k="${esc(it.key)}"><span class="d${DATA[it.key]?' w':fileOf(it)?' fl':''}" title="${DATA[it.key]?'დაწერილია':fileOf(it)?'ტექსტი მხოლოდ ფაილშია':'ცარიელი'}"></span><span class="l">${esc(it.label)}<small>${esc(it.key)}</small></span></div>`).join('')+(items.length>MAX?`<div class="hint" style="padding:10px">…კიდევ ${items.length-MAX} — დააზუსტე ძებნა</div>`:'')||'<div class="hint" style="padding:12px">ვერაფერი მოიძებნა</div>';
+  $('list').innerHTML=items.slice(0,MAX).map(it=>`<div class="it${SEL&&SEL.key===it.key?' on':''}" data-k="${esc(it.key)}">${(st=>`<span class="d${st?' '+st:''}" title="${ST_T[st]}"></span>`)(stateOf(it))}<span class="l">${esc(it.label)}<small>${esc(it.key)}</small></span></div>`).join('')+(items.length>MAX?`<div class="hint" style="padding:10px">…კიდევ ${items.length-MAX} — დააზუსტე ძებნა</div>`:'')||'<div class="hint" style="padding:12px">ვერაფერი მოიძებნა</div>';
   $('list').querySelectorAll('.it').forEach(el=>el.onclick=()=>{if(!confirmLeave())return;const it=allItems().find(x=>x.key===el.dataset.k);if(it)open(it);});
 }
 async function loadSys(id){
@@ -264,7 +271,7 @@ async function loadSys(id){
   /* ★ items in reverse-equal zones: edit whichever order already has the text */
   for(const g of CAT)for(const it of g.items)if(it.alt&&!DATA[it.key]&&DATA[it.alt]){const k=it.key;it.key=it.alt;it.alt=k;}
   COUNTS[id]=Object.keys(DATA).length;drawSys();drawGroups();drawList();
-  if(!SEL)$('ed').innerHTML=`<div class="empty">აირჩიე ჩანაწერი მარცხნივ<br><br><span class="hint">მწვანე წერტილი — დაწერილია · ყვითელი — ტექსტი მხოლოდ matrix_combos.js-შია (გახსნისას ჩაიტვირთება რედაქტირებისთვის) · ნაცრისფერი — ცარიელი</span></div>`;
+  if(!SEL)$('ed').innerHTML=`<div class="empty">აირჩიე ჩანაწერი მარცხნივ<br><br><span class="hint">მწვანე წერტილი — დაწერილია · ცისფერი — სხვაგანაა დაწერილი (★ საერთო ბაზა ან ზონა) და აქაც ჩანს · ყვითელი — ტექსტი მხოლოდ ფაილშია · ნაცრისფერი — ცარიელი</span></div>`;
 }
 
 /* ═══════════ editor ═══════════ */
@@ -275,7 +282,7 @@ function open(it){
   SEL=it;GI=it.gi;drawGroups();
   const a=DATA[it.key],f=fileOf(it),grp=CAT[it.gi];
   const title=a?a.t:(f&&f.title)||'',html=a?a.h:(f&&f.text)||'';
-  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია '+(f.src==='common'?'საერთო ბაზიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':f.src==='ch_names'?'ჩაკრების საერთო კომბინაციებიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':'ფაილიდან')+' — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
+  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია '+(f.src==='common'?'საერთო ბაზიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':f.src==='ch_names'?'ჩაკრების საერთო კომბინაციებიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':f.src==='zone'?'ზონიდან ('+esc(f.from)+') — შენახვისას გახდება საერთო ყველა ზონისთვის':'ფაილიდან')+' — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
     <input class="ti" id="ti" placeholder="სათაური" value="${esc(title)}">
     <div><div class="tb" id="tb">
       <select id="blk" title="სტილი"><option value="p">ჩვეულებრივი</option><option value="h2">სათაური 1</option><option value="h3">სათაური 2</option><option value="blockquote">ციტატა</option></select>
