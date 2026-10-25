@@ -43,7 +43,25 @@ const ART={
       const box=kind==='s'?(z.singles||(z.singles={})):(z.combos||(z.combos={}));
       box[code]={title:a.t||'',text:a.h||''};
     }
-    /* common base (admin ★): fills every combo zone where that code has no text of its own */
+    /* position → position: a code written in one position shows in every other position that has no text of
+       its own for it (the text written first wins). Editing it there makes that position's own text. */
+    const SRC=[];
+    for(const [k,a] of Object.entries(MEM.matrix||{})){const [zone,kind,code]=k.split('|');
+      if(kind==='c'&&zone&&code&&zone!=='common'&&zone!=='ch_names'&&String(a.h||'').replace(/<[^>]+>|&nbsp;|\s/g,''))SRC.push({zone,code,a});}
+    SRC.sort((x,y)=>String(x.a.u||'').localeCompare(String(y.a.u||'')));
+    const EXZ0=(typeof EXACT_ORDER_ZONES!=='undefined')?EXACT_ORDER_ZONES:new Set(['karmic_tail','cp_karmic_tail']);
+    const CN0=DB.ch_names&&DB.ch_names.combos,empty0=e=>!e||!String(e.text||'').replace(/<[^>]+>|&nbsp;|\s/g,'');
+    for(const [zone,z] of Object.entries(DB)){
+      if(!z||!z.combos||zone==='ch_names')continue;
+      for(const {zone:sz,code,a} of SRC){
+        if(sz===zone)continue;const r=code.split('-').reverse().join('-');
+        const key=EXZ0.has(zone)?code:(z.combos[code]?code:(z.combos[r]?r:code)),e=z.combos[key];
+        if(!empty0(e))continue;
+        if(/^ch_/.test(zone)&&CN0&&(!empty0(CN0[key])||!empty0(CN0[key.split('-').reverse().join('-')])))continue;
+        z.combos[key]={title:(e&&!e._c&&e.title)||(e&&e._c&&e._ft)||a.t||'',text:a.h||'',_c:1,_z:1,_s:code,_f:e?(e._c?e._f:true):false,_ft:e?(e._c?e._ft:e.title||''):''};
+      }
+    }
+    /* old shared texts (common|c|<code>): fill whatever is still empty */
     const EXZ=(typeof EXACT_ORDER_ZONES!=='undefined')?EXACT_ORDER_ZONES:new Set(['karmic_tail','cp_karmic_tail']);
     const empty=e=>!e||!String(e.text||'').replace(/<[^>]+>|&nbsp;|\s/g,'');
     const CN=DB.ch_names&&DB.ch_names.combos;
@@ -52,7 +70,7 @@ const ART={
       for(const [code,a] of common){
         const r=code.split('-').reverse().join('-');
         const key=(!EXZ.has(zone)&&!z.combos[code]&&z.combos[r])?r:code,e=z.combos[key];
-        if(!empty(e)&&!(e._c&&code===key&&e._s!==code))continue;   /* an exact-order common text beats a reversed one */
+        if(!empty(e)&&(e._z||!(e._c&&code===key&&e._s!==code)))continue;   /* an exact-order common text beats a reversed one */
         /* chakra boxes: your chakra list (ch_names) wins over the general common text */
         if(/^ch_/.test(zone)&&CN&&(!empty(CN[key])||!empty(CN[key.split('-').reverse().join('-')])))continue;
         z.combos[key]={title:(e&&!e._c&&e.title)||(e&&e._c&&e._ft)||a.t||'',text:a.h||'',_c:1,_s:code,_f:e?(e._c?e._f:true):false,_ft:e?(e._c?e._ft:e.title||''):''};

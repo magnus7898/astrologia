@@ -154,7 +154,9 @@ function catMatrix(){
   const ckOf=(zone,c)=>use[c]?`common|c|${c}`:(!EXZ.has(zone)&&use[rv(c)]?`common|c|${rv(c)}`:null);
   /* reverse-equal zones: when both orders are separate common texts (an exact-order zone needs both), the other order is the fallback */
   for(const g of groups)if(g.combo)for(const it of g.items){it.ck=ckOf(g.id,it.code);const r=rv(it.code);if(!EXZ.has(g.id)&&r!==it.code&&use[r]&&`common|c|${r}`!==it.ck)it.ckr=`common|c|${r}`;}
-  /* ★ common base, split by position in the reading order; every section points at the same common|c|<code> texts */
+  /* positions in the reading order. Each position edits ONLY its own texts (<zone>|c|<code>).
+     A position with no text of its own shows the text first written for that code in another position
+     (blue dot); editing it there creates that position's own copy and leaves the first one unchanged. */
   const ORD=[['karmic_tail','კარმული კუდი'],['persona','პერსონა'],['material_karma','მატერიალური კარმა'],['talent_zone','ტალანტების ზონა'],
     ['br','მამის (კაცი წინაპრების) კარმა'],['bl','დედის (ქალი წინაპრების) კარმა'],['tl','მამის (კაცი წინაპრების) ნიჭები'],['tr','დედის (ქალი წინაპრების) ნიჭები'],
     ['love','სიყვარულის ხაზი'],['money','ფულის ხაზი'],
@@ -162,20 +164,19 @@ function catMatrix(){
     ['ch_lelia','მე-3 მეთოდი · დალი (ქალის ხაზი)'],['ch_lada','მე-3 მეთოდი · კოპალა (კაცის ხაზი)'],['ch_total','მე-3 მეთოდი · ჩაკრების ჯამი']];
   const rank=id=>{const k=ORD.findIndex(o=>o[0]===id);return k<0?ORD.length:k;};
   const zoneG=groups.filter(g=>g.combo).sort((a,b2)=>rank(a.id)-rank(b2.id)),singleG=groups.filter(g=>!g.combo);
-  const star=zoneG.map(g=>{const seen=new Set(),items=[];
-    for(const it of g.items){if(!it.ck||seen.has(it.ck))continue;seen.add(it.ck);const c=it.ck.split('|')[2];
-      items.push({key:it.ck,alt:it.ckr,label:`${it.code}${it.code!==c?' ('+c+')':''}${ttl[c]?' — '+ttl[c]:''} · ${use[c].size} ზონა`,common:1});}
-    const nm=(ORD.find(o=>o[0]===g.id)||[0,g.label.replace(/ · \d+ კომბ\.$/,'')])[1];
-    return {id:'common_'+g.id,label:`★ ${nm} · ${items.length} კომბ.`,combo:true,items};}).filter(g=>g.items.length);
-  const inOrd=g=>rank(g.id.replace(/^common_/,''))<ORD.length;
-  /* ★ item → the zone items that read it, so a text already written in a zone shows here too */
-  const zk={};for(const g of zoneG)for(const it of g.items)for(const k of [it.ck,it.ckr])if(k)(zk[k]=zk[k]||[]).push(it.key);
-  for(const g of star)for(const it of g.items)it.zs=[...new Set([...(zk[it.key]||[]),...(it.alt&&zk[it.alt]||[])])];
-  const out=star.filter(inOrd),rest=star.filter(g=>!inOrd(g));
-  if(DB.ch_names&&DB.ch_names.combos)out.push({id:'ch_names',label:'★ ჩაკრების საერთო კომბინაციები',combo:true,items:Object.keys(DB.ch_names.combos).map(c=>({key:`ch_names|c|${c}`,code:c,label:c+(DB.ch_names.combos[c].title?' — '+DB.ch_names.combos[c].title:''),file:DB.ch_names.combos[c]}))});
-  /* chakra boxes: your chakra list (ch_names) comes before the general common text */
+  for(const g of zoneG){const o=ORD.find(x=>x[0]===g.id);if(o)g.label=`${o[1]} · ${g.items.length} კომბ.`;}
+  /* siblings: other positions' items whose text this item may borrow (exact code; reversed too where order doesn't matter here) */
+  const byCode={};for(const g of zoneG)for(const it of g.items)(byCode[it.code]=byCode[it.code]||[]).push(it);
+  for(const g of zoneG)for(const it of g.items){const r=rv(it.code),c=[...(byCode[it.code]||[]),...(!EXZ.has(g.id)&&r!==it.code?(byCode[r]||[]):[])];
+    it.sib=c.filter(x=>x.zone!==g.id).map(x=>x.key);}
+  const ordG=zoneG.filter(g=>rank(g.id)<ORD.length),restG=zoneG.filter(g=>rank(g.id)>=ORD.length);
+  if(DB.ch_names&&DB.ch_names.combos)ordG.push({id:'ch_names',label:'★ ჩაკრების საერთო კომბინაციები',combo:true,items:Object.keys(DB.ch_names.combos).map(c=>({key:`ch_names|c|${c}`,code:c,label:c+(DB.ch_names.combos[c].title?' — '+DB.ch_names.combos[c].title:''),file:DB.ch_names.combos[c]}))});
+  /* chakra boxes: your chakra list (ch_names) comes before texts borrowed from other positions */
   for(const g of zoneG)if(/^ch_/.test(g.id))for(const it of g.items)it.cn=[`ch_names|c|${it.code}`,`ch_names|c|${rv(it.code)}`];
-  return [...out,...rest,...zoneG,...singleG];
+  /* old shared texts (common|c|<code>) stay readable and editable in one group at the end */
+  const cc=Object.keys(use).sort((a,b2)=>{const x=a.split('-').map(Number),y=b2.split('-').map(Number);return x[0]-y[0]||x[1]-y[1]||x[2]-y[2];});
+  const legacy={id:'common',label:`საერთო ბაზა (ძველი) — ყველა ზონისთვის · ${cc.length} კომბ.`,combo:true,items:cc.map(c=>({key:`common|c|${c}`,label:`${c}${ttl[c]?' — '+ttl[c]:''} · ${use[c].size} ზონა`,common:1}))};
+  return [...ordG,...restG,legacy,...singleG].filter(g=>g.items.length);
 }
 function catPyth(){
   const PYL={1:'ხასიათი, ნება',2:'ენერგია',3:'ინტერესი, მეცნიერება',4:'ჯანმრთელობა',5:'ლოგიკა, ინტუიცია',6:'შრომა',7:'იღბალი, ნიჭი',8:'პასუხისმგებლობა',9:'მეხსიერება, გონება'};
@@ -244,8 +245,9 @@ const fileOf=it=>{if(!it)return null;const f=it.file&&(it.file.title||it.file.te
   /* matrix combo with no text of its own → the common base text (common|c|<code>) */
   if(f&&f.text)return f;
   if(it.cn){const CN=(window.MATRIX_DB||{}).ch_names,cf=CN&&CN.combos||{};for(const k of it.cn){const d=DATA[k],fc=cf[k.split('|')[2]],h=(d&&d.h)||(fc&&fc.text);if(h)return {title:(f&&f.title)||(d&&d.t)||(fc&&fc.title)||'',text:h,src:'ch_names'};}}
+  if(it.sib){let best=null;for(const k of it.sib){const d=DATA[k];if(d&&d.h&&(!best||String(d.u||'')<String(DATA[best].u||'')))best=k;}
+    if(best){const d=DATA[best];return {title:(f&&f.title)||d.t||'',text:d.h,src:'zone',from:best};}}
   for(const k of [it.ck,it.ckr]){const c=k&&DATA[k];if(c&&(c.h||c.t))return {title:(f&&f.title)||c.t||'',text:c.h||'',src:'common'};}
-  if(it.zs){for(const k of [it.alt,...it.zs]){const d=k&&DATA[k];if(d&&d.h)return {title:d.t||'',text:d.h,src:'zone',from:k};}}
   return f;};
 /* text state of an item: w = its own text · in = shows a text written elsewhere · fl = text in the file · '' = no text (a title alone is not text) */
 const stateOf=it=>{if(DATA[it.key])return 'w';const f=fileOf(it);if(!f||!f.text)return '';return f.src?'in':'fl';};
@@ -276,7 +278,7 @@ async function loadSys(id){
   /* ★ items in reverse-equal zones: edit whichever order already has the text */
   for(const g of CAT)for(const it of g.items)if(it.alt&&!DATA[it.key]&&DATA[it.alt]){const k=it.key;it.key=it.alt;it.alt=k;}
   COUNTS[id]=Object.keys(DATA).length;drawSys();drawGroups();drawList();
-  if(!SEL)$('ed').innerHTML=`<div class="empty">აირჩიე ჩანაწერი მარცხნივ<br><br><span class="hint">მწვანე წერტილი — დაწერილია · ცისფერი — სხვაგანაა დაწერილი (★ საერთო ბაზა ან ზონა) და აქაც ჩანს · ყვითელი — ტექსტი მხოლოდ ფაილშია · ნაცრისფერი — ცარიელი</span></div>`;
+  if(!SEL)$('ed').innerHTML=`<div class="empty">აირჩიე ჩანაწერი მარცხნივ<br><br><span class="hint">მწვანე წერტილი — დაწერილია · ცისფერი — ტექსტი სხვა პოზიციაშია დაწერილი და აქაც ჩანს, სანამ აქ საკუთარს არ დაწერ · ყვითელი — ტექსტი მხოლოდ ფაილშია · ნაცრისფერი — ცარიელი</span></div>`;
 }
 
 /* ═══════════ editor ═══════════ */
@@ -287,7 +289,7 @@ function open(it){
   SEL=it;GI=it.gi;drawGroups();
   const a=DATA[it.key],f=fileOf(it),grp=CAT[it.gi];
   const title=a?a.t:(f&&f.title)||'',html=a?a.h:(f&&f.text)||'';
-  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია '+(f.src==='common'?'საერთო ბაზიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':f.src==='ch_names'?'ჩაკრების საერთო კომბინაციებიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':f.src==='zone'?'ზონიდან ('+esc(f.from)+') — შენახვისას გახდება საერთო ყველა ზონისთვის':'ფაილიდან')+' — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
+  $('ed').innerHTML=`<div class="crumb">${esc(grp.label)}<b>${esc(it.label)}</b><code>${esc(it.key)}</code> ${a&&a.u?`<span class="hint">· ბოლო ცვლილება ${new Date(a.u+'Z').toLocaleString('ka-GE')}</span>`:''}${!a&&f?' <span class="hint" style="color:#d9b34a">· ტექსტი ჩატვირთულია '+(f.src==='common'?'ძველი საერთო ბაზიდან — აქ შეცვლა მხოლოდ ამ პოზიციას შეეხება':f.src==='ch_names'?'ჩაკრების საერთო კომბინაციებიდან (★) — აქ შეცვლა მხოლოდ ამ ზონას შეეხება':f.src==='zone'?'სხვა პოზიციიდან ('+esc(f.from)+') — აქ შენახვა მხოლოდ ამ პოზიციას შეცვლის, ის უცვლელი დარჩება':'ფაილიდან')+' — შენახვის შემდეგ ბაზიდან წაიკითხება</span>':''}</div>
     <input class="ti" id="ti" placeholder="სათაური" value="${esc(title)}">
     <div><div class="tb" id="tb">
       <select id="blk" title="სტილი"><option value="p">ჩვეულებრივი</option><option value="h2">სათაური 1</option><option value="h3">სათაური 2</option><option value="blockquote">ციტატა</option></select>
