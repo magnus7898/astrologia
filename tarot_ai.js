@@ -7,7 +7,8 @@
 'use strict';
 const BACKEND='https://astrology-production-b165.up.railway.app';
 const MAXC=26;
-let ON=false,WAIT=600;
+let ON=false,WAIT=600,STATE='';   /* STATE: '' checking · 'off' no key · 'down' backend unreachable */
+let ADMIN=false;try{ADMIN=!!localStorage.getItem('magnus_admin_token');}catch(e){}
 const store={get(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
 function device(){let d=null;try{d=localStorage.getItem('magnus_dev');}catch(e){}
@@ -37,7 +38,12 @@ document.head.appendChild(st);
 
 let timer=null;
 function box(){
-  const R=document.getElementById('reading');if(!R||!ON||!drawn.length||drawn.length>MAXC||!drawn.every(d=>d.up))return;
+  const R=document.getElementById('reading');if(!R||!drawn.length||drawn.length>MAXC||!drawn.every(d=>d.up))return;
+  if(!ON){if(!ADMIN||!STATE)return;   /* visitors never see a switched-off feature; the admin sees why */
+    let B=R.querySelector('.ai-box');if(!B){B=document.createElement('div');B.className='ai-box';R.appendChild(B);}
+    B.innerHTML=`<h4>✦ AI ინტერპრეტაცია · მხოლოდ ადმინს ჩანს</h4><div class="ai-msg">${STATE==='off'
+      ?'გამორთულია: Railway → backend → Variables-ში დაამატე ANTHROPIC_API_KEY (console.anthropic.com-დან) და გააკეთე redeploy. ამის შემდეგ ღილაკი ყველას გამოუჩნდება.'
+      :'სერვერი არ პასუხობს ან ჯერ არ განახლებულა (Railway deploy). შეამოწმე Railway-ს Deployments.'}</div>`;return;}
   let B=R.querySelector('.ai-box');if(!B){B=document.createElement('div');B.className='ai-box';R.appendChild(B);}
   const c=cached();
   if(c){B.innerHTML=`<h4>✦ AI ინტერპრეტაცია</h4><div class="ai-txt">${fmt(c.text)}</div><div class="ai-foot">შექმნილია ხელოვნური ინტელექტით (Claude) — მიიღე როგორც ფიქრის მასალა.</div>`;return;}
@@ -65,5 +71,5 @@ async function ask(B){
 }
 const orig=window.renderReading;
 if(typeof orig==='function'){window.renderReading=function(){const r=orig.apply(this,arguments);try{box();}catch(e){console.warn(e);}return r;};}
-fetch(BACKEND+'/api/tarot/ai/status').then(r=>r.ok?r.json():null).then(j=>{if(j&&j.enabled){ON=true;WAIT=j.wait||WAIT;box();}}).catch(()=>{});
+fetch(BACKEND+'/api/tarot/ai/status').then(r=>r.ok?r.json():null).then(j=>{if(j&&j.enabled){ON=true;WAIT=j.wait||WAIT;}else STATE=j?'off':'down';box();}).catch(()=>{STATE='down';box();});
 })();
