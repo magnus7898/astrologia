@@ -45,10 +45,10 @@ const ART={
       for(const [code,a] of common){
         const r=code.split('-').reverse().join('-');
         const key=(!EXZ.has(zone)&&!z.combos[code]&&z.combos[r])?r:code,e=z.combos[key];
-        if(!empty(e))continue;
+        if(!empty(e)&&!(e._c&&code===key&&e._s!==code))continue;   /* an exact-order common text beats a reversed one */
         /* chakra boxes: your chakra list (ch_names) wins over the general common text */
         if(/^ch_/.test(zone)&&CN&&(!empty(CN[key])||!empty(CN[key.split('-').reverse().join('-')])))continue;
-        z.combos[key]={title:(e&&e.title)||a.t||'',text:a.h||'',_c:1,_f:!!e,_ft:e?e.title||'':''};
+        z.combos[key]={title:(e&&!e._c&&e.title)||(e&&e._c&&e._ft)||a.t||'',text:a.h||'',_c:1,_s:code,_f:e?(e._c?e._f:true):false,_ft:e?(e._c?e._ft:e.title||''):''};
       }
     }
   }

@@ -152,7 +152,8 @@ function catMatrix(){
     const t=it.file&&it.file.title;if(t&&!ttl[it.code])ttl[it.code]=t;}
   for(const c of Object.keys(use)){const r=rv(c);if(r===c||!use[r]||!use[c]||ex.has(c)||ex.has(r))continue;const k=c<r?c:r,o=k===c?r:c;use[o].forEach(z=>use[k].add(z));delete use[o];if(!ttl[k]&&ttl[o])ttl[k]=ttl[o];}
   const ckOf=(zone,c)=>use[c]?`common|c|${c}`:(!EXZ.has(zone)&&use[rv(c)]?`common|c|${rv(c)}`:null);
-  for(const g of groups)if(g.combo)for(const it of g.items)it.ck=ckOf(g.id,it.code);
+  /* reverse-equal zones: when both orders are separate common texts (an exact-order zone needs both), the other order is the fallback */
+  for(const g of groups)if(g.combo)for(const it of g.items){it.ck=ckOf(g.id,it.code);const r=rv(it.code);if(!EXZ.has(g.id)&&r!==it.code&&use[r]&&`common|c|${r}`!==it.ck)it.ckr=`common|c|${r}`;}
   /* ★ common base, split by position in the reading order; every section points at the same common|c|<code> texts */
   const ORD=[['karmic_tail','კარმული კუდი'],['persona','პერსონა'],['material_karma','მატერიალური კარმა'],['talent_zone','ტალანტების ზონა'],
     ['br','მამის (კაცი წინაპრების) კარმა'],['bl','დედის (ქალი წინაპრების) კარმა'],['tl','მამის (კაცი წინაპრების) ნიჭები'],['tr','დედის (ქალი წინაპრების) ნიჭები'],
@@ -163,7 +164,7 @@ function catMatrix(){
   const zoneG=groups.filter(g=>g.combo).sort((a,b2)=>rank(a.id)-rank(b2.id)),singleG=groups.filter(g=>!g.combo);
   const star=zoneG.map(g=>{const seen=new Set(),items=[];
     for(const it of g.items){if(!it.ck||seen.has(it.ck))continue;seen.add(it.ck);const c=it.ck.split('|')[2];
-      items.push({key:it.ck,label:`${it.code}${it.code!==c?' ('+c+')':''}${ttl[c]?' — '+ttl[c]:''} · ${use[c].size} ზონა`,common:1});}
+      items.push({key:it.ck,alt:it.ckr,label:`${it.code}${it.code!==c?' ('+c+')':''}${ttl[c]?' — '+ttl[c]:''} · ${use[c].size} ზონა`,common:1});}
     const nm=(ORD.find(o=>o[0]===g.id)||[0,g.label.replace(/ · \d+ კომბ\.$/,'')])[1];
     return {id:'common_'+g.id,label:`★ ${nm} · ${items.length} კომბ.`,combo:true,items};}).filter(g=>g.items.length);
   const inOrd=g=>rank(g.id.replace(/^common_/,''))<ORD.length;
@@ -235,7 +236,7 @@ const fileOf=it=>{if(!it)return null;const f=it.file&&(it.file.title||it.file.te
   /* matrix combo with no text of its own → the common base text (common|c|<code>) */
   if(f&&f.text)return f;
   if(it.cn){const CN=(window.MATRIX_DB||{}).ch_names,cf=CN&&CN.combos||{};for(const k of it.cn){const d=DATA[k],fc=cf[k.split('|')[2]],h=(d&&d.h)||(fc&&fc.text);if(h)return {title:(f&&f.title)||(d&&d.t)||(fc&&fc.title)||'',text:h,src:'ch_names'};}}
-  const c=it.ck&&DATA[it.ck];if(c&&(c.h||c.t))return {title:(f&&f.title)||c.t||'',text:c.h||'',src:'common'};
+  for(const k of [it.ck,it.ckr]){const c=k&&DATA[k];if(c&&(c.h||c.t))return {title:(f&&f.title)||c.t||'',text:c.h||'',src:'common'};}
   return f;};
 function allItems(){return CAT.flatMap((g,gi)=>g.items.map(it=>({...it,gi})));}
 function shown(){
@@ -260,6 +261,8 @@ async function loadSys(id){
   CAT=SYS.find(s=>s[0]===id)[2]();drawSys();drawGroups();
   $('ed').innerHTML='<div class="empty">⏳ იტვირთება…</div>';$('list').innerHTML='';
   try{DATA=await api('/api/articles?system='+id);}catch(e){DATA={};if(e.message!=='auth')$('ed').innerHTML=`<div class="empty" style="color:var(--bad)">ვერ ჩაიტვირთა: ${esc(e.message)}</div>`;}
+  /* ★ items in reverse-equal zones: edit whichever order already has the text */
+  for(const g of CAT)for(const it of g.items)if(it.alt&&!DATA[it.key]&&DATA[it.alt]){const k=it.key;it.key=it.alt;it.alt=k;}
   COUNTS[id]=Object.keys(DATA).length;drawSys();drawGroups();drawList();
   if(!SEL)$('ed').innerHTML=`<div class="empty">აირჩიე ჩანაწერი მარცხნივ<br><br><span class="hint">მწვანე წერტილი — დაწერილია · ყვითელი — ტექსტი მხოლოდ matrix_combos.js-შია (გახსნისას ჩაიტვირთება რედაქტირებისთვის) · ნაცრისფერი — ცარიელი</span></div>`;
 }
