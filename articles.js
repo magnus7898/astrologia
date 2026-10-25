@@ -12,12 +12,19 @@ const BACKEND='https://astrology-production-b165.up.railway.app';
 const MEM={},WAIT={};
 const ck=s=>'magnus_art_'+s;
 function cached(s){try{const v=localStorage.getItem(ck(s));return v?JSON.parse(v):null;}catch(e){return null;}}
+function cachedBak(s){try{const v=localStorage.getItem(ck(s)+'_bak');return v?JSON.parse(v):null;}catch(e){return null;}}
 const ART={
   load(s){
     if(WAIT[s])return WAIT[s];
     const c=cached(s);if(c&&!MEM[s])MEM[s]=c;
     WAIT[s]=fetch(BACKEND+'/api/articles?system='+encodeURIComponent(s)).then(r=>r.ok?r.json():Promise.reject(r.status))
-      .then(j=>{MEM[s]=j;try{localStorage.setItem(ck(s),JSON.stringify(j));}catch(e){}ART._apply(s);return j;})
+      .then(j=>{
+        /* never let an empty or much smaller answer wipe the texts this browser already has:
+           keep the larger set as a backup (magnus_art_<s>_bak) for recover.html */
+        const old=cached(s)||{},nOld=Object.keys(old).length,nNew=Object.keys(j||{}).length;
+        if(nOld>nNew){const bk=cachedBak(s),nBk=bk?Object.keys(bk).length:0;if(nOld>nBk)try{localStorage.setItem(ck(s)+'_bak',JSON.stringify(old));}catch(e){}}
+        if(!nNew&&nOld){MEM[s]=old;return old;}
+        MEM[s]=j;try{localStorage.setItem(ck(s),JSON.stringify(j));}catch(e){}ART._apply(s);return j;})
       .catch(()=>MEM[s]||{});
     return WAIT[s];
   },
