@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ვექტორული რედაქტორი · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=Noto+Sans+Georgian:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#141119;--panel:#1c1824;--panel2:#231e2e;--line:rgba(201,168,76,.22);--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--mid:#b3a68f;--dim:#6d6253;--vi:#a585ef;--sel:#4da3ff}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Noto Sans Georgian','Noto Serif Georgian',system-ui,sans-serif;font-size:13px}
+.app{display:grid;grid-template-columns:52px minmax(0,1fr) 300px;grid-template-rows:auto minmax(0,1fr);height:100%}
+.top{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line)}
+.top .ttl{font-family:'Cinzel',serif;color:var(--gold-lt);font-size:15px;margin-right:6px;text-decoration:none}
+.top button,.top select,.top label.bt{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;cursor:pointer}
+.top button:hover,.tools button:hover{border-color:var(--gold)}.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.tools{display:flex;flex-direction:column;gap:4px;padding:8px 6px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
+.tools button{width:38px;height:36px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink);font-size:17px;cursor:pointer;position:relative}
+.tools button.on{background:rgba(201,168,76,.16);border-color:var(--gold);color:var(--gold-lt)}
+.tools button small{position:absolute;right:2px;bottom:0;font-size:8px;color:var(--dim)}
+.stage{position:relative;overflow:hidden;background:#0d0b12 repeating-conic-gradient(#121018 0 25%,#0f0d14 0 50%) 0 0/24px 24px}
+#svg{width:100%;height:100%;display:block;touch-action:none;user-select:none}
+.side{background:var(--panel);border-left:1px solid var(--line);overflow:auto;display:flex;flex-direction:column}
+.sec{padding:10px 12px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr);gap:8px;min-width:0}.sec>*,#props>*{min-width:0}#props{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}.side{overflow-x:hidden}math-field.mi-f{max-width:100%}
+.sec h3{margin:0;font-size:11px;letter-spacing:1.5px;color:var(--gold);font-weight:400;text-transform:uppercase}
+.grid2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.grid2 label{display:grid;gap:2px;font-size:11px;color:var(--mid)}
+input[type=number],input[type=text],select.in,textarea{width:100%;background:#100d17;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 6px;font:inherit}
+textarea{min-height:52px;resize:vertical}
+.rowc{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.rowc input[type=color]{width:34px;height:26px;border:1px solid var(--line);border-radius:6px;background:none;padding:0;cursor:pointer}
+.rowc input[type=range]{flex:1;min-width:60px}
+.layers{display:grid;gap:2px;max-height:300px;overflow:auto}
+.ly{display:grid;grid-template-columns:20px 20px minmax(0,1fr) auto;gap:4px;align-items:center;padding:4px 6px;border-radius:6px;cursor:pointer;border:1px solid transparent}
+.ly.on{background:rgba(77,163,255,.14);border-color:rgba(77,163,255,.5)}.ly:hover{background:rgba(255,255,255,.04)}
+.ly button{background:none;border:0;color:var(--mid);cursor:pointer;padding:0;font-size:13px}.ly .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini{font:inherit;font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer}
+.hint{font-size:11.5px;color:var(--mid);line-height:1.5}
+.status{position:absolute;left:8px;bottom:6px;font-size:11px;color:var(--mid);background:rgba(13,11,18,.8);padding:2px 8px;border-radius:6px;pointer-events:none}
+math-field.mi-f{font-size:17px!important}
+@media (max-width:860px){.app{grid-template-columns:46px minmax(0,1fr);grid-template-rows:auto 62vh auto}.side{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a>
+    <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა (.json / .svg)">📂</button><button id="bSave" title="პროექტის შენახვა (.json)">💾</button>
+    <button id="bSvg">⬇ SVG</button><button id="bPng">⬇ PNG</button><label class="bt" title="სურათის ჩასმა">🖼<input type="file" id="fImg" accept="image/*" hidden></label>
+    <input type="file" id="fOpen" accept=".json,.svg,application/json,image/svg+xml" hidden>
+    <span class="sep"></span><button id="bUndo" title="Ctrl+Z">↶</button><button id="bRedo" title="Ctrl+Y">↷</button>
+    <span class="sep"></span><select id="board" title="დაფის ზომა"><option value="1200x800">1200 × 800</option><option value="1080x1080">1080 × 1080 (Instagram)</option><option value="1920x1080">1920 × 1080</option><option value="1123x794">A4 ჰორიზ.</option><option value="794x1123">A4 ვერტ.</option><option value="512x512">512 × 512 (იკონი)</option></select>
+    <label class="bt" title="დაფის ფონი">ფონი <input type="color" id="bgc" value="#ffffff" style="width:22px;height:18px;border:0;padding:0;background:none"></label>
+    <span class="sep"></span><button id="zOut">－</button><span id="zLab" style="min-width:44px;text-align:center">100%</span><button id="zIn">＋</button><button id="zFit" title="დაფაზე მორგება">⤢</button>
+    <label class="bt"><input type="checkbox" id="gridOn"> ბადე</label><label class="bt"><input type="checkbox" id="snapOn"> მიბმა</label>
+    <span class="sep"></span><span id="alignBar"><button data-al="l" title="მარცხნივ">⫷</button><button data-al="c" title="ცენტრში">⫼</button><button data-al="r" title="მარჯვნივ">⫸</button><button data-al="t" title="ზემოთ">⊤</button><button data-al="m" title="შუაში">⊝</button><button data-al="b" title="ქვემოთ">⊥</button></span>
+  </div>
+  <div class="tools" id="tools"></div>
+  <div class="stage" id="stage"><svg id="svg" xmlns="http://www.w3.org/2000/svg"><defs id="defs"></defs><g id="view"><rect id="boardR"/><g id="gridG"></g><g id="objs"></g><g id="ov"></g></g></svg><div class="status" id="status"></div></div>
+  <div class="side">
+    <div class="sec" id="propSec"><h3>თვისებები</h3><div id="props" class="hint">აირჩიე ობიექტი ან ხელსაწყო. <b>F</b> — ფორმულა: დააწკაპუნე დაფაზე და ჩაწერე განტოლება.</div></div>
+    <div class="sec"><h3>ფენები</h3><div class="rowc"><button class="mini" id="lUp" title="წინ ]">▲</button><button class="mini" id="lDn" title="უკან [">▼</button><button class="mini" id="lDup" title="Ctrl+D">⧉ ასლი</button><button class="mini" id="lDel" title="Delete">🗑</button></div><div class="layers" id="layers"></div></div>
+    <div class="sec"><h3>მალსახმობები</h3><div class="hint">V არჩევა · A კვანძები · P კალამი · N ფანქარი · R მართკუთხედი · E ელიფსი · L ხაზი · G მრავალკუთხედი · S ვარსკვლავი · T ტექსტი · F ფორმულა · H ხელი (ან Space) · Ctrl+ბორბალი — მასშტაბი · Shift — პროპორცია / 15° · ისრები — გადაწევა · Ctrl+Z/Y · Ctrl+D · Delete · [ ] — რიგი</div></div>
+  </div>
+</div>
+<script src="mathinput.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',svg=$('svg'),view=$('view'),objsG=$('objs'),ov=$('ov'),defs=$('defs');
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>'o'+Math.random().toString(36).slice(2,9);
+const store={get(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const TOOLS=[['select','➤','V'],['direct','⌖','A'],['pen','✒','P'],['pencil','✎','N'],['rect','▭','R'],['ellipse','◯','E'],['line','╱','L'],['polygon','⬠','G'],['star','☆','S'],['text','T','T'],['eq','ƒ','F'],['hand','✋','H']];
+const TN={select:'არჩევა',direct:'კვანძების რედაქტირება',pen:'კალამი (ბეზიე)',pencil:'ფანქარი',rect:'მართკუთხედი',ellipse:'ელიფსი',line:'ხაზი',polygon:'მრავალკუთხედი',star:'ვარსკვლავი',text:'ტექსტი',eq:'ფორმულა → ფიგურა',hand:'ხელი'};
+let DOC={w:1200,h:800,bg:'#ffffff'},O=[],SEL=[],tool='select',Z=1,PX=0,PY=0,hist=[],fut=[],act=null,penPath=null,dirSel=null,spaceDown=false;
+const style0={fill:'#ecd59a',stroke:'#2a1f3d',sw:2,op:1,ft:'solid',fill2:'#a585ef',ang:90};let lastStyle={...style0};
+
+/* ───────── geometry ───────── */
+const pt=e=>{const r=svg.getBoundingClientRect();return {x:(e.clientX-r.left-PX)/Z,y:(e.clientY-r.top-PY)/Z};};
+const snap=p=>$('snapOn').checked?{x:Math.round(p.x/10)*10,y:Math.round(p.y/10)*10}:p;
+const CC=new Map(),comp=(src,vars)=>{const k=src+'|'+vars.join();if(CC.has(k))return CC.get(k);const c=MI.compile(src,{vars});if(window.math){CC.set(k,c);if(CC.size>300)CC.delete(CC.keys().next().value);}return c;};
+function eqPts(o){const c=comp(o.tex||'',o.mode==='f'?['x']:o.mode==='p'?['theta','x']:['t']),c2=o.mode==='xy'?comp(o.tex2||'',['t']):null;o._err=!c.ok?c.error:(c2&&!c2.ok?c2.error:'');
+  const prm=Object.assign({},o.params||{});o._params=[...new Set([...(c.params||[]),...((c2&&c2.params)||[])])];o._params.forEach(k=>{if(prm[k]==null)prm[k]=1;});o.params=prm;
+  const out=[];let seg=[];const n=Math.max(50,Math.min(4000,o.n||600)),push=(x,y)=>{if(!isFinite(x)||!isFinite(y)||Math.abs(x)>1e6||Math.abs(y)>1e6){if(seg.length>1)out.push(seg);seg=[];return;}
+    const X=o.ox+x*o.ux,Y=o.oy-y*o.uy;if(seg.length){const p=seg[seg.length-1];if(Math.abs(Y-p[1])>DOC.h*3){out.push(seg);seg=[];}}seg.push([X,Y]);};
+  if(!c.ok||(c2&&!c2.ok))return out;
+  for(let i=0;i<=n;i++){const t=o.a+(o.b-o.a)*i/n;if(o.mode==='f')push(t,c.f({...prm,x:t}));else if(o.mode==='p'){const r=c.f({...prm,theta:t,x:t});push(r*Math.cos(t),r*Math.sin(t));}else push(c.f({...prm,t}),c2.f({...prm,t}));}
+  if(seg.length>1)out.push(seg);return out;}
+function pathD(o){
+  if(o.type==='path'){const A=o.pts;if(!A.length)return '';let d=`M${A[0].x},${A[0].y}`;for(let i=1;i<A.length;i++)d+=`C${A[i-1].ox},${A[i-1].oy} ${A[i].ix},${A[i].iy} ${A[i].x},${A[i].y}`;
+    if(o.closed&&A.length>1){const a=A[A.length-1],b=A[0];d+=`C${a.ox},${a.oy} ${b.ix},${b.iy} ${b.x},${b.y}Z`;}return d;}
+  if(o.type==='polygon'||o.type==='star'){const n=o.type==='star'?o.k*2:o.k,P=[];for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n,r=o.type==='star'&&i%2?o.inner:1;P.push(`${o.cx+Math.cos(a)*o.rx*r},${o.cy+Math.sin(a)*o.ry*r}`);}return 'M'+P.join('L')+'Z';}
+  if(o.type==='eq'){const S=eqPts(o);o._segs=S;let d='';S.forEach(s=>{d+='M'+s.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join('L');});
+    if(o.fillMode==='under'&&o.mode==='f'&&S.length){d='';S.forEach(s=>{d+=`M${s[0][0]},${o.oy}L`+s.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join('L')+`L${s[s.length-1][0]},${o.oy}Z`;});}
+    else if(o.fillMode==='closed')d+=S.length?'Z':'';return d;}
+  return '';}
+function bbox(o){
+  if(o.type==='rect'||o.type==='image')return {x:o.x,y:o.y,w:o.w||0.01,h:o.h||0.01};
+  if(o.type==='ellipse')return {x:o.cx-o.rx,y:o.cy-o.ry,w:2*o.rx||0.01,h:2*o.ry||0.01};
+  if(o.type==='line')return {x:Math.min(o.x1,o.x2),y:Math.min(o.y1,o.y2),w:Math.abs(o.x2-o.x1)||0.01,h:Math.abs(o.y2-o.y1)||0.01};
+  if(o.type==='polygon'||o.type==='star')return {x:o.cx-o.rx,y:o.cy-o.ry,w:2*o.rx||0.01,h:2*o.ry||0.01};
+  if(o.type==='text'){const b=o._bb||{x:o.x,y:o.y-o.size,width:o.size*4,height:o.size};return {x:b.x,y:b.y,w:b.width,h:b.height};}
+  let xs=[],ys=[];if(o.type==='path')o.pts.forEach(p=>{xs.push(p.x,p.ix,p.ox);ys.push(p.y,p.iy,p.oy);});
+  if(o.type==='eq'){(o._segs||eqPts(o)).forEach(s=>s.forEach(p=>{xs.push(p[0]);ys.push(p[1]);}));if(o.fillMode==='under'){ys.push(o.oy);}if(!xs.length){xs=[o.ox-10,o.ox+10];ys=[o.oy-10,o.oy+10];}}
+  const x=Math.min(...xs),y=Math.min(...ys);return {x,y,w:(Math.max(...xs)-x)||0.01,h:(Math.max(...ys)-y)||0.01};}
+const center=o=>{const b=bbox(o);return {x:b.x+b.w/2,y:b.y+b.h/2};};
+const rot=(p,c,deg)=>{const a=deg*Math.PI/180,s=Math.sin(a),k=Math.cos(a);return {x:c.x+(p.x-c.x)*k-(p.y-c.y)*s,y:c.y+(p.x-c.x)*s+(p.y-c.y)*k};};
+/* map geometry from bbox B to bbox N (scale + move) */
+function mapObj(o,B,N){const fx=x=>N.x+(x-B.x)*N.w/B.w,fy=y=>N.y+(y-B.y)*N.h/B.h,sx=N.w/B.w,sy=N.h/B.h;
+  if(o.type==='rect'||o.type==='image'){const x1=fx(o.x),y1=fy(o.y),x2=fx(o.x+o.w),y2=fy(o.y+o.h);o.x=Math.min(x1,x2);o.y=Math.min(y1,y2);o.w=Math.abs(x2-x1);o.h=Math.abs(y2-y1);}
+  else if(o.type==='ellipse'||o.type==='polygon'||o.type==='star'){o.cx=fx(o.cx);o.cy=fy(o.cy);o.rx=Math.abs(o.rx*sx);o.ry=Math.abs(o.ry*sy);}
+  else if(o.type==='line'){o.x1=fx(o.x1);o.y1=fy(o.y1);o.x2=fx(o.x2);o.y2=fy(o.y2);}
+  else if(o.type==='path')o.pts.forEach(p=>{p.x=fx(p.x);p.y=fy(p.y);p.ix=fx(p.ix);p.iy=fy(p.iy);p.ox=fx(p.ox);p.oy=fy(p.oy);});
+  else if(o.type==='text'){o.x=fx(o.x);o.y=fy(o.y);o.size=Math.max(4,o.size*Math.abs(sy));delete o._bb;}
+  else if(o.type==='eq'){o.ox=fx(o.ox);o.oy=fy(o.oy);o.ux*=sx;o.uy*=sy;}}
+const moveObj=(o,dx,dy)=>{const B=bbox(o);mapObj(o,B,{x:B.x+dx,y:B.y+dy,w:B.w,h:B.h});};
+
+/* ───────── rendering ───────── */
+function fillOf(o){if(o.fill==='none')return 'none';if(o.ft==='linear'||o.ft==='radial')return `url(#gr_${o.id})`;return o.fill;}
+function gradDefs(){return O.filter(o=>o.fill!=='none'&&(o.ft==='linear'||o.ft==='radial')).map(o=>{const a=(o.ang||0)*Math.PI/180,x1=50-Math.cos(a)*50,y1=50-Math.sin(a)*50,x2=50+Math.cos(a)*50,y2=50+Math.sin(a)*50;
+  const st=`<stop offset="0" stop-color="${o.fill}"/><stop offset="1" stop-color="${o.fill2}"/>`;return o.ft==='linear'?`<linearGradient id="gr_${o.id}" x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%">${st}</linearGradient>`:`<radialGradient id="gr_${o.id}">${st}</radialGradient>`;}).join('');}
+function elStr(o,forExport){if(o.hidden)return '';const c=center(o),tr=o.rot?` transform="rotate(${o.rot} ${c.x} ${c.y})"`:'',
+  st=`fill="${fillOf(o)}" stroke="${o.stroke}" stroke-width="${o.stroke==='none'?0:o.sw}" opacity="${o.op}" stroke-linejoin="round" stroke-linecap="round"`,id=forExport?'':` data-id="${o.id}" pointer-events="all"`;
+  if(o.type==='rect')return `<rect${id} x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" rx="${o.r||0}" ${st}${tr}/>`;
+  if(o.type==='ellipse')return `<ellipse${id} cx="${o.cx}" cy="${o.cy}" rx="${o.rx}" ry="${o.ry}" ${st}${tr}/>`;
+  if(o.type==='line')return `<line${id} x1="${o.x1}" y1="${o.y1}" x2="${o.x2}" y2="${o.y2}" ${st}${tr}/>`;
+  if(o.type==='text')return `<text${id} x="${o.x}" y="${o.y}" font-size="${o.size}" font-family="${esc(o.font)}" font-weight="${o.weight||400}" ${st}${tr}>${esc(o.text).split('\n').map((l,i)=>`<tspan x="${o.x}" dy="${i?o.size*1.2:0}">${l||' '}</tspan>`).join('')}</text>`;
+  if(o.type==='image')return `<image${id} x="${o.x}" y="${o.y}" width="${o.w}" height="${o.h}" href="${o.src}" preserveAspectRatio="none" opacity="${o.op}"${tr}/>`;
+  let ax='';if(o.type==='eq'&&o.axes){const b=bbox(o);ax=`<g${forExport?'':' pointer-events="none"'} stroke="${o.stroke}" stroke-width="0.75" opacity="${o.op*0.4}"><line x1="${b.x-10}" y1="${o.oy}" x2="${b.x+b.w+10}" y2="${o.oy}"/><line x1="${o.ox}" y1="${b.y-10}" x2="${o.ox}" y2="${b.y+b.h+10}"/></g>`;}
+  return ax+`<path${id} d="${pathD(o)}" ${st} fill-rule="evenodd"${tr}/>`;}
+function render(){defs.innerHTML=gradDefs();objsG.innerHTML=O.map(o=>elStr(o)).join('');
+  objsG.querySelectorAll('text[data-id]').forEach(t=>{const o=O.find(x=>x.id===t.dataset.id);try{const b=t.getBBox();o._bb={x:b.x,y:b.y,width:b.width,height:b.height};}catch(e){}});
+  const r=$('boardR');r.setAttribute('width',DOC.w);r.setAttribute('height',DOC.h);r.setAttribute('fill',DOC.bg);r.setAttribute('filter','');
+  view.setAttribute('transform',`translate(${PX},${PY}) scale(${Z})`);$('zLab').textContent=Math.round(Z*100)+'%';
+  $('gridG').innerHTML=$('gridOn').checked?(()=>{let s='';for(let x=0;x<=DOC.w;x+=20)s+=`<line x1="${x}" y1="0" x2="${x}" y2="${DOC.h}"/>`;for(let y=0;y<=DOC.h;y+=20)s+=`<line x1="0" y1="${y}" x2="${DOC.w}" y2="${y}"/>`;return `<g stroke="rgba(77,163,255,.18)" stroke-width="${0.5/Z}">${s}</g>`;})():'';
+  overlay();layers();}
+function overlay(){const k=1/Z;let s='';
+  SEL.forEach(id=>{const o=O.find(x=>x.id===id);if(!o)return;const b=bbox(o),c={x:b.x+b.w/2,y:b.y+b.h/2},tr=o.rot?` transform="rotate(${o.rot} ${c.x} ${c.y})"`:'';
+    s+=`<g${tr}><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${4*k} ${3*k}"/>`;
+    if(SEL.length===1&&tool==='select'&&!o.locked){HANDLES.forEach(([hx,hy,cur])=>{s+=`<rect data-h="${hx},${hy}" x="${b.x+b.w*hx-4*k}" y="${b.y+b.h*hy-4*k}" width="${8*k}" height="${8*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:${cur}"/>`;});
+      s+=`<line x1="${c.x}" y1="${b.y}" x2="${c.x}" y2="${b.y-24*k}" stroke="#4da3ff" stroke-width="${k}"/><circle data-h="rot" cx="${c.x}" cy="${b.y-24*k}" r="${5*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:grab"/>`;}
+    s+='</g>';
+    if(o.type==='path'&&(tool==='direct'||tool==='pen')){o.pts.forEach((p,i)=>{const on=dirSel&&dirSel.id===o.id&&dirSel.i===i;
+      if(on||tool==='direct'){[['ix','iy'],['ox','oy']].forEach(([hx,hy],j)=>{if(Math.hypot(p[hx]-p.x,p[hy]-p.y)>0.5)s+=`<line x1="${p.x}" y1="${p.y}" x2="${p[hx]}" y2="${p[hy]}" stroke="#4da3ff" stroke-width="${k}"/><circle data-ph="${o.id},${i},${j}" cx="${p[hx]}" cy="${p[hy]}" r="${3.5*k}" fill="#4da3ff"/>`;});}
+      s+=`<rect data-pa="${o.id},${i}" x="${p.x-4*k}" y="${p.y-4*k}" width="${8*k}" height="${8*k}" fill="${on?'#4da3ff':'#fff'}" stroke="#4da3ff" stroke-width="${k}"/>`;});}});
+  if(act&&act.marq){const m=act.marq;s+=`<rect x="${Math.min(m.x0,m.x1)}" y="${Math.min(m.y0,m.y1)}" width="${Math.abs(m.x1-m.x0)}" height="${Math.abs(m.y1-m.y0)}" fill="rgba(77,163,255,.08)" stroke="#4da3ff" stroke-width="${k}"/>`;}
+  if(penPath&&act&&act.penHover){const a=penPath.pts[penPath.pts.length-1];s+=`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${act.penHover.x},${act.penHover.y} ${act.penHover.x},${act.penHover.y}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}"/>`;}
+  ov.innerHTML=s;}
+const HANDLES=[[0,0,'nwse-resize'],[0.5,0,'ns-resize'],[1,0,'nesw-resize'],[1,0.5,'ew-resize'],[1,1,'nwse-resize'],[0.5,1,'ns-resize'],[0,1,'nesw-resize'],[0,0.5,'ew-resize']];
+
+/* ───────── history ───────── */
+const snapState=()=>JSON.stringify({DOC,O:O.map(o=>{const c={...o};delete c._bb;delete c._segs;delete c._err;delete c._params;return c;})});
+function commit(){hist.push(snapState());if(hist.length>120)hist.shift();fut=[];store.set('magnus_vector_doc',hist[hist.length-1]);}
+function restore(s){const d=JSON.parse(s);DOC=d.DOC;O=d.O;SEL=SEL.filter(id=>O.some(o=>o.id===id));render();props();}
+$('bUndo').onclick=()=>{if(hist.length>1){fut.push(hist.pop());restore(hist[hist.length-1]);store.set('magnus_vector_doc',hist[hist.length-1]);}};
+$('bRedo').onclick=()=>{if(fut.length){const s=fut.pop();hist.push(s);restore(s);store.set('magnus_vector_doc',s);}};
+
+/* ───────── creating objects ───────── */
+function make(type,extra){const o=Object.assign({id:uid(),type,name:'',rot:0,...lastStyle},extra);if(extra.fill==null&&(type==='line'||(type==='path'&&!extra.closed)))o.fill='none';if(type==='text'&&extra.stroke==null){o.stroke='none';}
+  if(type==='eq'&&extra.fill==null){o.fill='none';o.stroke=lastStyle.stroke==='none'?'#2a1f3d':lastStyle.stroke;o.sw=Math.max(2,lastStyle.sw);}
+  o.name=o.name||({path:'კონტური',rect:'მართკუთხედი',ellipse:'ელიფსი',line:'ხაზი',polygon:'მრავალკუთხედი',star:'ვარსკვლავი',text:'ტექსტი',eq:'ფორმულა',image:'სურათი'}[type]||type)+' '+(O.filter(x=>x.type===type).length+1);O.push(o);return o;}
+function setTool(t){tool=t;penFinish();document.querySelectorAll('#tools button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));svg.style.cursor=t==='hand'?'grab':t==='select'||t==='direct'?'default':'crosshair';
+  $('status').textContent=TN[t]+(t==='pen'?' — დააწკაპუნე: კუთხე, გადაათრიე: გლუვი კვანძი. პირველ კვანძზე დაწკაპუნება — დახურვა, Enter — დასრულება':t==='eq'?' — დააწკაპუნე დაფაზე, სადაც სათავე იქნება':'');overlay();props();}
+$('tools').innerHTML=TOOLS.map(([t,i,k])=>`<button data-t="${t}" title="${TN[t]} (${k})">${i}<small>${k}</small></button>`).join('');
+$('tools').querySelectorAll('button').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
+
+/* pen */
+function penFinish(){if(!penPath)return;if(penPath.pts.length<2){O=O.filter(o=>o!==penPath);}else{SEL=[penPath.id];}penPath=null;render();commit();props();}
+/* pencil smoothing: RDP + Catmull-Rom → cubic */
+function rdp(P,eps){if(P.length<3)return P;let dm=0,ix=0;const [a,b]=[P[0],P[P.length-1]];for(let i=1;i<P.length-1;i++){const p=P[i],d=Math.abs((b.y-a.y)*p.x-(b.x-a.x)*p.y+b.x*a.y-b.y*a.x)/(Math.hypot(b.x-a.x,b.y-a.y)||1);if(d>dm){dm=d;ix=i;}}
+  return dm>eps?[...rdp(P.slice(0,ix+1),eps).slice(0,-1),...rdp(P.slice(ix),eps)]:[a,b];}
+function smooth(P,closed){const n=P.length;return P.map((p,i)=>{const a=P[closed?(i-1+n)%n:Math.max(0,i-1)],b=P[closed?(i+1)%n:Math.min(n-1,i+1)],dx=(b.x-a.x)/6,dy=(b.y-a.y)/6;return {x:p.x,y:p.y,ix:p.x-dx,iy:p.y-dy,ox:p.x+dx,oy:p.y+dy};});}
+
+/* ───────── pointer handling ───────── */
+svg.addEventListener('wheel',e=>{e.preventDefault();const r=svg.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  if(e.ctrlKey||e.metaKey){const f=Math.exp(-e.deltaY*0.0018),nz=Math.min(16,Math.max(0.05,Z*f));PX=mx-(mx-PX)*nz/Z;PY=my-(my-PY)*nz/Z;Z=nz;}else{PX-=e.deltaX;PY-=e.deltaY;}render();},{passive:false});
+svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);const p=pt(e),sp=snap(p),tg=e.target;
+  if(tool==='hand'||spaceDown||e.button===1){act={pan:true,sx:e.clientX,sy:e.clientY,PX,PY};svg.style.cursor='grabbing';return;}
+  if(tg.dataset&&tg.dataset.h){const o=O.find(x=>x.id===SEL[0]);const B=bbox(o);act={o,B,h:tg.dataset.h,p0:p,snap0:snapState(),c:{x:B.x+B.w/2,y:B.y+B.h/2},rot0:o.rot||0};return;}
+  if(tg.dataset&&tg.dataset.pa){const [id,i]=tg.dataset.pa.split(','),o=O.find(x=>x.id===id);
+    if(penPath&&o===penPath&&+i===0&&penPath.pts.length>1){penPath.closed=true;if(penPath.fill==='none')penPath.fill=lastStyle.fill;penFinish();return;}
+    dirSel={id,i:+i};act={pa:true,o,i:+i,p0:p};overlay();return;}
+  if(tg.dataset&&tg.dataset.ph){const [id,i,j]=tg.dataset.ph.split(','),o=O.find(x=>x.id===id);act={ph:true,o,i:+i,j:+j};return;}
+  const hitId=tg.closest&&tg.closest('[data-id]')?tg.closest('[data-id]').dataset.id:null,hit=hitId?O.find(o=>o.id===hitId):null;
+  if(tool==='select'||tool==='direct'){
+    if(hit&&!hit.locked){if(e.shiftKey){SEL=SEL.includes(hit.id)?SEL.filter(x=>x!==hit.id):[...SEL,hit.id];}else if(!SEL.includes(hit.id))SEL=[hit.id];
+      if(tool==='direct'&&hit.type!=='path'&&['rect','ellipse','polygon','star','line'].includes(hit.type)){/* convert to editable path */toPath(hit);}
+      act={move:true,p0:sp,last:sp,moved:false};render();props();}
+    else{if(!e.shiftKey)SEL=[];dirSel=null;act={marq:{x0:p.x,y0:p.y,x1:p.x,y1:p.y}};render();props();}return;}
+  if(tool==='pen'){if(!penPath){penPath=make('path',{pts:[],closed:false});penPath.fill='none';SEL=[penPath.id];}
+    penPath.pts.push({x:sp.x,y:sp.y,ix:sp.x,iy:sp.y,ox:sp.x,oy:sp.y});act={pen:true,p0:sp};render();return;}
+  if(tool==='pencil'){const o=make('path',{pts:[],closed:false});o.fill='none';act={pencil:true,o,raw:[p]};SEL=[o.id];return;}
+  if(tool==='text'){const o=make('text',{x:sp.x,y:sp.y,text:'ტექსტი',size:48,font:'Noto Serif Georgian',weight:400,fill:lastStyle.fill==='none'?'#2a1f3d':(lastStyle.fill==='#ecd59a'?'#2a1f3d':lastStyle.fill)});
+    SEL=[o.id];render();commit();setTool('select');props();setTimeout(()=>{const t=$('pText');if(t){t.focus();t.select();}},30);return;}
+  if(tool==='eq'){const o=make('eq',{mode:'f',tex:'2\\sin\\left(x\\right)',tex2:'',ox:sp.x,oy:sp.y,ux:40,uy:40,a:-6.283,b:6.283,n:600,fillMode:'none',axes:true,params:{}});
+    SEL=[o.id];render();commit();setTool('select');props();return;}
+  /* shapes by drag */const T=tool,base={rect:{x:sp.x,y:sp.y,w:0,h:0,r:0},ellipse:{cx:sp.x,cy:sp.y,rx:0,ry:0},line:{x1:sp.x,y1:sp.y,x2:sp.x,y2:sp.y},polygon:{cx:sp.x,cy:sp.y,rx:0,ry:0,k:6},star:{cx:sp.x,cy:sp.y,rx:0,ry:0,k:5,inner:0.45}}[T];
+  if(base){const o=make(T,base);SEL=[o.id];act={shape:true,o,p0:sp};render();}});
+svg.addEventListener('pointermove',e=>{const p=pt(e),sp=snap(p);$('status').textContent=`${TN[tool]} · x ${Math.round(p.x)}, y ${Math.round(p.y)}`;
+  if(!act){if(penPath){act=null;penHoverOnly=sp;overlayPen(sp);}return;}
+  if(act.pan){PX=act.PX+e.clientX-act.sx;PY=act.PY+e.clientY-act.sy;render();return;}
+  if(act.h){const {o,B,c}=act;if(act.h==='rot'){let a=Math.atan2(p.y-c.y,p.x-c.x)*180/Math.PI+90;if(e.shiftKey)a=Math.round(a/15)*15;o.rot=Math.round(a*10)/10;render();props(true);return;}
+    const [hx,hy]=act.h.split(',').map(Number),lp=o.rot?rot(p,c,-o.rot):p;let x0=B.x,y0=B.y,x1=B.x+B.w,y1=B.y+B.h;
+    if(hx===0)x0=lp.x;if(hx===1)x1=lp.x;if(hy===0)y0=lp.y;if(hy===1)y1=lp.y;
+    if(e.shiftKey&&hx!==0.5&&hy!==0.5){const s=Math.max(Math.abs(x1-x0)/B.w,Math.abs(y1-y0)/B.h);if(hx===0)x0=x1-B.w*s;else x1=x0+B.w*s;if(hy===0)y0=y1-B.h*s;else y1=y0+B.h*s;}
+    const N={x:Math.min(x0,x1),y:Math.min(y0,y1),w:Math.max(1,Math.abs(x1-x0)),h:Math.max(1,Math.abs(y1-y0))},cur=bbox(o);mapObj(o,cur,N);render();props(true);return;}
+  if(act.move){const dx=sp.x-act.last.x,dy=sp.y-act.last.y;if(dx||dy){act.moved=true;SEL.forEach(id=>{const o=O.find(x=>x.id===id);if(o&&!o.locked)moveObj(o,dx,dy);});act.last=sp;render();props(true);}return;}
+  if(act.marq){act.marq.x1=p.x;act.marq.y1=p.y;overlay();return;}
+  if(act.pa){const P=act.o.pts[act.i],dx=sp.x-P.x,dy=sp.y-P.y;P.x+=dx;P.y+=dy;P.ix+=dx;P.iy+=dy;P.ox+=dx;P.oy+=dy;render();return;}
+  if(act.ph){const P=act.o.pts[act.i];if(act.j===0){P.ix=sp.x;P.iy=sp.y;if(!e.altKey){P.ox=2*P.x-sp.x;P.oy=2*P.y-sp.y;}}else{P.ox=sp.x;P.oy=sp.y;if(!e.altKey){P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;}}render();return;}
+  if(act.pen){const P=penPath.pts[penPath.pts.length-1];if(Math.hypot(sp.x-act.p0.x,sp.y-act.p0.y)>2){P.ox=sp.x;P.oy=sp.y;P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;render();}return;}
+  if(act.pencil){act.raw.push(p);const A=act.raw;act.o.pts=A.map(q=>({x:q.x,y:q.y,ix:q.x,iy:q.y,ox:q.x,oy:q.y}));render();return;}
+  if(act.shape){const o=act.o,a=act.p0;let w=sp.x-a.x,h=sp.y-a.y;if(e.shiftKey){const m=Math.max(Math.abs(w),Math.abs(h));w=Math.sign(w||1)*m;h=Math.sign(h||1)*m;}
+    if(o.type==='rect'){o.x=Math.min(a.x,a.x+w);o.y=Math.min(a.y,a.y+h);o.w=Math.abs(w);o.h=Math.abs(h);}
+    else if(o.type==='line'){if(e.shiftKey){const ang=Math.round(Math.atan2(sp.y-a.y,sp.x-a.x)/(Math.PI/4))*(Math.PI/4),L=Math.hypot(sp.x-a.x,sp.y-a.y);o.x2=a.x+Math.cos(ang)*L;o.y2=a.y+Math.sin(ang)*L;}else{o.x2=sp.x;o.y2=sp.y;}}
+    else{o.cx=a.x+w/2;o.cy=a.y+h/2;o.rx=Math.abs(w)/2;o.ry=Math.abs(h)/2;}render();}});
+let penHoverOnly=null;function overlayPen(sp){act=null;const k=1/Z;overlay();if(!penPath||!penPath.pts.length)return;const a=penPath.pts[penPath.pts.length-1];
+  ov.insertAdjacentHTML('beforeend',`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${sp.x},${sp.y} ${sp.x},${sp.y}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}" pointer-events="none"/>`);}
+svg.addEventListener('pointerup',e=>{if(!act)return;const a=act;act=null;svg.style.cursor=tool==='hand'?'grab':'';
+  if(a.pan)return;
+  if(a.marq){const m=a.marq,R={x:Math.min(m.x0,m.x1),y:Math.min(m.y0,m.y1),w:Math.abs(m.x1-m.x0),h:Math.abs(m.y1-m.y0)};if(R.w>2||R.h>2){const ins=O.filter(o=>!o.hidden&&!o.locked).filter(o=>{const b=bbox(o);return b.x>=R.x&&b.y>=R.y&&b.x+b.w<=R.x+R.w&&b.y+b.h<=R.y+R.h;}).map(o=>o.id);
+    SEL=e.shiftKey?[...new Set([...SEL,...ins])]:ins;}render();props();return;}
+  if(a.pencil){const P=rdp(a.raw,1.6/Z);if(P.length<2){O=O.filter(o=>o!==a.o);SEL=[];}else{const closed=Math.hypot(P[0].x-P[P.length-1].x,P[0].y-P[P.length-1].y)<12/Z&&P.length>3;if(closed)P.pop();a.o.pts=smooth(P,closed);a.o.closed=closed;if(closed)a.o.fill=lastStyle.fill;}
+    render();commit();props();return;}
+  if(a.pen)return;
+  if(a.shape){const o=a.o,b=bbox(o);if(b.w<2&&b.h<2){/* click without drag: default size */const P=a.p0;if(o.type==='rect'){o.x=P.x-50;o.y=P.y-50;o.w=100;o.h=100;}else if(o.type==='line'){o.x2=P.x+100;o.y2=P.y;}else{o.rx=50;o.ry=50;}}render();commit();props();setTool('select');return;}
+  if(a.move&&!a.moved)return;commit();props();});
+svg.addEventListener('dblclick',e=>{const tg=e.target.closest&&e.target.closest('[data-id]');if(penPath){penFinish();return;}if(!tg)return;const o=O.find(x=>x.id===tg.dataset.id);
+  if(o.type==='text'){SEL=[o.id];props();setTimeout(()=>{$('pText')&&$('pText').focus();},20);}else if(o.type==='path'){SEL=[o.id];setTool('direct');}else if(o.type==='eq'){SEL=[o.id];props();}});
+function toPath(o){const d=pathD(o.type==='rect'?{...o,type:'polygon'}:o);let pts=[];
+  if(o.type==='rect')pts=[[o.x,o.y],[o.x+o.w,o.y],[o.x+o.w,o.y+o.h],[o.x,o.y+o.h]].map(([x,y])=>({x,y,ix:x,iy:y,ox:x,oy:y}));
+  else if(o.type==='ellipse'){const k=0.5523;pts=[[0,-1],[1,0],[0,1],[-1,0]].map(([u,v])=>{const x=o.cx+u*o.rx,y=o.cy+v*o.ry,tx=-v*o.rx*k,ty=u*o.ry*k;return {x,y,ix:x-tx,iy:y-ty,ox:x+tx,oy:y+ty};});}
+  else if(o.type==='line')pts=[[o.x1,o.y1],[o.x2,o.y2]].map(([x,y])=>({x,y,ix:x,iy:y,ox:x,oy:y}));
+  else{const n=o.type==='star'?o.k*2:o.k;for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n,r=o.type==='star'&&i%2?o.inner:1,x=o.cx+Math.cos(a)*o.rx*r,y=o.cy+Math.sin(a)*o.ry*r;pts.push({x,y,ix:x,iy:y,ox:x,oy:y});}}
+  const keep={id:o.id,name:o.name,fill:o.fill,stroke:o.stroke,sw:o.sw,op:o.op,ft:o.ft,fill2:o.fill2,ang:o.ang,rot:o.rot,hidden:o.hidden,locked:o.locked};Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,keep,{type:'path',pts,closed:pts.length>2});commit();}
+
+/* ───────── keyboard ───────── */
+document.addEventListener('keydown',e=>{const tgt=e.target;if(tgt.closest&&(tgt.closest('input,textarea,select,math-field')))return;const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
+  if(e.code==='Space'){spaceDown=true;svg.style.cursor='grab';e.preventDefault();return;}
+  if(mod&&k==='z'){e.preventDefault();e.shiftKey?$('bRedo').click():$('bUndo').click();return;}if(mod&&k==='y'){e.preventDefault();$('bRedo').click();return;}
+  if(mod&&k==='d'){e.preventDefault();dup();return;}if(mod&&k==='a'){e.preventDefault();SEL=O.filter(o=>!o.hidden&&!o.locked).map(o=>o.id);render();props();return;}
+  if(mod&&k==='s'){e.preventDefault();$('bSave').click();return;}
+  if(k==='enter'||k==='escape'){if(penPath){penFinish();return;}if(k==='escape'){SEL=[];dirSel=null;render();props();}return;}
+  if(k==='delete'||k==='backspace'){e.preventDefault();if(dirSel&&tool==='direct'){const o=O.find(x=>x.id===dirSel.id);if(o&&o.pts.length>2){o.pts.splice(dirSel.i,1);dirSel=null;render();commit();return;}}del();return;}
+  if(k.startsWith('arrow')){e.preventDefault();const s=e.shiftKey?10:1,dx=k==='arrowleft'?-s:k==='arrowright'?s:0,dy=k==='arrowup'?-s:k==='arrowdown'?s:0;SEL.forEach(id=>{const o=O.find(x=>x.id===id);if(o&&!o.locked)moveObj(o,dx,dy);});render();commit();props(true);return;}
+  if(k==='['){order(-1);return;}if(k===']'){order(1);return;}
+  const map={v:'select',a:'direct',p:'pen',n:'pencil',r:'rect',e:'ellipse',l:'line',g:'polygon',s:'star',t:'text',f:'eq',h:'hand'};if(!mod&&map[k])setTool(map[k]);});
+document.addEventListener('keyup',e=>{if(e.code==='Space'){spaceDown=false;svg.style.cursor=tool==='hand'?'grab':'';}});
+function del(){if(!SEL.length)return;O=O.filter(o=>!SEL.includes(o.id));SEL=[];render();commit();props();}
+function dup(){const n=SEL.map(id=>{const o=JSON.parse(JSON.stringify(O.find(x=>x.id===id)));o.id=uid();o.name+=' ასლი';moveObj(o,20,20);O.push(o);return o.id;});if(n.length){SEL=n;render();commit();props();}}
+function order(d){if(SEL.length!==1)return;const i=O.findIndex(o=>o.id===SEL[0]),j=i+d;if(j<0||j>=O.length)return;[O[i],O[j]]=[O[j],O[i]];render();commit();}
+$('lUp').onclick=()=>order(1);$('lDn').onclick=()=>order(-1);$('lDup').onclick=dup;$('lDel').onclick=del;
+
+/* ───────── align ───────── */
+document.querySelectorAll('#alignBar button').forEach(b=>b.onclick=()=>{const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolean);if(!L.length)return;
+  const bs=L.map(bbox),R=L.length===1?{x:0,y:0,w:DOC.w,h:DOC.h}:(()=>{const x=Math.min(...bs.map(b=>b.x)),y=Math.min(...bs.map(b=>b.y));return {x,y,w:Math.max(...bs.map(b=>b.x+b.w))-x,h:Math.max(...bs.map(b=>b.y+b.h))-y};})();
+  L.forEach((o,i)=>{const B=bs[i],a=b.dataset.al;let dx=0,dy=0;if(a==='l')dx=R.x-B.x;if(a==='c')dx=R.x+R.w/2-(B.x+B.w/2);if(a==='r')dx=R.x+R.w-(B.x+B.w);if(a==='t')dy=R.y-B.y;if(a==='m')dy=R.y+R.h/2-(B.y+B.h/2);if(a==='b')dy=R.y+R.h-(B.y+B.h);moveObj(o,dx,dy);});render();commit();props(true);});
+
+/* ───────── layers panel ───────── */
+function layers(){$('layers').innerHTML=O.slice().reverse().map(o=>`<div class="ly${SEL.includes(o.id)?' on':''}" data-id="${o.id}"><button data-a="eye" title="ჩვენება">${o.hidden?'◌':'👁'}</button><button data-a="lock" title="დაბლოკვა">${o.locked?'🔒':'🔓'}</button><span class="nm" title="ორჯერ — სახელის შეცვლა">${esc(o.name)}</span><span class="hint">${({path:'✒',rect:'▭',ellipse:'◯',line:'╱',polygon:'⬠',star:'☆',text:'T',eq:'ƒ',image:'🖼'})[o.type]||''}</span></div>`).join('')||'<span class="hint">ცარიელია</span>';
+  $('layers').querySelectorAll('.ly').forEach(el=>{const o=O.find(x=>x.id===el.dataset.id);el.onclick=e=>{const a=e.target.dataset.a;if(a==='eye'){o.hidden=!o.hidden;render();commit();return;}if(a==='lock'){o.locked=!o.locked;render();commit();return;}
+    SEL=e.shiftKey?[...new Set([...SEL,o.id])]:[o.id];render();props();};el.querySelector('.nm').ondblclick=()=>{const nm=el.querySelector('.nm');nm.contentEditable='true';nm.focus();nm.onblur=()=>{o.name=nm.textContent.trim()||o.name;nm.contentEditable='false';commit();layers();};nm.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();nm.blur();}};};});}
+
+/* ───────── properties panel ───────── */
+let eqFields=null;
+function props(onlyNums){const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolean),o=L[0];
+  if(onlyNums&&o&&$('pX')){const b=bbox(o);$('pX').value=Math.round(b.x);$('pY').value=Math.round(b.y);$('pW').value=Math.round(b.w);$('pH').value=Math.round(b.h);if($('pR'))$('pR').value=o.rot||0;return;}
+  if(!o){const s=lastStyle;$('props').innerHTML=`<div class="hint">ახალი ფიგურების სტილი:</div>${styleBlock(s)}<div class="hint">აირჩიე ხელსაწყო მარცხნივ და დახატე დაფაზე. ფორმულის ხელსაწყო (ƒ) — განტოლება იქცევა ფიგურად.</div>`;bindStyle([s],true);eqFields=null;return;}
+  const b=bbox(o);let h=L.length>1?`<div class="hint">არჩეულია ${L.length} ობიექტი</div>`:'';
+  h+=`<div class="grid2"><label>X<input type="number" id="pX" value="${Math.round(b.x)}"></label><label>Y<input type="number" id="pY" value="${Math.round(b.y)}"></label><label>W<input type="number" id="pW" value="${Math.round(b.w)}"></label><label>H<input type="number" id="pH" value="${Math.round(b.h)}"></label></div>
+    <div class="rowc">ბრუნვა° <input type="number" id="pR" value="${o.rot||0}" style="width:70px"></div>`+styleBlock(o);
+  if(L.length===1){
+    if(o.type==='rect')h+=`<div class="rowc">კუთხის რადიუსი <input type="range" id="pRr" min="0" max="${Math.round(Math.min(o.w,o.h)/2)}" value="${o.r||0}"></div>`;
+    if(o.type==='polygon')h+=`<div class="rowc">გვერდები <input type="number" id="pK" min="3" max="40" value="${o.k}" style="width:70px"></div>`;
+    if(o.type==='star')h+=`<div class="rowc">სხივები <input type="number" id="pK" min="3" max="40" value="${o.k}" style="width:70px"> შიდა <input type="range" id="pIn" min="0.1" max="0.95" step="0.01" value="${o.inner}"></div>`;
+    if(o.type==='text')h+=`<textarea id="pText">${esc(o.text)}</textarea><div class="rowc">ზომა <input type="number" id="pSz" value="${Math.round(o.size)}" style="width:70px"><select class="in" id="pFont" style="width:auto">${['Noto Serif Georgian','Noto Sans Georgian','Cinzel','Georgia','Arial','Courier New'].map(f=>`<option${f===o.font?' selected':''}>${f}</option>`).join('')}</select>
+      <select class="in" id="pWt" style="width:auto"><option value="400"${o.weight==400?' selected':''}>ჩვეულ.</option><option value="600"${o.weight==600?' selected':''}>მსხვილი</option></select></div>`;
+    if(o.type==='path')h+=`<div class="rowc"><label><input type="checkbox" id="pCl"${o.closed?' checked':''}> დახურული</label><button class="mini" id="pEdit">⌖ კვანძები</button></div><div class="hint">${o.pts.length} კვანძი · A — კვანძების გადაადგილება, სახელურები (Alt — დამოუკიდებლად), Delete — კვანძის წაშლა</div>`;
+    if(o.type==='eq')h+=`<div class="rowc">${['f','p','xy'].map(m=>`<button class="mini${o.mode===m?'" style="border-color:#ecd59a;color:#ecd59a':''}" data-em="${m}">${m==='f'?'y = f(x)':m==='p'?'r(θ)':'x(t), y(t)'}</button>`).join('')}</div>
+      <div class="hint">${o.mode==='f'?'y =':o.mode==='p'?'r(θ) =':'x(t) =  ·  y(t) ='}</div><div id="eqF1"></div>${o.mode==='xy'?'<div id="eqF2"></div>':''}<div id="eqErr" class="hint" style="color:#e8705a"></div>
+      <div class="grid2"><label>${o.mode==='f'?'x':o.mode==='p'?'θ':'t'} დან<input type="number" id="eA" step="0.1" value="${+o.a.toFixed(3)}"></label><label>მდე<input type="number" id="eB" step="0.1" value="${+o.b.toFixed(3)}"></label><label>ერთეული X<input type="number" id="eUx" value="${Math.round(o.ux)}"></label><label>ერთეული Y<input type="number" id="eUy" value="${Math.round(o.uy)}"></label></div>
+      <div class="rowc">წერტილები <input type="number" id="eN" value="${o.n}" style="width:70px"> შევსება <select class="in" id="eFm" style="width:auto"><option value="none"${o.fillMode==='none'?' selected':''}>არა</option><option value="under"${o.fillMode==='under'?' selected':''}>მრუდის ქვეშ</option><option value="closed"${o.fillMode==='closed'?' selected':''}>დახურული ფიგურა</option></select>
+      <label><input type="checkbox" id="eAx"${o.axes?' checked':''}> ღერძები</label></div><div id="eqPar"></div>
+      <div class="rowc">${[['ვარდი','p','3\\cos\\left(4\\theta\\right)'],['გული','xy','16\\sin^3t','13\\cos t-5\\cos\\left(2t\\right)-2\\cos\\left(3t\\right)-\\cos\\left(4t\\right)'],['სპირალი','p','0.3\\theta'],['ტალღა','f','\\frac{\\sin\\left(3x\\right)}{x}'],['ზარი','f','4e^{-x^2}'],['ბატერფლაი','p','e^{\\sin\\theta}-2\\cos\\left(4\\theta\\right)']].map((x,i)=>`<button class="mini" data-eex="${i}">${x[0]}</button>`).join('')}</div>
+      <button class="mini" id="eConv" title="ფორმულა იქცევა ჩვეულებრივ რედაქტირებად კონტურად">✒ კონტურად გადაქცევა</button>`;
+    if(o.type==='image')h+=`<div class="hint">სურათი · ${Math.round(o.w)}×${Math.round(o.h)}</div>`;}
+  $('props').innerHTML=h;bindStyle(L);
+  const numCh=()=>{const B=bbox(o),N={x:+$('pX').value,y:+$('pY').value,w:Math.max(1,+$('pW').value),h:Math.max(1,+$('pH').value)};if(L.length===1)mapObj(o,B,N);else{const dx=N.x-B.x,dy=N.y-B.y;L.forEach(q=>moveObj(q,dx,dy));}render();commit();};
+  ['pX','pY','pW','pH'].forEach(id=>$(id).onchange=numCh);$('pR').onchange=()=>{L.forEach(q=>q.rot=+$('pR').value||0);render();commit();};
+  const on=(id,fn,ev='input')=>{const el=$(id);if(el)el.addEventListener(ev,()=>{fn(el);render();});if(el)el.addEventListener('change',()=>commit());};
+  on('pRr',el=>o.r=+el.value);on('pK',el=>o.k=Math.max(3,Math.min(40,+el.value||3)));on('pIn',el=>o.inner=+el.value);on('pText',el=>{o.text=el.value;delete o._bb;});on('pSz',el=>{o.size=Math.max(4,+el.value||12);delete o._bb;});
+  on('pFont',el=>{o.font=el.value;delete o._bb;},'change');on('pWt',el=>{o.weight=+el.value;delete o._bb;},'change');on('pCl',el=>o.closed=el.checked,'change');
+  if($('pEdit'))$('pEdit').onclick=()=>setTool('direct');
+  if(o.type==='eq'&&L.length===1){
+    const upd=()=>{render();$('eqErr').textContent=o._err||'';paramsUI();};
+    MI.field($('eqF1'),{value:o.tex,onInput:f=>{o.tex=f.latex();upd();},onReady:()=>{}});if(o.mode==='xy')MI.field($('eqF2'),{value:o.tex2,onInput:f=>{o.tex2=f.latex();upd();}});
+    const fl=document.querySelectorAll('#props [data-em]');fl.forEach(b=>b.onclick=()=>{o.mode=b.dataset.em;if(o.mode==='f'){o.a=-6.283;o.b=6.283;}else{o.a=0;o.b=6.283;}if(o.mode==='xy'&&!o.tex2){o.tex='\\cos t';o.tex2='\\sin\\left(2t\\right)';}if(o.mode==='p'&&!/theta/.test(o.tex))o.tex='2\\cos\\left(3\\theta\\right)';render();commit();props();});
+    on('eA',el=>o.a=+el.value);on('eB',el=>o.b=+el.value);on('eUx',el=>o.ux=+el.value||1);on('eUy',el=>o.uy=+el.value||1);on('eN',el=>o.n=+el.value||600);on('eFm',el=>{o.fillMode=el.value;if(el.value!=='none'&&o.fill==='none'){o.fill=lastStyle.fill==='none'?'#ecd59a':lastStyle.fill;}},'change');on('eAx',el=>o.axes=el.checked,'change');
+    const EXS=[['ვარდი','p','3\\cos\\left(4\\theta\\right)'],['გული','xy','16\\sin^3t','13\\cos t-5\\cos\\left(2t\\right)-2\\cos\\left(3t\\right)-\\cos\\left(4t\\right)'],['სპირალი','p','0.3\\theta'],['ტალღა','f','\\frac{\\sin\\left(3x\\right)}{x}'],['ზარი','f','4e^{-x^2}'],['ბატერფლაი','p','e^{\\sin\\theta}-2\\cos\\left(4\\theta\\right)']];
+    document.querySelectorAll('#props [data-eex]').forEach(b=>b.onclick=()=>{const x=EXS[+b.dataset.eex];o.mode=x[1];o.tex=x[2];o.tex2=x[3]||'';o.a=x[1]==='f'?-6.283:0;o.b=x[1]==='p'&&x[0]==='სპირალი'?6.283*4:x[1]==='p'&&x[0]==='ბატერფლაი'?6.283*2:6.283;if(x[1]==='xy'){o.ux=o.uy=10;}if(x[0]==='გული'){o.fillMode='closed';o.fill='#e8705a';}render();commit();props();});
+    $('eConv').onclick=()=>{const S=o._segs||eqPts(o);if(!S.length)return;const s=S.reduce((a,b)=>b.length>a.length?b:a);const P=rdp(s.map(p=>({x:p[0],y:p[1]})),0.6);const closed=o.fillMode==='closed';
+      const keep={id:o.id,name:o.name+' (კონტური)',fill:o.fill,stroke:o.stroke,sw:o.sw,op:o.op,ft:o.ft,fill2:o.fill2,ang:o.ang,rot:o.rot};Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,keep,{type:'path',pts:smooth(P,closed),closed});render();commit();props();};
+    function paramsUI(){const box=$('eqPar');if(!box)return;box.innerHTML=(o._params||[]).map(k=>`<div class="rowc"><b style="min-width:30px">${esc(k)}</b><input type="range" min="-10" max="10" step="0.05" value="${o.params[k]}" data-pk="${esc(k)}"><span>${o.params[k]}</span></div>`).join('');
+      box.querySelectorAll('[data-pk]').forEach(r=>{r.oninput=()=>{o.params[r.dataset.pk]=+r.value;r.nextElementSibling.textContent=r.value;render();};r.onchange=commit;});}
+    $('eqErr').textContent=o._err||'';paramsUI();}}
+function styleBlock(s){return `<div class="rowc">შევსება <input type="color" id="sF" value="${s.fill==='none'?'#ffffff':s.fill}"><label><input type="checkbox" id="sFn"${s.fill==='none'?' checked':''}> არა</label>
+    <select class="in" id="sFt" style="width:auto"><option value="solid"${s.ft==='solid'||!s.ft?' selected':''}>ერთფერი</option><option value="linear"${s.ft==='linear'?' selected':''}>გრადიენტი</option><option value="radial"${s.ft==='radial'?' selected':''}>რადიალური</option></select></div>
+  <div class="rowc" id="sGr"${s.ft==='linear'||s.ft==='radial'?'':' hidden'}>მეორე ფერი <input type="color" id="sF2" value="${s.fill2||'#a585ef'}"> კუთხე <input type="range" id="sAng" min="0" max="360" value="${s.ang||90}"></div>
+  <div class="rowc">კონტური <input type="color" id="sS" value="${s.stroke==='none'?'#000000':s.stroke}"><label><input type="checkbox" id="sSn"${s.stroke==='none'?' checked':''}> არა</label> სისქე <input type="number" id="sW" min="0" step="0.5" value="${s.sw}" style="width:60px"></div>
+  <div class="rowc">გამჭვირვალობა <input type="range" id="sO" min="0" max="1" step="0.01" value="${s.op}"></div>`;}
+function bindStyle(L,isDefault){const set=(k,v)=>{L.forEach(o=>o[k]=v);if(!isDefault){lastStyle={...lastStyle,[k]:v};render();}};
+  const ch=()=>{if(!isDefault)commit();};
+  $('sF').oninput=()=>{set('fill',$('sF').value);$('sFn').checked=false;};$('sF').onchange=ch;$('sFn').onchange=()=>{set('fill',$('sFn').checked?'none':$('sF').value);ch();};
+  $('sFt').onchange=()=>{set('ft',$('sFt').value);$('sGr').hidden=$('sFt').value==='solid';ch();};$('sF2').oninput=()=>set('fill2',$('sF2').value);$('sF2').onchange=ch;$('sAng').oninput=()=>set('ang',+$('sAng').value);$('sAng').onchange=ch;
+  $('sS').oninput=()=>{set('stroke',$('sS').value);$('sSn').checked=false;};$('sS').onchange=ch;$('sSn').onchange=()=>{set('stroke',$('sSn').checked?'none':$('sS').value);ch();};
+  $('sW').oninput=()=>set('sw',Math.max(0,+$('sW').value||0));$('sW').onchange=ch;$('sO').oninput=()=>set('op',+$('sO').value);$('sO').onchange=ch;}
+
+/* ───────── files ───────── */
+function exportSvg(){return `<svg xmlns="http://www.w3.org/2000/svg" width="${DOC.w}" height="${DOC.h}" viewBox="0 0 ${DOC.w} ${DOC.h}"><defs>${gradDefs()}</defs><rect width="${DOC.w}" height="${DOC.h}" fill="${DOC.bg}"/>${O.map(o=>elStr(o,true)).join('')}</svg>`;}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+$('bSvg').onclick=()=>download(new Blob([exportSvg()],{type:'image/svg+xml'}),'magnus-drawing.svg');
+$('bPng').onclick=()=>{const img=new Image(),url=URL.createObjectURL(new Blob([exportSvg()],{type:'image/svg+xml'}));img.onload=()=>{const c=document.createElement('canvas'),s=2;c.width=DOC.w*s;c.height=DOC.h*s;const g=c.getContext('2d');g.scale(s,s);g.drawImage(img,0,0);URL.revokeObjectURL(url);c.toBlob(b=>download(b,'magnus-drawing.png'));};img.src=url;};
+$('bSave').onclick=()=>download(new Blob([snapState()],{type:'application/json'}),'magnus-drawing.json');
+$('bOpen').onclick=()=>$('fOpen').click();
+$('fOpen').onchange=async e=>{const f=e.target.files[0];if(!f)return;const t=await f.text();e.target.value='';
+  if(/\.json$/i.test(f.name)){try{restore(t);commit();fit();}catch(err){$('status').textContent='ფაილი ვერ წავიკითხე';}return;}
+  /* SVG: placed as one image object, so it can be traced over */const src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(t)));addImage(src);};
+$('fImg').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>addImage(r.result);r.readAsDataURL(f);e.target.value='';};
+function addImage(src){const im=new Image();im.onload=()=>{let w=im.naturalWidth||400,h=im.naturalHeight||300;const s=Math.min(1,DOC.w*0.8/w,DOC.h*0.8/h);w*=s;h*=s;const o=make('image',{x:(DOC.w-w)/2,y:(DOC.h-h)/2,w,h,src});o.fill='none';o.stroke='none';SEL=[o.id];render();commit();props();};im.src=src;}
+$('bNew').onclick=()=>{if(O.length&&!newArm){newArm=Date.now();$('status').textContent='დააჭირე კიდევ ერთხელ — ყველაფერი წაიშლება';setTimeout(()=>newArm=0,3000);return;}newArm=0;O=[];SEL=[];render();commit();props();};let newArm=0;
+$('board').onchange=()=>{const [w,h]=$('board').value.split('x').map(Number);DOC.w=w;DOC.h=h;fit();commit();};
+$('bgc').oninput=()=>{DOC.bg=$('bgc').value;render();};$('bgc').onchange=commit;
+$('gridOn').onchange=render;
+function fit(){const r=svg.getBoundingClientRect();Z=Math.min((r.width-60)/DOC.w,(r.height-60)/DOC.h);PX=(r.width-DOC.w*Z)/2;PY=(r.height-DOC.h*Z)/2;render();}
+$('zIn').onclick=()=>zoomBy(1.25);$('zOut').onclick=()=>zoomBy(0.8);$('zFit').onclick=fit;
+function zoomBy(f){const r=svg.getBoundingClientRect(),mx=r.width/2,my=r.height/2,nz=Math.min(16,Math.max(0.05,Z*f));PX=mx-(mx-PX)*nz/Z;PY=my-(my-PY)*nz/Z;Z=nz;render();}
+let _rz=0;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(fit,150);});
+
+/* ───────── start: last drawing or a sample made with formulas ───────── */
+const saved=store.get('magnus_vector_doc');
+if(saved){try{const d=JSON.parse(saved);DOC=d.DOC;O=d.O;}catch(e){}}
+if(!O.length){O=[];make('rect',{x:0,y:0,w:1200,h:800,r:0,fill:'#1b1433',stroke:'none',ft:'linear',fill2:'#3a2a5c',ang:90,name:'ფონი',locked:true});
+  make('eq',{mode:'p',tex:'3\\cos\\left(4\\theta\\right)',tex2:'',ox:300,oy:400,ux:55,uy:55,a:0,b:6.283,n:800,fillMode:'closed',axes:false,params:{},fill:'#ecd59a',ft:'radial',fill2:'#c9a84c',stroke:'#ecd59a',sw:1.5,op:0.9,name:'ვარდი r = 3cos 4θ'});
+  make('eq',{mode:'xy',tex:'16\\sin^3t',tex2:'13\\cos t-5\\cos\\left(2t\\right)-2\\cos\\left(3t\\right)-\\cos\\left(4t\\right)',ox:900,oy:380,ux:9,uy:9,a:0,b:6.283,n:600,fillMode:'closed',axes:false,params:{},fill:'#e8705a',ft:'solid',stroke:'#fff',sw:2,op:1,name:'გული'});
+  make('eq',{mode:'f',tex:'a\\sin\\left(x\\right)',tex2:'',ox:600,oy:690,ux:45,uy:28,a:-13,b:13,n:800,fillMode:'under',axes:false,params:{a:2},fill:'#a585ef',ft:'solid',stroke:'#d6c6ff',sw:2,op:0.55,name:'ტალღა a·sin x'});
+  make('text',{x:600,y:120,text:'MAGNUS',size:72,font:'Cinzel',weight:600,fill:'#ecd59a',stroke:'none',sw:0,op:1,ft:'solid',name:'სათაური'});O[O.length-1].x=440;}
+setTool('select');MI.ready.then(()=>{render();hist=[snapState()];fit();});render();fit();
+})();
+</script>
+</body>
+</html>
