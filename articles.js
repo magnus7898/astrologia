@@ -53,9 +53,11 @@ const ART={
     const CN0=DB.ch_names&&DB.ch_names.combos,empty0=e=>!e||!String(e.text||'').replace(/<[^>]+>|&nbsp;|\s/g,'');
     for(const [zone,z] of Object.entries(DB)){
       if(!z||!z.combos||zone==='ch_names')continue;
-      for(const {zone:sz,code,a} of SRC){
+      /* pass 1: the same order · pass 2 (exact-order positions): the reversed order, only where still empty */
+      for(const pass of [1,2])for(const {zone:sz,code,a} of SRC){
         if(sz===zone)continue;const r=code.split('-').reverse().join('-');
-        const key=EXZ0.has(zone)?code:(z.combos[code]?code:(z.combos[r]?r:code)),e=z.combos[key];
+        if(pass===2&&(!EXZ0.has(zone)||r===code))continue;
+        const key=pass===2?r:EXZ0.has(zone)?code:(z.combos[code]?code:(z.combos[r]?r:code)),e=z.combos[key];
         if(!empty0(e))continue;
         if(/^ch_/.test(zone)&&CN0&&(!empty0(CN0[key])||!empty0(CN0[key.split('-').reverse().join('-')])))continue;
         z.combos[key]={title:(e&&!e._c&&e.title)||(e&&e._c&&e._ft)||a.t||'',text:a.h||'',_c:1,_z:1,_s:code,_f:e?(e._c?e._f:true):false,_ft:e?(e._c?e._ft:e.title||''):''};

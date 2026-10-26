@@ -116,6 +116,19 @@ function comboName(nums){
   return _names[nums.join('-')]||_names[[...nums].reverse().join('-')]||'';
 }
 
+/* last resort for chakra names: the code's name in ANY position (karmic tail included), exact order first, then reversed */
+let _anyNames=null;
+function anyName(nums){
+  if(!_anyNames){
+    _anyNames={};
+    const DB=(typeof MATRIX_DB!=='undefined')?MATRIX_DB:(window.MATRIX_DB||{});
+    /* real names first; titles that came with a borrowed text (_c) only fill what is still missing */
+    for(const pass of [0,1])for(const z in DB){if(z==='ch_names')continue;const c=(DB[z]||{}).combos||{};
+      for(const k in c){const e=c[k];if(!e)continue;const t=((pass||!e._c)?e.title:e._ft||'').trim(); if(t && !_anyNames[k]) _anyNames[k]=t;}}
+  }
+  return _anyNames[nums.join('-')]||_anyNames[[...nums].reverse().join('-')]||'';
+}
+
 /* your naming list: MATRIX_DB.ch_names, exact code or its reverse */
 function chakraShared(nums){
   const DB=(typeof MATRIX_DB!=='undefined')?MATRIX_DB:(window.MATRIX_DB||{});
@@ -188,7 +201,7 @@ function buildMatrixBoxes(v, method){
     if(box.chakra && nums.length===3){
       const own=art||{}, sh=chakraShared(nums)||{};
       const has=x=>x&&String(x).trim();
-      const title=has(own.title)?own.title:has(sh.title)?sh.title:comboName(nums);
+      const title=has(own.title)?own.title:has(sh.title)?sh.title:(comboName(nums)||anyName(nums));
       const text=has(own.text)?own.text:has(sh.text)?sh.text
                 :(typeof autoCombo==='function'?(autoCombo(box.id,nums)||''):'');
       art={title,text};
