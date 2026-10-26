@@ -115,6 +115,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--pen);outline-of
 
       <div class="sec">
         <div class="row"><label for="circles">წრეები</label><input type="range" id="circles" min="1" max="300" value="300"><output id="circlesOut">300</output></div>
+        <div class="row"><label for="npts">წერტილები</label><select id="npts" style="flex:1;min-width:0;background:var(--paper);color:var(--ink);border:1px solid var(--line-dim);padding:4px 6px;font:13px var(--f-mono)"><option>300</option><option>500</option><option>1000</option><option>2000</option><option>3000</option><option>5000</option></select><output id="nptsOut"></output></div>
         <div class="row"><label for="speed">სიჩქარე</label><input type="range" id="speed" min="0.25" max="6" step="0.25" value="1.5"><output id="speedOut">1.5×</output></div>
         <div class="toggles">
           <label><input type="checkbox" id="showCircles" checked> წრეები</label>
@@ -152,7 +153,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--pen);outline-of
 (()=>{
 'use strict';
 const {sin,cos,PI,exp,sqrt,atan2,hypot,abs,min,max}=Math;
-const TAU=2*PI, N=300;
+const TAU=2*PI;let N=300,LAST=null;
 const $=id=>document.getElementById(id);
 const cv=$('cv'),cx=cv.getContext('2d');
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
@@ -194,15 +195,16 @@ let NORM=null;
 function normalize(pts){ /* centre on bbox, scale so the larger side is 2 (−1…1) */
   let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;for(const [x,y] of pts){x0=min(x0,x);x1=max(x1,x);y0=min(y0,y);y1=max(y1,y);}
   const s=2/max(x1-x0,y1-y0,1e-9),mx=(x0+x1)/2,my=(y0+y1)/2;NORM={s,mx,my};return pts.map(([x,y])=>[(x-mx)*s,(y-my)*s]);}
-function dft(v){const n=v.length,o=[];
-  for(let k=0;k<n;k++){let re=0,im=0;for(let j=0;j<n;j++){const a=TAU*k*j/n;re+=v[j]*cos(a);im-=v[j]*sin(a);}
+function dft(v){const n=v.length,o=[],CT=new Float64Array(n),ST=new Float64Array(n);for(let i=0;i<n;i++){CT[i]=cos(TAU*i/n);ST[i]=sin(TAU*i/n);}
+  for(let k=0;k<n;k++){let re=0,im=0,idx=0;for(let j=0;j<n;j++){re+=v[j]*CT[idx];im-=v[j]*ST[idx];idx+=k;if(idx>=n)idx-=n;}
     re/=n;im/=n;o.push({freq:k<=n/2?k:k-n,amp:hypot(re,im),phase:atan2(im,re)});}
   return o.sort((a,b)=>b.amp-a.amp);}
 
 /* ── state ───────────────────────────────────────────── */
 let target=[],FX=[],FY=[],t=0,trail=[],playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,current='pin',drawing=null,drawMode=false;
 function load(pts,label){
-  const r=resample(pts,N);if(!r)return false;target=normalize(r);
+  const r=resample(pts,N);if(!r)return false;target=normalize(r);LAST=[pts,label];
+  $('circles').max=N;$('circles').value=N;$('circlesOut').textContent=N;
   FX=dft(target.map(p=>p[0]));FY=dft(target.map(p=>p[1]));t=0;trail=[];
   $('stamp').textContent=`${label} · N = ${N} წერტილი`;showTerms();return true;}
 
@@ -244,9 +246,11 @@ function frame(advance=true){
   cx.fillStyle=C.pen;cx.beginPath();cx.arc(pen[0],pen[1],4,0,TAU);cx.fill();
 }
 let acc=0;
+/* tip of a chain (in shape units) — lets many samples per frame be traced without redrawing every circle */
+function tip(F,M,rot){let x=0,y=0;for(let i=0;i<M;i++){const c=F[i],a=c.freq*t+c.phase+rot;x+=c.amp*cos(a);y+=c.amp*sin(a);}return [x,y];}
 function tick(){
-  if(playing&&!drawing){acc+=+$('speed').value;
-    while(acc>=1){acc-=1;frame(true);t+=TAU/N;if(t>=TAU-1e-9){t=0;trail=[];}}
+  if(playing&&!drawing&&FX.length){acc+=+$('speed').value*N/300;const M=+$('circles').value;
+    while(acc>=1){acc-=1;trail.push([tip(FX,M,0)[0],tip(FY,M,PI/2)[1]]);t+=TAU/N;if(t>=TAU-1e-9){t=0;trail=[];}}
     frame(false);}
   requestAnimationFrame(tick);}
 
@@ -321,6 +325,7 @@ cv.addEventListener('pointerup',()=>{if(!drawing)return;const pts=drawing;drawin
   if(pts.length>8&&load(pts,'შენი ნახატი')){current='draw';drawMode=false;$('drawhint').hidden=true;}else frame(false);});
 
 $('circles').max=N;
+$('npts').onchange=e=>{N=+e.target.value;$('nptsOut').textContent='⏳';setTimeout(()=>{if(LAST)load(LAST[0],LAST[1]);$('nptsOut').textContent='';if(!playing)frame(false);},20);};
 $('file').onchange=e=>{loadPicture(e.target.files[0]);e.target.value='';};
 $('fileBtn').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('file').click();}};
 $('thr').oninput=e=>{$('thrOut').textContent=e.target.value;tracePicture();};
