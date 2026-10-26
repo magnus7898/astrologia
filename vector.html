@@ -13,7 +13,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .top{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line)}
 .top .ttl{font-family:'Cinzel',serif;color:var(--gold-lt);font-size:15px;margin-right:6px;text-decoration:none}
 .top button,.top select,.top label.bt{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;cursor:pointer}
-.top button:hover,.tools button:hover{border-color:var(--gold)}.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+.top button:hover,.tools button:hover{border-color:var(--gold)}.sep{width:1px;height:22px;background:var(--line);margin:0 4px}.grpl{color:var(--mid);font-size:12px}
 .tools{display:flex;flex-direction:column;gap:4px;padding:8px 6px;background:var(--panel);border-right:1px solid var(--line);overflow:auto}
 .tools button{width:38px;height:36px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--ink);font-size:17px;cursor:pointer;position:relative}
 .tools button.on{background:rgba(201,168,76,.16);border-color:var(--gold);color:var(--gold-lt)}
@@ -52,6 +52,8 @@ math-field.mi-f{font-size:17px!important}
     <span class="sep"></span><button id="zOut">－</button><span id="zLab" style="min-width:44px;text-align:center">100%</span><button id="zIn">＋</button><button id="zFit" title="დაფაზე მორგება">⤢</button>
     <label class="bt"><input type="checkbox" id="gridOn"> ბადე</label><label class="bt"><input type="checkbox" id="snapOn"> მიბმა</label>
     <span class="sep"></span><span id="alignBar"><select id="alTo" title="გასწორება"><option value="sel">მონიშნულთან</option><option value="board">დაფასთან</option></select><button data-al="l" title="მარცხნივ">⫷</button><button data-al="c" title="ცენტრში">⫼</button><button data-al="r" title="მარჯვნივ">⫸</button><button data-al="t" title="ზემოთ">⊤</button><button data-al="m" title="შუაში">⊝</button><button data-al="b" title="ქვემოთ">⊥</button><button data-al="dh" title="თანაბრად ჰორიზონტალურად">⇹</button><button data-al="dv" title="თანაბრად ვერტიკალურად">⇳</button></span>
+    <span class="sep"></span><span class="grpl">Pathfinder:</span><span id="pfBar"><button data-pf="unite" title="გაერთიანება">⊕</button><button data-pf="minusFront" title="წინას გამოკლება">⊖</button><button data-pf="minusBack" title="უკანას გამოკლება">⊝</button><button data-pf="intersect" title="გადაკვეთა">⊗</button><button data-pf="exclude" title="გამორიცხვა">⊘</button><button data-pf="divide" title="დაყოფა">▦</button></span>
+    <span class="sep"></span><button id="tbBlend" title="ბლენდი: მონიშნე 2 ფიგურა">⇢ ბლენდი</button><button id="tbRound" title="კუთხეების მომრგვალება">◜ მომრგვალება</button>
   </div>
   <div class="tools" id="tools"></div>
   <div class="stage" id="stage"><svg id="svg" xmlns="http://www.w3.org/2000/svg"><defs id="defs"></defs><g id="view"><rect id="boardR"/><g id="gridG"></g><g id="objs"></g><g id="ov"></g></g></svg><div class="status" id="status"></div></div>
@@ -385,6 +387,11 @@ document.querySelectorAll('#alignBar button').forEach(b=>b.onclick=()=>{const L=
     ord.slice(1,-1).forEach(q=>{const d=cur-q.b[ax];moveObj(q.o,ax==='x'?d:0,ax==='y'?d:0);cur+=q.b[sz]+gap;});render();commit();props(true);return;}
   const R=L.length===1||$('alTo').value==='board'?{x:0,y:0,w:DOC.w,h:DOC.h}:(()=>{const x=Math.min(...bs.map(b=>b.x)),y=Math.min(...bs.map(b=>b.y));return {x,y,w:Math.max(...bs.map(b=>b.x+b.w))-x,h:Math.max(...bs.map(b=>b.y+b.h))-y};})();
   L.forEach((o,i)=>{const B=bs[i],a=b.dataset.al;let dx=0,dy=0;if(a==='l')dx=R.x-B.x;if(a==='c')dx=R.x+R.w/2-(B.x+B.w/2);if(a==='r')dx=R.x+R.w-(B.x+B.w);if(a==='t')dy=R.y-B.y;if(a==='m')dy=R.y+R.h/2-(B.y+B.h/2);if(a==='b')dy=R.y+R.h-(B.y+B.h);moveObj(o,dx,dy);});render();commit();props(true);});
+
+/* top-bar shortcuts: Pathfinder, blend, round corners (same actions as in the properties panel) */
+document.querySelectorAll('#pfBar button').forEach(b=>b.onclick=()=>pathfinder(b.dataset.pf));
+$('tbBlend').onclick=()=>{if(SEL.length!==2){$('status').textContent='ბლენდი: მონიშნე ზუსტად 2 ფიგურა (Shift + დაწკაპუნება)';return;}props();const m=$('blM'),v=$('blV');blend(m?m.value:'steps',v?+v.value:8);};
+$('tbRound').onclick=()=>{const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolean);if(!L.length){$('status').textContent='მომრგვალება: ჯერ მონიშნე ფიგურა';return;}const r=$('rcR')?Math.max(0,+$('rcR').value||0):12;L.forEach(q=>roundCorners(q,r));render();commit();props();};
 
 /* ───────── layers panel ───────── */
 function layers(){$('layers').innerHTML=O.slice().reverse().map(o=>`<div class="ly${SEL.includes(o.id)?' on':''}" data-id="${o.id}"><button data-a="eye" title="ჩვენება">${o.hidden?'◌':'👁'}</button><button data-a="lock" title="დაბლოკვა">${o.locked?'🔒':'🔓'}</button><span class="nm" title="ორჯერ — სახელის შეცვლა">${esc(o.name)}</span><span class="hint">${({path:'✒',rect:'▭',ellipse:'◯',line:'╱',polygon:'⬠',star:'☆',text:'T',eq:'ƒ',image:'🖼'})[o.type]||''}</span></div>`).join('')||'<span class="hint">ცარიელია</span>';
