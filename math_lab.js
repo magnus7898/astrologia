@@ -642,7 +642,7 @@ const LEVELS=[
  {t:'ანალიზი',n:'ცვლილების მათემატიკა',d:'ზღვრები, წარმოებული, ინტეგრალი, მწკრივები, დიფერენციალური განტოლებები.',ids:['seq','deriv','integ','taylor','ode']},
  {t:'უმაღლესი',n:'სივრცე და შემთხვევა',d:'კომპლექსური რიცხვები, წრფივი ალგებრა, ვექტორები, ალბათობა და სტატისტიკა.',ids:['complex','linalg','vec3','prob','stat']},
  {t:'გმირი',n:'თანამედროვე მათემატიკა',d:'ფურიე, ფრაქტალები, ქაოსი, გრაფები, კრიპტოგრაფია, უსასრულობა.',ids:['fourier','fractal','logmap','graphs','numth','inf','mref']}];
-const ORDER=LEVELS.flatMap(l=>l.ids);
+let ORDER=LEVELS.flatMap(l=>l.ids);
 const CL=(h,l)=>` <a href="math_classic.html#${h}" style="color:var(--acc2)">${l} →</a>`;
 const INTRO={
  num:'მათემატიკა იწყება წრფით: ყოველი რიცხვი — წერტილია, ყოველი მოქმედება — ნახტომი. <ul><li>რატომ ხდება „მინუსი მინუსზე“ პლიუსი</li><li>რიცხვების ოჯახები ℕ → ℂ</li></ul>',
@@ -698,6 +698,10 @@ const QUIZ={
  numth:[['17 mod 5 = ?',['2','3','12','1'],0,''],['RSA-ს უსაფრთხოება ეყრდნობა:',['დიდი რიცხვის დაშლის სირთულეს','π-ს','ფრაქტალებს','შემთხვევითობას'],0,''],['ფერმას მცირე თეორემა: aᵖ⁻¹ mod p = ?',['1','0','a','p'],0,'p მარტივია, a არ იყოფა p-ზე.'],['წრეზე k = 2-ით შეერთება ქმნის:',['კარდიოიდას','წრეს','კვადრატს','ვარსკვლავს'],0,'']],
  inf:[['ლუწი რიცხვები ნატურალურზე:',['ტოლი რაოდენობისაა','ნახევარია','ნაკლებია','მეტია'],0,'n ↔ 2n.'],['ნამდვილი რიცხვები:',['დათვლადზე მეტია','დათვლადია','სასრულია','ℕ-ის ტოლია'],0,'კანტორის დიაგონალი.'],['ყველაზე დიდი უსასრულობა:',['არ არსებობს','ℵ₀','|ℝ|','∞'],0,'კანტორის თეორემა.'],['ჰილბერტის სასტუმრო სავსეა. ახალ სტუმარს:',['ყველა n → n+1 გადაიწევს','ვერ მიიღებენ','გარეთ დატოვებენ','ბოლოს მიიღებენ'],0,'']]};
 
+/* extensions (math_lab2.js …): window.MATHLAB_EXT = [kit => ({level, at, mods, intro, quiz})] — loaded before this file */
+for(const ext of (window.MATHLAB_EXT||[])){try{const e=ext({K,reg,T})||{};(e.mods||[]).forEach(reg);
+  if(e.level)LEVELS.splice(e.at!=null?e.at:LEVELS.length-1,0,e.level);Object.assign(INTRO,e.intro||{});Object.assign(QUIZ,e.quiz||{});}catch(err){console.warn('math ext',err);}}
+ORDER=LEVELS.flatMap(l=>l.ids);
 const host=$('mathp');if(!host)return;
 window.MATHLAB=SCIPATH.mount({host,key:'math',title:'მათემატიკა',accent:'#a585ef',accent2:'#e4d8ff',levels:LEVELS,meta:id=>T[id],intro:INTRO,quiz:QUIZ,
   build:(id,el)=>T[id].build(el),decorate:el=>K.attachXp(el)});
