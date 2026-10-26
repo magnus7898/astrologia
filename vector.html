@@ -51,16 +51,17 @@ math-field.mi-f{font-size:17px!important}
     <label class="bt" title="დაფის ფონი">ფონი <input type="color" id="bgc" value="#ffffff" style="width:22px;height:18px;border:0;padding:0;background:none"></label>
     <span class="sep"></span><button id="zOut">－</button><span id="zLab" style="min-width:44px;text-align:center">100%</span><button id="zIn">＋</button><button id="zFit" title="დაფაზე მორგება">⤢</button>
     <label class="bt"><input type="checkbox" id="gridOn"> ბადე</label><label class="bt"><input type="checkbox" id="snapOn"> მიბმა</label>
-    <span class="sep"></span><span id="alignBar"><button data-al="l" title="მარცხნივ">⫷</button><button data-al="c" title="ცენტრში">⫼</button><button data-al="r" title="მარჯვნივ">⫸</button><button data-al="t" title="ზემოთ">⊤</button><button data-al="m" title="შუაში">⊝</button><button data-al="b" title="ქვემოთ">⊥</button></span>
+    <span class="sep"></span><span id="alignBar"><select id="alTo" title="გასწორება"><option value="sel">მონიშნულთან</option><option value="board">დაფასთან</option></select><button data-al="l" title="მარცხნივ">⫷</button><button data-al="c" title="ცენტრში">⫼</button><button data-al="r" title="მარჯვნივ">⫸</button><button data-al="t" title="ზემოთ">⊤</button><button data-al="m" title="შუაში">⊝</button><button data-al="b" title="ქვემოთ">⊥</button><button data-al="dh" title="თანაბრად ჰორიზონტალურად">⇹</button><button data-al="dv" title="თანაბრად ვერტიკალურად">⇳</button></span>
   </div>
   <div class="tools" id="tools"></div>
   <div class="stage" id="stage"><svg id="svg" xmlns="http://www.w3.org/2000/svg"><defs id="defs"></defs><g id="view"><rect id="boardR"/><g id="gridG"></g><g id="objs"></g><g id="ov"></g></g></svg><div class="status" id="status"></div></div>
   <div class="side">
     <div class="sec" id="propSec"><h3>თვისებები</h3><div id="props" class="hint">აირჩიე ობიექტი ან ხელსაწყო. <b>F</b> — ფორმულა: დააწკაპუნე დაფაზე და ჩაწერე განტოლება.</div></div>
     <div class="sec"><h3>ფენები</h3><div class="rowc"><button class="mini" id="lUp" title="წინ ]">▲</button><button class="mini" id="lDn" title="უკან [">▼</button><button class="mini" id="lDup" title="Ctrl+D">⧉ ასლი</button><button class="mini" id="lDel" title="Delete">🗑</button></div><div class="layers" id="layers"></div></div>
-    <div class="sec"><h3>მალსახმობები</h3><div class="hint">V არჩევა · A კვანძები · P კალამი · N ფანქარი · R მართკუთხედი · E ელიფსი · L ხაზი · G მრავალკუთხედი · S ვარსკვლავი · T ტექსტი · F ფორმულა · H ხელი (ან Space) · Ctrl+ბორბალი — მასშტაბი · Shift — პროპორცია / 15° · ისრები — გადაწევა · Ctrl+Z/Y · Ctrl+D · Delete · [ ] — რიგი</div></div>
+    <div class="sec"><h3>მალსახმობები</h3><div class="hint">V არჩევა · A ნაწილობრივი არჩევა / კვანძები · Q ლასო · + კვანძის დამატება · − კვანძის წაშლა · C მაკრატელი · X (Shift+E) საშლელი · P კალამი · N ფანქარი · R მართკუთხედი · E ელიფსი · L ხაზი · G მრავალკუთხედი · S ვარსკვლავი · T ტექსტი · F ფორმულა · H ხელი (ან Space) · Ctrl+ბორბალი — მასშტაბი · Shift — პროპორცია / 15° · ისრები — გადაწევა · Ctrl+Z/Y · Ctrl+D · Delete · [ ] — რიგი</div></div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/paper@0.12.18/dist/paper-core.min.js"></script>
 <script src="mathinput.js"></script>
 <script>
 (function(){
@@ -69,8 +70,9 @@ const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg',svg=$('s
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>'o'+Math.random().toString(36).slice(2,9);
 const store={get(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
-const TOOLS=[['select','➤','V'],['direct','⌖','A'],['pen','✒','P'],['pencil','✎','N'],['rect','▭','R'],['ellipse','◯','E'],['line','╱','L'],['polygon','⬠','G'],['star','☆','S'],['text','T','T'],['eq','ƒ','F'],['hand','✋','H']];
-const TN={select:'არჩევა',direct:'კვანძების რედაქტირება',pen:'კალამი (ბეზიე)',pencil:'ფანქარი',rect:'მართკუთხედი',ellipse:'ელიფსი',line:'ხაზი',polygon:'მრავალკუთხედი',star:'ვარსკვლავი',text:'ტექსტი',eq:'ფორმულა → ფიგურა',hand:'ხელი'};
+const TOOLS=[['select','➤','V'],['direct','⌖','A'],['lasso','⌇','Q'],['pen','✒','P'],['addpt','✚','+'],['delpt','⊖','−'],['scissors','✂','C'],['eraser','⌫','X'],['pencil','✎','N'],['rect','▭','R'],['ellipse','◯','E'],['line','╱','L'],['polygon','⬠','G'],['star','☆','S'],['text','T','T'],['eq','ƒ','F'],['hand','✋','H']];
+const TN={lasso:'ნაწილობრივი არჩევა (ლასო)',addpt:'კვანძის დამატება',delpt:'კვანძის წაშლა',scissors:'მაკრატელი',eraser:'საშლელი',select:'არჩევა',direct:'ნაწილობრივი არჩევა / კვანძები',pen:'კალამი (ბეზიე)',pencil:'ფანქარი',rect:'მართკუთხედი',ellipse:'ელიფსი',line:'ხაზი',polygon:'მრავალკუთხედი',star:'ვარსკვლავი',text:'ტექსტი',eq:'ფორმულა → ფიგურა',hand:'ხელი'};
+const ANCHOR_TOOLS=new Set(['direct','pen','lasso','addpt','delpt','scissors']),CONVERTIBLE=new Set(['rect','ellipse','polygon','star','line']);let ASEL=new Set(),HOV=null,ER=20;
 let DOC={w:1200,h:800,bg:'#ffffff'},O=[],SEL=[],tool='select',Z=1,PX=0,PY=0,hist=[],fut=[],act=null,penPath=null,dirSel=null,spaceDown=false;
 const style0={fill:'#ecd59a',stroke:'#2a1f3d',sw:2,op:1,ft:'solid',fill2:'#a585ef',ang:90};let lastStyle={...style0};
 
@@ -85,9 +87,13 @@ function eqPts(o){const c=comp(o.tex||'',o.mode==='f'?['x']:o.mode==='p'?['theta
   if(!c.ok||(c2&&!c2.ok))return out;
   for(let i=0;i<=n;i++){const t=o.a+(o.b-o.a)*i/n;if(o.mode==='f')push(t,c.f({...prm,x:t}));else if(o.mode==='p'){const r=c.f({...prm,theta:t,x:t});push(r*Math.cos(t),r*Math.sin(t));}else push(c.f({...prm,t}),c2.f({...prm,t}));}
   if(seg.length>1)out.push(seg);return out;}
+/* a path holds a main contour (pts, closed) and optional extra contours (subs) — holes and pieces from Pathfinder */
+const CONT=o=>[{pts:o.pts,closed:!!o.closed,ci:0},...(o.subs||[]).map((c,i)=>({pts:c.pts,closed:!!c.closed,ci:i+1}))];
+const contAt=(o,ci)=>ci?o.subs[ci-1]:o;
+function contD(A,closed){if(!A||!A.length)return '';let d=`M${A[0].x},${A[0].y}`;for(let i=1;i<A.length;i++)d+=`C${A[i-1].ox},${A[i-1].oy} ${A[i].ix},${A[i].iy} ${A[i].x},${A[i].y}`;
+  if(closed&&A.length>1){const a=A[A.length-1],b=A[0];d+=`C${a.ox},${a.oy} ${b.ix},${b.iy} ${b.x},${b.y}Z`;}return d;}
 function pathD(o){
-  if(o.type==='path'){const A=o.pts;if(!A.length)return '';let d=`M${A[0].x},${A[0].y}`;for(let i=1;i<A.length;i++)d+=`C${A[i-1].ox},${A[i-1].oy} ${A[i].ix},${A[i].iy} ${A[i].x},${A[i].y}`;
-    if(o.closed&&A.length>1){const a=A[A.length-1],b=A[0];d+=`C${a.ox},${a.oy} ${b.ix},${b.iy} ${b.x},${b.y}Z`;}return d;}
+  if(o.type==='path')return CONT(o).map(c=>contD(c.pts,c.closed)).join('');
   if(o.type==='polygon'||o.type==='star'){const n=o.type==='star'?o.k*2:o.k,P=[];for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n,r=o.type==='star'&&i%2?o.inner:1;P.push(`${o.cx+Math.cos(a)*o.rx*r},${o.cy+Math.sin(a)*o.ry*r}`);}return 'M'+P.join('L')+'Z';}
   if(o.type==='eq'){const S=eqPts(o);o._segs=S;let d='';S.forEach(s=>{d+='M'+s.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join('L');});
     if(o.fillMode==='under'&&o.mode==='f'&&S.length){d='';S.forEach(s=>{d+=`M${s[0][0]},${o.oy}L`+s.map(p=>p[0].toFixed(2)+','+p[1].toFixed(2)).join('L')+`L${s[s.length-1][0]},${o.oy}Z`;});}
@@ -99,7 +105,7 @@ function bbox(o){
   if(o.type==='line')return {x:Math.min(o.x1,o.x2),y:Math.min(o.y1,o.y2),w:Math.abs(o.x2-o.x1)||0.01,h:Math.abs(o.y2-o.y1)||0.01};
   if(o.type==='polygon'||o.type==='star')return {x:o.cx-o.rx,y:o.cy-o.ry,w:2*o.rx||0.01,h:2*o.ry||0.01};
   if(o.type==='text'){const b=o._bb||{x:o.x,y:o.y-o.size,width:o.size*4,height:o.size};return {x:b.x,y:b.y,w:b.width,h:b.height};}
-  let xs=[],ys=[];if(o.type==='path')o.pts.forEach(p=>{xs.push(p.x,p.ix,p.ox);ys.push(p.y,p.iy,p.oy);});
+  let xs=[],ys=[];if(o.type==='path')CONT(o).forEach(c=>c.pts.forEach(p=>{xs.push(p.x,p.ix,p.ox);ys.push(p.y,p.iy,p.oy);}));if(o.type==='path'&&!xs.length){xs=[0];ys=[0];}
   if(o.type==='eq'){(o._segs||eqPts(o)).forEach(s=>s.forEach(p=>{xs.push(p[0]);ys.push(p[1]);}));if(o.fillMode==='under'){ys.push(o.oy);}if(!xs.length){xs=[o.ox-10,o.ox+10];ys=[o.oy-10,o.oy+10];}}
   const x=Math.min(...xs),y=Math.min(...ys);return {x,y,w:(Math.max(...xs)-x)||0.01,h:(Math.max(...ys)-y)||0.01};}
 const center=o=>{const b=bbox(o);return {x:b.x+b.w/2,y:b.y+b.h/2};};
@@ -109,7 +115,7 @@ function mapObj(o,B,N){const fx=x=>N.x+(x-B.x)*N.w/B.w,fy=y=>N.y+(y-B.y)*N.h/B.h
   if(o.type==='rect'||o.type==='image'){const x1=fx(o.x),y1=fy(o.y),x2=fx(o.x+o.w),y2=fy(o.y+o.h);o.x=Math.min(x1,x2);o.y=Math.min(y1,y2);o.w=Math.abs(x2-x1);o.h=Math.abs(y2-y1);}
   else if(o.type==='ellipse'||o.type==='polygon'||o.type==='star'){o.cx=fx(o.cx);o.cy=fy(o.cy);o.rx=Math.abs(o.rx*sx);o.ry=Math.abs(o.ry*sy);}
   else if(o.type==='line'){o.x1=fx(o.x1);o.y1=fy(o.y1);o.x2=fx(o.x2);o.y2=fy(o.y2);}
-  else if(o.type==='path')o.pts.forEach(p=>{p.x=fx(p.x);p.y=fy(p.y);p.ix=fx(p.ix);p.iy=fy(p.iy);p.ox=fx(p.ox);p.oy=fy(p.oy);});
+  else if(o.type==='path')CONT(o).forEach(c=>c.pts.forEach(p=>{p.x=fx(p.x);p.y=fy(p.y);p.ix=fx(p.ix);p.iy=fy(p.iy);p.ox=fx(p.ox);p.oy=fy(p.oy);}));
   else if(o.type==='text'){o.x=fx(o.x);o.y=fy(o.y);o.size=Math.max(4,o.size*Math.abs(sy));delete o._bb;}
   else if(o.type==='eq'){o.ox=fx(o.ox);o.oy=fy(o.oy);o.ux*=sx;o.uy*=sy;}}
 const moveObj=(o,dx,dy)=>{const B=bbox(o);mapObj(o,B,{x:B.x+dx,y:B.y+dy,w:B.w,h:B.h});};
@@ -139,9 +145,12 @@ function overlay(){const k=1/Z;let s='';
     if(SEL.length===1&&tool==='select'&&!o.locked){HANDLES.forEach(([hx,hy,cur])=>{s+=`<rect data-h="${hx},${hy}" x="${b.x+b.w*hx-4*k}" y="${b.y+b.h*hy-4*k}" width="${8*k}" height="${8*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:${cur}"/>`;});
       s+=`<line x1="${c.x}" y1="${b.y}" x2="${c.x}" y2="${b.y-24*k}" stroke="#4da3ff" stroke-width="${k}"/><circle data-h="rot" cx="${c.x}" cy="${b.y-24*k}" r="${5*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:grab"/>`;}
     s+='</g>';
-    if(o.type==='path'&&(tool==='direct'||tool==='pen')){o.pts.forEach((p,i)=>{const on=dirSel&&dirSel.id===o.id&&dirSel.i===i;
-      if(on||tool==='direct'){[['ix','iy'],['ox','oy']].forEach(([hx,hy],j)=>{if(Math.hypot(p[hx]-p.x,p[hy]-p.y)>0.5)s+=`<line x1="${p.x}" y1="${p.y}" x2="${p[hx]}" y2="${p[hy]}" stroke="#4da3ff" stroke-width="${k}"/><circle data-ph="${o.id},${i},${j}" cx="${p[hx]}" cy="${p[hy]}" r="${3.5*k}" fill="#4da3ff"/>`;});}
-      s+=`<rect data-pa="${o.id},${i}" x="${p.x-4*k}" y="${p.y-4*k}" width="${8*k}" height="${8*k}" fill="${on?'#4da3ff':'#fff'}" stroke="#4da3ff" stroke-width="${k}"/>`;});}});
+    if(o.type==='path'&&ANCHOR_TOOLS.has(tool)&&!o.rot){CONT(o).forEach(c=>c.pts.forEach((p,i)=>{const key=o.id+','+c.ci+','+i,on=ASEL.has(key);
+      if(on||tool==='direct'&&ASEL.size<2){[['ix','iy'],['ox','oy']].forEach(([hx,hy],j)=>{if(Math.hypot(p[hx]-p.x,p[hy]-p.y)>0.5)s+=`<line x1="${p.x}" y1="${p.y}" x2="${p[hx]}" y2="${p[hy]}" stroke="#4da3ff" stroke-width="${k}"/><circle data-ph="${key},${j}" cx="${p[hx]}" cy="${p[hy]}" r="${3.5*k}" fill="#4da3ff"/>`;});}
+      s+=`<rect data-pa="${key}" x="${p.x-4*k}" y="${p.y-4*k}" width="${8*k}" height="${8*k}" fill="${on?'#4da3ff':'#fff'}" stroke="#4da3ff" stroke-width="${k}" style="cursor:${tool==='delpt'?'not-allowed':tool==='scissors'?'crosshair':'move'}"/>`;}));}});
+  if(act&&act.lasso){s+=`<polyline points="${act.lasso.map(q=>q.x+','+q.y).join(' ')}" fill="rgba(77,163,255,.08)" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}"/>`;}
+  if(act&&act.erase){s+=`<polyline points="${act.erase.map(q=>q.x+','+q.y).join(' ')}" fill="none" stroke="rgba(232,112,90,.35)" stroke-width="${2*ER}" stroke-linecap="round" stroke-linejoin="round"/>`;}
+  if(tool==='eraser'&&HOV&&!act){s+=`<circle cx="${HOV.x}" cy="${HOV.y}" r="${ER}" fill="rgba(232,112,90,.12)" stroke="#e8705a" stroke-width="${k}"/>`;}
   if(act&&act.marq){const m=act.marq;s+=`<rect x="${Math.min(m.x0,m.x1)}" y="${Math.min(m.y0,m.y1)}" width="${Math.abs(m.x1-m.x0)}" height="${Math.abs(m.y1-m.y0)}" fill="rgba(77,163,255,.08)" stroke="#4da3ff" stroke-width="${k}"/>`;}
   if(penPath&&act&&act.penHover){const a=penPath.pts[penPath.pts.length-1];s+=`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${act.penHover.x},${act.penHover.y} ${act.penHover.x},${act.penHover.y}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}"/>`;}
   ov.innerHTML=s;}
@@ -150,7 +159,7 @@ const HANDLES=[[0,0,'nwse-resize'],[0.5,0,'ns-resize'],[1,0,'nesw-resize'],[1,0.
 /* ───────── history ───────── */
 const snapState=()=>JSON.stringify({DOC,O:O.map(o=>{const c={...o};delete c._bb;delete c._segs;delete c._err;delete c._params;return c;})});
 function commit(){hist.push(snapState());if(hist.length>120)hist.shift();fut=[];store.set('magnus_vector_doc',hist[hist.length-1]);}
-function restore(s){const d=JSON.parse(s);DOC=d.DOC;O=d.O;SEL=SEL.filter(id=>O.some(o=>o.id===id));render();props();}
+function restore(s){const d=JSON.parse(s);DOC=d.DOC;O=d.O;ASEL=new Set();SEL=SEL.filter(id=>O.some(o=>o.id===id));render();props();}
 $('bUndo').onclick=()=>{if(hist.length>1){fut.push(hist.pop());restore(hist[hist.length-1]);store.set('magnus_vector_doc',hist[hist.length-1]);}};
 $('bRedo').onclick=()=>{if(fut.length){const s=fut.pop();hist.push(s);restore(s);store.set('magnus_vector_doc',s);}};
 
@@ -158,8 +167,8 @@ $('bRedo').onclick=()=>{if(fut.length){const s=fut.pop();hist.push(s);restore(s)
 function make(type,extra){const o=Object.assign({id:uid(),type,name:'',rot:0,...lastStyle},extra);if(extra.fill==null&&(type==='line'||(type==='path'&&!extra.closed)))o.fill='none';if(type==='text'&&extra.stroke==null){o.stroke='none';}
   if(type==='eq'&&extra.fill==null){o.fill='none';o.stroke=lastStyle.stroke==='none'?'#2a1f3d':lastStyle.stroke;o.sw=Math.max(2,lastStyle.sw);}
   o.name=o.name||({path:'კონტური',rect:'მართკუთხედი',ellipse:'ელიფსი',line:'ხაზი',polygon:'მრავალკუთხედი',star:'ვარსკვლავი',text:'ტექსტი',eq:'ფორმულა',image:'სურათი'}[type]||type)+' '+(O.filter(x=>x.type===type).length+1);O.push(o);return o;}
-function setTool(t){tool=t;penFinish();document.querySelectorAll('#tools button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));svg.style.cursor=t==='hand'?'grab':t==='select'||t==='direct'?'default':'crosshair';
-  $('status').textContent=TN[t]+(t==='pen'?' — დააწკაპუნე: კუთხე, გადაათრიე: გლუვი კვანძი. პირველ კვანძზე დაწკაპუნება — დახურვა, Enter — დასრულება':t==='eq'?' — დააწკაპუნე დაფაზე, სადაც სათავე იქნება':'');overlay();props();}
+function setTool(t){tool=t;penFinish();document.querySelectorAll('#tools button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));svg.style.cursor=t==='hand'?'grab':t==='select'||t==='direct'||t==='lasso'?'default':t==='eraser'?'none':'crosshair';HOV=null;
+  $('status').textContent=TN[t]+(t==='pen'?' — დააწკაპუნე: კუთხე, გადაათრიე: გლუვი კვანძი. პირველ კვანძზე დაწკაპუნება — დახურვა, Enter — დასრულება':t==='eq'?' — დააწკაპუნე დაფაზე, სადაც სათავე იქნება':t==='lasso'?' — შემოხაზე კვანძები (Shift — დამატება), მერე გადაათრიე ან Delete':t==='direct'?' — დააწკაპუნე / შემოხაზე კვანძები, Shift — დამატება':t==='addpt'?' — დააწკაპუნე კონტურზე':t==='delpt'?' — დააწკაპუნე კვანძზე':t==='scissors'?' — დააწკაპუნე კონტურზე ან კვანძზე, სადაც უნდა გაიჭრას':t==='eraser'?' — გადაუსვი ფიგურებს; ზომა — თვისებებში':'');overlay();props();}
 $('tools').innerHTML=TOOLS.map(([t,i,k])=>`<button data-t="${t}" title="${TN[t]} (${k})">${i}<small>${k}</small></button>`).join('');
 $('tools').querySelectorAll('button').forEach(b=>b.onclick=()=>setTool(b.dataset.t));
 
@@ -176,12 +185,21 @@ svg.addEventListener('wheel',e=>{e.preventDefault();const r=svg.getBoundingClien
 svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);const p=pt(e),sp=snap(p),tg=e.target;
   if(tool==='hand'||spaceDown||e.button===1){act={pan:true,sx:e.clientX,sy:e.clientY,PX,PY};svg.style.cursor='grabbing';return;}
   if(tg.dataset&&tg.dataset.h){const o=O.find(x=>x.id===SEL[0]);const B=bbox(o);act={o,B,h:tg.dataset.h,p0:p,snap0:snapState(),c:{x:B.x+B.w/2,y:B.y+B.h/2},rot0:o.rot||0};return;}
-  if(tg.dataset&&tg.dataset.pa){const [id,i]=tg.dataset.pa.split(','),o=O.find(x=>x.id===id);
-    if(penPath&&o===penPath&&+i===0&&penPath.pts.length>1){penPath.closed=true;if(penPath.fill==='none')penPath.fill=lastStyle.fill;penFinish();return;}
-    dirSel={id,i:+i};act={pa:true,o,i:+i,p0:p};overlay();return;}
-  if(tg.dataset&&tg.dataset.ph){const [id,i,j]=tg.dataset.ph.split(','),o=O.find(x=>x.id===id);act={ph:true,o,i:+i,j:+j};return;}
+  if(tg.dataset&&tg.dataset.pa){const key=tg.dataset.pa,[id,ci,i]=key.split(','),o=O.find(x=>x.id===id);
+    if(penPath&&o===penPath&&+ci===0&&+i===0&&penPath.pts.length>1){penPath.closed=true;if(penPath.fill==='none')penPath.fill=lastStyle.fill;penFinish();return;}
+    if(tool==='delpt'){delAnchors([key]);return;}if(tool==='scissors'){cutAt(o,+ci,+i);return;}
+    if(e.shiftKey){ASEL.has(key)?ASEL.delete(key):ASEL.add(key);}else if(!ASEL.has(key))ASEL=new Set([key]);
+    act={pa:true,last:sp,moved:false};overlay();props();return;}
+  if(tg.dataset&&tg.dataset.ph){const [id,ci,i,j]=tg.dataset.ph.split(','),o=O.find(x=>x.id===id);act={ph:true,o,ci:+ci,i:+i,j:+j};return;}
   const hitId=tg.closest&&tg.closest('[data-id]')?tg.closest('[data-id]').dataset.id:null,hit=hitId?O.find(o=>o.id===hitId):null;
+  if(tool==='lasso'){if(!e.shiftKey)ASEL=new Set();act={lasso:[p],add:e.shiftKey};return;}
+  if(tool==='eraser'){act={erase:[p]};overlay();return;}
+  if(tool==='addpt'||tool==='scissors'){let tgt=hit&&!hit.locked?hit:null;if(tgt&&CONVERTIBLE.has(tgt.type))toPath(tgt);
+    const r=nearestSeg(p,tgt);if(r){if(tool==='addpt'){const k2=insertAnchor(r);ASEL=new Set([k2]);}else cutAtSeg(r);SEL=[r.o.id];render();commit();props();return;}
+    if(tgt){SEL=[tgt.id];render();props();}return;}
+  if(tool==='delpt'){const a=nearestAnchor(p);if(a){delAnchors([a]);return;}if(hit&&!hit.locked){if(CONVERTIBLE.has(hit.type))toPath(hit);SEL=[hit.id];render();props();}return;}
   if(tool==='select'||tool==='direct'){
+    if(tool==='select')ASEL=new Set();
     if(hit&&!hit.locked){if(e.shiftKey){SEL=SEL.includes(hit.id)?SEL.filter(x=>x!==hit.id):[...SEL,hit.id];}else if(!SEL.includes(hit.id))SEL=[hit.id];
       if(tool==='direct'&&hit.type!=='path'&&['rect','ellipse','polygon','star','line'].includes(hit.type)){/* convert to editable path */toPath(hit);}
       act={move:true,p0:sp,last:sp,moved:false};render();props();}
@@ -196,7 +214,7 @@ svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);const 
   /* shapes by drag */const T=tool,base={rect:{x:sp.x,y:sp.y,w:0,h:0,r:0},ellipse:{cx:sp.x,cy:sp.y,rx:0,ry:0},line:{x1:sp.x,y1:sp.y,x2:sp.x,y2:sp.y},polygon:{cx:sp.x,cy:sp.y,rx:0,ry:0,k:6},star:{cx:sp.x,cy:sp.y,rx:0,ry:0,k:5,inner:0.45}}[T];
   if(base){const o=make(T,base);SEL=[o.id];act={shape:true,o,p0:sp};render();}});
 svg.addEventListener('pointermove',e=>{const p=pt(e),sp=snap(p);$('status').textContent=`${TN[tool]} · x ${Math.round(p.x)}, y ${Math.round(p.y)}`;
-  if(!act){if(penPath){act=null;penHoverOnly=sp;overlayPen(sp);}return;}
+  if(!act){if(penPath){act=null;penHoverOnly=sp;overlayPen(sp);}else if(tool==='eraser'){HOV=p;overlay();}return;}
   if(act.pan){PX=act.PX+e.clientX-act.sx;PY=act.PY+e.clientY-act.sy;render();return;}
   if(act.h){const {o,B,c}=act;if(act.h==='rot'){let a=Math.atan2(p.y-c.y,p.x-c.x)*180/Math.PI+90;if(e.shiftKey)a=Math.round(a/15)*15;o.rot=Math.round(a*10)/10;render();props(true);return;}
     const [hx,hy]=act.h.split(',').map(Number),lp=o.rot?rot(p,c,-o.rot):p;let x0=B.x,y0=B.y,x1=B.x+B.w,y1=B.y+B.h;
@@ -205,8 +223,11 @@ svg.addEventListener('pointermove',e=>{const p=pt(e),sp=snap(p);$('status').text
     const N={x:Math.min(x0,x1),y:Math.min(y0,y1),w:Math.max(1,Math.abs(x1-x0)),h:Math.max(1,Math.abs(y1-y0))},cur=bbox(o);mapObj(o,cur,N);render();props(true);return;}
   if(act.move){const dx=sp.x-act.last.x,dy=sp.y-act.last.y;if(dx||dy){act.moved=true;SEL.forEach(id=>{const o=O.find(x=>x.id===id);if(o&&!o.locked)moveObj(o,dx,dy);});act.last=sp;render();props(true);}return;}
   if(act.marq){act.marq.x1=p.x;act.marq.y1=p.y;overlay();return;}
-  if(act.pa){const P=act.o.pts[act.i],dx=sp.x-P.x,dy=sp.y-P.y;P.x+=dx;P.y+=dy;P.ix+=dx;P.iy+=dy;P.ox+=dx;P.oy+=dy;render();return;}
-  if(act.ph){const P=act.o.pts[act.i];if(act.j===0){P.ix=sp.x;P.iy=sp.y;if(!e.altKey){P.ox=2*P.x-sp.x;P.oy=2*P.y-sp.y;}}else{P.ox=sp.x;P.oy=sp.y;if(!e.altKey){P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;}}render();return;}
+  if(act.pa){const dx=sp.x-act.last.x,dy=sp.y-act.last.y;act.last=sp;if(dx||dy){act.moved=true;ASEL.forEach(key=>{const [id,ci,i]=key.split(','),o=O.find(x=>x.id===id);if(!o||o.locked)return;const P=(contAt(o,+ci)||{pts:[]}).pts[+i];
+      if(P){P.x+=dx;P.y+=dy;P.ix+=dx;P.iy+=dy;P.ox+=dx;P.oy+=dy;}});render();}return;}
+  if(act.lasso){act.lasso.push(p);overlay();return;}
+  if(act.erase){const l=act.erase[act.erase.length-1];if(Math.hypot(p.x-l.x,p.y-l.y)>ER/4)act.erase.push(p);overlay();return;}
+  if(act.ph){const P=contAt(act.o,act.ci).pts[act.i];if(act.j===0){P.ix=sp.x;P.iy=sp.y;if(!e.altKey){P.ox=2*P.x-sp.x;P.oy=2*P.y-sp.y;}}else{P.ox=sp.x;P.oy=sp.y;if(!e.altKey){P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;}}render();return;}
   if(act.pen){const P=penPath.pts[penPath.pts.length-1];if(Math.hypot(sp.x-act.p0.x,sp.y-act.p0.y)>2){P.ox=sp.x;P.oy=sp.y;P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;render();}return;}
   if(act.pencil){act.raw.push(p);const A=act.raw;act.o.pts=A.map(q=>({x:q.x,y:q.y,ix:q.x,iy:q.y,ox:q.x,oy:q.y}));render();return;}
   if(act.shape){const o=act.o,a=act.p0;let w=sp.x-a.x,h=sp.y-a.y;if(e.shiftKey){const m=Math.max(Math.abs(w),Math.abs(h));w=Math.sign(w||1)*m;h=Math.sign(h||1)*m;}
@@ -217,6 +238,12 @@ let penHoverOnly=null;function overlayPen(sp){act=null;const k=1/Z;overlay();if(
   ov.insertAdjacentHTML('beforeend',`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${sp.x},${sp.y} ${sp.x},${sp.y}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}" pointer-events="none"/>`);}
 svg.addEventListener('pointerup',e=>{if(!act)return;const a=act;act=null;svg.style.cursor=tool==='hand'?'grab':'';
   if(a.pan)return;
+  if(a.lasso){if(a.lasso.length>2){const inside=q=>{let c=false;const P=a.lasso;for(let i=0,j=P.length-1;i<P.length;j=i++)if((P[i].y>q.y)!==(P[j].y>q.y)&&q.x<(P[j].x-P[i].x)*(q.y-P[i].y)/(P[j].y-P[i].y)+P[i].x)c=!c;return c;};
+      pickAnchors(inside,a.add);}render();props();return;}
+  if(a.erase){erase(a.erase);return;}
+  if(a.pa){if(a.moved)commit();props();return;}
+  if(a.marq&&tool==='direct'){const m=a.marq,R={x:Math.min(m.x0,m.x1),y:Math.min(m.y0,m.y1),w:Math.abs(m.x1-m.x0),h:Math.abs(m.y1-m.y0)};
+    if(R.w>2||R.h>2)pickAnchors(q=>q.x>=R.x&&q.x<=R.x+R.w&&q.y>=R.y&&q.y<=R.y+R.h,e.shiftKey);render();props();return;}
   if(a.marq){const m=a.marq,R={x:Math.min(m.x0,m.x1),y:Math.min(m.y0,m.y1),w:Math.abs(m.x1-m.x0),h:Math.abs(m.y1-m.y0)};if(R.w>2||R.h>2){const ins=O.filter(o=>!o.hidden&&!o.locked).filter(o=>{const b=bbox(o);return b.x>=R.x&&b.y>=R.y&&b.x+b.w<=R.x+R.w&&b.y+b.h<=R.y+R.h;}).map(o=>o.id);
     SEL=e.shiftKey?[...new Set([...SEL,...ins])]:ins;}render();props();return;}
   if(a.pencil){const P=rdp(a.raw,1.6/Z);if(P.length<2){O=O.filter(o=>o!==a.o);SEL=[];}else{const closed=Math.hypot(P[0].x-P[P.length-1].x,P[0].y-P[P.length-1].y)<12/Z&&P.length>3;if(closed)P.pop();a.o.pts=smooth(P,closed);a.o.closed=closed;if(closed)a.o.fill=lastStyle.fill;}
@@ -226,12 +253,111 @@ svg.addEventListener('pointerup',e=>{if(!act)return;const a=act;act=null;svg.sty
   if(a.move&&!a.moved)return;commit();props();});
 svg.addEventListener('dblclick',e=>{const tg=e.target.closest&&e.target.closest('[data-id]');if(penPath){penFinish();return;}if(!tg)return;const o=O.find(x=>x.id===tg.dataset.id);
   if(o.type==='text'){SEL=[o.id];props();setTimeout(()=>{$('pText')&&$('pText').focus();},20);}else if(o.type==='path'){SEL=[o.id];setTool('direct');}else if(o.type==='eq'){SEL=[o.id];props();}});
-function toPath(o){const d=pathD(o.type==='rect'?{...o,type:'polygon'}:o);let pts=[];
+function toPath(o){if(o.type==='rect'&&o.r>0&&window.paper){const res=fromPaper(toPaper(o),o);if(res){const keep={...res,id:o.id,name:o.name,hidden:o.hidden,locked:o.locked};Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,keep);commit();return;}}
+  let pts=[];
   if(o.type==='rect')pts=[[o.x,o.y],[o.x+o.w,o.y],[o.x+o.w,o.y+o.h],[o.x,o.y+o.h]].map(([x,y])=>({x,y,ix:x,iy:y,ox:x,oy:y}));
   else if(o.type==='ellipse'){const k=0.5523;pts=[[0,-1],[1,0],[0,1],[-1,0]].map(([u,v])=>{const x=o.cx+u*o.rx,y=o.cy+v*o.ry,tx=-v*o.rx*k,ty=u*o.ry*k;return {x,y,ix:x-tx,iy:y-ty,ox:x+tx,oy:y+ty};});}
   else if(o.type==='line')pts=[[o.x1,o.y1],[o.x2,o.y2]].map(([x,y])=>({x,y,ix:x,iy:y,ox:x,oy:y}));
   else{const n=o.type==='star'?o.k*2:o.k;for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n,r=o.type==='star'&&i%2?o.inner:1,x=o.cx+Math.cos(a)*o.rx*r,y=o.cy+Math.sin(a)*o.ry*r;pts.push({x,y,ix:x,iy:y,ox:x,oy:y});}}
   const keep={id:o.id,name:o.name,fill:o.fill,stroke:o.stroke,sw:o.sw,op:o.op,ft:o.ft,fill2:o.fill2,ang:o.ang,rot:o.rot,hidden:o.hidden,locked:o.locked};Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,keep,{type:'path',pts,closed:pts.length>2});commit();}
+
+/* ───────── anchors: partial selection, add / delete / cut ───────── */
+function pickAnchors(test,add){if(!add)ASEL=new Set();const own=new Set(add?SEL:[]);
+  O.filter(o=>!o.hidden&&!o.locked&&(o.type==='path'||CONVERTIBLE.has(o.type))).forEach(o=>{const b=bbox(o);if(o.rot)return;
+    if(CONVERTIBLE.has(o.type)){const tmp=JSON.parse(JSON.stringify(o));toPathGeom(tmp);if(!tmp.pts.some(test))return;toPath(o);}
+    CONT(o).forEach(c=>c.pts.forEach((q,i)=>{if(test(q)){ASEL.add(o.id+','+c.ci+','+i);own.add(o.id);}}));});
+  SEL=[...own];}
+function toPathGeom(o){let pts=[];
+  if(o.type==='rect')pts=[[o.x,o.y],[o.x+o.w,o.y],[o.x+o.w,o.y+o.h],[o.x,o.y+o.h]].map(([x,y])=>({x,y,ix:x,iy:y,ox:x,oy:y}));
+  else if(o.type==='ellipse'){const k=0.5523;pts=[[0,-1],[1,0],[0,1],[-1,0]].map(([u,v])=>{const x=o.cx+u*o.rx,y=o.cy+v*o.ry,tx=-v*o.rx*k,ty=u*o.ry*k;return {x,y,ix:x-tx,iy:y-ty,ox:x+tx,oy:y+ty};});}
+  else if(o.type==='line')pts=[[o.x1,o.y1],[o.x2,o.y2]].map(([x,y])=>({x,y,ix:x,iy:y,ox:x,oy:y}));
+  else{const n=o.type==='star'?o.k*2:o.k;for(let i=0;i<n;i++){const a=-Math.PI/2+i*2*Math.PI/n,r=o.type==='star'&&i%2?o.inner:1,x=o.cx+Math.cos(a)*o.rx*r,y=o.cy+Math.sin(a)*o.ry*r;pts.push({x,y,ix:x,iy:y,ox:x,oy:y});}}
+  o.pts=pts;o.closed=pts.length>2;o.type='path';}
+const bez=(A,i,j,t)=>{const p0=A[i],p3=A[j],u=1-t;return {x:u*u*u*p0.x+3*u*u*t*p0.ox+3*u*t*t*p3.ix+t*t*t*p3.x,y:u*u*u*p0.y+3*u*u*t*p0.oy+3*u*t*t*p3.iy+t*t*t*p3.y};};
+function nearestSeg(p,prefer){let best=null;const L=O.filter(o=>o.type==='path'&&!o.hidden&&!o.locked&&!o.rot&&(o===prefer||SEL.includes(o.id)));
+  L.forEach(o=>CONT(o).forEach(c=>{const A=c.pts,n=A.length,segs=c.closed?n:n-1;for(let i=0;i<segs;i++){const j=(i+1)%n;for(let s2=0;s2<=60;s2++){const t=s2/60,q=bez(A,i,j,t),d=Math.hypot(q.x-p.x,q.y-p.y);if(!best||d<best.d)best={o,ci:c.ci,i,j,t,d};}}}));
+  return best&&best.d<9/Z?best:null;}
+function nearestAnchor(p){let best=null;O.filter(o=>o.type==='path'&&!o.hidden&&!o.locked&&!o.rot).forEach(o=>CONT(o).forEach(c=>c.pts.forEach((q,i)=>{const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<8/Z&&(!best||d<best.d))best={d,key:o.id+','+c.ci+','+i};})));return best?best.key:null;}
+function insertAnchor(r){const A=contAt(r.o,r.ci).pts,p0=A[r.i],p3=A[r.j],t=r.t,L=(a,b)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+  const c1={x:p0.ox,y:p0.oy},c2={x:p3.ix,y:p3.iy},a=L(p0,c1),b=L(c1,c2),c=L(c2,p3),ab=L(a,b),bc=L(b,c),m=L(ab,bc);
+  p0.ox=a.x;p0.oy=a.y;p3.ix=c.x;p3.iy=c.y;const np={x:m.x,y:m.y,ix:ab.x,iy:ab.y,ox:bc.x,oy:bc.y};const at=r.i+1;A.splice(at,0,np);return r.o.id+','+r.ci+','+at;}
+function cutAtSeg(r){const key=insertAnchor(r),[,ci,i]=key.split(',');cutAt(r.o,+ci,+i,true);}
+function cutAt(o,ci,i,noCommit){const c=contAt(o,ci),A=c.pts,P=A[i],cp=q=>({...q});
+  if(c.closed){const B=[...A.slice(i),...A.slice(0,i),cp(P)];B[0]={...B[0],ix:B[0].x,iy:B[0].y};const l=B[B.length-1];l.ox=l.x;l.oy=l.y;A.length=0;B.forEach(q=>A.push(q));c.closed=false;}
+  else{if(i===0||i===A.length-1)return;const tail=A.slice(i).map(cp);A.length=i+1;A[i]={...A[i],ox:A[i].x,oy:A[i].y};tail[0].ix=tail[0].x;tail[0].iy=tail[0].y;
+    if(ci===0){const n=JSON.parse(JSON.stringify(o));n.id=uid();n.name=o.name+' (ნაწილი)';n.pts=tail;n.closed=false;delete n.subs;O.splice(O.indexOf(o)+1,0,n);}else o.subs.push({pts:tail,closed:false});}
+  ASEL=new Set();if(o.fill!=='none'&&!CONT(o).some(q=>q.closed))o.fill='none';if(!noCommit){render();commit();props();}}
+function delAnchors(keys){const by={};keys.forEach(k=>{const [id,ci,i]=k.split(',');(by[id+','+ci]=by[id+','+ci]||[]).push(+i);});
+  Object.entries(by).forEach(([k,ix])=>{const [id,ci]=k.split(','),o=O.find(x=>x.id===id);if(!o)return;const c=contAt(o,+ci);ix.sort((a,b)=>b-a).forEach(i=>c.pts.splice(i,1));
+    if(c.pts.length<2){if(+ci===0){if(o.subs&&o.subs.length){const f=o.subs.shift();o.pts=f.pts;o.closed=f.closed;}else O=O.filter(x=>x!==o);}else o.subs.splice(+ci-1,1);}});
+  ASEL=new Set();SEL=SEL.filter(id=>O.some(o=>o.id===id));render();commit();props();}
+
+/* ───────── Paper.js bridge: Pathfinder, eraser, blend ───────── */
+function P0(){if(!window.paper){$('status').textContent='Pathfinder-ის ბიბლიოთეკა ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი';return false;}if(!P0.ok){paper.setup(new paper.Size(1,1));P0.ok=1;}return true;}
+function toPaper(o){if(!P0())return null;let it=null;
+  if(o.type==='rect')it=new paper.Path.Rectangle(new paper.Rectangle(o.x,o.y,o.w,o.h),new paper.Size(o.r||0,o.r||0));
+  else if(o.type==='ellipse')it=new paper.Path.Ellipse(new paper.Rectangle(o.cx-o.rx,o.cy-o.ry,2*o.rx,2*o.ry));
+  else if(o.type==='line')it=new paper.Path.Line(new paper.Point(o.x1,o.y1),new paper.Point(o.x2,o.y2));
+  else if(['path','polygon','star','eq'].includes(o.type)){const d=pathD(o);if(!d)return null;it=paper.PathItem.create(d);}
+  else return null;
+  if(o.rot){const c=center(o);it.rotate(o.rot,new paper.Point(c.x,c.y));}return it;}
+function fromPaper(it,src){if(!it)return null;const paths=[];const walk=x=>{if(!x)return;if(x.className==='Path'){if(x.segments.length>=2)paths.push(x);}else if(x.children)x.children.forEach(walk);};walk(it);
+  const C=paths.map(pth=>({closed:pth.closed,pts:pth.segments.map(sg=>({x:sg.point.x,y:sg.point.y,ix:sg.point.x+sg.handleIn.x,iy:sg.point.y+sg.handleIn.y,ox:sg.point.x+sg.handleOut.x,oy:sg.point.y+sg.handleOut.y}))}));
+  if(!C.length)return null;C.sort((a,b)=>b.pts.length-a.pts.length);
+  return {id:uid(),type:'path',name:src.name,pts:C[0].pts,closed:C[0].closed,subs:C.slice(1),fill:src.fill,stroke:src.stroke,sw:src.sw,op:src.op,ft:src.ft,fill2:src.fill2,ang:src.ang,rot:0};}
+const areaOf=it=>{let a=0;const w=x=>{if(x.className==='Path')a+=Math.abs(x.area);else if(x.children)x.children.forEach(w);};w(it);return a;};
+function pathfinder(op){const L=O.filter(o=>SEL.includes(o.id)&&!o.locked&&!o.hidden);if(L.length<2){$('status').textContent='Pathfinder: მონიშნე მინიმუმ 2 ფიგურა';return;}if(!P0())return;
+  paper.project.activeLayer.removeChildren();const items=L.map(o=>({o,it:toPaper(o)})).filter(x=>x.it);if(items.length<2){$('status').textContent='ტექსტი და სურათი Pathfinder-ში არ მონაწილეობს';return;}
+  const top=items[items.length-1],back=items[0],uni=a=>a.reduce((u,x)=>u?u.unite(x.it):x.it.clone(),null);let out=[];
+  if(op==='unite')out=[[uni(items),top.o]];
+  if(op==='minusFront')out=[[back.it.subtract(uni(items.slice(1))),back.o]];
+  if(op==='minusBack')out=[[top.it.subtract(uni(items.slice(0,-1))),top.o]];
+  if(op==='intersect')out=[[items.slice(1).reduce((u,x)=>u.intersect(x.it),back.it),top.o]];
+  if(op==='exclude')out=[[items.slice(1).reduce((u,x)=>u.exclude(x.it),back.it),top.o]];
+  if(op==='divide'){let pieces=[[back.it,back.o]];items.slice(1).forEach(x=>{const nx=[];pieces.forEach(([pc,so])=>{nx.push([pc.intersect(x.it),x.o]);nx.push([pc.subtract(x.it),so]);});
+      nx.push([x.it.subtract(uni(pieces.map(q=>({it:q[0]})))),x.o]);pieces=nx;});out=pieces;}
+  const at=Math.min(...L.map(o=>O.indexOf(o)));O=O.filter(o=>!L.includes(o));
+  const made=out.filter(([it])=>it&&areaOf(it)>0.5).map(([it,so])=>{const r=fromPaper(it,so);if(r)r.name=({unite:'გაერთიანება',minusFront:'გამოკლება',minusBack:'გამოკლება',intersect:'გადაკვეთა',exclude:'გამორიცხვა',divide:'ნაწილი'})[op]+' · '+so.name;return r;}).filter(Boolean);
+  O.splice(at,0,...made);SEL=made.map(o=>o.id);ASEL=new Set();paper.project.activeLayer.removeChildren();render();commit();props();
+  $('status').textContent=made.length?`Pathfinder: ${made.length} ფიგურა`:'შედეგი ცარიელია';}
+function erase(P){if(!P0())return;paper.project.activeLayer.removeChildren();let brush;
+  if(P.length<2)brush=new paper.Path.Circle(new paper.Point(P[0].x,P[0].y),ER);
+  else{const L=[],R=[];P.forEach((q,i)=>{const a=P[Math.max(0,i-1)],b=P[Math.min(P.length-1,i+1)];let nx=-(b.y-a.y),ny=b.x-a.x;const l=Math.hypot(nx,ny)||1;nx/=l;ny/=l;L.push([q.x+nx*ER,q.y+ny*ER]);R.push([q.x-nx*ER,q.y-ny*ER]);});
+    brush=new paper.Path({segments:[...L,...R.reverse()],closed:true});const r1=brush.resolveCrossings?brush.resolveCrossings():brush;brush=r1.unite(new paper.Path.Circle(new paper.Point(P[0].x,P[0].y),ER)).unite(new paper.Path.Circle(new paper.Point(P[P.length-1].x,P[P.length-1].y),ER));}
+  const bb=brush.bounds;let n=0;
+  O.slice().forEach(o=>{if(o.hidden||o.locked||['text','image'].includes(o.type))return;const b=bbox(o);if(b.x>bb.right||b.x+b.w<bb.left||b.y>bb.bottom||b.y+b.h<bb.top)return;
+    const it=toPaper(o);if(!it)return;const open=o.fill==='none'||(o.type==='path'&&!CONT(o).some(c=>c.closed))||o.type==='line'||(o.type==='eq'&&o.fillMode==='none');
+    if(!it.intersects(brush)&&!brush.contains(it.bounds.center))return;const res=it.subtract(brush,open?{trace:false}:undefined),r=fromPaper(res,o);n++;
+    const i=O.indexOf(o);if(r&&(open||areaOf(res)>0.5)){r.id=o.id;O[i]=r;}else O.splice(i,1);});
+  paper.project.activeLayer.removeChildren();SEL=SEL.filter(id=>O.some(o=>o.id===id));ASEL=new Set();render();if(n)commit();props();}
+const hexRgb=h=>{h=(h||'#000').replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)||0);};
+const rgbHex=c=>'#'+c.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+const mixC=(a,b,t)=>a==='none'||b==='none'?(t<0.5?a:b):rgbHex(hexRgb(a).map((v,i)=>v+(hexRgb(b)[i]-v)*t));
+function blend(mode,val){const L=O.filter(o=>SEL.includes(o.id));if(L.length!==2){$('status').textContent='ბლენდი: მონიშნე ზუსტად 2 ფიგურა';return;}if(!P0())return;
+  paper.project.activeLayer.removeChildren();const [A,B]=L.sort((a,b)=>O.indexOf(a)-O.indexOf(b)),ia=toPaper(A),ib=toPaper(B);if(!ia||!ib){$('status').textContent='ტექსტს და სურათს ბლენდი არ ეხება';return;}
+  const main=it=>{const ps=[];const w=x=>{if(x.className==='Path')ps.push(x);else if(x.children)x.children.forEach(w);};w(it);return ps.reduce((m,q)=>q.length>m.length?q:m);};
+  const K=120,samp=pth=>{const Lh=pth.length,res=[];for(let i=0;i<K;i++){const q=pth.getPointAt(Math.min(Lh-1e-6,pth.closed?Lh*i/K:Lh*i/(K-1)));res.push({x:q.x,y:q.y});}return res;};
+  const ma=main(ia),mb=main(ib),pa=samp(ma);let pb=samp(mb);const closed=ma.closed&&mb.closed;
+  const cen=a=>({x:a.reduce((s2,q)=>s2+q.x,0)/a.length,y:a.reduce((s2,q)=>s2+q.y,0)/a.length}),ca=cen(pa),cb=cen(pb);
+  if(closed){let best=null;[false,true].forEach(rv=>{const arr=rv?pb.slice().reverse():pb;for(let sh=0;sh<K;sh++){let d=0;for(let i=0;i<K;i+=3){const q=arr[(i+sh)%K];d+=(q.x-cb.x-pa[i].x+ca.x)**2+(q.y-cb.y-pa[i].y+ca.y)**2;}if(!best||d<best.d)best={d,sh,rv};}});
+    const arr=best.rv?pb.slice().reverse():pb;pb=arr.map((_,i)=>arr[(i+best.sh)%K]);}
+  else if(Math.hypot(pa[0].x-pb[0].x,pa[0].y-pb[0].y)>Math.hypot(pa[0].x-pb[K-1].x,pa[0].y-pb[K-1].y))pb=pb.slice().reverse();
+  let N;if(mode==='steps')N=Math.max(1,Math.min(500,Math.round(val)));
+  else if(mode==='dist')N=Math.max(1,Math.min(500,Math.floor(Math.hypot(cb.x-ca.x,cb.y-ca.y)/Math.max(1,val))-1));
+  else{const c1=A.fill!=='none'?A.fill:A.stroke,c2=B.fill!=='none'?B.fill:B.stroke,dd=hexRgb(c1).reduce((m,v,i)=>Math.max(m,Math.abs(v-hexRgb(c2)[i])),0);N=dd?Math.max(2,Math.min(256,Math.round(dd/4))):Math.max(2,Math.round(Math.hypot(cb.x-ca.x,cb.y-ca.y)/8));}
+  const mk=[];for(let k=1;k<=N;k++){const t=k/(N+1),pts=pa.map((q,i)=>({x:q.x+(pb[i].x-q.x)*t,y:q.y+(pb[i].y-q.y)*t}));
+    mk.push({id:uid(),type:'path',name:`ბლენდი ${k}/${N}`,pts:smooth(closed?pts:rdp(pts,0.25),closed),closed,fill:mixC(A.fill,B.fill,t),stroke:mixC(A.stroke,B.stroke,t),sw:A.sw+(B.sw-A.sw)*t,op:A.op+(B.op-A.op)*t,ft:'solid',fill2:A.fill2,ang:A.ang,rot:0});}
+  O.splice(O.indexOf(A)+1,0,...mk);paper.project.activeLayer.removeChildren();render();commit();props();$('status').textContent=`ბლენდი: ${N} შუალედური ფიგურა`;}
+/* round corners: every sharp anchor (or only the selected ones) becomes a circular arc */
+function roundCorners(o,r){if(o.type==='rect'){o.r=Math.min(r,o.w/2,o.h/2);return;}if(CONVERTIBLE.has(o.type))toPath(o);if(o.type!=='path')return;const only=[...ASEL].some(k=>k.startsWith(o.id+','));
+  CONT(o).forEach(c=>{const A=c.pts,n=A.length,out=[];for(let i=0;i<n;i++){const P=A[i],key=o.id+','+c.ci+','+i,sharp=Math.hypot(P.ix-P.x,P.iy-P.y)<0.01&&Math.hypot(P.ox-P.x,P.oy-P.y)<0.01;
+      if(!sharp||(!c.closed&&(i===0||i===n-1))||(only&&!ASEL.has(key))){out.push(P);continue;}
+      const a=A[(i-1+n)%n],b=A[(i+1)%n],da=Math.hypot(a.ox-P.x,a.oy-P.y)>0.01&&Math.hypot(a.ox-a.x,a.oy-a.y)>0.01?{x:a.ox,y:a.oy}:a,db=Math.hypot(b.ix-b.x,b.iy-b.y)>0.01?{x:b.ix,y:b.iy}:b;
+      const la=Math.hypot(a.x-P.x,a.y-P.y),lb=Math.hypot(b.x-P.x,b.y-P.y),ua={x:(da.x-P.x)/(Math.hypot(da.x-P.x,da.y-P.y)||1),y:(da.y-P.y)/(Math.hypot(da.x-P.x,da.y-P.y)||1)},ub={x:(db.x-P.x)/(Math.hypot(db.x-P.x,db.y-P.y)||1),y:(db.y-P.y)/(Math.hypot(db.x-P.x,db.y-P.y)||1)};
+      const th=Math.acos(Math.max(-1,Math.min(1,ua.x*ub.x+ua.y*ub.y)));if(th<0.01||th>Math.PI-0.01){out.push(P);continue;}
+      const d=Math.min(r/Math.tan(th/2),la*0.5,lb*0.5),rr=d*Math.tan(th/2),h=4/3*Math.tan((Math.PI-th)/4)*rr;
+      const P1={x:P.x+ua.x*d,y:P.y+ua.y*d},P2={x:P.x+ub.x*d,y:P.y+ub.y*d};out.push({x:P1.x,y:P1.y,ix:P1.x,iy:P1.y,ox:P1.x-ua.x*h,oy:P1.y-ua.y*h},{x:P2.x,y:P2.y,ix:P2.x-ub.x*h,iy:P2.y-ub.y*h,ox:P2.x,oy:P2.y});}
+    A.length=0;out.forEach(q=>A.push(q));});ASEL=new Set();}
 
 /* ───────── keyboard ───────── */
 document.addEventListener('keydown',e=>{const tgt=e.target;if(tgt.closest&&(tgt.closest('input,textarea,select,math-field')))return;const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
@@ -239,11 +365,12 @@ document.addEventListener('keydown',e=>{const tgt=e.target;if(tgt.closest&&(tgt.
   if(mod&&k==='z'){e.preventDefault();e.shiftKey?$('bRedo').click():$('bUndo').click();return;}if(mod&&k==='y'){e.preventDefault();$('bRedo').click();return;}
   if(mod&&k==='d'){e.preventDefault();dup();return;}if(mod&&k==='a'){e.preventDefault();SEL=O.filter(o=>!o.hidden&&!o.locked).map(o=>o.id);render();props();return;}
   if(mod&&k==='s'){e.preventDefault();$('bSave').click();return;}
-  if(k==='enter'||k==='escape'){if(penPath){penFinish();return;}if(k==='escape'){SEL=[];dirSel=null;render();props();}return;}
-  if(k==='delete'||k==='backspace'){e.preventDefault();if(dirSel&&tool==='direct'){const o=O.find(x=>x.id===dirSel.id);if(o&&o.pts.length>2){o.pts.splice(dirSel.i,1);dirSel=null;render();commit();return;}}del();return;}
+  if(k==='enter'||k==='escape'){if(penPath){penFinish();return;}if(k==='escape'){SEL=[];ASEL=new Set();render();props();}return;}
+  if(k==='delete'||k==='backspace'){e.preventDefault();if(ASEL.size&&ANCHOR_TOOLS.has(tool)){delAnchors([...ASEL]);return;}del();return;}
   if(k.startsWith('arrow')){e.preventDefault();const s=e.shiftKey?10:1,dx=k==='arrowleft'?-s:k==='arrowright'?s:0,dy=k==='arrowup'?-s:k==='arrowdown'?s:0;SEL.forEach(id=>{const o=O.find(x=>x.id===id);if(o&&!o.locked)moveObj(o,dx,dy);});render();commit();props(true);return;}
   if(k==='['){order(-1);return;}if(k===']'){order(1);return;}
-  const map={v:'select',a:'direct',p:'pen',n:'pencil',r:'rect',e:'ellipse',l:'line',g:'polygon',s:'star',t:'text',f:'eq',h:'hand'};if(!mod&&map[k])setTool(map[k]);});
+  if(!mod&&k==='e'&&e.shiftKey){setTool('eraser');return;}
+  const map={v:'select',a:'direct',q:'lasso','+':'addpt','=':'addpt','-':'delpt',c:'scissors',x:'eraser',p:'pen',n:'pencil',r:'rect',e:'ellipse',l:'line',g:'polygon',s:'star',t:'text',f:'eq',h:'hand'};if(!mod&&map[k])setTool(map[k]);});
 document.addEventListener('keyup',e=>{if(e.code==='Space'){spaceDown=false;svg.style.cursor=tool==='hand'?'grab':'';}});
 function del(){if(!SEL.length)return;O=O.filter(o=>!SEL.includes(o.id));SEL=[];render();commit();props();}
 function dup(){const n=SEL.map(id=>{const o=JSON.parse(JSON.stringify(O.find(x=>x.id===id)));o.id=uid();o.name+=' ასლი';moveObj(o,20,20);O.push(o);return o.id;});if(n.length){SEL=n;render();commit();props();}}
@@ -252,7 +379,11 @@ $('lUp').onclick=()=>order(1);$('lDn').onclick=()=>order(-1);$('lDup').onclick=d
 
 /* ───────── align ───────── */
 document.querySelectorAll('#alignBar button').forEach(b=>b.onclick=()=>{const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolean);if(!L.length)return;
-  const bs=L.map(bbox),R=L.length===1?{x:0,y:0,w:DOC.w,h:DOC.h}:(()=>{const x=Math.min(...bs.map(b=>b.x)),y=Math.min(...bs.map(b=>b.y));return {x,y,w:Math.max(...bs.map(b=>b.x+b.w))-x,h:Math.max(...bs.map(b=>b.y+b.h))-y};})();
+  const bs=L.map(bbox),a0=b.dataset.al;
+  if(a0==='dh'||a0==='dv'){if(L.length<3){$('status').textContent='თანაბარი განაწილება: მონიშნე მინიმუმ 3';return;}const ax=a0==='dh'?'x':'y',sz=a0==='dh'?'w':'h',ord=L.map((o,i)=>({o,b:bs[i]})).sort((p,q)=>p.b[ax]-q.b[ax]);
+    const first=ord[0].b,last=ord[ord.length-1].b,tot=ord.reduce((s2,q)=>s2+q.b[sz],0),gap=(last[ax]+last[sz]-first[ax]-tot)/(ord.length-1);let cur=first[ax]+first[sz]+gap;
+    ord.slice(1,-1).forEach(q=>{const d=cur-q.b[ax];moveObj(q.o,ax==='x'?d:0,ax==='y'?d:0);cur+=q.b[sz]+gap;});render();commit();props(true);return;}
+  const R=L.length===1||$('alTo').value==='board'?{x:0,y:0,w:DOC.w,h:DOC.h}:(()=>{const x=Math.min(...bs.map(b=>b.x)),y=Math.min(...bs.map(b=>b.y));return {x,y,w:Math.max(...bs.map(b=>b.x+b.w))-x,h:Math.max(...bs.map(b=>b.y+b.h))-y};})();
   L.forEach((o,i)=>{const B=bs[i],a=b.dataset.al;let dx=0,dy=0;if(a==='l')dx=R.x-B.x;if(a==='c')dx=R.x+R.w/2-(B.x+B.w/2);if(a==='r')dx=R.x+R.w-(B.x+B.w);if(a==='t')dy=R.y-B.y;if(a==='m')dy=R.y+R.h/2-(B.y+B.h/2);if(a==='b')dy=R.y+R.h-(B.y+B.h);moveObj(o,dx,dy);});render();commit();props(true);});
 
 /* ───────── layers panel ───────── */
@@ -264,8 +395,12 @@ function layers(){$('layers').innerHTML=O.slice().reverse().map(o=>`<div class="
 let eqFields=null;
 function props(onlyNums){const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolean),o=L[0];
   if(onlyNums&&o&&$('pX')){const b=bbox(o);$('pX').value=Math.round(b.x);$('pY').value=Math.round(b.y);$('pW').value=Math.round(b.w);$('pH').value=Math.round(b.h);if($('pR'))$('pR').value=o.rot||0;return;}
-  if(!o){const s=lastStyle;$('props').innerHTML=`<div class="hint">ახალი ფიგურების სტილი:</div>${styleBlock(s)}<div class="hint">აირჩიე ხელსაწყო მარცხნივ და დახატე დაფაზე. ფორმულის ხელსაწყო (ƒ) — განტოლება იქცევა ფიგურად.</div>`;bindStyle([s],true);eqFields=null;return;}
-  const b=bbox(o);let h=L.length>1?`<div class="hint">არჩეულია ${L.length} ობიექტი</div>`:'';
+  const erH=tool==='eraser'?`<div class="rowc">საშლელის ზომა <input type="range" id="pEr" min="2" max="150" value="${ER}"><span id="pErV">${ER}</span></div>`:'';
+  if(!o){const s=lastStyle;$('props').innerHTML=`${erH}<div class="hint">ახალი ფიგურების სტილი:</div>${styleBlock(s)}<div class="hint">აირჩიე ხელსაწყო მარცხნივ და დახატე დაფაზე. ფორმულის ხელსაწყო (ƒ) — განტოლება იქცევა ფიგურად.</div>`;bindStyle([s],true);eqFields=null;bindEr();return;}
+  const b=bbox(o);let h=erH+(L.length>1?`<div class="hint">არჩეულია ${L.length} ობიექტი</div>`:'');
+  if(L.length>=2)h+=`<div class="sec" style="padding:8px 0;border:0"><h3>Pathfinder</h3><div class="rowc">${[['unite','⊕ გაერთიანება'],['minusFront','⊖ წინას გამოკლება'],['minusBack','⊖ უკანას გამოკლება'],['intersect','⊗ გადაკვეთა'],['exclude','⊘ გამორიცხვა'],['divide','▦ დაყოფა']].map(([k2,l])=>`<button class="mini" data-pf="${k2}">${l}</button>`).join('')}</div></div>`;
+  if(L.length===2)h+=`<div class="sec" style="padding:8px 0;border:0"><h3>ბლენდი</h3><div class="rowc"><select class="in" id="blM" style="width:auto"><option value="steps">ნაბიჯების რაოდენობა</option><option value="color">გლუვი ფერი</option><option value="dist">მანძილი (px)</option></select><input type="number" id="blV" value="8" min="1" style="width:70px"><button class="mini" id="blGo">⇢ ბლენდი</button></div><div class="hint">ფორმა, ფერი, კონტური და გამჭვირვალობა თანდათან გადადის ერთიდან მეორეში.</div></div>`;
+  if(L.some(q=>q.type==='path'||CONVERTIBLE.has(q.type)&&q.type!=='line'))h+=`<div class="rowc">კუთხეების მომრგვალება <input type="number" id="rcR" value="12" min="0" style="width:64px"><button class="mini" id="rcGo">◜ მომრგვალება</button></div>${ASEL.size?`<div class="hint">მხოლოდ მონიშნული კვანძები (${ASEL.size})</div>`:''}`;
   h+=`<div class="grid2"><label>X<input type="number" id="pX" value="${Math.round(b.x)}"></label><label>Y<input type="number" id="pY" value="${Math.round(b.y)}"></label><label>W<input type="number" id="pW" value="${Math.round(b.w)}"></label><label>H<input type="number" id="pH" value="${Math.round(b.h)}"></label></div>
     <div class="rowc">ბრუნვა° <input type="number" id="pR" value="${o.rot||0}" style="width:70px"></div>`+styleBlock(o);
   if(L.length===1){
@@ -274,7 +409,7 @@ function props(onlyNums){const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolea
     if(o.type==='star')h+=`<div class="rowc">სხივები <input type="number" id="pK" min="3" max="40" value="${o.k}" style="width:70px"> შიდა <input type="range" id="pIn" min="0.1" max="0.95" step="0.01" value="${o.inner}"></div>`;
     if(o.type==='text')h+=`<textarea id="pText">${esc(o.text)}</textarea><div class="rowc">ზომა <input type="number" id="pSz" value="${Math.round(o.size)}" style="width:70px"><select class="in" id="pFont" style="width:auto">${['Noto Serif Georgian','Noto Sans Georgian','Cinzel','Georgia','Arial','Courier New'].map(f=>`<option${f===o.font?' selected':''}>${f}</option>`).join('')}</select>
       <select class="in" id="pWt" style="width:auto"><option value="400"${o.weight==400?' selected':''}>ჩვეულ.</option><option value="600"${o.weight==600?' selected':''}>მსხვილი</option></select></div>`;
-    if(o.type==='path')h+=`<div class="rowc"><label><input type="checkbox" id="pCl"${o.closed?' checked':''}> დახურული</label><button class="mini" id="pEdit">⌖ კვანძები</button></div><div class="hint">${o.pts.length} კვანძი · A — კვანძების გადაადგილება, სახელურები (Alt — დამოუკიდებლად), Delete — კვანძის წაშლა</div>`;
+    if(o.type==='path')h+=`<div class="rowc"><label><input type="checkbox" id="pCl"${o.closed?' checked':''}> დახურული</label><button class="mini" id="pEdit">⌖ კვანძები</button></div><div class="hint">${CONT(o).reduce((s2,c)=>s2+c.pts.length,0)} კვანძი${o.subs&&o.subs.length?' · '+(o.subs.length+1)+' კონტური':''} · A / Q — კვანძების მონიშვნა და გადაადგილება, Alt — სახელური დამოუკიდებლად, Delete — მონიშნული კვანძების წაშლა</div>`;
     if(o.type==='eq')h+=`<div class="rowc">${['f','p','xy'].map(m=>`<button class="mini${o.mode===m?'" style="border-color:#ecd59a;color:#ecd59a':''}" data-em="${m}">${m==='f'?'y = f(x)':m==='p'?'r(θ)':'x(t), y(t)'}</button>`).join('')}</div>
       <div class="hint">${o.mode==='f'?'y =':o.mode==='p'?'r(θ) =':'x(t) =  ·  y(t) ='}</div><div id="eqF1"></div>${o.mode==='xy'?'<div id="eqF2"></div>':''}<div id="eqErr" class="hint" style="color:#e8705a"></div>
       <div class="grid2"><label>${o.mode==='f'?'x':o.mode==='p'?'θ':'t'} დან<input type="number" id="eA" step="0.1" value="${+o.a.toFixed(3)}"></label><label>მდე<input type="number" id="eB" step="0.1" value="${+o.b.toFixed(3)}"></label><label>ერთეული X<input type="number" id="eUx" value="${Math.round(o.ux)}"></label><label>ერთეული Y<input type="number" id="eUy" value="${Math.round(o.uy)}"></label></div>
@@ -283,7 +418,10 @@ function props(onlyNums){const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolea
       <div class="rowc">${[['ვარდი','p','3\\cos\\left(4\\theta\\right)'],['გული','xy','16\\sin^3t','13\\cos t-5\\cos\\left(2t\\right)-2\\cos\\left(3t\\right)-\\cos\\left(4t\\right)'],['სპირალი','p','0.3\\theta'],['ტალღა','f','\\frac{\\sin\\left(3x\\right)}{x}'],['ზარი','f','4e^{-x^2}'],['ბატერფლაი','p','e^{\\sin\\theta}-2\\cos\\left(4\\theta\\right)']].map((x,i)=>`<button class="mini" data-eex="${i}">${x[0]}</button>`).join('')}</div>
       <button class="mini" id="eConv" title="ფორმულა იქცევა ჩვეულებრივ რედაქტირებად კონტურად">✒ კონტურად გადაქცევა</button>`;
     if(o.type==='image')h+=`<div class="hint">სურათი · ${Math.round(o.w)}×${Math.round(o.h)}</div>`;}
-  $('props').innerHTML=h;bindStyle(L);
+  $('props').innerHTML=h;bindStyle(L);bindEr();
+  document.querySelectorAll('#props [data-pf]').forEach(x=>x.onclick=()=>pathfinder(x.dataset.pf));
+  if($('blGo')){$('blM').onchange=()=>{$('blV').disabled=$('blM').value==='color';if($('blM').value==='dist')$('blV').value=30;};$('blGo').onclick=()=>blend($('blM').value,+$('blV').value);}
+  if($('rcGo'))$('rcGo').onclick=()=>{const r=Math.max(0,+$('rcR').value||0);L.forEach(q=>roundCorners(q,r));render();commit();props();};
   const numCh=()=>{const B=bbox(o),N={x:+$('pX').value,y:+$('pY').value,w:Math.max(1,+$('pW').value),h:Math.max(1,+$('pH').value)};if(L.length===1)mapObj(o,B,N);else{const dx=N.x-B.x,dy=N.y-B.y;L.forEach(q=>moveObj(q,dx,dy));}render();commit();};
   ['pX','pY','pW','pH'].forEach(id=>$(id).onchange=numCh);$('pR').onchange=()=>{L.forEach(q=>q.rot=+$('pR').value||0);render();commit();};
   const on=(id,fn,ev='input')=>{const el=$(id);if(el)el.addEventListener(ev,()=>{fn(el);render();});if(el)el.addEventListener('change',()=>commit());};
@@ -302,6 +440,7 @@ function props(onlyNums){const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolea
     function paramsUI(){const box=$('eqPar');if(!box)return;box.innerHTML=(o._params||[]).map(k=>`<div class="rowc"><b style="min-width:30px">${esc(k)}</b><input type="range" min="-10" max="10" step="0.05" value="${o.params[k]}" data-pk="${esc(k)}"><span>${o.params[k]}</span></div>`).join('');
       box.querySelectorAll('[data-pk]').forEach(r=>{r.oninput=()=>{o.params[r.dataset.pk]=+r.value;r.nextElementSibling.textContent=r.value;render();};r.onchange=commit;});}
     $('eqErr').textContent=o._err||'';paramsUI();}}
+function bindEr(){const r=$('pEr');if(r)r.oninput=()=>{ER=+r.value;$('pErV').textContent=ER;};}
 function styleBlock(s){return `<div class="rowc">შევსება <input type="color" id="sF" value="${s.fill==='none'?'#ffffff':s.fill}"><label><input type="checkbox" id="sFn"${s.fill==='none'?' checked':''}> არა</label>
     <select class="in" id="sFt" style="width:auto"><option value="solid"${s.ft==='solid'||!s.ft?' selected':''}>ერთფერი</option><option value="linear"${s.ft==='linear'?' selected':''}>გრადიენტი</option><option value="radial"${s.ft==='radial'?' selected':''}>რადიალური</option></select></div>
   <div class="rowc" id="sGr"${s.ft==='linear'||s.ft==='radial'?'':' hidden'}>მეორე ფერი <input type="color" id="sF2" value="${s.fill2||'#a585ef'}"> კუთხე <input type="range" id="sAng" min="0" max="360" value="${s.ang||90}"></div>
