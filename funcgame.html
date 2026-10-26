@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ფუნქციების თამაში · MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07060f;--card:#120e20;--line:rgba(201,168,76,.28);--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--mid:#b3a68f;--dim:#6d6253;--vi:#a585ef;--ok:#6fcf8a;--bad:#e8705a}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1b1433,#07060f 60%) fixed;color:var(--ink);font-family:'Noto Serif Georgian',Georgia,serif}
+.wrap{max-width:1100px;margin:0 auto;padding:16px max(14px,env(safe-area-inset-left)) 40px;display:grid;gap:12px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+h1{margin:0;font-family:'Cinzel','Noto Serif Georgian',serif;font-weight:600;font-size:clamp(22px,4vw,32px);color:var(--gold-lt);letter-spacing:1px}
+.back{color:var(--gold);text-decoration:none;font-size:13px}
+.modes,.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:18px;padding:6px 14px;cursor:pointer}
+button:hover{border-color:var(--gold)}button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+button.fire{background:linear-gradient(135deg,#ecd59a,#c9a84c);color:#1a1408;border:0;font-weight:600;padding:9px 22px;font-size:16px}
+button:disabled{opacity:.45;cursor:default}
+.board{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0b0816}
+canvas{display:block;width:100%;height:auto;touch-action:none}
+.hud{position:absolute;left:12px;top:10px;font-size:13px;color:var(--mid);pointer-events:none;text-shadow:0 1px 3px #000}
+.hud b{color:var(--gold-lt)}
+.msg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(10,7,20,.92);border:1px solid var(--gold);border-radius:16px;padding:18px 24px;text-align:center;min-width:260px}
+.msg h2{margin:0 0 6px;color:var(--gold-lt);font-weight:600}.msg .st{font-size:28px;letter-spacing:4px;color:var(--gold-lt)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px}
+.fx{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center}
+.fx .lab{font-size:20px;font-style:italic;color:var(--gold-lt)}
+.ins button{font-size:13px;padding:3px 10px}
+.small{font-size:12px;color:var(--mid)}label.small{display:flex;gap:5px;align-items:center;cursor:pointer}
+.score{display:flex;flex-wrap:wrap;gap:14px;font-size:14px}.score b{color:var(--gold-lt)}
+.hint{font-size:13px;color:var(--mid);line-height:1.6}
+.names input{background:#0b0816;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;width:130px}
+@media (max-width:600px){.fx{grid-template-columns:minmax(0,1fr)}.fx .lab{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div><a class="back" href="math.html">← მათემატიკა</a> · <a class="back" href="games.html">თამაშები</a><h1>ფუნქციების თამაში</h1></div>
+    <div class="modes" id="modes"><button data-m="lvl" class="on">🏆 დონეები</button><button data-m="duo">👥 ორი მოთამაშე</button><button data-m="free">✎ თავისუფალი</button></div></header>
+  <div class="board"><canvas id="cv" width="1100" height="700"></canvas><div class="hud" id="hud"></div><div class="msg" id="msg" hidden></div></div>
+  <div class="panel">
+    <div class="fx"><span class="lab">f(x) =</span><div id="fbox"></div><button class="fire" id="fire" type="button">🚀 გასროლა</button></div>
+    <div class="row ins" id="ins"></div>
+    <div class="row"><label class="small"><input type="checkbox" id="prev"> მრუდის წინასწარ ჩვენება</label>
+      <label class="small"><input type="checkbox" id="dir"> ← მარცხნივ</label>
+      <button id="hintB" type="button">💡 მინიშნება</button><button id="reset" type="button">⟲ თავიდან</button><button id="edit" type="button" hidden>✎ წერტილების დასმა</button><button id="ready" type="button" hidden>✓ მზადაა</button></div>
+    <div class="score" id="score"></div>
+    <div class="names row" id="names" hidden>მოთამაშე 1: <input id="n1" value="მოთამაშე 1"> მოთამაშე 2: <input id="n2" value="მოთამაშე 2"></div>
+    <div class="hint" id="help">შენი წერტილი (თეთრი) მრუდზე „გასრიალდება“: მრუდი ავტომატურად გადაიწევა ისე, რომ შენს წერტილზე გაიაროს (y = f(x) − f(x₀) + y₀). შეეხე ყველა <b style="color:#ecd59a">ოქროს წერტილს</b>. ხარისხი — ↑ ან x<sup>□</sup>, ფესვი — √, წილადი — /, ინდექსი — _. Enter — გასროლა.</div>
+  </div>
+</div>
+<script src="mathinput.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),cv=$('cv'),g=cv.getContext('2d'),W=1100,H=700;
+const XR=[-12,12],YR=[-7.6,7.6],X=x=>(x-XR[0])/(XR[1]-XR[0])*W,Y=y=>H-(y-YR[0])/(YR[1]-YR[0])*H,IX=px=>XR[0]+px/W*(XR[1]-XR[0]),IY=py=>YR[0]+(H-py)/H*(YR[1]-YR[0]);
+const rng=seed=>{let a=seed>>>0||1;return ()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+let mode='lvl',level=store.get('fg_level',1),best=store.get('fg_best',1);
+let start={x:-10,y:0},dots=[],shots=0,hints=0,run=null,trails=[],editing=false,parts=[],duo=null,field=null,preview=null;
+const R0=()=>mode==='lvl'?Math.max(0.3,0.5-level*0.012):0.42;
+
+/* ── level generator: targets right of the start, ≥1.1 apart in x, so a polynomial always exists ── */
+function makeLevel(L){const R=rng(L*7919+13),n=Math.min(2+Math.ceil(L*0.75),10);start={x:-11+R()*2.5,y:-4.5+R()*9};dots=[];let tries=0;
+  while(dots.length<n&&tries++<3000){const d={x:start.x+1.6+R()*(11.4-start.x-1.6),y:-6.6+R()*13.2,got:false};if(dots.every(o=>Math.abs(o.x-d.x)>1.1))dots.push(d);}
+  dots.sort((a,b)=>a.x-b.x);shots=0;hints=0;trails=[];run=null;}
+function setMode(m){mode=m;document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));$('names').hidden=m!=='duo';$('edit').hidden=m==='lvl';$('ready').hidden=true;$('hintB').hidden=false;
+  hideMsg();if(m==='lvl'){makeLevel(level);editing=false;}
+  if(m==='free'){start={x:-10,y:0};dots=[{x:-4,y:3,got:false},{x:1,y:-2,got:false},{x:6,y:4,got:false}];shots=0;hints=0;trails=[];editing=false;$('prev').checked=true;}
+  if(m==='duo'){duo={round:1,setter:1,shots:{1:null,2:null}};beginSetup();}
+  hud();}
+function beginSetup(){editing=true;dots=[];start={x:-10,y:0};trails=[];shots=0;hints=0;$('ready').hidden=false;$('edit').hidden=true;
+  showMsg(`<h2>${nm(duo.setter)} — დასვი ოქროს წერტილები</h2><div class="hint">დააწკაპუნე დაფაზე — წერტილი; წერტილზე — წაშლა. თეთრი საწყისი წერტილი გადაათრიე.<br>${nm(3-duo.setter)} არ უნდა უყურებდეს… 🙂</div><button onclick="this.parentNode.hidden=true">კარგი</button>`);}
+const nm=i=>($('n'+i).value||('მოთამაშე '+i)).trim();
+function hud(){const got=dots.filter(d=>d.got).length;
+  $('hud').innerHTML=mode==='lvl'?`დონე <b>${level}</b> · შეგროვდა <b>${got}/${dots.length}</b> · გასროლა <b>${shots}</b>${hints?` · მინიშნება ${hints}`:''}`:
+    mode==='duo'?(editing?`<b>${nm(duo.setter)}</b> სვამს წერტილებს (${dots.length})`:`<b>${nm(3-duo.setter)}</b> ისვრის · ${got}/${dots.length} · გასროლა <b>${shots}</b>`):
+    (editing?'რედაქტირება: დააწკაპუნე — წერტილი, გადაათრიე თეთრი':`შეგროვდა <b>${got}/${dots.length}</b> · გასროლა <b>${shots}</b>`);
+  $('score').innerHTML=mode==='lvl'?`<span>საუკეთესო დონე: <b>${best}</b></span>`:mode==='duo'?[1,2].map(i=>`<span>${nm(i)}: <b>${duo.shots[i]==null?'—':duo.shots[i]+' გასროლა'}</b></span>`).join(''):'';}
+function showMsg(h){$('msg').innerHTML=h;$('msg').hidden=false;}function hideMsg(){$('msg').hidden=true;}
+
+/* ── formula input ── */
+const INS=[['a·x','2x'],['x²','x^2'],['xⁿ','x^{3}'],['√x','\\sqrt{x}'],['ⁿ√x','\\sqrt[3]{x}'],['1/x','\\frac{1}{x}'],['|x|','\\left|x\\right|'],['sin','\\sin\\left(x\\right)'],['eˣ','e^{x}'],['ln','\\ln\\left(x\\right)'],['aₙ','a_{1}']];
+$('ins').innerHTML=INS.map(([l,t],i)=>`<button type="button" data-i="${i}">${l}</button>`).join('');
+field=MI.field($('fbox'),{value:'\\frac{x}{2}',size:22,onInput:()=>{compileNow();},onEnter:()=>fire(),onReady:f=>{compileNow();}});
+$('ins').querySelectorAll('button').forEach(b=>b.onclick=()=>{const t=INS[+b.dataset.i][1],el=field.el;if(el&&el.insert){el.insert(t,{selectionMode:'after',format:'latex'});el.focus();compileNow();}else field.set((field.latex()||'')+t);});
+let comp=null;function compileNow(){comp=MI.compile(field.latex(),{vars:['x']});preview=comp.ok?comp:null;}
+
+/* ── shooting ── */
+function pathOf(f){const dir=$('dir').checked?-1:1,y0=f(start.x);if(!isFinite(y0))return {pts:[],why:`f(${start.x.toFixed(2)}) არ არსებობს — სცადე სხვა ფორმულა`};
+  const pts=[[start.x,start.y]],dx=0.004*dir;let why='';
+  for(let x=start.x+dx;dir>0?x<=XR[1]:x>=XR[0];x+=dx){const y=f(x)-y0+start.y;if(!isFinite(y)){why='მრუდი წყდება';break;}
+    const [px,py]=pts[pts.length-1];if(Math.abs(y-py)>2.5){why='მრუდი ძალიან ციცაბოა / წყდება';break;}if(y<YR[0]-0.5||y>YR[1]+0.5){pts.push([x,y]);why='მრუდი დაფიდან გავიდა';break;}pts.push([x,y]);}
+  return {pts,why};}
+function fire(){if(run||editing)return;compileNow();if(!comp||!comp.ok){flash(comp&&comp.error?'ფორმულის შეცდომა: '+comp.error:'ჩაწერე ფორმულა');return;}
+  if(comp.params.length){flash('უცნობი ასო: '+comp.params.join(', ')+' — გამოიყენე მხოლოდ x');return;}
+  const F=x=>comp.f({x}),p=pathOf(F);if(p.pts.length<2){flash(p.why||'მრუდი ვერ აიგო');return;}
+  shots++;dots.forEach(d=>d.hitNow=false);
+  const L=[0];for(let i=1;i<p.pts.length;i++)L.push(L[i-1]+Math.hypot(X(p.pts[i][0])-X(p.pts[i-1][0]),Y(p.pts[i][1])-Y(p.pts[i-1][1])));
+  run={pts:p.pts,L,s:0,why:p.why,i:0};trails.push(run);if(trails.length>4)trails.shift();hud();}
+let flashT=0,flashS='';const flash=s=>{flashS=s;flashT=performance.now();};
+function finishRun(){const got=dots.filter(d=>d.got).length,all=got===dots.length&&dots.length;const r=run;run=null;
+  if(all){if(mode==='lvl'){const st=Math.max(1,3-Math.max(0,shots-1)-hints),next=level+1;best=Math.max(best,next);store.set('fg_level',next);store.set('fg_best',best);
+      showMsg(`<h2>დონე გავლილია!</h2><div class="st">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div><div class="hint">${shots} გასროლით${hints?', მინიშნებით':''}</div><button id="nx">შემდეგი დონე →</button>`);$('nx').onclick=()=>{hideMsg();level=next;makeLevel(level);hud();};}
+    else if(mode==='duo'){const shooter=3-duo.setter;duo.shots[shooter]=shots;
+      if(duo.shots[1]!=null&&duo.shots[2]!=null){const a=duo.shots[1],b=duo.shots[2],w=a===b?'ფრე!':(a<b?nm(1):nm(2))+' იმარჯვებს!';
+        showMsg(`<h2>${w}</h2><div class="hint">${nm(1)}: ${a} გასროლა · ${nm(2)}: ${b} გასროლა</div><button id="again">↻ ახალი რაუნდი</button>`);$('again').onclick=()=>{hideMsg();duo={round:duo.round+1,setter:1,shots:{1:null,2:null}};beginSetup();hud();};}
+      else{showMsg(`<h2>${nm(shooter)}: ${shots} გასროლა</h2><div class="hint">ახლა ${nm(shooter)} სვამს წერტილებს, ${nm(duo.setter)} ისვრის.</div><button id="sw">მზად ვართ</button>`);$('sw').onclick=()=>{hideMsg();duo.setter=shooter;beginSetup();hud();};}}
+    else showMsg(`<h2>ყველა წერტილი შეგროვდა!</h2><div class="hint">${shots} გასროლა</div><button onclick="this.parentNode.hidden=true">კარგი</button>`);}
+  else if(r&&r.why)flash(r.why+` · შეგროვდა ${got}/${dots.length}`);hud();}
+
+/* ── hint: polynomial through the start and the remaining dots (Lagrange, expanded) ── */
+function hintPoly(){const P=[[start.x,start.y],...dots.filter(d=>!d.got).map(d=>[d.x,d.y])].slice(0,8);if(P.length<2)return;
+  let co=Array(P.length).fill(0);P.forEach(([xi,yi],i)=>{let basis=[1],den=1;P.forEach(([xj],j)=>{if(j===i)return;den*=xi-xj;const nb=Array(basis.length+1).fill(0);basis.forEach((c,k)=>{nb[k]+=c*(-xj);nb[k+1]+=c;});basis=nb;});basis.forEach((c,k)=>co[k]+=yi*c/den);});
+  const fmt=v=>{const a=Math.abs(v);return a>=0.01?+a.toFixed(3):+a.toPrecision(2);};let t='';
+  for(let k=co.length-1;k>=0;k--){const c=co[k];if(Math.abs(c)<1e-9)continue;const s=c<0?'-':(t?'+':'');const m=fmt(c);t+=s+(k===0?m:(m===1?'':m))+(k?'x'+(k>1?'^{'+k+'}':''):'');}
+  field.set(t||'0');hints++;$('prev').checked=true;compileNow();hud();flash('მრავალწევრი, რომელიც ყველა წერტილზე გადის (ლაგრანჟი) — ვარსკვლავი იკლებს');}
+
+/* ── editing (free / two players) ── */
+let dragStart=false;
+cv.addEventListener('pointerdown',e=>{if(!editing||run)return;const r=cv.getBoundingClientRect(),px=(e.clientX-r.left)*W/r.width,py=(e.clientY-r.top)*H/r.height,x=IX(px),y=IY(py);
+  if(Math.hypot(X(start.x)-px,Y(start.y)-py)<16){dragStart=true;cv.setPointerCapture(e.pointerId);return;}
+  const i=dots.findIndex(d=>Math.hypot(X(d.x)-px,Y(d.y)-py)<14);if(i>=0)dots.splice(i,1);else dots.push({x:Math.round(x*10)/10,y:Math.round(y*10)/10,got:false});hud();});
+cv.addEventListener('pointermove',e=>{if(!dragStart)return;const r=cv.getBoundingClientRect();start={x:Math.round(IX((e.clientX-r.left)*W/r.width)*10)/10,y:Math.round(IY((e.clientY-r.top)*H/r.height)*10)/10};});
+cv.addEventListener('pointerup',()=>dragStart=false);
+$('edit').onclick=()=>{if(mode==='free'){editing=!editing;$('edit').classList.toggle('on',editing);dots.forEach(d=>d.got=false);trails=[];shots=0;hud();}};
+$('ready').onclick=()=>{if(!dots.length){flash('დასვი მინიმუმ ერთი წერტილი');return;}editing=false;$('ready').hidden=true;dots.forEach(d=>d.got=false);shots=0;hints=0;trails=[];
+  showMsg(`<h2>${nm(3-duo.setter)}, შენი ჯერია!</h2><div class="hint">${dots.length} ოქროს წერტილი. რაც ნაკლები გასროლა — მით უკეთესი.</div><button onclick="this.parentNode.hidden=true">დავიწყოთ</button>`);hud();};
+$('fire').onclick=fire;$('hintB').onclick=hintPoly;
+$('reset').onclick=()=>{if(mode==='lvl')makeLevel(level);else{dots.forEach(d=>d.got=false);trails=[];shots=0;hints=0;run=null;}hideMsg();hud();};
+document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));['n1','n2'].forEach(id=>$(id).oninput=hud);
+
+/* ── drawing ── */
+let last=performance.now();
+function frame(t){const dt=Math.min(0.05,(t-last)/1000);last=t;
+  g.fillStyle='#0b0816';g.fillRect(0,0,W,H);
+  g.strokeStyle='rgba(165,133,239,.07)';g.lineWidth=1;g.beginPath();for(let x=Math.ceil(XR[0]);x<=XR[1];x++){g.moveTo(X(x),0);g.lineTo(X(x),H);}for(let y=Math.ceil(YR[0]);y<=YR[1];y++){g.moveTo(0,Y(y));g.lineTo(W,Y(y));}g.stroke();
+  g.strokeStyle='rgba(214,198,255,.35)';g.beginPath();g.moveTo(0,Y(0));g.lineTo(W,Y(0));g.moveTo(X(0),0);g.lineTo(X(0),H);g.stroke();
+  g.fillStyle='rgba(179,166,143,.55)';g.font='11px sans-serif';g.textAlign='center';for(let x=Math.ceil(XR[0]);x<=XR[1];x+=2)if(x)g.fillText(x,X(x),Y(0)+13);g.textAlign='right';for(let y=Math.ceil(YR[0]);y<=YR[1];y+=2)if(y)g.fillText(y,X(0)-4,Y(y)+4);
+  /* preview */if($('prev').checked&&preview&&!run&&!editing&&!preview.params.length){const p=pathOf(x=>preview.f({x}));g.strokeStyle='rgba(236,213,154,.35)';g.setLineDash([5,6]);g.lineWidth=1.5;g.beginPath();p.pts.forEach(([x,y],i)=>i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y)));g.stroke();g.setLineDash([]);}
+  /* old trails */trails.forEach(tr=>{if(tr===run)return;g.strokeStyle='rgba(165,133,239,.35)';g.lineWidth=2;g.beginPath();tr.pts.forEach(([x,y],i)=>i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y)));g.stroke();});
+  /* active run */if(run){run.s+=dt*520;while(run.i<run.L.length-1&&run.L[run.i+1]<=run.s)run.i++;const k=run.i,pt=run.pts[k];
+    const grd=g.createLinearGradient(X(run.pts[0][0]),0,X(pt[0]),0);grd.addColorStop(0,'rgba(236,213,154,.15)');grd.addColorStop(1,'#ecd59a');g.strokeStyle=grd;g.lineWidth=3;g.beginPath();for(let i=0;i<=k;i++){const [x,y]=run.pts[i];i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y));}g.stroke();
+    dots.forEach(d=>{if(!d.got&&Math.hypot(X(d.x)-X(pt[0]),Y(d.y)-Y(pt[1]))<R0()*W/(XR[1]-XR[0])+6){d.got=true;burst(d);hud();}});
+    g.shadowColor='#d6c6ff';g.shadowBlur=18;g.fillStyle='#fff';g.beginPath();g.arc(X(pt[0]),Y(pt[1]),7,0,Math.PI*2);g.fill();g.shadowBlur=0;
+    if(run.i>=run.L.length-1)finishRun();}
+  /* dots */const pr=R0()*W/(XR[1]-XR[0]),pulse=1+0.12*Math.sin(t/260);
+  dots.forEach(d=>{const x=X(d.x),y=Y(d.y);if(d.got){g.strokeStyle='rgba(236,213,154,.35)';g.lineWidth=1.5;g.beginPath();g.arc(x,y,pr*0.6,0,Math.PI*2);g.stroke();return;}
+    const gr=g.createRadialGradient(x,y,1,x,y,pr*1.6*pulse);gr.addColorStop(0,'rgba(255,240,190,1)');gr.addColorStop(0.35,'rgba(236,200,100,.9)');gr.addColorStop(1,'rgba(201,168,76,0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,pr*1.6*pulse,0,Math.PI*2);g.fill();
+    if(editing){g.fillStyle='rgba(179,166,143,.8)';g.font='10px sans-serif';g.textAlign='center';g.fillText(`(${d.x}; ${d.y})`,x,y-pr-6);}});
+  /* start */if(!run){g.shadowColor='#a585ef';g.shadowBlur=16;g.fillStyle='#fff';g.beginPath();g.arc(X(start.x),Y(start.y),8,0,Math.PI*2);g.fill();g.shadowBlur=0;g.strokeStyle='#a585ef';g.lineWidth=2;g.beginPath();g.arc(X(start.x),Y(start.y),12,0,Math.PI*2);g.stroke();}
+  /* particles */parts=parts.filter(p=>(p.l-=dt)>0);parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=260*dt;g.globalAlpha=Math.max(0,p.l/0.9);g.fillStyle=p.c;g.fillRect(p.x,p.y,3,3);});g.globalAlpha=1;
+  if(flashS&&t-flashT<3200){g.font='15px "Noto Serif Georgian",serif';g.textAlign='center';const w=g.measureText(flashS).width+28;g.fillStyle='rgba(10,7,20,.85)';g.fillRect(W/2-w/2,H-48,w,32);g.fillStyle='#ecd59a';g.fillText(flashS,W/2,H-27);}
+  requestAnimationFrame(frame);}
+function burst(d){for(let i=0;i<30;i++){const a=Math.random()*Math.PI*2,v=80+Math.random()*220;parts.push({x:X(d.x),y:Y(d.y),vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,l:0.6+Math.random()*0.4,c:i%2?'#ecd59a':'#fff'});}}
+setMode('lvl');requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
