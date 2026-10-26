@@ -20,6 +20,11 @@
 <nav class="subnav" id="subnav"><a href="math.html" data-k="math" style="--sn:#a585ef"><i>∑</i>მათემატიკა<span class="pc"></span></a><a href="phys.html" data-k="phys" style="--sn:#5fc8d8"><i>⚛</i>ფიზიკა<span class="pc"></span></a><a href="chem.html" data-k="chem" style="--sn:#e0a030"><i>⚗</i>ქიმია<span class="pc"></span></a><a href="biology.html" data-k="bio" style="--sn:#6fcf8a"><i>🧬</i>ბიოლოგია<span class="pc"></span></a><a href="sciencegames.html" data-k="games" style="--sn:#e2685c"><i>🎮</i>თამაშები</a></nav>
 <script>(function(){const f=(location.pathname.split('/').pop()||'').split('.')[0],m={math:'math',phys:'phys',chem:'chem',biology:'bio'};document.querySelectorAll('#subnav a').forEach(a=>{if(a.dataset.k===m[f])a.classList.add('on');const pc=a.querySelector('.pc');if(pc&&window.SCIPATH){const p=SCIPATH.progress(a.dataset.k);if(p.done)pc.textContent=p.done+' ✓';}});})();</script>
 
+<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:4px 0 16px">
+  <a href="vector.html" style="text-decoration:none;color:#d6c6ff;border:1px solid rgba(165,133,239,.5);border-radius:18px;padding:7px 16px">✎ ვექტორული რედაქტორი</a>
+  <a href="funcgame.html" style="text-decoration:none;color:#ecd59a;border:1px solid rgba(236,213,154,.45);border-radius:18px;padding:7px 16px">🏆 ფუნქციების თამაში</a>
+  <a href="fourier.html" style="text-decoration:none;color:#5fc8d8;border:1px solid rgba(95,200,216,.45);border-radius:18px;padding:7px 16px">◎ ფურიეს ეპიციკლები</a>
+</div>
 <div id="mathp"></div>
 </div>
 <script src="sci_kit.js"></script>
