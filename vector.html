@@ -215,6 +215,7 @@ function overlay(){const k=1/Z;let s='';
   if(FD){const Q=FD.Q;s+=`<polygon points="${Q.map(q=>q.x+','+q.y).join(' ')}" fill="none" stroke="#e8705a" stroke-width="${k}" stroke-dasharray="${4*k}"/>`+Q.map((q,i)=>`<rect data-fd="${i}" x="${q.x-5*k}" y="${q.y-5*k}" width="${10*k}" height="${10*k}" fill="#fff" stroke="#e8705a" stroke-width="${1.5*k}" style="cursor:move"/>`).join('');}
   if(tool==='eraser'&&HOV&&!act){s+=`<circle cx="${HOV.x}" cy="${HOV.y}" r="${ER}" fill="rgba(232,112,90,.12)" stroke="#e8705a" stroke-width="${k}"/>`;}
   if(act&&act.marq){const m=act.marq;s+=`<rect x="${Math.min(m.x0,m.x1)}" y="${Math.min(m.y0,m.y1)}" width="${Math.abs(m.x1-m.x0)}" height="${Math.abs(m.y1-m.y0)}" fill="rgba(77,163,255,.08)" stroke="#4da3ff" stroke-width="${k}"/>`;}
+  if(penPath)s+=penExtras(k);
   if(penPath&&act&&act.penHover){const a=penPath.pts[penPath.pts.length-1];s+=`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${act.penHover.x},${act.penHover.y} ${act.penHover.x},${act.penHover.y}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}"/>`;}
   ov.innerHTML=s;}
 const HANDLES=[[0,0,'nwse-resize'],[0.5,0,'ns-resize'],[1,0,'nesw-resize'],[1,0.5,'ew-resize'],[1,1,'nwse-resize'],[0.5,1,'ns-resize'],[0,1,'nesw-resize'],[0,0.5,'ew-resize']];
@@ -260,7 +261,7 @@ svg.addEventListener('pointerdown',e=>{const te=$('tEdit');if(te&&e.button===0){
     if(h2&&!h2.locked){if(!SEL.includes(h2.id)){SEL=[h2.id];render();props();}act={move:true,p0:sp,last:sp,moved:false,copy:true,rb:true,cx:e.clientX,cy:e.clientY};}else act={rbEmpty:true,cx:e.clientX,cy:e.clientY};return;}
   if(tool==='hand'||spaceDown||e.button===1){act={pan:true,sx:e.clientX,sy:e.clientY,PX,PY};svg.style.cursor='grabbing';return;}
   if(tg.dataset&&tg.dataset.h){const o=O.find(x=>x.id===SEL[0]);const B=bbox(o);act={o,B,h:tg.dataset.h,p0:p,snap0:snapState(),c:{x:B.x+B.w/2,y:B.y+B.h/2},rot0:o.rot||0};return;}
-  if(tg.dataset&&tg.dataset.pa){const key=tg.dataset.pa,[id,ci,i]=key.split(','),o=O.find(x=>x.id===id);
+  if(tg.dataset&&tg.dataset.pa&&!(penPath&&tool==='pen'&&tg.dataset.pa.startsWith(penPath.id+','))){const key=tg.dataset.pa,[id,ci,i]=key.split(','),o=O.find(x=>x.id===id);
     if(penPath&&o===penPath&&+ci===0&&+i===0&&penPath.pts.length>1){penPath.closed=true;if(penPath.fill==='none')penPath.fill=lastStyle.fill;penFinish();return;}
     if(tool==='delpt'){delAnchors([key]);return;}if(tool==='scissors'){cutAt(o,+ci,+i);return;}
     if(e.shiftKey){ASEL.has(key)?ASEL.delete(key):ASEL.add(key);}else if(!ASEL.has(key))ASEL=new Set([key]);
@@ -288,7 +289,10 @@ svg.addEventListener('pointerdown',e=>{const te=$('tEdit');if(te&&e.button===0){
       if(tool==='direct'&&hit.type!=='path'&&['rect','ellipse','polygon','star','line'].includes(hit.type)){/* convert to editable path */toPath(hit);}
       act={move:true,p0:sp,last:sp,moved:false,copy:e.altKey,unSel,wasSel,hit,cand:$('sgOn').checked?smartCands(SEL):null,B0:selBox()};render();props();}
     else{if(!e.shiftKey)SEL=[];dirSel=null;act={marq:{x0:p.x,y0:p.y,x1:p.x,y1:p.y}};render();props();}return;}
-  if(tool==='pen'){if(!penPath){penPath=make('path',{pts:[],closed:false});penPath.fill='none';SEL=[penPath.id];}
+  if(tool==='pen'){if(penPath&&penPath.pts.length){const P=penPath.pts,tol=7/Z,L=P[P.length-1];
+      if(P.length>2&&Math.hypot(sp.x-P[0].x,sp.y-P[0].y)<tol){penPath.closed=true;if(lastStyle.fill!=='none')penPath.fill=lastStyle.fill;act={penClose:true,p0:sp};render();return;}
+      if(Math.hypot(sp.x-L.x,sp.y-L.y)<tol){act={penEnd:true};penFinish();$('status').textContent='კალამი: ღია კონტური დასრულდა';return;}}
+    if(!penPath){penPath=make('path',{pts:[],closed:false});penPath.fill='none';SEL=[penPath.id];}
     penPath.pts.push({x:sp.x,y:sp.y,ix:sp.x,iy:sp.y,ox:sp.x,oy:sp.y});act={pen:true,p0:sp};render();return;}
   if(tool==='pencil'){const o=make('path',{pts:[],closed:false});o.fill='none';act={pencil:true,o,raw:[p]};SEL=[o.id];return;}
   if(tool==='brush'){act={brush:true,raw:[{x:p.x,y:p.y,pr:e.pointerType==='pen'?e.pressure:null,tx:e.tiltX||0,ty:e.tiltY||0,t:performance.now()}]};return;}
@@ -334,14 +338,24 @@ svg.addEventListener('pointermove',e=>{const p=pt(e),sp=snap(p);$('status').text
   if(act.lasso){act.lasso.push(p);overlay();return;}
   if(act.erase){const l=act.erase[act.erase.length-1];if(Math.hypot(p.x-l.x,p.y-l.y)>ER/4)act.erase.push(p);overlay();return;}
   if(act.ph){const P=contAt(act.o,act.ci).pts[act.i];if(act.j===0){P.ix=sp.x;P.iy=sp.y;if(!e.altKey){P.ox=2*P.x-sp.x;P.oy=2*P.y-sp.y;}}else{P.ox=sp.x;P.oy=sp.y;if(!e.altKey){P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;}}render();return;}
+  if(act.penClose){const P=penPath.pts[0];if(Math.hypot(sp.x-act.p0.x,sp.y-act.p0.y)>2){P.ix=sp.x;P.iy=sp.y;P.ox=2*P.x-sp.x;P.oy=2*P.y-sp.y;render();}return;}
+  if(act.penEnd)return;
   if(act.pen){const P=penPath.pts[penPath.pts.length-1];if(Math.hypot(sp.x-act.p0.x,sp.y-act.p0.y)>2){P.ox=sp.x;P.oy=sp.y;P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;render();}return;}
   if(act.pencil){act.raw.push(p);const A=act.raw;act.o.pts=A.map(q=>({x:q.x,y:q.y,ix:q.x,iy:q.y,ox:q.x,oy:q.y}));render();return;}
   if(act.shape){const o=act.o,a=act.p0;let w=sp.x-a.x,h=sp.y-a.y;if(e.shiftKey){const m=Math.max(Math.abs(w),Math.abs(h));w=Math.sign(w||1)*m;h=Math.sign(h||1)*m;}
     if(o.type==='rect'){o.x=Math.min(a.x,a.x+w);o.y=Math.min(a.y,a.y+h);o.w=Math.abs(w);o.h=Math.abs(h);}
     else if(o.type==='line'){if(e.shiftKey){const ang=Math.round(Math.atan2(sp.y-a.y,sp.x-a.x)/(Math.PI/4))*(Math.PI/4),L=Math.hypot(sp.x-a.x,sp.y-a.y);o.x2=a.x+Math.cos(ang)*L;o.y2=a.y+Math.sin(ang)*L;}else{o.x2=sp.x;o.y2=sp.y;}}
     else{o.cx=a.x+w/2;o.cy=a.y+h/2;o.rx=Math.abs(w)/2;o.ry=Math.abs(h)/2;}render();}});
-let penHoverOnly=null;function overlayPen(sp){act=null;const k=1/Z;overlay();if(!penPath||!penPath.pts.length)return;const a=penPath.pts[penPath.pts.length-1];
-  ov.insertAdjacentHTML('beforeend',`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${sp.x},${sp.y} ${sp.x},${sp.y}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}" pointer-events="none"/>`);}
+let penHoverOnly=null;function overlayPen(sp){act=null;penHoverOnly=sp;overlay();}
+function penExtras(k){if(!penPath||!penPath.pts.length)return '';const P=penPath.pts,a=P[P.length-1],sp=penHoverOnly;let s='';const tol=7/Z;
+  if(sp&&!penPath.closed&&!(act&&act.pen)){const nearF=P.length>2&&Math.hypot(sp.x-P[0].x,sp.y-P[0].y)<tol,nearL=Math.hypot(sp.x-a.x,sp.y-a.y)<tol;
+    if(!nearL)s+=`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${sp.x},${sp.y} ${sp.x},${sp.y}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${3*k}"/>`;
+    if(nearF)s+=`<circle cx="${P[0].x}" cy="${P[0].y}" r="${7*k}" fill="none" stroke="#2ecc71" stroke-width="${1.5*k}"/><text x="${P[0].x+9*k}" y="${P[0].y-9*k}" font-size="${11*k}" fill="#2ecc71">დახურვა</text>`;
+    if(nearL)s+=`<circle cx="${a.x}" cy="${a.y}" r="${7*k}" fill="none" stroke="#e8705a" stroke-width="${1.5*k}"/><text x="${a.x+9*k}" y="${a.y-9*k}" font-size="${11*k}" fill="#e8705a">დასრულება</text>`;}
+  const hl=q=>{let r='';[['ix','iy'],['ox','oy']].forEach(([hx,hy])=>{if(Math.hypot(q[hx]-q.x,q[hy]-q.y)>0.5)r+=`<line x1="${q.x}" y1="${q.y}" x2="${q[hx]}" y2="${q[hy]}" stroke="#4da3ff" stroke-width="${k}"/><circle cx="${q[hx]}" cy="${q[hy]}" r="${3*k}" fill="#4da3ff"/>`;});return r;};
+  s+=hl(a);if(P.length>1)s+=hl(P[P.length-2]);if(act&&act.penClose)s+=hl(P[0]);
+  P.forEach((q,i)=>{const last=i===P.length-1;s+=`<rect x="${q.x-3.5*k}" y="${q.y-3.5*k}" width="${7*k}" height="${7*k}" fill="${last?'#4da3ff':'#fff'}" stroke="#4da3ff" stroke-width="${k}"/>`;});
+  return `<g pointer-events="none">${s}</g>`;}
 svg.addEventListener('pointerup',e=>{if(!act)return;const a=act;act=null;svg.style.cursor=tool==='hand'?'grab':'';if(SGC||SGL.length){SGC=null;SGL=[];drawSG();}
   if(a.gd!=null){const g=DOC.guides[a.gd],r=svg.getBoundingClientRect();if(g&&SHOW.rul&&((g.d==='h'&&e.clientY-r.top<18)||(g.d==='v'&&e.clientX-r.left<18)))DOC.guides.splice(a.gd,1);render();commit();return;}
   if(a.bend){if(a.moved)commit();props();return;}
@@ -371,7 +385,7 @@ svg.addEventListener('pointerup',e=>{if(!act)return;const a=act;act=null;svg.sty
     SEL=e.shiftKey?[...new Set([...SEL,...ins])]:ins;}render();props();return;}
   if(a.pencil){const W=1+Math.round(PSM/18),raw=a.raw.map((q,i,A)=>{let sx=0,sy=0,n=0;for(let j=Math.max(0,i-W);j<=Math.min(A.length-1,i+W);j++){sx+=A[j].x;sy+=A[j].y;n++;}return i===0||i===A.length-1?q:{x:sx/n,y:sy/n};});const P=rdp(raw,(0.6+PSM/100*6)/Z);if(P.length<2){O=O.filter(o=>o!==a.o);SEL=[];}else{const closed=Math.hypot(P[0].x-P[P.length-1].x,P[0].y-P[P.length-1].y)<12/Z&&P.length>3;if(closed)P.pop();a.o.pts=smooth(P,closed);a.o.closed=closed;if(closed)a.o.fill=lastStyle.fill;}
     render();commit();props();return;}
-  if(a.pen)return;
+  if(a.pen)return;if(a.penEnd)return;if(a.penClose){penFinish();$('status').textContent='კალამი: კონტური დაიხურა';return;}
   if(a.shape){const o=a.o,b=bbox(o);if(b.w<2&&b.h<2){/* click without drag: ask for exact size */O=O.filter(x=>x!==o);SEL=[];render();shapeDlg(o.type,a.p0);return;}render();commit();props();return;}
   if(a.move&&!a.moved){if(a.unSel){SEL=SEL.filter(x=>x!==a.unSel);render();props();}else if(a.wasSel&&tool==='select'&&a.hit&&a.hit.type==='text'&&!e.shiftKey&&!a.copy)editText(a.hit,false,e.clientX,e.clientY);return;}commit();props();});
 svg.addEventListener('dblclick',e=>{const tg=e.target.closest&&e.target.closest('[data-id]');if(penPath){penFinish();return;}if(!tg)return;const o=O.find(x=>x.id===tg.dataset.id);
@@ -588,7 +602,8 @@ const A_={newDoc:()=>$('bNew').click(),open:()=>$('bOpen').click(),save:()=>$('b
   flipH:()=>flipSel('x'),flipV:()=>flipSel('y'),rot90:()=>rotSel(90),rotM90:()=>rotSel(-90),
   lock:()=>{O.filter(o=>SEL.includes(o.id)).forEach(o=>o.locked=true);SEL=[];render();commit();props();},unlock:()=>{O.forEach(o=>o.locked=false);render();commit();},
   hide:()=>{O.filter(o=>SEL.includes(o.id)).forEach(o=>o.hidden=true);SEL=[];render();commit();props();},show:()=>{O.forEach(o=>o.hidden=false);render();commit();},
-  outline:()=>{O.filter(o=>SEL.includes(o.id)).forEach(o=>{if(CONVERTIBLE.has(o.type))toPath(o);else if(o.type==='eq'&&P0()){const r=fromPaper(toPaper(o),o);if(r){const keep={...r,id:o.id,name:o.name};Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,keep);}}});render();commit();props();},
+  toCurves:()=>outlineSel(),raster:()=>rasterSel(),
+  outline:()=>{if(O.some(o=>SEL.includes(o.id)&&(o.type==='text'||o.type==='tpath')))outlineSel();O.filter(o=>SEL.includes(o.id)).forEach(o=>{if(CONVERTIBLE.has(o.type))toPath(o);else if(o.type==='eq'&&P0()){const r=fromPaper(toPaper(o),o);if(r){const keep={...r,id:o.id,name:o.name};Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,keep);}}});render();commit();props();},
   blend:()=>$('tbBlend').click(),round:()=>$('tbRound').click(),fd:fdBegin,warp:()=>warpBegin('arc'),newDlg:()=>openNew(false),docSet:()=>openNew(true),pngAll:()=>DOC.boards.forEach((b,i)=>setTimeout(()=>exportPng(i,(b.name||('დაფა '+(i+1)))+'.png'),i*400)),abAdd:()=>abAdd(),abDel:()=>abDel(),fitAB:()=>fitBoard(DOC.ab),zoomTool:()=>setTool('zoom'),
   textH:()=>setTool('text'),textV:()=>setTool('vtext'),textP:()=>{const o=O.find(x=>SEL.includes(x.id)&&(x.type==='path'||CONVERTIBLE.has(x.type)));if(o){if(o.spine){o.pts=o.spine;o.closed=false;delete o.subs;delete o.spine;o.rule='evenodd';}setTool('textpath');const r=svg.getBoundingClientRect(),b=bbox(o);
       if(CONVERTIBLE.has(o.type))toPath(o);o.type='tpath';o.text='ტექსტი მრუდზე';o.size=32;o.font='Noto Serif Georgian';o.weight=400;o.off=0;o.showPath=false;o.fill=o.stroke!=='none'?o.stroke:'#2a1f3d';o.stroke='none';setTool('select');render();commit();props();}else setTool('textpath');},
@@ -597,12 +612,12 @@ const A_={newDoc:()=>$('bNew').click(),open:()=>$('bOpen').click(),save:()=>$('b
 ['l','c','r','t','m','b','dh','dv'].forEach(k=>A_['al_'+k]=()=>alignSel(k));['unite','minusFront','minusBack','intersect','exclude','divide'].forEach(k=>A_['pf_'+k]=()=>pathfinder(k));Object.assign(A_,{rul:()=>viewT('rul'),gdShow:()=>viewT('guides'),gdLock:()=>viewT('lockG'),gdClear:()=>{DOC.guides=[];render();commit();},sgT:()=>{$('sgOn').checked=!$('sgOn').checked;$('status').textContent='ჭკვიანი გიდები: '+($('sgOn').checked?'ჩართული':'გამორთული');},scT:()=>{$('scSt').checked=!$('scSt').checked;},blExp:()=>blendExpand(),blRel:()=>ungroupSel()});Object.keys(WARPS).forEach(k=>A_['w_'+k]=()=>warpBegin(k));
 const MENUS=[['ფაილი',[['ახალი…','Ctrl+Alt+N','newDlg'],['დოკუმენტის პარამეტრები…','','docSet'],['გახსნა…','Ctrl+O','open'],['შენახვა (.json)','Ctrl+S','save'],'-',['ექსპორტი SVG (აქტიური დაფა)','','svg'],['ექსპორტი PNG (აქტიური დაფა)','','png'],['ყველა დაფა → PNG','','pngAll'],'-',['სურათის ჩასმა…','','place']]],
  ['რედაქტირება',[['გაუქმება','Ctrl+Z','undo'],['დაბრუნება','Ctrl+Shift+Z','redo'],'-',['ამოჭრა','Ctrl+X','cut'],['კოპირება','Ctrl+C','copy'],['ჩასმა','Ctrl+V','paste'],['ჩასმა ადგილზე','Ctrl+F','pasteIn'],['დუბლირება / გამეორება','Ctrl+D','dup'],['წაშლა','Del','del']]],
- ['ობიექტი',[['დაჯგუფება','Ctrl+G','group'],['ჯგუფის დაშლა','Ctrl+Shift+G','ungroup'],'-',['რიგი',[['წინ — ყველაზე','Ctrl+Shift+]','front'],['წინ','Ctrl+]','fwd'],['უკან','Ctrl+[','bwd'],['უკან — ყველაზე','Ctrl+Shift+[','back']]],
+ ['ობიექტი',[['ტექსტი → მრუდები','Ctrl+Shift+O','toCurves'],['რასტრად გადაქცევა','','raster'],'-',['დაჯგუფება','Ctrl+G','group'],['ჯგუფის დაშლა','Ctrl+Shift+G','ungroup'],'-',['რიგი',[['წინ — ყველაზე','Ctrl+Shift+]','front'],['წინ','Ctrl+]','fwd'],['უკან','Ctrl+[','bwd'],['უკან — ყველაზე','Ctrl+Shift+[','back']]],
    ['გასწორება',[['მარცხნივ','','al_l'],['ცენტრში (ჰორიზ.)','','al_c'],['მარჯვნივ','','al_r'],['ზემოთ','','al_t'],['შუაში (ვერტ.)','','al_m'],['ქვემოთ','','al_b'],'-',['თანაბრად ჰორიზონტალურად','','al_dh'],['თანაბრად ვერტიკალურად','','al_dv']]],
    ['გარდაქმნა',[['არეკვლა ჰორიზონტალურად','','flipH'],['არეკვლა ვერტიკალურად','','flipV'],['ბრუნვა 90°','','rot90'],['ბრუნვა −90°','','rotM90'],'-',['გამეორება','Ctrl+D','dup']]],'-',
    ['Pathfinder',[['გაერთიანება','','pf_unite'],['წინას გამოკლება','','pf_minusFront'],['უკანას გამოკლება','','pf_minusBack'],['გადაკვეთა','','pf_intersect'],['გამორიცხვა','','pf_exclude'],['დაყოფა','','pf_divide']]],
    ['დაფები',[['დაფის დამატება','','abAdd'],['აქტიური დაფის წაშლა','','abDel'],['დაფაზე მორგება','','fitAB']]],'-',['ბლენდი (2 ფიგურა)','','blend'],['ბლენდის გაშლა (Expand)','','blExp'],['ბლენდის გაუქმება (Release)','','blRel'],['კუთხეების მომრგვალება','','round'],['კონტურად გადაქცევა','','outline'],'-',['დაბლოკვა','','lock'],['ყველას განბლოკვა','','unlock'],['დამალვა','','hide'],['ყველას ჩვენება','','show']]],
- ['ტექსტი',[['ჰორიზონტალური ტექსტი','T','textH'],['ვერტიკალური ტექსტი','','textV'],['ტექსტი მრუდზე','','textP']]],
+ ['ტექსტი',[['ჰორიზონტალური ტექსტი','T','textH'],['ვერტიკალური ტექსტი','','textV'],['ტექსტი მრუდზე','','textP'],'-',['მრუდებად გადაქცევა (Outlines)','Ctrl+Shift+O','toCurves'],['რასტრად გადაქცევა','','raster']]],
  ['მონიშვნა',[['ყველა','Ctrl+A','all'],['მოხსნა','Ctrl+Shift+A','none'],['ინვერსია','','inv'],'-',['იგივე შევსება','','sameFill'],['იგივე კონტური','','sameStroke']]],
  ['ეფექტი',[['დეფორმაცია (Warp)',[['რკალი','','w_arc'],['ამობურცვა','','w_bulge'],['დროშა','','w_flag'],['ტალღა','','w_wave'],['თევზი','','w_fish'],['აწევა','','w_rise'],['შეკუმშვა (squeeze)','','w_squeeze'],['გრეხა','','w_twist']]],'-',['ზიგზაგი…','','w_zigzag'],['შეკუმშვა / გაბერვა…','','w_pucker'],['უხეშობა…','','w_roughen'],'-',['თავისუფალი დეფორმაცია','','fd']]],
  ['ხედი',[['გადიდება','Ctrl+=','zin'],['დაპატარავება','Ctrl+−','zout'],['დაფაზე მორგება','Ctrl+0','fit'],['100%','Ctrl+1','z100'],['მასშტაბის ხელსაწყო','Z','zoomTool'],'-',['ბადე','','grid'],['მიბმა ბადეზე','','snap'],'-',['სახაზავები','Ctrl+R','rul'],['გიდები: ჩვენება / დამალვა','Ctrl+;','gdShow'],['გიდების დაბლოკვა','','gdLock'],['გიდების წაშლა','','gdClear'],['ჭკვიანი გიდები','Ctrl+U','sgT'],['კონტურის მასშტაბირება','','scT']]],
@@ -666,6 +681,43 @@ function shapeDlg(t,P){const d=SHD[t];if(!d)return;$('shT').textContent=(TN[t]||
 $('shOk').onclick=()=>shCb&&shCb();$('shX').onclick=()=>{$('shDlg').hidden=true;document.activeElement.blur();};
 $('shDlg').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();shCb&&shCb();}if(e.key==='Escape'){$('shDlg').hidden=true;document.activeElement.blur();}});
 $('newDlg').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();$('ndOk').click();}if(e.key==='Escape')$('newDlg').hidden=true;});
+/* ───────── text → outlines: glyphs from the real font files (opentype.js + Fontsource WOFF) ───────── */
+const FS='https://cdn.jsdelivr.net/npm/@fontsource/',FSV='@5.3.0/files/';
+const FCHAIN={'Noto Serif Georgian':[['noto-serif-georgian','georgian'],['noto-serif-georgian','latin'],['noto-serif-georgian','latin-ext']],
+  'Noto Sans Georgian':[['noto-sans-georgian','georgian'],['noto-sans-georgian','latin'],['noto-sans-georgian','latin-ext']],
+  'Cinzel':[['cinzel','latin'],['cinzel','latin-ext'],['noto-serif-georgian','georgian']],'Georgia':[['gelasio','latin'],['gelasio','latin-ext'],['noto-serif-georgian','georgian']],
+  'Arial':[['arimo','latin'],['arimo','latin-ext'],['arimo','cyrillic'],['noto-sans-georgian','georgian']],'Courier New':[['cousine','latin'],['cousine','latin-ext'],['cousine','cyrillic'],['noto-sans-georgian','georgian']]};
+const FW={'noto-serif-georgian':[100,200,300,400,500,600,700,800,900],'noto-sans-georgian':[100,200,300,400,500,600,700,800,900],cinzel:[400,500,600,700,800,900],gelasio:[400,500,600,700],arimo:[400,500,600,700],cousine:[400,700]};
+const FCACHE=new Map();let OTP=null;
+function loadOT(){if(window.opentype)return Promise.resolve();if(OTP)return OTP;OTP=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js';sc.onload=res;sc.onerror=()=>{OTP=null;rej(new Error('opentype'));};document.head.appendChild(sc);});return OTP;}
+function loadFace(fam,sub,w){const ws=FW[fam]||[400],wt=ws.reduce((m,v)=>Math.abs(v-w)<Math.abs(m-w)?v:m,ws[0]),url=`${FS}${fam}${FSV}${fam}-${sub}-${wt}-normal.woff`;
+  if(!FCACHE.has(url))FCACHE.set(url,fetch(url).then(r=>{if(!r.ok)throw new Error(r.status);return r.arrayBuffer();}).then(b=>opentype.parse(b)).catch(()=>null));return FCACHE.get(url);}
+async function facesFor(o){await loadOT();const ch=FCHAIN[o.font]||FCHAIN['Noto Serif Georgian'];const fs=await Promise.all([...ch,['noto-serif-georgian','latin']].map(([f,sb])=>loadFace(f,sb,o.weight||400)));return fs.filter(Boolean);}
+function glyphFor(F,ch){for(const f of F){const i=f.charToGlyphIndex(ch);if(i>0)return {f,g:f.glyphs.get(i)};}return F.length?{f:F[0],g:F[0].charToGlyph(ch)}:null;}
+function advOf(F,str,size,ls){let w=0;for(const ch of str){const q=glyphFor(F,ch);if(q)w+=q.g.advanceWidth*size/q.f.unitsPerEm+(ls||0);}return w;}
+function glyphItem(F,ch,size,x,y){const q=glyphFor(F,ch);if(!q)return null;const d=q.g.getPath(0,0,size).toPathData(3);if(!d)return null;const it=paper.PathItem.create(d);it.translate(new paper.Point(x,y));return it;}
+async function textOutline(o){if(!P0())throw new Error('paper');const F=await facesFor(o);if(!F.length)throw new Error('font');paper.project.activeLayer.removeChildren();const items=[],sz=o.size,ls=o.ls||0,lh=o.lh||1.2;
+  const runLine=(str,x,y,anchor)=>{const W=advOf(F,str,sz,ls)-(str.length?ls:0);let cx=anchor==='middle'?x-W/2:anchor==='end'?x-W:x;for(const ch of str){const q=glyphFor(F,ch);if(!q)continue;const it=glyphItem(F,ch,sz,cx,y);if(it)items.push(it);cx+=q.g.advanceWidth*sz/q.f.unitsPerEm+ls;}};
+  if(o.type==='text'&&o.box){const L=wrapLines(o),n=Math.max(1,Math.floor((o.box.h-sz*0.25)/(lh*sz))+1),ax=o.anchor==='middle'?o.x+o.box.w/2:o.anchor==='end'?o.x+o.box.w:o.x;L.slice(0,n).forEach((l,i)=>runLine(l,ax,o.y+sz*0.95+i*lh*sz,o.anchor||'start'));}
+  else if(o.type==='text'&&o.vertical){String(o.text).split('\n').forEach((l,li)=>[...l].forEach((ch,ci)=>runLine(ch,o.x+li*lh*sz,o.y+ci*(sz*1.05+ls),'middle')));}
+  else if(o.type==='text'){String(o.text).split('\n').forEach((l,i)=>runLine(l,o.x,o.y+i*lh*sz,o.anchor||'start'));}
+  else if(o.type==='tpath'){const pth=paper.PathItem.create(pathD(o));const path=pth.className==='CompoundPath'?pth.children[0]:pth,Lp=path.length,str=String(o.text),W=advOf(F,str,sz,ls);let s0=Lp*(o.off||0)/100;if(o.anchor==='middle')s0-=W/2;else if(o.anchor==='end')s0-=W;
+    for(const ch of str){const q=glyphFor(F,ch);if(!q)continue;const adv=q.g.advanceWidth*sz/q.f.unitsPerEm,mid=s0+adv/2;if(mid>=0&&mid<=Lp){const P=path.getPointAt(mid),T=path.getTangentAt(mid),it=glyphItem(F,ch,sz,-adv/2,0);if(it&&P&&T){it.rotate(T.angle,new paper.Point(0,0));it.translate(P);items.push(it);}}s0+=adv+ls;}pth.remove();}
+  if(!items.length)return null;const flat=[];items.forEach(it=>{if(it.className==='CompoundPath')it.children.slice().forEach(c=>flat.push(c));else flat.push(it);});const cp=new paper.CompoundPath({children:flat});
+  if(o.rot){const b=bbox(o);cp.rotate(o.rot,new paper.Point(b.x+b.w/2,b.y+b.h/2));}
+  const r=fromPaper(cp,o);paper.project.activeLayer.removeChildren();if(!r)return null;r.rule='nonzero';r.stroke=o.stroke;r.sw=o.sw;r.name=(o.name||'ტექსტი')+' (კონტური)';return r;}
+async function outlineSel(){const L=O.filter(o=>SEL.includes(o.id)&&(o.type==='text'||o.type==='tpath'));if(!L.length){$('status').textContent='მონიშნე ტექსტი';return 0;}$('status').textContent='შრიფტი იტვირთება…';let n=0;
+  for(const o of L){try{const r=await textOutline(o);if(r){r.id=o.id;Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,r);n++;}}catch(err){$('status').textContent='შრიფტი ვერ ჩაიტვირთა — შეამოწმე ინტერნეტი';}}
+  if(n){layers._s='';render();commit();props();$('status').textContent=`ტექსტი გადაიქცა მრუდებად (${n}) — ახლა ასოები ჩვეულებრივი ვექტორული ფიგურებია`;}return n;}
+/* rasterize: object → embedded PNG image at the document resolution */
+async function rasterSel(){const L=O.filter(o=>SEL.includes(o.id));if(!L.length){$('status').textContent='მონიშნე ობიექტი';return;}
+  for(const t of L.filter(o=>o.type==='text'||o.type==='tpath')){SEL=[t.id];await outlineSel();}SEL=L.map(o=>o.id);
+  const dpi=DOC.dpi||150,sc=dpi/96;for(const o of O.filter(x=>SEL.includes(x.id))){const b0=bbox(o),c={x:b0.x+b0.w/2,y:b0.y+b0.h/2},pad=(o.sw||0)+2;let b={...b0};
+    if(o.rot){const cs=[[b0.x,b0.y],[b0.x+b0.w,b0.y],[b0.x,b0.y+b0.h],[b0.x+b0.w,b0.y+b0.h]].map(([x,y])=>rot({x,y},c,o.rot));const xs=cs.map(q=>q.x),ys=cs.map(q=>q.y);b={x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)};}
+    b={x:b.x-pad,y:b.y-pad,w:b.w+2*pad,h:b.h+2*pad};const svgS=`<svg xmlns="http://www.w3.org/2000/svg" width="${b.w}" height="${b.h}" viewBox="${b.x} ${b.y} ${b.w} ${b.h}"><defs>${gradDefs()}</defs>${elStr(o,true)}</svg>`;
+    const src=await new Promise(res=>{const img=new Image(),u=URL.createObjectURL(new Blob([svgS],{type:'image/svg+xml'}));img.onload=()=>{const cv=document.createElement('canvas');cv.width=Math.max(1,Math.round(b.w*sc));cv.height=Math.max(1,Math.round(b.h*sc));const g=cv.getContext('2d');g.scale(sc,sc);g.drawImage(img,0,0,b.w,b.h);URL.revokeObjectURL(u);res(cv.toDataURL('image/png'));};img.onerror=()=>res(null);img.src=u;});
+    if(src){const keep={id:o.id,type:'image',name:(o.name||'ობიექტი')+' (რასტრი)',x:b.x,y:b.y,w:b.w,h:b.h,src,op:1,rot:0,fill:'none',stroke:'none',sw:0};Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,keep);}}
+  layers._s='';render();commit();props();$('status').textContent=`რასტრად გადაიქცა · ${dpi} dpi`;}
 /* ───────── zoom tool ───────── */
 function zoomAt(f,mx,my){const nz=Math.min(32,Math.max(0.03,Z*f));PX=mx-(mx-PX)*nz/Z;PY=my-(my-PY)*nz/Z;Z=nz;render();}
 function zoomRect(R){const r=svg.getBoundingClientRect();Z=Math.min(32,Math.min(r.width/R.w,r.height/R.h)*0.92);PX=r.width/2-(R.x+R.w/2)*Z;PY=r.height/2-(R.y+R.h/2)*Z;render();}
@@ -757,7 +809,7 @@ document.addEventListener('keydown',e=>{const tgt=e.target;if(tgt.closest&&(tgt.
   if(mod&&k==='z'){e.preventDefault();e.shiftKey?$('bRedo').click():$('bUndo').click();return;}if(mod&&k==='y'){e.preventDefault();$('bRedo').click();return;}
   if(mod&&k==='d'){e.preventDefault();transformAgain();return;}if(mod&&k==='c'){e.preventDefault();copySel();return;}if(mod&&k==='x'){e.preventDefault();copySel();del();return;}
   if(mod&&k==='v'){e.preventDefault();paste(false);return;}if(mod&&k==='f'){e.preventDefault();paste(true);return;}if(mod&&k==='g'){e.preventDefault();e.shiftKey?ungroupSel():groupSel();return;}
-  if(mod&&k==='o'){e.preventDefault();$('bOpen').click();return;}if(mod&&k==='0'){e.preventDefault();fit();return;}if(mod&&k==='1'){e.preventDefault();A_.z100();return;}
+  if(mod&&e.shiftKey&&k==='o'){e.preventDefault();outlineSel();return;}if(mod&&k==='o'){e.preventDefault();$('bOpen').click();return;}if(mod&&k==='0'){e.preventDefault();fit();return;}if(mod&&k==='1'){e.preventDefault();A_.z100();return;}
   if(mod&&(k==='='||k==='+')){e.preventDefault();zoomBy(1.25);return;}if(mod&&k==='-'){e.preventDefault();zoomBy(0.8);return;}
   if(mod&&(e.code==='BracketRight'||e.code==='BracketLeft')){e.preventDefault();arrange(e.code==='BracketRight'?(e.shiftKey?'front':'fwd'):(e.shiftKey?'back':'bwd'));return;}
   if(mod&&k==='a'&&e.shiftKey){e.preventDefault();A_.none();return;}
@@ -824,7 +876,7 @@ function props(onlyNums){const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolea
     if(o.type==='text'||o.type==='tpath')h+=`<div class="rowc">${o.type==='text'?`<label><input type="checkbox" id="pVert"${o.vertical?' checked':''}> ვერტიკალური</label>`:`<label><input type="checkbox" id="pShowP"${o.showPath?' checked':''}> მრუდის ჩვენება</label>`}
       <select class="in" id="pAnc" style="width:auto"><option value="start"${(o.anchor||'start')==='start'?' selected':''}>⯇ თავიდან</option><option value="middle"${o.anchor==='middle'?' selected':''}>☰ შუაში</option><option value="end"${o.anchor==='end'?' selected':''}>⯈ ბოლოში</option></select></div>
       <div class="rowc">ასოთა შორის <input type="number" id="pLs" value="${o.ls||0}" style="width:60px"> ${o.type==='text'?`სტრიქონი <input type="number" id="pLh" step="0.05" value="${o.lh||1.2}" style="width:60px">`:`გადაწევა % <input type="range" id="pOff" min="0" max="100" value="${o.off||0}">`}</div>`;
-    if(o.type==='text'||o.type==='tpath')h+=`<textarea id="pText">${esc(o.text)}</textarea><div class="rowc">ზომა <input type="number" id="pSz" value="${Math.round(o.size)}" style="width:70px"><select class="in" id="pFont" style="width:auto">${['Noto Serif Georgian','Noto Sans Georgian','Cinzel','Georgia','Arial','Courier New'].map(f=>`<option${f===o.font?' selected':''}>${f}</option>`).join('')}</select>
+    if(o.type==='text'||o.type==='tpath')h+=`<textarea id="pText">${esc(o.text)}</textarea><div class="rowc"><button class="mini" id="pCurv" title="ასოები გადაიქცევა ვექტორულ ფიგურებად">✒ მრუდებად (Ctrl+Shift+O)</button><button class="mini" id="pRast">▦ რასტრად</button></div><div class="rowc">ზომა <input type="number" id="pSz" value="${Math.round(o.size)}" style="width:70px"><select class="in" id="pFont" style="width:auto">${['Noto Serif Georgian','Noto Sans Georgian','Cinzel','Georgia','Arial','Courier New'].map(f=>`<option${f===o.font?' selected':''}>${f}</option>`).join('')}</select>
       <select class="in" id="pWt" style="width:auto"><option value="400"${o.weight==400?' selected':''}>ჩვეულ.</option><option value="600"${o.weight==600?' selected':''}>მსხვილი</option></select></div>`;
     if(o.type==='path')h+=`<div class="rowc"><label><input type="checkbox" id="pCl"${o.closed?' checked':''}> დახურული</label><button class="mini" id="pEdit">⌖ კვანძები</button></div><div class="hint">${CONT(o).reduce((s2,c)=>s2+c.pts.length,0)} კვანძი${o.subs&&o.subs.length?' · '+(o.subs.length+1)+' კონტური':''} · A / Q — კვანძების მონიშვნა და გადაადგილება, Alt — სახელური დამოუკიდებლად, Delete — მონიშნული კვანძების წაშლა</div>`;
     if(o.type==='eq')h+=`<div class="rowc">${['f','p','xy'].map(m=>`<button class="mini${o.mode===m?'" style="border-color:#ecd59a;color:#ecd59a':''}" data-em="${m}">${m==='f'?'y = f(x)':m==='p'?'r(θ)':'x(t), y(t)'}</button>`).join('')}</div>
@@ -844,7 +896,7 @@ function props(onlyNums){const L=SEL.map(id=>O.find(o=>o.id===id)).filter(Boolea
   const on=(id,fn,ev='input')=>{const el=$(id);if(el)el.addEventListener(ev,()=>{fn(el);render();});if(el)el.addEventListener('change',()=>commit());};
   on('pRr',el=>o.r=+el.value);on('pK',el=>o.k=Math.max(3,Math.min(40,+el.value||3)));on('pIn',el=>o.inner=+el.value);on('pText',el=>{o.text=el.value;delete o._bb;});on('pSz',el=>{o.size=Math.max(4,+el.value||12);delete o._bb;});
   on('pFont',el=>{o.font=el.value;delete o._bb;},'change');on('pVert',el=>{o.vertical=el.checked;delete o._bb;},'change');on('pShowP',el=>o.showPath=el.checked,'change');
-  on('pAnc',el=>{o.anchor=el.value;delete o._bb;},'change');on('pLs',el=>{o.ls=+el.value||0;delete o._bb;});on('pLh',el=>{o.lh=+el.value||1.2;delete o._bb;});on('pOff',el=>o.off=+el.value);if($('pUng'))$('pUng').onclick=ungroupSel;if($('blM2')){const g=o;$('blM2').onchange=()=>{g.blend.mode=$('blM2').value;g.blend.val=g.blend.mode==='dist'?30:8;render();commit();props();};$('blV2').oninput=()=>{g.blend.val=+$('blV2').value;$('blV2t').textContent=g.blend.val;render();};$('blV2').onchange=()=>commit();$('blExp').onclick=blendExpand;$('blRel').onclick=ungroupSel;}on('pWt',el=>{o.weight=+el.value;delete o._bb;},'change');on('pCl',el=>o.closed=el.checked,'change');
+  on('pAnc',el=>{o.anchor=el.value;delete o._bb;},'change');on('pLs',el=>{o.ls=+el.value||0;delete o._bb;});on('pLh',el=>{o.lh=+el.value||1.2;delete o._bb;});on('pOff',el=>o.off=+el.value);if($('pUng'))$('pUng').onclick=ungroupSel;if($('pCurv')){$('pCurv').onclick=()=>outlineSel();$('pRast').onclick=()=>rasterSel();}if($('blM2')){const g=o;$('blM2').onchange=()=>{g.blend.mode=$('blM2').value;g.blend.val=g.blend.mode==='dist'?30:8;render();commit();props();};$('blV2').oninput=()=>{g.blend.val=+$('blV2').value;$('blV2t').textContent=g.blend.val;render();};$('blV2').onchange=()=>commit();$('blExp').onclick=blendExpand;$('blRel').onclick=ungroupSel;}on('pWt',el=>{o.weight=+el.value;delete o._bb;},'change');on('pCl',el=>o.closed=el.checked,'change');
   if($('pEdit'))$('pEdit').onclick=()=>setTool('direct');
   if(o.type==='eq'&&L.length===1){
     const upd=()=>{render();$('eqErr').textContent=o._err||'';paramsUI();};
