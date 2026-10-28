@@ -272,6 +272,18 @@ header::after{content:"";display:block;width:280px;height:1px;
 .xopt.on .xname{color:var(--ink);}
 .xopt.on .xglyph{opacity:1;}
 .xopt.on .xtick{opacity:1;transform:scale(1);}
+.xbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:0 auto 16px;padding:10px 12px;max-width:760px;
+  border:1px solid var(--border);border-radius:var(--r);background:var(--card);}
+.xbar-l{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin-right:4px;}
+.xchip{font:inherit;font-size:.82rem;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;cursor:pointer;
+  background:transparent;color:var(--ink-mid);border:1px solid var(--border);transition:background .2s,border-color .2s,color .2s;}
+.xchip b{font-weight:400;font-size:1rem;opacity:.55}
+.xchip:hover{border-color:var(--border-h);color:var(--ink);}
+.xchip.on{background:var(--raised);color:var(--ink);}
+.xchip.on b{opacity:1}
+.xchip.on[data-x="chiron"]{border-color:#59C9A5;box-shadow:0 0 12px rgba(89,201,165,.18)}.xchip.on[data-x="chiron"] b{color:#59C9A5}
+.xchip.on[data-x="lilith"]{border-color:#E08FB4;box-shadow:0 0 12px rgba(224,143,180,.18)}.xchip.on[data-x="lilith"] b{color:#E08FB4}
+.xchip.on[data-x="asc"]{border-color:#7FC4E8;box-shadow:0 0 12px rgba(127,196,232,.18)}.xchip.on[data-x="asc"] b{color:#7FC4E8}
 .xopt.on[data-body="chiron"]{border-color:#59C9A5;box-shadow:0 0 14px rgba(89,201,165,.16);}
 .xopt.on[data-body="chiron"] .xbox{background:#59C9A5;border-color:#59C9A5;}
 .xopt.on[data-body="chiron"] .xglyph{color:#59C9A5;}
@@ -417,6 +429,12 @@ header::after{content:"";display:block;width:280px;height:1px;
 
 <!-- ══ NATAL RESULTS ══ -->
 <section id="results-natal" class="hidden">
+  <div class="xbar" role="group" aria-label="დამატებითი აქტივაციები">
+    <span class="xbar-l">დამატებითი აქტივაციები</span>
+    <button type="button" class="xchip" data-x="chiron" onclick="toggleExtra('opt-chiron')" title="ქირონი — ჭრილობა და მკურნალი"><b>⚷</b> ქირონი</button>
+    <button type="button" class="xchip" data-x="lilith" onclick="toggleExtra('opt-lilith')" title="ლილიტი — შავი მთვარე"><b>⚸</b> ლილიტი</button>
+    <button type="button" class="xchip" data-x="asc" onclick="toggleExtra('opt-asc')" title="ასცენდენტი — ამომავალი ნიშანი"><b>AC</b> ასცენდენტი</button>
+  </div>
   <div class="main-layout">
     <div class="left-col">
       <div class="sec-head"><span>სხეულის გრაფიკა</span></div>
@@ -454,6 +472,12 @@ header::after{content:"";display:block;width:280px;height:1px;
 
 <!-- ══ SYNASTRY RESULTS ══ -->
 <section id="results-synastry" class="hidden">
+  <div class="xbar" role="group" aria-label="დამატებითი აქტივაციები">
+    <span class="xbar-l">დამატებითი აქტივაციები</span>
+    <button type="button" class="xchip" data-x="chiron" onclick="toggleExtra('opt-chiron')" title="ქირონი — ჭრილობა და მკურნალი"><b>⚷</b> ქირონი</button>
+    <button type="button" class="xchip" data-x="lilith" onclick="toggleExtra('opt-lilith')" title="ლილიტი — შავი მთვარე"><b>⚸</b> ლილიტი</button>
+    <button type="button" class="xchip" data-x="asc" onclick="toggleExtra('opt-asc')" title="ასცენდენტი — ამომავალი ნიშანი"><b>AC</b> ასცენდენტი</button>
+  </div>
   <div class="legend">
     <div class="leg-item"><div class="leg-dot" style="background:var(--violet-lt)"></div>პირველი პირი</div>
     <div class="leg-item"><div class="leg-dot" style="background:var(--red-lt)"></div>მეორე პირი</div>
@@ -742,8 +766,11 @@ function syncChipStyles(){
     const inp=document.getElementById(id);
     const chip=document.querySelector(`.xopt[data-body="${body}"]`);
     if(inp&&chip)chip.classList.toggle('on',inp.checked);
+    document.querySelectorAll(`.xchip[data-x="${body}"]`).forEach(b=>{b.classList.toggle('on',!!(inp&&inp.checked));b.setAttribute('aria-pressed',inp&&inp.checked?'true':'false');});
   });
 }
+/* the same switches under the results — so they can be flipped after the chart is built */
+function toggleExtra(id){const inp=document.getElementById(id);if(!inp)return;inp.checked=!inp.checked;rerenderCurrent();}
 function rerenderCurrent(){
   syncChipStyles();
   if(currentMode==='natal'&&_lastNatal)renderNatal(_lastNatal);
