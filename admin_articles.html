@@ -129,6 +129,7 @@ const BODY_X=[['Selena','⚪','თეთრი მთვარე'],['Fortune','
 const ANG=[['ASC','AC','ასცენდენტი'],['MC','MC','შუაცა (MC)']];
 const ASP=[[0,'☌','შეერთება'],[60,'⚹','სექსტილი'],[90,'□','კვადრატი'],[120,'△','ტრინი'],[150,'⚻','კვინკონსი'],[180,'☍','ოპოზიცია']];
 const bl=b=>`${b[1]}︎ ${b[2]}`;
+const HFILE=k=>{const a=window.HD_GATE_INTERP&&HD_GATE_INTERP.forKey(k);return a?{title:a.t,text:a.h}:null;};
 const IFILE=k=>{const a=window.MAGNUS_INTERP&&MAGNUS_INTERP.forKey&&MAGNUS_INTERP.forKey(k);return a?{title:a.t,text:a.h}:null;};   /* built-in texts (magnus-interp.js) */
 function catMatrix(){
   const DB=window.MATRIX_DB||{},EX=new Set(['karmic_tail','cp_karmic_tail']);   /* exact-order zones (matrix_combos.js) */
@@ -225,10 +226,13 @@ function catHD(){
     {id:'def',label:'განსაზღვრება',items:[[0,'განსაზღვრება არ არის'],[1,'ერთიანი'],[2,'გაყოფილი'],[3,'სამად გაყოფილი'],[4,'ოთხად გაყოფილი']].map(([k,n])=>({key:`def:${k}`,label:n}))},
     {id:'center',label:'ცენტრები — განსაზღვრული / ღია',items:CE.flatMap(([k,n])=>[{key:`center:${k.replace(/ /g,'_')}:def`,label:`${n} — განსაზღვრული`},{key:`center:${k.replace(/ /g,'_')}:open`,label:`${n} — ღია`}])},
     {id:'channel',label:'არხები · 36',items:CH.map(c=>({key:`channel:${c}`,label:`${c}${CHN[c]?' — '+CHN[c][0]:''}`}))},
-    {id:'gate',label:'კარიბჭეები · 64',items:Array.from({length:64},(_,i)=>({key:`gate:${i+1}`,label:`კარიბჭე ${i+1}`}))},
-    {id:'line',label:'კარიბჭის ხაზები · 384',items:Array.from({length:384},(_,i)=>({key:`line:${(i/6|0)+1}.${i%6+1}`,label:`კარიბჭე ${(i/6|0)+1}, ხაზი ${i%6+1}`}))},
+    {id:'gate',label:'კარიბჭეები · 64',items:Array.from({length:64},(_,i)=>({key:`gate:${i+1}`,label:`კარიბჭე ${i+1}`,file:HFILE(`gate:${i+1}`)}))},
+    {id:'line',label:'კარიბჭის ხაზები · 384',items:Array.from({length:384},(_,i)=>({key:`line:${(i/6|0)+1}.${i%6+1}`,label:`კარიბჭე ${(i/6|0)+1}, ხაზი ${i%6+1}`,file:HFILE(`line:${(i/6|0)+1}.${i%6+1}`)}))},
     {id:'sense',label:'გრძნობა (Sense / Cognition)',items:['ყნოსვა','გემო','გარეგანი ხედვა','შინაგანი ხედვა','გრძნობა','შეხება'].map((n,i)=>({key:`sense:${i+1}`,label:`${i+1} ${n}`}))},
     {id:'cross',label:'ინკარნაციული ჯვრის კუთხე',items:[['right','მარჯვენა კუთხე (პერსონალური)'],['jx','იუქსტაპოზიცია'],['left','მარცხენა კუთხე (ტრანსპერსონალური)']].map(([k,n])=>({key:`cross:${k}`,label:n}))}];
+  const HP=[['Sun','☉ მზე'],['Earth','⊕ დედამიწა'],['Moon','☽ მთვარე'],['North_Node','☊ ჩრდ. კვანძი'],['South_Node','☋ სამხ. კვანძი'],['Mercury','☿ მერკური'],['Venus','♀ ვენერა'],['Mars','♂ მარსი'],['Jupiter','♃ იუპიტერი'],['Saturn','♄ სატურნი'],['Uranus','♅ ურანი'],['Neptune','♆ ნეპტუნი'],['Pluto','♇ პლუტონი'],['Chiron','⚷ ქირონი'],['Lilith','⚸ ლილიტი'],['Ascendant','AC ასცენდენტი']];
+  g.push({id:'hdabout',label:'სტატია — დამატებითი წერტილები (ქირონი, ლილიტი, AC)',items:[{key:'about:hd:extras',label:'დამატებითი წერტილები ადამიანის დიზაინში',file:HFILE('about:hd:extras')}]});
+  for(const [pk,pn] of HP)g.push({id:'pg_'+pk,label:`${pn} კარიბჭეებში · 64`,items:Array.from({length:64},(_,i)=>({key:`pgate:${pk}:${i+1}`,label:`${pn} — კარიბჭე ${i+1}`,file:HFILE(`pgate:${pk}:${i+1}`)}))});
   for(const [k,[n,list]] of Object.entries(VAR))g.push({id:k,label:n,items:list.map(([c,l])=>({key:`${k}:${c}`,label:l}))});
   return g;
 }
