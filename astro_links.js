@@ -3,9 +3,9 @@
    Keys: sign:<Body>:<0-11> · house:<Body>:<1-12> · asp:<A>:<B>:<angle> · cusp:<house>:<sign>   */
 (function(){
 'use strict';
-const EN={'მზე':'Sun','მთვარე':'Moon','მერკური':'Mercury','ვენერა':'Venus','მარსი':'Mars','იუპიტერი':'Jupiter','სატურნი':'Saturn','ურანი':'Uranus','ნეპტუნი':'Neptune','პლუტონი':'Pluto','ჩრდ. კვანძი':'Node','ქირონი':'Chiron','ლილიტი':'Lilith','AC':'ASC','MC':'MC'};
+const EN={'მზე':'Sun','მთვარე':'Moon','მერკური':'Mercury','ვენერა':'Venus','მარსი':'Mars','იუპიტერი':'Jupiter','სატურნი':'Saturn','ურანი':'Uranus','ნეპტუნი':'Neptune','პლუტონი':'Pluto','ჩრდ. კვანძი':'Node','ქირონი':'Chiron','ლილიტი':'Lilith','ჭ. ლილიტი':'Lilith','ჭ. ჩრდ. კვანძი':'Node','AC':'ASC','MC':'MC'};
 const XP={'თეთრი მთვარე':'Selena','ბედის ვარსკვლავი':'Fortune','ვერტექსი':'Vertex'};   /* sign/house keys only */
-const ORDER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','Node','Chiron','Lilith','ASC','MC'];
+const ORDER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','Node','Chiron','Lilith','Selena','Fortune','Vertex','ASC','MC'];
 const ANG={'შეერთება':0,'სექსტილი':60,'კვადრატი':90,'ტრინი':120,'ოპოზიცია':180,'კვინკონსი':150};
 const SG=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
 const ROM=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
@@ -27,9 +27,9 @@ function openPlanet(name,pd,isB){
   openArt(keys,heads,`${name} ${loc(SG[si])}${h&&en!=='ASC'&&en!=='MC'?` · ${ROM[h]} სახლში`:''}`,ctxName(isB));
 }
 function openAspect(p1,p2,type,ctx){
-  let a=EN[p1]||p1,b=EN[p2]||p2,ang=ANG[type];if(ang==null)return;
+  let a=EN[p1]||XP[p1]||p1,b=EN[p2]||XP[p2]||p2,ang=ANG[type];if(ang==null)return;
   if(ORDER.indexOf(a)>ORDER.indexOf(b)&&ORDER.indexOf(b)>=0)[a,b]=[b,a];
-  const n1=Object.keys(EN).find(k=>EN[k]===a)||p1,n2=Object.keys(EN).find(k=>EN[k]===b)||p2;
+  const ALL={...EN,...XP},n1=Object.keys(ALL).find(k=>ALL[k]===a)||p1,n2=Object.keys(ALL).find(k=>ALL[k]===b)||p2;
   openArt([`asp:${a}:${b}:${ang}`],[`${sym(n1)} ${n1} ${type} ${sym(n2)} ${n2}`],`${n1} ${type} ${n2}`,ctx);
 }
 function openHouse(h,deg,ctx){const si=signOf(deg);openArt([`cusp:${h}:${si}`],[`${ZG[si]} ${ROM[h]} სახლი ${loc(SG[si])}`],`${ROM[h]} სახლი ${loc(SG[si])}`,ctx);}
