@@ -24,13 +24,14 @@ function openPlanet(name,pd,isB){
   if(en){keys.push(`sign:${en}:${si}`);heads.push(`${g} ${name} ${loc(SG[si])}`);
     if(h&&en!=='ASC'&&en!=='MC'){keys.push(`house:${en}:${h}`);heads.push(`${g} ${name} ${ROM[h]} სახლში`);}}
   if(!keys.length){keys.push(`sign:${name}:${si}`);heads.push(`${g} ${name} ${loc(SG[si])}`);}
+  const AB={Chiron:'chiron',Lilith:'lilith',Node:'node',Selena:'selena',Fortune:'fortune',Vertex:'vertex'};if(AB[en]){keys.push(`about:${AB[en]}`);heads.push(`${g} ${name} — ზოგადად`);if(en==='Lilith'||en==='Node'){keys.push('about:points');heads.push('საშუალო და ჭეშმარიტი');}}
   openArt(keys,heads,`${name} ${loc(SG[si])}${h&&en!=='ASC'&&en!=='MC'?` · ${ROM[h]} სახლში`:''}`,ctxName(isB));
 }
 function openAspect(p1,p2,type,ctx){
   let a=EN[p1]||XP[p1]||p1,b=EN[p2]||XP[p2]||p2,ang=ANG[type];if(ang==null)return;
   if(ORDER.indexOf(a)>ORDER.indexOf(b)&&ORDER.indexOf(b)>=0)[a,b]=[b,a];
   const ALL={...EN,...XP},n1=Object.keys(ALL).find(k=>ALL[k]===a)||p1,n2=Object.keys(ALL).find(k=>ALL[k]===b)||p2;
-  openArt([`asp:${a}:${b}:${ang}`],[`${sym(n1)} ${n1} ${type} ${sym(n2)} ${n2}`],`${n1} ${type} ${n2}`,ctx);
+  openArt([`asp:${a}:${b}:${ang}`,`about:asp:${ang}`],[`${sym(n1)} ${n1} ${type} ${sym(n2)} ${n2}`,`${type} — ზოგადად`],`${n1} ${type} ${n2}`,ctx);
 }
 function openHouse(h,deg,ctx){const si=signOf(deg);openArt([`cusp:${h}:${si}`],[`${ZG[si]} ${ROM[h]} სახლი ${loc(SG[si])}`],`${ROM[h]} სახლი ${loc(SG[si])}`,ctx);}
 const mark=el=>{el.style.cursor='pointer';el.title='დააჭირე — აღწერა ახალ ჩანართში';};

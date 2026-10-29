@@ -103,6 +103,8 @@ button,input,select{font:inherit;color:inherit}
 <script src="matrix_boxes_addon.js"></script>
 <script src="magnus-interp.js"></script>
 <script src="interp_bridge.js"></script>
+<script src="aspect_interp.js"></script>
+<script src="hd_gate_interp.js"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -125,7 +127,7 @@ const BODY=[['Sun','☉','მზე'],['Moon','☽','მთვარე'],['Merc
   ['Uranus','♅','ურანი'],['Neptune','♆','ნეპტუნი'],['Pluto','♇','პლუტონი'],['Node','☊','ჩრდ. კვანძი'],['Chiron','⚷','ქირონი'],['Lilith','⚸','ლილიტი']];
 const BODY_X=[['Selena','⚪','თეთრი მთვარე'],['Fortune','⊕','ბედის ვარსკვლავი'],['Vertex','Vx','ვერტექსი']];   /* sign/house only */
 const ANG=[['ASC','AC','ასცენდენტი'],['MC','MC','შუაცა (MC)']];
-const ASP=[[0,'☌','შეერთება'],[60,'⚹','სექსტილი'],[90,'□','კვადრატი'],[120,'△','ტრინი'],[180,'☍','ოპოზიცია']];
+const ASP=[[0,'☌','შეერთება'],[60,'⚹','სექსტილი'],[90,'□','კვადრატი'],[120,'△','ტრინი'],[150,'⚻','კვინკონსი'],[180,'☍','ოპოზიცია']];
 const bl=b=>`${b[1]}︎ ${b[2]}`;
 const IFILE=k=>{const a=window.MAGNUS_INTERP&&MAGNUS_INTERP.forKey&&MAGNUS_INTERP.forKey(k);return a?{title:a.t,text:a.h}:null;};   /* built-in texts (magnus-interp.js) */
 function catMatrix(){
@@ -193,13 +195,14 @@ function catPyth(){
   return g;
 }
 function catAstro(){
-  const g=[],all=[...BODY,...ANG];
+  const g=[],all=[...BODY,...BODY_X,...ANG];
   for(const b of [...BODY,...BODY_X])g.push({id:'sign_'+b[0],label:`${bl(b)} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]}︎ ${b[2]} ${ZS[i]} ${s.endsWith('ი')?s.slice(0,-1)+'ში':s+'ში'}`,file:IFILE(`sign:${b[0]}:${i}`)}))});
   for(const b of ANG)g.push({id:'sign_'+b[0],label:`${b[2]} ნიშნებში`,items:SG.map((s,i)=>({key:`sign:${b[0]}:${i}`,label:`${b[1]} ${ZS[i]} ${s}`}))});
   for(const b of [...BODY,...BODY_X])g.push({id:'house_'+b[0],label:`${bl(b)} სახლებში`,items:ROM.slice(1).map((r,i)=>({key:`house:${b[0]}:${i+1}`,label:`${b[1]}︎ ${b[2]} ${r} სახლში`,file:IFILE(`house:${b[0]}:${i+1}`)}))});
   for(let i=0;i<all.length;i++){const a=all[i],items=[];
-    for(let j=i+1;j<all.length;j++){const b=all[j];if(a[0]==='ASC'&&b[0]==='MC')continue;for(const [ang,gl,n] of ASP)items.push({key:`asp:${a[0]}:${b[0]}:${ang}`,label:`${a[1]} ${gl} ${b[1]} — ${a[2]} · ${b[2]}: ${n}`});}
+    for(let j=i+1;j<all.length;j++){const b=all[j];if(a[0]==='ASC'&&b[0]==='MC')continue;for(const [ang,gl,n] of ASP)items.push({key:`asp:${a[0]}:${b[0]}:${ang}`,label:`${a[1]} ${gl} ${b[1]} — ${a[2]} · ${b[2]}: ${n}`,file:IFILE(`asp:${a[0]}:${b[0]}:${ang}`)});}
     if(items.length)g.push({id:'asp_'+a[0],label:`ასპექტები — ${a[2]}`,items});}
+  g.push({id:'about',label:'სტატიები — ასპექტები და ფიქტიური წერტილები',items:[['about:aspects','ასპექტები — ზოგადად'],...ASP.map(([a,gl,n])=>[`about:asp:${a}`,`${gl} ${n} — ზოგადად`]),['about:points','საშუალო და ჭეშმარიტი წერტილები'],['about:chiron','⚷ ქირონი'],['about:lilith','⚸ ლილიტი'],['about:node','☊ მთვარის კვანძები'],['about:selena','⚪ სელენა'],['about:fortune','⊕ ბედის ვარსკვლავი'],['about:vertex','Vx ვერტექსი']].map(([key,label])=>({key,label,file:IFILE(key)}))});
   g.push({id:'cusp',label:'სახლის წვერო ნიშანში (12×12)',items:ROM.slice(1).flatMap((r,h)=>SG.map((s,i)=>({key:`cusp:${h+1}:${i}`,label:`${r} სახლი ${ZS[i]} ${s}`})))});
   g.push({id:'ruler',label:'სახლის მმართველი სხვა სახლში (12×12)',items:ROM.slice(1).flatMap((r,h)=>ROM.slice(1).map((r2,k)=>({key:`ruler:${h+1}:${k+1}`,label:`${r} სახლის მმართველი ${r2} სახლში`})))});
   return g;

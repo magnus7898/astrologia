@@ -9,11 +9,14 @@ const CEN={'გვირგვინი':'Head','თავი':'Head','აჯნ
 const auth=s=>/ემოც|Emot/i.test(s)?'emo':/საკრალ|Sacral/i.test(s)?'sac':/სპლენ|ელენთ|Splen/i.test(s)?'spl':/თვით|Self/i.test(s)?'self':/ეგო|გულ|Ego|Heart/i.test(s)?'ego':/მთვარ|ლუნ|Lunar|Moon/i.test(s)?'moon':/მენტ|გარემ|Mental|Environ|None|არ არის/i.test(s)?'ment':null;
 const defn=s=>/სამ|Triple/i.test(s)?3:/ოთხ|Quad/i.test(s)?4:/გაყოფ|Split/i.test(s)?2:/ერთ|Single/i.test(s)?1:/არ |None|ნულ/i.test(s)?0:null;
 const cross=s=>/იუქსტ|მიმდებარე|Juxta/i.test(s)?'jx':/მარცხ|Left/i.test(s)?'left':/მარჯვ|Right/i.test(s)?'right':null;
+const PK={'მზე':'Sun','დედამ.':'Earth','დედამიწა':'Earth','მთვარე':'Moon','ჩ.კვ.':'North_Node','ს.კვ.':'South_Node','მერკ.':'Mercury','ვენ.':'Venus','მარს.':'Mars','იუპ.':'Jupiter','სატ.':'Saturn','ურ.':'Uranus','ნეპ.':'Neptune','პლ.':'Pluto','ქირონი':'Chiron','ლილიტი':'Lilith','ასცენდენტი':'Ascendant'};
 function openArt(keys,heads,title){window.open(`article.html?s=hd&k=${encodeURIComponent(keys.join(','))}&h=${encodeURIComponent(heads.join('|'))}&t=${encodeURIComponent(title)}`,'_blank','noopener');}
 function mk(el,fn){if(el.dataset.lk)return;el.dataset.lk='1';el.style.cursor='pointer';el.title='დააჭირე — აღწერა ახალ ჩანართში';el.classList.add('hd-art');el.addEventListener('click',e=>{e.stopPropagation();fn();});}
 function scan(root){
   root.querySelectorAll('.prow').forEach(r=>{const g=r.querySelector('.gate'),l=r.querySelector('.line');if(!g||!l)return;const G=g.textContent.trim(),L=l.textContent.trim(),nm=(r.querySelector('.nm')||{}).textContent||'';
-    if(!/^\d+$/.test(G))return;mk(r,()=>openArt([`gate:${G}`,`line:${G}.${L}`],[`კარიბჭე ${G}`,`კარიბჭე ${G}, ხაზი ${L}`],`კარიბჭე ${G}.${L}${nm?' · '+nm.trim():''}`));});
+    if(!/^\d+$/.test(G))return;const pk=PK[nm.trim()],h3=(r.parentElement&&r.parentElement.querySelector('h3')||{}).textContent||'',sd=/დიზაინ|Design/i.test(h3)?'d':/პიროვნ|Personal/i.test(h3)?'p':'';
+    const K=[`gate:${G}`,`line:${G}.${L}`],H=[`კარიბჭე ${G}`,`კარიბჭე ${G}, ხაზი ${L}`];if(pk){K.unshift(`pgate:${pk}:${G}.${L}${sd?':'+sd:''}`);H.unshift(`${nm.trim()} — კარიბჭე ${G}.${L}`);if(/Chiron|Lilith|Ascendant/.test(pk)){K.push('about:hd:extras');H.push('დამატებითი წერტილები');}}
+    mk(r,()=>openArt(K,H,`კარიბჭე ${G}.${L}${nm?' · '+nm.trim():''}`));});
   root.querySelectorAll('.ch-item').forEach(r=>{const p=(r.querySelector('.pair')||{}).textContent||'',m=p.match(/(\d+)\D+(\d+)/);if(!m)return;const a=Math.min(+m[1],+m[2]),b=Math.max(+m[1],+m[2]),nm=((r.querySelector('.cname')||{}).textContent||'').trim();
     mk(r,()=>openArt([`channel:${a}-${b}`],[`არხი ${a}–${b}${nm?' · '+nm:''}`],`არხი ${a}–${b}${nm?' · '+nm:''}`));});
   root.querySelectorAll('.center-chip').forEach(r=>{const t=r.textContent.trim(),c=CEN[t];if(!c)return;const on=r.classList.contains('on');
