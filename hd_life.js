@@ -108,6 +108,5 @@ HDLIFE.renderHD=function(ch){
     <div style="font-size:11px;color:rgba(200,180,140,.6);margin-top:8px">პროფესიული სფეროები ჯამდება ტიპიდან, პროფილის ხაზებიდან, ძლიერი გრძნობიდან, არხებიდან და განსაზღვრული ცენტრებიდან. სრული სურათი ყველა სისტემით — „ცხოვრების რუქა“.</div>`;
 };
 window.HDLIFE=HDLIFE;
-if(typeof document!=='undefined'&&document.getElementById&&document.getElementById('summary-cards')){
-  let n=0;(function wait(){if(HDLIFE.mountHD()||++n>100)return;setTimeout(wait,100);})();}
+/* the professions card is no longer mounted on hd.html (removed at the owner's request) */
 })();

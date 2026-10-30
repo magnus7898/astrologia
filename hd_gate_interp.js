@@ -52,7 +52,13 @@ function gateT(g){g=+g;if(!(g>=1&&g<=64))return null;const k=GK[g]||['','',''],c
 function lineT(g,l){g=+g;l=+l;const L=LN[l];if(!(g>=1&&g<=64)||!L)return null;const k=GK[g]||['','',''];
   const h=`<p><em>კარიბჭე ${g}.${l} — ${esc(GN[g])} · ხაზი ${l}: ${esc(L[0])}</em></p><p>ხაზის თემა: ${esc(L[1])}. ${l<=3?'ქვედა ტრიგრამის ხაზი — პირადი, შინაგანი პროცესი.':'ზედა ტრიგრამის ხაზი — ურთიერთობა სხვებთან და გარე სამყაროსთან.'}</p><p>კარიბჭის ენერგია (${esc(GN[g])}) ამ ხაზზე როლით „${esc(L[0])}“ ვლინდება${k[1]?`; ძღვნის დონეზე ეს არის „${esc(k[1])}“`:''}.</p>`;
   return {t:`კარიბჭე ${g}, ხაზი ${l} — ${L[0]}`,h};}
-function forKey(k){const gm=/^gate:(\d+)$/.exec(k||'');if(gm)return gateT(gm[1]);const lm=/^line:(\d+)\.(\d)$/.exec(k||'');if(lm)return lineT(lm[1],lm[2]);const m=/^pgate:([A-Za-z_]+):(\d+)(?:\.(\d))?(?::([pd]))?$/.exec(k||'');if(m)return pgate(m[1],m[2],m[3],m[4]);return ART[k]||null;}
+function giftT(g,main){g=+g;if(!(g>=1&&g<=64))return null;const k=GK[g]||['','',''],c=G2C[g],cn=CN[c]||['','',''];
+  const h=`<p><em>კარიბჭე ${g} — ${esc(GN[g])} · ${esc(cn[0])} · ${esc(k[0])} → ${esc(k[1])} → ${esc(k[2])}</em></p>`+
+   (main?`<p>მთავარი ნიჭი (Life's Work) პიროვნების მზის კარიბჭიდან მოდის — ეს ის ძღვენია, რომელიც ადამიანის ცხოვრების ცენტრშია და რასაც ის ყველაზე მეტად გამოასხივებს. აქ ეს არის „${esc(k[1])}“.</p>`:`<p>ეს ნიჭი რუკის ერთ-ერთი აქტიური კარიბჭიდან მოდის. ყოველი აქტიური კარიბჭე მუდმივად ხელმისაწვდომი თვისებაა — ძღვენი „${esc(k[1])}“.</p>`)+
+   `<p>ძღვენი ორ უკიდურესობას შორის დგას. მის ქვემოთ ჩრდილია — „${esc(k[0])}“: ის, როგორც ეს ენერგია ვლინდება შიშისა და გონებრივი კონტროლის დროს. ზემოთ კი სიდჰია — „${esc(k[2])}“: ამ ენერგიის უმაღლესი, სულიერი გამოვლინება.</p><p>კარიბჭე ${g} (${esc(GN[g])}) ${esc(cn[2])} ეკუთვნის, რომლის თემაა ${esc(cn[1])}.</p>`+
+   `<p><strong>როგორ გავხსნათ:</strong> ჩრდილის შენიშვნა განსჯის გარეშე. როცა ადამიანი იცნობს საკუთარ „${esc(k[0])}“-ს და გადაწყვეტილებებს სტრატეგიითა და ავტორიტეტით იღებს, ძღვენი ბუნებრივად ჩნდება.</p>`;
+  return {t:`${main?'მთავარი ნიჭი':'ნიჭი'} — ${k[1]} (კარიბჭე ${g})`,h};}
+function forKey(k){const fm=/^gift:(\d+)(:main)?$/.exec(k||'');if(fm)return giftT(fm[1],!!fm[2]);const gm=/^gate:(\d+)$/.exec(k||'');if(gm)return gateT(gm[1]);const lm=/^line:(\d+)\.(\d)$/.exec(k||'');if(lm)return lineT(lm[1],lm[2]);const m=/^pgate:([A-Za-z_]+):(\d+)(?:\.(\d))?(?::([pd]))?$/.exec(k||'');if(m)return pgate(m[1],m[2],m[3],m[4]);return ART[k]||null;}
 window.HD_GATE_INTERP={forKey,pgate,gateT,lineT,GN,GK,PL};
 const AR=window.ART;if(AR&&!AR.__hdg){const g=AR.get.bind(AR);AR.get=function(s,k){const a=g(s,k);if(a&&(a.h||a.t))return a;if(s!=='hd')return a;
   const m=/^(pgate:[A-Za-z_]+:\d+)[.:]/.exec(k||'');if(m){const b=g(s,m[1]);if(b&&(b.h||b.t))return b;}return forKey(k)||a;};AR.__hdg=1;}
