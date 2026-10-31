@@ -82,7 +82,7 @@ math-field.mi-f{font-size:17px!important}
 <div class="app">
   <nav class="menubar" id="menubar"></nav>
   <div class="top">
-    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·14</small>
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·15</small>
     <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა: .mg (MAGNUS), .svg — Ctrl+O">📂</button><button id="bSave" title="შენახვა .mg ფორმატში (Ctrl+S)">💾</button>
     <button id="bSvg" title="შენახვა როგორც: MAGNUS (.mg), SVG, PNG, JPEG, PDF, GIF (Ctrl+Shift+S)">⬇ შენახვა როგორც…</button><button id="bPng" hidden></button><input type="file" id="fImg" accept="image/*,.svg" hidden><input type="file" id="fImp" accept=".svg,image/svg+xml" hidden>
     <input type="file" id="fOpen" accept=".mg,.json,.svg,application/json,image/svg+xml" hidden>
@@ -794,7 +794,7 @@ const MENUS=[['ფაილი',[['ახალი…','Ctrl+Alt+N','newDlg'],['
  ['ეფექტი',[['3D და პერსპექტივა',[['3D გამოწევა და ფასკა (Extrude & Bevel)','','x3_ext'],['3D ბრუნვა (Revolve)','','x3_rev'],['3D პრიმიტივი…','','x3_prim'],['3D-ის გაშლა ფიგურებად','','x3_exp'],'-',['პერსპექტივის ბადე — ჩართვა/გამორთვა','','pg_tog'],['მონიშნულის მიმაგრება პერსპექტივაზე','','pg_att'],['პერსპექტივიდან მოხსნა','','pg_rel']]],['ნაჭრები (Slices)',[['ნაჭრები მონიშნულიდან','','sl_sel'],['არჩეული ნაჭრის დაყოფა…','','sl_div'],['ნაჭრების ექსპორტი…','','sl_exp'],['ყველა ნაჭრის წაშლა','','sl_clr']]],'-',['დეფორმაცია (Warp)',[['რკალი','','w_arc'],['ამობურცვა','','w_bulge'],['დროშა','','w_flag'],['ტალღა','','w_wave'],['თევზი','','w_fish'],['აწევა','','w_rise'],['შეკუმშვა (squeeze)','','w_squeeze'],['გრეხა','','w_twist'],'-',['ზედა რკალი','','w_arcUpper'],['ქვედა რკალი','','w_arcLower'],['თაღი','','w_arch'],['გაბერვა','','w_inflate'],['თევზის თვალი','','w_fisheye']]],'-',['კონტურის წანაცვლება (Offset Path)…','','offPath'],['ჩრდილი (Drop Shadow)…','','shadow'],['მხატვრული ეფექტები',Object.entries(FXS).filter(([k,v])=>v[1]==='art').map(([k,v])=>[v[0]+'…','','fx_'+k])],['ტექსტურები',Object.entries(FXS).filter(([k,v])=>v[1]==='tex').map(([k,v])=>[v[0]+'…','','fx_'+k])],'-',['ზიგზაგი…','','w_zigzag'],['შეკუმშვა / გაბერვა…','','w_pucker'],['უხეშობა…','','w_roughen'],'-',['თავისუფალი დეფორმაცია','','fd']]],
  ['ხედი',[['გადიდება','Ctrl+=','zin'],['დაპატარავება','Ctrl+−','zout'],['დაფაზე მორგება','Ctrl+0','fit'],['100%','Ctrl+1','z100'],['მასშტაბის ხელსაწყო','Z','zoomTool'],'-',['ბადე','','grid'],['მიბმა ბადეზე','','snap'],'-',['სახაზავები','Ctrl+R','rul'],['გიდები: ჩვენება / დამალვა','Ctrl+;','gdShow'],['გიდების დაბლოკვა','','gdLock'],['გიდების წაშლა','','gdClear'],['ჭკვიანი გიდები','Ctrl+U','sgT'],['კონტურის მასშტაბირება','','scT']]],
  ['✨ კრეატივი',[['✳ მანდალას სიმეტრია…','','symDlg'],['✳ სიმეტრია: ჩართვა / გამორთვა','','symT'],'-',['❀ საკრალური გეომეტრია…','','sacred'],['∞ სპიროგრაფი…','','spiro'],['⟲ განმეორება (Repeat)…','','repeat'],'-',['🎨 ფერთა ჰარმონია (Recolor)…','','recolor'],['☉ ეზოთერული სიმბოლოები…','','symbols'],'-',['φ ოქროს კვეთის ბადე','','phi']]],
- ['ფანჯარა',[['გასწორება (Align)','Shift+F7','wAlign'],['Pathfinder','Ctrl+Shift+F9','wPf']]],
+ ['ფანჯარა',[['გასწორება (Align)','Shift+F7','wAlign'],['Pathfinder','Ctrl+Shift+F9','wPf'],'-',['↺ სამუშაო სივრცის აღდგენა (პანელები თავდაპირველ ადგილზე)','','wReset']]],
  ['დახმარება',[['მალსახმობები','','keys']]]];
 const miHtml=L=>L.map(it=>it==='-'?'<div class="msep"></div>':Array.isArray(it[1])?`<div class="mi hs">${it[0]}<div class="sub">${miHtml(it[1])}</div></div>`:`<div class="mi" data-a="${it[2]}">${it[0]}<kbd>${it[1]}</kbd></div>`).join('');
 $('menubar').innerHTML=MENUS.map(([t,L])=>`<div class="mt"><button type="button">${t}</button><div class="dd">${miHtml(L)}</div></div>`).join('');
@@ -2221,7 +2221,7 @@ function tabsDraw(){const el=$('docTabs');if(!el)return;el.innerHTML=TABS.map((t
 $('docTabs').addEventListener('click',e=>{const x=e.target.closest('[data-tx]');if(x){e.stopPropagation();tabClose(+x.dataset.tx);return;}if(e.target.closest('#dtNew')){openNew(false);return;}const t=e.target.closest('[data-ti]');if(t)tabSwitch(+t.dataset.ti);});
 $('docTabs').addEventListener('auxclick',e=>{const t=e.target.closest('[data-ti]');if(t&&e.button===1){e.preventDefault();tabClose(+t.dataset.ti);}});
 /* ───────── resizable properties panel ───────── */
-(function(){let w=300;try{w=+localStorage.getItem('magnus_vector_sideW')||300;}catch(e){}const setW=v=>{w=Math.max(0,Math.min(Math.round(innerWidth*0.6),v));document.documentElement.style.setProperty('--sideW',w+'px');try{localStorage.setItem('magnus_vector_sideW',w);}catch(e){}};setW(w);let last=w>40?w:300;
+(function(){let w=300;try{w=+localStorage.getItem('magnus_vector_sideW')||300;}catch(e){}const setW=v=>{w=Math.max(0,Math.min(Math.round(innerWidth*0.6),v));document.documentElement.style.setProperty('--sideW',w+'px');try{localStorage.setItem('magnus_vector_sideW',w);}catch(e){}};setW(w);let last=w>40?w:300;window.__sideSet=v=>{setW(v);last=v;};
   const rz=$('sideRz');const vis=()=>{const r=svg.getBoundingClientRect();return DOC.boards.every(b=>PX+b.x*Z>=-2&&PY+b.y*Z>=-2&&PX+(b.x+b.w)*Z<=r.width+2&&PY+(b.y+b.h)*Z<=r.height+2);};rz.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();rz.setPointerCapture(e.pointerId);rz.classList.add('on');const wasFit=vis();const mv=ev=>{let v=innerWidth-ev.clientX;if(v<120)v=0;else v=Math.max(220,v);setW(v);if(wasFit)fit();else render();},up=()=>{rz.classList.remove('on');rz.removeEventListener('pointermove',mv);rz.removeEventListener('pointerup',up);if(w>40)last=w;};rz.addEventListener('pointermove',mv);rz.addEventListener('pointerup',up);});
   rz.addEventListener('dblclick',e=>{e.stopPropagation();const f=vis();if(w>40){last=w;setW(0);}else setW(last||300);if(f)fit();else render();});
   let RW=0;addEventListener('resize',()=>{if(w>innerWidth*0.6)setW(w);clearTimeout(RW);const f=vis();RW=setTimeout(()=>{if(f)fit();else render();},60);});})();
@@ -2230,7 +2230,16 @@ $('docTabs').addEventListener('auxclick',e=>{const t=e.target.closest('[data-ti]
   const apply=()=>{document.body.classList.toggle('tbfloat',!!F);if(F){const y=Math.max(0,Math.min(innerHeight-120,F.y));tl.style.left=Math.max(0,Math.min(innerWidth-60,F.x))+'px';tl.style.top=y+'px';tl.style.maxHeight=(innerHeight-y-8)+'px';}else{tl.style.left='';tl.style.top='';tl.style.maxHeight='';}try{localStorage.setItem('magnus_vector_tbfloat',JSON.stringify(F));}catch(e){}setTimeout(()=>{render();},20);};
   document.addEventListener('pointerdown',e=>{if(e.target.closest('#tbDock')){e.preventDefault();F=null;apply();return;}const g=e.target.closest('#tbGrip');if(!g)return;e.preventDefault();const r=tl.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top;if(!F){F={x:r.left,y:r.top};apply();}
     const mv=ev=>{F={x:ev.clientX-ox,y:ev.clientY-oy};const y=Math.max(0,Math.min(innerHeight-120,F.y));tl.style.left=Math.max(0,F.x)+'px';tl.style.top=y+'px';tl.style.maxHeight=(innerHeight-y-8)+'px';},up=ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);if(ev.clientX<50){F=null;}apply();$('status').textContent=F?'ხელსაწყოების პანელი გამოტანილია — ⇤ ან მარცხენა კიდესთან მიტანა: დაბრუნება':'ხელსაწყოების პანელი ადგილზეა';};addEventListener('pointermove',mv);addEventListener('pointerup',up);});
-  apply();})();
+  window.__tbDock=()=>{F=null;apply();};apply();})();
+/* ───────── reset the workspace: panels, toolbar, dialogs back to their default places ───────── */
+function resetWorkspace(){['magnus_vector_sideW','magnus_vector_tbfloat','magnus_vector_fp','magnus_vector_tb'].forEach(k=>{try{localStorage.removeItem(k);}catch(e){}});
+  window.__sideSet&&window.__sideSet(300);window.__tbDock&&window.__tbDock();
+  if(TBFULL){TBFULL=false;TGROUPS=TG_COMPACT;document.body.classList.remove('tbfull');drawTools();}
+  FPS={};const r=$('stage').getBoundingClientRect();[['fpAlign',0],['fpPf',1]].forEach(([id,dx])=>{const P=$(id);if(!P)return;P.hidden=false;P.style.left=Math.max(10,r.right-250-dx)+'px';P.style.top=(r.top+30+(dx?140:0))+'px';});
+  document.querySelectorAll('.fpanel').forEach(P=>{if(P.id!=='fpAlign'&&P.id!=='fpPf'&&P.id!=='fpOpt')P.hidden=true;});
+  document.querySelectorAll('.modal .mbox').forEach(b=>{b.style.transform='';delete b.dataset.dx;delete b.dataset.dy;});
+  setTimeout(()=>{fit();props();$('status').textContent='სამუშაო სივრცე აღდგენილია — პანელები თავდაპირველ ადგილზეა';},40);}
+Object.assign(A_,{wReset:()=>resetWorkspace()});
 /* ───────── start: last drawing or a sample made with formulas ───────── */
 const saved=store.get('magnus_vector_doc');
 if(saved){try{const d=JSON.parse(saved);DOC=d.DOC;O=d.O;}catch(e){}}
