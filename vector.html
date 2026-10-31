@@ -74,7 +74,7 @@ math-field.mi-f{font-size:17px!important}
 <div class="app">
   <nav class="menubar" id="menubar"></nav>
   <div class="top">
-    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·09</small>
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·10</small>
     <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა: .mg (MAGNUS), .svg — Ctrl+O">📂</button><button id="bSave" title="შენახვა .mg ფორმატში (Ctrl+S)">💾</button>
     <button id="bSvg" title="შენახვა როგორც: MAGNUS (.mg), SVG, PNG, JPEG, PDF, GIF (Ctrl+Shift+S)">⬇ შენახვა როგორც…</button><button id="bPng" hidden></button><input type="file" id="fImg" accept="image/*,.svg" hidden><input type="file" id="fImp" accept=".svg,image/svg+xml" hidden>
     <input type="file" id="fOpen" accept=".mg,.json,.svg,application/json,image/svg+xml" hidden>
@@ -246,6 +246,7 @@ function overlay(){const k=1/Z;let s='';
   if(SEL.length>1&&tool==='select'&&!(act&&act.move)){const L=O.filter(o=>SEL.includes(o.id)&&!o.locked);if(L.length>1){const b=uBox(L),c={x:b.x+b.w/2,y:b.y+b.h/2};s+=`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="none" stroke="#4da3ff" stroke-width="${k}" pointer-events="none"/>`;HANDLES.forEach(([hx,hy,cur])=>{s+=`<rect data-h="${hx},${hy}" x="${b.x+b.w*hx-4*k}" y="${b.y+b.h*hy-4*k}" width="${8*k}" height="${8*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:${cur}"/>`;});
     s+=`<line x1="${c.x}" y1="${b.y}" x2="${c.x}" y2="${b.y-24*k}" stroke="#4da3ff" stroke-width="${k}"/><circle data-h="rot" cx="${c.x}" cy="${b.y-24*k}" r="${5*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:grab"/>`;}}
   if(TPE)s+=tpCaret(k);
+  sselValid().forEach(kk=>{const [id,ci,i]=kk.split(','),o=O.find(x=>x.id===id),A=contAt(o,+ci).pts,a=A[+i],b=A[(+i+1)%A.length];s+=`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${b.ix},${b.iy} ${b.x},${b.y}" fill="none" stroke="#4da3ff" stroke-width="${4*k}" stroke-opacity=".75" pointer-events="none"/>`;});
   if(TPH&&(tool==='text'||tool==='textpath'||tool==='vtext'))s+=`<path d="${outlineD(TPH)}" fill="none" stroke="#4da3ff" stroke-width="${2.5*k}" stroke-dasharray="${6*k} ${3*k}" pointer-events="none"/>`;
   SEL.forEach(id=>{const o=O.find(x=>x.id===id);if(!o)return;const b=bbox(o),c={x:b.x+b.w/2,y:b.y+b.h/2},tr=o.rot?` transform="rotate(${o.rot} ${c.x} ${c.y})"`:'';
     const edit=!["select","rotate","scale","zoom","hand","board"].includes(tool)&&!["text","image","eq"].includes(o.type);s+=edit?`<g><path d="${outlineD(o)}" fill="none" stroke="#4da3ff" stroke-width="${1.5*k}"${o.rot&&o.type!=="group"?` transform="rotate(${o.rot} ${c.x} ${c.y})"`:""} pointer-events="none"/>`:`<g${tr}><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="none" stroke="#4da3ff" stroke-width="${k}" stroke-dasharray="${4*k} ${3*k}"/>`;
@@ -354,7 +355,7 @@ svg.addEventListener('pointerdown',e=>{const te=$('tEdit');if(te&&e.button===0){
     const selKey0=SEL.join();let unSel=null;const wasSel=!!(hit&&SEL.length===1&&SEL[0]===hit.id);if(hit&&!hit.locked){if(e.shiftKey){if(SEL.includes(hit.id))unSel=hit.id;else SEL=[...SEL,hit.id];}else if(!SEL.includes(hit.id))SEL=[hit.id];
       if(tool==='direct'&&hit.type!=='path'&&['rect','ellipse','polygon','star','line'].includes(hit.type)){/* convert to editable path — rectangles / polygons keep live (re-editable) corners */if(['rect','polygon','star'].includes(hit.type))rcEnsure(hit);else toPath(hit);}
       if(tool==='direct'&&hit.type==='path'&&!e.shiftKey&&!e.altKey){const r=nearestSeg(p,hit);if(r&&r.d<6/Z){
-        if(rcOk(hit)&&!hit.subs?.length){const ids=[...new Set([rcIdx(hit,r.i),rcIdx(hit,r.j)])].filter(x=>x>=0);act={rcSide:true,o:hit,ids,last:sp,moved:false};render();props();return;}
+        if(rcOk(hit)&&!hit.subs?.length){const ids=rcEdgeAt(hit,p);act={rcSide:true,o:hit,ids,last:sp,p0:p,moved:false};render();props();return;}
         const A2=contAt(hit,r.ci).pts,P0=A2[r.i],P1=A2[r.j],str=Math.hypot(P0.ox-P0.x,P0.oy-P0.y)<0.01&&Math.hypot(P1.ix-P1.x,P1.iy-P1.y)<0.01;
         if(str){act={segMove:true,o:hit,ci:r.ci,ids:[r.i,r.j],last:sp,moved:false};render();props();return;}
         act={segDrag:true,r,moved:false};render();props();return;}}
@@ -600,6 +601,7 @@ function rcPts(A,R,closed){const n=A.length,out=[],M=[],G=[];
     const {ua,ub,th}=g,d=D[i],rr=d*Math.tan(th/2),h=4/3*Math.tan((Math.PI-th)/4)*rr;
     const P1={x:P.x+ua.x*d,y:P.y+ua.y*d},P2={x:P.x+ub.x*d,y:P.y+ub.y*d};out.push({x:P1.x,y:P1.y,ix:P1.x,iy:P1.y,ox:P1.x-ua.x*h,oy:P1.y-ua.y*h},{x:P2.x,y:P2.y,ix:P2.x-ub.x*h,iy:P2.y-ub.y*h,ox:P2.x,oy:P2.y});M[i]=[out.length-2,out.length-1];}
   return {pts:out,M};}
+function rcEdgeAt(o,p){const A=o.rcs.A,n=A.length,cl=o.closed;let best=null;for(let k=0;k<(cl?n:n-1);k++){const a=A[k],b=A[(k+1)%n],vx=b.x-a.x,vy=b.y-a.y,L2=vx*vx+vy*vy||1,t=Math.max(0,Math.min(1,((p.x-a.x)*vx+(p.y-a.y)*vy)/L2)),d=Math.hypot(a.x+vx*t-p.x,a.y+vy*t-p.y);if(!best||d<best.d)best={d,ids:[k,(k+1)%n]};}return best?best.ids:[];}
 function rcApply(o){const r=rcPts(o.rcs.A,o.rcs.R,o.closed);o.pts.length=0;r.pts.forEach(q=>o.pts.push(q));o.rcs.M=r.M;o.rcs.sig=ptsSig(o.pts);}
 function rcEnsure(o){if(rcOk(o))return true;if(o.type==='path'&&o.subs?.length)return false;let R0=0;if(o.type==='rect'){R0=o.r||0;o.r=0;}
   if(['rect','polygon','star'].includes(o.type))toPathGeom(o);if(o.type!=='path')return false;o.rcs={A:JSON.parse(JSON.stringify(o.pts)),R:o.pts.map(()=>R0)};rcApply(o);return true;}
@@ -1177,7 +1179,14 @@ function smartDlg(){formDlg({title:'ჭკვიანი სწორება'
 let SMK=0.3,SMR0={};
 function smoothAt(o,p,r){const K0=SMK;let ch=false;
   CONT(o).forEach(c=>{const A=c.pts,n=A.length;if(n<2)return;const near=[];for(let i=0;i<n;i++){if(!c.closed&&(i===0||i===n-1))continue;if(Math.hypot(A[i].x-p.x,A[i].y-p.y)<=r)near.push(i);}
-    {const lc=locOn(A,c.closed,p);if(lc&&lc.d<=r)[lc.i,lc.j].forEach(i=>{if((c.closed||(i>0&&i<n-1))&&!near.includes(i))near.push(i);});}near.sort((a,b)=>a-b);if(!near.length)return;
+    {const lc=locOn(A,c.closed,p);if(lc&&lc.d<=r)[lc.i,lc.j].forEach(i=>{if((c.closed||(i>0&&i<n-1))&&!near.includes(i))near.push(i);});}
+    const SV=sselValid().filter(k2=>k2.startsWith(o.id+','+c.ci+','));if(SV.length){const lc=locOn(A,c.closed,p),onSel=lc&&lc.d<=r&&SV.includes(o.id+','+c.ci+','+lc.i);const allow=new Set(SV.flatMap(k2=>{const i=+k2.split(',')[2];return [i,(i+1)%n];}));
+      for(let t=near.length-1;t>=0;t--)if(!allow.has(near[t]))near.splice(t,1);if(onSel)[lc.i,lc.j].forEach(i=>{if(!near.includes(i))near.push(i);});if(!near.length)return;
+      /* a selected side: re-angle the handles at its two ends so it flows smoothly into its neighbours (open-path ends only turn) */
+      near.forEach(i=>{const q=A[i],a=A[c.closed?(i-1+n)%n:Math.max(0,i-1)],b=A[c.closed?(i+1)%n:Math.min(n-1,i+1)],end=!c.closed&&(i===0||i===n-1);let tx,ty;if(end){const z=i===0?b:a;tx=(z.x-q.x)*(i===0?1:-1);ty=(z.y-q.y)*(i===0?1:-1);}else{tx=b.x-a.x;ty=b.y-a.y;}
+        if(SMDIR&&Math.abs(SMDIR.x*tx+SMDIR.y*ty)>0.3*Math.hypot(tx,ty)){const sg=Math.sign(SMDIR.x*tx+SMDIR.y*ty);const tl0=Math.hypot(tx,ty)||1;tx=tx/tl0*0.7+SMDIR.x*sg*0.3;ty=ty/tl0*0.7+SMDIR.y*sg*0.3;}
+        const tl=Math.hypot(tx,ty)||1;tx/=tl;ty/=tl;const li=Math.hypot(a.x-q.x,a.y-q.y)/3,lo=Math.hypot(b.x-q.x,b.y-q.y)/3,w=Math.min(1,0.2+K0*1.6);if(!(end&&i===0)){q.ix+=(q.x-tx*li-q.ix)*w;q.iy+=(q.y-ty*li-q.iy)*w;}if(!(end&&i===n-1)){q.ox+=(q.x+tx*lo-q.ox)*w;q.oy+=(q.y+ty*lo-q.oy)*w;}});ch=true;return;}
+    near.sort((a,b)=>a-b);if(!near.length)return;
     /* anchor density under the brush: many anchors → strong smoothing, few anchors → gentle */
     const dens=(()=>{let sm=0,m=0;const ids=[...new Set(near.flatMap(i=>[i-1,i]))];for(const i0 of ids){if(!c.closed&&(i0<0||i0+1>=n))continue;const P=A[(i0+n)%n],Q=A[(i0+1)%n];sm+=Math.hypot(Q.x-P.x,Q.y-P.y);m++;}const sl=m?sm/m:r;return Math.max(0.2,Math.min(3,r*0.7/(sl||1)));})(),k=K0*dens;
     if(SMS.mode!=='simplify'&&dens<1.3&&smoothAlready(A,c.closed,near))return;
@@ -1192,12 +1201,12 @@ function smoothAt(o,p,r){const K0=SMK;let ch=false;
         near.forEach(i=>{const q=A[i],d=Math.hypot(q.x-cx,q.y-cy)||1,ux=(q.x-cx)/d,uy=(q.y-cy)/d,f=Math.min(1,0.45*k);mv(q,(cx+ux*R-q.x)*f,(cy+uy*R-q.y)*f);});
         near.forEach(i=>{const q=A[i],[a2,b2]=nb(i),d=Math.hypot(q.x-cx,q.y-cy)||1,ux=(q.x-cx)/d,uy=(q.y-cy)/d,tx=ccw?-uy:uy,ty=ccw?ux:-ux,ang=(z)=>{const v1=Math.atan2(q.y-cy,q.x-cx),v2=Math.atan2(z.y-cy,z.x-cx);let dd=Math.abs(v2-v1);if(dd>Math.PI)dd=2*Math.PI-dd;return dd;},li=4/3*Math.tan(ang(a2)/4)*R,lo=4/3*Math.tan(ang(b2)/4)*R,w=Math.min(1,0.5*k);
           q.ix+=(q.x-tx*li-q.ix)*w;q.iy+=(q.y-ty*li-q.iy)*w;q.ox+=(q.x+tx*lo-q.ox)*w;q.oy+=(q.y+ty*lo-q.oy)*w;});return;}}
-    if(SMS.mode!=='keep'&&dens>=0.9&&refitRegion(c,near,Math.min(1,k)))return;
+    if(SMS.mode==='simplify'&&refitRegion(c,near,Math.min(1,k)))return;
     /* general: Taubin smoothing (shrink-free) + smooth tangents */
-    [Math.min(0.6,0.9*k),-Math.min(0.62,0.93*k)].forEach(f=>{const off=near.map(i=>{const q=A[i],[a2,b2]=nb(i);return [((a2.x+b2.x)/2-q.x)*f,((a2.y+b2.y)/2-q.y)*f];});near.forEach((i,j)=>mv(A[i],off[j][0],off[j][1]));});
-    near.forEach(i=>{const q=A[i],[a2,b2]=nb(i);let ux=b2.x-a2.x,uy=b2.y-a2.y;const ul=Math.hypot(ux,uy)||1;ux/=ul;uy/=ul;const li=Math.hypot(q.x-a2.x,q.y-a2.y)/3,lo=Math.hypot(b2.x-q.x,b2.y-q.y)/3,w=Math.min(1,1.2*k);
+    const f1=Math.min(0.5,1.2*k),f2=f1>=0.3?-(f1+0.03):-f1*0.3;for(let pass=0,PS=1+Math.round(Math.min(4,k*5));pass<PS;pass++)[f1,f2].forEach(f=>{const off=near.map(i=>{const q=A[i],[a2,b2]=nb(i);return [((a2.x+b2.x)/2-q.x)*f,((a2.y+b2.y)/2-q.y)*f];});near.forEach((i,j)=>mv(A[i],off[j][0],off[j][1]));});
+    near.forEach(i=>{const q=A[i],[a2,b2]=nb(i);let ux=b2.x-a2.x,uy=b2.y-a2.y;if(SMDIR){const ul0=Math.hypot(ux,uy)||1,dt=(SMDIR.x*ux+SMDIR.y*uy)/ul0;if(Math.abs(dt)>0.92){const sg=Math.sign(dt);ux=ux/ul0*0.85+SMDIR.x*sg*0.15;uy=uy/ul0*0.85+SMDIR.y*sg*0.15;}}const ul=Math.hypot(ux,uy)||1;ux/=ul;uy/=ul;const li=Math.hypot(q.x-a2.x,q.y-a2.y)/3,lo=Math.hypot(b2.x-q.x,b2.y-q.y)/3,w=Math.min(1,1.2*k);
       q.ix+=(q.x-ux*li-q.ix)*w;q.iy+=(q.y-uy*li-q.iy)*w;q.ox+=(q.x+ux*lo-q.ox)*w;q.oy+=(q.y+uy*lo-q.oy)*w;});
-    if(SMS.mode==='keep'||dens<1.2||A.length<=(c.closed?4:3))return;const tol=(SMS.mode==='simplify'?2.6:0.7)*(0.4+SMS.str/100)/Z;
+    if(SMS.mode==='keep'||(SMS.mode!=='simplify'&&dens<2.2)||A.length<=(c.closed?4:3))return;const tol=(SMS.mode==='simplify'?2.6:0.7)*(0.4+SMS.str/100)/Z;
     for(let t=near.length-1;t>=0;t--){const i=near[t];if(A.length<=(c.closed?4:3))break;const m=A.length,ii=i%m;if(!c.closed&&(ii===0||ii===m-1))continue;const pi=c.closed?(ii-1+m)%m:ii-1,ni=c.closed?(ii+1)%m:ii+1,P0=A[pi],Q=A[ii],N=A[ni];
       const old=[];for(let s2=0;s2<=10;s2++){old.push(bez(A,pi,ii,s2/10));old.push(bez(A,ii,ni,s2/10));}const d1=dirOf(P0,'o',Q),d2=dirOf(N,'i',Q),ch2=Math.hypot(N.x-P0.x,N.y-P0.y);let best=null;
       for(const f of [0.6,0.8,1,1.2,1.45,1.7]){const h1={x:P0.x+d1.x*ch2/3*f,y:P0.y+d1.y*ch2/3*f},h2={x:N.x+d2.x*ch2/3*f,y:N.y+d2.y*ch2/3*f},T=[{...P0,ox:h1.x,oy:h1.y},{...N,ix:h2.x,iy:h2.y}];let dev=0;old.forEach(q=>{let md=1e9;for(let s2=0;s2<=24;s2++){const z=bez(T,0,1,s2/24),dd=Math.hypot(z.x-q.x,z.y-q.y);if(dd<md)md=dd;}if(md>dev)dev=md;});if(!best||dev<best.dev)best={dev,h1,h2};}
@@ -1785,7 +1794,8 @@ function toolDown(e,p,sp,tg,hit){
     if(T.length){T.forEach(cp);render();commit();props();$('status').textContent='სტილი გადავიდა მონიშნულზე';}else{K.forEach(k=>{if(src[k]!==undefined)lastStyle[k]=JSON.parse(JSON.stringify(src[k]));});swCur();props();$('status').textContent='სტილი აღებულია — ახალი ფიგურები ამ სტილით დაიხატება';}return true;}
   if(tool==='width'){const h=WH||widthHit(p);if(!h)return true;const o=h.o;if(o.type!=='path')toPathGeom(o);if(!o.wprof)o.wprof=[];SEL=[o.id];act={wt:true,o,t:h.t,pt:h.pt};return true;}
   return false;}
-let TPH=null;const TPCUR=(()=>{const c=`<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M3 22 Q10 10 17 18 T29 14' fill='none' stroke='white' stroke-width='4'/><path d='M3 22 Q10 10 17 18 T29 14' fill='none' stroke='%234da3ff' stroke-width='2'/><text x='9' y='14' font-size='13' font-weight='bold' font-family='serif' fill='black' stroke='white' stroke-width='0.8' paint-order='stroke'>T</text></svg>`;return `url("data:image/svg+xml;utf8,${c.replace(/"/g,"'").replace(/#/g,'%23')}") 9 14, text`;})();
+let TPH=null,SSEL=new Set(),SMDIR=null;
+const sselValid=()=>[...SSEL].filter(k=>{const [id,ci,i]=k.split(','),o=O.find(x=>x.id===id),c=o&&contAt(o,+ci);if(!c||+i>=c.pts.length)return false;return ASEL.has(id+','+ci+','+i)&&ASEL.has(id+','+ci+','+((+i+1)%c.pts.length));});const TPCUR=(()=>{const c=`<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M3 22 Q10 10 17 18 T29 14' fill='none' stroke='white' stroke-width='4'/><path d='M3 22 Q10 10 17 18 T29 14' fill='none' stroke='%234da3ff' stroke-width='2'/><text x='9' y='14' font-size='13' font-weight='bold' font-family='serif' fill='black' stroke='white' stroke-width='0.8' paint-order='stroke'>T</text></svg>`;return `url("data:image/svg+xml;utf8,${c.replace(/"/g,"'").replace(/#/g,'%23')}") 9 14, text`;})();
 function toolHover(p,sp){if(tool==='text'||tool==='textpath'||tool==='vtext'){const np=nearPathAt(p,true),id=np&&np.type!=='tpath'?np.id:null;svg.style.cursor=id?TPCUR:curFor(tool);if((TPH&&TPH.id)!==id){TPH=id?np:null;overlay();$('status').textContent=id?'დააწკაპუნე — ტექსტი ამ მრუდზე / კონტურზე':TN[tool];}return true;}if(tool==='smooth'){WH={pt:p,sm:true};overlay();return true;}if(tool==='curv'&&CV){CVH=sp;overlay();return true;}if(tool==='sbuild'){if(!SB||SB.key!==SEL.join())SB=buildSB();const i=sbAt(p);if(i!==SBH){SBH=i;overlay();}return true;}
   if(tool==='width'){WH=widthHit(p);overlay();return true;}if(tool==='rotate'){overlay();return true;}return false;}
 function toolMove(e,p,sp){
@@ -1793,7 +1803,7 @@ function toolMove(e,p,sp){
   if(act.penSeg){if(!act.moved&&Math.hypot(sp.x-act.p0.x,sp.y-act.p0.y)<3/Z)return true;act.moved=true;segReshape(act.r,sp);rl([act.r.o.id]);return true;}
   if(act.sa){const q=act.o.spine[act.i],dx=sp.x-act.last.x,dy=sp.y-act.last.y;q.x+=dx;q.y+=dy;q.ix+=dx;q.iy+=dy;q.ox+=dx;q.oy+=dy;act.last=sp;act.moved=true;brushRegen(act.o);rl();return true;}
   if(act.shd){const q=act.o.spine[act.i],[hx,hy,ox,oy]=act.j===0?['ix','iy','ox','oy']:['ox','oy','ix','iy'];q[hx]=sp.x;q[hy]=sp.y;if(!act.alt&&!e.altKey){const l=Math.hypot(q[ox]-q.x,q[oy]-q.y),ux=sp.x-q.x,uy=sp.y-q.y,lu=Math.hypot(ux,uy)||1;q[ox]=q.x-ux/lu*l;q[oy]=q.y-uy/lu*l;}act.moved=true;brushRegen(act.o);rl();return true;}
-  if(act.smoothT){const dd=Math.hypot(p.x-act.lp.x,p.y-act.lp.y);act.hp=p;if(dd<1/Z){overlay();return true;}act.lp=p;SMK=SMS.str/100*Math.min(1,dd/(SMS.r/Z*0.7))*0.55;act.L.forEach(o=>{if(smoothAt(o,p,SMS.r/Z))act.ch=true;});rl();return true;}
+  if(act.smoothT){const dd=Math.hypot(p.x-act.lp.x,p.y-act.lp.y);act.hp=p;if(dd<1/Z){overlay();return true;}SMDIR={x:(p.x-act.lp.x)/dd,y:(p.y-act.lp.y)/dd};act.lp=p;SMK=SMS.str/100*Math.min(1,dd/(SMS.r/Z*0.7))*0.55;act.L.forEach(o=>{if(smoothAt(o,p,SMS.r/Z))act.ch=true;});rl();return true;}
   if(act.sclT){const P=act.piv,a=act.p0;if(Math.hypot(e.clientX-act.cx,e.clientY-act.cy)>3)act.moved=true;if(!act.moved)return true;let sx,sy;
     if(e.shiftKey){const d0=Math.hypot(a.x-P.x,a.y-P.y)||1;sx=sy=Math.hypot(sp.x-P.x,sp.y-P.y)/d0;}else{sx=Math.abs(a.x-P.x)>2/Z?(sp.x-P.x)/(a.x-P.x):1;sy=Math.abs(a.y-P.y)>2/Z?(sp.y-P.y)/(a.y-P.y):1;}
     sx=Math.max(0.01,Math.abs(sx));sy=Math.max(0.01,Math.abs(sy));restoreSnap(act.L,act.S);scaleObjs(act.L,sx,sy,P);act.sx=sx;act.sy=sy;rl();$('status').textContent=`მასშტაბი: ${Math.round(sx*100)}% × ${Math.round(sy*100)}%${e.altKey?' · Alt — ასლი':''}`;return true;}
@@ -1818,7 +1828,9 @@ function toolUp(e,a){
   if(a.smoothT){if(a.ch)commit();props();return true;}
   if(a.sclT){if(!a.moved){ROTP={x:a.p0.x,y:a.p0.y,key:SEL.join()};overlay();$('status').textContent='საყრდენი წერტილი დაყენდა — ახლა გადაათრიე';return true;}
     if(e.altKey){const C=a.L.map(o=>clone(o));restoreSnap(a.L,a.S);C.forEach((c,i)=>O.splice(O.indexOf(a.L[i])+1,0,c));SEL=C.map(c=>c.id);ROTP=ROTP?{...ROTP,key:SEL.join()}:null;}render();commit();props();return true;}
-  if(a.segDrag||a.rcSide||a.segMove){if(a.moved)commit();props();return true;}
+  if(a.segDrag||a.rcSide||a.segMove){if(a.moved)commit();else{const o=a.o||a.r.o,ci=a.ci??(a.r?a.r.ci:0);let i,j;if(a.r){i=a.r.i;j=a.r.j;}else if(a.segMove){[i,j]=a.ids;}else{const r=nearestSeg(a.p0||{x:0,y:0},o);if(r){i=r.i;j=r.j;}}
+      if(i!=null){const key=o.id+','+ci+','+i;if(e.shiftKey){SSEL.has(key)?SSEL.delete(key):SSEL.add(key);}else SSEL=new Set([key]);[...SSEL].forEach(k2=>{const [id,c2,i2]=k2.split(','),oo=O.find(x=>x.id===id),cc=oo&&contAt(oo,+c2);if(!cc)return;ASEL.add(id+','+c2+','+i2);ASEL.add(id+','+c2+','+((+i2+1)%cc.pts.length));});if(!e.shiftKey){ASEL=new Set();SSEL.forEach(k2=>{const [id,c2,i2]=k2.split(','),oo=O.find(x=>x.id===id),cc=oo&&contAt(oo,+c2);if(cc){ASEL.add(id+','+c2+','+i2);ASEL.add(id+','+c2+','+((+i2+1)%cc.pts.length));}});}
+        $('status').textContent='მონიშნულია გვერდი (სეგმენტი) — Shift+დაწკაპუნება: კიდევ; გამგლუვებელი იმუშავებს მხოლოდ მონიშნულ გვერდზე';overlay();}}props();return true;}
   if(a.anc){if(!a.moved){const A=contAt(a.o,a.ci).pts,P=A[a.i],n=A.length,has=Math.hypot(P.ix-P.x,P.iy-P.y)>0.5||Math.hypot(P.ox-P.x,P.oy-P.y)>0.5;
       if(has){P.ix=P.ox=P.x;P.iy=P.oy=P.y;}else{const cl=a.o.closed||a.ci>0&&contAt(a.o,a.ci).closed,pa=A[cl?(a.i-1+n)%n:Math.max(0,a.i-1)],pb=A[cl?(a.i+1)%n:Math.min(n-1,a.i+1)],dx=(pb.x-pa.x)/6,dy=(pb.y-pa.y)/6;P.ix=P.x-dx;P.iy=P.y-dy;P.ox=P.x+dx;P.oy=P.y+dy;}}
     render();commit();props();return true;}
