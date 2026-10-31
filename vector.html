@@ -74,7 +74,7 @@ math-field.mi-f{font-size:17px!important}
 <div class="app">
   <nav class="menubar" id="menubar"></nav>
   <div class="top">
-    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·10</small>
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·11</small>
     <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა: .mg (MAGNUS), .svg — Ctrl+O">📂</button><button id="bSave" title="შენახვა .mg ფორმატში (Ctrl+S)">💾</button>
     <button id="bSvg" title="შენახვა როგორც: MAGNUS (.mg), SVG, PNG, JPEG, PDF, GIF (Ctrl+Shift+S)">⬇ შენახვა როგორც…</button><button id="bPng" hidden></button><input type="file" id="fImg" accept="image/*,.svg" hidden><input type="file" id="fImp" accept=".svg,image/svg+xml" hidden>
     <input type="file" id="fOpen" accept=".mg,.json,.svg,application/json,image/svg+xml" hidden>
@@ -246,6 +246,7 @@ function overlay(){const k=1/Z;let s='';
   if(SEL.length>1&&tool==='select'&&!(act&&act.move)){const L=O.filter(o=>SEL.includes(o.id)&&!o.locked);if(L.length>1){const b=uBox(L),c={x:b.x+b.w/2,y:b.y+b.h/2};s+=`<rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}" fill="none" stroke="#4da3ff" stroke-width="${k}" pointer-events="none"/>`;HANDLES.forEach(([hx,hy,cur])=>{s+=`<rect data-h="${hx},${hy}" x="${b.x+b.w*hx-4*k}" y="${b.y+b.h*hy-4*k}" width="${8*k}" height="${8*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:${cur}"/>`;});
     s+=`<line x1="${c.x}" y1="${b.y}" x2="${c.x}" y2="${b.y-24*k}" stroke="#4da3ff" stroke-width="${k}"/><circle data-h="rot" cx="${c.x}" cy="${b.y-24*k}" r="${5*k}" fill="#fff" stroke="#4da3ff" stroke-width="${k}" style="cursor:grab"/>`;}}
   if(TPE)s+=tpCaret(k);
+  if(SEGH&&(tool==='direct'||tool==='lasso')&&!act){const o=SEGH.o,A=(SEGH.g||o)&&(SEGH.g?SEGH.g.pts:(contAt(o,SEGH.ci)||{}).pts);if(A&&A[SEGH.i]&&A[SEGH.j]){const a=A[SEGH.i],b=A[SEGH.j];s+=`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${b.ix},${b.iy} ${b.x},${b.y}" fill="none" stroke="#4da3ff" stroke-width="${3*k}" stroke-opacity=".55" pointer-events="none"/>`;}}
   sselValid().forEach(kk=>{const [id,ci,i]=kk.split(','),o=O.find(x=>x.id===id),A=contAt(o,+ci).pts,a=A[+i],b=A[(+i+1)%A.length];s+=`<path d="M${a.x},${a.y}C${a.ox},${a.oy} ${b.ix},${b.iy} ${b.x},${b.y}" fill="none" stroke="#4da3ff" stroke-width="${4*k}" stroke-opacity=".75" pointer-events="none"/>`;});
   if(TPH&&(tool==='text'||tool==='textpath'||tool==='vtext'))s+=`<path d="${outlineD(TPH)}" fill="none" stroke="#4da3ff" stroke-width="${2.5*k}" stroke-dasharray="${6*k} ${3*k}" pointer-events="none"/>`;
   SEL.forEach(id=>{const o=O.find(x=>x.id===id);if(!o)return;const b=bbox(o),c={x:b.x+b.w/2,y:b.y+b.h/2},tr=o.rot?` transform="rotate(${o.rot} ${c.x} ${c.y})"`:'';
@@ -319,7 +320,7 @@ svg.addEventListener('pointerdown',e=>{const te=$('tEdit');if(te&&e.button===0){
   if(tg.dataset&&tg.dataset.fd!=null){act={fd:+tg.dataset.fd};return;}
   if(tg.dataset&&tg.dataset.tpo){const o=O.find(x=>x.id===tg.dataset.tpo);if(o){act={tpo:o,off0:o.off||0};}return;}
   if(tg.dataset&&tg.dataset.tpe){const o=O.find(x=>x.id===tg.dataset.tpe);if(o){act={tpend:o};}return;}
-  if(tg.dataset&&tg.dataset.rc!=null){const o=O.find(x=>x.id===SEL[0]),c=rcVisible(o)[+tg.dataset.rc];if(o&&c){act={rc:true,o,c,snap:JSON.parse(JSON.stringify(o)),C:c.C,u:c.u,d0:c.d0};}return;}
+  if(tg.dataset&&tg.dataset.rc!=null){const o=O.find(x=>x.id===SEL[0]),c=rcVisible(o)[+tg.dataset.rc];if(o&&c){const sel=c.single?rcSelIdx(o):[];act={rc:true,o,c,sel:sel.length?sel:[c.i],snap:JSON.parse(JSON.stringify(o)),C:c.C,u:c.u,d0:c.d0};}return;}
   if(e.button===2){const hid=tg.closest&&tg.closest('[data-id]')?tg.closest('[data-id]').dataset.id:null,h2=hid?O.find(o=>o.id===hid):null;
     if(h2&&!h2.locked){if(!SEL.includes(h2.id)){SEL=[h2.id];render();props();}act={move:true,p0:sp,last:sp,moved:false,copy:true,rb:true,cx:e.clientX,cy:e.clientY};}else act={rbEmpty:true,cx:e.clientX,cy:e.clientY};return;}
   if(tool==='hand'||spaceDown||e.button===1){act={pan:true,sx:e.clientX,sy:e.clientY,PX,PY};svg.style.cursor='grabbing';return;}
@@ -344,6 +345,10 @@ svg.addEventListener('pointerdown',e=>{const te=$('tEdit');if(te&&e.button===0){
   if(tool==='board'){const i=DOC.boards.map((b,k)=>k).reverse().find(k=>{const b=DOC.boards[k];return p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h;});
     if(i!=null){DOC.ab=i;syncAB();act={bmove:true,i,p0:sp,bx:DOC.boards[i].x,by:DOC.boards[i].y};render();boardsUI();}else act={bnew:true,p0:sp};return;}
   if(tool==='table'||tool==='spiral'||tool==='arc'){act={drawX:tool,p0:sp,p1:sp};return;}
+  if(tool==='lasso'||tool==='direct'){const h=segPick(p);if(h&&!e.altKey){let o=h.o;if(o.type!=='path'){if(['rect','polygon','star'].includes(o.type))rcEnsure(o);else toPath(o);}
+      if(rcOk(o)&&!o.subs?.length){const ids=rcEdgeAt(o,p);const r=nearestSeg(p,o);if(r)segSelect(o,r.ci,r.i,e.shiftKey);act={rcSide:true,o,ids,last:sp,p0:p,moved:false,pre:true};render();props();return;}
+      const r=nearestSeg(p,o);if(r){segSelect(o,r.ci,r.i,e.shiftKey);const A2=contAt(o,r.ci).pts,P0=A2[r.i],P1=A2[r.j],str=Math.hypot(P0.ox-P0.x,P0.oy-P0.y)<0.01&&Math.hypot(P1.ix-P1.x,P1.iy-P1.y)<0.01;
+        act=str?{segMove:true,o,ci:r.ci,ids:[r.i,r.j],last:sp,moved:false,pre:true}:{segDrag:true,r,moved:false,pre:true};render();props();return;}}}
   if(tool==='lasso'){if(!e.shiftKey)ASEL=new Set();act={lasso:[p],add:e.shiftKey};return;}
   if(tool==='eraser'){act={erase:[p]};overlay();return;}
   if(tool==='addpt'||tool==='scissors'){let tgt=hit&&!hit.locked?hit:null;if(tgt&&CONVERTIBLE.has(tgt.type))toPath(tgt);
@@ -414,7 +419,7 @@ const pmH=e=>{const p=pt(e),sp=snap(p);$('status').textContent=`${TN[tool]} · x
   if(act.drawX){act.p1=sp;overlay();return;}
   if(act.rc){const o=act.o,d=Math.max(0,(p.x-act.C.x)*act.u.x+(p.y-act.C.y)*act.u.y-act.d0),snap0=JSON.parse(JSON.stringify(act.snap));Object.keys(o).forEach(k=>delete o[k]);Object.assign(o,snap0);
     const c=act.c,sn=Math.sin((c.th||Math.PI/2)/2),r=d*sn/Math.max(0.05,1-sn);
-    if(o.type==='rect'&&!c.single)o.r=Math.min(r,o.w/2,o.h/2);else if(rcEnsure(o)){if(c.single)o.rcs.R[c.i]=r;else o.rcs.A.forEach((P,i)=>{if(rcSharp(P))o.rcs.R[i]=r;});rcApply(o);}rl([o.id]);$('status').textContent=`კუთხის რადიუსი: ${Math.round(r)}${c.single?' (ერთი კუთხე)':''}`;return;}
+    if(o.type==='rect'&&!c.single)o.r=Math.min(r,o.w/2,o.h/2);else if(rcEnsure(o)){if(c.single)act.sel.forEach(i=>{if(i<o.rcs.R.length)o.rcs.R[i]=r;});else o.rcs.A.forEach((P,i)=>{if(rcSharp(P))o.rcs.R[i]=r;});rcApply(o);}rl([o.id]);$('status').textContent=`კუთხის რადიუსი: ${Math.round(r)}${c.single?(act.sel.length>1?` (${act.sel.length} მონიშნული კუთხე)`:' (ერთი კუთხე)'):''}`;return;}
   if(act.bmove){const b=DOC.boards[act.i];b.x=Math.round(act.bx+sp.x-act.p0.x);b.y=Math.round(act.by+sp.y-act.p0.y);render();return;}
   if(act.bnew){act.marq={x0:act.p0.x,y0:act.p0.y,x1:sp.x,y1:sp.y};overlay();return;}
   if(act.marq){act.marq.x1=p.x;act.marq.y1=p.y;overlay();return;}
@@ -596,7 +601,7 @@ function rcPts(A,R,closed){const n=A.length,out=[],M=[],G=[];
     const la=Math.hypot(a.x-P.x,a.y-P.y),lb=Math.hypot(b.x-P.x,b.y-P.y),na=Math.hypot(da.x-P.x,da.y-P.y)||1,nb=Math.hypot(db.x-P.x,db.y-P.y)||1,ua={x:(da.x-P.x)/na,y:(da.y-P.y)/na},ub={x:(db.x-P.x)/nb,y:(db.y-P.y)/nb};
     const th=Math.acos(Math.max(-1,Math.min(1,ua.x*ub.x+ua.y*ub.y)));if(th<0.01||th>Math.PI-0.01)continue;G[i]={ua,ub,th,la,lb,d:r/Math.tan(th/2)};}
   /* pass 2: a side is shared by its two corners — a lone rounded corner may use the whole side, two rounded corners split it */
-  const dq=G.map(g=>g?Math.min(g.d,g.la*0.5,g.lb*0.5):0),   /* a corner rounds at most to the middle of its sides */D=G.map((g,i)=>{if(!g)return 0;const pv=dq[(i-1+n)%n],nx=dq[(i+1)%n],s1=g.la/Math.max(g.la,dq[i]+pv),s2=g.lb/Math.max(g.lb,dq[i]+nx);return Math.min(dq[i],g.la*0.999,g.lb*0.999)*Math.min(1,s1,s2);});
+  const dq=G.map(g=>g?Math.min(g.d,g.la*0.999,g.lb*0.999):0),   /* a lone corner may round the whole side; two rounded corners share it */D=G.map((g,i)=>{if(!g)return 0;const pv=dq[(i-1+n)%n],nx=dq[(i+1)%n],s1=g.la/Math.max(g.la,dq[i]+pv),s2=g.lb/Math.max(g.lb,dq[i]+nx);return Math.min(dq[i],g.la*0.999,g.lb*0.999)*Math.min(1,s1,s2);});
   for(let i=0;i<n;i++){const P=A[i],g=G[i];M.push([out.length]);if(!g||D[i]<0.01){out.push({...P});continue;}
     const {ua,ub,th}=g,d=D[i],rr=d*Math.tan(th/2),h=4/3*Math.tan((Math.PI-th)/4)*rr;
     const P1={x:P.x+ua.x*d,y:P.y+ua.y*d},P2={x:P.x+ub.x*d,y:P.y+ub.y*d};out.push({x:P1.x,y:P1.y,ix:P1.x,iy:P1.y,ox:P1.x-ua.x*h,oy:P1.y-ua.y*h},{x:P2.x,y:P2.y,ix:P2.x-ub.x*h,iy:P2.y-ub.y*h,ox:P2.x,oy:P2.y});M[i]=[out.length-2,out.length-1];}
@@ -1794,9 +1799,12 @@ function toolDown(e,p,sp,tg,hit){
     if(T.length){T.forEach(cp);render();commit();props();$('status').textContent='სტილი გადავიდა მონიშნულზე';}else{K.forEach(k=>{if(src[k]!==undefined)lastStyle[k]=JSON.parse(JSON.stringify(src[k]));});swCur();props();$('status').textContent='სტილი აღებულია — ახალი ფიგურები ამ სტილით დაიხატება';}return true;}
   if(tool==='width'){const h=WH||widthHit(p);if(!h)return true;const o=h.o;if(o.type!=='path')toPathGeom(o);if(!o.wprof)o.wprof=[];SEL=[o.id];act={wt:true,o,t:h.t,pt:h.pt};return true;}
   return false;}
-let TPH=null,SSEL=new Set(),SMDIR=null;
+let TPH=null,SSEL=new Set(),SMDIR=null,SEGH=null;
+function segPick(p){for(let i=O.length-1;i>=0;i--){const o=O[i];if(o.hidden||o.locked||o.rot)continue;if(!(o.type==='path'||['rect','polygon','star'].includes(o.type)))continue;const b=bbox(o),m=8/Z;if(p.x<b.x-m||p.x>b.x+b.w+m||p.y<b.y-m||p.y>b.y+b.h+m)continue;
+  let g=o;if(o.type!=='path'){g=JSON.parse(JSON.stringify(o));if(o.type==='rect'&&o.r){g.r=o.r;rcEnsure(g);}else toPathGeom(g);}const C=o.type==='path'?CONT(o):[{pts:g.pts,closed:g.closed,ci:0}];for(const c of C){const A=c.pts,n=A.length;if(n<2)continue;const lc=locOn(A,!!c.closed,p);if(lc&&lc.d<6/Z)return {o,ci:c.ci||0,i:lc.i,j:lc.j,g:o.type==='path'?null:g};}}return null;}
+function segSelect(o,ci,i,add){const c=contAt(o,ci);if(!c)return;const key=o.id+','+ci+','+i;if(add){SSEL.has(key)?SSEL.delete(key):SSEL.add(key);}else{SSEL=new Set([key]);ASEL=new Set();}const j=(i+1)%c.pts.length;ASEL.add(o.id+','+ci+','+i);ASEL.add(o.id+','+ci+','+j);if(!SEL.includes(o.id))SEL=add?[...SEL,o.id]:[o.id];}
 const sselValid=()=>[...SSEL].filter(k=>{const [id,ci,i]=k.split(','),o=O.find(x=>x.id===id),c=o&&contAt(o,+ci);if(!c||+i>=c.pts.length)return false;return ASEL.has(id+','+ci+','+i)&&ASEL.has(id+','+ci+','+((+i+1)%c.pts.length));});const TPCUR=(()=>{const c=`<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M3 22 Q10 10 17 18 T29 14' fill='none' stroke='white' stroke-width='4'/><path d='M3 22 Q10 10 17 18 T29 14' fill='none' stroke='%234da3ff' stroke-width='2'/><text x='9' y='14' font-size='13' font-weight='bold' font-family='serif' fill='black' stroke='white' stroke-width='0.8' paint-order='stroke'>T</text></svg>`;return `url("data:image/svg+xml;utf8,${c.replace(/"/g,"'").replace(/#/g,'%23')}") 9 14, text`;})();
-function toolHover(p,sp){if(tool==='text'||tool==='textpath'||tool==='vtext'){const np=nearPathAt(p,true),id=np&&np.type!=='tpath'?np.id:null;svg.style.cursor=id?TPCUR:curFor(tool);if((TPH&&TPH.id)!==id){TPH=id?np:null;overlay();$('status').textContent=id?'დააწკაპუნე — ტექსტი ამ მრუდზე / კონტურზე':TN[tool];}return true;}if(tool==='smooth'){WH={pt:p,sm:true};overlay();return true;}if(tool==='curv'&&CV){CVH=sp;overlay();return true;}if(tool==='sbuild'){if(!SB||SB.key!==SEL.join())SB=buildSB();const i=sbAt(p);if(i!==SBH){SBH=i;overlay();}return true;}
+function toolHover(p,sp){if(tool==='direct'||tool==='lasso'){const h=segPick(p),key=h?h.o.id+':'+h.i:null;if((SEGH&&SEGH.key)!==key){SEGH=h?{...h,key}:null;overlay();}svg.style.cursor=h?'pointer':curFor(tool);if(h)$('status').textContent='გვერდი — დააწკაპუნე მოსანიშნად, გადაათრიე გადასაადგილებლად';}if(tool==='text'||tool==='textpath'||tool==='vtext'){const np=nearPathAt(p,true),id=np&&np.type!=='tpath'?np.id:null;svg.style.cursor=id?TPCUR:curFor(tool);if((TPH&&TPH.id)!==id){TPH=id?np:null;overlay();$('status').textContent=id?'დააწკაპუნე — ტექსტი ამ მრუდზე / კონტურზე':TN[tool];}return true;}if(tool==='smooth'){WH={pt:p,sm:true};overlay();return true;}if(tool==='curv'&&CV){CVH=sp;overlay();return true;}if(tool==='sbuild'){if(!SB||SB.key!==SEL.join())SB=buildSB();const i=sbAt(p);if(i!==SBH){SBH=i;overlay();}return true;}
   if(tool==='width'){WH=widthHit(p);overlay();return true;}if(tool==='rotate'){overlay();return true;}return false;}
 function toolMove(e,p,sp){
   if(x3Move(e,p,sp))return true;
@@ -1828,7 +1836,7 @@ function toolUp(e,a){
   if(a.smoothT){if(a.ch)commit();props();return true;}
   if(a.sclT){if(!a.moved){ROTP={x:a.p0.x,y:a.p0.y,key:SEL.join()};overlay();$('status').textContent='საყრდენი წერტილი დაყენდა — ახლა გადაათრიე';return true;}
     if(e.altKey){const C=a.L.map(o=>clone(o));restoreSnap(a.L,a.S);C.forEach((c,i)=>O.splice(O.indexOf(a.L[i])+1,0,c));SEL=C.map(c=>c.id);ROTP=ROTP?{...ROTP,key:SEL.join()}:null;}render();commit();props();return true;}
-  if(a.segDrag||a.rcSide||a.segMove){if(a.moved)commit();else{const o=a.o||a.r.o,ci=a.ci??(a.r?a.r.ci:0);let i,j;if(a.r){i=a.r.i;j=a.r.j;}else if(a.segMove){[i,j]=a.ids;}else{const r=nearestSeg(a.p0||{x:0,y:0},o);if(r){i=r.i;j=r.j;}}
+  if(a.segDrag||a.rcSide||a.segMove){if(a.moved)commit();else if(!a.pre){const o=a.o||a.r.o,ci=a.ci??(a.r?a.r.ci:0);let i,j;if(a.r){i=a.r.i;j=a.r.j;}else if(a.segMove){[i,j]=a.ids;}else{const r=nearestSeg(a.p0||{x:0,y:0},o);if(r){i=r.i;j=r.j;}}
       if(i!=null){const key=o.id+','+ci+','+i;if(e.shiftKey){SSEL.has(key)?SSEL.delete(key):SSEL.add(key);}else SSEL=new Set([key]);[...SSEL].forEach(k2=>{const [id,c2,i2]=k2.split(','),oo=O.find(x=>x.id===id),cc=oo&&contAt(oo,+c2);if(!cc)return;ASEL.add(id+','+c2+','+i2);ASEL.add(id+','+c2+','+((+i2+1)%cc.pts.length));});if(!e.shiftKey){ASEL=new Set();SSEL.forEach(k2=>{const [id,c2,i2]=k2.split(','),oo=O.find(x=>x.id===id),cc=oo&&contAt(oo,+c2);if(cc){ASEL.add(id+','+c2+','+i2);ASEL.add(id+','+c2+','+((+i2+1)%cc.pts.length));}});}
         $('status').textContent='მონიშნულია გვერდი (სეგმენტი) — Shift+დაწკაპუნება: კიდევ; გამგლუვებელი იმუშავებს მხოლოდ მონიშნულ გვერდზე';overlay();}}props();return true;}
   if(a.anc){if(!a.moved){const A=contAt(a.o,a.ci).pts,P=A[a.i],n=A.length,has=Math.hypot(P.ix-P.x,P.iy-P.y)>0.5||Math.hypot(P.ox-P.x,P.oy-P.y)>0.5;
