@@ -74,7 +74,7 @@ math-field.mi-f{font-size:17px!important}
 <div class="app">
   <nav class="menubar" id="menubar"></nav>
   <div class="top">
-    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·06</small>
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·08</small>
     <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა: .mg (MAGNUS), .svg — Ctrl+O">📂</button><button id="bSave" title="შენახვა .mg ფორმატში (Ctrl+S)">💾</button>
     <button id="bSvg" title="შენახვა როგორც: MAGNUS (.mg), SVG, PNG, JPEG, PDF, GIF (Ctrl+Shift+S)">⬇ შენახვა როგორც…</button><button id="bPng" hidden></button><input type="file" id="fImg" accept="image/*,.svg" hidden><input type="file" id="fImp" accept=".svg,image/svg+xml" hidden>
     <input type="file" id="fOpen" accept=".mg,.json,.svg,application/json,image/svg+xml" hidden>
@@ -1167,9 +1167,16 @@ function smartAlign(mode){const L=O.filter(o=>SEL.includes(o.id)&&!o.locked);if(
 function smartDlg(){formDlg({title:'ჭკვიანი სწორება',fields:[{k:'m',l:'როგორ გავასწორო მწკრივები',v:'edge',type:'select',opts:[['edge','კიდით — ყველა მწკრივი ერთნაირ სიგანეზე'],['qty','რაოდენობით — თანაბარი ბიჯი, მარცხნიდან'],['qtyc','რაოდენობით — თანაბარი ბიჯი, ცენტრში']]}],ok:v=>smartAlign(v.m)});}
 /* smooth tool */
 let SMK=0.3,SMR0={};
-function smoothAt(o,p,r){const k=SMK;let ch=false;
+function smoothAt(o,p,r){const K0=SMK;let ch=false;
   CONT(o).forEach(c=>{const A=c.pts,n=A.length;if(n<2)return;const near=[];for(let i=0;i<n;i++){if(!c.closed&&(i===0||i===n-1))continue;if(Math.hypot(A[i].x-p.x,A[i].y-p.y)<=r)near.push(i);}
-    {const lc=locOn(A,c.closed,p);if(lc&&lc.d<=r)[lc.i,lc.j].forEach(i=>{if((c.closed||(i>0&&i<n-1))&&!near.includes(i))near.push(i);});}near.sort((a,b)=>a-b);if(!near.length)return;if(SMS.mode!=='simplify'&&smoothAlready(A,c.closed,near))return;
+    {const lc=locOn(A,c.closed,p);if(lc&&lc.d<=r)[lc.i,lc.j].forEach(i=>{if((c.closed||(i>0&&i<n-1))&&!near.includes(i))near.push(i);});}near.sort((a,b)=>a-b);if(!near.length)return;
+    /* anchor density under the brush: many anchors → strong smoothing, few anchors → gentle */
+    const dens=(()=>{let sm=0,m=0;const ids=[...new Set(near.flatMap(i=>[i-1,i]))];for(const i0 of ids){if(!c.closed&&(i0<0||i0+1>=n))continue;const P=A[(i0+n)%n],Q=A[(i0+1)%n];sm+=Math.hypot(Q.x-P.x,Q.y-P.y);m++;}const sl=m?sm/m:r;return Math.max(0.2,Math.min(3,r*0.7/(sl||1)));})(),k=K0*dens;
+    if(SMS.mode!=='simplify'&&dens<1.3&&smoothAlready(A,c.closed,near))return;
+    if(dens<1&&SMS.mode!=='simplify'){/* few anchors: the curve is already smooth between them — only soften corners at the anchors */
+      let any=false;near.forEach(i=>{const q=A[i],a=A[c.closed?(i-1+n)%n:Math.max(0,i-1)],b=A[c.closed?(i+1)%n:Math.min(n-1,i+1)],u=dirOf(q,'o',b),v=dirOf(q,'i',a);const dt=u.x*v.x+u.y*v.y;if(dt<-0.996)return;any=true;
+        let tx=u.x-v.x,ty=u.y-v.y;const tl=Math.hypot(tx,ty)||1;tx/=tl;ty/=tl;const li=Math.max(Math.hypot(q.ix-q.x,q.iy-q.y),Math.hypot(a.x-q.x,a.y-q.y)/4),lo=Math.max(Math.hypot(q.ox-q.x,q.oy-q.y),Math.hypot(b.x-q.x,b.y-q.y)/4),w=Math.min(1,0.25+K0*dens*2);
+        q.ix+=(q.x-tx*li-q.ix)*w;q.iy+=(q.y-ty*li-q.iy)*w;q.ox+=(q.x+tx*lo-q.ox)*w;q.oy+=(q.y+ty*lo-q.oy)*w;});if(any)ch=true;return;}
     const nb=i=>[A[c.closed?(i-1+n)%n:Math.max(0,i-1)],A[c.closed?(i+1)%n:Math.min(n-1,i+1)]],mv=(q,dx,dy)=>{q.x+=dx;q.y+=dy;q.ix+=dx;q.iy+=dy;q.ox+=dx;q.oy+=dy;};ch=true;
     /* looks round? → pull towards the best circle, never inwards */
     if(c.closed&&n>=3){const D=denseOf(A,true),cx=D.reduce((s2,q)=>s2+q.x,0)/D.length,cy=D.reduce((s2,q)=>s2+q.y,0)/D.length,rr=D.map(q=>Math.hypot(q.x-cx,q.y-cy)),Rm=rr.reduce((a,b)=>a+b,0)/rr.length,err=rr.reduce((a,b)=>a+Math.abs(b-Rm),0)/rr.length/(Rm||1);let ar2=0;for(let i=0;i<D.length;i++){const a2=D[i],b2=D[(i+1)%D.length];ar2+=a2.x*b2.y-b2.x*a2.y;}const key=o.id+':'+c.ci,R=SMR0[key]??(SMR0[key]=Math.sqrt(Math.abs(ar2/2)/(D.length/2*Math.sin(2*Math.PI/D.length))));
@@ -1177,15 +1184,12 @@ function smoothAt(o,p,r){const k=SMK;let ch=false;
         near.forEach(i=>{const q=A[i],d=Math.hypot(q.x-cx,q.y-cy)||1,ux=(q.x-cx)/d,uy=(q.y-cy)/d,f=Math.min(1,0.45*k);mv(q,(cx+ux*R-q.x)*f,(cy+uy*R-q.y)*f);});
         near.forEach(i=>{const q=A[i],[a2,b2]=nb(i),d=Math.hypot(q.x-cx,q.y-cy)||1,ux=(q.x-cx)/d,uy=(q.y-cy)/d,tx=ccw?-uy:uy,ty=ccw?ux:-ux,ang=(z)=>{const v1=Math.atan2(q.y-cy,q.x-cx),v2=Math.atan2(z.y-cy,z.x-cx);let dd=Math.abs(v2-v1);if(dd>Math.PI)dd=2*Math.PI-dd;return dd;},li=4/3*Math.tan(ang(a2)/4)*R,lo=4/3*Math.tan(ang(b2)/4)*R,w=Math.min(1,0.5*k);
           q.ix+=(q.x-tx*li-q.ix)*w;q.iy+=(q.y-ty*li-q.iy)*w;q.ox+=(q.x+tx*lo-q.ox)*w;q.oy+=(q.y+ty*lo-q.oy)*w;});return;}}
-    /* nearly straight here? → straighten */
-    {const ix=[...new Set(near.flatMap(i=>{const l=c.closed?(i-1+n)%n:Math.max(0,i-1),m=c.closed?(i+1)%n:Math.min(n-1,i+1);return [l,i,m];}))],Pp=ix.map(i=>A[i]);if(Pp.length>=3){const mx=Pp.reduce((s2,q)=>s2+q.x,0)/Pp.length,my=Pp.reduce((s2,q)=>s2+q.y,0)/Pp.length;let sxx=0,syy=0,sxy=0;Pp.forEach(q=>{sxx+=(q.x-mx)**2;syy+=(q.y-my)**2;sxy+=(q.x-mx)*(q.y-my);});const th=0.5*Math.atan2(2*sxy,sxx-syy),ux=Math.cos(th),uy=Math.sin(th),span=Math.max(...Pp.map(q=>(q.x-mx)*ux+(q.y-my)*uy))-Math.min(...Pp.map(q=>(q.x-mx)*ux+(q.y-my)*uy)),dev=Math.max(...Pp.map(q=>Math.abs(-(q.x-mx)*uy+(q.y-my)*ux)));
-      if(span>0&&dev<0.06*span){near.forEach(i=>{const q=A[i],dd=-(q.x-mx)*uy+(q.y-my)*ux,f=Math.min(1,1.2*k);mv(q,uy*dd*f,-ux*dd*f);const [a2,b2]=nb(i),li=Math.hypot(q.x-a2.x,q.y-a2.y)/3,lo=Math.hypot(b2.x-q.x,b2.y-q.y)/3,sg=((b2.x-a2.x)*ux+(b2.y-a2.y)*uy)>=0?1:-1,w=0.6*k;q.ix+=(q.x-ux*sg*li-q.ix)*w;q.iy+=(q.y-uy*sg*li-q.iy)*w;q.ox+=(q.x+ux*sg*lo-q.ox)*w;q.oy+=(q.y+uy*sg*lo-q.oy)*w;});return;}}}
-    if(SMS.mode!=='keep'&&refitRegion(c,near,k))return;
+    if(SMS.mode!=='keep'&&dens>=0.9&&refitRegion(c,near,Math.min(1,k)))return;
     /* general: Taubin smoothing (shrink-free) + smooth tangents */
     [Math.min(0.6,0.9*k),-Math.min(0.62,0.93*k)].forEach(f=>{const off=near.map(i=>{const q=A[i],[a2,b2]=nb(i);return [((a2.x+b2.x)/2-q.x)*f,((a2.y+b2.y)/2-q.y)*f];});near.forEach((i,j)=>mv(A[i],off[j][0],off[j][1]));});
     near.forEach(i=>{const q=A[i],[a2,b2]=nb(i);let ux=b2.x-a2.x,uy=b2.y-a2.y;const ul=Math.hypot(ux,uy)||1;ux/=ul;uy/=ul;const li=Math.hypot(q.x-a2.x,q.y-a2.y)/3,lo=Math.hypot(b2.x-q.x,b2.y-q.y)/3,w=Math.min(1,1.2*k);
       q.ix+=(q.x-ux*li-q.ix)*w;q.iy+=(q.y-uy*li-q.iy)*w;q.ox+=(q.x+ux*lo-q.ox)*w;q.oy+=(q.y+uy*lo-q.oy)*w;});
-    if(SMS.mode==='keep'||A.length<=(c.closed?4:3))return;const tol=(SMS.mode==='simplify'?2.6:0.7)*(0.4+SMS.str/100)/Z;
+    if(SMS.mode==='keep'||dens<1.2||A.length<=(c.closed?4:3))return;const tol=(SMS.mode==='simplify'?2.6:0.7)*(0.4+SMS.str/100)/Z;
     for(let t=near.length-1;t>=0;t--){const i=near[t];if(A.length<=(c.closed?4:3))break;const m=A.length,ii=i%m;if(!c.closed&&(ii===0||ii===m-1))continue;const pi=c.closed?(ii-1+m)%m:ii-1,ni=c.closed?(ii+1)%m:ii+1,P0=A[pi],Q=A[ii],N=A[ni];
       const old=[];for(let s2=0;s2<=10;s2++){old.push(bez(A,pi,ii,s2/10));old.push(bez(A,ii,ni,s2/10));}const d1=dirOf(P0,'o',Q),d2=dirOf(N,'i',Q),ch2=Math.hypot(N.x-P0.x,N.y-P0.y);let best=null;
       for(const f of [0.6,0.8,1,1.2,1.45,1.7]){const h1={x:P0.x+d1.x*ch2/3*f,y:P0.y+d1.y*ch2/3*f},h2={x:N.x+d2.x*ch2/3*f,y:N.y+d2.y*ch2/3*f},T=[{...P0,ox:h1.x,oy:h1.y},{...N,ix:h2.x,iy:h2.y}];let dev=0;old.forEach(q=>{let md=1e9;for(let s2=0;s2<=24;s2++){const z=bez(T,0,1,s2/24),dd=Math.hypot(z.x-q.x,z.y-q.y);if(dd<md)md=dd;}if(md>dev)dev=md;});if(!best||dev<best.dev)best={dev,h1,h2};}
@@ -1426,9 +1430,9 @@ function refitRegion(c,near,k){if(!P0())return false;const A=c.pts,n=A.length;if
   if(c.closed){const S2=[...new Set(near)].sort((a,b)=>a-b);if(S2.length>=n-1){idx=[...Array(n).keys(),0];}else{let gi=0,gl=-1;for(let t=0;t<S2.length;t++){const a=S2[t],b=S2[(t+1)%S2.length],g=((b-a)+n)%n||n;if(g>gl){gl=g;gi=t;}}const st=S2[(gi+1)%S2.length],en=S2[gi],a=(st-1+n)%n,b=(en+1)%n;for(let i=a;;i=(i+1)%n){idx.push(i);if(i===b||idx.length>n+1)break;}}}
   else{const a=Math.max(0,Math.min(...near)-1),b=Math.min(n-1,Math.max(...near)+1);for(let i=a;i<=b;i++)idx.push(i);}
   if(idx.length<3)return false;const S=[];for(let m=0;m<idx.length-1;m++){const P=A[idx[m]],Q=A[idx[m+1]],L=Math.hypot(P.ox-P.x,P.oy-P.y)+Math.hypot(Q.ix-P.ox,Q.iy-P.oy)+Math.hypot(Q.x-Q.ix,Q.y-Q.iy),st=Math.max(4,Math.min(60,Math.ceil(L*Z/3)));for(let s2=0;s2<st;s2++)S.push(bez(A,idx[m],idx[m+1],s2/st));}S.push({x:A[idx[idx.length-1]].x,y:A[idx[idx.length-1]].y});
-  const whole=c.closed&&idx[0]===idx[idx.length-1]&&idx.length===n+1,its=1+Math.round(k*7),N=S.length;
+  const whole=c.closed&&idx[0]===idx[idx.length-1]&&idx.length===n+1,its=1+Math.round(k*14),N=S.length;
   for(let it=0;it<its;it++)[0.5,-0.53].forEach(f=>{const T=S.map(q=>({...q}));for(let i=0;i<N;i++){if(!whole&&(i===0||i===N-1))continue;const a=T[whole?(i-1+N-1)%(N-1):i-1],b=T[whole?(i+1)%(N-1):i+1];S[i].x+=((a.x+b.x)/2-T[i].x)*f;S[i].y+=((a.y+b.y)/2-T[i].y)*f;}if(whole){S[N-1].x=S[0].x;S[N-1].y=S[0].y;}});
-  const tol=(SMS.mode==='simplify'?2.4:0.9)/Z,pp=new paper.Path({segments:S.map(q=>[q.x,q.y]),closed:false,insert:false});pp.simplify(tol);let F=pp.segments.map(sg=>({x:sg.point.x,y:sg.point.y,ix:sg.point.x+sg.handleIn.x,iy:sg.point.y+sg.handleIn.y,ox:sg.point.x+sg.handleOut.x,oy:sg.point.y+sg.handleOut.y}));if(F.length<2)return false;
+  const tol=(SMS.mode==='simplify'?2.4:0.9)*(1+k*1.5)/Z,pp=new paper.Path({segments:S.map(q=>[q.x,q.y]),closed:false,insert:false});pp.simplify(tol);let F=pp.segments.map(sg=>({x:sg.point.x,y:sg.point.y,ix:sg.point.x+sg.handleIn.x,iy:sg.point.y+sg.handleIn.y,ox:sg.point.x+sg.handleOut.x,oy:sg.point.y+sg.handleOut.y}));if(F.length<2)return false;
   if(whole){const fl=F[F.length-1];F[0].ix=fl.ix;F[0].iy=fl.iy;F.pop();if(F.length<3)return false;A.length=0;F.forEach(q=>A.push(q));return true;}
   const a=idx[0],b=idx[idx.length-1],Pa=A[a],Pb=A[b];Pa.ox=Pa.x+(F[0].ox-F[0].x);Pa.oy=Pa.y+(F[0].oy-F[0].y);const fl=F[F.length-1];Pb.ix=Pb.x+(fl.ix-fl.x);Pb.iy=Pb.y+(fl.iy-fl.y);const mid=F.slice(1,-1);
   if(!c.closed||a<b){A.splice(a+1,b-a-1,...mid);}else{const keep=[];for(let i=b;;i=(i+1)%n){keep.push(A[i]);if(i===a)break;}A.length=0;[...keep,...mid].forEach(q=>A.push(q));}return true;}
