@@ -9,7 +9,15 @@
 :root{--bg:#141119;--panel:#1c1824;--panel2:#231e2e;--line:rgba(201,168,76,.22);--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--mid:#b3a68f;--dim:#6d6253;--vi:#a585ef;--sel:#4da3ff}
 *{box-sizing:border-box}[hidden]{display:none!important}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:'Noto Sans Georgian','Noto Serif Georgian',system-ui,sans-serif;font-size:13px}
-.app{display:grid;grid-template-columns:92px minmax(0,1fr) 300px;grid-template-rows:auto auto minmax(0,1fr);height:100%}
+.app{display:grid;grid-template-columns:92px minmax(0,1fr) var(--sideW,300px);grid-template-rows:auto auto auto minmax(0,1fr);height:100%}
+.dtabs{grid-column:1/-1;display:flex;align-items:flex-end;gap:2px;padding:4px 8px 0;background:#120f18;border-bottom:1px solid var(--line);overflow-x:auto;min-height:30px}
+.dt{display:flex;align-items:center;gap:6px;max-width:220px;padding:5px 8px 5px 12px;border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;background:#1a1624;color:var(--mid);font-size:12px;cursor:pointer;white-space:nowrap}
+.dt span{overflow:hidden;text-overflow:ellipsis}.dt.on{background:var(--panel);color:var(--gold-lt);border-color:rgba(201,168,76,.45)}.dt b{font-weight:400;opacity:.55;padding:0 3px;border-radius:4px}.dt b:hover{opacity:1;background:rgba(232,112,90,.25)}
+#dtNew{margin-left:4px;padding:3px 10px;font-size:14px;align-self:center}
+#sideRz{position:absolute;top:0;right:0;bottom:0;width:7px;cursor:col-resize;z-index:25;background:transparent}#sideRz:hover,#sideRz.on{background:rgba(201,168,76,.35)}
+body.tbfloat .app{grid-template-columns:0 minmax(0,1fr) var(--sideW,300px)!important}.app>.tools{grid-column:1;grid-row:4}.app>.stage{grid-column:2;grid-row:4}.app>.side{grid-column:3;grid-row:4}@media (max-width:860px){.app>.side{grid-column:1/-1;grid-row:5}}body.tbfloat .tools{position:fixed;z-index:70;max-height:82vh;border:1px solid var(--line);border-radius:10px;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.tbgrip{grid-column:1/-1;height:14px;margin:-4px -2px 4px;border-radius:5px;cursor:grab;background:repeating-linear-gradient(90deg,rgba(201,168,76,.35) 0 2px,transparent 2px 5px);display:flex;justify-content:flex-end;align-items:center}
+.tbgrip i{font-style:normal;font-size:11px;line-height:14px;padding:0 4px;background:var(--panel);color:var(--gold-lt);border-radius:4px;cursor:pointer;display:none}body.tbfloat .tbgrip i{display:block}
 .menubar{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:2px;padding:2px 8px;background:#120f18;border-bottom:1px solid var(--line);position:relative;z-index:30}
 .menubar>.mt{position:relative}.menubar>.mt>button{font:inherit;color:var(--ink);background:none;border:0;padding:5px 10px;border-radius:6px;cursor:pointer}
 .menubar>.mt.open>button,.menubar>.mt>button:hover{background:var(--panel2);color:var(--gold-lt)}
@@ -29,7 +37,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .pg>summary::-webkit-details-marker{display:none}.pg>summary::before{content:'▸';color:var(--mid);transition:transform .15s}.pg[open]>summary::before{transform:rotate(90deg)}.pg>summary:hover{color:var(--gold-lt)}.pgb{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:0 10px 10px;min-width:0}.pgb>*{min-width:0}
 .fpanel{position:fixed;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.5);min-width:200px;max-width:320px}.fph{cursor:move;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;color:var(--gold);font-size:11px;letter-spacing:1.3px;text-transform:uppercase;border-bottom:1px solid var(--line);user-select:none}
 .fph button{background:none;border:0;color:var(--mid);cursor:pointer;font-size:14px}.fpb{padding:8px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}.fpb button,.fpb select{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:4px 8px;cursor:pointer;min-width:32px}.fpb button:hover{border-color:var(--gold)}.fpb .grpl{display:none}.fpb .lab{width:100%;font-size:11px;color:var(--mid)}
-body.tbfull .app{grid-template-columns:112px minmax(0,1fr) 300px}body.tbfull .tools{grid-template-columns:repeat(3,32px);grid-auto-rows:31px}body.tbfull .tools button{width:32px;height:31px;font-size:15px!important}#tbMode{grid-column:1/-1;font-size:10px!important;height:22px!important;width:auto!important;color:var(--mid)}
+body.tbfull .app{grid-template-columns:112px minmax(0,1fr) var(--sideW,300px)}body.tbfull .tools{grid-template-columns:repeat(3,32px);grid-auto-rows:31px}body.tbfull .tools button{width:32px;height:31px;font-size:15px!important}#tbMode{grid-column:1/-1;font-size:10px!important;height:22px!important;width:auto!important;color:var(--mid)}
 .rul{position:absolute;background:#17131f;z-index:6;display:block}#rulX{left:18px;top:0;height:18px;width:calc(100% - 18px);cursor:ns-resize}#rulY{top:18px;left:0;width:18px;height:calc(100% - 18px);cursor:ew-resize}#rulC{left:0;top:0;width:18px;height:18px;border-right:1px solid #2c2538;border-bottom:1px solid #2c2538}
 .stage.norul .rul{display:none}#tEdit{white-space:pre-wrap;word-wrap:break-word;overflow:visible}
 .modal{position:fixed;inset:0;background:rgba(5,4,10,.65);z-index:80;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -67,14 +75,14 @@ textarea{min-height:52px;resize:vertical}
 .hint{font-size:11.5px;color:var(--mid);line-height:1.5}
 .status{position:absolute;left:8px;bottom:6px;font-size:11px;color:var(--mid);background:rgba(13,11,18,.8);padding:2px 8px;border-radius:6px;pointer-events:none}
 math-field.mi-f{font-size:17px!important}
-@media (max-width:860px){.app{grid-template-columns:110px minmax(0,1fr);grid-template-rows:auto auto 62vh auto}.side{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}}
+@media (max-width:860px){.app{grid-template-columns:110px minmax(0,1fr)!important;grid-template-rows:auto auto auto 62vh auto}#sideRz{display:none}.side{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}}
 </style>
 </head>
 <body>
 <div class="app">
   <nav class="menubar" id="menubar"></nav>
   <div class="top">
-    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·12</small>
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·13</small>
     <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა: .mg (MAGNUS), .svg — Ctrl+O">📂</button><button id="bSave" title="შენახვა .mg ფორმატში (Ctrl+S)">💾</button>
     <button id="bSvg" title="შენახვა როგორც: MAGNUS (.mg), SVG, PNG, JPEG, PDF, GIF (Ctrl+Shift+S)">⬇ შენახვა როგორც…</button><button id="bPng" hidden></button><input type="file" id="fImg" accept="image/*,.svg" hidden><input type="file" id="fImp" accept=".svg,image/svg+xml" hidden>
     <input type="file" id="fOpen" accept=".mg,.json,.svg,application/json,image/svg+xml" hidden>
@@ -87,8 +95,9 @@ math-field.mi-f{font-size:17px!important}
     <span class="sep"></span><span class="grpl">Pathfinder:</span><span id="pfBar"><button data-pf="unite" title="გაერთიანება">⊕</button><button data-pf="minusFront" title="წინას გამოკლება">⊖</button><button data-pf="minusBack" title="უკანას გამოკლება">⊝</button><button data-pf="intersect" title="გადაკვეთა">⊗</button><button data-pf="exclude" title="გამორიცხვა">⊘</button><button data-pf="divide" title="დაყოფა">▦</button><button data-pf="trim" title="მოჭრა (Trim): დაფარული ნაწილები იშლება">✂</button><button data-pf="merge" title="შერწყმა (Merge): მოჭრა + ერთნაირი ფერის გაერთიანება">⧉</button><button data-pf="crop" title="ჩამოჭრა (Crop): ზედა ფიგურის ფორმით">⬚</button></span>
     <span class="sep"></span><button id="tbBlend" title="ბლენდი: მონიშნე 2 ფიგურა">⇢ ბლენდი</button><button id="tbRound" title="კუთხეების მომრგვალება">◜ მომრგვალება</button>
   </div>
+  <div class="dtabs" id="docTabs"></div>
   <div class="tools" id="tools"></div>
-  <div class="stage" id="stage"><svg id="svg" xmlns="http://www.w3.org/2000/svg"><defs id="defs"></defs><g id="view"><g id="boardsG"></g><g id="gridG" pointer-events="none"></g><g id="objs"></g><g id="guideG"></g><g id="sgG" pointer-events="none"></g><g id="ov"></g></g></svg><canvas id="rulX" class="rul" title="გადაათრიე — ჰორიზონტალური გიდი"></canvas><canvas id="rulY" class="rul" title="გადაათრიე — ვერტიკალური გიდი"></canvas><div id="rulC" class="rul"></div><div class="status" id="status"></div></div>
+  <div class="stage" id="stage"><div id="sideRz" title="გადაათრიე — პანელის სიგანე · ორმაგი დაწკაპუნება — დამალვა / ჩვენება"></div><svg id="svg" xmlns="http://www.w3.org/2000/svg"><defs id="defs"></defs><g id="view"><g id="boardsG"></g><g id="gridG" pointer-events="none"></g><g id="objs"></g><g id="guideG"></g><g id="sgG" pointer-events="none"></g><g id="ov"></g></g></svg><canvas id="rulX" class="rul" title="გადაათრიე — ჰორიზონტალური გიდი"></canvas><canvas id="rulY" class="rul" title="გადაათრიე — ვერტიკალური გიდი"></canvas><div id="rulC" class="rul"></div><div class="status" id="status"></div></div>
   <div class="side">
     <div class="sec" id="propSec"><h3>თვისებები</h3><div id="props" class="hint">აირჩიე ობიექტი ან ხელსაწყო. <b>F</b> — ფორმულა: დააწკაპუნე დაფაზე და ჩაწერე განტოლება.</div></div>
     <div class="sec"><h3>ფერები</h3><div class="cur"><span class="hint">შევსება</span><b id="cF"></b><span class="hint">კონტური</span><b id="cS"></b><button class="mini" id="cSw" title="გაცვლა (Shift+X)">⇄</button></div>
@@ -278,10 +287,10 @@ const HANDLES=[[0,0,'nwse-resize'],[0.5,0,'ns-resize'],[1,0,'nesw-resize'],[1,0.
 
 /* ───────── history ───────── */
 const snapState=()=>JSON.stringify({DOC,O:O.map(o=>{const c={...o};delete c._bb;delete c._segs;delete c._err;delete c._params;return c;})});
-function commit(){hist.push(snapState());if(hist.length>120)hist.shift();fut=[];store.set('magnus_vector_doc',hist[hist.length-1]);}
+function commit(){hist.push(snapState());if(hist.length>120)hist.shift();fut=[];store.set('magnus_vector_doc',hist[hist.length-1]);if(typeof tabsPersistSoon==='function')tabsPersistSoon();}
 function restore(s){const d=JSON.parse(s);DOC=d.DOC;boardsInit();O=d.O;layers._s='';ASEL=new Set();SEL=SEL.filter(id=>O.some(o=>o.id===id));render();props();}
-$('bUndo').onclick=()=>{if(hist.length>1){fut.push(hist.pop());restore(hist[hist.length-1]);store.set('magnus_vector_doc',hist[hist.length-1]);}};
-$('bRedo').onclick=()=>{if(fut.length){const s=fut.pop();hist.push(s);restore(s);store.set('magnus_vector_doc',s);}};
+$('bUndo').onclick=()=>{if(hist.length>1){fut.push(hist.pop());restore(hist[hist.length-1]);store.set('magnus_vector_doc',hist[hist.length-1]);if(typeof tabsPersistSoon==='function')tabsPersistSoon();}};
+$('bRedo').onclick=()=>{if(fut.length){const s=fut.pop();hist.push(s);restore(s);store.set('magnus_vector_doc',s);if(typeof tabsPersistSoon==='function')tabsPersistSoon();}};
 
 /* ───────── creating objects ───────── */
 function make(type,extra){const o=Object.assign({id:uid(),type,name:'',rot:0,...lastStyle},extra);if(extra.fill==null&&(type==='line'||(type==='path'&&!extra.closed)))o.fill='none';if(type==='text'&&extra.stroke==null){o.stroke='none';}
@@ -292,7 +301,7 @@ function setTool(t){if(t!==tool)FPTC=null;if((t==='textpath'||t==='text')&&t!==t
 /* toolbar: one button per family, a click opens the family's list on the right */
 const TG_FULL=[['select',['select']],['direct',['direct']],['lasso',['lasso']],['wand',['wand']],['pen',['pen']],['curv',['curv']],['anchor',['anchor']],['addpt',['addpt']],['delpt',['delpt']],['pencil',['pencil']],['shaper',['shaper']],['smooth',['smooth']],['brush',['brush']],['spray',['spray']],['width',['width']],['eraser',['eraser']],['scissors',['scissors']],['rect',['rect']],['ellipse',['ellipse']],['polygon',['polygon']],['star',['star']],['line',['line']],['arc',['arc']],['spiral',['spiral']],['table',['table']],['text',['text']],['vtext',['vtext']],['textpath',['textpath']],['eq',['eq']],['rotate',['rotate']],['reflect',['reflect']],['scale',['scale']],['freet',['freet']],['xform',['xform']],['blendt',['blendt']],['sbuild',['sbuild']],['gradt',['gradt']],['mesh',['mesh']],['eyedrop',['eyedrop']],['zoom',['zoom']],['slice',['slice']],['persp',['persp']],['o3d',['o3d']],['hand',['hand']],['board',['board']]],TG_COMPACT=[['select',['select']],['direct',['direct']],['lasso',['lasso']],['wand',['wand']],['pen',['pen','curv','anchor','addpt','delpt']],['pencil',['pencil','shaper','smooth']],['brush',['brush']],['spray',['spray']],['width',['width']],['erase',['eraser','scissors']],['shape',['rect','ellipse','polygon','star']],['line',['line','arc','spiral','table']],['type',['text','vtext','textpath']],['eq',['eq']],['rotate',['rotate','reflect']],['scale',['scale']],['freet',['freet']],['xform',['xform']],['blend',['blendt','sbuild']],['gradt',['gradt']],['mesh',['mesh']],['eyedrop',['eyedrop']],['zoom',['zoom']],['d3',['o3d','persp']],['slice',['slice']],['hand',['hand','board']]];let TBFULL=false;try{TBFULL=localStorage.getItem('magnus_vector_tb')==='full';}catch(e){}let TGROUPS=TBFULL?TG_FULL:TG_COMPACT;
 const TI={};TOOLS.forEach(([t,i,k])=>TI[t]={i,k});const GCUR={};[...TG_FULL,...TG_COMPACT].forEach(([g,l])=>{if(!GCUR[g])GCUR[g]=l[0];});TGROUPS.forEach(([g,l])=>GCUR[g]=l[0]);
-function drawTools(){$('tools').innerHTML=TGROUPS.map(([g,l])=>{const t=l.includes(tool)?tool:GCUR[g];return `<button data-g="${g}" data-t="${t}" class="${l.includes(tool)?'on':''}" title="${TN[t]} (${TI[t].k})${l.length>1?' — დააჭირე და დაიჭირე / მარჯვენა ღილაკი: სხვა ხელსაწყოები':''}">${TI[t].i}${l.length>1?'<i class="tri"></i>':''}<small>${TI[t].k}</small></button>`;}).join('');
+function drawTools(){$('tools').innerHTML=`<div class="tbgrip" id="tbGrip" title="გადაათრიე — ხელსაწყოების პანელის გამოტანა და გადაადგილება · ⇤ — ადგილზე დაბრუნება"><i id="tbDock" title="ადგილზე დაბრუნება">⇤</i></div>`+TGROUPS.map(([g,l])=>{const t=l.includes(tool)?tool:GCUR[g];return `<button data-g="${g}" data-t="${t}" class="${l.includes(tool)?'on':''}" title="${TN[t]} (${TI[t].k})${l.length>1?' — დააჭირე და დაიჭირე / მარჯვენა ღილაკი: სხვა ხელსაწყოები':''}">${TI[t].i}${l.length>1?'<i class="tri"></i>':''}<small>${TI[t].k}</small></button>`;}).join('');
   $('tools').insertAdjacentHTML('beforeend',`<button id="tbMode" title="${TBFULL?'ხელსაწყოების დაჯგუფება (მსგავსები ერთ ღილაკში)':'ყველა ხელსაწყოს ჩვენება ცალ-ცალკე'}">${TBFULL?'▣ დაჯგუფება':'☷ ყველა'}</button><div class="fsw" title="შევსება / კონტური — დაწკაპუნება აქტიურს ხდის, მეორედ — ფერის რედაქტორი"><b id="twF"></b><b id="twS"></b><i id="twX" title="გაცვლა (Shift+X)">⇄</i><i id="twN" title="არა">⊘</i></div><input id="twW" type="number" min="0" step="0.5" title="კონტურის სისქე">`);
   $('tbMode').onclick=e=>{e.stopPropagation();TBFULL=!TBFULL;try{localStorage.setItem('magnus_vector_tb',TBFULL?'full':'compact');}catch(err){}TGROUPS=TBFULL?TG_FULL:TG_COMPACT;document.body.classList.toggle('tbfull',TBFULL);drawTools();setTimeout(()=>{fit();drawRulers();},30);};
   $('twF').onclick=()=>{if(FSACT==='fill')openGrad('fill');else{FSACT='fill';swCur();}};$('twS').onclick=()=>{if(FSACT==='stroke')openGrad('stroke');else{FSACT='stroke';swCur();}};$('twX').onclick=()=>swapFS();$('twN').onclick=()=>applyColor(FSACT,'none');
@@ -1910,7 +1919,7 @@ $('ndP').onchange=()=>{const v=$('ndP').value;if(!v)return;const m=v.match(/^([\
 $('ndO').onclick=()=>{const w=$('ndW').value;$('ndW').value=$('ndH').value;$('ndH').value=w;ndInfo();};$('ndX').onclick=()=>{$('newDlg').hidden=true;};
 $('ndOk').onclick=()=>{const u=UNIT[$('ndU').value],w=Math.max(10,+$('ndW').value*u),h=Math.max(10,+$('ndH').value*u),bg=$('ndT0').checked?'none':$('ndB').value,dpi=+$('ndR').value;
   if(ndEdit){const b=AB();b.w=w;b.h=h;DOC.bg=bg;DOC.dpi=dpi;DOC.unit=$('ndU').value;}
-  else{const n=Math.max(1,Math.min(50,+$('ndN').value||1)),cols=Math.max(1,+$('ndC').value||1),sp=Math.max(0,+$('ndS').value||0);
+  else{tabNew();const n=Math.max(1,Math.min(50,+$('ndN').value||1)),cols=Math.max(1,+$('ndC').value||1),sp=Math.max(0,+$('ndS').value||0);
     DOC={boards:Array.from({length:n},(_,i)=>({x:(i%cols)*(w+sp),y:Math.floor(i/cols)*(h+sp),w,h,name:'დაფა '+(i+1)})),ab:0,bg,dpi,unit:$('ndU').value,guides:[]};O=[];SEL=[];ASEL=new Set();layers._s='';}
   syncAB();$('bgc').value=bg==='none'?'#ffffff':bg;$('newDlg').hidden=true;document.activeElement&&document.activeElement.blur();fit();commit();props();};
 /* ───────── area text: wrapping and in-place editing ───────── */
@@ -2181,7 +2190,7 @@ $('bPng').onclick=()=>exportPng(DOC.ab,(AB().name||'magnus')+'.png');
 $('bSave').onclick=()=>download(new Blob([snapState()],{type:'application/json'}),(DOC.title||'magnus')+'.mg');
 $('bOpen').onclick=()=>$('fOpen').click();
 $('fOpen').onchange=async e=>{const f=e.target.files[0];if(!f)return;const t=await f.text();e.target.value='';
-  if(/\.(json|mg)$/i.test(f.name)){try{restore(t);DOC.title=f.name.replace(/\.(json|mg)$/i,'');commit();fit();}catch(err){$('status').textContent='ფაილი ვერ წავიკითხე';}return;}
+  tabNew();if(/\.(json|mg)$/i.test(f.name)){try{restore(t);DOC.title=f.name.replace(/\.(json|mg)$/i,'');commit();fit();}catch(err){$('status').textContent='ფაილი ვერ წავიკითხე';}return;}
   openSvgDoc(t,f.name);};
 $('fImp').onchange=async e=>{const f=e.target.files[0];if(!f)return;const t=await f.text();e.target.value='';importSvg(t,false);};
 $('fImg').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>addImage(r.result);r.readAsDataURL(f);e.target.value='';};
@@ -2196,9 +2205,37 @@ $('zIn').onclick=()=>zoomBy(1.25);$('zOut').onclick=()=>zoomBy(0.8);$('zFit').on
 function zoomBy(f){const r=svg.getBoundingClientRect(),mx=r.width/2,my=r.height/2,nz=Math.min(16,Math.max(0.05,Z*f));PX=mx-(mx-PX)*nz/Z;PY=my-(my-PY)*nz/Z;Z=nz;render();}
 let _rz=0;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(fit,150);});
 
+/* ───────── document tabs ───────── */
+let TABS=[],TCUR=0,TPT=0;
+function tabSaveCur(){const t=TABS[TCUR]||(TABS[TCUR]={});t.state=snapState();t.hist=hist;t.fut=fut;t.view={Z,PX,PY};t.title=DOC.title||t.title||'';}
+function tabsPersist(){try{localStorage.setItem('magnus_vector_tabs',JSON.stringify({cur:TCUR,tabs:TABS.map((t,i)=>({title:i===TCUR?(DOC.title||t.title||''):t.title,state:i===TCUR?snapState():t.state,view:i===TCUR?{Z,PX,PY}:t.view}))}));}catch(e){}}
+addEventListener('pagehide',()=>{clearTimeout(TPT);tabsPersist();});addEventListener('beforeunload',()=>{clearTimeout(TPT);tabsPersist();});
+function tabsPersistSoon(){clearTimeout(TPT);TPT=setTimeout(()=>{tabsPersist();tabsDraw();},400);}
+function tabLoad(i){const t=TABS[i];TCUR=i;if(t.state)restore(t.state);hist=t.hist&&t.hist.length?t.hist:[t.state||snapState()];fut=t.fut||[];if(t.view){Z=t.view.Z;PX=t.view.PX;PY=t.view.PY;render();}else fit();SEL=[];ASEL=new Set();layers._s='';syncAB&&syncAB();$('bgc').value=DOC.bg==='none'?'#ffffff':DOC.bg;render();props();tabsDraw();tabsPersist();store.set('magnus_vector_doc',snapState());}
+function tabSwitch(i){if(i===TCUR||!TABS[i])return;if(TPE)tpEnd();penFinish();tabSaveCur();tabLoad(i);}
+function tabNew(){if(TPE)tpEnd();penFinish();tabSaveCur();TABS.push({title:'',state:null});TCUR=TABS.length-1;hist=[];fut=[];DOC={...DOC,title:''};tabsDraw();}
+function tabClose(i){const t=TABS[i];const nm=(i===TCUR?DOC.title:t.title)||('დოკუმენტი '+(i+1));const has=i===TCUR?O.length>0:(t.state&&JSON.parse(t.state).O.length>0);if(has&&!confirm(`დავხურო „${nm}“? თუ არ შეგინახავს (.mg), ნახატი დაიკარგება.`))return;
+  if(TABS.length===1){TABS=[{title:'',state:null}];TCUR=0;const b=AB();DOC={boards:[{x:0,y:0,w:b.w,h:b.h,name:'დაფა 1'}],ab:0,bg:'#ffffff',dpi:DOC.dpi||96,unit:DOC.unit||'px',guides:[]};O=[];hist=[];fut=[];SEL=[];ASEL=new Set();layers._s='';syncAB();fit();commit();props();tabsDraw();return;}
+  if(i===TCUR){TABS.splice(i,1);tabLoad(Math.min(i,TABS.length-1));}else{if(TCUR<TABS.length)tabSaveCur();TABS.splice(i,1);if(i<TCUR)TCUR--;tabsDraw();tabsPersist();}}
+function tabsDraw(){const el=$('docTabs');if(!el)return;el.innerHTML=TABS.map((t,i)=>{const nm=(i===TCUR?(DOC.title||t.title):t.title)||('დოკუმენტი '+(i+1));return `<div class="dt${i===TCUR?' on':''}" data-ti="${i}" title="${esc(nm)}"><span>${esc(nm)}</span><b data-tx="${i}" title="დახურვა">×</b></div>`;}).join('')+`<button id="dtNew" class="mini" title="ახალი დოკუმენტი ახალ ჩანართში">＋</button>`;}
+$('docTabs').addEventListener('click',e=>{const x=e.target.closest('[data-tx]');if(x){e.stopPropagation();tabClose(+x.dataset.tx);return;}if(e.target.closest('#dtNew')){openNew(false);return;}const t=e.target.closest('[data-ti]');if(t)tabSwitch(+t.dataset.ti);});
+$('docTabs').addEventListener('auxclick',e=>{const t=e.target.closest('[data-ti]');if(t&&e.button===1){e.preventDefault();tabClose(+t.dataset.ti);}});
+/* ───────── resizable properties panel ───────── */
+(function(){let w=300;try{w=+localStorage.getItem('magnus_vector_sideW')||300;}catch(e){}const setW=v=>{w=Math.max(0,Math.min(Math.round(innerWidth*0.6),v));document.documentElement.style.setProperty('--sideW',w+'px');try{localStorage.setItem('magnus_vector_sideW',w);}catch(e){}};setW(w);let last=w>40?w:300;
+  const rz=$('sideRz');rz.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();rz.setPointerCapture(e.pointerId);rz.classList.add('on');const mv=ev=>{let v=innerWidth-ev.clientX;if(v<120)v=0;else v=Math.max(220,v);setW(v);render();},up=()=>{rz.classList.remove('on');rz.removeEventListener('pointermove',mv);rz.removeEventListener('pointerup',up);if(w>40)last=w;};rz.addEventListener('pointermove',mv);rz.addEventListener('pointerup',up);});
+  rz.addEventListener('dblclick',e=>{e.stopPropagation();if(w>40){last=w;setW(0);}else setW(last||300);render();});
+  addEventListener('resize',()=>{if(w>innerWidth*0.6)setW(w);});})();
+/* ───────── detachable toolbar ───────── */
+(function(){let F=null;try{F=JSON.parse(localStorage.getItem('magnus_vector_tbfloat')||'null');}catch(e){}const tl=$('tools');
+  const apply=()=>{document.body.classList.toggle('tbfloat',!!F);if(F){const y=Math.max(0,Math.min(innerHeight-120,F.y));tl.style.left=Math.max(0,Math.min(innerWidth-60,F.x))+'px';tl.style.top=y+'px';tl.style.maxHeight=(innerHeight-y-8)+'px';}else{tl.style.left='';tl.style.top='';tl.style.maxHeight='';}try{localStorage.setItem('magnus_vector_tbfloat',JSON.stringify(F));}catch(e){}setTimeout(()=>{render();},20);};
+  document.addEventListener('pointerdown',e=>{if(e.target.closest('#tbDock')){e.preventDefault();F=null;apply();return;}const g=e.target.closest('#tbGrip');if(!g)return;e.preventDefault();const r=tl.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top;if(!F){F={x:r.left,y:r.top};apply();}
+    const mv=ev=>{F={x:ev.clientX-ox,y:ev.clientY-oy};const y=Math.max(0,Math.min(innerHeight-120,F.y));tl.style.left=Math.max(0,F.x)+'px';tl.style.top=y+'px';tl.style.maxHeight=(innerHeight-y-8)+'px';},up=ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);if(ev.clientX<50){F=null;}apply();$('status').textContent=F?'ხელსაწყოების პანელი გამოტანილია — ⇤ ან მარცხენა კიდესთან მიტანა: დაბრუნება':'ხელსაწყოების პანელი ადგილზეა';};addEventListener('pointermove',mv);addEventListener('pointerup',up);});
+  apply();})();
 /* ───────── start: last drawing or a sample made with formulas ───────── */
 const saved=store.get('magnus_vector_doc');
 if(saved){try{const d=JSON.parse(saved);DOC=d.DOC;O=d.O;}catch(e){}}
+try{const tj=JSON.parse(localStorage.getItem('magnus_vector_tabs')||'null');if(tj&&tj.tabs&&tj.tabs.length){TABS=tj.tabs.map(t=>({title:t.title||'',state:t.state,view:t.view}));TCUR=Math.max(0,Math.min(tj.cur||0,TABS.length-1));const st=TABS[TCUR].state;if(st){const d=JSON.parse(st);DOC=d.DOC;O=d.O;}}}catch(e){}
+if(!TABS.length)TABS=[{title:'',state:null}];setTimeout(tabsDraw,0);
 const SAMPLE=new Set(['ფონი','ვარდი r = 3cos 4θ','გული','ტალღა a·sin x','სათაური']);
 if(O.length&&O.every(o=>SAMPLE.has(o.name))){O=[];DOC.bg='#ffffff';}   /* the old demo drawing is not kept */
 if(!O.length&&DOC.bg!=='none')DOC.bg='#ffffff';boardsInit();$('bgc').value=DOC.bg==='none'?'#ffffff':DOC.bg;
