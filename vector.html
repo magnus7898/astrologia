@@ -46,7 +46,7 @@ body.tbfull .app{grid-template-columns:112px minmax(0,1fr) var(--sideW,300px)}bo
 .mbox{position:relative;background:#1f1a29;border:1px solid var(--line);border-radius:12px;padding:18px 20px;width:min(520px,100%);display:grid;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .mbox h2{margin:0;font-family:'Cinzel',serif;font-weight:400;color:var(--gold-lt);font-size:18px}.mbox .g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.mbox label{display:grid;gap:3px;font-size:12px;color:var(--mid)}
 .mbox .act{display:flex;justify-content:flex-end;gap:8px}.mbox .act button{font:inherit;padding:7px 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);cursor:pointer}.mbox .act .pri{background:var(--gold);color:#1a1408;border:0}
-.swg{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px}.swg i{aspect-ratio:1;border-radius:4px;cursor:pointer;border:1px solid rgba(255,255,255,.18)}.swg i:hover{transform:scale(1.15)}
+.swg{display:grid;grid-template-columns:repeat(auto-fill,22px);gap:3px;justify-content:start}.swg i{width:22px;height:22px;border-radius:4px;cursor:pointer;border:1px solid rgba(255,255,255,.18)}.swg i:hover{transform:scale(1.15)}
 .swg i.none{background:linear-gradient(45deg,#fff 44%,#e8705a 44%,#e8705a 56%,#fff 56%)}.cur{display:flex;align-items:center;gap:8px}.cur b{width:26px;height:26px;border-radius:5px;border:1px solid rgba(255,255,255,.3);display:inline-block}
 .tools button .tri{position:absolute;right:2px;top:2px;border:3px solid transparent;border-right-color:var(--mid);border-bottom-color:var(--mid)}
 .top{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px;background:var(--panel);border-bottom:1px solid var(--line)}
@@ -82,7 +82,7 @@ math-field.mi-f{font-size:17px!important}
 <div class="app">
   <nav class="menubar" id="menubar"></nav>
   <div class="top">
-    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·13</small>
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·14</small>
     <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა: .mg (MAGNUS), .svg — Ctrl+O">📂</button><button id="bSave" title="შენახვა .mg ფორმატში (Ctrl+S)">💾</button>
     <button id="bSvg" title="შენახვა როგორც: MAGNUS (.mg), SVG, PNG, JPEG, PDF, GIF (Ctrl+Shift+S)">⬇ შენახვა როგორც…</button><button id="bPng" hidden></button><input type="file" id="fImg" accept="image/*,.svg" hidden><input type="file" id="fImp" accept=".svg,image/svg+xml" hidden>
     <input type="file" id="fOpen" accept=".mg,.json,.svg,application/json,image/svg+xml" hidden>
@@ -2222,9 +2222,9 @@ $('docTabs').addEventListener('click',e=>{const x=e.target.closest('[data-tx]');
 $('docTabs').addEventListener('auxclick',e=>{const t=e.target.closest('[data-ti]');if(t&&e.button===1){e.preventDefault();tabClose(+t.dataset.ti);}});
 /* ───────── resizable properties panel ───────── */
 (function(){let w=300;try{w=+localStorage.getItem('magnus_vector_sideW')||300;}catch(e){}const setW=v=>{w=Math.max(0,Math.min(Math.round(innerWidth*0.6),v));document.documentElement.style.setProperty('--sideW',w+'px');try{localStorage.setItem('magnus_vector_sideW',w);}catch(e){}};setW(w);let last=w>40?w:300;
-  const rz=$('sideRz');rz.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();rz.setPointerCapture(e.pointerId);rz.classList.add('on');const mv=ev=>{let v=innerWidth-ev.clientX;if(v<120)v=0;else v=Math.max(220,v);setW(v);render();},up=()=>{rz.classList.remove('on');rz.removeEventListener('pointermove',mv);rz.removeEventListener('pointerup',up);if(w>40)last=w;};rz.addEventListener('pointermove',mv);rz.addEventListener('pointerup',up);});
-  rz.addEventListener('dblclick',e=>{e.stopPropagation();if(w>40){last=w;setW(0);}else setW(last||300);render();});
-  addEventListener('resize',()=>{if(w>innerWidth*0.6)setW(w);});})();
+  const rz=$('sideRz');const vis=()=>{const r=svg.getBoundingClientRect();return DOC.boards.every(b=>PX+b.x*Z>=-2&&PY+b.y*Z>=-2&&PX+(b.x+b.w)*Z<=r.width+2&&PY+(b.y+b.h)*Z<=r.height+2);};rz.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();rz.setPointerCapture(e.pointerId);rz.classList.add('on');const wasFit=vis();const mv=ev=>{let v=innerWidth-ev.clientX;if(v<120)v=0;else v=Math.max(220,v);setW(v);if(wasFit)fit();else render();},up=()=>{rz.classList.remove('on');rz.removeEventListener('pointermove',mv);rz.removeEventListener('pointerup',up);if(w>40)last=w;};rz.addEventListener('pointermove',mv);rz.addEventListener('pointerup',up);});
+  rz.addEventListener('dblclick',e=>{e.stopPropagation();const f=vis();if(w>40){last=w;setW(0);}else setW(last||300);if(f)fit();else render();});
+  let RW=0;addEventListener('resize',()=>{if(w>innerWidth*0.6)setW(w);clearTimeout(RW);const f=vis();RW=setTimeout(()=>{if(f)fit();else render();},60);});})();
 /* ───────── detachable toolbar ───────── */
 (function(){let F=null;try{F=JSON.parse(localStorage.getItem('magnus_vector_tbfloat')||'null');}catch(e){}const tl=$('tools');
   const apply=()=>{document.body.classList.toggle('tbfloat',!!F);if(F){const y=Math.max(0,Math.min(innerHeight-120,F.y));tl.style.left=Math.max(0,Math.min(innerWidth-60,F.x))+'px';tl.style.top=y+'px';tl.style.maxHeight=(innerHeight-y-8)+'px';}else{tl.style.left='';tl.style.top='';tl.style.maxHeight='';}try{localStorage.setItem('magnus_vector_tbfloat',JSON.stringify(F));}catch(e){}setTimeout(()=>{render();},20);};
