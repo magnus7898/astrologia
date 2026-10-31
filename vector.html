@@ -74,7 +74,7 @@ math-field.mi-f{font-size:17px!important}
 <div class="app">
   <nav class="menubar" id="menubar"></nav>
   <div class="top">
-    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·08</small>
+    <a class="ttl" href="math.html">✎ MAGNUS ვექტორი</a><small id="vVer" title="ვერსია — თუ აქ ძველი თარიღია, დააჭირე Ctrl+Shift+R" style="font-size:10px;opacity:.55;margin-left:4px">v31.10·09</small>
     <button id="bNew" title="ახალი">🗋</button><button id="bOpen" title="გახსნა: .mg (MAGNUS), .svg — Ctrl+O">📂</button><button id="bSave" title="შენახვა .mg ფორმატში (Ctrl+S)">💾</button>
     <button id="bSvg" title="შენახვა როგორც: MAGNUS (.mg), SVG, PNG, JPEG, PDF, GIF (Ctrl+Shift+S)">⬇ შენახვა როგორც…</button><button id="bPng" hidden></button><input type="file" id="fImg" accept="image/*,.svg" hidden><input type="file" id="fImp" accept=".svg,image/svg+xml" hidden>
     <input type="file" id="fOpen" accept=".mg,.json,.svg,application/json,image/svg+xml" hidden>
@@ -352,8 +352,12 @@ svg.addEventListener('pointerdown',e=>{const te=$('tEdit');if(te&&e.button===0){
   if(tool==='select'||tool==='direct'){
     if(tool==='select')ASEL=new Set();
     const selKey0=SEL.join();let unSel=null;const wasSel=!!(hit&&SEL.length===1&&SEL[0]===hit.id);if(hit&&!hit.locked){if(e.shiftKey){if(SEL.includes(hit.id))unSel=hit.id;else SEL=[...SEL,hit.id];}else if(!SEL.includes(hit.id))SEL=[hit.id];
-      if(tool==='direct'&&hit.type!=='path'&&['rect','ellipse','polygon','star','line'].includes(hit.type)){/* convert to editable path */toPath(hit);}
-      if(tool==='direct'&&hit.type==='path'&&!e.shiftKey&&!e.altKey){const r=nearestSeg(p,hit);if(r&&r.d<6/Z){act={segDrag:true,r,moved:false};render();props();return;}}
+      if(tool==='direct'&&hit.type!=='path'&&['rect','ellipse','polygon','star','line'].includes(hit.type)){/* convert to editable path — rectangles / polygons keep live (re-editable) corners */if(['rect','polygon','star'].includes(hit.type))rcEnsure(hit);else toPath(hit);}
+      if(tool==='direct'&&hit.type==='path'&&!e.shiftKey&&!e.altKey){const r=nearestSeg(p,hit);if(r&&r.d<6/Z){
+        if(rcOk(hit)&&!hit.subs?.length){const ids=[...new Set([rcIdx(hit,r.i),rcIdx(hit,r.j)])].filter(x=>x>=0);act={rcSide:true,o:hit,ids,last:sp,moved:false};render();props();return;}
+        const A2=contAt(hit,r.ci).pts,P0=A2[r.i],P1=A2[r.j],str=Math.hypot(P0.ox-P0.x,P0.oy-P0.y)<0.01&&Math.hypot(P1.ix-P1.x,P1.iy-P1.y)<0.01;
+        if(str){act={segMove:true,o:hit,ci:r.ci,ids:[r.i,r.j],last:sp,moved:false};render();props();return;}
+        act={segDrag:true,r,moved:false};render();props();return;}}
       act={move:true,p0:sp,last:sp,moved:false,copy:e.altKey,unSel,wasSel,hit,cand:$('sgOn').checked?smartCands(SEL):null,B0:selBox()};if(SEL.join()!==selKey0){render();props();}else overlay();}
     else{if(!e.shiftKey)SEL=[];dirSel=null;act={marq:{x0:p.x,y0:p.y,x1:p.x,y1:p.y}};render();props();}return;}
   if(tool==='pen'&&!penPath&&SEL.length===1){const so=O.find(x=>x.id===SEL[0]);if(so&&!so.locked&&!so.rot&&(so.type==='path'||CONVERTIBLE.has(so.type))){const g=so.type==='path'?so:(()=>{const t=JSON.parse(JSON.stringify(so));toPathGeom(t);return t;})();const lc=g.pts&&g.pts.length>1?locOn(g.pts,!!g.closed,p):null;
@@ -413,8 +417,8 @@ const pmH=e=>{const p=pt(e),sp=snap(p);$('status').textContent=`${TN[tool]} · x
   if(act.bmove){const b=DOC.boards[act.i];b.x=Math.round(act.bx+sp.x-act.p0.x);b.y=Math.round(act.by+sp.y-act.p0.y);render();return;}
   if(act.bnew){act.marq={x0:act.p0.x,y0:act.p0.y,x1:sp.x,y1:sp.y};overlay();return;}
   if(act.marq){act.marq.x1=p.x;act.marq.y1=p.y;overlay();return;}
-  if(act.pa){const dx=sp.x-act.last.x,dy=sp.y-act.last.y;act.last=sp;if(dx||dy){act.moved=true;ASEL.forEach(key=>{const [id,ci,i]=key.split(','),o=O.find(x=>x.id===id);if(!o||o.locked)return;const P=(contAt(o,+ci)||{pts:[]}).pts[+i];
-      if(P){P.x+=dx;P.y+=dy;P.ix+=dx;P.iy+=dy;P.ox+=dx;P.oy+=dy;}});rl([...new Set([...ASEL].map(k2=>k2.split(',')[0]))]);}return;}
+  if(act.pa){const dx=sp.x-act.last.x,dy=sp.y-act.last.y;act.last=sp;if(dx||dy){act.moved=true;const RCD={};ASEL.forEach(key=>{const [id,ci,i]=key.split(','),o=O.find(x=>x.id===id);if(!o||o.locked)return;if(+ci===0&&rcOk(o)){const si=rcIdx(o,+i);if(si>=0){(RCD[id]=RCD[id]||{o,s:new Set()}).s.add(si);return;}}const P=(contAt(o,+ci)||{pts:[]}).pts[+i];
+      if(P){P.x+=dx;P.y+=dy;P.ix+=dx;P.iy+=dy;P.ox+=dx;P.oy+=dy;}});Object.values(RCD).forEach(({o,s:S2})=>{S2.forEach(si=>{const P=o.rcs.A[si];P.x+=dx;P.y+=dy;P.ix+=dx;P.iy+=dy;P.ox+=dx;P.oy+=dy;});rcApply(o);});rl([...new Set([...ASEL].map(k2=>k2.split(',')[0]))]);}return;}
   if(act.lasso){act.lasso.push(p);overlay();return;}
   if(act.erase){const l=act.erase[act.erase.length-1];if(Math.hypot(p.x-l.x,p.y-l.y)>ER/4)act.erase.push(p);overlay();return;}
   if(act.ph){const P=contAt(act.o,act.ci).pts[act.i];if(act.j===0){P.ix=sp.x;P.iy=sp.y;if(!e.altKey){P.ox=2*P.x-sp.x;P.oy=2*P.y-sp.y;}}else{P.ox=sp.x;P.oy=sp.y;if(!e.altKey){P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;}}rl([act.o.id]);return;}
@@ -584,12 +588,16 @@ function blendSteps(A,B,mode,val){if(!P0())return [];
 const ptsSig=A=>{let s=A.length;A.forEach((p,i)=>{s+=(p.x*7.31+p.y*3.17+(p.ox-p.ix)*1.3+(p.oy-p.iy)*0.7)*(i%13+1);});return Math.round(s*100);};
 const rcSharp=P=>Math.hypot(P.ix-P.x,P.iy-P.y)<0.01&&Math.hypot(P.ox-P.x,P.oy-P.y)<0.01;
 const rcOk=o=>{if(!o||!o.rcs)return false;if(o.type==='path'&&!o.subs?.length&&o.rcs.sig===ptsSig(o.pts))return true;delete o.rcs;return false;};
-function rcPts(A,R,closed){const n=A.length,out=[],M=[];for(let i=0;i<n;i++){const P=A[i],r=R[i]||0;M.push([out.length]);
-    if(r<=0.01||!rcSharp(P)||(!closed&&(i===0||i===n-1))){out.push({...P});continue;}
+function rcPts(A,R,closed){const n=A.length,out=[],M=[],G=[];
+  /* pass 1: what every corner asks for */
+  for(let i=0;i<n;i++){const P=A[i],r=R[i]||0;G.push(null);if(r<=0.01||!rcSharp(P)||(!closed&&(i===0||i===n-1)))continue;
     const a=A[(i-1+n)%n],b=A[(i+1)%n],da=Math.hypot(a.ox-a.x,a.oy-a.y)>0.01?{x:a.ox,y:a.oy}:a,db=Math.hypot(b.ix-b.x,b.iy-b.y)>0.01?{x:b.ix,y:b.iy}:b;
     const la=Math.hypot(a.x-P.x,a.y-P.y),lb=Math.hypot(b.x-P.x,b.y-P.y),na=Math.hypot(da.x-P.x,da.y-P.y)||1,nb=Math.hypot(db.x-P.x,db.y-P.y)||1,ua={x:(da.x-P.x)/na,y:(da.y-P.y)/na},ub={x:(db.x-P.x)/nb,y:(db.y-P.y)/nb};
-    const th=Math.acos(Math.max(-1,Math.min(1,ua.x*ub.x+ua.y*ub.y)));if(th<0.01||th>Math.PI-0.01){out.push({...P});continue;}
-    const d=Math.min(r/Math.tan(th/2),la*0.5,lb*0.5),rr=d*Math.tan(th/2),h=4/3*Math.tan((Math.PI-th)/4)*rr;
+    const th=Math.acos(Math.max(-1,Math.min(1,ua.x*ub.x+ua.y*ub.y)));if(th<0.01||th>Math.PI-0.01)continue;G[i]={ua,ub,th,la,lb,d:r/Math.tan(th/2)};}
+  /* pass 2: a side is shared by its two corners — a lone rounded corner may use the whole side, two rounded corners split it */
+  const dq=G.map(g=>g?Math.min(g.d,g.la*0.5,g.lb*0.5):0),   /* a corner rounds at most to the middle of its sides */D=G.map((g,i)=>{if(!g)return 0;const pv=dq[(i-1+n)%n],nx=dq[(i+1)%n],s1=g.la/Math.max(g.la,dq[i]+pv),s2=g.lb/Math.max(g.lb,dq[i]+nx);return Math.min(dq[i],g.la*0.999,g.lb*0.999)*Math.min(1,s1,s2);});
+  for(let i=0;i<n;i++){const P=A[i],g=G[i];M.push([out.length]);if(!g||D[i]<0.01){out.push({...P});continue;}
+    const {ua,ub,th}=g,d=D[i],rr=d*Math.tan(th/2),h=4/3*Math.tan((Math.PI-th)/4)*rr;
     const P1={x:P.x+ua.x*d,y:P.y+ua.y*d},P2={x:P.x+ub.x*d,y:P.y+ub.y*d};out.push({x:P1.x,y:P1.y,ix:P1.x,iy:P1.y,ox:P1.x-ua.x*h,oy:P1.y-ua.y*h},{x:P2.x,y:P2.y,ix:P2.x-ub.x*h,iy:P2.y-ub.y*h,ox:P2.x,oy:P2.y});M[i]=[out.length-2,out.length-1];}
   return {pts:out,M};}
 function rcApply(o){const r=rcPts(o.rcs.A,o.rcs.R,o.closed);o.pts.length=0;r.pts.forEach(q=>o.pts.push(q));o.rcs.M=r.M;o.rcs.sig=ptsSig(o.pts);}
@@ -1790,6 +1798,8 @@ function toolMove(e,p,sp){
     if(e.shiftKey){const d0=Math.hypot(a.x-P.x,a.y-P.y)||1;sx=sy=Math.hypot(sp.x-P.x,sp.y-P.y)/d0;}else{sx=Math.abs(a.x-P.x)>2/Z?(sp.x-P.x)/(a.x-P.x):1;sy=Math.abs(a.y-P.y)>2/Z?(sp.y-P.y)/(a.y-P.y):1;}
     sx=Math.max(0.01,Math.abs(sx));sy=Math.max(0.01,Math.abs(sy));restoreSnap(act.L,act.S);scaleObjs(act.L,sx,sy,P);act.sx=sx;act.sy=sy;rl();$('status').textContent=`მასშტაბი: ${Math.round(sx*100)}% × ${Math.round(sy*100)}%${e.altKey?' · Alt — ასლი':''}`;return true;}
   if(act.segDrag){segReshape(act.r,sp);act.moved=true;rl();return true;}
+  if(act.rcSide||act.segMove){const dx=sp.x-act.last.x,dy=sp.y-act.last.y;act.last=sp;if(!dx&&!dy)return true;const o=act.o,A2=act.rcSide?(rcOk(o)?o.rcs.A:null):contAt(o,act.ci).pts;if(!A2)return true;
+    act.ids.forEach(i=>{const P=A2[i];if(P){P.x+=dx;P.y+=dy;P.ix+=dx;P.iy+=dy;P.ox+=dx;P.oy+=dy;}});if(act.rcSide)rcApply(o);act.moved=true;rl([o.id]);$('status').textContent=act.rcSide?'გვერდი გადაადგილდა — მომრგვალებული კუთხეები შენარჩუნებულია':'გვერდი გადაადგილდა';return true;}
   if(act.anc){const P=contAt(act.o,act.ci).pts[act.i];if(Math.hypot(sp.x-act.p0.x,sp.y-act.p0.y)>2/Z||act.moved){act.moved=true;P.ox=sp.x;P.oy=sp.y;P.ix=2*P.x-sp.x;P.iy=2*P.y-sp.y;rl();}return true;}
   if(act.rpMove){ROTP={x:sp.x,y:sp.y,key:SEL.join()};overlay();return true;}
   if(act.rotT){const P=act.piv,a1=Math.atan2(act.p0.y-P.y,act.p0.x-P.x),a2=Math.atan2(sp.y-P.y,sp.x-P.x);let d=(a2-a1)*180/Math.PI;if(e.shiftKey)d=Math.round(d/15)*15;if(Math.hypot(e.clientX-act.cx,e.clientY-act.cy)>3)act.moved=true;if(!act.moved)return true;
@@ -1808,7 +1818,7 @@ function toolUp(e,a){
   if(a.smoothT){if(a.ch)commit();props();return true;}
   if(a.sclT){if(!a.moved){ROTP={x:a.p0.x,y:a.p0.y,key:SEL.join()};overlay();$('status').textContent='საყრდენი წერტილი დაყენდა — ახლა გადაათრიე';return true;}
     if(e.altKey){const C=a.L.map(o=>clone(o));restoreSnap(a.L,a.S);C.forEach((c,i)=>O.splice(O.indexOf(a.L[i])+1,0,c));SEL=C.map(c=>c.id);ROTP=ROTP?{...ROTP,key:SEL.join()}:null;}render();commit();props();return true;}
-  if(a.segDrag){if(a.moved)commit();props();return true;}
+  if(a.segDrag||a.rcSide||a.segMove){if(a.moved)commit();props();return true;}
   if(a.anc){if(!a.moved){const A=contAt(a.o,a.ci).pts,P=A[a.i],n=A.length,has=Math.hypot(P.ix-P.x,P.iy-P.y)>0.5||Math.hypot(P.ox-P.x,P.oy-P.y)>0.5;
       if(has){P.ix=P.ox=P.x;P.iy=P.oy=P.y;}else{const cl=a.o.closed||a.ci>0&&contAt(a.o,a.ci).closed,pa=A[cl?(a.i-1+n)%n:Math.max(0,a.i-1)],pb=A[cl?(a.i+1)%n:Math.min(n-1,a.i+1)],dx=(pb.x-pa.x)/6,dy=(pb.y-pa.y)/6;P.ix=P.x-dx;P.iy=P.y-dy;P.ox=P.x+dx;P.oy=P.y+dy;}}
     render();commit();props();return true;}
