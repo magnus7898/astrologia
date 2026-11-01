@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>კონტაქტი — MAGNUS</title>
+<meta name="description" content="MAGNUS-ის საკონტაქტო ინფორმაცია.">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07061a;--card:rgba(14,11,36,.9);--brd:rgba(201,162,76,.28);--gold:#F0D48A;--gold2:#C9A24C;--txt:#efe7d6;--dim:#c2b498}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 20% 0%,#1d1650 0,transparent 55%),radial-gradient(ellipse at 90% 100%,#2a1240 0,transparent 50%),var(--bg);
+  color:var(--txt);font:15.5px/1.75 "Noto Sans Georgian",system-ui,sans-serif}
+main{max-width:820px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 30px max(16px,env(safe-area-inset-left,0px))}
+h1{font:600 clamp(24px,4vw,32px)/1.25 "Noto Serif Georgian",Georgia,serif;color:var(--gold);margin:12px 0 4px;text-wrap:balance}
+.upd{color:var(--dim);font-size:13px;margin:0 0 22px}
+h2{font:600 18px/1.4 "Noto Serif Georgian",Georgia,serif;color:var(--gold);margin:30px 0 8px}
+p,li{max-width:68ch}
+ul{padding-left:22px}li{margin:4px 0}
+a{color:var(--gold)}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:16px 18px;margin:16px 0}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px}
+.kv span:nth-child(odd){color:var(--dim)}
+.toc{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px}
+.lead{font-size:16.5px;color:#f6efdf}
+</style>
+</head>
+<body>
+<main>
+<h1>კონტაქტი</h1>
+<p class="lead">კითხვები, შეცდომები, გადახდა ან ანგარიშის საკითხები — მოგვწერეთ, ვპასუხობთ ჩვეულებრივ 2 სამუშაო დღეში.</p>
+<div class="card kv">
+  <span>მომსახურების მიმწოდებელი</span><span data-owner="legal"></span>
+  <span>საიდენტიფიკაციო კოდი</span><span data-owner="idcode"></span>
+  <span>მისამართი</span><span data-owner="address"></span>
+  <span>ელფოსტა</span><span><a data-owner="email" href="#"></a></span>
+  <span>ტელეფონი</span><span data-owner="phone"></span>
+</div>
+<h2>რა მოგვწეროთ</h2>
+<ul>
+  <li><b>გადახდა ან Pro გეგმა</b> — ანგარიშის ელფოსტა და გადახდის თარიღი.</li>
+  <li><b>შეცდომა გამოთვლაში</b> — გვერდი, თარიღი/დრო/ქალაქი და რას ელოდით.</li>
+  <li><b>პირადი მონაცემები</b> (ასლი, შესწორება, წაშლა) — იხ. <a href="privacy.html">კონფიდენციალურობის პოლიტიკა</a>. ანგარიშის წაშლა თავადაც შეგიძლიათ: <a href="account.html">ჩემი ანგარიში</a> → პროფილი.</li>
+</ul>
+</main>
+<script src="site.js"></script>
+<script src="account.js"></script>
+<script>
+/* owner details come from site.js (OWNER) — one place to edit */
+(function(){const O=(window.MAGNUS_SITE||{}).OWNER||{};
+document.querySelectorAll('[data-owner]').forEach(el=>{const v=O[el.dataset.owner];el.textContent=v||'—';
+  if(v&&el.dataset.owner==='email'&&el.tagName==='A')el.href='mailto:'+v;});
+document.querySelectorAll('[data-owner-if]').forEach(el=>{if(!O[el.dataset.ownerIf])el.hidden=true;});})();
+</script>
+</body>
+</html>

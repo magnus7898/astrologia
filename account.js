@@ -131,6 +131,7 @@ function openAuth(mode='login'){
         <form id="mg-f">${mode==='register'?'<label for="mg-nm">სახელი</label><input id="mg-nm" autocomplete="name" maxlength="80">':''}
         <label for="mg-em">ელფოსტა</label><input id="mg-em" type="email" autocomplete="email" required>
         <label for="mg-pw">პაროლი${mode==='register'?' (მინ. 8 სიმბოლო)':''}</label><input id="mg-pw" type="password" autocomplete="${mode==='login'?'current-password':'new-password'}" required minlength="${mode==='register'?8:1}">
+        ${mode==='register'?'<label style="display:flex;gap:8px;align-items:flex-start;letter-spacing:0;font-size:12.5px;margin-top:14px;cursor:pointer"><input id="mg-ok" type="checkbox" required style="width:auto;margin-top:2px"> <span>ვეთანხმები <a href="terms.html" target="_blank" style="color:#F0D48A">წესებსა და პირობებს</a> და <a href="privacy.html" target="_blank" style="color:#F0D48A">კონფიდენციალურობის პოლიტიკას</a></span></label>':''}
         <div class="mg-err" id="mg-er"></div>
         <div class="mg-row"><button class="mg-btn pri" type="submit">${mode==='login'?'შესვლა':'ანგარიშის შექმნა'}</button></div></form>
         ${mode==='login'?'<p style="margin-top:12px"><button class="mg-link" type="button" data-m="forgot">დაგავიწყდათ პაროლი?</button></p>':''}`;
@@ -140,7 +141,7 @@ function openAuth(mode='login'){
       try{
         if(mode==='forgot'){const d=await api('/api/account/password/forgot',{method:'POST',body:{email:$('mg-em').value}});
           er.className='mg-err mg-ok';er.textContent=d.smtp?'თუ ეს ელფოსტა რეგისტრირებულია, ბმული გამოგზავნილია.':'ელფოსტის გაგზავნა ჯერ არ არის ჩართული — მიმართეთ ადმინს.';return;}
-        const body={email:$('mg-em').value,password:$('mg-pw').value,device:DEVICE};if(mode==='register')body.name=$('mg-nm').value;
+        const body={email:$('mg-em').value,password:$('mg-pw').value,device:DEVICE};if(mode==='register'){if(!$('mg-ok').checked){er.className='mg-err';er.textContent='დაეთანხმეთ წესებსა და კონფიდენციალურობის პოლიტიკას';return;}body.name=$('mg-nm').value;body.accepted_terms=true;}
         const d=await api(mode==='login'?'/api/account/login':'/api/account/register',{method:'POST',body,noLogout:true});
         setSession(d.token,d.user);ov.remove();track(mode==='login'?'login':'register');
         toast(mode==='login'?`მოგესალმებით, ${d.user.name||d.user.email}!`:(d.user.smtp&&!d.user.verified?'ანგარიში შეიქმნა — დაადასტურეთ ელფოსტა':'ანგარიში შეიქმნა'));
@@ -152,7 +153,9 @@ async function refreshMe(){if(!TOKEN)return;try{const u=await api('/api/account/
 /* ───────── tracking ───────── */
 let Q=[];
 let MUTE=false;
-function track(action,target,detail){if(ADMINPG||MUTE)return;Q.push({page:PAGE,action,target:target||'',detail:detail||null,t:Date.now()});if(Q.length>=40)flush();}
+/* visitors who chose "essential only" in the privacy notice (site.js) are not tracked */
+const trackOff=()=>{try{return localStorage.getItem('magnus_consent')==='essential';}catch(e){return false;}};
+function track(action,target,detail){if(ADMINPG||MUTE||trackOff())return;Q.push({page:PAGE,action,target:target||'',detail:detail||null,t:Date.now()});if(Q.length>=40)flush();}
 function flush(keep){if(!Q.length)return;const events=Q.splice(0,60);
   api('/api/track',{method:'POST',body:{device:DEVICE,session:SESSION,events},keepalive:true,noLogout:true}).catch(()=>{});}
 setInterval(flush,5000);

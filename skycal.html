@@ -232,6 +232,7 @@ $('tz').onchange=()=>{TZ=$('tz').value;try{localStorage.setItem('skycal_tz',TZ);
 $('d0').onchange=()=>run();$('outer').onchange=()=>{if(!VOC)return;const o={outer:$('outer').checked},j0=startJD();VOC=SKY.voc(j0,30,o);PVOC=SKY.planetVoc(j0,30,o);renderVoc();};
 SKY.init().then(run).catch(e=>{$('msg').innerHTML='<span style="color:var(--bad)">შეცდომა: '+esc(e.message)+'</span>';});
 </script>
+<script src="site.js"></script>
 <script src="account.js"></script>
 </body>
 </html>
