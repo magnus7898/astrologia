@@ -1,6 +1,7 @@
 /* pythagoras_plus.js — სტატისტიკა · შეთავსება · დამატებითი ანალიზი პითაგორას კვადრატისთვის
    ჩართვა: <script src="pythagoras_plus.js"></script> </body>-ის წინ (მთავარი სკრიპტის შემდეგ).
-   იყენებს გვერდის გლობალებს: computeModes, LABELS, COLORS, GRID_ORDER, COMPOUND, MODES, activeMode, setMode. */
+   სტატისტიკა და კვადრატები ითვლება სერვერზე (/api/pythagoras, /api/pythagoras/stats — numcalc.py).
+   იყენებს გვერდის გლობალებს: LABELS, COLORS, GRID_ORDER, COMPOUND, MODES, activeMode, setMode. */
 (function(){
 'use strict';
 if(window._pyPlus)return;window._pyPlus=1;
@@ -105,49 +106,25 @@ const TASK={1:"საკუთარი „მე“-ს გაძლიერ�
 const PYEAR={1:"ახალი დასაწყისი — ინიციატივა, თესვა, ახალი პროექტები.",2:"თანამშრომლობა და მოთმინება — ურთიერთობების წელი.",3:"შემოქმედება და კომუნიკაცია — სოციალური გაფართოება.",4:"შრომა და საფუძველი — დისციპლინა, მშენებლობა.",5:"ცვლილებები — მოგზაურობა, თავისუფლება, მოულოდნელობა.",6:"ოჯახი და სახლი — პასუხისმგებლობა, ზრუნვა.",7:"ანალიზი და სიმშვიდე — სწავლა, შინაგანი ძიება.",8:"მატერიალური შედეგი — ფინანსები, კარიერა, ძალაუფლება.",9:"დასრულება — ძველის გაშვება, ციკლის შეჯამება."};
 const NUMTXT={1:"ლიდერი, დამოუკიდებელი",2:"დიპლომატი, მგრძნობიარე",3:"შემოქმედი, კომუნიკაბელური",4:"მშენებელი, საიმედო",5:"თავისუფალი, ცვალებადი",6:"მზრუნველი, ოჯახური",7:"მოაზროვნე, მისტიკოსი",8:"ორგანიზატორი, მატერიალური",9:"ჰუმანისტი, ბრძენი"};
 
-/* ═══════════ FAST ENGINE ═══════════
-   იმეორებს computeModes-ის ლოგიკას რიცხვებით (გადამოწმებულია ტესტით). */
-const sdn=n=>{n=Math.abs(n);let s=0;while(n){s+=n%10;n=(n/10)|0;}return s;};
-function addD(e,n){n=Math.abs(n);while(n){e[n%10]++;n=(n/10)|0;}}
-const EX={};
-function exTable(mode){
-  if(EX[mode])return EX[mode];
-  const T=new Int8Array(80*10*2*10);
-  for(let A=0;A<80;A++)for(let fd=0;fd<10;fd++)for(let x=0;x<2;x++){
-    const o=((A*10+fd)*2+x)*10, e=new Int8Array(10);
-    if(mode==='classic'){const C=Math.abs(A-2*fd);addD(e,A);addD(e,sdn(A));addD(e,C);addD(e,sdn(C));}
-    else if(mode==='corrected'){
-      if(x){const C=A+19;addD(e,A);e[1]++;e[9]++;addD(e,C);addD(e,sdn(C));}
-      else{const C=A-2;addD(e,A);e[2]++;addD(e,C);addD(e,sdn(C));}
-    }else{const kA=Math.abs(A-9),kC=Math.abs(kA-2*fd);addD(e,kA);addD(e,sdn(kA));addD(e,kC);addD(e,sdn(kC));}
-    for(let d=0;d<10;d++)T[o+d]=e[d];
-  }
-  return EX[mode]=T;
+/* ═══════════ SERVER ═══════════
+   every square and every statistic is computed on the server (numcalc.py) */
+const API='https://astrology-production-b165.up.railway.app';
+async function post(path,body){
+  const h={'Content-Type':'application/json'},tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch(API+path,{method:'POST',headers:h,body:JSON.stringify(body)});let d=null;try{d=await r.json();}catch(e){}
+  if(r.status===402&&window.MAGNUS){window.MAGNUS.toast((d&&d.error)||'Pro',5000);if(!window.MAGNUS.user)window.MAGNUS.open('login');}
+  if(!r.ok)throw new Error((d&&d.error)||('სერვერის შეცდომა '+r.status));return d;
 }
-/* day-month combinations */
-const DM=(function(){
-  const dim=[31,29,31,30,31,30,31,31,30,31,30,31];
-  const C=[],S=[],F=[],L=[];
-  for(let m=1;m<=12;m++)for(let d=1;d<=dim[m-1];d++){
-    const e=new Int8Array(10);addD(e,d);addD(e,m);
-    C.push(e);S.push(sdn(d)+sdn(m));F.push(d<10?d:((d/10)|0));L.push(m===2&&d===29?1:0);
-  }
-  const n=C.length,CC=new Int8Array(n*10);C.forEach((e,i)=>CC.set(e,i*10));
-  return{n,CC,S:Int16Array.from(S),F:Int8Array.from(F),L:Int8Array.from(L)};
-})();
 const isLeap=y=>(y%4===0&&y%100!==0)||y%400===0;
-/* scan years [y0,y1], calling fn(c,y) with c = Int16Array(10) counts per digit */
-function scanYears(y0,y1,mode,fn){
-  const T=exTable(mode),c=new Int16Array(10),yc=new Int8Array(10);
-  for(let y=y0;y<=y1;y++){
-    yc.fill(0);addD(yc,y);const ys=sdn(y),lp=isLeap(y),x=y>=2000?1:0;
-    for(let i=0;i<DM.n;i++){
-      if(DM.L[i]&&!lp)continue;
-      const A=DM.S[i]+ys,o=((A*10+DM.F[i])*2+x)*10,co=i*10;
-      for(let d=1;d<10;d++)c[d]=DM.CC[co+d]+yc[d]+T[o+d];
-      fn(c,y);
-    }
-  }
+/* statistics of a year span: the S object the panels draw (typed arrays, SQ as a Map) */
+async function serverStats(y0,y1,mode,conds){
+  const d=await post('/api/pythagoras/stats',{y0,y1,mode,conds});
+  const F=a=>a?Float64Array.from(a):null;
+  const S={y0:d.y0,y1:d.y1,mode:d.mode,conds,has:d.has,N:d.N,NC:d.NC,KM:d.KM,LM:d.LM,
+    HB:F(d.HB),SB:F(d.SB),EB:F(d.EB),LB:F(d.LB),BN:F(d.BN),BE:F(d.BE),BS:F(d.BS),YN:F(d.YN),YE:F(d.YE),YS:F(d.YS),
+    SQ:new Map(d.SQ[0].map((k,i)=>[k,d.SQ[1][i]]))};
+  if(d.has){S.HC=F(d.HC);S.SC=F(d.SC);S.EC=F(d.EC);S.LC=F(d.LC);}else{S.HC=S.HB;S.SC=S.SB;S.EC=S.EB;S.LC=S.LB;}
+  return S;
 }
 const sqKey=c=>{let k=0,m=1;for(let d=1;d<10;d++){k+=Math.min(c[d],15)*m;m*=16;}return k;};
 const keyToC=k=>{const c=[0];for(let d=1;d<10;d++){c.push(k%16);k=Math.floor(k/16);}return c;};
@@ -164,7 +141,7 @@ function parseDate(v){
 function maskDate(inp){
   inp.addEventListener('input',e=>{let v=e.target.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'/'+v.slice(2);if(v.length>5)v=v.slice(0,5)+'/'+v.slice(5,9);e.target.value=v;});
 }
-function countsFor(p,mode){return computeModes(p.dd,p.mm,p.yyyy)[mode].count;}
+async function countsFor(p,mode){return (await post('/api/pythagoras',{dd:p.dd,mm:p.mm,yyyy:p.yyyy})).modes[mode].count;}
 function mini(c,big){
   return `<div class="pp-mini${big?' big':''}">`+GRID_ORDER.map(n=>{
     const k=c[n]||0;return k?`<div style="color:${COLORS[n]}">${String(n).repeat(Math.min(k,6))}${k>6?'+':''}</div>`:`<div class="e">—</div>`;
@@ -199,13 +176,12 @@ const resultsEl=$('results');
 /* after the energy curves / vedic / element blocks */
 page.insertBefore(extra,pStats);
 const RAR={};
-function rarityTable(mode){
+async function rarityTable(mode){
   if(RAR[mode])return RAR[mode];
-  const H=new Int32Array(10*16),M=new Map();let N=0;
-  scanYears(1900,2099,mode,c=>{N++;for(let d=1;d<10;d++)H[d*16+Math.min(c[d],15)]++;const k=sqKey(c);M.set(k,(M.get(k)||0)+1);});
-  return RAR[mode]={H,M,N};
+  const S=await serverStats(1900,2099,mode,[]);
+  return RAR[mode]={H:S.HB,M:S.SQ,N:S.N};
 }
-function enrich(){
+async function enrich(){
   const p=parseDate($('birth').value);
   if(!p||typeof MODES==='undefined'||!MODES){extra.style.display='none';return;}
   const mode=curMode(),c=MODES[mode].count;
@@ -227,7 +203,7 @@ function enrich(){
   const empt=DIG.filter(d=>!c[d]);
   const over=DIG.filter(d=>c[d]>=4);
   /* rarity among 1900–2099 */
-  const R=rarityTable(mode);
+  const R=await rarityTable(mode);
   const same=R.M.get(sqKey(c))||0;
   let rows='';DIG.forEach(d=>{const k=Math.min(c[d],15);const pp=pct(R.H[d*16+k],R.N);
     rows+=`<tr><td class="l" style="color:${COLORS[d]}">${d} · ${LABELS[d]}</td><td>${c[d]}</td><td>${fp(pp)}%</td><td style="width:40%"><div class="pp-bar"><i style="width:${Math.min(100,pp)}%;background:${COLORS[d]}"></i></div></td></tr>`;});
@@ -255,7 +231,7 @@ function enrich(){
   extra.style.display='block';
 }
 const _setMode=window.setMode;
-window.setMode=function(){const r=_setMode.apply(this,arguments);try{enrich();}catch(e){console.error(e);}return r;};
+window.setMode=function(){const r=_setMode.apply(this,arguments);enrich().catch(e=>console.error(e));return r;};
 
 /* ═══════════ STATISTICS ═══════════ */
 let statsInit=false,conds=[],running=null,lastStats=null,chartDigit=2,chartKind='empty';
@@ -304,37 +280,18 @@ function runStats(){
   if(!(y0>=Y_MIN))y0=Y_MIN;if(!(y1<=Y_MAX))y1=Y_MAX;if(y0>y1)[y0,y1]=[y1,y0];
   $('ps-y0').value=y0;$('ps-y1').value=y1;
   const mode=$('ps-mode').value;
-  const CS=conds.map(c=>({...c}));const has=CS.length>0;
-  const KM=16,LM=28;
-  const S={y0,y1,mode,conds:CS,has,N:0,NC:0,
-    HB:new Float64Array(10*KM),HC:new Float64Array(10*KM),SB:new Float64Array(10),SC:new Float64Array(10),
-    LB:new Float64Array(8*LM),LC:new Float64Array(8*LM),EB:new Float64Array(10),EC:new Float64Array(10),
-    YN:new Float64Array(y1-y0+1),YE:new Float64Array((y1-y0+1)*10),YS:new Float64Array((y1-y0+1)*10),BN:new Float64Array(y1-y0+1),BE:new Float64Array((y1-y0+1)*10),BS:new Float64Array((y1-y0+1)*10),SQ:new Map(),KM,LM};
-  const lt=new Int16Array(8);
-  const test=(c,empt)=>{for(const q of CS){const v=q.t==='d'?c[q.d]:q.t==='l'?lt[q.d]:empt;
-    if(q.op==='='?v!==q.k:q.op==='≥'?v<q.k:v>q.k)return false;}return true;};
-  const fn=(c,y)=>{
-    S.N++;let empt=0;const bi=y-y0;S.BN[bi]++;
-    for(let d=1;d<10;d++){const k=c[d];S.HB[d*KM+(k<KM?k:KM-1)]++;S.SB[d]+=k;S.BS[bi*10+d]+=k;if(!k){empt++;S.BE[bi*10+d]++;}}
-    S.EB[empt]++;
-    for(let l=0;l<8;l++){const g=LINE_DIG[l];const t=c[g[0]]+c[g[1]]+c[g[2]];lt[l]=t;S.LB[l*LM+(t<LM?t:LM-1)]++;}
-    if(has&&!test(c,empt))return;
-    S.NC++;const yi=y-y0;S.YN[yi]++;
-    for(let d=1;d<10;d++){const k=c[d];if(has){S.HC[d*KM+(k<KM?k:KM-1)]++;S.SC[d]+=k;}if(!k)S.YE[yi*10+d]++;S.YS[yi*10+d]+=k;}
-    if(has){S.EC[empt]++;for(let l=0;l<8;l++){const t=lt[l];S.LC[l*LM+(t<LM?t:LM-1)]++;}}
-    const key=sqKey(c);S.SQ.set(key,(S.SQ.get(key)||0)+1);
-  };
+  const CS=conds.map(c=>({...c}));
   const job={stop:false};running=job;
   const prog=$('ps-prog');prog.style.display='block';const bar=prog.firstChild;
   $('ps-out').innerHTML='';
-  let y=y0;const CH=120,t0=performance.now();
-  (function step(){
+  const t0=performance.now();bar.style.width='35%';
+  (async()=>{
+    let S;try{S=await serverStats(y0,y1,mode,CS);}catch(x){prog.style.display='none';running=null;$('ps-out').innerHTML=`<div class="pp-card pp-note" style="text-align:center;color:#e88a8a">${x.message}</div>`;return;}
     if(job.stop)return;
-    const e=Math.min(y1,y+CH-1);scanYears(y,e,mode,fn);y=e+1;
-    bar.style.width=(pct(y-y0,y1-y0+1)).toFixed(1)+'%';
-    if(y<=y1){setTimeout(step,0);return;}
+    const P=parseDate($('birth').value);S.mine=null;
+    if(P&&P.y>=S.y0&&P.y<=S.y1){try{const c=await countsFor(P,S.mode);S.mine={c,n:S.SQ.get(sqKey(c))||0};}catch(x){}}
+    if(job.stop)return;
     prog.style.display='none';running=null;S.ms=performance.now()-t0;
-    if(!has){S.HC=S.HB;S.SC=S.SB;S.EC=S.EB;S.LC=S.LB;}
     lastStats=S;renderStats();
   })();
 }
@@ -357,8 +314,7 @@ function condCell(L,k,plus,pb,ol){
 const CR_NOTE='<div class="pp-note" style="margin-top:8px"><span style="color:#7fcfe8">ცისფერი</span> — პირობის სტრიქონი: აქ ნაჩვენებია <b>რეალური % მთელ დიაპაზონში</b> (პირობის შიგნით ის ყოველთვის 100% იქნებოდა). ჩარჩოიანი უჯრა — რასაც პირობა ირჩევს, მკრთალი — დანარჩენი. სხვა სტრიქონები — % პირობის შიგნით.</div>';
 function renderStats(){
   const S=lastStats,out=$('ps-out'),N=S.N,NC=S.NC,KM=S.KM,LM=S.LM;
-  const P=parseDate($('birth').value);let mine=null;
-  if(P&&P.y>=S.y0&&P.y<=S.y1){const c=countsFor(P,S.mode);mine={c,n:S.SQ.get(sqKey(c))||0};}
+  const mine=S.mine||null;
   if(!NC){out.innerHTML=`<div class="pp-card pp-note" style="text-align:center">ამ პირობებით ${S.y0}–${S.y1} წლებში არცერთი თარიღი არ მოიძებნა.</div>`;return;}
   /* summary */
   let h=`<div class="pp-card"><div class="pp-kv">
@@ -489,11 +445,11 @@ function initCompat(){
   if(!$('pc-da').value&&parseDate($('birth').value))$('pc-da').value=$('birth').value;
 }
 const CONCORD=[[1,5,7],[2,4,8],[3,6,9]];
-function runCompat(){
+async function runCompat(){
   const A=parseDate($('pc-da').value),B=parseDate($('pc-db').value),out=$('pc-out');
   if(!A||!B){out.innerHTML=`<div class="pp-card pp-note" style="text-align:center">შეიყვანე ორივე თარიღი ფორმატით DD/MM/YYYY (წელი 1–9999).</div>`;return;}
   const mode=$('pc-mode').value,na=esc($('pc-na').value.trim()||'პირველი პარტნიორი'),nb=esc($('pc-nb').value.trim()||'მეორე პარტნიორი');
-  const a=countsFor(A,mode),b=countsFor(B,mode);
+  let a,b;try{[a,b]=await Promise.all([countsFor(A,mode),countsFor(B,mode)]);}catch(x){out.innerHTML=`<div class="pp-card pp-note" style="text-align:center;color:#e88a8a">${x.message}</div>`;return;}
   const L=(c,k)=>COMPOUND[k].keys.reduce((s,d)=>s+c[d],0);
   const items=[];const add=(name,w,s,t)=>items.push({name,w,s,t});
   /* 1 · character */
@@ -559,5 +515,5 @@ function runCompat(){
       ყველაზე მძიმე წონა აქვს ტემპერამენტს (3-5-7), ხასიათს (1) და ენერგიას (2) — ესენია კლასიკური კვადრატის შეთავსების ძირითადი ნიშნები. შემდეგ — ოჯახის ხაზი, ჩვევები, მიზანდასახულობა, ურთიერთშევსება და ბედისწერის რიცხვები (ჰარმონიული ჯგუფები 1-5-7 · 2-4-8 · 3-6-9). ეს ორიენტირია და არა განაჩენი.</div>`;
 }
 
-window._pyPlus={scanYears,exTable,sqKey,enrich,setView,parseDate};
+window._pyPlus={serverStats,sqKey,enrich,setView,parseDate};
 })();

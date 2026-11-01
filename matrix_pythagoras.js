@@ -25,47 +25,17 @@ const LINES=[
   ['სულიერება','1·5·9',[1,5,9]],['ტემპერამენტი','3·5·7',[3,5,7]]
 ];
 
-const sumDigits=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
-const digitsOf=n=>String(Math.abs(n)).split('').map(Number);
-
-/* ── the three variants (same as pythagoras.html, crisis corrected) ── */
-function computeSquares(day,month,year){
-  const birthDigits=(day+month+year).split('').map(Number);
-  const A=birthDigits.reduce((a,b)=>a+b,0);
-  const fd=day[0]!=='0'?+day[0]:+day[1];
-
-  const cB=sumDigits(A),cC=Math.abs(A-2*fd),cD=sumDigits(cC);
-  const classic={key:'classic',title:'კლასიკური',
-    work:[[A,'I'],[cB,'II'],[cC,'III'],[cD,'IV']],
-    extra:[...digitsOf(A),...digitsOf(cB),...digitsOf(cC),...digitsOf(cD)],
-    note:'III = |I − 2×'+fd+'|'};
-
-  let corrected;
-  if(+year>=2000){
-    const C=A+19,D=sumDigits(C);
-    corrected={key:'corrected',title:'კორექტირებული',
-      work:[[A,'I'],['+19','კორ.'],[C,'III'],[D,'IV']],
-      extra:[...digitsOf(A),1,9,...digitsOf(C),...digitsOf(D)],note:'XXI საუკუნე · +19'};
-  }else{
-    const C=A-2,D=sumDigits(C);
-    corrected={key:'corrected',title:'კორექტირებული',
-      work:[[A,'I'],['−2','კორ.'],[C,'III'],[D,'IV']],
-      extra:[...digitsOf(A),2,...digitsOf(C),...digitsOf(D)],note:'XX საუკუნე · −2'};
-  }
-
-  /* crisis: every subtraction is taken as a modulus */
-  const kA=Math.abs(A-9),kB=sumDigits(kA),kC=Math.abs(kA-2*fd),kD=sumDigits(kC);
-  const crisis={key:'crisis',title:'კრიზისული',
-    work:[[kA,'|I−9|'],[kB,'II'],[kC,'III'],[kD,'IV']],
-    extra:[...digitsOf(kA),...digitsOf(kB),...digitsOf(kC),...digitsOf(kD)],
-    note:'|'+A+'−9| = '+kA+' · |'+kA+'−'+(2*fd)+'| = '+kC};
-
-  for(const sq of [classic,corrected,crisis]){
-    const c={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
-    [...birthDigits,...sq.extra].forEach(d=>{if(c[d]!==undefined)c[d]++;});
-    sq.count=c;
-  }
-  return [classic,corrected,crisis];
+/* ── the three squares come from the server (/api/pythagoras — numcalc.py) ── */
+async function computeSquares(day,month,year){
+  const h={'Content-Type':'application/json'},tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch('https://astrology-production-b165.up.railway.app/api/pythagoras',{method:'POST',headers:h,body:JSON.stringify({dd:day,mm:month,yyyy:year})});
+  if(!r.ok)throw new Error('pythagoras '+r.status);
+  const M=(await r.json()).modes,fd=day[0]!=='0'?+day[0]:+day[1];
+  const w=(m,l)=>m.disp.map((v,i)=>[v,l[i]]);
+  return [
+    {key:'classic',title:'კლასიკური',work:w(M.classic,['I','II','III','IV']),note:'III = |I − 2×'+fd+'|',count:M.classic.count},
+    {key:'corrected',title:'კორექტირებული',work:w(M.corrected,['I','კორ.','III','IV']),note:M.corrected.note,count:M.corrected.count},
+    {key:'crisis',title:'კრიზისული',work:w(M.crisis,['|I−9|','II','III','IV']),note:M.crisis.note,count:M.crisis.count}];
 }
 
 /* ── UI ─────────────────────────────────────────────────────── */
@@ -109,9 +79,9 @@ function inject(){
   else{const ml=$('main-layout');if(ml)ml.appendChild(p);}
 }
 
-function render(day,month,year){
+async function render(day,month,year){
   const p=$('pyth-panel');if(!p)return;
-  const S=computeSquares(day,month,year);
+  const S=await computeSquares(day,month,year);
   const base=S[0].count;
   const box=sq=>{
     const cells=GRID_ORDER.map(n=>{
@@ -162,7 +132,7 @@ function hook(){
       const dd=String(parseInt(q('dd'),10)).padStart(2,'0');
       const mm=String(parseInt(q('mm'),10)).padStart(2,'0');
       const yy=String(parseInt(q('yyyy'),10));
-      try{render(dd,mm,yy);}catch(e){console.warn('pythagoras',e);}
+      try{await render(dd,mm,yy);}catch(e){console.warn('pythagoras',e);}
       wireChakraRows();
       return res;
     };

@@ -256,8 +256,6 @@ document.getElementById("birth").addEventListener("input",function(e){
 });
 document.getElementById("birth").addEventListener("keydown",function(e){if(e.key==="Enter")calculate();});
 
-function sumDigits(n){return Math.abs(n).toString().split("").reduce((a,b)=>a+Number(b),0);}
-function digitsOf(n){return Math.abs(n).toString().split("").map(Number);}
 
 function getDesc(n,count){
   const d={
@@ -285,48 +283,7 @@ const COMPOUND={
   spirit:      {name:"სულიერება",         label:"1+5+9", keys:[1,5,9]}
 };
 
-/* ── THREE VARIANTS ──
-   classic:   I=Σთარიღი, II=Σ(I), III=|I−2×დღის პირვ.ციფრი|, IV=Σ(III)
-   corrected: XX(19xx): II→−2 (ციფრი 2 ითვლება), III=I−2
-              XXI(20xx): II→+19 (ციფრები 1,9 ითვლება), III=I+19; IV=Σ(III)
-   crisis:    I'=|I−9| (მოდული), III'=|I'−2×დღის პირვ.ციფრი|                              */
-function computeModes(day,month,year){
-  const birthDigits=(day+month+year).split("").map(Number);
-  const A=birthDigits.reduce((a,b)=>a+b,0);
-  const fd=(day[0]!=="0")?Number(day[0]):Number(day[1]);
-
-  const cB=sumDigits(A), cC=Math.abs(A-2*fd), cD=sumDigits(cC);
-  const classic={disp:[String(A),String(cB),String(cC),String(cD)],
-    extra:[...digitsOf(A),...digitsOf(cB),...digitsOf(cC),...digitsOf(cD)],note:""};
-
-  const isXXI=Number(year)>=2000;
-  let corrected;
-  if(isXXI){
-    const C=A+19,D=sumDigits(C);
-    corrected={disp:[String(A),"+19",String(C),String(D)],
-      extra:[...digitsOf(A),1,9,...digitsOf(C),...digitsOf(D)],note:"XXI საუკუნე · +19"};
-  }else{
-    const C=A-2,D=sumDigits(C);
-    corrected={disp:[String(A),"−2",String(C),String(D)],
-      extra:[...digitsOf(A),2,...digitsOf(C),...digitsOf(D)],note:"XX საუკუნე · −2"};
-  }
-
-  /* crisis: every subtraction is a modulus — |I−9|, then |I'−2×fd| */
-  const kA=Math.abs(A-9),kB=sumDigits(kA),kC=Math.abs(kA-2*fd),kD=sumDigits(kC);
-  const crisis={disp:[String(kA),String(kB),String(kC),String(kD)],
-    extra:[...digitsOf(kA),...digitsOf(kB),...digitsOf(kC),...digitsOf(kD)],note:"|"+A+"−9| = "+kA+" · |"+kA+"−"+(2*fd)+"| = "+kC};
-
-  const mk=extra=>{
-    const count={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
-    [...birthDigits,...extra].forEach(d=>{if(count[d]!==undefined)count[d]++;});
-    return count;
-  };
-  classic.count=mk(classic.extra);
-  corrected.count=mk(corrected.extra);
-  crisis.count=mk(crisis.extra);
-  return {classic,corrected,crisis};
-}
-
+/* the three variants (classic · corrected · crisis) are computed on the server — /api/pythagoras (numcalc.py) */
 let MODES=null, activeMode='classic';
 
 /* the square, the curves and the Vedic digits are computed on the server: /api/pythagoras (numcalc.py) */

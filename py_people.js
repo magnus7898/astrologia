@@ -3,7 +3,7 @@
    ------------------------------------------------------------
    Your square + up to 10 difficult and 10 good people (the mode
    chosen on the page: კლასიკური / კორექტირებული / კრიზისული,
-   computed by the page's own computeModes()).
+   computed on the server — /api/pythagoras/batch and /api/pythagoras/stats).
 
    What repeats in each group, against EVERY date of the same years
    (exact, not sampled):
@@ -23,7 +23,17 @@ const LINES=(typeof COMPOUND!=='undefined')?COMPOUND:{};
 const MODE_KA={classic:'კლასიკური',corrected:'კორექტირებული',crisis:'კრიზისული'};
 const mode=()=>(typeof activeMode!=='undefined'&&activeMode)||'classic';
 const p2=n=>String(n).padStart(2,'0');
-function square(d,m,y){return computeModes(p2(d),p2(m),String(y))[mode()].count;}
+const API='https://astrology-production-b165.up.railway.app';
+async function post(path,body){
+  const h={'Content-Type':'application/json'},tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch(API+path,{method:'POST',headers:h,body:JSON.stringify(body)});let d=null;try{d=await r.json();}catch(e){}
+  if(r.status===402&&window.MAGNUS){window.MAGNUS.toast((d&&d.error)||'Pro',5000);if(!window.MAGNUS.user)window.MAGNUS.open('login');}
+  if(!r.ok)throw new Error((d&&d.error)||('სერვერის შეცდომა '+r.status));return d;
+}
+/* the squares of several dates in one request */
+async function squares(list){const r=await post('/api/pythagoras/batch',{dates:list.map(p=>({dd:+p.d,mm:+p.m,yyyy:+p.y}))});
+  return r.map(x=>x&&x[mode()]);}
+const keyToC=k=>{const c=[0];for(let d=1;d<10;d++){c.push(k%16);k=Math.floor(k/16);}return c;};
 
 function own(c){
   const f=new Set();
@@ -54,14 +64,16 @@ const MEAN={fill:'მათ აქვთ ის, რაც შენ გაკ�
   lw:'ხაზი ხშირად სუსტია',ls:'ხაზი ხშირად ძლიერია'};
 
 async function onRun(me,people){
-  if(typeof computeModes!=='function')throw new Error('pythagoras.html ფუნქციები ვერ მოიძებნა');
-  const M=square(me.d,me.m,me.y);
-  for(const p of people){p.c=square(p.d,p.m,p.y);p.F=rel(M,p.c);}
+  const sq=await squares([me,...people]);
+  if(sq.some(x=>!x))throw new Error('თარიღი არასწორია');
+  const M=sq[0];
+  people.forEach((p,i)=>{p.c=sq[i+1];p.F=rel(M,p.c);});
   /* chance level: every date of the same years */
   const ys=people.map(p=>p.y),y0=Math.max(1000,Math.min(...ys)-1),y1=Math.min(2100,Math.max(...ys)+1);
-  const cnt=new Map();let N=0;
-  for(let y=y0;y<=y1;y++)for(let m=1;m<=12;m++){const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31][m-1];
-    for(let d=1;d<=dim;d++){for(const k of rel(M,square(d,m,y)))cnt.set(k,(cnt.get(k)||0)+1);N++;}}
+  /* every date of those years, from the server: each distinct square once, with how many dates have it */
+  const cnt=new Map();
+  const hs=await post('/api/pythagoras/stats',{y0,y1,mode:mode(),conds:[]}),N=hs.N;
+  hs.SQ[0].forEach((key,i)=>{const w=hs.SQ[1][i];for(const k of rel(M,keyToC(key)))cnt.set(k,(cnt.get(k)||0)+w);});
   const base=k=>Math.max(cnt.get(k)||0,0.5)/N;
   const st=PeopleUI.groupStats(people,p=>p.F,base);
   const only=pre=>({...st,rows:st.rows.filter(r=>pre.some(x=>r.k.startsWith(x+'|')))});

@@ -7,10 +7,10 @@
    physics combos and the emotion values), the central energies,
    the purposes and every single point.
 
-   The year enters the matrix only through R3 = r22(year) and the
-   leap day, so the 22 × 2 possible "year types" are computed once
-   (365/366 dates each) and the span is the weighted sum of them —
-   0 … 9999 is instant.
+   Computed on the server (/api/matrix/stats — numcalc.py): the year
+   enters the matrix only through R3 = r22(year) and the leap day, so
+   the 22 × 2 possible "year types" are tabulated once and the span is
+   their weighted sum. This file keeps only the aspect list and drawing.
 
    Self-injecting: adds a „სტატისტიკა“ button to the method bar.
    Load AFTER matrix_combos.js and matrix_boxes_addon.js.
@@ -25,30 +25,6 @@ const EXACT=new Set(['karmic_tail','ch_sahasrara','ch_ajna','ch_vishudha','ch_an
 const isLeap=y=>(y%4===0&&(y%100!==0||y%400===0));
 const DIM=[31,28,31,30,31,30,31,31,30,31,30,31];
 const Y_MIN=0,Y_MAX=9999;
-
-/* ── method-1 matrix of one date (mirrors calculate() with CUR===1) ── */
-function m1(dd,mm,R3){
-  const L3=R(dd),T3=R(mm);
-  const B3=R(L3+T3+R3),Cv=R(L3+T3+R3+B3);
-  const TL3=R(L3+T3),TR3=R(T3+R3),BR3=R(R3+B3),BL3=R(B3+L3);
-  const RC1=R(TL3+TR3+BR3+BL3),RC2=R(RC1+Cv);
-  const B1=R(Cv+B3),B2=R(B1+B3),R1=R(Cv+R3),R2=R(R1+R3),L1=R(Cv+L3),L2=R(L1+L3),T1=R(Cv+T3),T2=R(T1+T3),G1=R(L1+Cv),G2=R(T1+Cv);
-  const dCv=RC1;
-  const TL1=R(TL3+dCv),TL2=R(TL1+TL3),TR1=R(TR3+dCv),TR2=R(TR1+TR3),BR1=R(BR3+dCv),BR2=R(BR1+BR3),BL1=R(BL3+dCv),BL2=R(BL1+BL3);
-  const W2=R(B1+R1),W1=R(B1+W2),W3=R(R1+W2);
-  const v={L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,TL3,TR3,BR3,BL3,RC1,RC2,TL1,TL2,TR1,TR2,BR1,BR2,BL1,BL2,W1,W2,W3};
-  /* chakra rows exactly as renderChakra()/chakraRows() for method 1 */
-  const CH=[['sahasrara',T3,L3],['ajna',T2,L2],['vishudha',T1,L1],['anahata',G2,G1],['manipura',Cv,Cv],['svadhistana',B1,R1],['muladhara',B3,R3]];
-  let se=0,sp=0,ss=0;
-  for(const [k,e,p] of CH){const s=R(e+p);v['CHE_'+k]=e;v['CHP_'+k]=p;v['CHS_'+k]=s;se+=e;sp+=p;ss+=s;}
-  v.CHE_total=R(se);v.CHP_total=R(sp);v.CHS_total=R(ss);
-  v.S6=v.CHS_svadhistana;
-  /* purposes (extra panels) */
-  v.MALE=R(TL3+BR3);v.FEM=R(TR3+BL3);
-  const sT=R(T3+B3),sB=R(R3+L3);v.SOUL=R(sT+sB);
-  const oT=R(TL3+BR3),oB=R(TR3+BL3);v.SOC=R(oT+oB);v.MISSION=R(v.SOUL+v.SOC);
-  return v;
-}
 
 /* ── aspects ── [id, title, keys, zone-for-names, group] ── */
 const CHN={sahasrara:'საჰასრარა',ajna:'აჯნა',vishudha:'ვიშუდჰა',anahata:'ანაჰატა',manipura:'მანიპურა',svadhistana:'სვადჰისტანა',muladhara:'მულადჰარა',total:'ჩაკრების ჯამი'};
@@ -74,30 +50,10 @@ for(const c of ['sahasrara','ajna','vishudha','anahata','manipura','svadhistana'
  .forEach(([k,t])=>add('p_'+k,t,[k],null,'point'));
 const GROUPS=[['tail','კარმული კუდი'],['prog','პროგრამები / ზონები'],['chakra','ჩაკრები'],['center','ცენტრალური ენერგიები'],['point','ყველა წერტილი']];
 
-/* code of an aspect for one matrix (reverse-equivalent zones merged) */
-function codeOf(a,v){
-  const n=a.keys.map(k=>v[k]);
-  if(n.length===1)return String(n[0]);
-  const f=n.join('-');if(EXACT.has(a.zone))return f;
-  const r=[...n].reverse().join('-');return f<=r?f:r;
-}
-
-/* ── year-type tables: TAB[R3][leap] = per aspect {code:count} ── */
-const TAB={};
-function table(R3,leap){
-  const k=R3+'_'+leap;if(TAB[k])return TAB[k];
-  const t={};for(const a of A)t[a.id]=Object.create(null);
-  for(let m=1;m<=12;m++){const dm=m===2&&leap?29:DIM[m-1];
-    for(let d=1;d<=dm;d++){const v=m1(d,m,R3);for(const a of A){const c=codeOf(a,v),o=t[a.id];o[c]=(o[c]||0)+1;}}}
-  /* dominant code of this year type, per aspect */
-  t._dom={};for(const a of A){let best=null,bc=-1,tie=0;for(const c in t[a.id]){const n=t[a.id][c];if(n>bc){bc=n;best=c;tie=1;}else if(n===bc)tie++;}
-    t._dom[a.id]=tie>1?[TIE,bc,tie]:[best,bc,1];}   /* several codes share the maximum → no single dominant */
-  t._n=leap?366:365;
-  return TAB[k]=t;
-}
 const TIE='=';
 const yearR3=y=>y===0?22:R(y);           /* year 0 → 22 (the Fool, = 0) */
-const yt=y=>table(yearR3(y),isLeap(y)?1:0);
+/* year-type summary from the server: {_n, _dom:{aspect:[code,count,ties]}, top:[[code,count]…] of the shown aspect} */
+const yt=y=>{const t=S.res&&S.res.types[yearR3(y)+'_'+(isLeap(y)?1:0)];return t?{_n:t.n,_dom:t.dom,top:t.top}:{_n:0,_dom:{},top:[]};};
 
 /* ── names ── */
 const ENE=n=>(typeof getE==='function')?getE(+n):{name:'',color:'#666'};
@@ -188,35 +144,42 @@ function inject(){
   ['st-y0','st-y1'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')run();}));
 }
 
-/* ── aggregate the span ── */
-function aggregate(y0,y1){
-  const cnt={},yt0={},domYears={};       /* per aspect: code→dates, code→years dominant */
-  for(const a of A){cnt[a.id]=Object.create(null);domYears[a.id]=Object.create(null);}
-  /* how many years of each type */
-  const types=Object.create(null);let days=0;
-  for(let y=y0;y<=y1;y++){const k=yearR3(y)+'_'+(isLeap(y)?1:0);types[k]=(types[k]||0)+1;}
-  for(const k in types){const [r3,l]=k.split('_').map(Number),t=table(r3,l),w=types[k];days+=t._n*w;
-    for(const a of A){const o=cnt[a.id],s=t[a.id];for(const c in s)o[c]=(o[c]||0)+s[c]*w;
-      const d=t._dom[a.id][0];domYears[a.id][d]=(domYears[a.id][d]||0)+w;}}
-  return{y0,y1,years:y1-y0+1,days,cnt,domYears};
+/* ── the span — counted on the server ── */
+const ASPECTS=A.map(a=>({id:a.id,keys:a.keys,exact:EXACT.has(a.zone)}));
+async function fetchStats(y0,y1,sel){
+  const h={'Content-Type':'application/json'},tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch('https://astrology-production-b165.up.railway.app/api/matrix/stats',{method:'POST',headers:h,body:JSON.stringify({y0,y1,sel,aspects:ASPECTS})});
+  let d=null;try{d=await r.json();}catch(e){}
+  if(r.status===402&&window.MAGNUS){window.MAGNUS.toast((d&&d.error)||'Pro',5000);if(!window.MAGNUS.user)window.MAGNUS.open('login');}
+  if(!r.ok)throw new Error((d&&d.error)||('სერვერის შეცდომა '+r.status));
+  return d;
 }
-function yearFree(a){const t1=table(1,0),t2=table(13,0);return JSON.stringify(sorted(t1[a.id]))===JSON.stringify(sorted(t2[a.id]));}
 function sorted(o){return Object.entries(o).sort((p,q)=>q[1]-p[1]);}
-
-function run(){
+let seq=0;
+async function load(sel){
+  const my=++seq,out=$('st-out');
+  if(out&&!S.res)out.innerHTML='<div class="st-card st-note">⏳ ვითვლი…</div>';
+  const t0=performance.now();
+  let d;try{d=await fetchStats(S.y0,S.y1,sel);}catch(e){if(my===seq&&out)out.innerHTML=`<div class="st-card st-note" style="color:#e88a8a">${e.message}</div>`;return false;}
+  if(my!==seq)return false;
+  S.res={y0:d.y0,y1:d.y1,years:d.years,days:d.days,sel:d.sel,cnt:d.cnt,domYears:d.domYears,summary:d.summary,free:d.free,types:d.types};
+  S.ms=performance.now()-t0;return true;
+}
+async function run(){
   const cl=v=>Math.max(Y_MIN,Math.min(Y_MAX,Math.round(+v)));
   let y0=cl($('st-y0').value||0),y1=cl($('st-y1').value||9999);if(y1<y0)[y0,y1]=[y1,y0];
   $('st-y0').value=y0;$('st-y1').value=y1;
-  S.y0=y0;S.y1=y1;S.all=false;
-  const t0=performance.now();S.res=aggregate(y0,y1);S.ms=performance.now()-t0;
-  render();
+  S.y0=y0;S.y1=y1;S.all=false;S.res=null;
+  if(await load(S.asp))render();
 }
+/* another aspect: its distribution comes from the server */
+async function show(id){S.asp=id;S.all=false;if(S.res&&S.res.sel!==id){if(!await load(id))return;}render();}
 
 function render(){
   const r=S.res,out=$('st-out');if(!r){out.innerHTML='';return;}
   const a=A.find(x=>x.id===S.asp)||A[0];
-  const list=sorted(r.cnt[a.id]),shown=S.all?list:list.slice(0,a.keys.length===1?22:30),max=list.length?list[0][1]:1;
-  const dl=sorted(r.domYears[a.id]);
+  const list=r.cnt,shown=S.all?list:list.slice(0,a.keys.length===1?22:30),max=list.length?list[0][1]:1;
+  const dl=r.domYears;
   out.innerHTML=`
   <div class="st-card">
     <div class="st-note"><b>${r.y0} – ${r.y1}</b> · ${fmtN(r.years)} წელი · <b>${fmtN(r.days)}</b> დაბადების თარიღი · დათვლა ${Math.max(1,Math.round(S.ms))} მწმ</div>
@@ -225,7 +188,7 @@ function render(){
   </div>
   <div class="st-card">
     <h3>${a.title} — განაწილება</h3>
-    <div class="st-note">${a.keys.length===1?'ენერგია (1–22)':'კოდი '+(a.group==='chakra'?'ენერგია·ემოცია·ფიზიკა':a.keys.join('·'))}${yearFree(a)?' · <b>წელზე არ არის დამოკიდებული</b> (მხოლოდ დღე და თვე) — ყველა წელს ერთნაირია':''} · სულ ${fmtN(list.length)} სხვადასხვა ${a.keys.length===1?'ენერგია':'კომბინაცია'}${a.zone&&!EXACT.has(a.zone)?' · შებრუნებული კოდი (8-8-18 = 18-8-8) ერთად ითვლება':''}</div>
+    <div class="st-note">${a.keys.length===1?'ენერგია (1–22)':'კოდი '+(a.group==='chakra'?'ენერგია·ემოცია·ფიზიკა':a.keys.join('·'))}${r.free[a.id]?' · <b>წელზე არ არის დამოკიდებული</b> (მხოლოდ დღე და თვე) — ყველა წელს ერთნაირია':''} · სულ ${fmtN(list.length)} სხვადასხვა ${a.keys.length===1?'ენერგია':'კომბინაცია'}${a.zone&&!EXACT.has(a.zone)?' · შებრუნებული კოდი (8-8-18 = 18-8-8) ერთად ითვლება':''}</div>
     <div class="st-bars">${shown.map(([c,n])=>{const nm=nameOf(a,c);
       return `<div class="st-bar" title="${nm.replace(/"/g,'&quot;')}"><span class="c">${c}</span><span class="t"><i style="width:${(100*n/max).toFixed(1)}%;background:${colorOf(a,c)}"></i><span>${nm}</span></span><span class="n">${pct(n,r.days)} · ${fmtN(n)}</span></div>`;}).join('')}</div>
     ${list.length>shown.length?`<button class="st-chip st-more" id="st-all">ყველას ჩვენება (${list.length})</button>`:''}
@@ -244,15 +207,15 @@ function render(){
   <div class="st-card">
     <h3>ყველაფრის მიმოხილვა — ყველაზე ხშირი თითო ასპექტში</h3>
     <div class="st-scroll" style="max-height:560px"><table class="st-tbl"><tr><th>ასპექტი</th><th>ყველაზე ხშირი</th><th>სახელი</th><th>წილი</th><th>ყველაზე იშვიათი</th></tr>
-      ${A.map(x=>{const l=sorted(r.cnt[x.id]);if(!l.length)return '';const [c,n]=l[0],[c2,n2]=l[l.length-1],ties=l.filter(e=>e[1]===n).length;
+      ${A.map(x=>{const sm=r.summary[x.id];if(!sm)return '';const [c,n]=sm.top,[c2,n2]=sm.bot,ties=sm.ties;
         return `<tr class="click" data-a="${x.id}"><td>${x.title}</td><td class="k"><span class="st-dot" style="background:${colorOf(x,c)}"></span>${c}</td><td>${ties>1?`<i style="opacity:.75">თანაბარი — ${ties} კოდი</i>`:nameOf(x,c)}</td><td>${pct(n,r.days)}</td><td class="k" style="opacity:.7">${c2} · ${pct(n2,r.days)}</td></tr>`;}).join('')}</table></div>
   </div>`;
-  out.querySelectorAll('.st-groups button').forEach(b=>b.onclick=()=>{S.group=b.dataset.g;S.asp=A.find(x=>x.group===S.group).id;S.all=false;render();});
-  out.querySelectorAll('.st-asp .st-chip').forEach(b=>b.onclick=()=>{S.asp=b.dataset.a;S.all=false;render();});
-  out.querySelectorAll('tr.click').forEach(tr=>tr.onclick=()=>{const x=A.find(z=>z.id===tr.dataset.a);S.group=x.group;S.asp=x.id;S.all=false;render();window.scrollTo({top:$('stats-panel').offsetTop,behavior:'smooth'});});
+  out.querySelectorAll('.st-groups button').forEach(b=>b.onclick=()=>{S.group=b.dataset.g;show(A.find(x=>x.group===S.group).id);});
+  out.querySelectorAll('.st-asp .st-chip').forEach(b=>b.onclick=()=>show(b.dataset.a));
+  out.querySelectorAll('tr.click').forEach(tr=>tr.onclick=()=>{const x=A.find(z=>z.id===tr.dataset.a);S.group=x.group;show(x.id);window.scrollTo({top:$('stats-panel').offsetTop,behavior:'smooth'});});
   const all=$('st-all');if(all)all.onclick=()=>{S.all=true;render();};
   drawStrip(a);
-  const yi=$('st-year');const showY=()=>{const y=Math.max(r.y0,Math.min(r.y1,Math.round(+yi.value)));const t=yt(y),top=sorted(t[a.id]).slice(0,5);
+  const yi=$('st-year');const showY=()=>{const y=Math.max(r.y0,Math.min(r.y1,Math.round(+yi.value)));const t=yt(y),top=t.top;
     $('st-year-out').innerHTML=`${y} (${isLeap(y)?'ნაკიანი, ':''}R3 = ${yearR3(y)}): `+top.map(([c,n])=>`<b>${c}</b>${nameOf(a,c)?' '+nameOf(a,c):''} ${pct(n,t._n)}`).join(' · ');};
   yi.oninput=showY;showY();
 }
@@ -292,5 +255,5 @@ function hook(){
 }
 function init(){inject();hook();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-window._mxStats={m1,table,aggregate,A};
+window._mxStats={A,run,show};
 })();

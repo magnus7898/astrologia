@@ -20,20 +20,22 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
-const R=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
 const MAX=10, STORE='mx_people_v1';
 const E=n=>(typeof getE==='function')?getE(n):{name:'ენ.'+n,color:'#444'};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* ── method-1 matrix (mirrors calculate() with CUR===1) ── */
-function m1(dd,mm,yy){
-  const L3=R(dd),T3=R(mm),R3=R(yy);
-  const B3=R(L3+T3+R3),Cv=R(L3+T3+R3+B3);
-  const TL3=R(L3+T3),TR3=R(T3+R3),BR3=R(R3+B3),BL3=R(B3+L3);
-  const B1=R(Cv+B3),B2=R(B1+B3),R1=R(Cv+R3),R2=R(R1+R3),L1=R(Cv+L3),L2=R(L1+L3),T1=R(Cv+T3),T2=R(T1+T3);
-  const W2=R(B1+R1),W1=R(B1+W2),W3=R(R1+W2);
-  const sT=R(T3+B3),sB=R(R3+L3),SOUL=R(sT+sB),SOC=R(R(TL3+BR3)+R(TR3+BL3)),MISSION=R(SOUL+SOC);
-  return{L3,T3,R3,B3,Cv,TL3,TR3,BR3,BL3,B1,B2,R1,R2,L1,L2,T1,T2,W1,W2,W3,MISSION};
+/* ── method-1 matrices come from the server (/api/matrix/batch — numcalc.py) ── */
+const API='https://astrology-production-b165.up.railway.app';
+async function post(path,body){
+  const h={'Content-Type':'application/json'},tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch(API+path,{method:'POST',headers:h,body:JSON.stringify(body)});let d=null;try{d=await r.json();}catch(e){}
+  if(r.status===402&&window.MAGNUS){window.MAGNUS.toast((d&&d.error)||'Pro',5000);if(!window.MAGNUS.user)window.MAGNUS.open('login');}
+  if(!r.ok)throw new Error((d&&d.error)||('სერვერის შეცდომა '+r.status));return d;
+}
+/* me + people in one request; each person also gets the couple's karmic tail with me (compat) */
+async function matrices(me,list){
+  const dt=x=>({dd:+x.d,mm:+x.m,yyyy:+x.y});
+  return post('/api/matrix/batch',{method:1,me:dt(me),dates:[me,...list].map(dt)});
 }
 
 /* the 9 points that make a person's "profile" */
@@ -56,16 +58,9 @@ const ZONES=[
   {t:'მისია',k:['MISSION'],kind:''}];
 function myZones(me,n){return ZONES.filter(z=>z.k.some(k=>me[k]===n));}
 
-/* baseline: share of all dates 1930–2010 whose profile holds each energy */
+/* baseline: share of all dates 1930–2010 whose profile holds each energy (server, cached) */
 let BASE=null;
-function baseline(){
-  if(BASE)return BASE;
-  const c=new Array(23).fill(0);let N=0;
-  const dim=y=>[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
-  for(let y=1930;y<=2010;y++){const d=dim(y);for(let m=1;m<=12;m++)for(let dd=1;dd<=d[m-1];dd++){
-    for(const n of profile(m1(dd,m,y)))c[n]++;N++;}}
-  BASE=c.map(x=>x/N);return BASE;
-}
+async function baseline(){if(BASE)return BASE;BASE=await post('/api/matrix/people_baseline',{keys:POS.map(p=>p[0])});return BASE;}
 
 /* ── storage ── */
 function load(){try{const s=JSON.parse(localStorage.getItem(STORE)||'null');if(s&&s.bad&&s.good)return s;}catch(_){}
@@ -186,7 +181,7 @@ function parse(p){
 function mark(g,i,on){const row=document.querySelector(`#pp-${g} .pp-row[data-i="${i}"]`);
   if(row)row.querySelectorAll('input:not(.nm)').forEach(x=>x.classList.toggle('bad',on));}
 
-function run(){
+async function run(){
   const out=$('pp-out');
   if(!S.me||!S.me.d){ /* take the main form's date when "me" is empty */
     const q=n=>document.querySelector(`[name=${n}]`);
@@ -196,14 +191,18 @@ function run(){
   const meD=parse(S.me||{});
   ['pp-me-d','pp-me-m','pp-me-y'].forEach(id=>$(id).classList.toggle('bad',!meD||!!meD.err));
   if(!meD||meD.err){out.innerHTML=`<div class="pp-card pp-note">შეიყვანე შენი დაბადების თარიღი.</div>`;return;}
-  const me=m1(meD.d,meD.m,meD.y);
   const people=[];let bad=0;
   for(const g of ['bad','good'])S[g].forEach((p,i)=>{
     const r=parse(p);mark(g,i,!!(r&&r.err));
     if(!r)return;if(r.err){bad++;return;}
-    people.push({g,name:p.n||(g==='bad'?'რთული ':'კარგი ')+(i+1),...r,v:m1(r.d,r.m,r.y)});
+    people.push({g,name:p.n||(g==='bad'?'რთული ':'კარგი ')+(i+1),...r});
   });
   if(!people.length){out.innerHTML=`<div class="pp-card pp-note">დაამატე ერთი ადამიანი მაინც.</div>`;return;}
+  out.innerHTML='<div class="pp-card pp-note">⏳ ვითვლი…</div>';
+  let res;
+  try{[res]=await Promise.all([matrices(meD,people),baseline()]);}catch(e){out.innerHTML=`<div class="pp-card pp-note" style="color:#e88a8a">${esc(e.message)}</div>`;return;}
+  const me=res[0];people.forEach((p,i)=>{p.v=res[i+1];});
+  if(!me||people.some(p=>!p.v)){out.innerHTML=`<div class="pp-card pp-note" style="color:#e88a8a">თარიღი არასწორია (წელი 1000–2100).</div>`;return;}
   out.innerHTML=analysis(me,people)+(bad?`<div class="pp-note" style="color:#e88a8a;margin:-4px 0 12px">${bad} თარიღი არასწორია და გამოტოვებულია (წითლად მონიშნული).</div>`:'');
   out.scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -217,12 +216,12 @@ function person(me,p){
   const trig=new Set(),res=new Set();
   for(const n of pr)for(const z of myZones(me,n)){if(z.kind==='trig')trig.add(n);if(z.kind==='res')res.add(n);}
   const mirror=POS.filter(([k])=>p.v[k]===me[k]);
-  const cCv=R(me.Cv+p.v.Cv),cB3=R(me.B3+p.v.B3),cB1=R(cCv+cB3),cB2=R(cB1+cB3);
-  return{trig:[...trig],res:[...res],mirror,cCv,tail:[cB3,cB2,cB1]};
+  const cp=p.v.compat||{};      /* the couple's matrix (centre + karmic tail) — from the server */
+  return{trig:[...trig],res:[...res],mirror,cCv:cp.Cv,tail:[cp.B3,cp.B2,cp.B1]};
 }
 
 function analysis(me,people){
-  const base=baseline();
+  const base=BASE||[];
   const grp=g=>people.filter(p=>p.g===g);
   const B=grp('bad'),G=grp('good');
   const cnt=(arr,n)=>arr.filter(p=>profile(p.v).has(n)).length;
@@ -329,5 +328,5 @@ function hook(){
 }
 function init(){inject();hook();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-window._mxPeople={m1,profile,baseline};
+window._mxPeople={matrices,profile,baseline};
 })();
