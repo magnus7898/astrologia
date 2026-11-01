@@ -851,6 +851,35 @@ function calcComposite(d1,d2){
   return{planets,houses,asc,mc,aspects:compAspects,_timeUnknown:false};
 }
 
+/* Composite houses — derived-ASC method (R. Hand). Midpointing every cusp separately breaks the
+   house order when the two ASCs are ~180° apart. Instead: composite MC = midpoint of the MCs,
+   then ASC and all cusps come from that MC at the mean birth latitude, in the selected house
+   system: the backend draws a chart for the instant whose local sidereal time puts the MC there. */
+async function deriveCompositeHouses(comp,p1,p2){
+  if(p1.time_unknown||p2.time_unknown){comp._timeUnknown=true;return;}
+  try{
+    const D=Math.PI/180,n=x=>((x%360)+360)%360;
+    const jdOf=q=>Date.UTC(+q.year,+q.month-1,+q.day,12)/864e5+2440587.5;
+    let j0=(jdOf(p1)+jdOf(p2))/2;if(!isFinite(j0)||j0<2378496.5||j0>2524593.5)j0=2451545;   /* 1800–2200, else J2000 */
+    const eps=(23.4392911-0.0130042*(j0-2451545)/36525)*D;
+    const ramc=n(Math.atan2(Math.sin(comp.mc*D)*Math.cos(eps),Math.cos(comp.mc*D))/D);
+    const lat=(+p1.lat + +p2.lat)/2,lon=midpoint(+p1.lon,+p2.lon);
+    const gmst=j=>n(280.46061837+360.98564736629*(j-2451545));
+    const jd=j0+(((ramc-lon-gmst(j0))%360+540)%360-180)/360.98564736629;   /* nearest instant to j0 (±12h) */
+    const t=new Date(Math.round((jd-2440587.5)*864e2)*1e3);   /* nearest whole second */
+    const q={year:t.getUTCFullYear(),month:t.getUTCMonth()+1,day:t.getUTCDate(),hour:t.getUTCHours(),minute:t.getUTCMinutes(),second:t.getUTCSeconds(),
+      lat:+lat.toFixed(4),lon:+(lon>180?lon-360:lon).toFixed(4),tz_name:'UTC',time_unknown:false};
+    const r=await fetch(`${BACKEND}/chart`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(q)});
+    const d=JSON.parse(await r.text());
+    if(d.error||!Array.isArray(d.houses)||d.houses.length!==12)return;
+    comp.houses=d.houses.map(Number);comp.asc=+d.asc;comp.mc=+d.mc;
+    for(const k of Object.keys(comp.planets)){const deg=comp.planets[k].degree;
+      for(let i=0;i<12;i++){const s=comp.houses[i],e=comp.houses[(i+1)%12];
+        if(n(deg-s)<n(e-s)){comp.planets[k].house=i+1;break;}}}
+    comp._compHouses='derived';
+  }catch(e){console.warn('composite houses',e);}
+}
+
 // ── PROGRESSION CALCULATION ──
 // Secondary progression: natal date + (years_elapsed) days
 function progressedDate(natal,target){
@@ -1780,6 +1809,7 @@ async function generate(){
       if(!p1.lat||!p1.lon||!p2.lat||!p2.lon){showError('შეიყვანეთ ორივე ქალაქი');return;}
       const[d1,d2]=await Promise.all([fetchChart(p1),fetchChart(p2)]);
       const comp=calcComposite(d1,d2);
+      await deriveCompositeHouses(comp,p1,p2);
       showSingleChart(comp,'კომპოზიტი',false);
 
     }else if(mode==='transit'){
