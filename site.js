@@ -53,39 +53,39 @@ const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1'
 const CSS=`
 #mg-head{box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
   padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));margin:0 0 6px;
-  background:rgba(8,6,22,.82);border-bottom:1px solid rgba(201,162,76,.28);backdrop-filter:blur(6px);
-  font:13px/1.3 "Noto Sans Georgian",system-ui,sans-serif;color:#d9ccb0;text-align:left}
+  background:rgba(11,20,24,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
+  font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif;color:#B9BFBC;text-align:left}
 #mg-head a{color:inherit;text-decoration:none}
-#mg-head .brand{font:600 16px/1 "Cinzel","Noto Serif Georgian",Georgia,serif;letter-spacing:.14em;color:#F0D48A;white-space:nowrap}
+#mg-head .brand{font:600 16px/1 'Marcellus SC','Noto Serif Georgian',Georgia,serif;letter-spacing:.14em;color:#E3BE84;white-space:nowrap}
 #mg-head .crumbs{display:flex;align-items:center;gap:6px;min-width:0;flex:1;overflow:hidden;white-space:nowrap}
-#mg-head .crumbs a:hover,#mg-head nav a:hover{color:#F0D48A}
+#mg-head .crumbs a:hover,#mg-head nav a:hover{color:#E3BE84}
 #mg-head .crumbs .sep{opacity:.45}
-#mg-head .crumbs .cur{color:#f3ecdc;overflow:hidden;text-overflow:ellipsis}
-#mg-head nav{display:none;width:100%;flex-wrap:wrap;gap:4px 8px;padding-top:8px;border-top:1px solid rgba(201,162,76,.18)}
+#mg-head .crumbs .cur{color:#EDE6D8;overflow:hidden;text-overflow:ellipsis}
+#mg-head nav{display:none;width:100%;flex-wrap:wrap;gap:4px 8px;padding-top:8px;border-top:1px solid rgba(184,137,74,.18)}
 #mg-head.open nav{display:flex}
-#mg-head nav a{padding:6px 12px;border:1px solid rgba(201,162,76,.22);border-radius:999px;white-space:nowrap}
-#mg-head nav a.on{color:#F0D48A;border-color:#C9A24C;background:rgba(201,162,76,.12)}
-#mg-head .burger{all:unset;cursor:pointer;color:#F0D48A;font-size:13px;line-height:1;padding:7px 12px;border:1px solid rgba(201,162,76,.45);border-radius:999px;white-space:nowrap}
-#mg-head .burger:hover{background:rgba(201,162,76,.12)}
-#mg-head .burger:focus-visible,#mg-foot a:focus-visible,#mg-head a:focus-visible{outline:2px solid #F0D48A;outline-offset:2px}
+#mg-head nav a{padding:6px 12px;border:1px solid rgba(184,137,74,.22);border-radius:2px;white-space:nowrap}
+#mg-head nav a.on{color:#E3BE84;border-color:#B8894A;background:rgba(184,137,74,.12)}
+#mg-head .burger{all:unset;cursor:pointer;color:#E3BE84;font-size:13px;line-height:1;padding:7px 12px;border:1px solid rgba(184,137,74,.45);border-radius:2px;white-space:nowrap}
+#mg-head .burger:hover{background:rgba(184,137,74,.12)}
+#mg-head .burger:focus-visible,#mg-foot a:focus-visible,#mg-head a:focus-visible{outline:2px solid #E3BE84;outline-offset:2px}
 @media(max-width:600px){#mg-head .crumbs .home,#mg-head .crumbs .home+.sep{display:none}
-  #mg-head nav{flex-direction:column;gap:0}#mg-head nav a{border:0;border-bottom:1px solid rgba(201,162,76,.1);border-radius:0;padding:10px 2px}
+  #mg-head nav{flex-direction:column;gap:0}#mg-head nav a{border:0;border-bottom:1px solid rgba(184,137,74,.1);border-radius:0;padding:10px 2px}
   #mg-head .burger .w{display:none}}
 #mg-foot{box-sizing:border-box;width:100%;align-self:stretch;clear:both;margin-top:40px;position:relative;z-index:1;
   padding:22px max(16px,env(safe-area-inset-right,0px)) calc(70px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
-  background:rgba(6,5,18,.88);border-top:1px solid rgba(201,162,76,.25);font:12.5px/1.6 "Noto Sans Georgian",system-ui,sans-serif;color:#b9ab90;text-align:center}
+  background:rgba(11,20,24,.96);border-top:1px solid rgba(184,137,74,.25);font:12.5px/1.6 'Noto Serif Georgian',system-ui,sans-serif;color:#B9BFBC;text-align:center}
 #mg-foot .links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-bottom:10px}
-#mg-foot a{color:#e3cf9a;text-decoration:none}#mg-foot a:hover{color:#F0D48A;text-decoration:underline}
+#mg-foot a{color:#E3BE84;text-decoration:none}#mg-foot a:hover{color:#E3BE84;text-decoration:underline}
 #mg-foot .note{max-width:760px;margin:0 auto 8px;font-size:11.5px;opacity:.85}
 #mg-foot .copy{font-size:11.5px;opacity:.75}
 #mg-consent{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:9993;width:min(560px,calc(100% - 24px));box-sizing:border-box;
-  background:#0d0a22;border:1px solid rgba(201,162,76,.55);border-radius:14px;padding:14px 16px;color:#f3ecdc;box-shadow:0 12px 40px rgba(0,0,0,.6);
-  font:13px/1.55 "Noto Sans Georgian",system-ui,sans-serif}
-#mg-consent a{color:#F0D48A}
+  background:#101E24;border:1px solid rgba(184,137,74,.55);border-radius:2px;padding:14px 16px;color:#EDE6D8;box-shadow:0 12px 40px rgba(0,0,0,.6);
+  font:13px/1.55 'Noto Serif Georgian',system-ui,sans-serif}
+#mg-consent a{color:#E3BE84}
 #mg-consent .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:flex-end}
-#mg-consent button{all:unset;cursor:pointer;padding:7px 14px;border-radius:8px;border:1px solid rgba(201,162,76,.5);color:#F0D48A;font-size:13px}
-#mg-consent button.pri{background:#C9A24C;color:#1d1405;border-color:#C9A24C;font-weight:600}
-#mg-consent button:focus-visible{outline:2px solid #F0D48A;outline-offset:2px}`;
+#mg-consent button{all:unset;cursor:pointer;padding:7px 14px;border-radius:2px;border:1px solid rgba(184,137,74,.5);color:#E3BE84;font-size:13px}
+#mg-consent button.pri{background:#B8894A;color:#0B1418;border-color:#B8894A;font-weight:600}
+#mg-consent button:focus-visible{outline:2px solid #E3BE84;outline-offset:2px}`;
 
 function header(){
   if(P==='index.html'&&!qs.get('g'))return;                 /* the main menu is the home page itself */
@@ -126,7 +126,7 @@ function consent(force){
   if(document.getElementById('mg-consent'))return;
   const cur=LS.get('magnus_consent');
   const c=document.createElement('div');c.id='mg-consent';c.setAttribute('role','dialog');c.setAttribute('aria-label','კონფიდენციალურობა');
-  c.innerHTML=`<b style="color:#F0D48A">ბრაუზერის მეხსიერება და სტატისტიკა</b><br>
+  c.innerHTML=`<b style="color:#E3BE84">ბრაუზერის მეხსიერება და სტატისტიკა</b><br>
     MAGNUS ინახავს ბრაუზერში თქვენს პარამეტრებს და შესვლის მონაცემს (სარეკლამო ქუქიებს არ ვიყენებთ). საიტის გასაუმჯობესებლად ვაგროვებთ სტატისტიკას — რომელ გვერდებს ნახულობთ და რას ითვლით.
     დეტალები: <a href="privacy.html">კონფიდენციალურობის პოლიტიკა</a>.${cur?`<br><span style="opacity:.75">ახლა: ${cur==='all'?'სტატისტიკა ჩართულია':'მხოლოდ აუცილებელი'}</span>`:''}
     <div class="row"><button type="button" data-c="essential">მხოლოდ აუცილებელი</button><button type="button" class="pri" data-c="all">ვეთანხმები</button></div>`;
@@ -136,6 +136,7 @@ function consent(force){
 }
 
 function start(){
+  if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
   header();footer();consent(false);
 }
