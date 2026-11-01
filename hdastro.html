@@ -9,7 +9,7 @@
 :root{
   --void:#04030a;--panel:rgba(14,12,28,.82);--border:rgba(201,168,76,.22);
   --gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8a6a20;
-  --txt:#e0d8ff;--dim:rgba(170,178,196,.62);--des:#8e949e;
+  --txt:#e0d8ff;--dim:rgba(170,178,196,.62);--des:#d9dde4;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
@@ -30,23 +30,24 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 40%,#9a7028 65%,#e8d5a0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero-sub{font-size:13px;color:var(--dim);margin-top:8px}
 
-.form{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+.form{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;
+  flex-wrap:wrap;gap:12px 18px;align-items:flex-end;justify-content:center}
 .f label{display:block;font-size:11px;color:var(--dim);margin-bottom:5px;letter-spacing:.5px}
-.f input,.f select{width:100%;background:#0b0918;border:1px solid var(--border);border-radius:8px;color:var(--txt);
+.f input,.f select{width:100%;text-align:center;background:#0b0918;border:1px solid var(--border);border-radius:8px;color:var(--txt);
   padding:9px 10px;font:inherit;font-size:14px}
 .f input:focus,.f select:focus{outline:none;border-color:var(--gold)}
-.row3{display:flex;gap:6px}.row3 input{min-width:0}
-.f.wide{grid-column:span 2}
-.row3 .yr{flex:1.6}
+.row3{display:flex;gap:5px}.row3 input{min-width:0;padding-left:4px;padding-right:4px}
+.row3 .n2{width:50px}.row3 .yr{width:76px}.row3 .co{width:96px}
+.f.city{width:220px;position:relative}
+.f.city .hint{position:absolute;left:0;right:0;top:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.f.tz{width:150px}.f.hs{width:150px}
 input[type=number]{-moz-appearance:textfield;appearance:textfield}
 input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .hint{font-size:11px;color:var(--dim);margin-top:4px;min-height:14px}
 .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);cursor:pointer;padding-bottom:10px}
-.btn{grid-column:1/-1;justify-self:center;background:linear-gradient(135deg,#8a6a20,#c9a84c 50%,#8a6a20);color:#120c02;border:none;
+.btn{flex-basis:100%;max-width:280px;margin:4px auto 0;background:linear-gradient(135deg,#8a6a20,#c9a84c 50%,#8a6a20);color:#120c02;border:none;
   border-radius:10px;padding:12px 34px;font-family:'Cinzel','Noto Sans Georgian',serif;font-weight:600;letter-spacing:2px;cursor:pointer;font-size:14px}
 .btn:disabled{opacity:.6;cursor:wait}
-.err{grid-column:1/-1;text-align:center;color:#ff8a80;font-size:13px;min-height:16px}
+.err{flex-basis:100%;text-align:center;color:#ff8a80;font-size:13px;min-height:16px}
 
 #out{display:none;margin-top:22px}
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
@@ -97,15 +98,15 @@ td.dd{color:#a9aeb7}
   </div>
 
   <div class="form">
-    <div class="f wide"><label>დღე / თვე / წელი</label>
-      <div class="row3"><input id="day" type="number" min="1" max="31" value="15"><input id="month" type="number" min="1" max="12" value="5"><input id="year" class="yr" type="number" min="-3000" max="9999" value="1990"></div></div>
+    <div class="f"><label>დღე / თვე / წელი</label>
+      <div class="row3"><input id="day" class="n2" type="number" min="1" max="31" value="15"><input id="month" class="n2" type="number" min="1" max="12" value="5"><input id="year" class="yr" type="number" min="-3000" max="9999" value="1990"></div></div>
     <div class="f"><label>საათი : წუთი</label>
-      <div class="row3"><input id="hour" type="number" min="0" max="23" value="14"><input id="minute" type="number" min="0" max="59" value="30"></div></div>
-    <div class="f wide"><label>ქალაქი</label><input id="city" placeholder="მაგ. Tbilisi" autocomplete="off"><div class="hint" id="city-hint"></div></div>
-    <div class="f wide"><label>განედი / გრძედი</label>
-      <div class="row3"><input id="lat" type="number" step="0.0001" value="41.7151"><input id="lon" type="number" step="0.0001" value="44.8271"></div></div>
-    <div class="f"><label>დროის სარტყელი</label><input id="tz" value="Asia/Tbilisi"></div>
-    <div class="f"><label>სახლების სისტემა</label>
+      <div class="row3"><input id="hour" class="n2" type="number" min="0" max="23" value="14"><input id="minute" class="n2" type="number" min="0" max="59" value="30"></div></div>
+    <div class="f city"><label>ქალაქი</label><input id="city" placeholder="მაგ. Tbilisi" autocomplete="off"><div class="hint" id="city-hint"></div></div>
+    <div class="f"><label>განედი / გრძედი</label>
+      <div class="row3"><input id="lat" class="co" type="number" step="0.0001" value="41.7151"><input id="lon" class="co" type="number" step="0.0001" value="44.8271"></div></div>
+    <div class="f tz"><label>დროის სარტყელი</label><input id="tz" value="Asia/Tbilisi"></div>
+    <div class="f hs"><label>სახლების სისტემა</label>
       <select id="hsys"><option value="P">პლაციდუსი</option><option value="K">კოხი</option><option value="O">პორფირი</option><option value="E">თანაბარი</option><option value="W">მთლიანი ნიშანი</option></select></div>
     <label class="chk"><input type="checkbox" id="tunk"> დრო უცნობია</label>
     <button class="btn" id="go">✦ რუქის აგება ✦</button>
@@ -160,7 +161,7 @@ const PKA={"Sun":"მზე","Earth":"დედამიწა","Moon":"მთ�
 /* personality = colourful, one colour per body */
 const PCOL={"Sun":"#ffc83d","Earth":"#6bbf59","Moon":"#e8ecf5","North Node":"#c08bff","South Node":"#9b7bd1","Mercury":"#5fd3e0",
   "Venus":"#ff8fc8","Mars":"#ff5a4e","Jupiter":"#ff9f43","Saturn":"#c9a97a","Uranus":"#49c6ff","Neptune":"#5a7cff","Pluto":"#d04ca0"};
-const DCOL='#8e949e';
+const DCOL='#e1e5ec';
 const CENTER_KA={"Head":"გვირგვინი","Ajna":"აჯნა","Throat":"ყელი","G":"G ცენტრი","Heart":"გული","Solar Plexus":"მზის წნული",
   "Spleen":"ელენთა","Sacral":"საკრალური","Root":"ფუძე"};
 const TYPE_KA={"Manifestor":"მანიფესტორი","Generator":"გენერატორი","Manifesting Generator":"მანიფ. გენერატორი","Projector":"პროექტორი","Reflector":"რეფლექტორი"};
@@ -189,12 +190,19 @@ const fmtDeg=lon=>{const s=Math.floor(lon/30),d=lon-s*30;let dg=Math.floor(d),mi
 
 /* spread glyphs on one track so they never overlap */
 function spread(items,minSep){
-  const it=items.map(o=>({...o,p:o.lon})).sort((a,b)=>a.lon-b.lon);const n=it.length;if(n<2)return it;
-  for(let k=0;k<200;k++){let moved=false;
-    for(let i=0;i<n;i++){const a=it[i],b=it[(i+1)%n];let d=HDA.norm(b.p-a.p);if(n===2&&i===1)break;
-      if(d<minSep){const push=(minSep-d)/2+0.01;a.p=HDA.norm(a.p-push);b.p=HDA.norm(b.p+push);moved=true;}}
+  /* unwrap from the widest empty gap, then relax neighbours in a fixed order
+     (positions may never swap, so a pushed glyph cannot jump past another) */
+  const it=items.map(o=>({...o})).sort((a,b)=>a.lon-b.lon),n=it.length;if(n<2){it.forEach(o=>o.p=o.lon);return it;}
+  let gi=0,gmax=-1;for(let i=0;i<n;i++){const g=HDA.norm(it[(i+1)%n].lon-it[i].lon)||(n===1?360:0);if(g>gmax){gmax=g;gi=i;}}
+  const seq=[];for(let k=1;k<=n;k++)seq.push(it[(gi+k)%n]);
+  let base=seq[0].lon;seq.forEach(o=>{o.u=base+HDA.norm(o.lon-base);});
+  const span=Math.min(360,n*minSep);if(span>=360)minSep=360/n;
+  for(let k=0;k<500;k++){let moved=false;
+    for(let i=0;i<n-1;i++){const a=seq[i],b=seq[i+1],d=b.u-a.u;
+      if(d<minSep-1e-6){const push=(minSep-d)/2;a.u-=push;b.u+=push;moved=true;}}
     if(!moved)break;}
-  return it;
+  seq.forEach(o=>o.p=HDA.norm(o.u));
+  return seq;
 }
 
 /* ── draw ── */
@@ -287,17 +295,19 @@ function draw(){
     let g='';
     for(const it of spread(items,isP?7.4:7.8)){
       const a=o[it.b],col=isP?PCOL[it.b]:DCOL;
-      g+=line(R.gi,R.gi-(isP?12:7),a.lon,`stroke="${col}" stroke-width="${isP?2:1.6}"`);
+      g+=line(R.gi,R.gi-(isP?12:9),a.lon,`stroke="${col}" stroke-width="2"`);
       const [x1,y1]=P(R.gi-(isP?12:7),a.lon),[x2,y2]=P(rt+fs*.55,it.p);
-      g+=`<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="${col}" stroke-opacity=".3" stroke-width=".7"/>`;
+      g+=`<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="${col}" stroke-opacity="${isP?.3:.45}" stroke-width=".8"/>`;
       const rx=(a.retro&&!/Node|Sun|Earth|Moon/.test(it.b))?'℞':'';
+      const [gx,gy]=P(rt,it.p);
       g+=`<g class="pl" data-side="${side}" data-b="${it.b}" style="cursor:pointer">`+
+        (isP?'':`<circle cx="${f1(gx)}" cy="${f1(gy)}" r="14.5" fill="#15132a" stroke="#e1e5ec" stroke-opacity=".55" stroke-width="1.1"/>`)+
         txt(rt,it.p,PG[it.b]+VS,`fill="${col}" font-size="${fs}" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`)+
-        txt(rl,it.p,`${a.gate}.${a.line}${rx}`,`fill="${isP?col:'#a7adb6'}" fill-opacity=".9" font-size="11.5" font-family="Cinzel,serif"`)+'</g>';
+        txt(rl,it.p,`${a.gate}.${a.line}${rx}`,`fill="${isP?col:'#d3d7de'}" fill-opacity="${isP?.9:1}" font-size="${isP?11.5:12}" font-weight="${isP?400:600}" font-family="Cinzel,serif"`)+'</g>';
     }
     return g;
   };
-  s+=track('des',R.dt,R.dl,22,false);
+  s+=track('des',R.dt,R.dl,20,false);
   s+=track('pers',R.pt,R.pl,27,true);
   s+=`<circle cx="500" cy="500" r="${R.sl}" fill="#0b0918" stroke="#c9a84c" stroke-opacity=".4"/>`;
   s+=`<text x="500" y="500" text-anchor="middle" dominant-baseline="central" fill="#c9a84c" font-size="18">✦</text>`;
