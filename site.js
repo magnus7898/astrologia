@@ -135,10 +135,90 @@ function consent(force){
   document.body.appendChild(c);
 }
 
+
+/* ── every tab has its own address: page.html#tab (tabs inside tabs: #tab/sub) ──
+   Finds the page's tab bars (astro .tab-btn + setMode, matrix .method-btn + setMethod,
+   pythagoras .mode-pill, pills, .tabs …, including tabs other scripts add later), names each
+   tab (its own key — natal, synastry, trutine … — or the Georgian label in Latin letters),
+   writes the address on every switch (Back steps through tabs) and opens the tab from the
+   address on load. The breadcrumb shows the open tab.                                      */
+const NO_TABS=new Set(['index.html','account.html','about.html','contact.html','privacy.html','terms.html','refund.html','article.html']);
+const TAB_SEL='.tab-bar .tab-btn,.tab-btn,.method-bar .method-btn,.method-btn,#pp-nav .mode-pill,.mode-pill,[role=tab],.tabs>.tab,.tabs>button,.pills>.pill,.pill';
+const KA={'ა':'a','ბ':'b','გ':'g','დ':'d','ე':'e','ვ':'v','ზ':'z','თ':'t','ი':'i','კ':'k','ლ':'l','მ':'m','ნ':'n','ო':'o','პ':'p','ჟ':'zh','რ':'r','ს':'s','ტ':'t','უ':'u','ფ':'p','ქ':'k','ღ':'gh','ყ':'q','შ':'sh','ჩ':'ch','ც':'ts','ძ':'dz','წ':'ts','ჭ':'ch','ხ':'kh','ჯ':'j','ჰ':'h'};
+const ALIAS={tru:'trutine',dr:'directions',m1:'method-1',m2:'method-2',m3:'method-3',mc:'compatibility',ms:'statistics',mp:'people'};
+const slugify=t=>[...String(t).toLowerCase()].map(c=>KA[c]!==undefined?KA[c]:c).join('').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40);
+const tabLabel=b=>(b.getAttribute('aria-label')||b.textContent||'').replace(/[✦✧★☆⟡◆◇•]/g,' ').replace(/\s+/g,' ').trim();
+function tabKey(b){
+  const oc=b.getAttribute('onclick')||'';
+  let m=/(?:setMode|setTab|setView|showTab|switchTab|openTab|selectTab)\(\s*['"]([\w-]+)['"]/.exec(oc);if(m)return slugify(m[1]);
+  for(const a of ['data-v','data-t','data-tab','data-mode','data-view','data-key'])if(b.getAttribute(a))return slugify(b.getAttribute(a));
+  if(b.id){const id=b.id.replace(/^(btn|tab)-/,'').replace(/-(tab-btn|tab|btn)$/,'');if(id&&!/^\d+$/.test(id))return ALIAS[id]||slugify(id);}
+  m=/setMethod\(\s*(\d+)/.exec(oc);if(m)return 'method-'+m[1];
+  return slugify(tabLabel(b))||null;
+}
+const isOn=b=>b.classList.contains('active')||b.classList.contains('on')||b.classList.contains('sel')||b.getAttribute('aria-selected')==='true';
+let GROUPS=[];
+function scanTabs(){
+  const by=new Map();
+  document.querySelectorAll(TAB_SEL).forEach(b=>{
+    if(b.closest('#mg-head,#mg-foot,#mg-consent,.mg-ov,.mg-dlg,#mg-menu,[role=dialog],.overlay,.modal,#modal'))return;
+    const p=b.parentElement;if(!p)return;if(!by.has(p))by.set(p,[]);if(!by.get(p).includes(b))by.get(p).push(b);});
+  const old=new Map(GROUPS.map(g=>[g.el,g]));
+  GROUPS=[...by.entries()].filter(([el,bs])=>bs.length>=2).map(([el,bs])=>{
+    const g=old.get(el)||{el,def:null};g.btns=bs;
+    const seen={};g.keys=bs.map(b=>{let k=tabKey(b)||'tab';if(seen[k])k+='-'+(++seen[k]);else seen[k]=1;return k;});
+    if(g.def==null){const i=bs.findIndex(isOn);g.def=i<0?0:i;}
+    return g;});
+  return GROUPS;
+}
+const activeIdx=g=>{const i=g.btns.findIndex(isOn);return i<0?(g.cur!=null?g.cur:g.def):i;};
+function tabState(){return GROUPS.map(g=>{const i=g.cur!=null?g.cur:activeIdx(g);return i!==g.def?{k:g.keys[i],t:tabLabel(g.btns[i])}:null;}).filter(Boolean);}
+function tabCrumb(){
+  const h=document.getElementById('mg-head');if(!h)return;const c=h.querySelector('.crumbs');if(!c)return;
+  c.querySelectorAll('.tabc').forEach(e=>e.remove());
+  for(const t of tabState()){const sp=document.createElement('span');sp.className='sep tabc';sp.textContent='›';
+    const x=document.createElement('span');x.className='cur tabc';x.textContent=t.t.slice(0,40);c.appendChild(sp);c.appendChild(x);}
+}
+let applying=false;
+function writeHash(push){
+  if(applying)return;
+  const st=tabState(),h=st.length?'#'+st.map(t=>t.k).join('/'):'';
+  if(h===(location.hash||''))return tabCrumb();
+  if(/=/.test(location.hash))return tabCrumb();                  /* #restore=… etc. belong to other scripts */
+  const url=location.pathname+location.search+h;
+  try{push?history.pushState({mgTabs:1},'',url):history.replaceState(history.state,'',url);}catch(e){}
+  tabCrumb();
+}
+function applyHash(){
+  const raw=decodeURIComponent((location.hash||'').slice(1));
+  scanTabs();
+  if(!raw||/=/.test(raw)){
+    if(!raw)GROUPS.forEach(g=>{const b=g.btns[g.def];if(b&&activeIdx(g)!==g.def&&history.state&&history.state.mgTabs){applying=true;try{b.click();}finally{applying=false;}}});
+    return tabCrumb();}
+  const want=raw.split('/');let hit=0;
+  for(const k of want){scanTabs();
+    for(const g of GROUPS){const i=g.keys.indexOf(k);
+      if(i>=0){g.cur=i;if(activeIdx(g)!==i||!isOn(g.btns[i])){applying=true;try{g.btns[i].click();}finally{applying=false;}}hit++;break;}}}
+  tabCrumb();return hit===want.length;
+}
+function tabs(){
+  if(NO_TABS.has(P))return;
+  document.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest(TAB_SEL);if(!b||applying)return;
+    scanTabs();const g=GROUPS.find(x=>x.btns.includes(b));if(!g)return;
+    g.cur=g.btns.indexOf(b);
+    setTimeout(()=>{scanTabs();writeHash(true);},0);
+  },true);
+  addEventListener('popstate',()=>{GROUPS.forEach(g=>g.cur=null);applyHash();});
+  /* open the tab from the address once the page's own scripts have built their tabs */
+  let n=0;const tryOpen=()=>{const ok=applyHash();if(!ok&&location.hash&&++n<12)setTimeout(tryOpen,350);};
+  setTimeout(tryOpen,location.hash?250:600);
+}
+
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
-  header();footer();consent(false);
+  header();footer();consent(false);tabs();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
