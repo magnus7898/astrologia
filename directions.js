@@ -1,13 +1,13 @@
-/* directions.js — „დირექციები“: მიმართულებები ნატალური რუკისთვის.
-   Self-injecting add-on for astro.html — load after techniques.js.
-   Card under every single chart, 4 methods (tabs):
+/* directions.js — „დირექციები“: ცალკე ჩანართი astro.html-ში.
+   Self-injecting: adds its own tab (დირექციები) at the end of the tab bar with its own birth form
+   (↧ copies from the natal tab), asks the backend /chart for the natal positions and lists:
    • სოლარული რკალი — ნამდვილი: რკალი = პროგრესირებული მზე − ნატალური მზე (1 დღე = 1 წელი)
    • ნაიბოდი — 0°59′08″ წელიწადში (მზის საშუალო დღიური სვლა)
    • 1° = 1 წელი — პტოლემეოსის სიმბოლური გასაღები
    • პრიმარული — პლაციდუსის ნახევარრკალი (ზოდიაქოს წერტილები, განედი 0), გასაღები პტოლემეოსი / ნაიბოდი
    Every directed point (planets, ASC, MC) is checked against every natal point with the 5 major
    aspects; the exact age and date are listed for the whole life, the current year highlighted.
-   Direct / converse toggle. Needs nothing from the backend beyond the natal chart already drawn. */
+   Direct / converse toggle. astro.html needs only:  <script src="directions.js"></script>        */
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
@@ -24,21 +24,22 @@ const fmt=l=>{l=n360(l);const s=Math.floor(l/30),d=l-s*30;return `${Math.floor(d
 const fmtD=jd=>{const t=new Date((jd-2440587.5)*864e5);if(isNaN(t))return '—';return `${String(t.getUTCDate()).padStart(2,'0')}.${String(t.getUTCMonth()+1).padStart(2,'0')}.${t.getUTCFullYear()}`;};
 const nowJD=()=>Date.now()/864e5+2440587.5;
 const CSS=`
-#dir-card .dc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-#dir-card .dc-tabs button,#dir-card .dc-seg button{background:none;border:1px solid rgba(201,162,76,.3);color:rgba(232,201,122,.85);border-radius:14px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit}
-#dir-card .dc-seg{display:inline-flex;gap:4px;flex-wrap:wrap;margin:0 10px 8px 0}
-#dir-card .dc-seg button{border-radius:10px;padding:2px 9px;font-size:10.5px}
-#dir-card .dc-tabs button.on,#dir-card .dc-seg button.on{background:rgba(201,162,76,.2);border-color:#C9A24C;color:#F7E3A8}
-#dir-card table{width:100%;border-collapse:collapse;font-size:12.5px}
-#dir-card th{font-weight:400;font-size:10.5px;letter-spacing:1px;color:rgba(232,201,122,.85);text-align:left;padding:6px 8px;border-bottom:1px solid rgba(201,162,76,.25);position:sticky;top:0;background:#0d0a1e}
-#dir-card td{padding:5px 8px;border-bottom:1px solid rgba(201,162,76,.08);color:#f3ecdc;vertical-align:top;white-space:nowrap}
-#dir-card tr.now td{background:rgba(201,162,76,.15)}
-#dir-card tr.past td{opacity:.55}
-#dir-card .dc-scroll{overflow-x:auto;max-height:440px;overflow-y:auto}
-#dir-card .dc-note{font-size:11px;color:rgba(196,176,148,.8);line-height:1.65;margin-top:8px}
-#dir-card .dc-big{font-size:13.5px;color:#f3ecdc;line-height:1.8;margin-bottom:8px}
-#dir-card .dc-big b{color:#F0D48A;font-weight:500}
-#dir-card h4{font-weight:400;font-size:11px;letter-spacing:1px;color:rgba(232,201,122,.85);margin:12px 0 6px}`;
+#dr-out{margin-top:14px}
+#dr-out .dc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+#dr-out .dc-tabs button,#dr-out .dc-seg button{background:none;border:1px solid rgba(201,162,76,.3);color:rgba(232,201,122,.85);border-radius:14px;padding:4px 12px;font-size:11px;cursor:pointer;font-family:inherit}
+#dr-out .dc-seg{display:inline-flex;gap:4px;flex-wrap:wrap;margin:0 10px 8px 0}
+#dr-out .dc-seg button{border-radius:10px;padding:2px 9px;font-size:10.5px}
+#dr-out .dc-tabs button.on,#dr-out .dc-seg button.on{background:rgba(201,162,76,.2);border-color:#C9A24C;color:#F7E3A8}
+#dr-out table{width:100%;border-collapse:collapse;font-size:12.5px}
+#dr-out th{font-weight:400;font-size:10.5px;letter-spacing:1px;color:rgba(232,201,122,.85);text-align:left;padding:6px 8px;border-bottom:1px solid rgba(201,162,76,.25);position:sticky;top:0;background:#0d0a1e}
+#dr-out td{padding:5px 8px;border-bottom:1px solid rgba(201,162,76,.08);color:#f3ecdc;vertical-align:top;white-space:nowrap}
+#dr-out tr.now td{background:rgba(201,162,76,.15)}
+#dr-out tr.past td{opacity:.55}
+#dr-out .dc-scroll{overflow-x:auto;max-height:440px;overflow-y:auto}
+#dr-out .dc-note{font-size:11px;color:rgba(196,176,148,.8);line-height:1.65;margin-top:8px}
+#dr-out .dc-big{font-size:13.5px;color:#f3ecdc;line-height:1.8;margin-bottom:8px}
+#dr-out .dc-big b{color:#F0D48A;font-weight:500}
+#dr-out h4{font-weight:400;font-size:11px;letter-spacing:1px;color:rgba(232,201,122,.85);margin:12px 0 6px}`;
 
 /* ── birth moment (same reading as techniques.js) ── */
 function reqJD(q){if(!q||!isFinite(+q.year))return null;
@@ -56,12 +57,11 @@ function sunLon(jd){const T=(jd-2451545)/36525,M=(357.52911+35999.05029*T)*D2R,L
 const obliq=jd=>23.4392911-0.0130042*(jd-2451545)/36525;
 
 /* ── chart model ── */
-function model(d){
+function model(d,q){
   const P={};for(const k of KEYS){const v=d.planets&&d.planets[k];if(v&&isFinite(+v.degree))P[k]=n360(+v.degree);}
-  const known=!d._timeUnknown&&d.asc!=null&&d.mc!=null;
+  const known=!q.time_unknown&&d.asc!=null&&d.mc!=null;
   if(known){P.ASC=n360(+d.asc);P.MC=n360(+d.mc);}
-  const q=window._lastChartReq||{};
-  return{P,known,jd:reqJD(q),lat:isFinite(+q.lat)?+q.lat:null};
+  return{P,known,jd:reqJD(q),lat:isFinite(+q.lat)?+q.lat:null,name:q.name||''};
 }
 
 /* ── keys: arc ⇄ age ── */
@@ -152,28 +152,88 @@ function body(M){
     +`<div class="dc-note">${note} ${CONV?'<b>კონვერსიული</b> — რკალი აკლდება (წერტილები უკან მიდის).':'<b>პირდაპირი</b> — რკალი ემატება.'} ცხრილში „dir.“ — დირექციული წერტილი, „nat.“ — ნატალური. ოქროსფრად მონიშნულია ±1 წლის ფარგლებში მიმდინარე დირექციები, ნაცრისფრად — გავლილი.${M.known?'':' ASC/MC არ ითვლება — დაბადების დრო უცნობია.'}</div>`;
 }
 const TABS=[['sa','სოლარული რკალი'],['nb','ნაიბოდი'],['pt','1° = 1 წელი'],['pd','პრიმარული']];
-function card(){let c=$('dir-card');if(c)return c;const anchor=$('tech-card')||$('dominants-card');if(!anchor)return null;
-  c=document.createElement('div');c.className='data-card';c.id='dir-card';c.style.cssText='display:none;margin-top:14px';
-  c.innerHTML='<div class="data-card-title">↗ დირექციები</div><div id="dir-body" style="padding:12px 14px"></div>';
-  anchor.parentNode.insertBefore(c,anchor);return c;}
-function render(d){
-  const c=card();if(!c)return;if(!d||!d.planets){c.style.display='none';return;}
-  LAST=d;const M=model(d);
-  $('dir-body').innerHTML=`<div class="dc-tabs">${TABS.map(x=>`<button data-t="${x[0]}" class="${x[0]===TAB?'on':''}">${x[1]}</button>`).join('')}</div>${body(M)}`;
-  c.style.display='block';
-  c.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render(LAST);});
-  c.querySelectorAll('[data-cv]').forEach(b=>b.onclick=()=>{CONV=b.dataset.cv==='1';render(LAST);});
-  c.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{SPAN=+b.dataset.sp;render(LAST);});
-  c.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PKEY=b.dataset.pk;render(LAST);});
-  const nx=$('dc-next'),sc=c.querySelector('.dc-scroll');if(nx&&sc)sc.scrollTop=Math.max(0,nx.offsetTop-sc.clientHeight/3);
+let M_LAST=null;
+function draw(){
+  const o=$('dr-out');if(!o||!M_LAST)return;const M=M_LAST;
+  const who=M.name?`<b>${M.name.replace(/[<>&]/g,'')}</b> · `:'';
+  const sun=M.P['მზე']!=null?` · ☉ ${fmt(M.P['მზე'])}`:'';
+  o.innerHTML=`<div class="dc-big">${who}${fmtD(M.jd)}${sun}${M.known?` · AC ${fmt(M.P.ASC)} · MC ${fmt(M.P.MC)}`:''}</div>
+    <div class="dc-tabs">${TABS.map(x=>`<button type="button" data-t="${x[0]}" class="${x[0]===TAB?'on':''}">${x[1]}</button>`).join('')}</div>${body(M)}`;
+  o.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;draw();});
+  o.querySelectorAll('[data-cv]').forEach(b=>b.onclick=()=>{CONV=b.dataset.cv==='1';draw();});
+  o.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{SPAN=+b.dataset.sp;draw();});
+  o.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PKEY=b.dataset.pk;draw();});
+  const nx=$('dc-next'),sc=o.querySelector('.dc-scroll');if(nx&&sc)sc.scrollTop=Math.max(0,nx.offsetTop-sc.clientHeight/3);
 }
-function hook(){
+
+/* ── own tab + form ── */
+const field=(lbl,id,val,min,max)=>`<div class="field"><label>${lbl}</label><input type="number" id="dr-${id}" value="${val}" min="${min}" max="${max}"></div>`;
+const PAIRS=['name','day','month','year','hour','minute','second','city','lat','lon','tz'];
+function copyFromNatal(){
+  for(const k of PAIRS){const a=$('n-'+k),b=$('dr-'+k);if(a&&b&&a.value!=='')b.value=a.value;}
+  const tz=$('n-tz-display'),tt=$('dr-tz-display');if(tz&&tt)tt.textContent=tz.textContent;
+  const tu=$('n-time-unknown'),dt=$('dr-time-unknown');if(tu&&dt){dt.checked=tu.checked;try{toggleTU('dr');}catch(e){}}
+}
+function readForm(){
+  const v=id=>$('dr-'+id),tu=v('time-unknown').checked;
+  return{name:v('name').value.trim(),year:+v('year').value,month:+v('month').value,day:+v('day').value,
+    hour:tu?12:+v('hour').value,minute:tu?0:+v('minute').value,second:tu?0:+v('second').value,
+    lat:+v('lat').value,lon:+v('lon').value,tz_name:v('tz').value||'UTC',time_unknown:tu};
+}
+async function run(){
+  const o=$('dr-out'),q=readForm();
+  if(!$('dr-lat').value||!$('dr-lon').value){o.innerHTML='<div class="dc-note" style="color:#e8a0a0">შეიყვანეთ დაბადების ქალაქი.</div>';return;}
+  o.innerHTML='<div class="dc-note">⏳ ვითვლი…</div>';
+  try{
+    const {name,...body}=q;
+    const r=await fetch(`${BACKEND}/chart`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const d=JSON.parse(await r.text());if(d.error)throw new Error(d.error);
+    M_LAST=model(d,q);draw();
+  }catch(e){o.innerHTML=`<div class="dc-note" style="color:#e8a0a0">შეცდომა: ${String(e.message||e).slice(0,200)}</div>`;}
+}
+function activate(){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  $('dr-tab-btn').classList.add('active');
+  document.querySelectorAll('.form-section').forEach(s=>s.classList.remove('active'));
+  $('form-directions').classList.add('active');
+  const ca=$('chart-area');if(ca)ca.style.display='none';
+  const acg=$('acg-section');if(acg)acg.style.display='none';
+  try{currentMode='directions';}catch(e){}
+  if(!$('dr-lat').value&&$('n-lat')&&$('n-lat').value)copyFromNatal();
+}
+function inject(){
+  const bar=document.querySelector('.tab-bar'),card=document.querySelector('.form-card');
+  if(!bar||!card||$('dr-tab-btn'))return;
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
-  if(typeof window.showSingleChart==='function'&&!window.showSingleChart._dc){const o=window.showSingleChart;
-    const w=function(d){const r=o.apply(this,arguments);try{render(d);}catch(e){console.warn('directions',e);}return r;};w._dc=true;for(const k in o)w[k]=o[k];window.showSingleChart=w;}
-  if(typeof window.showDoubleChart==='function'&&!window.showDoubleChart._dc){const o=window.showDoubleChart;
-    const w=function(){const r=o.apply(this,arguments);const c=$('dir-card');if(c)c.style.display='none';return r;};w._dc=true;for(const k in o)w[k]=o[k];window.showDoubleChart=w;}
+  const btn=document.createElement('button');btn.type='button';btn.className='tab-btn';btn.id='dr-tab-btn';btn.textContent='დირექციები';
+  btn.onclick=activate;bar.appendChild(btn);
+  const sec=document.createElement('div');sec.id='form-directions';sec.className='form-section';
+  sec.innerHTML=`
+    <div class="person-label">↗ დირექციები</div>
+    <div class="dc-note" style="margin:0 0 8px">სოლარული რკალი, ნაიბოდი, 1° = 1 წელი და პრიმარული დირექციები (პლაციდუსი) — ზუსტი ასაკი და თარიღი მთელი ცხოვრებისთვის.
+      <button type="button" class="tru-ap" id="dr-copy" style="margin-left:6px;background:none;border:1px solid rgba(240,212,138,.55);color:#F0D48A;border-radius:6px;padding:2px 10px;font-size:10px;cursor:pointer;font-family:inherit">↧ ნატალურიდან</button></div>
+    <div class="field wide" style="margin-bottom:10px"><label>სახელი</label><input id="dr-name" placeholder="სახელი"></div>
+    <div class="form-grid">${field('დღე','day',1,1,31)}${field('თვე','month',1,1,12)}${field('წელი','year',1990,-3000,3000)}</div>
+    <div class="form-grid" id="dr-time-fields">${field('საათი','hour',12,0,23)}${field('წუთი','minute',0,0,59)}${field('წამი','second',0,0,59)}</div>
+    <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
+      <input type="checkbox" id="dr-time-unknown" onchange="toggleTU('dr')" style="width:15px;height:15px;accent-color:#C9A24C;cursor:pointer">
+      <label for="dr-time-unknown" style="font-size:11px;letter-spacing:1px;text-transform:none;cursor:pointer">დრო უცნობია (ASC/MC და პრიმარული არ ითვლება)</label>
+    </div>
+    <div class="field" style="margin-bottom:8px"><label>დაბადების ქალაქი</label>
+      <input id="dr-city" placeholder="თბილისი, London, Paris..." oninput="searchCity('dr')">
+      <div class="city-hint" id="dr-city-hint"></div></div>
+    <div class="form-grid-2" style="margin-bottom:8px">
+      <div class="field"><label>განედი</label><input type="number" id="dr-lat" step="0.0001" readonly></div>
+      <div class="field"><label>გრძედი</label><input type="number" id="dr-lon" step="0.0001" readonly></div>
+    </div>
+    <input type="hidden" id="dr-tz" value="UTC">
+    <div class="tz-display" id="dr-tz-display">⏳ ქალაქის შეყვანის შემდეგ სარტყელი განისაზღვრება</div>
+    <button type="button" class="gen-btn" id="dr-run">↗ დირექციების გამოთვლა ✦</button>
+    <div id="dr-out"></div>`;
+  card.insertBefore(sec,$('orb-panel')||null);
+  $('dr-run').addEventListener('click',run);
+  $('dr-copy').addEventListener('click',copyFromNatal);
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hook);else setTimeout(hook,0);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else setTimeout(inject,0);
 window._directions={model,symbolic,primary,mundane,eq,solarArcAt,KEY};
 })();
