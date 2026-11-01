@@ -119,5 +119,6 @@ document.getElementById('bdClr').onclick=()=>{try{localStorage.removeItem(KEY);}
 let saved=null;try{saved=localStorage.getItem(KEY);}catch(e){}
 if(saved){bd.value=saved;if(!apply(saved))draw(null);}else draw(null);
 </script>
+<script src="account.js"></script>
 </body>
 </html>

@@ -487,5 +487,6 @@ if(/index\.html|\/$/.test(document.referrer)&&!/games\.html/.test(document.refer
 window.addEventListener('resize',()=>{[CG.c,OG.c,GG.c].forEach(c=>{if(c&&c.isConnected)c.fit();});if(CG.c&&CG.c.isConnected&&!CG.fly)cDraw();if(OG.c&&OG.c.isConnected&&!OG.fly)oDraw();if(GG.c&&GG.c.isConnected&&GG.ans)grDraw(GG.ans.f,null);});
 go(new URLSearchParams(location.search).get('t')||'elem');
 </script>
+<script src="account.js"></script>
 </body>
 </html>

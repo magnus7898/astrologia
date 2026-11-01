@@ -383,5 +383,6 @@ document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target.tagName!==
   $(id).onchange=()=>{try{localStorage.setItem('breath-'+id,$(id).checked?'1':'0');}catch(e){}};});
 buildList();select((location.hash||'').slice(1)||'478');showToday();
 </script>
+<script src="account.js"></script>
 </body>
 </html>

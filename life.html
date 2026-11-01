@@ -435,5 +435,6 @@ $('tu').onchange=()=>{$('hh').disabled=$('mi').disabled=$('tu').checked;};
 $('run').onclick=run;
 try{const s=JSON.parse(localStorage.getItem('life_last')||'null');if(s){$('dd').value=s.d;$('mm').value=s.m;$('yy').value=s.y;$('hh').value=s.h;$('mi').value=s.mi;$('tu').checked=!!s.tu;$('tu').onchange();$('place').value=s.place||'თბილისი';$('nm').value=s.nm||'';if(s.hs)$('hs').value=s.hs;}}catch(e){}
 </script>
+<script src="account.js"></script>
 </body>
 </html>

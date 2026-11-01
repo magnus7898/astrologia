@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ჩემი ანგარიში — MAGNUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07061a;--card:rgba(14,11,36,.92);--brd:rgba(201,162,76,.32);--gold:#F0D48A;--gold2:#C9A24C;--txt:#f3ecdc;--dim:#c9b99a;--bad:#ff9a92;--good:#93d6a2}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 20% 0%,#1d1650 0,transparent 55%),radial-gradient(ellipse at 90% 100%,#2a1240 0,transparent 50%),var(--bg);
+  color:var(--txt);font:15px/1.5 "Noto Sans Georgian",system-ui,sans-serif;padding:24px max(16px,env(safe-area-inset-right,0px)) 90px max(16px,env(safe-area-inset-left,0px))}
+.wrap{max-width:900px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+header a{color:var(--dim);text-decoration:none;font-size:13px}
+header a:hover{color:var(--gold)}
+h1{font:600 26px "Cinzel","Noto Serif Georgian",serif;color:var(--gold);margin:0;letter-spacing:.04em}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{all:unset;cursor:pointer;padding:8px 16px;border-radius:999px;border:1px solid var(--brd);color:var(--dim);font-size:13.5px}
+.tabs button.on{background:rgba(201,162,76,.15);color:var(--gold);border-color:var(--gold2)}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:18px;margin-bottom:14px}
+.card h2{font:500 15px "Noto Sans Georgian",sans-serif;color:var(--gold);margin:0 0 12px;letter-spacing:.03em}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+.kv span:nth-child(odd){color:var(--dim)}
+label{display:block;font-size:11px;letter-spacing:.06em;color:var(--dim);margin:10px 0 4px}
+input,select,textarea{width:100%;background:#08061a;border:1px solid var(--brd);border-radius:8px;padding:9px 10px;color:var(--txt);font:inherit;font-size:14px}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 12px}
+.g6{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:0 10px}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 16px;border-radius:9px;border:1px solid var(--brd);color:var(--gold);font-size:13.5px;text-align:center}
+.btn.pri{background:var(--gold2);color:#1d1405;border-color:var(--gold2);font-weight:600}
+.btn.sm{padding:4px 10px;font-size:12px}
+.btn.del{color:var(--bad);border-color:rgba(255,154,146,.4)}
+.btn:hover{filter:brightness(1.12)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.msg{font-size:13px;min-height:18px;margin-top:8px}
+.msg.err{color:var(--bad)} .msg.ok{color:var(--good)}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 12px;border:1px solid rgba(201,162,76,.18);border-radius:10px;background:rgba(8,6,26,.6)}
+.item .main{flex:1;min-width:180px}
+.item b{font-weight:500;color:var(--txt)}
+.item small{display:block;color:var(--dim);font-size:12px}
+.pill{font-size:11px;letter-spacing:.06em;border:1px solid var(--gold2);color:var(--gold);border-radius:4px;padding:1px 6px}
+.tl{font-size:13px;display:flex;flex-direction:column}
+.tl .d{color:var(--gold);font-size:12px;margin:12px 0 4px;letter-spacing:.05em}
+.tl .e{display:grid;grid-template-columns:52px 120px 1fr;gap:8px;padding:4px 0;border-bottom:1px solid rgba(201,162,76,.08)}
+.tl .e span:first-child{color:var(--dim);font-variant-numeric:tabular-nums}
+.tl .e .a{color:var(--gold)}
+.tl .e .x{color:var(--dim);font-size:12px;overflow-wrap:anywhere}
+.empty{color:var(--dim);font-size:13.5px;padding:8px 0}
+.center{text-align:center;padding:40px 16px}
+@media (max-width:560px){.tl .e{grid-template-columns:46px 1fr}.tl .e .x{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>ჩემი ანგარიში</h1><a href="index.html">← მთავარი</a></header>
+  <div id="app"><div class="card center">⏳</div></div>
+</div>
+<script src="account.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const M=()=>window.MAGNUS;
+let TAB='profile';
+const TABS=[['profile','პროფილი'],['people','ჩემი ხალხი'],['saved','შენახული'],['activity','აქტივობა']];
+const PAGES={'astro.html':'ასტროლოგია','matrix.html':'ბედის მატრიცა','hd.html':'ადამიანის დიზაინი','pythagoras.html':'პითაგორას კვადრატი','numerology.html':'ნუმეროლოგია',
+  'name.html':'სახელის ნუმეროლოგია','vedic.html':'ვედური','true_sidereal.html':'ჭეშმარიტი სიდერული','tarot.html':'ტარო','cards.html':'ბედის კარტები','index.html':'მთავარი'};
+const pg=p=>PAGES[p]||p;
+const ACT={view:'ნახვა',click:'დაჭერა',tab:'ჩანართი',calc:'გამოთვლა',nav:'გადასვლა',change:'არჩევა',save:'შენახვა',restore:'აღდგენა',login:'შესვლა',register:'რეგისტრაცია',
+  logout:'გასვლა',person_save:'ადამიანი შენახულია',person_use:'ადამიანი არჩეულია',locked:'დაბლოკილი (Pro)'};
+
+/* links from email: #verify=… / #reset=… */
+async function handleHash(){
+  const h=location.hash;let m;
+  if((m=/#verify=([^&]+)/.exec(h))){history.replaceState(null,'',location.pathname);
+    try{await M().api('/api/account/verify',{method:'POST',body:{token:m[1]},noLogout:true});await M().refreshMe();M().toast('ელფოსტა დადასტურებულია ✓',4000);}catch(x){M().toast(x.message,5000);}}
+  if((m=/#reset=([^&]+)/.exec(h))){history.replaceState(null,'',location.pathname);return resetForm(m[1]);}
+  const t=/#(people|saved|activity|profile)\b/.exec(h);if(t)TAB=t[1];
+  draw();
+}
+function resetForm(tok){
+  $('app').innerHTML=`<div class="card" style="max-width:420px;margin:0 auto"><h2>ახალი პაროლი</h2>
+    <form id="rf"><label for="rp1">ახალი პაროლი (მინ. 8)</label><input id="rp1" type="password" minlength="8" required autocomplete="new-password">
+    <label for="rp2">გაიმეორეთ</label><input id="rp2" type="password" minlength="8" required autocomplete="new-password">
+    <div class="row"><button class="btn pri" type="submit">შეცვლა</button></div><div class="msg" id="rm"></div></form></div>`;
+  $('rf').onsubmit=async e=>{e.preventDefault();const r=$('rm');
+    if($('rp1').value!==$('rp2').value){r.className='msg err';r.textContent='პაროლები არ ემთხვევა';return;}
+    try{const d=await M().api('/api/account/password/reset',{method:'POST',body:{token:tok,password:$('rp1').value},noLogout:true});
+      M().setSession(d.token,d.user);M().toast('პაროლი შეიცვალა — შესული ხართ',4000);TAB='profile';draw();}
+    catch(x){r.className='msg err';r.textContent=x.message;}};
+}
+
+function draw(){
+  const u=M().user;
+  if(!u){$('app').innerHTML=`<div class="card center"><h2 style="text-align:center">შედით ანგარიშზე</h2>
+      <p style="color:var(--dim);font-size:14px;max-width:440px;margin:0 auto 16px">ანგარიში ინახავს თქვენს ხალხს (დაბადების მონაცემებს), შენახულ რუკებსა და გამოთვლებს — ყველა მოწყობილობაზე.</p>
+      <div class="row" style="justify-content:center"><button class="btn pri" type="button" id="li">შესვლა</button><button class="btn" type="button" id="rg">რეგისტრაცია</button></div></div>`;
+    $('li').onclick=()=>M().open('login');$('rg').onclick=()=>M().open('register');return;}
+  $('app').innerHTML=`<div class="tabs">${TABS.map(([k,t])=>`<button type="button" data-t="${k}" class="${k===TAB?'on':''}">${t}</button>`).join('')}</div><div id="pane"></div>`;
+  $('app').querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;history.replaceState(null,'','#'+TAB);draw();});
+  ({profile,people:peopleTab,saved,activity})[TAB]();
+}
+
+/* ── profile ── */
+function profile(){
+  const u=M().user;
+  $('pane').innerHTML=`<div class="card"><h2>ანგარიში</h2><div class="kv">
+      <span>სახელი</span><span>${esc(u.name)||'—'}</span><span>ელფოსტა</span><span>${esc(u.email)} ${u.verified?'<span class="pill" style="border-color:var(--good);color:var(--good)">დადასტურებული</span>':(u.smtp?'<button class="btn sm" type="button" id="vs">დადასტურების ბმული</button>':'')}</span>
+      <span>გეგმა</span><span>${u.plan==='pro'?'<span class="pill">PRO</span>'+(u.plan_until?' · '+esc(u.plan_until.slice(0,10))+'-მდე':''):'უფასო'}</span>
+      <span>ლიმიტი</span><span>${u.people} / ${u.limits.people} ადამიანი · ${u.saved} / ${u.limits.saved} შენახვა</span>
+      <span>რეგისტრაცია</span><span>${esc((u.created||'').slice(0,10))}</span></div><div class="msg" id="vm"></div></div>
+    <div class="card"><h2>სახელის შეცვლა</h2><form id="nf"><label for="nn">სახელი</label><input id="nn" value="${esc(u.name)}" maxlength="80">
+      <div class="row"><button class="btn pri" type="submit">შენახვა</button></div><div class="msg" id="nm"></div></form></div>
+    <div class="card"><h2>პაროლის შეცვლა</h2><form id="pf">
+      <label for="p0">ახლანდელი პაროლი</label><input id="p0" type="password" required autocomplete="current-password">
+      <div class="g2"><div><label for="p1">ახალი პაროლი (მინ. 8)</label><input id="p1" type="password" minlength="8" required autocomplete="new-password"></div>
+      <div><label for="p2">გაიმეორეთ</label><input id="p2" type="password" minlength="8" required autocomplete="new-password"></div></div>
+      <div class="row"><button class="btn pri" type="submit">შეცვლა</button></div><div class="msg" id="pm"></div></form>
+      <p style="font-size:12px;color:var(--dim);margin:10px 0 0">პაროლის შეცვლის შემდეგ სხვა მოწყობილობებზე ხელახლა მოგიწევთ შესვლა.</p></div>
+    <div class="card"><h2>ანგარიშის წაშლა</h2><p style="font-size:13px;color:var(--dim);margin:0 0 8px">წაიშლება ანგარიში, თქვენი ხალხი, შენახული მონაცემები და აქტივობის ისტორია. ეს შეუქცევადია.</p>
+      <form id="df"><label for="dp">პაროლი დასადასტურებლად</label><input id="dp" type="password" required autocomplete="current-password">
+      <div class="row"><button class="btn del" type="submit">ანგარიშის წაშლა</button></div><div class="msg" id="dm"></div></form></div>`;
+  const vs=$('vs');if(vs)vs.onclick=async()=>{try{await M().api('/api/account/verify/send',{method:'POST'});$('vm').className='msg ok';$('vm').textContent='ბმული გამოგზავნილია — შეამოწმეთ ელფოსტა.';}catch(x){$('vm').className='msg err';$('vm').textContent=x.message;}};
+  $('nf').onsubmit=async e=>{e.preventDefault();try{const d=await M().api('/api/account/me',{method:'PATCH',body:{name:$('nn').value}});M().setSession(d.token,d.user);$('nm').className='msg ok';$('nm').textContent='შენახულია';}catch(x){$('nm').className='msg err';$('nm').textContent=x.message;}};
+  $('pf').onsubmit=async e=>{e.preventDefault();const m=$('pm');if($('p1').value!==$('p2').value){m.className='msg err';m.textContent='პაროლები არ ემთხვევა';return;}
+    try{const d=await M().api('/api/account/me',{method:'PATCH',body:{password:$('p0').value,new_password:$('p1').value},noLogout:true});M().setSession(d.token,d.user);e.target.reset();m.className='msg ok';m.textContent='პაროლი შეიცვალა';}
+    catch(x){m.className='msg err';m.textContent=x.message;}};
+  $('df').onsubmit=async e=>{e.preventDefault();const m=$('dm');
+    if(!$('df').dataset.sure){$('df').dataset.sure='1';m.className='msg err';m.textContent='დარწმუნებული ხართ? დააჭირეთ კიდევ ერთხელ.';return;}
+    try{await M().api('/api/account/me',{method:'DELETE',body:{password:$('dp').value},noLogout:true});M().setSession(null,null);M().toast('ანგარიში წაიშალა',4000);draw();}
+    catch(x){delete $('df').dataset.sure;m.className='msg err';m.textContent=x.message;}};
+}
+
+/* ── people ── */
+let editing=null;
+async function peopleTab(){
+  $('pane').innerHTML='<div class="card">⏳</div>';
+  let list=[];try{list=await M().people(true);}catch(e){}
+  const p=editing||{};
+  $('pane').innerHTML=`<div class="card"><h2>${editing&&editing.id?'რედაქტირება: '+esc(editing.name):'ახალი ადამიანი'}</h2>
+    <form id="pf2"><div class="g2"><div><label for="x-name">სახელი</label><input id="x-name" maxlength="80" required value="${esc(p.name)}"></div>
+      <div><label for="x-city">დაბადების ქალაქი</label><input id="x-city" value="${esc(p.city)}" placeholder="თბილისი, London…" oninput="searchCity&&searchCity('x')"><div id="x-city-hint" style="font-size:12px;color:var(--dim);margin-top:3px">${p.city?'📍 '+esc(p.city):''}</div></div></div>
+      <div class="g6"><div><label for="x-day">დღე</label><input id="x-day" type="number" min="1" max="31" required value="${p.day??''}"></div>
+        <div><label for="x-month">თვე</label><input id="x-month" type="number" min="1" max="12" required value="${p.month??''}"></div>
+        <div><label for="x-year">წელი</label><input id="x-year" type="number" required value="${p.year??''}"></div>
+        <div><label for="x-hour">საათი</label><input id="x-hour" type="number" min="0" max="23" value="${p.hour??12}"></div>
+        <div><label for="x-minute">წუთი</label><input id="x-minute" type="number" min="0" max="59" value="${p.minute??0}"></div>
+        <div><label for="x-second">წამი</label><input id="x-second" type="number" min="0" max="59" value="${p.second??0}"></div></div>
+      <input type="hidden" id="x-lat" value="${p.lat??''}"><input type="hidden" id="x-lon" value="${p.lon??''}"><input type="hidden" id="x-tz" value="${esc(p.tz||'UTC')}"><span id="x-tz-display" hidden></span>
+      <div class="row" style="margin-top:10px"><label style="display:flex;gap:6px;align-items:center;margin:0;font-size:13px;letter-spacing:0"><input type="checkbox" id="x-tu" style="width:auto" ${p.time_unknown?'checked':''}> დრო უცნობია</label>
+        <label style="display:flex;gap:6px;align-items:center;margin:0;font-size:13px;letter-spacing:0"><input type="checkbox" id="x-self" style="width:auto" ${p.is_self?'checked':''}> ეს მე ვარ ⭐</label></div>
+      <label for="x-note">შენიშვნა</label><input id="x-note" maxlength="500" value="${esc(p.note)}">
+      <div class="row"><button class="btn pri" type="submit">${editing&&editing.id?'შენახვა':'დამატება'}</button>${editing?'<button class="btn" type="button" id="cx">გაუქმება</button>':''}</div>
+      <div class="msg" id="xm"></div></form></div>
+    <div class="card"><h2>ჩემი ხალხი · ${list.length}</h2><div class="list">${list.length?list.map(x=>`<div class="item"><div class="main"><b>${x.is_self?'⭐ ':''}${esc(x.name)}</b>
+      <small>${pad(x.day)}.${pad(x.month)}.${x.year}${x.time_unknown?' · დრო უცნობია':' · '+pad(x.hour)+':'+pad(x.minute)}${x.city?' · '+esc(x.city):''}${x.note?' · '+esc(x.note):''}</small></div>
+      <a class="btn sm" href="astro.html">რუკა →</a><button class="btn sm" type="button" data-e="${x.id}">რედაქტირება</button><button class="btn sm del" type="button" data-d="${x.id}">წაშლა</button></div>`).join(''):'<div class="empty">ჯერ არავინ არის. ნებისმიერ გვერდზე, დაბადების ფორმასთან, დააჭირეთ „💾 შენახვა“ — ან დაამატეთ აქ.</div>'}</div>
+    <p style="font-size:12px;color:var(--dim);margin:12px 0 0">ყველა გვერდზე, სადაც დაბადების თარიღი შეგყავთ, „👥 ჩემი ხალხი“ ავსებს ფორმას ერთი დაჭერით.</p></div>`;
+  const cx=$('cx');if(cx)cx.onclick=()=>{editing=null;peopleTab();};
+  $('pane').querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{editing=list.find(x=>String(x.id)===b.dataset.e);peopleTab();scrollTo({top:0,behavior:'smooth'});});
+  $('pane').querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{if(!b.dataset.sure){b.dataset.sure='1';b.textContent='დარწმუნებული ხართ?';return;}
+    try{await M().api('/api/people/'+b.dataset.d,{method:'DELETE'});peopleTab();}catch(x){M().toast(x.message);}});
+  $('pf2').onsubmit=async e=>{e.preventDefault();const v=id=>$('x-'+id).value,m=$('xm');
+    if(!v('lat')&&v('city').trim()&&window._geoPending&&window._geoPending.x){try{await window._geoPending.x;}catch(_){}}
+    const body={name:v('name'),day:+v('day'),month:+v('month'),year:+v('year'),hour:+v('hour'),minute:+v('minute'),second:+v('second'),
+      time_unknown:$('x-tu').checked,is_self:$('x-self').checked,city:v('city'),lat:v('lat')===''?null:+v('lat'),lon:v('lon')===''?null:+v('lon'),tz:v('tz'),note:v('note')};
+    try{await M().api(editing&&editing.id?'/api/people/'+editing.id:'/api/people',{method:editing&&editing.id?'PUT':'POST',body});editing=null;M().toast('შენახულია');peopleTab();}
+    catch(x){m.className='msg err';m.textContent=x.message;}};
+}
+/* city lookup for the person form (same backend as astro.html) */
+window.searchCity=window.searchCity||function(P){
+  clearTimeout(searchCity._t);const c=$(P+'-city'),h=$(P+'-city-hint');$(P+'-lat').value='';$(P+'-lon').value='';
+  const q=c.value.trim();if(q.length<2){h.textContent='';return;}h.textContent='⏳ ძიება...';
+  window._geoPending=window._geoPending||{};let done;window._geoPending[P]=new Promise(r=>done=r);
+  searchCity._t=setTimeout(async()=>{try{const r=await fetch('https://astrology-production-b165.up.railway.app/geocode/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q})});
+      const j=await r.json();const d=(j.results||[])[0];if(!d){h.textContent='❌ ვერ მოიძებნა';return;}
+      $(P+'-lat').value=(+d.lat).toFixed(4);$(P+'-lon').value=(+d.lon).toFixed(4);$(P+'-tz').value=d.tz_name||'UTC';h.textContent='📍 '+d.display+' · '+(d.tz_name||'UTC');}
+    catch(e){h.textContent='❌ '+e.message;}finally{done();delete window._geoPending[P];}},400);
+};
+
+/* ── saved ── */
+async function saved(){
+  $('pane').innerHTML='<div class="card">⏳</div>';
+  let list=[];try{list=await M().api('/api/saved');}catch(e){}
+  $('pane').innerHTML=`<div class="card"><h2>შენახული · ${list.length}</h2><div class="list">${list.length?list.map(s=>`<div class="item"><div class="main"><b>${esc(s.title)||'—'}</b>
+      <small>${esc(pg(s.page))}${s.tab?' · '+esc(s.tab):''} · ${esc(s.updated.slice(0,16))}</small></div>
+      <a class="btn sm" href="${esc(s.page)}#restore=${s.id}">გახსნა →</a><button class="btn sm" type="button" data-r="${s.id}">სახელის შეცვლა</button><button class="btn sm del" type="button" data-d="${s.id}">წაშლა</button></div>`).join('')
+    :'<div class="empty">ჯერ არაფერია შენახული. ნებისმიერ გვერდზე: 👤 → „💾 ამ გვერდის შენახვა“ — ინახება ყველა შეყვანილი მონაცემი, მერე აქედან გახსნით.</div>'}</div></div>`;
+  $('pane').querySelectorAll('[data-d]').forEach(b=>b.onclick=async()=>{if(!b.dataset.sure){b.dataset.sure='1';b.textContent='დარწმუნებული ხართ?';return;}
+    try{await M().api('/api/saved/'+b.dataset.d,{method:'DELETE'});saved();}catch(x){M().toast(x.message);}});
+  $('pane').querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{const s=list.find(x=>String(x.id)===b.dataset.r);const it=b.closest('.item');
+    it.innerHTML=`<form class="main" style="display:flex;gap:8px;width:100%"><input value="${esc(s.title)}" maxlength="200" aria-label="სახელი"><button class="btn sm pri" type="submit">OK</button></form>`;
+    it.querySelector('form').onsubmit=async e=>{e.preventDefault();try{await M().api('/api/saved/'+s.id,{method:'PUT',body:{title:it.querySelector('input').value}});saved();}catch(x){M().toast(x.message);}};});
+}
+
+/* ── activity ── */
+async function activity(){
+  $('pane').innerHTML='<div class="card">⏳</div>';
+  let list=[];try{list=await M().api('/api/account/activity');}catch(e){}
+  let html='',day='';
+  for(const a of list){const d=a.t.slice(0,10);if(d!==day){day=d;html+=`<div class="d">${d}</div>`;}
+    const det=a.detail&&typeof a.detail==='object'?Object.entries(a.detail).filter(([k,v])=>v!==null&&v!=='').slice(0,8).map(([k,v])=>`${esc(k)}: ${esc(String(v).slice(0,40))}`).join(' · '):'';
+    html+=`<div class="e"><span>${a.t.slice(11,16)}</span><span class="a">${esc(ACT[a.action]||a.action)}</span><span>${esc(pg(a.page))}${a.target?' — '+esc(a.target):''}${det?`<div class="x">${det}</div>`:''}</span></div>`;}
+  $('pane').innerHTML=`<div class="card"><h2>ბოლო აქტივობა · ${list.length}</h2><div class="tl">${html||'<div class="empty">ჯერ ცარიელია.</div>'}</div>
+    <p style="font-size:12px;color:var(--dim);margin:12px 0 0">დრო — UTC. ინახება გვერდის ნახვები, ჩანართები, გამოთვლები და მათი მონაცემები, რომ შეგეძლოთ წინა ნაბიჯებს დაუბრუნდეთ.</p></div>`;
+}
+
+document.addEventListener('magnus:user',()=>draw());
+function boot(){if(!window.MAGNUS)return setTimeout(boot,50);handleHash();}
+boot();
+})();
+</script>
+</body>
+</html>
