@@ -166,6 +166,15 @@ const CENTER_KA={"Head":"გვირგვინი","Ajna":"აჯნა","Thr
   "Spleen":"ელენთა","Sacral":"საკრალური","Root":"ფუძე"};
 const TYPE_KA={"Manifestor":"მანიფესტორი","Generator":"გენერატორი","Manifesting Generator":"მანიფ. გენერატორი","Projector":"პროექტორი","Reflector":"რეფლექტორი"};
 const STRAT_KA={"Manifestor":"ინფორმირება","Generator":"პასუხი","Manifesting Generator":"პასუხი → ინფორმირება","Projector":"მოიცადე მოწვევას","Reflector":"ელოდე მთვარის ციკლს (28 დღე)"};
+/* Variables — same tables as hd_find.js: colour picks the row, tone 1-3 = left (←), 4-6 = right (→) */
+const VAR_T={
+  dig:[['მადა','თანმიმდევრული','მონაცვლეობითი'],['გემო','ღია','დახურული'],['წყურვილი','ცხელი','ცივი'],['შეხება','მშვიდი','ნერვული'],['ხმა','მაღალი','დაბალი'],['სინათლე','პირდაპირი','ირიბი']],
+  env:[['მღვიმეები','შერჩევითი','შერწყმული'],['ბაზრები','შიდა','გარე'],['სამზარეულო','ნესტიანი','მშრალი'],['მთები','აქტიური','პასიური'],['ველები','ვიწრო','ფართო'],['სანაპირო','ბუნებრივი','ხელოვნური']],
+  mot:[['შიში','კომუნალისტი','სეპარატისტი'],['იმედი','თეისტი','ანტითეისტი'],['სურვილი','ლიდერი','მიმდევარი'],['საჭიროება','ოსტატი','ახალბედა'],['დანაშაული','კონდიციონერი','კონდიცირებული'],['უდანაშაულობა','დამკვირვებელი','დაკვირვებული']],
+  per:[['გადარჩენა','ფოკუსირებული','პერიფერიული'],['შესაძლებლობა','ფოკუსირებული','პერიფერიული'],['ძალა','ფოკუსირებული','პერიფერიული'],['სურვილი','ფოკუსირებული','პერიფერიული'],['ალბათობა','ფოკუსირებული','პერიფერიული'],['პირადი','ფოკუსირებული','პერიფერიული']]};
+const SENSE_KA=['ყნოსვა','გემო','გარეგანი ხედვა','შინაგანი ხედვა','გრძნობა','შეხება'];
+function varTxt(kind,a){const r=VAR_T[kind][a.color-1],L=a.tone<=3;
+  return `${r[0]} · ${L?r[1]:r[2]} <span style="color:var(--dim);font-size:11px">(${a.color}.${a.tone} ${L?'←':'→'})</span>`;}
 const HSYS_KA={P:'პლაციდუსი',K:'კოხი',O:'პორფირი',E:'თანაბარი',W:'მთლიანი ნიშანი'};
 
 /* one colour per channel — 36 distinct hues (golden-angle walk, alternating lightness) */
@@ -354,7 +363,13 @@ function panel(){
   const cent=[...c.centers].map(x=>CENTER_KA[x]).join(', ')||'—';
   $('sum').innerHTML=[
     ['ტიპი',TYPE_KA[c.type]],['პროფილი',c.profile],['სტრატეგია',STRAT_KA[c.type]],['ავტორიტეტი',c.authority],
-    ['განსაზღვრება',c.definition],['არხები',c.channels.length],['განსაზღვრული ცენტრები',cent,'full']
+    ['განსაზღვრება',c.definition],['არხები',c.channels.length],
+    ['გრძნობა',`${SENSE_KA[c.des.Sun.tone-1]} <span style="color:var(--dim);font-size:11px">(დიზ. ☉ ტონი ${c.des.Sun.tone})</span>`],
+    ['საკვები',varTxt('dig',c.des.Sun)],
+    ['გარემო',varTxt('env',c.des['North Node'])],
+    ['მოტივაცია',varTxt('mot',c.pers.Sun)],
+    ['პერსპექტივა',varTxt('per',c.pers['North Node'])],
+    ['განსაზღვრული ცენტრები',cent,'full']
   ].map(([k,v,cl])=>`<div class="${cl||''}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
   $('ch-h').textContent=`არხები · ${c.channels.length}`;
   const who=g=>{const s=c.src[g];return s.p&&s.d?'პ+დ':s.p?'პ':'დ';};
