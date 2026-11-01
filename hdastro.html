@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ასტრო-დიზაინი · ასტროლოგია და ადამიანის დიზაინი</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;600&family=Noto+Serif+Georgian:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#04030a;--panel:rgba(14,12,28,.82);--border:rgba(201,168,76,.22);
+  --gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8a6a20;
+  --txt:#e0d8ff;--dim:rgba(170,178,196,.62);--des:#8e949e;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.5) 0,transparent 100%),
+  radial-gradient(1px 1px at 41% 8%,rgba(255,255,255,.4) 0,transparent 100%),
+  radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.45) 0,transparent 100%),
+  radial-gradient(1px 1px at 15% 68%,rgba(255,255,255,.3) 0,transparent 100%),
+  radial-gradient(1px 1px at 88% 74%,rgba(255,255,255,.35) 0,transparent 100%),
+  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),
+  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%)}
+.wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 16px}
+.back{display:inline-block;margin:18px 0 0;color:var(--gold);text-decoration:none;font-size:13px;opacity:.75}
+.back:hover{opacity:1}
+.hero{text-align:center;padding:26px 0 24px}
+.hero-eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);opacity:.55;margin-bottom:10px}
+.hero-title{font-family:'Cinzel Decorative','Noto Serif Georgian',serif;font-size:clamp(22px,3.6vw,38px);letter-spacing:2px;
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 40%,#9a7028 65%,#e8d5a0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:13px;color:var(--dim);margin-top:8px}
+
+.form{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end}
+.f label{display:block;font-size:11px;color:var(--dim);margin-bottom:5px;letter-spacing:.5px}
+.f input,.f select{width:100%;background:#0b0918;border:1px solid var(--border);border-radius:8px;color:var(--txt);
+  padding:9px 10px;font:inherit;font-size:14px}
+.f input:focus,.f select:focus{outline:none;border-color:var(--gold)}
+.row3{display:flex;gap:6px}.row3 input{min-width:0}
+.f.wide{grid-column:span 2}
+.row3 .yr{flex:1.6}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.hint{font-size:11px;color:var(--dim);margin-top:4px;min-height:14px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);cursor:pointer;padding-bottom:10px}
+.btn{grid-column:1/-1;justify-self:center;background:linear-gradient(135deg,#8a6a20,#c9a84c 50%,#8a6a20);color:#120c02;border:none;
+  border-radius:10px;padding:12px 34px;font-family:'Cinzel','Noto Sans Georgian',serif;font-weight:600;letter-spacing:2px;cursor:pointer;font-size:14px}
+.btn:disabled{opacity:.6;cursor:wait}
+.err{grid-column:1/-1;text-align:center;color:#ff8a80;font-size:13px;min-height:16px}
+
+#out{display:none;margin-top:22px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:start}
+@media(max-width:1000px){.layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px}
+.wheel-card{padding:10px}
+#wheel{width:100%;height:auto;display:block;touch-action:manipulation}
+.ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:12px;color:var(--dim);padding:8px 6px 2px}
+.ctrl label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.ctrl input[type=range]{width:120px;accent-color:var(--gold)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);padding:2px 6px 6px}
+.legend b{font-weight:600}
+h3{font-family:'Cinzel','Noto Serif Georgian',serif;font-size:12px;letter-spacing:2.5px;color:var(--gold);margin:0 0 10px;font-weight:600}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sum>div{background:rgba(255,255,255,.025);border:1px solid rgba(201,168,76,.13);border-radius:9px;padding:8px 10px}
+.sum .k{font-size:10px;color:var(--dim);letter-spacing:.5px}
+.sum .v{font-size:14px;color:var(--gold-l);margin-top:2px}
+.sum .full{grid-column:1/-1}
+.chl{display:flex;flex-direction:column;gap:5px}
+.ch{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent;font-size:13px}
+.ch:hover,.ch.on{border-color:rgba(201,168,76,.35);background:rgba(255,255,255,.03)}
+.ch .sw{width:14px;height:14px;border-radius:4px;flex:none}
+.ch .pr{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-l);min-width:46px}
+.ch .ce{margin-left:auto;font-size:10px;color:var(--dim);text-align:right}
+.ch .src{font-size:10px;color:var(--dim)}
+.none{color:var(--dim);font-size:13px}
+.tbl-card{margin-top:18px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+th{font-weight:400;color:var(--dim);font-size:11px;text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)}
+th.p{color:var(--gold)}th.d{color:var(--des)}
+td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.04)}
+td.gl{font-family:'Cinzel',serif;color:var(--gold-l)}
+td.dgl{font-family:'Cinzel',serif;color:#c3c8d0}
+td.dd{color:#a9aeb7}
+.pg{font-size:17px;width:22px;display:inline-block;text-align:center}
+.meta{font-size:12px;color:var(--dim);margin-top:10px;line-height:1.7}
+.tip{position:fixed;pointer-events:none;z-index:50;background:#120f22;border:1px solid var(--gold-d);border-radius:8px;
+  padding:7px 10px;font-size:12px;color:var(--txt);max-width:260px;display:none;box-shadow:0 6px 24px rgba(0,0,0,.5)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html?g=astrology">← ასტროლოგია</a>
+  <div class="hero">
+    <div class="hero-eyebrow">ASTROLOGY × HUMAN DESIGN</div>
+    <h1 class="hero-title">ასტრო-დიზაინი</h1>
+    <div class="hero-sub">ზოდიაქოს წრე · 64 კარიბჭე · პიროვნება და დიზაინი ერთ რუქაზე</div>
+  </div>
+
+  <div class="form">
+    <div class="f wide"><label>დღე / თვე / წელი</label>
+      <div class="row3"><input id="day" type="number" min="1" max="31" value="15"><input id="month" type="number" min="1" max="12" value="5"><input id="year" class="yr" type="number" min="-3000" max="9999" value="1990"></div></div>
+    <div class="f"><label>საათი : წუთი</label>
+      <div class="row3"><input id="hour" type="number" min="0" max="23" value="14"><input id="minute" type="number" min="0" max="59" value="30"></div></div>
+    <div class="f wide"><label>ქალაქი</label><input id="city" placeholder="მაგ. Tbilisi" autocomplete="off"><div class="hint" id="city-hint"></div></div>
+    <div class="f wide"><label>განედი / გრძედი</label>
+      <div class="row3"><input id="lat" type="number" step="0.0001" value="41.7151"><input id="lon" type="number" step="0.0001" value="44.8271"></div></div>
+    <div class="f"><label>დროის სარტყელი</label><input id="tz" value="Asia/Tbilisi"></div>
+    <div class="f"><label>სახლების სისტემა</label>
+      <select id="hsys"><option value="P">პლაციდუსი</option><option value="K">კოხი</option><option value="O">პორფირი</option><option value="E">თანაბარი</option><option value="W">მთლიანი ნიშანი</option></select></div>
+    <label class="chk"><input type="checkbox" id="tunk"> დრო უცნობია</label>
+    <button class="btn" id="go">✦ რუქის აგება ✦</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="out">
+    <div class="layout">
+      <div class="card wheel-card">
+        <svg id="wheel" viewBox="-30 -30 1060 1060" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="ctrl">
+          <label>ნაჭრების გამჭვირვალობა <input type="range" id="op" min="3" max="60" value="10"> <span id="opv">10%</span></label>
+          <label><input type="checkbox" id="lines"> არხის ხაზები</label>
+          <label><input type="checkbox" id="asp"> ასპექტები</label>
+        </div>
+        <div class="legend">
+          <span><b style="color:var(--gold-l)">ფერადი</b> — პიროვნება (დაბადების მომენტი)</span>
+          <span><b style="color:var(--des)">ნაცრისფერი</b> — დიზაინი (მზე 88°-ით ადრე)</span>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>ადამიანის დიზაინი</h3>
+          <div class="sum" id="sum"></div>
+          <h3 id="ch-h">არხები</h3>
+          <div class="chl" id="chl"></div>
+          <div class="meta" id="meta"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card tbl-card">
+      <h3>პლანეტები</h3>
+      <table id="tbl"></table>
+    </div>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+
+<script src="hdastro_engine.js"></script>
+<script>
+'use strict';
+const BACKEND="https://astrology-production-b165.up.railway.app";
+const $=id=>document.getElementById(id);
+const VS='︎';
+const SIGN_G=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(s=>s+VS);
+const SIGN_KA=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const ELEM_COL=['#ff7a5c','#9ccf6a','#f2d46b','#6fb6ff'];      /* fire earth air water */
+const PG={"Sun":"☉","Earth":"⊕","Moon":"☽","North Node":"☊","South Node":"☋","Mercury":"☿","Venus":"♀","Mars":"♂",
+  "Jupiter":"♃","Saturn":"♄","Uranus":"♅","Neptune":"♆","Pluto":"♇"};
+const PKA={"Sun":"მზე","Earth":"დედამიწა","Moon":"მთვარე","North Node":"ჩრდ. კვანძი","South Node":"სამხ. კვანძი","Mercury":"მერკური",
+  "Venus":"ვენერა","Mars":"მარსი","Jupiter":"იუპიტერი","Saturn":"სატურნი","Uranus":"ურანი","Neptune":"ნეპტუნი","Pluto":"პლუტონი"};
+/* personality = colourful, one colour per body */
+const PCOL={"Sun":"#ffc83d","Earth":"#6bbf59","Moon":"#e8ecf5","North Node":"#c08bff","South Node":"#9b7bd1","Mercury":"#5fd3e0",
+  "Venus":"#ff8fc8","Mars":"#ff5a4e","Jupiter":"#ff9f43","Saturn":"#c9a97a","Uranus":"#49c6ff","Neptune":"#5a7cff","Pluto":"#d04ca0"};
+const DCOL='#8e949e';
+const CENTER_KA={"Head":"გვირგვინი","Ajna":"აჯნა","Throat":"ყელი","G":"G ცენტრი","Heart":"გული","Solar Plexus":"მზის წნული",
+  "Spleen":"ელენთა","Sacral":"საკრალური","Root":"ფუძე"};
+const TYPE_KA={"Manifestor":"მანიფესტორი","Generator":"გენერატორი","Manifesting Generator":"მანიფ. გენერატორი","Projector":"პროექტორი","Reflector":"რეფლექტორი"};
+const STRAT_KA={"Manifestor":"ინფორმირება","Generator":"პასუხი","Manifesting Generator":"პასუხი → ინფორმირება","Projector":"მოიცადე მოწვევას","Reflector":"ელოდე მთვარის ციკლს (28 დღე)"};
+const HSYS_KA={P:'პლაციდუსი',K:'კოხი',O:'პორფირი',E:'თანაბარი',W:'მთლიანი ნიშანი'};
+
+/* one colour per channel — 36 distinct hues (golden-angle walk, alternating lightness) */
+const CH_COL=HDA.CHANNELS.map((_,i)=>`hsl(${Math.round((i*137.508)%360)},${i%3===2?70:85}%,${i%2?60:54}%)`);
+
+const ASPECTS=[{a:0,orb:8,c:'#d9c27a'},{a:60,orb:5,c:'#5fb6ff'},{a:90,orb:7,c:'#ff5a4e'},{a:120,orb:7,c:'#5fb6ff'},{a:180,orb:8,c:'#ff5a4e'}];
+
+let CH=null,ROT=0,HL=null;
+const R={zo:488,zi:442,tk:436,go:436,gm:412,gi:388,pt:358,pl:334,dt:302,dl:282,hn:258,inn:244,sl:26};
+
+/* ── geometry ── */
+const ang=lon=>(180+(lon-ROT))*Math.PI/180;
+const P=(r,lon)=>[500+r*Math.cos(ang(lon)),500-r*Math.sin(ang(lon))];
+const f1=n=>n.toFixed(1);
+function wedge(r1,r2,a,b){
+  const [x1,y1]=P(r2,a),[x2,y2]=P(r2,b),[x3,y3]=P(r1,b),[x4,y4]=P(r1,a),lg=(HDA.norm(b-a)>180)?1:0;
+  return `M${f1(x1)} ${f1(y1)}A${r2} ${r2} 0 ${lg} 0 ${f1(x2)} ${f1(y2)}L${f1(x3)} ${f1(y3)}A${r1} ${r1} 0 ${lg} 1 ${f1(x4)} ${f1(y4)}Z`;
+}
+const line=(r1,r2,lon,st)=>{const [a,b]=P(r1,lon),[c,d]=P(r2,lon);return `<line x1="${f1(a)}" y1="${f1(b)}" x2="${f1(c)}" y2="${f1(d)}" ${st}/>`;};
+const txt=(r,lon,s,st)=>{const [x,y]=P(r,lon);return `<text x="${f1(x)}" y="${f1(y)}" text-anchor="middle" dominant-baseline="central" ${st}>${s}</text>`;};
+const fmtDeg=lon=>{const s=Math.floor(lon/30),d=lon-s*30;let dg=Math.floor(d),mi=Math.round((d-dg)*60);if(mi===60){mi=0;dg++;}return {s,txt:`${dg}°${String(mi).padStart(2,'0')}′`};};
+
+/* spread glyphs on one track so they never overlap */
+function spread(items,minSep){
+  const it=items.map(o=>({...o,p:o.lon})).sort((a,b)=>a.lon-b.lon);const n=it.length;if(n<2)return it;
+  for(let k=0;k<200;k++){let moved=false;
+    for(let i=0;i<n;i++){const a=it[i],b=it[(i+1)%n];let d=HDA.norm(b.p-a.p);if(n===2&&i===1)break;
+      if(d<minSep){const push=(minSep-d)/2+0.01;a.p=HDA.norm(a.p-push);b.p=HDA.norm(b.p+push);moved=true;}}
+    if(!moved)break;}
+  return it;
+}
+
+/* ── draw ── */
+function draw(){
+  const c=CH,svg=$('wheel'),op=+$('op').value/100;
+  const H=c.houses;ROT=H?H.asc:0;
+  let s=`<defs><radialGradient id="bgG"><stop offset="0" stop-color="#0d0a1f"/><stop offset="1" stop-color="#05040c"/></radialGradient></defs>`;
+  s+=`<circle cx="500" cy="500" r="${R.zo}" fill="url(#bgG)" stroke="${'#c9a84c'}" stroke-opacity=".55" stroke-width="1.4"/>`;
+
+  /* 64 hidden cake slices — lit only when a channel is defined */
+  s+='<g id="slices">';
+  c.channels.forEach(ch=>{
+    const col=CH_COL[ch.idx];
+    for(const g of [ch.a,ch.b]){const [a,b]=HDA.gateRange(g);
+      s+=`<path class="slc" data-ch="${ch.idx}" d="${wedge(R.sl,R.gi,a,b)}" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-opacity="${Math.min(1,op*4+.15)}" stroke-width="1"/>`;}
+  });
+  s+='</g>';
+  /* faint slice boundaries so the 64 sectors are sensed even when dark */
+  s+='<g stroke="#c9a84c" stroke-opacity=".05" stroke-width=".6">';
+  for(let i=0;i<64;i++)s+=line(R.sl,R.gi,HDA.GATE_START+i*HDA.GW,'');
+  s+='</g>';
+
+  /* zodiac ring */
+  for(let i=0;i<12;i++){
+    const a=i*30,col=ELEM_COL[i%4];
+    s+=`<path d="${wedge(R.zi,R.zo,a,a+30)}" fill="${col}" fill-opacity=".055" stroke="#c9a84c" stroke-opacity=".35" stroke-width=".8"/>`;
+    s+=txt((R.zo+R.zi)/2,a+15,SIGN_G[i],`fill="${col}" font-size="26" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`);
+  }
+  /* degree ticks */
+  s+='<g stroke="#c9a84c" stroke-opacity=".45">';
+  for(let d=0;d<360;d++){const L=d%10===0?8:d%5===0?6:3;s+=line(R.zi,R.zi-L,d,`stroke-width="${d%5===0?1:.6}"`);}
+  s+='</g>';
+
+  /* gate ring — outer half = personality, inner half = design */
+  const src=c.src,chOf={};c.channels.forEach(ch=>{(chOf[ch.a]=chOf[ch.a]||[]).push(ch.idx);(chOf[ch.b]=chOf[ch.b]||[]).push(ch.idx);});
+  s+='<g id="gates">';
+  HDA.GATE_ORDER.forEach(g=>{
+    const [a,b]=HDA.gateRange(g),st=src[g]||{};
+    s+=`<path d="${wedge(R.gi,R.go,a,b)}" fill="#0a0817" stroke="#c9a84c" stroke-opacity=".28" stroke-width=".7"/>`;
+    if(st.p)s+=`<path d="${wedge(R.gm,R.go-5,a+.25,b-.25)}" fill="#f0d080" fill-opacity=".2"/>`;
+    if(st.d)s+=`<path d="${wedge(R.gi+1,R.gm,a+.25,b-.25)}" fill="#b8bec8" fill-opacity=".18"/>`;
+    if(chOf[g])s+=`<path d="${wedge(R.gi,R.gi+3,a,b)}" fill="${CH_COL[chOf[g][0]]}"/>`;
+    for(let l=1;l<6;l++)s+=line(R.go,R.go-4,a+l*HDA.GW/6,`stroke="#c9a84c" stroke-opacity=".3" stroke-width=".5"`);
+    const on=st.p||st.d;
+    s+=`<g class="gt" data-g="${g}">`+txt((R.go+R.gi)/2,(a+b)/2,g,`fill="${on?(st.p?'#f6e3a6':'#d4d8de'):'rgba(201,168,76,.42)'}" font-size="${on?15:13}" font-weight="${on?600:400}" font-family="Cinzel,serif"`)+'</g>';
+  });
+  s+='</g>';
+
+  /* houses */
+  if(H){
+    s+='<g>';
+    H.cusps.forEach((cu,i)=>{
+      const ax=i%3===0;
+      s+=line(R.gi,R.inn,cu,`stroke="#c9a84c" stroke-opacity="${ax?.75:.28}" stroke-width="${ax?1.6:.8}" ${ax?'':'stroke-dasharray="3 4"'}`);
+      const nx=H.cusps[(i+1)%12],mid=cu+HDA.norm(nx-cu)/2;
+      s+=txt(R.hn,mid,i+1,`fill="rgba(201,168,76,.5)" font-size="12" font-family="Cinzel,serif"`);
+    });
+    [[H.asc,'ASC'],[H.mc,'MC'],[HDA.norm(H.asc+180),'DSC'],[HDA.norm(H.mc+180),'IC']].forEach(([l,t])=>{
+      s+=line(R.zo,R.zo+10,l,`stroke="#f0d080" stroke-width="2"`);
+      s+=txt(R.zo+22,l,t,`fill="#f0d080" font-size="13" font-family="Cinzel,serif" font-weight="600"`);
+    });
+    s+='</g>';
+  }
+  s+=`<circle cx="500" cy="500" r="${R.inn}" fill="none" stroke="#c9a84c" stroke-opacity=".25"/>`;
+
+  /* aspects (personality, optional) */
+  if($('asp').checked){
+    const B=Object.keys(c.pers).filter(b=>b!=='Earth'&&b!=='South Node');
+    s+='<g stroke-width="1">';
+    for(let i=0;i<B.length;i++)for(let j=i+1;j<B.length;j++){
+      const d=Math.abs(((c.pers[B[i]].lon-c.pers[B[j]].lon)%360+540)%360-180);
+      const A=ASPECTS.find(x=>x.a&&Math.abs(d-x.a)<=x.orb);if(!A)continue;
+      const [x1,y1]=P(R.inn-4,c.pers[B[i]].lon),[x2,y2]=P(R.inn-4,c.pers[B[j]].lon);
+      s+=`<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="${A.c}" stroke-opacity=".55"/>`;
+    }
+    s+='</g>';
+  }
+  /* channel chords (optional) */
+  if($('lines').checked){
+    c.channels.forEach(ch=>{
+      const ma=HDA.gateRange(ch.a)[0]+HDA.GW/2,mb=HDA.gateRange(ch.b)[0]+HDA.GW/2;
+      const [x1,y1]=P(R.inn-2,ma),[x2,y2]=P(R.inn-2,mb);
+      s+=`<line class="chl-l" data-ch="${ch.idx}" x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="${CH_COL[ch.idx]}" stroke-width="2" stroke-opacity=".8"/>`;
+    });
+  }
+
+  /* planets: personality (colourful) outer track, design (grey) inner track */
+  const track=(side,rt,rl,fs,isP)=>{
+    const o=c[side],items=Object.keys(o).map(b=>({b,lon:o[b].lon}));
+    let g='';
+    for(const it of spread(items,isP?7.4:7.8)){
+      const a=o[it.b],col=isP?PCOL[it.b]:DCOL;
+      g+=line(R.gi,R.gi-(isP?12:7),a.lon,`stroke="${col}" stroke-width="${isP?2:1.6}"`);
+      const [x1,y1]=P(R.gi-(isP?12:7),a.lon),[x2,y2]=P(rt+fs*.55,it.p);
+      g+=`<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x2)}" y2="${f1(y2)}" stroke="${col}" stroke-opacity=".3" stroke-width=".7"/>`;
+      const rx=(a.retro&&!/Node|Sun|Earth|Moon/.test(it.b))?'℞':'';
+      g+=`<g class="pl" data-side="${side}" data-b="${it.b}" style="cursor:pointer">`+
+        txt(rt,it.p,PG[it.b]+VS,`fill="${col}" font-size="${fs}" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`)+
+        txt(rl,it.p,`${a.gate}.${a.line}${rx}`,`fill="${isP?col:'#a7adb6'}" fill-opacity=".9" font-size="11.5" font-family="Cinzel,serif"`)+'</g>';
+    }
+    return g;
+  };
+  s+=track('des',R.dt,R.dl,22,false);
+  s+=track('pers',R.pt,R.pl,27,true);
+  s+=`<circle cx="500" cy="500" r="${R.sl}" fill="#0b0918" stroke="#c9a84c" stroke-opacity=".4"/>`;
+  s+=`<text x="500" y="500" text-anchor="middle" dominant-baseline="central" fill="#c9a84c" font-size="18">✦</text>`;
+  svg.innerHTML=s;
+  bindWheel();
+  applyHL();
+}
+
+/* ── highlight a channel (hover / click) ── */
+function applyHL(){
+  const op=+$('op').value/100;
+  document.querySelectorAll('#slices .slc').forEach(p=>{
+    const on=HL!==null&&+p.dataset.ch===HL;
+    p.setAttribute('fill-opacity',on?Math.max(.45,op*2.5):(HL===null?op:op*.5));
+  });
+  document.querySelectorAll('.ch').forEach(e=>e.classList.toggle('on',HL!==null&&+e.dataset.ch===HL));
+}
+function bindWheel(){
+  const tip=$('tip');
+  const show=(e,h)=>{tip.innerHTML=h;tip.style.display='block';tip.style.left=Math.min(innerWidth-270,e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px';};
+  const hide=()=>{tip.style.display='none';};
+  document.querySelectorAll('#slices .slc').forEach(p=>{
+    p.addEventListener('mousemove',e=>{const ch=HDA.CHANNELS[+p.dataset.ch];HL=+p.dataset.ch;applyHL();
+      show(e,`<b style="color:${CH_COL[HL]}">${ch[0]}–${ch[1]}</b> · ${ch[2]}<br><span style="color:var(--dim)">${CENTER_KA[HDA.G2C[ch[0]]]} ↔ ${CENTER_KA[HDA.G2C[ch[1]]]}</span>`);});
+    p.addEventListener('mouseleave',()=>{HL=null;applyHL();hide();});
+  });
+  document.querySelectorAll('#wheel .pl').forEach(el=>{
+    el.addEventListener('mousemove',e=>{const side=el.dataset.side,b=el.dataset.b,a=CH[side][b],f=fmtDeg(a.lon);
+      show(e,`<b style="color:${side==='pers'?PCOL[b]:DCOL}">${PG[b]}${VS} ${PKA[b]}</b> · ${side==='pers'?'პიროვნება':'დიზაინი'}<br>${f.txt} ${SIGN_KA[f.s]}${a.house?` · ${a.house} სახლი`:''}<br>კარიბჭე ${a.gate}.${a.line} · ფერი ${a.color} · ტონი ${a.tone}${a.retro&&!/Node/.test(b)?' · ℞':''}`);});
+    el.addEventListener('mouseleave',hide);
+  });
+  document.querySelectorAll('#wheel .gt').forEach(el=>{
+    el.addEventListener('mousemove',e=>{const g=+el.dataset.g,who=[];
+      for(const side of ['pers','des'])for(const b in CH[side])if(CH[side][b].gate===g)who.push(`<span style="color:${side==='pers'?PCOL[b]:DCOL}">${PG[b]}${VS}</span> ${CH[side][b].gate}.${CH[side][b].line}`);
+      const [a]=HDA.gateRange(g),f=fmtDeg(a);
+      show(e,`<b>კარიბჭე ${g}</b> · ${CENTER_KA[HDA.G2C[g]]}<br><span style="color:var(--dim)">${f.txt} ${SIGN_KA[f.s]}-დან</span>${who.length?'<br>'+who.join(' · '):''}`);});
+    el.addEventListener('mouseleave',hide);
+  });
+}
+
+/* ── side panel + table ── */
+function panel(){
+  const c=CH;
+  const cent=[...c.centers].map(x=>CENTER_KA[x]).join(', ')||'—';
+  $('sum').innerHTML=[
+    ['ტიპი',TYPE_KA[c.type]],['პროფილი',c.profile],['სტრატეგია',STRAT_KA[c.type]],['ავტორიტეტი',c.authority],
+    ['განსაზღვრება',c.definition],['არხები',c.channels.length],['განსაზღვრული ცენტრები',cent,'full']
+  ].map(([k,v,cl])=>`<div class="${cl||''}"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+  $('ch-h').textContent=`არხები · ${c.channels.length}`;
+  const who=g=>{const s=c.src[g];return s.p&&s.d?'პ+დ':s.p?'პ':'დ';};
+  $('chl').innerHTML=c.channels.length?c.channels.map(ch=>`<div class="ch" data-ch="${ch.idx}">
+      <span class="sw" style="background:${CH_COL[ch.idx]}"></span>
+      <span class="pr">${ch.a}–${ch.b}</span>
+      <span>${ch.name}<br><span class="src">${ch.a}:${who(ch.a)} · ${ch.b}:${who(ch.b)}</span></span>
+      <span class="ce">${CENTER_KA[ch.ca]}<br>${CENTER_KA[ch.cb]}</span></div>`).join('')
+    :'<div class="none">განსაზღვრული არხი არ არის</div>';
+  document.querySelectorAll('.ch').forEach(e=>{
+    e.addEventListener('mouseenter',()=>{HL=+e.dataset.ch;applyHL();});
+    e.addEventListener('mouseleave',()=>{HL=null;applyHL();});
+    e.addEventListener('click',()=>{HL=HL===+e.dataset.ch?null:+e.dataset.ch;applyHL();});
+  });
+  const tz=$('tz').value.trim()||'UTC',p=HDA.localParts(c.designJD,tz),pad=n=>String(n).padStart(2,'0');
+  $('meta').innerHTML=`დიზაინის მომენტი: <b style="color:#c3c8d0">${p.y}-${pad(p.m)}-${pad(p.d)} ${pad(p.h)}:${pad(p.mi)}</b> (${tz})<br>`+
+    (c.houses?`სახლები: ${HSYS_KA[c.houses.sys]}${c.houses.sys!==$('hsys').value?' (ამ განედზე სისტემა ვერ აიგება — პორფირი)':''}`:'დრო უცნობია — სახლები და ASC არ აიგება, მთვარე 12:00-ზე');
+  const row=b=>{
+    const a=c.pers[b],d=c.des[b],fa=fmtDeg(a.lon),fd=fmtDeg(d.lon);
+    const r=(x,b2)=>x.retro&&!/Node|Sun|Earth|Moon/.test(b2)?' ℞':'';
+    return `<tr><td><span class="pg" style="color:${PCOL[b]}">${PG[b]}${VS}</span> ${PKA[b]}</td>
+      <td>${fa.txt} ${SIGN_G[fa.s]} ${SIGN_KA[fa.s]}${r(a,b)}</td><td>${a.house||'—'}</td><td class="gl">${a.gate}.${a.line}</td>
+      <td class="dd">${fd.txt} ${SIGN_G[fd.s]} ${SIGN_KA[fd.s]}${r(d,b)}</td><td class="dd">${d.house||'—'}</td><td class="dgl">${d.gate}.${d.line}</td></tr>`;
+  };
+  $('tbl').innerHTML=`<tr><th></th><th class="p">პიროვნება</th><th class="p">სახლი</th><th class="p">კარიბჭე</th><th class="d">დიზაინი</th><th class="d">სახლი</th><th class="d">კარიბჭე</th></tr>`+
+    HDA.BODIES.map(row).join('');
+}
+
+/* ── geocode (same backend as hd.html) ── */
+let geoT=null;
+$('city').addEventListener('input',()=>{
+  clearTimeout(geoT);const city=$('city').value.trim(),hint=$('city-hint');
+  if(city.length<2){hint.textContent='';return;}
+  geoT=setTimeout(async()=>{
+    hint.textContent='⏳ ძიება…';
+    try{const r=await fetch(BACKEND+'/geocode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city})});
+      const d=await r.json();if(d.error){hint.textContent='❌ '+d.error;return;}
+      $('lat').value=d.lat;$('lon').value=d.lon;$('tz').value=d.tz_name||'UTC';hint.textContent='📍 '+d.display;
+    }catch(e){hint.textContent='❌ '+e.message;}
+  },600);
+});
+
+/* ── build ── */
+async function build(){
+  const err=$('err'),btn=$('go');err.textContent='';
+  const y=+$('year').value,m=+$('month').value,d=+$('day').value;
+  const tk=!$('tunk').checked,h=tk?+$('hour').value:12,mi=tk?+$('minute').value:0;
+  const lat=parseFloat($('lat').value),lon=parseFloat($('lon').value),tz=$('tz').value.trim()||'UTC';
+  if(!(m>=1&&m<=12&&d>=1&&d<=31)){err.textContent='⚠ შეამოწმეთ თარიღი';return;}
+  if(tk&&(isNaN(lat)||isNaN(lon))){err.textContent='⚠ შეიყვანეთ ქალაქი ან კოორდინატები';return;}
+  btn.disabled=true;btn.textContent='⏳ …';
+  try{
+    await HDA.load();
+    const jd=HDA.localToJD(y,m,d,h,mi,tz);
+    CH=HDA.chart({jd,lat,lon,hsys:$('hsys').value,timeKnown:tk});
+    $('out').style.display='block';
+    draw();panel();
+  }catch(e){err.textContent='შეცდომა: '+e.message;console.error(e);}
+  finally{btn.disabled=false;btn.textContent='✦ რუქის აგება ✦';}
+}
+$('go').addEventListener('click',build);
+$('op').addEventListener('input',()=>{$('opv').textContent=$('op').value+'%';if(CH)applyHL();});
+$('lines').addEventListener('change',()=>CH&&draw());
+$('asp').addEventListener('change',()=>CH&&draw());
+$('hsys').addEventListener('change',()=>CH&&build());
+</script>
+</body>
+</html>
