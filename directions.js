@@ -181,7 +181,12 @@ function readForm(){
     lat:+v('lat').value,lon:+v('lon').value,tz_name:v('tz').value||'UTC',time_unknown:tu};
 }
 async function run(){
-  const o=$('dr-out'),q=readForm();
+  const o=$('dr-out');
+  /* wait for a city lookup still in flight; a city typed or copied without coordinates is looked up now */
+  if((!$('dr-lat').value||!$('dr-lon').value)&&$('dr-city').value.trim().length>=2&&!(window._geoPending||{}).dr&&typeof searchCity==='function'){
+    o.innerHTML='<div class="dc-note">⏳ ქალაქს ვეძებ…</div>';searchCity('dr');}
+  try{await Promise.all(Object.values(window._geoPending||{}));}catch(e){}
+  const q=readForm();
   if(!$('dr-lat').value||!$('dr-lon').value){o.innerHTML='<div class="dc-note" style="color:#e8a0a0">შეიყვანეთ დაბადების ქალაქი.</div>';return;}
   o.innerHTML='<div class="dc-note">⏳ ვითვლი…</div>';
   try{
