@@ -416,10 +416,19 @@ function showAgeRow(ageLabel, energy){
   panel.style.display='block';
 }
 
-// ── Numerology ──
+// ── Numerology ── (all matrix formulas run on the server: /api/matrix — numcalc.py)
 function r22(n){while(n>22)n=String(n).split('').reduce((a,d)=>a+parseInt(d),0);return n;}
-const GEO={'ა':1,'ბ':2,'გ':3,'დ':4,'ე':5,'ვ':6,'ზ':7,'ჱ':8,'თ':9,'ი':1,'კ':2,'ლ':3,'მ':4,'ნ':5,'ჲ':6,'ო':7,'პ':8,'ჟ':9,'რ':1,'ს':2,'ტ':3,'უ':4,'ფ':5,'ქ':6,'ღ':7,'ყ':8,'შ':9,'ჩ':1,'ც':2,'ძ':3,'წ':4,'ჭ':5,'ხ':6,'ჯ':7,'ჰ':8};
-function geoNum(s){if(!s)return 0;return r22([...s].reduce((a,c)=>a+(GEO[c]||0),0));}
+const MX_API='https://astrology-production-b165.up.railway.app';
+async function mxApi(path,body){
+  const h={'Content-Type':'application/json'};
+  const tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch(MX_API+path,{method:'POST',headers:h,body:JSON.stringify(body)});
+  let d=null;try{d=await r.json();}catch(e){}
+  if(r.status===402&&window.MAGNUS){window.MAGNUS.toast((d&&d.error)||'Pro',5000);if(!window.MAGNUS.user)window.MAGNUS.open('login');}
+  if(!r.ok)throw new Error((d&&d.error)||('სერვერის შეცდომა '+r.status));
+  return d;
+}
+function mxBusy(on){document.querySelectorAll('.calc-btn').forEach(b=>{b.disabled=on;b.style.opacity=on?.6:'';});}
 
 let CUR=1;
 function setMethod(m){
@@ -436,9 +445,15 @@ function setMethod(m){
   {const rc=document.querySelector('.mx-right-col');if(rc)rc.style.display=m===4?'none':'flex';}
 }
 
+let _m3t=null;
+function m3Names(){return{gvari:document.getElementById('m3-gvari').value,saxeli:document.getElementById('m3-saxeli').value,mamis:document.getElementById('m3-mamis').value,dedis:document.getElementById('m3-dedis').value};}
 function m3Preview(){
-  const v=[['გვარი',geoNum(document.getElementById('m3-gvari').value)],['სახელი',geoNum(document.getElementById('m3-saxeli').value)],['მამის',geoNum(document.getElementById('m3-mamis').value)],['დედის',geoNum(document.getElementById('m3-dedis').value)]];
-  document.getElementById('m3-preview').innerHTML=v.map(([l,n])=>'<span>'+l+': <b style="color:white">'+(n||'-')+'</b></span>').join(' · ');
+  clearTimeout(_m3t);
+  _m3t=setTimeout(async()=>{
+    let n={};try{n=await mxApi('/api/matrix/names',m3Names());}catch(e){return;}
+    const v=[['გვარი',n.gvari],['სახელი',n.saxeli],['მამის',n.mamis],['დედის',n.dedis]];
+    document.getElementById('m3-preview').innerHTML=v.map(([l,x])=>'<span>'+l+': <b style="color:white">'+(x||'-')+'</b></span>').join(' · ');
+  },250);
 }
 
 function daysInMonth(mm,yyyy){
@@ -453,65 +468,32 @@ function validateDate(dd,mm,yyyy){
   return null;
 }
 
-/* ── ჩაკრების ცხრილი: 7 რიგი (მეთოდი 1-2) / 9 რიგი (მეთოდი 3) ── */
-function renderChakra(v, method){
-  const body=document.getElementById('chakra-body'); if(!body)return;
-  const rows = method===3 ? [
-    ['row-sahasrara',  'საჰასრარა (გვირგვინი)',   v.T3,  v.L3   ],
-    ['row-ajna',       'აჯნა (მესამე თვალი)',      v.T2,  v.L2   ],
-    ['row-vishudha',   'ვიშუდჰა (ყელის ჩაკრა)',    v.T1,  v.L1   ],
-    ['row-lelia',      'დალი (ქალის ხაზი)',        v.TR3, v.BL3  ],
-    ['row-lada',       'კოპალა (მამაკაცის ხაზი)',  v.TL3, v.BR3  ],
-    ['row-anahata',    'ანაჰატა (გულის ჩაკრა)',    v.Cv,  v.m3Cv2],
-    ['row-manipura',   'მანიპურა (მზის წნული)',    v.B1,  v.R1   ],
-    ['row-svadhistana','სვადჰისტანა (საკრალური)',  v.B2,  v.R2   ],
-    ['row-muladhara',  'მულადჰარა (ფუძის ჩაკრა)',  v.B3,  v.R3   ]
-  ] : [
-    ['row-sahasrara',  'საჰასრარა (გვირგვინი)',   v.T3, v.L3],
-    ['row-ajna',       'აჯნა (მესამე თვალი)',      v.T2, v.L2],
-    ['row-vishudha',   'ვიშუდჰა (ყელის ჩაკრა)',    v.T1, v.L1],
-    ['row-anahata',    'ანაჰატა (გულის ჩაკრა)',    v.G2, v.G1],
-    ['row-manipura',   'მანიპურა (მზის წნული)',    v.Cv, v.Cv],
-    ['row-svadhistana','სვადჰისტანა (საკრალური)',  v.B1, v.R1],
-    ['row-muladhara',  'მულადჰარა (ფუძის ჩაკრა)',  v.B3, v.R3]
-  ];
-  let html='',se=0,sl=0,ss=0;
-  for(const [cls,name,e,l] of rows){
-    const en=e||0, ln=l||0, sm=r22(en+ln);
-    se+=en; sl+=ln; ss+=sm;
-    html+='<tr class="'+cls+'"><td>'+name+'</td><td>'+en+'</td><td>'+ln+'</td><td>'+sm+'</td></tr>';
-  }
-  html+='<tr class="row-total"><td>სულ</td><td>'+r22(se)+'</td><td>'+r22(sl)+'</td><td>'+r22(ss)+'</td></tr>';
+/* ── ჩაკრების ცხრილი: 7 რიგი (მეთოდი 1-2) / 9 რიგი (მეთოდი 3) — rows come from the server ── */
+function renderChakra(ch){
+  const body=document.getElementById('chakra-body'); if(!body||!ch)return;
+  let html='';
+  for(const r of ch.rows)html+='<tr class="'+r.cls+'"><td>'+r.name+'</td><td>'+r.e+'</td><td>'+r.l+'</td><td>'+r.sum+'</td></tr>';
+  html+='<tr class="row-total"><td>სულ</td><td>'+ch.total[0]+'</td><td>'+ch.total[1]+'</td><td>'+ch.total[2]+'</td></tr>';
   body.innerHTML=html;
 }
 
-function calculate(){
+async function calculate(){
   const dd=parseInt(document.querySelector('[name=dd]').value,10);
   const mm=parseInt(document.querySelector('[name=mm]').value,10);
   const yyyy=parseInt(document.querySelector('[name=yyyy]').value,10);
   const _err=validateDate(dd,mm,yyyy);
   if(_err){alert('თარიღი არასწორია: '+_err);return;}
-  const L3=r22(dd),T3=r22(mm),R3=r22(yyyy);
-  const B3=r22(L3+T3+R3),Cv=r22(L3+T3+R3+B3);
   // person's current age
   let _age=null;
   {const t=new Date();_age=t.getFullYear()-yyyy;const md=(t.getMonth()+1)-mm||(t.getDate()-dd);if(md<0)_age--;}
-  let TL3=r22(L3+T3),TR3=r22(T3+R3),BR3=r22(R3+B3),BL3=r22(B3+L3);
-  let m3Cv2=0;
-  if(CUR===3){
-    const gv=geoNum(document.getElementById('m3-gvari').value),sx=geoNum(document.getElementById('m3-saxeli').value),ma=geoNum(document.getElementById('m3-mamis').value),de=geoNum(document.getElementById('m3-dedis').value);
-    if(!gv&&!sx&&!ma&&!de){alert('გთხოვთ შეიყვანოთ სახელი, გვარი ან სხვა მონაცემი');return;}
-    if(gv)TL3=gv;if(sx)TR3=sx;if(ma)BR3=ma;if(de)BL3=de;
-    m3Cv2=r22(TL3+TR3+BR3+BL3);
-  }
-  const RC1=r22(TL3+TR3+BR3+BL3),RC2=r22(RC1+Cv);
-  const B1=r22(Cv+B3),B2=r22(B1+B3),R1=r22(Cv+R3),R2=r22(R1+R3),L1=r22(Cv+L3),L2=r22(L1+L3),T1=r22(Cv+T3),T2=r22(T1+T3),G1=r22(L1+Cv),G2=r22(T1+Cv);
-  const dCv=CUR===1?RC1:Cv;   /* მეთოდი 3-შიც მთავარი ცენტრალური ენერგია */
-  const TL1=r22(TL3+dCv),TL2=r22(TL1+TL3),TR1=r22(TR3+dCv),TR2=r22(TR1+TR3),BR1=r22(BR3+dCv),BR2=r22(BR1+BR3),BL1=r22(BL3+dCv),BL2=r22(BL1+BL3);
-  const W2=r22(B1+R1),W1=r22(B1+W2),W3=r22(R1+W2);
-  draw({L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,TL3,TR3,BR3,BL3,RC1,RC2,TL1,TL2,TR1,TR2,BR1,BR2,BL1,BL2,W1,W2,W3,showRC:CUR!==2,m3Cv2,compat:false,age:_age});
+  const body={dd,mm,yyyy,method:CUR};
+  if(CUR===3){body.names=m3Names();if(!Object.values(body.names).some(x=>x.trim())){alert('გთხოვთ შეიყვანოთ სახელი, გვარი ან სხვა მონაცემი');return;}}
+  let R;mxBusy(true);
+  try{R=await mxApi('/api/matrix',body);}catch(e){alert(e.message);return;}finally{mxBusy(false);}
+  const V=R.values;
+  draw({...V,showRC:R.showRC,compat:false,age:_age,ages:R.ages});
   if(typeof buildMatrixBoxes==='function'){
-    buildMatrixBoxes({L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,RC1,RC2,TL3,TL2,TL1,TR3,TR2,TR1,BR3,BR2,BR1,BL3,BL2,BL1,W1,W2,W3},CUR);
+    const {m3Cv2,...vals}=V;buildMatrixBoxes(vals,CUR);
   }else{
     const mb=document.getElementById('matrix-boxes');
     if(mb){mb.style.display='flex';mb.innerHTML='<div style="padding:14px;border:1px solid rgba(255,120,120,.5);border-radius:10px;color:#ffb0b0;font-size:12px;">⚠ matrix_boxes_addon.js ვერ ჩაიტვირთა — შეამოწმეთ ფაილი იმავე საქაღალდეშია matrix.html-თან.</div>';}
@@ -521,43 +503,40 @@ function calculate(){
   /* მეთოდ 3-ში კაცის/ქალის პანელები ცხრილში დუბლირდება — ვმალავთ */
   {const dup=document.getElementById('ep-lines-row'); if(dup) dup.style.display=(CUR===3?'none':'flex');}
   const sc=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  sc('ep-tl3',TL3);sc('ep-br3',BR3);sc('ep-male-sum',r22(TL3+BR3));
-  sc('ep-tr3',TR3);sc('ep-bl3',BL3);sc('ep-fem-sum',r22(TR3+BL3));
-  const sT=r22(T3+B3),sB=r22(R3+L3),sM=r22(sT+sB);
-  sc('ep-soul-top',sT);sc('ep-soul-bot',sB);sc('ep-soul-mid',sM);
-  const oT=r22(TL3+BR3),oB=r22(TR3+BL3),oM=r22(oT+oB);
-  sc('ep-soc-top',oT);sc('ep-soc-bot',oB);sc('ep-soc-mid',oM);
-  sc('ep-misia',r22(sM+oM));
-  renderChakra({T3,T2,T1,L3,L2,L1,G1,G2,Cv,B1,B2,B3,R1,R2,R3,TL3,TR3,BL3,BR3,m3Cv2},CUR);
+  const L=R.lines;
+  sc('ep-tl3',L.tl3);sc('ep-br3',L.br3);sc('ep-male-sum',L.male_sum);
+  sc('ep-tr3',L.tr3);sc('ep-bl3',L.bl3);sc('ep-fem-sum',L.fem_sum);
+  sc('ep-soul-top',L.soul_top);sc('ep-soul-bot',L.soul_bot);sc('ep-soul-mid',L.soul_mid);
+  sc('ep-soc-top',L.soc_top);sc('ep-soc-bot',L.soc_bot);sc('ep-soc-mid',L.soc_mid);
+  sc('ep-misia',L.misia);
+  renderChakra(R.chakra);
+  return R;
 }
 
-function calculateCompat(){
+async function calculateCompat(){
   const g=id=>parseInt(document.getElementById(id).value)||1;
   const p1={dd:g('c1-dd'),mm:g('c1-mm'),yyyy:g('c1-yyyy')},p2={dd:g('c2-dd'),mm:g('c2-mm'),yyyy:g('c2-yyyy')};
   const e1=validateDate(p1.dd,p1.mm,p1.yyyy); if(e1){alert('პირველი პიროვნების თარიღი არასწორია: '+e1);return;}
   const e2=validateDate(p2.dd,p2.mm,p2.yyyy); if(e2){alert('მეორე პიროვნების თარიღი არასწორია: '+e2);return;}
-  const v1=base(p1),v2=base(p2);
-  const cv1=r22(v1.L3+v1.T3+v1.R3+v1.B3),cv2=r22(v2.L3+v2.T3+v2.R3+v2.B3);
-  const L3=r22(v1.L3+v2.L3),T3=r22(v1.T3+v2.T3),R3=r22(v1.R3+v2.R3),B3=r22(v1.B3+v2.B3),Cv=r22(cv1+cv2);
-  const TL3=r22(r22(v1.T3+v1.L3)+r22(v2.T3+v2.L3)),TR3=r22(r22(v1.T3+v1.R3)+r22(v2.T3+v2.R3)),BR3=r22(r22(v1.B3+v1.R3)+r22(v2.B3+v2.R3)),BL3=r22(r22(v1.B3+v1.L3)+r22(v2.B3+v2.L3));
-  const RC1=r22(TL3+TR3+BR3+BL3),RC2=r22(RC1+Cv),B1=r22(Cv+B3),B2=r22(B1+B3),R1=r22(Cv+R3),R2=r22(R1+R3),L1=r22(Cv+L3),L2=r22(L1+L3),T1=r22(Cv+T3),T2=r22(T1+T3),G1=r22(L1+Cv),G2=r22(T1+Cv),W2=r22(B1+R1),W1=r22(B1+W2),W3=r22(R1+W2);
-  draw({L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,TL3,TR3,BR3,BL3,RC1,RC2,TL1:0,TL2:0,TR1:0,TR2:0,BR1:0,BR2:0,BL1:0,BL2:0,W1,W2,W3,showRC:false,m3Cv2:0,compat:true,age:null});
+  let R;mxBusy(true);
+  try{R=await mxApi('/api/matrix/compat',{p1,p2});}catch(e){alert(e.message);return;}finally{mxBusy(false);}
+  const V=R.values;
+  draw({...V,showRC:false,compat:true,age:null,ages:R.ages});
   document.getElementById('extra-panels').style.display='none';
   document.getElementById('chakra-panel').style.display='none';
   {const ap=document.getElementById('age-row-panel');if(ap)ap.style.display='none';}
   /* ── განმარტების ბოქსები შეთავსების რეჟიმშიც ── */
   if(typeof buildMatrixBoxes==='function'){
     /* TL/TR/BR/BL-ის შიდა რგოლები აქ არ ითვლება — არ ვაწვდით, addon გამოტოვებს */
-    buildMatrixBoxes({L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,
-                      RC1,RC2,TL3,TR3,BR3,BL3,W1,W2,W3},4);
+    const {L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,RC1,RC2,TL3,TR3,BR3,BL3,W1,W2,W3}=V;
+    buildMatrixBoxes({L3,T3,R3,B3,Cv,B1,B2,R1,R2,L1,L2,T1,T2,G1,G2,RC1,RC2,TL3,TR3,BR3,BL3,W1,W2,W3},4);
     document.getElementById('matrix-boxes').style.display='flex';
   }else{
     const mb=document.getElementById('matrix-boxes');
     if(mb)mb.style.display='none';
   }
+  return R;
 }
-
-function base(p){const L3=r22(p.dd),T3=r22(p.mm),R3=r22(p.yyyy),B3=r22(L3+T3+R3);return{L3,T3,R3,B3};}
 
 // ── Draw ──
 function draw(v){
@@ -617,14 +596,11 @@ function draw(v){
   const agePoints=[];
   const anchorAges=[0,10,20,30,40,50,60,70];
   const aAngles=[180,225,270,315,0,45,90,135];
-  const sEnAnch=[[v.L3,v.TL3],[v.TL3,v.T3],[v.T3,v.TR3],[v.TR3,v.R3],[v.R3,v.BR3],[v.BR3,v.B3],[v.B3,v.BL3],[v.BL3,v.L3]];
   const sStarts=[1,11,21,31,41,51,61,71];
-  function sEn(A,B){const d4=r22(A+B),d2=r22(A+d4),d1b=r22(A+d2),d3b=r22(d2+d4),d6=r22(d4+B),d5=r22(d4+d6),d7=r22(d6+B);return[d1b,d2,d3b,d4,d5,d6,d7];}
-  function sAg(s){const f=n=>n===Math.floor(n)?String(n):String(n.toFixed(1)).replace('.',',');return[f(s)+'-'+f(s+1.5),f(s+1.5)+'-'+f(s+2.5),f(s+2.5)+'-'+f(s+3),f(s+4),f(s+5)+'-'+f(s+6.5),f(s+6.5)+'-'+f(s+7.5),f(s+7.5)+'-'+f(s+8)];}
   const subMidAges=d=>[0.75,2,2.75,4,5.75,7,7.75][d];
   for(let sec=0;sec<8;sec++){
     const sa=aAngles[sec],ea=aAngles[(sec+1)%8];let diff=ea-sa;if(diff<=0)diff+=360;
-    const ages=sAg(sStarts[sec]),ens=sEn(sEnAnch[sec][0],sEnAnch[sec][1]);
+    const seg=(v.ages||[]).slice(sec*7,sec*7+7),ages=seg.map(p=>p.label),ens=seg.map(p=>p.energy);
     for(let d=0;d<7;d++){
       const t=(d+1)/8,ang=sa+diff*t,rad=ang*Math.PI/180;
       const px=Math.round(cx+outerR*Math.cos(rad)),py=Math.round(cy+outerR*Math.sin(rad));

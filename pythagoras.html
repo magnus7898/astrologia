@@ -329,15 +329,25 @@ function computeModes(day,month,year){
 
 let MODES=null, activeMode='classic';
 
-function calculate(){
+/* the square, the curves and the Vedic digits are computed on the server: /api/pythagoras (numcalc.py) */
+const PY_API='https://astrology-production-b165.up.railway.app';
+async function pyApi(path,body){
+  const h={'Content-Type':'application/json'};const tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
+  const r=await fetch(PY_API+path,{method:'POST',headers:h,body:JSON.stringify(body)});let d=null;try{d=await r.json();}catch(e){}
+  if(r.status===402&&window.MAGNUS){window.MAGNUS.toast((d&&d.error)||'Pro',5000);if(!window.MAGNUS.user)window.MAGNUS.open('login');}
+  if(!r.ok)throw new Error((d&&d.error)||('სერვერის შეცდომა '+r.status));return d;
+}
+async function calculate(){
   const val=document.getElementById("birth").value;
   if(!/^\d{2}\/\d{2}\/\d{4}$/.test(val)){alert("შეიყვანე თარიღი ფორმატით: DD/MM/YYYY");return;}
   const[day,month,year]=val.split("/");
-  MODES=computeModes(day,month,year);
+  let R;
+  try{R=await pyApi('/api/pythagoras',{dd:day,mm:month,yyyy:year});}catch(e){alert(e.message);return;}
+  MODES=R.modes;
   document.getElementById("modeWrap").style.display="flex";
   setMode(activeMode,true);
-  renderCurves(day,month,year);
-  renderVedic(day,month,year);
+  renderCurves(R.curves);
+  renderVedic(R.vedic);
   setTimeout(()=>document.getElementById("summary").scrollIntoView({behavior:"smooth",block:"start"}),100);
 }
 
@@ -395,9 +405,8 @@ function toggleMirror(){
   document.getElementById("mtBtn").classList.toggle("on",vMirror);
   vDraw();
 }
-const vdsum=s=>{let n=[...s].reduce((a,c)=>a+ +c,0);while(n>9)n=[...String(n)].reduce((a,c)=>a+ +c,0);return n;};
-function renderVedic(dd,mm,yy){
-  const psychic=vdsum(dd), destiny=vdsum(dd+mm+yy);
+function renderVedic(vd){
+  const psychic=vd.psychic, destiny=vd.destiny;
   vMine=new Set([psychic,destiny]);
   document.getElementById("digitRow").innerHTML=[1,2,3,4,5,6,7,8,9].map(d=>
     `<div class="dchip${vMine.has(d)?' mine':''}" data-d="${d}" onclick="vSelect(${d})"><div class="dn">${d}</div><div class="dg">${GRAHA[d]}</div></div>`).join("");
@@ -420,23 +429,9 @@ const CURVE_DEFS=[
 let curveState={life:true,will:true,fate:false};
 let curveData=null;
 
-function pad7(ds){const o=[...ds];let i=0;while(o.length<7){o.push(ds[i%ds.length]);i++;}return o;}
-function computeCurves(dd,mm,yyyy){
-  const z=s=>s.replace(/0/g,"1");
-  const lifeN=parseInt(dd+mm,10)*parseInt(yyyy,10);
-  const willN=parseInt(z(dd+mm),10)*parseInt(z(yyyy),10);
-  const fateN=parseInt(dd,10)*parseInt(mm,10)*parseInt(yyyy,10);
-  const dig=n=>pad7(String(n).split("").map(Number));
-  return{
-    life:{n:lifeN,f:`${dd+mm} × ${yyyy}`,d:dig(lifeN)},
-    will:{n:willN,f:`${z(dd+mm)} × ${z(yyyy)}`,d:dig(willN)},
-    fate:{n:fateN,f:`${+dd} × ${+mm} × ${yyyy}`,d:dig(fateN)},
-    year0:Number(yyyy)
-  };
-}
 
-function renderCurves(dd,mm,yyyy){
-  curveData=computeCurves(dd,mm,yyyy);
+function renderCurves(cd){
+  curveData=cd;
   // legend chips
   document.getElementById("curveLegend").innerHTML=CURVE_DEFS.map(c=>
     `<div class="cleg ${curveState[c.id]?'on':'off'}" id="cl-${c.id}" onclick="toggleCurve('${c.id}')">

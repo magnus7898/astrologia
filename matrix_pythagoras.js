@@ -153,17 +153,18 @@ function wireChakraRows(){
 function hook(){
   if(typeof window.calculate==='function'&&!window.calculate._py){
     const orig=window.calculate;
-    const w=function(){
-      orig.apply(this,arguments);
+    const w=async function(){
+      const res=await orig.apply(this,arguments);      /* calculate() is async — the server computes the matrix */
       /* calculate() returns early on a bad date — draw only if it ran */
       const ran=($('extra-panels')||{}).style&&$('extra-panels').style.display==='block';
-      if(!ran)return;
+      if(!ran)return res;
       const q=n=>(document.querySelector('[name='+n+']')||{}).value||'';
       const dd=String(parseInt(q('dd'),10)).padStart(2,'0');
       const mm=String(parseInt(q('mm'),10)).padStart(2,'0');
       const yy=String(parseInt(q('yyyy'),10));
       try{render(dd,mm,yy);}catch(e){console.warn('pythagoras',e);}
       wireChakraRows();
+      return res;
     };
     w._py=true;window.calculate=w;
   }
