@@ -46,9 +46,9 @@ window.fetch=function(u,init){
   return of.call(this,u,init);
 };
 const CSS=`
-#hs-bar{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid rgba(184,137,74,.16);font-size:11.5px;color:#B9BFBC}
-#hs-bar select{width:auto!important;min-width:170px;background:#0B1418;border:1px solid rgba(184,137,74,.4);color:#E3BE84;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px;max-width:100%}
-#hs-bar small{color:#6E8087;font-size:10.5px}
+#hs-bar{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid rgba(184,137,74,.16);font-size:11.5px;color:#BCC0CA}
+#hs-bar select{width:auto!important;min-width:170px;background:#0C1222;border:1px solid rgba(184,137,74,.4);color:#E3BE84;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px;max-width:100%}
+#hs-bar small{color:#7A8499;font-size:10.5px}
 #hs-bar .fb{color:#e8907a}`;
 function inject(){
   const bar=document.querySelector('.tab-bar');if(!bar)return false;if($('hs-bar'))return true;

@@ -54,8 +54,8 @@ const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1'
 const CSS=`
 #mg-head{flex-direction:row!important;justify-content:flex-start!important;text-align:left!important;margin-bottom:0!important;box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
   padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));margin:0 0 6px;
-  background:rgba(11,20,24,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
-  font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif;color:#B9BFBC;text-align:left}
+  background:rgba(12,18,34,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
+  font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:left}
 #mg-head a{color:inherit;text-decoration:none}
 #mg-head .brand{font:600 16px/1 'Marcellus SC','Noto Serif Georgian',Georgia,serif;letter-spacing:.14em;color:#E3BE84;white-space:nowrap}
 #mg-head .crumbs{display:flex;align-items:center;gap:6px;min-width:0;flex:1;overflow:hidden;white-space:nowrap}
@@ -74,18 +74,18 @@ const CSS=`
   #mg-head .burger .w{display:none}}
 #mg-foot{box-sizing:border-box;width:100%;align-self:stretch;clear:both;margin-top:40px;position:relative;z-index:1;
   padding:22px max(16px,env(safe-area-inset-right,0px)) calc(70px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
-  background:rgba(11,20,24,.96);border-top:1px solid rgba(184,137,74,.25);font:12.5px/1.6 'Noto Serif Georgian',system-ui,sans-serif;color:#B9BFBC;text-align:center}
+  background:rgba(12,18,34,.96);border-top:1px solid rgba(184,137,74,.25);font:12.5px/1.6 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:center}
 #mg-foot .links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-bottom:10px}
 #mg-foot a{color:#E3BE84;text-decoration:none}#mg-foot a:hover{color:#E3BE84;text-decoration:underline}
 #mg-foot .note{max-width:760px;margin:0 auto 8px;font-size:11.5px;opacity:.85}
 #mg-foot .copy{font-size:11.5px;opacity:.75}
 #mg-consent{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:9993;width:min(560px,calc(100% - 24px));box-sizing:border-box;
-  background:#101E24;border:1px solid rgba(184,137,74,.55);border-radius:2px;padding:14px 16px;color:#EDE6D8;box-shadow:0 12px 40px rgba(0,0,0,.6);
+  background:#111A2E;border:1px solid rgba(184,137,74,.55);border-radius:2px;padding:14px 16px;color:#EDE6D8;box-shadow:0 12px 40px rgba(0,0,0,.6);
   font:13px/1.55 'Noto Serif Georgian',system-ui,sans-serif}
 #mg-consent a{color:#E3BE84}
 #mg-consent .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:flex-end}
 #mg-consent button{all:unset;cursor:pointer;padding:7px 14px;border-radius:2px;border:1px solid rgba(184,137,74,.5);color:#E3BE84;font-size:13px}
-#mg-consent button.pri{background:#B8894A;color:#0B1418;border-color:#B8894A;font-weight:600}
+#mg-consent button.pri{background:#B8894A;color:#0C1222;border-color:#B8894A;font-weight:600}
 #mg-consent button:focus-visible{outline:2px solid #E3BE84;outline-offset:2px}`;
 
 function header(){
@@ -229,14 +229,14 @@ const TILE_CSS=`
 .mg-tiles>*{flex:0 0 var(--mg-tile)!important;width:var(--mg-tile)!important;height:var(--mg-tile)!important;min-width:0!important;box-sizing:border-box!important;margin:0!important;
   display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:8px 6px!important;
   white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;hyphens:auto;
-  background:linear-gradient(160deg,#16272E,#101E24)!important;border:1px solid rgba(184,137,74,.34)!important;border-radius:3px!important;
-  color:#B9BFBC!important;font:400 12.5px/1.3 'Noto Serif Georgian',Georgia,serif!important;letter-spacing:.02em!important;text-transform:none!important;text-decoration:none!important;
+  background:linear-gradient(160deg,#18223A,#111A2E)!important;border:1px solid rgba(184,137,74,.34)!important;border-radius:3px!important;
+  color:#BCC0CA!important;font:400 12.5px/1.3 'Noto Serif Georgian',Georgia,serif!important;letter-spacing:.02em!important;text-transform:none!important;text-decoration:none!important;
   box-shadow:inset 0 1px 0 rgba(227,190,132,.06),0 2px 8px rgba(0,0,0,.35)!important;transform:none!important;cursor:pointer;transition:border-color .2s,color .2s,background .2s!important}
 .mg-tiles>* i{font-style:normal;display:block;font-size:20px;margin:0 0 4px}
 .mg-tiles>a{flex-direction:column!important}
-.mg-tiles>*:hover{border-color:#B8894A!important;color:#EDE6D8!important;background:linear-gradient(160deg,#1B3038,#132329)!important}
+.mg-tiles>*:hover{border-color:#B8894A!important;color:#EDE6D8!important;background:linear-gradient(160deg,#1E2A45,#141E33)!important}
 .mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{color:#E3BE84!important;border-color:#E3BE84!important;
-  background:linear-gradient(160deg,#22343A,#16272E)!important;box-shadow:inset 0 0 0 1px rgba(227,190,132,.35),0 0 16px rgba(184,137,74,.22)!important}
+  background:linear-gradient(160deg,#24304C,#18223A)!important;box-shadow:inset 0 0 0 1px rgba(227,190,132,.35),0 0 16px rgba(184,137,74,.22)!important}
 .mg-bench{position:relative;z-index:1;width:100%}
 @media(min-width:1000px){
  .mg-bench{display:flex;align-items:flex-start;justify-content:center;gap:22px;margin:18px auto 0;max-width:var(--mg-bench-w)}
@@ -289,10 +289,10 @@ function layoutTiles(){
 
 /* ── Destiny Matrix ground (background only — each page keeps its own boxes) ── */
 const BG_SKIP=new Set(['index.html','matrix.html','fool_journey.html','vector.html']);
-const BG_CSS=`html{background:#0B1418!important}
+const BG_CSS=`html{background:#0C1222!important}
 body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
- radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(78,143,130,.11),transparent 70%),
- radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%),#0B1418!important;background-attachment:fixed!important}`;
+ radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(123,147,189,.11),transparent 70%),
+ radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%),#0C1222!important;background-attachment:fixed!important}`;
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);

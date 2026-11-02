@@ -44,46 +44,46 @@ function setSession(tok,user){
 /* ───────── styles ───────── */
 const CSS=`
 #mg-pill{position:fixed;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:9990;
-  display:flex;align-items:center;gap:6px;background:rgba(11,20,24,.94);border:1px solid rgba(184,137,74,.55);color:#E3BE84;border-radius:2px;
+  display:flex;align-items:center;gap:6px;background:rgba(12,18,34,.94);border:1px solid rgba(184,137,74,.55);color:#E3BE84;border-radius:2px;
   padding:7px 13px;font:500 12.5px/1.2 'Noto Serif Georgian',system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45);backdrop-filter:blur(4px)}
 #mg-pill:hover{border-color:#E3BE84}
 #mg-pill .dot{width:7px;height:7px;border-radius:50%;background:#7fd1a8}
-#mg-pill .pro{font-size:9.5px;letter-spacing:.08em;background:#B8894A;color:#0B1418;border-radius:2px;padding:1px 5px}
+#mg-pill .pro{font-size:9.5px;letter-spacing:.08em;background:#B8894A;color:#0C1222;border-radius:2px;padding:1px 5px}
 #mg-menu{position:fixed;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(56px + env(safe-area-inset-bottom,0px));z-index:9991;min-width:230px;
-  background:#101E24;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.55);font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif}
-#mg-menu .hd{padding:8px 10px;color:#B9BFBC;font-size:11.5px;border-bottom:1px solid rgba(184,137,74,.2);margin-bottom:4px}
+  background:#111A2E;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.55);font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif}
+#mg-menu .hd{padding:8px 10px;color:#BCC0CA;font-size:11.5px;border-bottom:1px solid rgba(184,137,74,.2);margin-bottom:4px}
 #mg-menu .hd b{display:block;color:#E3BE84;font-weight:500;font-size:13px}
 #mg-menu button,#mg-menu a{all:unset;box-sizing:border-box;display:block;width:100%;padding:8px 10px;border-radius:2px;color:#EDE6D8;cursor:pointer}
 #mg-menu button:hover,#mg-menu a:hover{background:rgba(184,137,74,.14)}
 #mg-menu .warn{color:#E3BE84;font-size:11.5px;padding:6px 10px}
-.mg-ov{position:fixed;inset:0;z-index:9995;background:rgba(5,10,12,.72);display:flex;align-items:center;justify-content:center;
+.mg-ov{position:fixed;inset:0;z-index:9995;background:rgba(6,9,18,.72);display:flex;align-items:center;justify-content:center;
   padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));font-family:'Noto Serif Georgian',system-ui,sans-serif}
-.mg-dlg{background:#101E24;border:1px solid rgba(184,137,74,.55);border-radius:2px;padding:20px;width:min(400px,100%);max-height:100%;overflow:auto;color:#EDE6D8;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.mg-dlg{background:#111A2E;border:1px solid rgba(184,137,74,.55);border-radius:2px;padding:20px;width:min(400px,100%);max-height:100%;overflow:auto;color:#EDE6D8;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .mg-dlg h3{margin:0 0 4px;font:500 19px "Noto Serif Georgian",Georgia,serif;color:#E3BE84}
-.mg-dlg p{margin:0 0 12px;font-size:12.5px;color:#B9BFBC;line-height:1.55}
-.mg-dlg label{display:block;font-size:11px;letter-spacing:.06em;color:#B9BFBC;margin:10px 0 4px}
-.mg-dlg input,.mg-dlg select{width:100%;box-sizing:border-box;background:#0B1418;border:1px solid rgba(184,137,74,.35);border-radius:2px;padding:9px 10px;color:#EDE6D8;font:inherit;font-size:14px}
+.mg-dlg p{margin:0 0 12px;font-size:12.5px;color:#BCC0CA;line-height:1.55}
+.mg-dlg label{display:block;font-size:11px;letter-spacing:.06em;color:#BCC0CA;margin:10px 0 4px}
+.mg-dlg input,.mg-dlg select{width:100%;box-sizing:border-box;background:#0C1222;border:1px solid rgba(184,137,74,.35);border-radius:2px;padding:9px 10px;color:#EDE6D8;font:inherit;font-size:14px}
 .mg-dlg input:focus{outline:none;border-color:#E3BE84}
 .mg-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .mg-btn{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 16px;border-radius:2px;border:1px solid rgba(184,137,74,.45);color:#E3BE84;font-size:13.5px;text-align:center}
-.mg-btn.pri{background:#B8894A;color:#0B1418;border-color:#B8894A;font-weight:600;flex:1}
+.mg-btn.pri{background:#B8894A;color:#0C1222;border-color:#B8894A;font-weight:600;flex:1}
 .mg-btn:hover{filter:brightness(1.1)}
 .mg-link{all:unset;cursor:pointer;color:#E3BE84;font-size:12px;text-decoration:underline}
 .mg-err{color:#e88a8a;font-size:12.5px;margin-top:10px;min-height:16px}
 .mg-ok{color:#7fd1a8}
 .mg-tabs{display:flex;gap:4px;margin:0 0 6px}
-.mg-tabs button{all:unset;cursor:pointer;flex:1;text-align:center;padding:7px;border-radius:2px;font-size:13px;color:#B9BFBC;border:1px solid transparent}
+.mg-tabs button{all:unset;cursor:pointer;flex:1;text-align:center;padding:7px;border-radius:2px;font-size:13px;color:#BCC0CA;border:1px solid transparent}
 .mg-tabs button.on{border-color:rgba(184,137,74,.5);color:#E3BE84;background:rgba(184,137,74,.1)}
 .mg-ppl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 8px;position:relative;grid-column:1/-1}
 .mg-ppl button{all:unset;cursor:pointer;font:12px 'Noto Serif Georgian',system-ui,sans-serif;color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:4px 11px;background:rgba(184,137,74,.06)}
 .mg-ppl button:hover{background:rgba(184,137,74,.16)}
-.mg-drop{position:absolute;top:100%;left:0;z-index:9989;margin-top:4px;background:#101E24;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:4px;min-width:240px;max-height:300px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.55)}
+.mg-drop{position:absolute;top:100%;left:0;z-index:9989;margin-top:4px;background:#111A2E;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:4px;min-width:240px;max-height:300px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.55)}
 .mg-drop button{display:block;width:100%;box-sizing:border-box;border:0!important;border-radius:2px!important;padding:8px 10px!important;color:#EDE6D8!important;background:none!important;text-align:left}
 .mg-drop button:hover{background:rgba(184,137,74,.14)!important}
-.mg-drop small{display:block;color:#B9BFBC;font-size:11px}
-#mg-toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;background:#101E24;border:1px solid #B8894A;color:#E3BE84;
+.mg-drop small{display:block;color:#BCC0CA;font-size:11px}
+#mg-toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;background:#111A2E;border:1px solid #B8894A;color:#E3BE84;
   border-radius:2px;padding:9px 16px;font:13px 'Noto Serif Georgian',system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.5);max-width:calc(100% - 32px)}
-.mg-lock{position:fixed;inset:0;z-index:9994;background:rgba(5,10,12,.9);display:flex;align-items:center;justify-content:center;padding:16px}`;
+.mg-lock{position:fixed;inset:0;z-index:9994;background:rgba(6,9,18,.9);display:flex;align-items:center;justify-content:center;padding:16px}`;
 
 function toast(t,ms=2600){let el=$('mg-toast');if(!el){el=document.createElement('div');el.id='mg-toast';document.body.appendChild(el);}
   el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>{el.hidden=true;},ms);}
@@ -217,7 +217,7 @@ function personBar(fill,read,where){
     if(b.dataset.id){const p=(await people()).find(x=>String(x.id)===b.dataset.id);if(p){fill(p);track('person_use',p.name);toast(`შევსებულია: ${p.name}`);}bar.querySelector('.mg-drop')?.remove();return;}
     const list=await people(true);const d=document.createElement('div');d.className='mg-drop';
     d.innerHTML=list.length?list.map(p=>`<button type="button" data-p="use" data-id="${p.id}">${p.is_self?'⭐ ':''}${esc(p.name||'—')}<small>${pDate(p)}${p.city?' · '+esc(p.city):''}</small></button>`).join('')
-      :'<div style="padding:10px;font-size:12px;color:#B9BFBC">ჯერ არავინ არის შენახული — შეავსეთ ფორმა და დააჭირეთ 💾</div>';
+      :'<div style="padding:10px;font-size:12px;color:#BCC0CA">ჯერ არავინ არის შენახული — შეავსეთ ფორმა და დააჭირეთ 💾</div>';
     bar.appendChild(d);});
 }
 function askName(def,cb){const ov=dialog(`<h3>შენახვა</h3><form id="mg-nf"><label for="mg-nn">სახელი</label><input id="mg-nn" maxlength="80" value="${esc(def||'')}" required><div class="mg-row"><button class="mg-btn" type="button" data-x>გაუქმება</button><button class="mg-btn pri" type="submit">შენახვა</button></div></form>`);
