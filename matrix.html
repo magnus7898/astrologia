@@ -15,16 +15,16 @@
        petrol ink, engraved hairlines, brass fittings, enamel type.
        ═══════════════════════════════════════════════════════════ */
     :root{
-      --ink:#0B1418;          /* petrol black — the plate's ground   */
-      --ink-2:#101E24;        /* recessed panel                     */
-      --ink-3:#16272E;        /* raised element                     */
+      --ink:#0C1222;          /* petrol black — the plate's ground   */
+      --ink-2:#111A2E;        /* recessed panel                     */
+      --ink-3:#18223A;        /* raised element                     */
       --brass:#B8894A;        /* the fittings                       */
       --brass-lt:#E3BE84;     /* polished edge                      */
       --brass-dk:#6B4F26;     /* tarnish                            */
-      --patina:#4E8F82;       /* verdigris — the metal's own age    */
+      --patina:#7B93BD;       /* verdigris — the metal's own age    */
       --enamel:#EDE6D8;       /* enamel lettering                   */
-      --enamel-2:#B9BFBC;     /* secondary                          */
-      --dim:#6E8087;          /* engraved, unfilled                 */
+      --enamel-2:#BCC0CA;     /* secondary                          */
+      --dim:#7A8499;          /* engraved, unfilled                 */
       --rule:rgba(184,137,74,.22);
       --rule-2:rgba(184,137,74,.10);
     }
@@ -41,12 +41,12 @@
     body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       background:
         repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
-        radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(78,143,130,.10),transparent 70%),
+        radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(123,147,189,.10),transparent 70%),
         radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%);}
 
     /* ── the plate: hairline engraving + four brass screws ── */
     .plate{position:relative;z-index:1;width:100%;max-width:1240px;
-      border:1px solid var(--rule);background:rgba(16,30,36,.35);
+      border:1px solid var(--rule);background:rgba(17,26,46,.35);
       padding:30px 26px 34px;}
     .plate::before{content:'';position:absolute;inset:7px;border:1px solid var(--rule-2);pointer-events:none;}
     .screw{position:absolute;width:9px;height:9px;border-radius:50%;
@@ -172,7 +172,7 @@
     .chakra-table th:first-child{text-align:left;}
     .chakra-table td{padding:9px 12px;text-align:center;font-weight:400;font-size:16px;
       font-family:'Cinzel',serif;
-      border-bottom:1px solid rgba(11,20,24,.55);border-right:1px solid rgba(11,20,24,.35);}
+      border-bottom:1px solid rgba(12,18,34,.55);border-right:1px solid rgba(12,18,34,.35);}
     .chakra-table td:first-child{text-align:left;font-size:11px;font-weight:400;
       font-family:'Noto Serif Georgian',serif;letter-spacing:.02em;}
     .chakra-table tbody tr:hover td{filter:brightness(1.14);}
@@ -198,7 +198,7 @@
     .age-table .tc-arch{padding:12px 8px;text-align:center;}
     .age-table .tc-desc{padding:12px 16px;text-align:left;font-size:12px;line-height:1.85;
       color:var(--enamel-2);font-weight:300;}
-    .age-table tr.anchor{background:rgba(78,143,130,.07);}
+    .age-table tr.anchor{background:rgba(123,147,189,.07);}
     .e-badge{display:inline-block;padding:5px 13px;border-radius:0;font-size:10px;
       font-family:'Marcellus SC',serif;font-weight:400;letter-spacing:.08em;color:white;
       white-space:nowrap;line-height:1.35;text-align:center;}

@@ -70,16 +70,16 @@ let S=load();
 
 const CSS=`
 #people-panel{display:none;width:100%;max-width:920px;margin:0 auto;font-family:'JetBrains Mono',monospace}
-.pp-card{border:1px solid var(--rule,rgba(184,137,74,.22));background:rgba(16,30,36,.45);padding:16px 16px 14px;margin-bottom:14px}
+.pp-card{border:1px solid var(--rule,rgba(184,137,74,.22));background:rgba(17,26,46,.45);padding:16px 16px 14px;margin-bottom:14px}
 .pp-card h3{font-family:'Marcellus SC','Cinzel',serif;font-weight:400;color:var(--brass-lt,#E3BE84);letter-spacing:.12em;font-size:15px;margin:0 0 10px}
-.pp-note{font-size:12px;color:var(--enamel-2,#B9BFBC);line-height:1.6}
+.pp-note{font-size:12px;color:var(--enamel-2,#BCC0CA);line-height:1.6}
 .pp-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .pp-row{display:grid;grid-template-columns:1fr 44px 44px 64px 30px;gap:6px;align-items:center;margin-bottom:6px}
-.pp-row input{min-width:0;background:rgba(11,20,24,.6);border:none;border-bottom:1px solid var(--rule,rgba(184,137,74,.22));color:var(--enamel,#EDE6D8);font:inherit;font-size:13px;padding:7px 4px;text-align:center;outline:none}
+.pp-row input{min-width:0;background:rgba(12,18,34,.6);border:none;border-bottom:1px solid var(--rule,rgba(184,137,74,.22));color:var(--enamel,#EDE6D8);font:inherit;font-size:13px;padding:7px 4px;text-align:center;outline:none}
 .pp-row input.nm{text-align:left}
 .pp-row input:focus{border-bottom-color:var(--brass,#B8894A)}
 .pp-row input.bad{border-bottom-color:#e06b6b}
-.pp-x{all:unset;cursor:pointer;text-align:center;color:var(--dim,#6E8087);font-size:16px;padding:6px 0}
+.pp-x{all:unset;cursor:pointer;text-align:center;color:var(--dim,#7A8499);font-size:16px;padding:6px 0}
 .pp-x:hover{color:#e06b6b}
 .pp-add{all:unset;cursor:pointer;font-size:12px;color:var(--brass,#B8894A);padding:6px 2px}
 .pp-add[disabled]{opacity:.35;cursor:default}
@@ -87,7 +87,7 @@ const CSS=`
 .pp-gh.bad{color:#e88a8a}.pp-gh.good{color:#7fd1a8}
 .pp-go{display:block;margin:14px auto 0}
 .pp-tbl{width:100%;border-collapse:collapse;font-size:12px}
-.pp-tbl th{font-weight:400;color:var(--dim,#6E8087);text-align:left;padding:6px;border-bottom:1px solid var(--rule,rgba(184,137,74,.22));white-space:nowrap}
+.pp-tbl th{font-weight:400;color:var(--dim,#7A8499);text-align:left;padding:6px;border-bottom:1px solid var(--rule,rgba(184,137,74,.22));white-space:nowrap}
 .pp-tbl td{padding:7px 6px;border-bottom:1px solid var(--rule-2,rgba(184,137,74,.10));vertical-align:top;color:var(--enamel,#EDE6D8)}
 .pp-tbl tr.hot td{background:rgba(184,137,74,.07)}
 .pp-scroll{overflow-x:auto}
@@ -95,15 +95,15 @@ const CSS=`
 .pp-bar{display:inline-block;height:7px;vertical-align:middle;margin-right:6px}
 .pp-tag{display:inline-block;font-size:10.5px;padding:1px 6px;border-radius:3px;margin:1px 3px 1px 0;white-space:nowrap}
 .pp-tag.trig{background:rgba(224,107,107,.18);color:#f0a0a0}
-.pp-tag.res{background:rgba(78,143,130,.22);color:#8fd3c4}
+.pp-tag.res{background:rgba(123,147,189,.22);color:#8fd3c4}
 .pp-tag.mir{background:rgba(184,137,74,.18);color:var(--brass-lt,#E3BE84)}
-.pp-tag.neu{background:rgba(110,128,135,.2);color:var(--enamel-2,#B9BFBC)}
+.pp-tag.neu{background:rgba(110,128,135,.2);color:var(--enamel-2,#BCC0CA)}
 .pp-sum p{font-size:13px;line-height:1.7;margin:0 0 8px;color:var(--enamel,#EDE6D8)}
 .pp-pc{border-top:1px solid var(--rule-2,rgba(184,137,74,.10));padding:10px 0}
 .pp-pc:first-child{border-top:0}
 .pp-pc .hd{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px}
 .pp-pc .hd b{font-weight:400;color:var(--brass-lt,#E3BE84)}
-.pp-pc .ln{font-size:12px;color:var(--enamel-2,#B9BFBC);margin-top:5px;line-height:1.7}
+.pp-pc .ln{font-size:12px;color:var(--enamel-2,#BCC0CA);margin-top:5px;line-height:1.7}
 .pp-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
 @media(max-width:700px){.pp-cols{grid-template-columns:1fr}
  .pp-row{grid-template-columns:1fr 38px 38px 56px 26px;gap:4px}
@@ -209,7 +209,7 @@ async function run(){
 
 /* ── analysis ── */
 const enBadge=n=>{const e=E(n);return `<span class="pp-en" style="background:${e.color}">${n} · ${e.name}</span>`;};
-const zoneTags=(me,n)=>myZones(me,n).map(z=>`<span class="pp-tag ${z.kind==='trig'?'trig':z.kind==='res'?'res':'neu'}">${z.t}</span>`).join('')||'<span style="color:var(--dim,#6E8087)">—</span>';
+const zoneTags=(me,n)=>myZones(me,n).map(z=>`<span class="pp-tag ${z.kind==='trig'?'trig':z.kind==='res'?'res':'neu'}">${z.t}</span>`).join('')||'<span style="color:var(--dim,#7A8499)">—</span>';
 
 function person(me,p){
   const pr=profile(p.v);
@@ -274,9 +274,9 @@ function analysis(me,people){
   const tbl=`<div class="pp-scroll"><table class="pp-tbl"><thead><tr>
      <th>ენერგია</th><th>რთული</th><th>კარგი</th><th class="opt">ჩვეულებრივ</th><th>შენს მატრიცაში</th></tr></thead><tbody>${
      shown.map(r=>`<tr class="${hot.has(r.n)?'hot':''}"><td>${enBadge(r.n)}</td>
-       <td>${B.length?bar(r.bp,'#e06b6b')+`${r.b}/${B.length}`+(r.b?` <small style="color:var(--dim,#6E8087)">${r.bl.toFixed(1)}×</small>`:''):'—'}</td>
-       <td>${G.length?bar(r.gp,'#4E8F82')+`${r.g}/${G.length}`+(r.g?` <small style="color:var(--dim,#6E8087)">${r.gl.toFixed(1)}×</small>`:''):'—'}</td>
-       <td class="opt" style="color:var(--dim,#6E8087)">${Math.round(r.base*100)}%</td>
+       <td>${B.length?bar(r.bp,'#e06b6b')+`${r.b}/${B.length}`+(r.b?` <small style="color:var(--dim,#7A8499)">${r.bl.toFixed(1)}×</small>`:''):'—'}</td>
+       <td>${G.length?bar(r.gp,'#7B93BD')+`${r.g}/${G.length}`+(r.g?` <small style="color:var(--dim,#7A8499)">${r.gl.toFixed(1)}×</small>`:''):'—'}</td>
+       <td class="opt" style="color:var(--dim,#7A8499)">${Math.round(r.base*100)}%</td>
        <td>${zoneTags(me,r.n)}</td></tr>`).join('')}</tbody></table></div>
      <div class="pp-note" style="margin-top:8px">თითო ადამიანის 9 წერტილი: ${POS.map(p=>p[1]).join(' · ')}.
        „ჩვეულებრივ“ — 1930–2010 წლების ყველა თარიღიდან რა წილს აქვს ეს ენერგია; ×N — ჯგუფში რამდენჯერ უფრო ხშირია.
@@ -284,8 +284,8 @@ function analysis(me,people){
 
   /* ── per person ── */
   const card=p=>{const x=P.get(p);
-    return `<div class="pp-pc"><div class="hd"><span><span class="pp-dot" style="background:${p.g==='bad'?'#e06b6b':'#4E8F82'}"></span><b>${esc(p.name)}</b>
-       <span style="color:var(--dim,#6E8087)"> ${String(p.d).padStart(2,'0')}.${String(p.m).padStart(2,'0')}.${p.y}</span></span>
+    return `<div class="pp-pc"><div class="hd"><span><span class="pp-dot" style="background:${p.g==='bad'?'#e06b6b':'#7B93BD'}"></span><b>${esc(p.name)}</b>
+       <span style="color:var(--dim,#7A8499)"> ${String(p.d).padStart(2,'0')}.${String(p.m).padStart(2,'0')}.${p.y}</span></span>
        <span style="font-size:12px">წყვილის ცენტრი ${enBadge(x.cCv)}</span></div>
      <div class="ln">${
        x.mirror.length?`<span class="pp-tag mir">სარკე</span> ${x.mirror.map(([k,t])=>`${t} = ${p.v[k]}`).join(', ')}<br>`:''}${

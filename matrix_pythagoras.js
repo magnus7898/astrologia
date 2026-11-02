@@ -61,7 +61,7 @@ const CSS=`
 #pyth-panel .py-c b{font-family:'Cinzel',serif;font-size:17px;font-weight:400;color:var(--brass-lt);letter-spacing:.04em;word-break:break-all}
 #pyth-panel .py-c.empty b{color:var(--dim)}
 #pyth-panel .py-c span{font-size:9px;color:var(--enamel-2);opacity:.75}
-#pyth-panel .py-c.diff{background:rgba(78,143,130,.10)}
+#pyth-panel .py-c.diff{background:rgba(123,147,189,.10)}
 #pyth-panel .py-l{display:grid;grid-template-columns:1fr auto auto;gap:2px 10px;margin-top:10px;font-size:10.5px}
 #pyth-panel .py-l .k{color:var(--enamel-2)}
 #pyth-panel .py-l .d{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--dim);align-self:center}

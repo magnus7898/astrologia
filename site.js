@@ -289,7 +289,7 @@ function layoutTiles(){
 }
 
 /* ── Destiny Matrix ground (background only — each page keeps its own boxes) ── */
-const BG_SKIP=new Set(['index.html','matrix.html','fool_journey.html','vector.html']);
+const BG_SKIP=new Set(['index.html','fool_journey.html','vector.html']);
 /* every box in the colour of the home-page cards */
 const CARD_SKIP=new Set(['cards.html','tarot.html','tarotborth.html','fool_journey.html','vector.html','index.html','matrix.html']);
 const BOX_SEL='.panel,.form-card,.form-shell,.data-card,.input-panel,.stat,.box,#orb-panel,#asp-filters,.mg-tiles>*'+(CARD_SKIP.has(P)?'':',.card');

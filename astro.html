@@ -780,7 +780,7 @@ td{border-bottom-color:rgba(184,137,74,.12)}
 
 <script>
 const BACKEND='https://astrology-production-b165.up.railway.app';
-const CX=350,CY=350,R1=270,R2=202,R3=135,R4=105;
+const CX=350,CY=350,R1=270,R2=202,R3=135,R4=135; // aspects fill the whole inner circle (no empty ring)
 const R5=72; // inner ring for second person in synastry/transit
 
 let currentMode='natal';
@@ -3268,6 +3268,7 @@ setToday('pd');
   <script src="livewhere.js"></script>
   <script src="astro_links.js"></script>
   <script src="pointvariants.js"></script>
+  <script src="chartui.js"></script>
 <script>
 /* დღე · თვე · წელი · საათი · წუთი — one line in every form (tabs added later too) */
 (function(){
