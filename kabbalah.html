@@ -6,16 +6,16 @@
 <title>კაბალა · სიცოცხლის ხე</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Serif+Hebrew:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+:root{--bg:#091113;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#C8A36E;--gold-dim:rgba(200,163,110,0.3);--text:#E8E0D5;--muted:rgba(232,224,213,0.42);--vio:#DDBA8A}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(120,85,35,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(30,70,63,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,49,20,.15) 0%,transparent 55%)}
 .page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
 .page-header{text-align:center;margin-bottom:40px}
 .eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
 .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
-.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.page-title em{font-style:italic;color:rgba(232,224,213,.5)}
 .ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
 .ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
 .ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
@@ -24,30 +24,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
 .h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
 .note{font-size:11.5px;color:var(--muted);line-height:1.8}
-.note b{color:rgba(200,169,110,.9);font-weight:500}
+.note b{color:rgba(200,163,110,.9);font-weight:500}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
 .in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
-.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
-.sel option{background:#14121f}
+.in:focus,.sel:focus{border-color:rgba(200,163,110,.4)}
+.sel option{background:#121C1F}
 .in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
 .in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
-.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
-.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(221,186,138,.2),rgba(108,192,178,.1));border:1px solid rgba(221,186,138,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(221,186,138,.6);box-shadow:0 0 22px rgba(221,186,138,.2)}
 .pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
 .pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
 .pill:hover{color:var(--text)}
-.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.pill.active{color:var(--gold);border-color:rgba(200,163,110,.5);background:rgba(200,163,110,.07)}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
 .tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
 .tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
-.tbl tr.now td{background:rgba(200,169,110,.07)}
+.tbl tr.now td{background:rgba(200,163,110,.07)}
 .scroll{overflow-x:auto}
 .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
 .kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
 .kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
-.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
-.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.kv .t{font-size:11.5px;color:rgba(232,224,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,224,213,.78)}
 .txt b{color:var(--text);font-weight:500}
 .big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
 .sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
@@ -180,10 +180,10 @@ function draw(){
     <div class="sinfo"><div class="t">${s.id?s.id+'. ':''}${s.n} <span class="he">${s.he}</span></div><div class="note">${s.m} · ${PL[s.p][1]} ${PL[s.p][0]}</div>
       <div class="txt" style="margin-top:8px">${s.t}</div>
       ${p?`<div class="txt" style="margin-top:8px">შენს რუკაში: <b>${PL[s.p][0]} ${SIGN[p.s]}ში ${p.d.toFixed(1)}°</b>${dg&&dg[1]!=='—'?` · ${dg[1]}`:''}${dg&&dg[0]>0?' — სეფირა ძლიერად ანათებს.':dg&&dg[0]<0?' — სეფირის ენერგია დაბრკოლებულია, საჭიროებს ცნობიერ მუშაობას.':''}</div>`:'<div class="txt" style="margin-top:8px">მალხუთი — შენი სხეული და ფიზიკური ცხოვრება; აქ ყველა ზემოთა ენერგია ხორციელდება.</div>'}
-      ${s.id===(lp===11?2:lp===22?4:lp)?`<div class="txt" style="margin-top:8px;color:#b8a4f0">✦ შენი ცხოვრების გზის რიცხვი ${lp} — ამ სეფირის თემა შენი ცხოვრების მთავარი გაკვეთილია.</div>`:''}
+      ${s.id===(lp===11?2:lp===22?4:lp)?`<div class="txt" style="margin-top:8px;color:#E7CFAD">✦ შენი ცხოვრების გზის რიცხვი ${lp} — ამ სეფირის თემა შენი ცხოვრების მთავარი გაკვეთილია.</div>`:''}
       <div class="note" style="margin-top:10px">დაკავშირებული გზები: ${paths.map(pa=>`${pa[0]} ${pa[3]} (${ARC[pa[5]]})`).join(' · ')}</div>
       <div class="note" style="margin-top:12px">დააჭირე სეფირას ხეზე.</div></div></div>
-    <div class="note" style="margin-top:10px">გზის სისქე — რამდენი პლანეტა ააქტიურებს მას (ნიშნით ან თავად პლანეტით). <span style="color:#9b7fe8">წყვეტილი იისფერი რგოლი</span> — ცხოვრების გზის რიცხვის (${lp}) სეფირა.</div></div>`;
+    <div class="note" style="margin-top:10px">გზის სისქე — რამდენი პლანეტა ააქტიურებს მას (ნიშნით ან თავად პლანეტით). <span style="color:#DDBA8A">წყვეტილი იისფერი რგოლი</span> — ცხოვრების გზის რიცხვის (${lp}) სეფირა.</div></div>`;
   const ap=PATHS.filter(pa=>act[pa[0]].w>0).sort((a,b)=>act[b[0]].w-act[a[0]].w);
   h+=`<div class="card"><div class="h">აქტიური გზები</div><div class="scroll"><table class="tbl"><tr><th>გზა</th><th>ასო</th><th>არკანი</th><th>მიმართება</th><th>რატომ</th></tr>`+
     ap.map(pa=>`<tr><td>${pa[0]} · ${S_ID[pa[1]].n} → ${S_ID[pa[2]].n}</td><td style="font-family:'Noto Serif Hebrew',serif;font-size:16px">${pa[3]} <span class="note">${pa[4]}</span></td><td>${pa[5]===bcArc?'<b style="color:var(--gold)">':''}${ARC[pa[5]]}${pa[5]===bcArc?'</b>':''}</td><td>${pa[6]==='zs'?ZS[pa[7]]+' '+SIGN[pa[7]]:pa[6]==='pl'?PL[pa[7]][1]+' '+PL[pa[7]][0]:pa[7]}</td><td class="note">${act[pa[0]].why.join(', ')}</td></tr>`).join('')+`</table></div></div>
@@ -201,7 +201,7 @@ function draw(){
       <div class="txt" style="margin-top:10px">${PATH_T[pa[0]]}</div><div class="note" style="margin-top:6px">ქართული ასოების რიცხვითი მნიშვნელობა — ძველი ქართული ანბანური რიცხვები (ა=1 … ჵ=10000); ებრაული — მისპარ ჰეხრეხი.</div></div>`;})()}
   <div class="card"><div class="h">ახლანდელი წელი</div>${(()=>{const Y=new Date().getFullYear(),py=root9(ST.P.d+ST.P.m+dsum(Y)),yc=red22(ST.P.m+ST.P.d+Y),ya=yc===22?0:yc,pa=PATHS.find(x=>x[5]===ya);
     return `<div class="txt">პირადი წელი <b>${py}</b> → სეფირა <b>${S_ID[py].n}</b> (${S_ID[py].m}): ${S_ID[py].t}</div><div class="txt" style="margin-top:6px">წლის კარტა <b>${ARC[ya]}</b> → გზა ${pa[0]} (${pa[3]}): ${PATH_T[pa[0]]}</div>`;})()}</div>
-  <div class="card"><div class="h">22 გზა</div><div class="scroll"><table class="tbl"><tr><th>გზა</th><th>ასო</th><th>მნიშვნელობა</th></tr>${PATHS.map(pa=>`<tr class="${act[pa[0]].w?'now':''}"><td>${pa[0]}<br><span class="note">${S_ID[pa[1]].n} → ${S_ID[pa[2]].n}</span></td><td style="font-family:'Noto Serif Hebrew',serif;font-size:18px">${pa[3]}</td><td class="note" style="color:rgba(232,226,213,.7)">${PATH_T[pa[0]]}</td></tr>`).join('')}</table></div></div>
+  <div class="card"><div class="h">22 გზა</div><div class="scroll"><table class="tbl"><tr><th>გზა</th><th>ასო</th><th>მნიშვნელობა</th></tr>${PATHS.map(pa=>`<tr class="${act[pa[0]].w?'now':''}"><td>${pa[0]}<br><span class="note">${S_ID[pa[1]].n} → ${S_ID[pa[2]].n}</span></td><td style="font-family:'Noto Serif Hebrew',serif;font-size:18px">${pa[3]}</td><td class="note" style="color:rgba(232,224,213,.7)">${PATH_T[pa[0]]}</td></tr>`).join('')}</table></div></div>
   <div class="card note">პლანეტები — MAGNUS-ის ეფემერიდა (search.js). შესაბამისობები: ოქროს განთიადის ორდენი (XIX ს.); ხოხმა/კეთერი/დაათი — თანამედროვე მიმართება ურანთან, ნეპტუნთან და პლუტონთან. არკანები MAGNUS-ის ნუმერაციით (8 — სამართლიანობა → ლამედი/სასწორი, 11 — ძალა → ტეთი/ლომი). ${ST.T?'':'დრო უცნობია — აღებულია შუადღე (მთვარე ±7°).'}</div>`;
   $('out').innerHTML=h;
   document.querySelectorAll('[data-s]').forEach(g=>g.onclick=()=>{SELS=+g.dataset.s;draw();});

@@ -6,47 +6,47 @@
 <title>პითაგორას კვადრატი</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.38);}
+:root{--bg:#091113;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#C8A36E;--gold-dim:rgba(200,163,110,0.3);--text:#E8E0D5;--muted:rgba(232,224,213,0.38);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,0.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,0.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,0.15) 0%,transparent 55%);}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(120,85,35,0.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(30,70,63,0.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,49,20,0.15) 0%,transparent 55%);}
 .page{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:60px 24px 100px;}
 .page-header{text-align:center;margin-bottom:52px;}
 .eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8;}
 .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(36px,7vw,58px);line-height:1;color:var(--text);letter-spacing:1px;}
-.page-title em{font-style:italic;color:rgba(232,226,213,.5);}
+.page-title em{font-style:italic;color:rgba(232,224,213,.5);}
 .ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px;}
 .ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim));}
 .ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent);}
 .ornament-dot{width:6px;height:6px;background:var(--gold);transform:rotate(45deg);opacity:.6;}
 .input-wrap{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
 .input-field{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:18px;letter-spacing:3px;padding:12px 20px;outline:none;width:200px;text-align:center;transition:border-color .3s;}
-.input-field:focus{border-color:rgba(200,169,110,.35);}
+.input-field:focus{border-color:rgba(200,163,110,.35);}
 .input-field::placeholder{color:var(--muted);font-size:13px;letter-spacing:2px;}
-.calc-btn{padding:12px 28px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .3s;}
-.calc-btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 24px rgba(155,127,232,.2);}
+.calc-btn{padding:12px 28px;background:linear-gradient(135deg,rgba(221,186,138,.2),rgba(108,192,178,.1));border:1px solid rgba(221,186,138,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .3s;}
+.calc-btn:hover{border-color:rgba(221,186,138,.6);box-shadow:0 0 24px rgba(221,186,138,.2);}
 
 /* mode toggle */
 .mode-wrap{display:none;flex-direction:column;align-items:center;gap:10px;margin-bottom:36px;}
 .mode-pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
 .mode-pill{padding:8px 20px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;}
-.mode-pill:hover{color:var(--text);border-color:rgba(200,169,110,.3);}
-.mode-pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07);box-shadow:0 0 16px rgba(200,169,110,.1);}
+.mode-pill:hover{color:var(--text);border-color:rgba(200,163,110,.3);}
+.mode-pill.active{color:var(--gold);border-color:rgba(200,163,110,.5);background:rgba(200,163,110,.07);box-shadow:0 0 16px rgba(200,163,110,.1);}
 .mode-desc{font-size:11px;color:var(--muted);text-align:center;letter-spacing:.5px;max-width:520px;line-height:1.7;min-height:16px;}
-.mode-desc b{color:rgba(200,169,110,.85);font-weight:500;}
+.mode-desc b{color:rgba(200,163,110,.85);font-weight:500;}
 
 .summary{display:none;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 28px;margin-bottom:44px;text-align:center;}
 .summary-row{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;}
 .summary-item{display:flex;flex-direction:column;gap:4px;}
 .summary-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
 .summary-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--gold);}
-.summary-value.corr{color:rgba(155,127,232,.95);}
+.summary-value.corr{color:rgba(221,186,138,.95);}
 .grid-section{display:none;margin-bottom:52px;}
 .grid-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:24px;}
 .pyth-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:430px;
   margin:0 auto;}
-.cell{--c:rgba(232,226,213,.25);
+.cell{--c:rgba(232,224,213,.25);
   background:linear-gradient(160deg,color-mix(in srgb,var(--c) 16%,transparent),
                                     color-mix(in srgb,var(--c) 5%,transparent));
   border:1px solid color-mix(in srgb,var(--c) 32%,transparent);
@@ -79,7 +79,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .cell-digits{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;
   letter-spacing:5px;min-height:36px;display:flex;align-items:center;
   position:relative;z-index:1;transition:color .25s,text-shadow .25s;}
-.cell-digits.empty{font-size:18px;color:rgba(232,226,213,.2);}
+.cell-digits.empty{font-size:18px;color:rgba(232,224,213,.2);}
 #results{display:none;}
 .section{margin-bottom:0;opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease;}
 .section.visible{opacity:1;transform:none;}
@@ -88,8 +88,8 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:clamp(20px,4vw,26px);color:var(--text);line-height:1;}
 .section-title em{font-style:italic;color:var(--muted);font-size:.75em;margin-left:8px;}
 .digit-display{display:flex;gap:3px;flex-shrink:0;}
-.digit-pip{width:9px;height:9px;border-radius:50%;background:var(--gold);opacity:.7;box-shadow:0 0 6px rgba(200,169,110,.5);}
-.section-body{font-family:'Noto Sans Georgian',sans-serif;font-size:14px;font-weight:300;line-height:1.8;color:rgba(232,226,213,.72);}
+.digit-pip{width:9px;height:9px;border-radius:50%;background:var(--gold);opacity:.7;box-shadow:0 0 6px rgba(200,163,110,.5);}
+.section-body{font-family:'Noto Sans Georgian',sans-serif;font-size:14px;font-weight:300;line-height:1.8;color:rgba(232,224,213,.72);}
 .section-body strong{color:var(--text);font-weight:500;}
 .divider{display:flex;align-items:center;gap:16px;padding:32px 0;}
 .divider-line{flex:1;height:1px;background:var(--border);}
@@ -102,7 +102,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .compound-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);}
 .compound-name{font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;opacity:.8;}
 .compound-digits-label{font-size:10px;color:var(--muted);margin-bottom:10px;}
-.compound-body{font-size:12px;line-height:1.7;color:rgba(232,226,213,.6);}
+.compound-body{font-size:12px;line-height:1.7;color:rgba(232,224,213,.6);}
 @media(max-width:600px){.compound-row{grid-template-columns:1fr;}.page{padding:40px 16px 80px;}}
 
 /* ── ENERGY CURVES ── */
@@ -112,7 +112,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
   font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
   color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none;}
 .cleg .sw{width:16px;height:3px;border-radius:2px;}
-.cleg.on{color:var(--text);border-color:rgba(200,169,110,.35);}
+.cleg.on{color:var(--text);border-color:rgba(200,163,110,.35);}
 .cleg.off{opacity:.4;}
 .curve-svg-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 10px 10px;overflow-x:auto;}
 .curve-svg-wrap svg{width:100%;height:auto;display:block;min-width:560px;}
@@ -130,17 +130,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
   border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none;position:relative;}
 .dchip .dn{font-family:'Cormorant Garamond',serif;font-size:21px;color:var(--text);line-height:1;}
 .dchip .dg{font-size:8px;letter-spacing:.5px;color:var(--muted);margin-top:3px;font-family:'Cinzel',serif;text-transform:uppercase;}
-.dchip:hover{border-color:rgba(200,169,110,.35);}
-.dchip.active{border-color:rgba(200,169,110,.6);background:rgba(200,169,110,.09);}
+.dchip:hover{border-color:rgba(200,163,110,.35);}
+.dchip.active{border-color:rgba(200,163,110,.6);background:rgba(200,163,110,.09);}
 .dchip.active .dn{color:var(--gold);}
-.dchip.mine::after{content:'●';position:absolute;top:3px;right:6px;font-size:7px;color:rgba(155,127,232,.9);}
-.vsq-mine-note{text-align:center;font-size:10.5px;color:rgba(155,127,232,.75);margin-bottom:8px;letter-spacing:.5px;}
+.dchip.mine::after{content:'●';position:absolute;top:3px;right:6px;font-size:7px;color:rgba(221,186,138,.9);}
+.vsq-mine-note{text-align:center;font-size:10.5px;color:rgba(221,186,138,.75);margin-bottom:8px;letter-spacing:.5px;}
 .mirror-toggle{display:flex;justify-content:center;margin-bottom:22px;}
 .mt-btn{padding:7px 20px;border-radius:18px;font-family:'Cinzel',serif;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
   cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none;}
-.mt-btn.on{color:rgba(155,127,232,.95);border-color:rgba(155,127,232,.45);background:rgba(155,127,232,.07);}
+.mt-btn.on{color:rgba(221,186,138,.95);border-color:rgba(221,186,138,.45);background:rgba(221,186,138,.07);}
 .sq-wrap{background:
-    radial-gradient(ellipse 60% 50% at 20% 0%,rgba(155,127,232,.13),transparent 65%),
+    radial-gradient(ellipse 60% 50% at 20% 0%,rgba(221,186,138,.13),transparent 65%),
     radial-gradient(ellipse 55% 50% at 85% 100%,rgba(127,207,232,.11),transparent 65%),
     linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
   border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;
@@ -149,7 +149,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .sq-wrap svg{width:100%;height:auto;display:block;}
 .pattern-info{text-align:center;font-size:12px;color:var(--muted);line-height:1.8;min-height:20px;}
 .pattern-info b{color:var(--gold);font-weight:500;}
-.pattern-info i{color:rgba(155,127,232,.95);font-style:normal;}
+.pattern-info i{color:rgba(221,186,138,.95);font-style:normal;}
 </style>
 </head>
 <body>
@@ -216,15 +216,15 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
     სადაც z — წლის ბოლოსწინა ციფრი, u — ბოლო ციფრი. შედეგი მრგვალდება.
   </div>
   <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;align-items:stretch">
-    <div style="background:var(--surface);border:1px solid rgba(200,169,110,.35);border-radius:14px;padding:26px 34px;text-align:center;min-width:220px">
+    <div style="background:var(--surface);border:1px solid rgba(200,163,110,.35);border-radius:14px;padding:26px 34px;text-align:center;min-width:220px">
       <div id="elemNum" style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;color:var(--muted)"></div>
-      <div id="elemSym" style="font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;color:var(--gold);line-height:1.1;text-shadow:0 0 40px rgba(200,169,110,.3)"></div>
+      <div id="elemSym" style="font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;color:var(--gold);line-height:1.1;text-shadow:0 0 40px rgba(200,163,110,.3)"></div>
       <div id="elemName" style="font-size:15px;color:var(--text);letter-spacing:1px"></div>
       <div id="elemRadio" style="font-size:10px;letter-spacing:2px;margin-top:8px;font-family:'Cinzel',serif"></div>
     </div>
     <div id="elemAlt" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 28px;text-align:center;min-width:200px;opacity:.85">
       <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:6px">კლასიკური წესი (107 ელემ.)<br>N&gt;107 → ციფრთა ჯამი</div>
-      <div id="elemAltSym" style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:rgba(155,127,232,.9);line-height:1.1"></div>
+      <div id="elemAltSym" style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:rgba(221,186,138,.9);line-height:1.1"></div>
       <div id="elemAltName" style="font-size:13px;color:var(--muted)"></div>
     </div>
   </div>

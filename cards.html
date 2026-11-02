@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --void:#04030a;--gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8a6a20;
-  --purple:#a78bfa;--txt:#e0d8ff;--dim:rgba(155,168,184,.6);
-  --red:#e05252;--black-suit:#c8d0e8;
+  --void:#0A1012;--gold:#C9954C;--gold-l:#DFBF91;--gold-d:#845D26;
+  --purple:#E4C8A1;--txt:#E4F3F1;--dim:rgba(155,168,184,.6);
+  --red:#e05252;--black-suit:#C8E8E2;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
@@ -21,52 +21,52 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   radial-gradient(1px 1px at 41% 8%,rgba(255,255,255,.45) 0,transparent 100%),
   radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.5) 0,transparent 100%),
   radial-gradient(1px 1px at 60% 62%,rgba(255,255,255,.3) 0,transparent 100%),
-  radial-gradient(1.5px 1.5px at 34% 51%,rgba(167,139,250,.25) 0,transparent 100%),
-  radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,168,76,.18) 0,transparent 100%);}
+  radial-gradient(1.5px 1.5px at 34% 51%,rgba(228,200,161,.25) 0,transparent 100%),
+  radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,149,76,.18) 0,transparent 100%);}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
-  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),
-  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%);}
+  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(186,131,54,.08) 0,transparent 70%),
+  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(72,168,152,.06) 0,transparent 70%);}
 
 .hero{position:relative;z-index:1;text-align:center;padding:48px 24px 28px;width:100%}
 .hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:12px;font-family:'Cinzel',serif}
 .hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,3.6vw,36px);font-weight:400;letter-spacing:3px;
-  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,#e8d5a0 100%);
+  background:linear-gradient(160deg,#EDDBC2 0%,var(--gold) 35%,#966A2C 60%,#E4C9A4 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 0 28px rgba(201,168,76,.22));}
+  filter:drop-shadow(0 0 28px rgba(201,149,76,.22));}
 .hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:8px}
 .hero-divider{display:flex;align-items:center;gap:14px;margin:18px auto 0;max-width:300px}
-.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
+.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.35),transparent)}
 .hero-gem{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.5;flex-shrink:0}
 
-.form-card{position:relative;z-index:1;background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.6);
+.form-card{position:relative;z-index:1;background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.6);
   border-radius:16px;padding:24px;width:100%;max-width:480px;margin:14px auto 24px;backdrop-filter:blur(12px);
   box-shadow:0 8px 40px rgba(0,0,0,.5);}
 .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
 .field{display:flex;flex-direction:column;gap:4px}
 label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
-input{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:8px;
+input{background:rgba(12,23,26,.7);border:1px solid rgba(54,126,114,.6);border-radius:8px;
   color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;
   width:100%;transition:border-color .2s;}
-input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
-.gen-btn{width:100%;background:linear-gradient(135deg,#6d28d9,#4c1d95);color:#fff;
-  border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:13px;font-size:13px;
+input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(207,157,88,.15)}
+.gen-btn{width:100%;background:linear-gradient(135deg,#C68C3B,#8A6128);color:#fff;
+  border:1px solid rgba(207,157,88,.4);border-radius:10px;padding:13px;font-size:13px;
   cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;transition:all .3s;
-  box-shadow:0 4px 20px rgba(109,40,217,.3);}
-.gen-btn:hover{background:linear-gradient(135deg,#7c3aed,#5b21b6);transform:translateY(-1px)}
+  box-shadow:0 4px 20px rgba(198,140,59,.3);}
+.gen-btn:hover{background:linear-gradient(135deg,#CF9D58,#A77530);transform:translateY(-1px)}
 .err{font-size:12px;color:#f87171;text-align:center;margin-top:8px;min-height:16px}
 
 #results{position:relative;z-index:1;width:100%;max-width:860px;padding:0 16px;display:none}
 .sec-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:var(--gold);
   text-transform:uppercase;text-align:center;margin:28px 0 16px;display:flex;align-items:center;gap:14px;}
-.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.3),transparent)}
 
 /* ── PLAYING CARD ── */
 .pcard{display:inline-flex;flex-direction:column;justify-content:space-between;
   width:120px;height:172px;border-radius:12px;padding:10px;position:relative;
-  background:linear-gradient(155deg,#f5f0e2 0%,#e8e0cc 55%,#ded2b8 100%);
-  border:1px solid rgba(201,168,76,.9);
-  box-shadow:0 0 0 3px rgba(4,3,10,1),0 0 0 4px rgba(201,168,76,.45),
-    0 10px 34px rgba(0,0,0,.65),0 0 24px rgba(201,168,76,.18);}
+  background:linear-gradient(155deg,#F5EDE2 0%,#E8DCCC 55%,#DECEB8 100%);
+  border:1px solid rgba(201,149,76,.9);
+  box-shadow:0 0 0 3px rgba(10,16,18,1),0 0 0 4px rgba(201,149,76,.45),
+    0 10px 34px rgba(0,0,0,.65),0 0 24px rgba(201,149,76,.18);}
 .pcard.sm{width:74px;height:106px;border-radius:8px;padding:6px;}
 .pcard .corner{font-family:'Cinzel',serif;font-weight:600;line-height:1;text-align:center;}
 .pcard .corner .rk{font-size:22px}
@@ -78,21 +78,21 @@ input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(12
   font-size:52px;opacity:.9;line-height:1}
 .pcard.sm .big-suit{font-size:30px}
 .pcard.red{color:#b3202a}
-.pcard.blk{color:#1a1a2e}
-.pcard.joker{color:#6d28d9}
+.pcard.blk{color:#1A2E2B}
+.pcard.joker{color:#C68C3B}
 .pcard.joker .big-suit{font-size:40px}
 
 .birth-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
 .card-name{font-family:'Cinzel',serif;font-size:15px;letter-spacing:2px;color:var(--gold-l);text-align:center}
 .card-sub{font-size:11px;color:var(--dim);text-align:center;line-height:1.7}
-.zodiac-chip{display:inline-block;background:rgba(45,31,110,.5);border:1px solid rgba(100,70,200,.4);
+.zodiac-chip{display:inline-block;background:rgba(42,99,89,.5);border:1px solid rgba(87,183,167,.4);
   border-radius:14px;padding:4px 14px;font-size:11px;color:var(--purple);font-family:'Cinzel',serif;letter-spacing:1px;margin:2px}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
-.data-card{background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.5);border-radius:12px;overflow:hidden;}
-.data-card-title{background:rgba(167,139,250,.07);padding:9px 14px;font-family:'Cinzel',serif;font-size:10px;
-  letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(45,31,110,.5);}
+.data-card{background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.5);border-radius:12px;overflow:hidden;}
+.data-card-title{background:rgba(228,200,161,.07);padding:9px 14px;font-family:'Cinzel',serif;font-size:10px;
+  letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(42,99,89,.5);}
 .dc-body{padding:14px;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:center}
 .mini-slot{display:flex;flex-direction:column;align-items:center;gap:6px}
 .mini-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:.75}
@@ -102,16 +102,16 @@ input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(12
 .pending b{color:var(--gold-l);font-weight:500}
 
 .yr-nav{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px 0;flex-wrap:wrap}
-.yr-nav button{background:rgba(45,31,110,.5);border:1px solid rgba(100,70,200,.45);color:var(--purple);border-radius:8px;
+.yr-nav button{background:rgba(42,99,89,.5);border:1px solid rgba(87,183,167,.45);color:var(--purple);border-radius:8px;
   padding:5px 12px;font-size:12px;cursor:pointer;font-family:'Cinzel',serif}
 .yr-nav button:hover{border-color:var(--purple);color:#fff}
 .yr-lbl{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-l);letter-spacing:1px;text-align:center}
 .yr-lbl small{display:block;font-family:'Noto Sans Georgian',sans-serif;font-size:10px;color:var(--dim);letter-spacing:0}
-.mini-slot.now .pcard{box-shadow:0 0 0 3px rgba(4,3,10,1),0 0 0 5px rgba(167,139,250,.9),0 0 26px rgba(167,139,250,.45)}
+.mini-slot.now .pcard{box-shadow:0 0 0 3px rgba(10,16,18,1),0 0 0 5px rgba(228,200,161,.9),0 0 26px rgba(228,200,161,.45)}
 .mini-slot.now .mini-label{color:var(--purple);opacity:1}
 .note{font-size:10px;color:var(--dim);line-height:1.7;padding:0 14px 12px;text-align:center}
 table{width:100%;border-collapse:collapse;font-size:12px}
-td{padding:6px 14px;border-bottom:1px solid rgba(15,13,40,.8)}
+td{padding:6px 14px;border-bottom:1px solid rgba(16,32,37,.8)}
 tr:last-child td{border-bottom:none}
 td.k{color:var(--dim);font-size:10px;letter-spacing:1px;text-transform:uppercase;font-family:'Cinzel',serif;white-space:nowrap}
 </style>

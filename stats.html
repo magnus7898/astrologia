@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="games.css">
 <style>
-:root{--glow:rgba(90,140,220,.12);--up:95,207,138;--dn:226,104,92}
+:root{--glow:rgba(115,195,182,.12);--up:95,207,138;--dn:226,104,92}
 .page{max-width:1040px}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:12px}
 .panel h3{font-family:'Cinzel',serif;font-weight:400;font-size:12px;letter-spacing:2.5px;color:var(--gold);margin-bottom:10px;text-transform:uppercase}
@@ -17,7 +17,7 @@ select:focus,input:focus{border-color:var(--border-h)}
 .frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border)}
 .frow .x{background:none;border:1px solid var(--border);color:var(--gold-lt);border-radius:50%;width:28px;height:28px;cursor:pointer;flex:none}
 .frow .and{font-size:10.5px;color:var(--gold);letter-spacing:1px;width:22px;text-align:center}
-.add{background:rgba(201,168,76,.08);border:1px dashed var(--border-h);color:var(--gold-lt);border-radius:8px;padding:7px 13px;font:inherit;font-size:12px;cursor:pointer;margin-top:10px}
+.add{background:rgba(201,149,76,.08);border:1px dashed var(--border-h);color:var(--gold-lt);border-radius:8px;padding:7px 13px;font:inherit;font-size:12px;cursor:pointer;margin-top:10px}
 .pre{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .pre button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:4px 11px;font:inherit;font-size:11.5px;cursor:pointer}
 .pre button:hover{border-color:var(--border-h);color:var(--gold-lt)}
@@ -25,7 +25,7 @@ select:focus,input:focus{border-color:var(--border-h)}
 .set label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-dim)}
 .go{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:14px 0 6px}
 .prog{height:4px;border-radius:2px;background:rgba(255,255,255,.06);overflow:hidden;margin:8px 0}
-.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4a90c8,var(--gold-lt));transition:width .15s}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#5AB8A8,var(--gold-lt));transition:width .15s}
 #msg{text-align:center;font-size:12.5px;color:var(--ink-mid);min-height:20px}
 #res{display:none}
 .sum{text-align:center;padding:16px}
@@ -38,7 +38,7 @@ select:focus,input:focus{border-color:var(--border-h)}
 .top2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .toplist{list-style:none;display:flex;flex-direction:column;gap:3px}
 .toplist li{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;padding:5px 8px;border-radius:6px;background:rgba(255,255,255,.02);}
-.toplist li:hover{background:rgba(201,168,76,.07)}
+.toplist li:hover{background:rgba(201,149,76,.07)}
 .toplist li b{font-weight:400;color:var(--ink)}
 .toplist li span{color:var(--ink-dim);font-size:11px;white-space:nowrap;text-align:right}
 .toplist li .lu{color:rgb(var(--up))}.toplist li .ld{color:rgb(var(--dn))}
@@ -53,12 +53,12 @@ section.sys>h2{font-family:'Cinzel',serif;font-weight:400;font-size:15px;letter-
 .bars{display:flex;flex-direction:column;gap:2px}
 .bars.long{max-height:420px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:var(--border-h) transparent}
 .br{display:grid;grid-template-columns:minmax(0,1fr) 92px 46px 44px;gap:6px;align-items:center;font-size:11.5px;padding:2px 4px;border-radius:4px}
-.br:hover{background:rgba(201,168,76,.07)}
+.br:hover{background:rgba(201,149,76,.07)}
 .br .l{color:var(--ink-mid);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .br.top .l{color:var(--gold-lt)}
 .br .b{position:relative;height:8px;background:rgba(255,255,255,.05);border-radius:2px}
-.br .b i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#9a7028,var(--gold-lt));border-radius:2px}
-.br .b u{position:absolute;top:-2px;bottom:-2px;width:2px;background:#8fb8e8;border-radius:1px}
+.br .b i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#966A2C,var(--gold-lt));border-radius:2px}
+.br .b u{position:absolute;top:-2px;bottom:-2px;width:2px;background:#A1D6CE;border-radius:1px}
 .br .p{text-align:right;color:var(--ink);font-family:'Cinzel',serif;font-size:11px}
 .br .k{text-align:right;font-size:10.5px;color:var(--ink-dim)}
 .br .k.u{color:rgb(var(--up))}.br .k.d{color:rgb(var(--dn))}
@@ -83,7 +83,7 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 .qres.on{display:block}
 .qres button{display:flex;justify-content:space-between;align-items:baseline;gap:10px;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);color:var(--ink);font:inherit;font-size:12.5px;padding:7px 11px;cursor:pointer}
 .qres button:last-child{border-bottom:none}
-.qres button:hover,.qres button.on{background:rgba(201,168,76,.1);color:var(--gold-lt)}
+.qres button:hover,.qres button.on{background:rgba(201,149,76,.1);color:var(--gold-lt)}
 .qres button small{color:var(--ink-dim);font-size:10.5px;white-space:nowrap;flex:none}
 .qres .none{padding:9px 11px;font-size:12px;color:var(--ink-dim)}
 .frow select{flex:1 1 130px}
@@ -96,8 +96,8 @@ table.heat td.mx{box-shadow:inset 0 -2px 0 var(--gold)}
 #res [data-f]{cursor:pointer}
 .fo{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(80px,1fr) auto;gap:6px 12px;align-items:center;font-size:12.5px}
 .fo .l{color:var(--ink)}.fo .b{position:relative;height:10px;background:rgba(255,255,255,.05);border-radius:2px}
-.fo .b i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#9a7028,var(--gold-lt));border-radius:2px}
-.fo .b u{position:absolute;top:-3px;bottom:-3px;width:2px;background:#8fb8e8}
+.fo .b i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#966A2C,var(--gold-lt));border-radius:2px}
+.fo .b u{position:absolute;top:-3px;bottom:-3px;width:2px;background:#A1D6CE}
 .fo .p{text-align:right;font-family:'Cinzel',serif;font-size:11.5px;white-space:nowrap}
 .fo .p small{font-family:'Noto Serif Georgian',serif;color:var(--ink-dim);font-size:10.5px}
 .fo .all{font-weight:600;color:var(--gold-lt)}
@@ -798,7 +798,7 @@ function render(keep){
         · შედარება: ყველა დაბადება ${yrTxt(P.a)}–${yrTxt(P.b)} (📅 ${B.days.toLocaleString()} დღე · 🕐 ${B.mom.toLocaleString()} მომენტი) · ${esc(placeName())}</div>`
     :`<div class="cond">ყველა დაბადება</div><div class="meta">${yrTxt(P.a)}–${yrTxt(P.b)} · 📅 ${B.days.toLocaleString()} დღე — ყველა, ზუსტად · 🕐 HD და ასტროლოგია: ${B.mom.toLocaleString()} მომენტი · ${esc(placeName())} — აირჩიე რიცხვი, თვე, წელი ან ნებისმიერი ნიშანი, რომ ნახო რით განსხვავდება ჯგუფი</div>`;
   $('legend').innerHTML=filtered()
-    ?`<span style="color:var(--gold-lt)">▬</span> ჯგუფში · <span style="color:#8fb8e8">|</span> ჩვეულებრივ · ×  რამდენჯერ ხშირია`+
+    ?`<span style="color:var(--gold-lt)">▬</span> ჯგუფში · <span style="color:#A1D6CE">|</span> ჩვეულებრივ · ×  რამდენჯერ ხშირია`+
      `<i style="background:rgba(var(--up),.55)"></i>უფრო ხშირი<i style="background:rgba(var(--dn),.5)"></i>უფრო იშვიათი · ფერი მხოლოდ სანდო სხვაობაზე · მნიშვნელობაზე დაჭერა — პირობად დამატება`
     :`ფერი — წილი რიგში (რაც უფრო მკვეთრია, მით ხშირი) · ოქროს ხაზი — ყველაზე ხშირი · მნიშვნელობაზე დაჭერა — პირობად დამატება`;
   /* top lifts */

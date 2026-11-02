@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;600&family=Noto+Serif+Georgian:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --void:#04030a;--panel:rgba(14,12,28,.82);--border:rgba(201,168,76,.22);
-  --gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8a6a20;
-  --txt:#e0d8ff;--dim:rgba(170,178,196,.62);--des:#d9dde4;
+  --void:#0A1012;--panel:rgba(12,24,28,.82);--border:rgba(201,149,76,.22);
+  --gold:#C9954C;--gold-l:#DFBF91;--gold-d:#845D26;
+  --txt:#E4F3F1;--dim:rgba(170,196,192,.62);--des:#d9dde4;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding:0 0 80px;overflow-x:hidden}
@@ -19,21 +19,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.45) 0,transparent 100%),
   radial-gradient(1px 1px at 15% 68%,rgba(255,255,255,.3) 0,transparent 100%),
   radial-gradient(1px 1px at 88% 74%,rgba(255,255,255,.35) 0,transparent 100%),
-  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),
-  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%)}
+  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(186,131,54,.08) 0,transparent 70%),
+  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(72,168,152,.06) 0,transparent 70%)}
 .wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 16px}
 .back{display:inline-block;margin:18px 0 0;color:var(--gold);text-decoration:none;font-size:13px;opacity:.75}
 .back:hover{opacity:1}
 .hero{text-align:center;padding:26px 0 24px}
 .hero-eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);opacity:.55;margin-bottom:10px}
 .hero-title{font-family:'Cinzel Decorative','Noto Serif Georgian',serif;font-size:clamp(22px,3.6vw,38px);letter-spacing:2px;
-  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 40%,#9a7028 65%,#e8d5a0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  background:linear-gradient(160deg,#EDDBC2 0%,var(--gold) 40%,#966A2C 65%,#E4C9A4 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .hero-sub{font-size:13px;color:var(--dim);margin-top:8px}
 
 .form{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;
   flex-wrap:wrap;gap:12px 18px;align-items:flex-end;justify-content:center}
 .f label{display:block;font-size:11px;color:var(--dim);margin-bottom:5px;letter-spacing:.5px}
-.f input,.f select{width:100%;text-align:center;background:#0b0918;border:1px solid var(--border);border-radius:8px;color:var(--txt);
+.f input,.f select{width:100%;text-align:center;background:#0A1417;border:1px solid var(--border);border-radius:8px;color:var(--txt);
   padding:9px 10px;font:inherit;font-size:14px}
 .f input:focus,.f select:focus{outline:none;border-color:var(--gold)}
 .row3{display:flex;gap:5px}.row3 input{min-width:0;padding-left:4px;padding-right:4px}
@@ -44,7 +44,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .hint{font-size:11px;color:var(--dim);margin-top:4px;min-height:14px}
 .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);cursor:pointer;padding-bottom:10px}
-.btn{flex-basis:100%;max-width:280px;margin:4px auto 0;background:linear-gradient(135deg,#8a6a20,#c9a84c 50%,#8a6a20);color:#120c02;border:none;
+.btn{flex-basis:100%;max-width:280px;margin:4px auto 0;background:linear-gradient(135deg,#845D26,#C9954C 50%,#845D26);color:#091113;border:none;
   border-radius:10px;padding:12px 34px;font-family:'Cinzel','Noto Sans Georgian',serif;font-weight:600;letter-spacing:2px;cursor:pointer;font-size:14px}
 .btn:disabled{opacity:.6;cursor:wait}
 .err{flex-basis:100%;text-align:center;color:#ff8a80;font-size:13px;min-height:16px}
@@ -62,13 +62,13 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .legend b{font-weight:600}
 h3{font-family:'Cinzel','Noto Serif Georgian',serif;font-size:12px;letter-spacing:2.5px;color:var(--gold);margin:0 0 10px;font-weight:600}
 .sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.sum>div{background:rgba(255,255,255,.025);border:1px solid rgba(201,168,76,.13);border-radius:9px;padding:8px 10px}
+.sum>div{background:rgba(255,255,255,.025);border:1px solid rgba(201,149,76,.13);border-radius:9px;padding:8px 10px}
 .sum .k{font-size:10px;color:var(--dim);letter-spacing:.5px}
 .sum .v{font-size:14px;color:var(--gold-l);margin-top:2px}
 .sum .full{grid-column:1/-1}
 .chl{display:flex;flex-direction:column;gap:5px}
 .ch{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent;font-size:13px}
-.ch:hover,.ch.on{border-color:rgba(201,168,76,.35);background:rgba(255,255,255,.03)}
+.ch:hover,.ch.on{border-color:rgba(201,149,76,.35);background:rgba(255,255,255,.03)}
 .ch .sw{width:14px;height:14px;border-radius:4px;flex:none}
 .ch .pr{font-family:'Cinzel',serif;font-size:12px;color:var(--gold-l);min-width:46px}
 .ch .ce{margin-left:auto;font-size:10px;color:var(--dim);text-align:right}
@@ -84,7 +84,7 @@ td.dgl{font-family:'Cinzel',serif;color:#c3c8d0}
 td.dd{color:#a9aeb7}
 .pg{font-size:17px;width:22px;display:inline-block;text-align:center}
 .meta{font-size:12px;color:var(--dim);margin-top:10px;line-height:1.7}
-.tip{position:fixed;pointer-events:none;z-index:50;background:#120f22;border:1px solid var(--gold-d);border-radius:8px;
+.tip{position:fixed;pointer-events:none;z-index:50;background:#0F1D22;border:1px solid var(--gold-d);border-radius:8px;
   padding:7px 10px;font-size:12px;color:var(--txt);max-width:260px;display:none;box-shadow:0 6px 24px rgba(0,0,0,.5)}
 </style>
 </head>

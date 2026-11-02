@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="constellations.js"></script>
 <style>
-:root{--void:#05040c;--acc:#7c9ad0;--acc-l:#a8c4ea;--dust:#c8d4e8;
-  --txt:#e6ecf8;--dim:rgba(190,205,230,0.55)}
+:root{--void:#091113;--acc:#82CABE;--acc-l:#B3DFD7;--dust:#C8E8E2;
+  --txt:#E9F5F3;--dim:rgba(192,228,222,0.55)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
   min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;position:relative}
@@ -19,49 +19,49 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   radial-gradient(1px 1px at 79% 33%,rgba(255,255,255,.45) 0,transparent 100%),
   radial-gradient(1px 1px at 44% 77%,rgba(255,255,255,.3) 0,transparent 100%)}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 700px 420px at 25% 15%,rgba(124,154,208,.09) 0,transparent 70%)}
+  background:radial-gradient(ellipse 700px 420px at 25% 15%,rgba(130,202,190,.09) 0,transparent 70%)}
 .hero{position:relative;z-index:1;text-align:center;padding:34px 24px 14px;width:100%}
 .orb{width:56px;height:56px;margin:0 auto 12px;border-radius:50%;transition:background .4s;
-  box-shadow:0 0 26px rgba(124,154,208,.35),inset -5px -5px 12px rgba(0,0,0,.55)}
+  box-shadow:0 0 26px rgba(130,202,190,.35),inset -5px -5px 12px rgba(0,0,0,.55)}
 .hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--acc-l);opacity:.6;margin-bottom:9px;font-family:'Cinzel',serif}
 .hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(19px,4vw,34px);letter-spacing:3px;
-  background:linear-gradient(160deg,#dce8ff 0%,var(--acc-l) 35%,#4a6a9a 62%,#c8dcf8 100%);
+  background:linear-gradient(160deg,#E6F5F2 0%,var(--acc-l) 35%,#4A9A8D 62%,#D4ECE8 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:7px}
 .panel{position:relative;z-index:1;width:100%;max-width:880px;padding:0 16px;margin-top:16px}
-.card{background:rgba(10,12,26,.78);border:1px solid rgba(124,154,208,.22);border-radius:14px;padding:18px;margin-bottom:14px}
+.card{background:rgba(11,21,25,.78);border:1px solid rgba(130,202,190,.22);border-radius:14px;padding:18px;margin-bottom:14px}
 .card-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--acc-l);opacity:.85;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(124,154,208,.15)}
+  color:var(--acc-l);opacity:.85;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(130,202,190,.15)}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:96px}
 label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--acc-l);opacity:.7;font-family:'Cinzel',serif}
-input,select{background:rgba(8,10,22,.8);border:1px solid rgba(124,154,208,.3);border-radius:8px;
+input,select{background:rgba(9,18,21,.8);border:1px solid rgba(130,202,190,.3);border-radius:8px;
   color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%}
-input:focus,select:focus{outline:none;border-color:var(--acc-l);box-shadow:0 0 0 3px rgba(124,154,208,.15)}
-.btn{background:linear-gradient(135deg,#3a5a8a,#7c9ad0);color:#0a0c18;border:none;border-radius:9px;
+input:focus,select:focus{outline:none;border-color:var(--acc-l);box-shadow:0 0 0 3px rgba(130,202,190,.15)}
+.btn{background:linear-gradient(135deg,#3B897C,#82CABE);color:#0B1417;border:none;border-radius:9px;
   padding:11px 22px;font-size:12px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;font-weight:600;width:100%;margin-top:10px}
 .btn:hover{filter:brightness(1.15)}
-.btn.ghost{background:none;border:1px solid rgba(124,154,208,.4);color:var(--acc-l)}
+.btn.ghost{background:none;border:1px solid rgba(130,202,190,.4);color:var(--acc-l)}
 svg#wheel{width:100%;height:auto;display:block;overflow:visible}
 .sec{font-family:'Cinzel',serif;font-size:10px;letter-spacing:4px;color:var(--acc-l);text-transform:uppercase;
   text-align:center;margin:22px 0 12px;display:flex;align-items:center;gap:12px}
-.sec::before,.sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(124,154,208,.3),transparent)}
+.sec::before,.sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(130,202,190,.3),transparent)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:620px){.grid2{grid-template-columns:1fr}}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{color:rgba(190,205,230,.5);padding:6px 10px;text-align:left;font-weight:400;font-size:9px;
-  text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(124,154,208,.18)}
-td{padding:5px 10px;border-bottom:1px solid rgba(16,18,34,.9);font-size:12px}
+th{color:rgba(192,228,222,.5);padding:6px 10px;text-align:left;font-weight:400;font-size:9px;
+  text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(130,202,190,.18)}
+td{padding:5px 10px;border-bottom:1px solid rgba(16,30,34,.9);font-size:12px}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(30,40,70,.45)}
-.deg{font-family:'Cinzel',serif;font-size:11px;color:#cfe0f5;white-space:nowrap}
-.lat{font-size:9px;color:rgba(190,205,230,.42)}
-.badge{display:inline-block;background:rgba(30,40,70,.8);border:1px solid rgba(124,154,208,.35);
+tr:hover td{background:rgba(30,70,63,.45)}
+.deg{font-family:'Cinzel',serif;font-size:11px;color:#D6EEEA;white-space:nowrap}
+.lat{font-size:9px;color:rgba(192,228,222,.42)}
+.badge{display:inline-block;background:rgba(30,70,63,.8);border:1px solid rgba(130,202,190,.35);
   border-radius:4px;padding:1px 6px;font-size:10px;color:var(--dust);font-family:'Cinzel',serif}
 .retro{color:#f87171;font-size:9px}
-.note{font-size:10px;color:rgba(190,205,230,.45);line-height:1.7;margin-top:10px}
-.hl{background:rgba(124,154,208,.10);border-left:3px solid var(--acc);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;line-height:1.9}
-.odd{background:rgba(176,120,64,.12);border-left:3px solid #b07840;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;line-height:1.8}
+.note{font-size:10px;color:rgba(192,228,222,.45);line-height:1.7;margin-top:10px}
+.hl{background:rgba(130,202,190,.10);border-left:3px solid var(--acc);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;line-height:1.9}
+.odd{background:rgba(176,129,64,.12);border-left:3px solid #B08140;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:12px;line-height:1.8}
 details.orbp>summary{cursor:pointer;list-style:none;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--acc-l);text-transform:uppercase;padding:12px 14px}
 details.orbp>summary::-webkit-details-marker{display:none}
 .ob-in{padding:0 14px 14px}
@@ -69,7 +69,7 @@ details.orbp>summary::-webkit-details-marker{display:none}
 .ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}
 @media(max-width:600px){.ob-grid{grid-template-columns:1fr}}
 .ob-r{display:flex;align-items:center;gap:7px;font-size:11px;padding:2px 0}
-.ob-r input[type=checkbox]{width:14px;height:14px;accent-color:#7c9ad0;flex:none}
+.ob-r input[type=checkbox]{width:14px;height:14px;accent-color:#82CABE;flex:none}
 .ob-r .g{width:20px;text-align:center;font-family:serif;font-size:14px;flex:none}
 .ob-r .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ob-r input[type=number]{width:62px;padding:4px 6px;font-size:12px;flex:none}
@@ -78,12 +78,12 @@ details.orbp>summary::-webkit-details-marker{display:none}
 .ob-r.off .n,.ob-r.off .g{opacity:.35}
 .ob-h{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:var(--acc-l);opacity:.8;margin:10px 0 6px;text-transform:uppercase}
 .ob-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.ob-bar input[type=checkbox]{width:14px;height:14px;flex:none;accent-color:#7c9ad0}
+.ob-bar input[type=checkbox]{width:14px;height:14px;flex:none;accent-color:#82CABE}
 .ob-bar label{text-transform:none;letter-spacing:0;font-size:11px;opacity:1;color:var(--txt);display:flex;align-items:center;gap:6px;font-family:inherit}
-.ob-bar button{background:none;border:1px solid rgba(124,154,208,.4);color:var(--acc-l);border-radius:6px;padding:3px 10px;font-size:10px;cursor:pointer}
-.orb-bar{display:inline-block;width:34px;height:3px;background:rgba(124,154,208,.15);border-radius:2px;margin-left:6px;vertical-align:middle;overflow:hidden}
+.ob-bar button{background:none;border:1px solid rgba(130,202,190,.4);color:var(--acc-l);border-radius:6px;padding:3px 10px;font-size:10px;cursor:pointer}
+.orb-bar{display:inline-block;width:34px;height:3px;background:rgba(130,202,190,.15);border-radius:2px;margin-left:6px;vertical-align:middle;overflow:hidden}
 .orb-bar i{display:block;height:100%}
-.warn{background:rgba(200,150,40,.12);border:1px solid rgba(220,170,60,.35);border-radius:8px;color:#e8c070;font-size:11px;padding:8px 12px;margin-top:10px}
+.warn{background:rgba(186,131,54,.12);border:1px solid rgba(203,151,77,.35);border-radius:8px;color:#DAB47E;font-size:11px;padding:8px 12px;margin-top:10px}
 .err{background:rgba(200,40,40,.15);border:1px solid rgba(220,60,60,.4);border-radius:8px;
   color:#f87171;font-size:12px;padding:10px 14px;margin-top:10px}
 </style>
@@ -130,7 +130,7 @@ details.orbp>summary::-webkit-details-marker{display:none}
         <input id="i-tz" value="Asia/Tbilisi" list="tzlist" autocomplete="off" spellcheck="false">
         <datalist id="tzlist"></datalist></div>
     </div>
-    <div style="border-top:1px solid rgba(124,154,208,.15);margin:14px 0 10px;padding-top:12px">
+    <div style="border-top:1px solid rgba(130,202,190,.15);margin:14px 0 10px;padding-top:12px">
       <div class="card-title" style="margin-bottom:10px">🌍 დედამიწის დაბადების ადგილი → პლანეტაზე</div>
       <div class="row">
         <div class="field" style="min-width:150px"><label>ქალაქი</label>
@@ -155,7 +155,7 @@ details.orbp>summary::-webkit-details-marker{display:none}
     <div class="sec">სხეულები</div>
     <div class="grid2">
       <div class="card" style="padding:0;overflow:hidden">
-        <div class="card-title" id="ptitle" style="padding:9px 14px;margin:0;border-bottom:1px solid rgba(124,154,208,.18)">🪐 პლანეტოცენტრული</div>
+        <div class="card-title" id="ptitle" style="padding:9px 14px;margin:0;border-bottom:1px solid rgba(130,202,190,.18)">🪐 პლანეტოცენტრული</div>
         <table><thead><tr><th></th><th>სხეული</th><th>გრადუსი ნიშანში</th><th>ნიშანი</th><th>სახ.</th><th>℞ / დაშ.</th></tr></thead>
         <tbody id="ptb"></tbody></table>
       </div>
@@ -167,7 +167,7 @@ details.orbp>summary::-webkit-details-marker{display:none}
     </div>
     <div class="sec">ასპექტები</div>
     <div class="card" style="padding:0 0 8px;overflow:hidden">
-      <div class="card-title" id="atitle" style="padding:9px 14px;margin:0;border-bottom:1px solid rgba(124,154,208,.18)">⚡ ასპექტები</div>
+      <div class="card-title" id="atitle" style="padding:9px 14px;margin:0;border-bottom:1px solid rgba(130,202,190,.18)">⚡ ასპექტები</div>
       <table><thead><tr><th>სხეული 1</th><th>ასპ.</th><th>სხეული 2</th><th>ტიპი</th><th>ორბი</th></tr></thead>
       <tbody id="atb"></tbody></table>
     </div>
@@ -691,7 +691,7 @@ async function gen(quiet){
     const mp=earthPlaceTo(obs,J,+$('i-elat').value,+$('i-elon').value);
     $('i-derived').innerHTML='🪐 <b style="color:'+pd.col+'">'+
       Math.abs(mp.lat).toFixed(2)+'°'+(mp.lat>=0?'N':'S')+' '+mp.lon.toFixed(2)+'°E</b> — '+
-      pd.ka+'ზე შესაბამისი წერტილი<br><span style="color:rgba(190,205,230,.5);font-size:10px">'+
+      pd.ka+'ზე შესაბამისი წერტილი<br><span style="color:rgba(192,228,222,.5);font-size:10px">'+
       'ზენიტის მიმართულება RA '+mp.ra.toFixed(2)+'° Dec '+mp.dec.toFixed(2)+'° (J2000) · UTC '+
       uy+'-'+String(um).padStart(2,'0')+'-'+String(ud).padStart(2,'0')+' '+
       String(uh).padStart(2,'0')+':'+String(umi).padStart(2,'0')+' ('+fmtOff(lu.off)+')</span>';
@@ -816,7 +816,7 @@ async function gen(quiet){
       $('ptb').innerHTML+=MO.map(function(mo){
         const s=sigOf({lon:mo.lon,raw:mo.raw,lat:mo.lat}),
               info=MOON_I[mo.key]||{sym:'?',color:'#cfd8e8'};
-        return '<tr style="background:rgba(124,154,208,.05)">'+
+        return '<tr style="background:rgba(130,202,190,.05)">'+
           '<td><span style="color:'+info.color+';font-family:Cinzel,serif;font-size:11px">'+info.sym+'</span></td>'+
           '<td style="color:'+info.color+';font-size:11px">'+mo.name_ka+
             ' <span class="lat">მთვარე</span></td>'+
@@ -842,18 +842,18 @@ async function gen(quiet){
         const per=mo.period?(mo.period<1?(mo.period*24).toFixed(1)+' სთ':mo.period.toFixed(2)+' დღე'):'—';
         return '<span style="display:inline-block;margin:0 14px 6px 0">'+
           '<b style="color:'+info.color+'">'+info.sym+' '+mo.name_ka+'</b> '+
-          '<span style="color:rgba(190,205,230,.55);font-size:11px">'+
+          '<span style="color:rgba(192,228,222,.55);font-size:11px">'+
           (mo.radii!=null?mo.radii.toFixed(1)+' რადიუსი':
            (mo.sep!=null?'დედამიწიდან '+mo.sep.toFixed(2)+'°':''))+' · '+per+
           (mo.behind===null?'':' · '+(mo.behind?'პლანეტის უკან':'პლანეტის წინ'))+
-          (mo.source==='fit'?' · <span style="color:#b8a060">მოდელი</span>':'')+
+          (mo.source==='fit'?' · <span style="color:#B89360">მოდელი</span>':'')+
           '</span></span>';
       }).join('');
-      const na=moonNA.length?'<div style="margin-top:6px;color:rgba(190,205,230,.45);font-size:10px">'+
+      const na=moonNA.length?'<div style="margin-top:6px;color:rgba(192,228,222,.45);font-size:10px">'+
         moonNA.map(function(u){return u.name_ka;}).join(', ')+
         ' — ამ ბიბლიოთეკას მისთვის ანალიტიკური თეორია არ გააჩნია, ამიტომ არ ჩანს</div>':'';
       $('moonbox').innerHTML='<div class="card"><div class="card-title">🌙 '+pd.ka+'ის მთვარეები</div>'+
-        '<div style="font-size:12px;line-height:2">'+(rows||'<span style="color:rgba(190,205,230,.5)">—</span>')+'</div>'+
+        '<div style="font-size:12px;line-height:2">'+(rows||'<span style="color:rgba(192,228,222,.5)">—</span>')+'</div>'+
         na+'<div class="note">მთვარეები ნაჩვენებია ისე, როგორც ისინი ჩანან '+pd.ka+'იდან — '+
         'პლანეტების გვერდით, იმავე გარე რგოლზე. მანძილი პლანეტის რადიუსებშია.'+
         (MO.some(function(x){return x.source==='fit';})?
@@ -877,7 +877,7 @@ async function gen(quiet){
         const si=Math.floor(norm(hh)/30)%12;
         sym=ZSYM[si];ka=SIGN_KA[si];col=ZCOL[si];dg=norm(hh)%30;
       }
-      return '<tr><td style="color:'+(a?'#a8c4ea':'rgba(190,205,230,.7)')+';font-family:Cinzel,serif;font-size:11px">'+
+      return '<tr><td style="color:'+(a?'#B3DFD7':'rgba(192,228,222,.7)')+';font-family:Cinzel,serif;font-size:11px">'+
         ROM[i]+(a?' <span style="font-size:9px;opacity:.7">'+a+'</span>':'')+'</td>'+
         '<td><span style="color:'+col+';font-family:serif;font-size:13px">'+sym+'</span> '+
         '<span style="font-size:10px;color:'+col+'">'+ka+'</span></td>'+
@@ -893,7 +893,7 @@ async function gen(quiet){
         '<td><span style="color:'+i2.color+';font-family:serif">'+i2.sym+'</span> '+
         '<span style="font-size:10px;color:'+i2.color+'">'+a.p2+'</span></td>'+
         '<td style="color:'+a.color+';font-size:10px;white-space:nowrap">'+a.type+' '+a.ang+'°</td>'+
-        '<td style="color:rgba(190,205,230,.7);font-size:10px;white-space:nowrap">'+fmt2(a.orb)+
+        '<td style="color:rgba(192,228,222,.7);font-size:10px;white-space:nowrap">'+fmt2(a.orb)+
           ' <span style="opacity:.5">/ '+a.allow.toFixed(1)+'°</span><span class="orb-bar"><i style="width:'+
           (Math.max(0,1-a.orb/a.allow)*100).toFixed(0)+'%;background:'+a.color+'"></i></span></td></tr>';
     }).join('')||'<tr><td colspan="5" style="color:var(--dim);text-align:center;padding:14px">ასპექტები არ მოიძებნა</td></tr>';
@@ -909,7 +909,7 @@ async function gen(quiet){
       const list=Object.keys(uniq).map(function(k){return IAU_KA[k]||k;});
       $('oddbox').innerHTML='<div class="odd">✦ '+pd.ka+'ის ზოდიაქო — <b>'+
         SECT[obs].length+' სექტორი</b>, ეკლიპტიკის დახრა '+KEP[obs][2].toFixed(2)+'°'+
-        (list.length?'<br>არაზოდიაქალური თანავარსკვლავედები ამ პლანეტის მზის გზაზე: <b style="color:#e0b080">'+
+        (list.length?'<br>არაზოდიაქალური თანავარსკვლავედები ამ პლანეტის მზის გზაზე: <b style="color:#DBB785">'+
           list.join(' · ')+'</b>':'')+
         (odd.length?'<br>ამ რუქაში: '+odd.join(' · '):'')+'</div>';
     }else $('oddbox').innerHTML='';
@@ -926,26 +926,26 @@ async function gen(quiet){
     }
     $('innerbox').innerHTML='<div class="hl"><b style="color:'+pd.col+'">'+pd.sym+' '+pd.ka+'იდან</b> — '+
       (inner.length?'შიდა პლანეტები (მაქს. ელონგაცია): <b>'+inner.join(' · ')+'</b><br>'+
-       '<span style="color:rgba(190,205,230,.65);font-size:11px">ისინი მზეს არასოდეს შორდებიან — მხოლოდ დილის ან საღამოს ვარსკვლავები არიან.</span>'
+       '<span style="color:rgba(192,228,222,.65);font-size:11px">ისინი მზეს არასოდეს შორდებიან — მხოლოდ დილის ან საღამოს ვარსკვლავები არიან.</span>'
        :'ყველა პლანეტა გარეთაა — ყველა შეიძლება ოპოზიციაში იყოს მზესთან.')+'</div>';
 
     const rp=PLA[obs].day,yr=PLA[obs].yr;
     $('info').innerHTML=
-      '<span class="k" style="color:rgba(190,205,230,.55);font-size:11px">ბრუნვის პერიოდი:</span> <b>'+
+      '<span class="k" style="color:rgba(192,228,222,.55);font-size:11px">ბრუნვის პერიოდი:</span> <b>'+
       Math.abs(rp).toFixed(3)+' დღე'+(rp<0?' (რეტროგრადი)':'')+'</b>'+
-      ' &nbsp;·&nbsp; <span style="color:rgba(190,205,230,.55);font-size:11px">წელი:</span> <b>'+
+      ' &nbsp;·&nbsp; <span style="color:rgba(192,228,222,.55);font-size:11px">წელი:</span> <b>'+
       yr.toLocaleString('ka-GE')+' დღე</b>'+
-      ' &nbsp;·&nbsp; <span style="color:rgba(190,205,230,.55);font-size:11px">ღერძის დახრა ორბიტასთან:</span> <b>'+
+      ' &nbsp;·&nbsp; <span style="color:rgba(192,228,222,.55);font-size:11px">ღერძის დახრა ორბიტასთან:</span> <b>'+
       ang.tilt.toFixed(2)+'°</b>'+
-      (ang.dir<0?'<br><span style="color:#e0b080;font-size:11px">↺ დახრა 90°-ზე მეტია — ცა ორბიტული მოძრაობის საწინააღმდეგოდ ბრუნავს, '+
+      (ang.dir<0?'<br><span style="color:#DBB785;font-size:11px">↺ დახრა 90°-ზე მეტია — ცა ორბიტული მოძრაობის საწინააღმდეგოდ ბრუნავს, '+
         'ნიშნები უკუღმა ამოდის. ამიტომ სახლები და ზოდიაქო რუქაზე საათის ისრის მიმართულებით მიდის (AC მაინც მარცხნივ, MC ზემოთ).</span>':'')+'<br>'+
-      '<span style="color:rgba(190,205,230,.55);font-size:11px">ორბიტის დახრა ეკლიპტიკასთან:</span> <b>'+
+      '<span style="color:rgba(192,228,222,.55);font-size:11px">ორბიტის დახრა ეკლიპტიკასთან:</span> <b>'+
       KEP[obs][2].toFixed(3)+'°</b>'+
-      (mode==='psid'?' &nbsp;·&nbsp; <span style="color:rgba(190,205,230,.55);font-size:11px">აიანამსა:</span> <b>'+
+      (mode==='psid'?' &nbsp;·&nbsp; <span style="color:rgba(192,228,222,.55);font-size:11px">აიანამსა:</span> <b>'+
         aya.toFixed(3)+'°</b>':'')+
-      ' &nbsp;·&nbsp; <span style="color:rgba(190,205,230,.55);font-size:11px">მზე:</span> <b>'+
+      ' &nbsp;·&nbsp; <span style="color:rgba(192,228,222,.55);font-size:11px">მზე:</span> <b>'+
       P['მზე'].d.toFixed(3)+' AU</b><br>'+
-      '<span style="color:rgba(190,205,230,.45);font-size:10px">'+
+      '<span style="color:rgba(192,228,222,.45);font-size:10px">'+
       (iau?'IAU საზღვრები Roman 1987 · B1875 · 2-D ძიება':
        mode==='ptrop'?'12 თანაბარი ნიშანი '+pd.ka+'ის ბუნიობის წერტილიდან':
        '12 თანაბარი ნიშანი · სპიკაზე მიბმული')+

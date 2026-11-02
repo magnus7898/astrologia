@@ -7,18 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="games.css">
 <style>
-:root{--glow:rgba(201,168,76,.12);--accent:#c9a84c}
+:root{--glow:rgba(201,149,76,.12);--accent:#C9954C}
 .hanoi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:620px;height:260px}
 .peg{position:relative;border-radius:10px;border:1px solid var(--border);background:var(--raised);cursor:pointer;display:flex;flex-direction:column-reverse;align-items:center;
   padding:10px 4px 14px;gap:3px;transition:border-color .15s}
-.peg::before{content:'';position:absolute;left:50%;top:22px;bottom:14px;width:4px;margin-left:-2px;border-radius:2px;background:rgba(201,168,76,.28)}
-.peg::after{content:'';position:absolute;left:8%;right:8%;bottom:10px;height:4px;border-radius:2px;background:rgba(201,168,76,.35)}
+.peg::before{content:'';position:absolute;left:50%;top:22px;bottom:14px;width:4px;margin-left:-2px;border-radius:2px;background:rgba(201,149,76,.28)}
+.peg::after{content:'';position:absolute;left:8%;right:8%;bottom:10px;height:4px;border-radius:2px;background:rgba(201,149,76,.35)}
 .peg:hover{border-color:var(--border-h)}
 .peg.src{border-color:var(--gold)}
 .disc{position:relative;z-index:1;height:20px;border-radius:10px;border:1px solid rgba(0,0,0,.35);transition:transform .15s}
-.disc.lift{transform:translateY(-14px);box-shadow:0 6px 18px rgba(236,213,154,.35)}
+.disc.lift{transform:translateY(-14px);box-shadow:0 6px 18px rgba(228,200,162,.35)}
 .fifteen{display:grid;gap:6px;width:min(100%,380px);aspect-ratio:1}
-.tile{border-radius:10px;border:1px solid rgba(201,168,76,.35);background:linear-gradient(160deg,#241a3c,#151024);color:var(--gold-lt);font-family:'Cinzel',serif;
+.tile{border-radius:10px;border:1px solid rgba(201,149,76,.35);background:linear-gradient(160deg,#3C2E1A,#101F24);color:var(--gold-lt);font-family:'Cinzel',serif;
   font-size:var(--fs,26px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .08s}
 .tile:active{transform:scale(.95)}
 .tile.home{border-color:rgba(95,207,138,.5)}

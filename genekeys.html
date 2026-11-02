@@ -6,16 +6,16 @@
 <title>გენის გასაღებები</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+:root{--bg:#091113;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#C8A36E;--gold-dim:rgba(200,163,110,0.3);--text:#E8E0D5;--muted:rgba(232,224,213,0.42);--vio:#DDBA8A}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(120,85,35,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(30,70,63,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,49,20,.15) 0%,transparent 55%)}
 .page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
 .page-header{text-align:center;margin-bottom:40px}
 .eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
 .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
-.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.page-title em{font-style:italic;color:rgba(232,224,213,.5)}
 .ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
 .ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
 .ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
@@ -24,30 +24,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
 .h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
 .note{font-size:11.5px;color:var(--muted);line-height:1.8}
-.note b{color:rgba(200,169,110,.9);font-weight:500}
+.note b{color:rgba(200,163,110,.9);font-weight:500}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
 .in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
-.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
-.sel option{background:#14121f}
+.in:focus,.sel:focus{border-color:rgba(200,163,110,.4)}
+.sel option{background:#121C1F}
 .in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
 .in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
-.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
-.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(221,186,138,.2),rgba(108,192,178,.1));border:1px solid rgba(221,186,138,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(221,186,138,.6);box-shadow:0 0 22px rgba(221,186,138,.2)}
 .pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
 .pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
 .pill:hover{color:var(--text)}
-.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.pill.active{color:var(--gold);border-color:rgba(200,163,110,.5);background:rgba(200,163,110,.07)}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
 .tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
 .tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
-.tbl tr.now td{background:rgba(200,169,110,.07)}
+.tbl tr.now td{background:rgba(200,163,110,.07)}
 .scroll{overflow-x:auto}
 .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
 .kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
 .kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
-.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
-.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.kv .t{font-size:11.5px;color:rgba(232,224,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,224,213,.78)}
 .txt b{color:var(--text);font-weight:500}
 .big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
 .sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
@@ -239,8 +239,8 @@ function run(){
 }
 function keyCard(g,l,title,sub){return `<div class="big" style="font-size:40px">გასაღები ${g}${l?'.'+l:''}</div>
     <div class="spec"><div style="background:rgba(232,107,107,.06)"><div class="k">ჩრდილი</div><div class="v" style="color:#e88">${GK[g][0]}</div></div>
-      <div style="background:rgba(200,169,110,.08)"><div class="k">ნიჭი</div><div class="v" style="color:var(--gold)">${GK[g][1]}</div></div>
-      <div style="background:rgba(155,127,232,.08)"><div class="k">სიდჰი</div><div class="v" style="color:#b8a4f0">${GK[g][2]}</div></div></div>
+      <div style="background:rgba(200,163,110,.08)"><div class="k">ნიჭი</div><div class="v" style="color:var(--gold)">${GK[g][1]}</div></div>
+      <div style="background:rgba(221,186,138,.08)"><div class="k">სიდჰი</div><div class="v" style="color:#E7CFAD">${GK[g][2]}</div></div></div>
     <div class="txt" style="margin-top:12px">${KT[g]}</div>
     <div class="note" style="margin-top:8px">კოდონის რგოლი: <b>${RINGS[ringOf(g)][0]}</b> (${RINGS[ringOf(g)][1].join(', ')}) — ${RINGS[ringOf(g)][2]} · პროგრამული პარტნიორი: <b>${partnerOf(g)}</b> (${GK[partnerOf(g)][1]}) · HD კარიბჭე ${g}.</div>`;}
 function draw(){
@@ -271,7 +271,7 @@ function ringsView(){
 function allView(){
   return `<div class="card" id="detail"><div class="h">გასაღები ${ALLSEL} · ${GK[ALLSEL].join(' → ')}</div>${keyCard(ALLSEL,0)}</div>
     <div class="card"><div class="h">64 გასაღები</div><div class="scroll"><table class="tbl"><tr><th>#</th><th>ჩრდილი</th><th>ნიჭი</th><th>სიდჰი</th><th>რგოლი</th></tr>${[...Array(64)].map((_,i)=>{const g=i+1;const mineK=R&&Object.keys(SPH).filter(k=>R[k].g===g);
-      return `<tr data-g="${g}" style="cursor:pointer" class="${g===ALLSEL?'now':''}"><td>${g}${mineK&&mineK.length?' <span style="color:var(--gold)">●</span>':''}</td><td style="color:#e88">${GK[g][0]}</td><td style="color:var(--gold)">${GK[g][1]}</td><td style="color:#b8a4f0">${GK[g][2]}</td><td class="note">${RINGS[ringOf(g)][0]}</td></tr>`;}).join('')}</table></div>
+      return `<tr data-g="${g}" style="cursor:pointer" class="${g===ALLSEL?'now':''}"><td>${g}${mineK&&mineK.length?' <span style="color:var(--gold)">●</span>':''}</td><td style="color:#e88">${GK[g][0]}</td><td style="color:var(--gold)">${GK[g][1]}</td><td style="color:#E7CFAD">${GK[g][2]}</td><td class="note">${RINGS[ringOf(g)][0]}</td></tr>`;}).join('')}</table></div>
     <div class="note" style="margin-top:8px">● — გასაღები შენს პროფილშია. დააჭირე სტრიქონს.</div></div>`;
 }
 function bindAll(){document.querySelectorAll('tr[data-g]').forEach(t=>t.onclick=()=>{ALLSEL=+t.dataset.g;draw();$('detail').scrollIntoView({behavior:'smooth'});});}
@@ -284,7 +284,7 @@ function compatView(){
   const v=k=>R[k].g,w=k=>R2[k].g;
   const venus=[['at','მიზიდულობა'],['eq','EQ'],['sq','SQ']];
   sc=Math.min(97,sc);
-  return `<div class="card" style="text-align:center"><div class="big" style="color:${sc>=70?'#7fcf8f':sc>=50?'#c8a96e':'#e86b6b'}">${sc}%</div><div class="sub">გასაღებების რეზონანსი</div></div>
+  return `<div class="card" style="text-align:center"><div class="big" style="color:${sc>=70?'#7fcf8f':sc>=50?'#C8A36E':'#e86b6b'}">${sc}%</div><div class="sub">გასაღებების რეზონანსი</div></div>
    <div class="card"><div class="h">საერთო გასაღებები</div><div class="txt">${shared.length?shared.map(g=>`<b>${g}</b> ${GK[g][1]}`).join(' · ')+' — ერთნაირი თემა: ერთმანეთს სარკესავით ირეკლავთ.':'საერთო გასაღები არ არის.'}</div></div>
    <div class="card"><div class="h">პროგრამული პარტნიორები</div><div class="txt">${prog.length?prog.map(g=>`<b>${g}</b> ↔ <b>${partnerOf(g)}</b> (${GK[g][1]} ↔ ${GK[partnerOf(g)][1]})`).join('<br>')+'<br>— ერთმანეთის საპირისპირო ბოლოს ფლობთ: ერთად ერთი მთლიანობა ხართ.':'პროგრამული პარტნიორობა არ არის.'}</div></div>
    <div class="card"><div class="h">ვენერას თანმიმდევრობა</div>${venus.map(([k,n])=>`<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)"><b>${n}</b>: შენ ${v(k)} (${GK[v(k)][1]}) · პარტნიორი ${w(k)} (${GK[w(k)][1]})${ringOf(v(k))===ringOf(w(k))?' — <span style="color:#7fcf8f">ერთი რგოლი</span>':''}</div>`).join('')}

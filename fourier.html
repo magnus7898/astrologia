@@ -10,16 +10,16 @@
 /* Layout: one blueprint sheet. Plot canvas on the left (x-chain across the top, y-chain down the side),
    instrument panel on the right; stacks to one column on phones. Single deliberate dark theme. */
 :root{
-  --paper:#0b0816;        /* blueprint ground */
-  --paper-2:#141022;      /* panel */
-  --grid:rgba(165,133,239,.06);
-  --line:#d6c6ff;         /* chalk-blue linework */
-  --line-dim:rgba(201,168,76,.24);
-  --ink:#efe6d4;
-  --ink-dim:#b3a68f;
-  --pen:#ecd59a;          /* the traced curve */
+  --paper:#091215;        /* blueprint ground */
+  --paper-2:#101E22;      /* panel */
+  --grid:rgba(224,192,148,.06);
+  --line:#F2E5D3;         /* chalk-blue linework */
+  --line-dim:rgba(201,149,76,.24);
+  --ink:#EFE4D4;
+  --ink-dim:#B3A48F;
+  --pen:#E4C8A2;          /* the traced curve */
   --xc:#5fc8d8;           /* x-chain accent */
-  --yc:#a585ef;           /* y-chain accent */
+  --yc:#E0C094;           /* y-chain accent */
   --f-display:'Cinzel','Noto Serif Georgian',Georgia,serif;
   --f-body:'Noto Serif Georgian',Georgia,serif;
   --f-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
@@ -39,7 +39,7 @@ h1 i{color:var(--pen);font-style:normal}
 .stamp{font-family:var(--f-mono);font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-dim)}
 .main{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
 @media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}}
-.sheet{position:relative;border:1px solid var(--line-dim);background:rgba(11,8,22,.7);min-width:0}
+.sheet{position:relative;border:1px solid var(--line-dim);background:rgba(9,18,21,.7);min-width:0}
 canvas{display:block;width:100%;aspect-ratio:1/1;max-width:100%;touch-action:none}
 .sheet .tag{position:absolute;font-family:var(--f-mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;pointer-events:none}
 .tag.x{top:8px;right:10px;color:var(--xc)}
@@ -67,7 +67,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--pen);outline-of
 .toggles label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .toggles input{accent-color:var(--pen)}
 .btns{display:flex;gap:8px;flex-wrap:wrap}
-.btn{font:600 13px var(--f-body);background:var(--pen);color:#1a1408;border:0;padding:7px 14px;cursor:pointer}
+.btn{font:600 13px var(--f-body);background:var(--pen);color:#0B1417;border:0;padding:7px 14px;cursor:pointer}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line-dim)}
 .eq{display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
 .eq>*{min-width:0}

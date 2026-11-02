@@ -6,9 +6,9 @@
 <title>MAGNUS — პანელი</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Sans+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-  :root{--void:#04030a;--surface:rgba(15,13,42,.85);--raised:#161228;
-    --gold:#c9a84c;--gold-l:#f0d080;--txt:#e6e0d4;--dim:#9ba8b8;
-    --brd:rgba(122,90,34,.45);--ok:#30c890;--bad:#e05050;}
+  :root{--void:#0A1012;--surface:rgba(17,33,38,.85);--raised:#122228;
+    --gold:#C9954C;--gold-l:#DFBF91;--txt:#E6DED4;--dim:#9ba8b8;
+    --brd:rgba(121,85,35,.45);--ok:#30c890;--bad:#e05050;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;
     min-height:100vh;padding:30px 16px 70px;}
@@ -20,11 +20,11 @@
     padding:18px;margin-bottom:16px;}
   label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;
     color:var(--dim);margin-bottom:4px;}
-  input,select{width:100%;background:rgba(8,6,18,.8);border:1px solid var(--brd);
+  input,select{width:100%;background:rgba(9,17,19,.8);border:1px solid var(--brd);
     border-radius:6px;color:var(--txt);padding:9px 11px;font-size:13px;
     font-family:inherit;outline:none;}
   input:focus{border-color:var(--gold);}
-  button{background:linear-gradient(135deg,#8a6a20,var(--gold));border:none;color:#0a0810;
+  button{background:linear-gradient(135deg,#845D26,var(--gold));border:none;color:#091013;
     padding:9px 18px;border-radius:6px;font-family:'Cinzel',serif;font-size:12px;
     letter-spacing:1.5px;cursor:pointer;font-weight:600;}
   button:hover{filter:brightness(1.12);}
@@ -38,14 +38,14 @@
     cursor:grab;transition:border-color .15s,opacity .15s;}
   .item.dragging{opacity:.4;}
   .item.hidden-card{opacity:.45;}
-  .item:hover{border-color:rgba(201,168,76,.7);}
+  .item:hover{border-color:rgba(201,149,76,.7);}
   .grip{color:var(--dim);font-size:14px;cursor:grab;}
   .sym{font-size:20px;width:28px;text-align:center;}
   .info{flex:1;min-width:0;}
   .info .t{font-size:14px;}
   .info .h{font-size:10.5px;color:var(--dim);font-family:monospace;}
   .toggle{width:42px;height:22px;border-radius:11px;border:1px solid var(--brd);
-    background:rgba(8,6,18,.8);position:relative;cursor:pointer;flex-shrink:0;}
+    background:rgba(9,17,19,.8);position:relative;cursor:pointer;flex-shrink:0;}
   .toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;
     border-radius:50%;background:var(--dim);transition:left .18s,background .18s;}
   .toggle.on{border-color:var(--ok);}
@@ -62,8 +62,8 @@
 <div class="wrap">
   <h1>პანელი</h1>
   <div class="sub">მთავარი გვერდის ბარათების მართვა</div>
-  <a href="admin_users.html" style="display:block;text-align:center;margin:10px auto 6px;padding:10px 14px;border:1px solid rgba(201,168,76,.5);border-radius:10px;color:#ecd59a;text-decoration:none;max-width:420px">👥 მომხმარებლები — ანგარიშები · ყოველი ნაბიჯი · Pro გვერდები · სტატისტიკა</a>
-  <a href="admin_articles.html" style="display:block;text-align:center;margin:10px auto 14px;padding:10px 14px;border:1px solid rgba(201,168,76,.5);border-radius:10px;color:#ecd59a;text-decoration:none;max-width:420px">📝 სტატიების რედაქტორი — მატრიცა · პითაგორა · ასტროლოგია · ადამიანის დიზაინი · მთვარის დღეები</a>
+  <a href="admin_users.html" style="display:block;text-align:center;margin:10px auto 6px;padding:10px 14px;border:1px solid rgba(201,149,76,.5);border-radius:10px;color:#E4C8A2;text-decoration:none;max-width:420px">👥 მომხმარებლები — ანგარიშები · ყოველი ნაბიჯი · Pro გვერდები · სტატისტიკა</a>
+  <a href="admin_articles.html" style="display:block;text-align:center;margin:10px auto 14px;padding:10px 14px;border:1px solid rgba(201,149,76,.5);border-radius:10px;color:#E4C8A2;text-decoration:none;max-width:420px">📝 სტატიების რედაქტორი — მატრიცა · პითაგორა · ასტროლოგია · ადამიანის დიზაინი · მთვარის დღეები</a>
 
   <div id="msg" class="msg"></div>
 

@@ -6,14 +6,14 @@
 <title>MAGNUS — მინერალოგია</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
-  :root { --void:#04030a; --gold:#c9a84c; --gold-pale:#e8d5a0; --silver:#9ba8b8; --jade:#2fae7d; --cinn:#c0503a; }
+  :root { --void:#0A1012; --gold:#C9954C; --gold-pale:#E4C9A4; --silver:#9ba8b8; --jade:#2fae7d; --cinn:#c0503a; }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{background:
-      radial-gradient(ellipse 700px 500px at 20% 15%, rgba(140,60,200,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 20% 15%, rgba(199,141,61,0.10), transparent 60%),
       radial-gradient(ellipse 600px 500px at 82% 70%, rgba(47,174,125,0.07), transparent 60%),
-      radial-gradient(ellipse 500px 400px at 50% 95%, rgba(201,168,76,0.06), transparent 60%),
+      radial-gradient(ellipse 500px 400px at 50% 95%, rgba(201,149,76,0.06), transparent 60%),
       var(--void);
-    min-height:100vh;overflow-x:hidden;font-family:'Cinzel',serif;color:#d7dde6;}
+    min-height:100vh;overflow-x:hidden;font-family:'Cinzel',serif;color:#D7E6E4;}
   .stars{position:fixed;inset:0;z-index:0;pointer-events:none;background:
       radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.6),transparent),
       radial-gradient(1px 1px at 23% 35%,rgba(255,255,255,.4),transparent),
@@ -25,59 +25,59 @@
       radial-gradient(1px 1px at 50% 75%,rgba(255,255,255,.45),transparent),
       radial-gradient(1px 1px at 82% 80%,rgba(255,255,255,.4),transparent),
       radial-gradient(1.5px 1.5px at 34% 51%,rgba(47,174,125,.3),transparent),
-      radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,168,76,.22),transparent);}
-  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(4,3,10,.55) 80%,rgba(4,3,10,.9) 100%);}
+      radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,149,76,.22),transparent);}
+  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(10,16,18,.55) 80%,rgba(10,16,18,.9) 100%);}
   .page{position:relative;z-index:2;min-height:100vh;max-width:860px;margin:0 auto;padding:44px 20px 90px;}
   header{text-align:center;margin-bottom:36px;}
   .eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:12px;}
   h1{font-family:'Cinzel Decorative',serif;font-size:clamp(24px,4.4vw,42px);font-weight:400;letter-spacing:2px;
-    background:linear-gradient(160deg,#f5e8ba,var(--gold) 35%,#9a7028 60%,var(--gold-pale) 80%,#c09040);
+    background:linear-gradient(160deg,#EDDBC2,var(--gold) 35%,#966A2C 60%,var(--gold-pale) 80%,#C08B40);
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    filter:drop-shadow(0 0 28px rgba(201,168,76,.25));}
+    filter:drop-shadow(0 0 28px rgba(201,149,76,.25));}
   .subtitle{font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--silver);opacity:.5;margin-top:10px;}
   .back{display:inline-block;margin-bottom:20px;color:var(--gold);opacity:.55;text-decoration:none;font-size:11px;letter-spacing:2px;}
   .back:hover{opacity:1;}
-  .panel{background:rgba(8,6,18,.78);border:1px solid rgba(201,168,76,.14);border-radius:4px;padding:22px 22px 26px;margin-bottom:22px;position:relative;}
-  .panel::before{content:'';position:absolute;top:8px;left:8px;width:13px;height:13px;border:solid rgba(201,168,76,.22);border-width:1px 0 0 1px;}
-  .panel::after{content:'';position:absolute;bottom:8px;right:8px;width:13px;height:13px;border:solid rgba(201,168,76,.22);border-width:0 1px 1px 0;}
+  .panel{background:rgba(9,17,19,.78);border:1px solid rgba(201,149,76,.14);border-radius:4px;padding:22px 22px 26px;margin-bottom:22px;position:relative;}
+  .panel::before{content:'';position:absolute;top:8px;left:8px;width:13px;height:13px;border:solid rgba(201,149,76,.22);border-width:1px 0 0 1px;}
+  .panel::after{content:'';position:absolute;bottom:8px;right:8px;width:13px;height:13px;border:solid rgba(201,149,76,.22);border-width:0 1px 1px 0;}
   .ptitle{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gold-pale);margin-bottom:16px;}
   label{font-size:10px;letter-spacing:2px;color:var(--silver);display:block;margin:8px 0 4px;}
-  input,select{background:rgba(20,15,40,.7);border:1px solid rgba(201,168,76,.25);color:#e8e2d0;padding:8px 10px;border-radius:3px;font-family:inherit;font-size:14px;width:100%;}
+  input,select{background:rgba(17,33,38,.7);border:1px solid rgba(201,149,76,.25);color:#E8DED0;padding:8px 10px;border-radius:3px;font-family:inherit;font-size:14px;width:100%;}
   input:focus,select:focus{outline:none;border-color:var(--gold);}
   .frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;align-items:end;}
-  button.go{background:linear-gradient(135deg,#8a6a20,var(--gold));border:none;color:#0a0810;font-family:inherit;font-weight:600;letter-spacing:2px;padding:11px 26px;border-radius:3px;cursor:pointer;font-size:12px;margin-top:16px;}
+  button.go{background:linear-gradient(135deg,#845D26,var(--gold));border:none;color:#091013;font-family:inherit;font-weight:600;letter-spacing:2px;padding:11px 26px;border-radius:3px;cursor:pointer;font-size:12px;margin-top:16px;}
   button.go:hover{filter:brightness(1.15);}
-  .kua-big{font-family:'Cinzel Decorative',serif;font-size:64px;color:var(--gold);text-align:center;line-height:1;filter:drop-shadow(0 0 22px rgba(201,168,76,.4));}
+  .kua-big{font-family:'Cinzel Decorative',serif;font-size:64px;color:var(--gold);text-align:center;line-height:1;filter:drop-shadow(0 0 22px rgba(201,149,76,.4));}
   .kua-sub{text-align:center;color:var(--silver);font-size:12px;margin-top:6px;letter-spacing:2px;}
   .dir-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
   .dir-col h4{font-size:10px;letter-spacing:3px;margin-bottom:8px;}
-  .dir-item{display:flex;justify-content:space-between;font-size:12px;padding:5px 8px;border-radius:3px;margin-bottom:4px;background:rgba(20,15,40,.5);}
+  .dir-item{display:flex;justify-content:space-between;font-size:12px;padding:5px 8px;border-radius:3px;margin-bottom:4px;background:rgba(17,33,38,.5);}
   .good .dir-item{border-left:2px solid var(--jade);} .bad .dir-item{border-left:2px solid var(--cinn);}
   .good h4{color:var(--jade);} .bad h4{color:var(--cinn);}
-  .dir-name{color:#e8e2d0;} .dir-mean{color:var(--silver);font-size:10.5px;}
+  .dir-name{color:#E8DED0;} .dir-mean{color:var(--silver);font-size:10.5px;}
   .compass{display:block;margin:18px auto 0;}
   .zoo-row{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
-  .zoo-glyph{font-size:52px;filter:drop-shadow(0 0 14px rgba(201,168,76,.35));}
+  .zoo-glyph{font-size:52px;filter:drop-shadow(0 0 14px rgba(201,149,76,.35));}
   .fs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:420px;margin:14px auto 0;}
-  .fs-cell{aspect-ratio:1;border:1px solid rgba(201,168,76,.2);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,15,40,.55);padding:4px;}
+  .fs-cell{aspect-ratio:1;border:1px solid rgba(201,149,76,.2);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(17,33,38,.55);padding:4px;}
   .fs-num{font-family:'Cinzel Decorative',serif;font-size:26px;line-height:1;}
   .fs-dir{font-size:9px;letter-spacing:1px;color:var(--silver);margin-bottom:4px;}
   .fs-mean{font-size:8.5px;color:var(--silver);text-align:center;margin-top:4px;line-height:1.35;}
   .bagua-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:520px;margin:14px auto 0;}
-  .bg-cell{border:1px solid rgba(201,168,76,.18);border-radius:3px;padding:10px 8px;background:rgba(20,15,40,.5);text-align:center;}
+  .bg-cell{border:1px solid rgba(201,149,76,.18);border-radius:3px;padding:10px 8px;background:rgba(17,33,38,.5);text-align:center;}
   .bg-dir{font-size:9px;letter-spacing:2px;color:var(--gold);opacity:.7;}
-  .bg-area{font-size:12px;color:#e8e2d0;margin:4px 0;}
+  .bg-area{font-size:12px;color:#E8DED0;margin:4px 0;}
   .bg-el{font-size:10px;color:var(--silver);}
   .note{font-size:10px;color:rgba(155,168,184,.55);margin-top:10px;line-height:1.6;}
-  .cl-row{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(201,168,76,.1);flex-wrap:wrap;}
+  .cl-row{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(201,149,76,.1);flex-wrap:wrap;}
   .cl-label{min-width:150px;font-size:11px;letter-spacing:1px;color:var(--gold-pale);padding-top:3px;}
   .cl-sw{display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex:1;}
   .sw{width:26px;height:26px;border-radius:6px;border:1px solid rgba(255,255,255,.22);box-shadow:0 2px 6px rgba(0,0,0,.5);}
   .sw-name{font-size:10px;color:var(--silver);margin-right:8px;align-self:center;}
   .cl-note{font-size:10px;color:var(--silver);flex-basis:100%;margin-top:3px;opacity:.75;}
-  .num-chip{display:inline-block;min-width:30px;text-align:center;padding:5px 8px;border:1px solid rgba(201,168,76,.4);border-radius:6px;color:var(--gold);font-size:15px;margin-right:6px;font-family:'Cinzel Decorative',serif;}
+  .num-chip{display:inline-block;min-width:30px;text-align:center;padding:5px 8px;border:1px solid rgba(201,149,76,.4);border-radius:6px;color:var(--gold);font-size:15px;margin-right:6px;font-family:'Cinzel Decorative',serif;}
   footer{margin-top:56px;text-align:center;}
-  footer span{font-size:9px;letter-spacing:6px;text-transform:uppercase;color:rgba(201,168,76,.2);}
+  footer span{font-size:9px;letter-spacing:6px;text-transform:uppercase;color:rgba(201,149,76,.2);}
   @media(max-width:560px){.dir-grid{grid-template-columns:1fr;}.kua-big{font-size:48px;}}
 </style>
 </head>
@@ -222,9 +222,9 @@ function renderSyn(){
   }
   const rows=[...map.values()].sort((a,b)=>b.srcs.length-a.srcs.length);
   document.getElementById('syn-out').innerHTML=rows.map(r=>`
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid rgba(201,168,76,.1);flex-wrap:wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid rgba(201,149,76,.1);flex-wrap:wrap">
       <span style="font-size:14px;color:${r.col}">💎 ${r.name}</span>
-      <span>${r.srcs.map(s=>`<span style="font-size:9px;letter-spacing:1px;border:1px solid rgba(201,168,76,.35);border-radius:10px;padding:2px 8px;color:var(--silver);margin-left:4px">${s}</span>`).join('')}</span>
+      <span>${r.srcs.map(s=>`<span style="font-size:9px;letter-spacing:1px;border:1px solid rgba(201,149,76,.35);border-radius:10px;padding:2px 8px;color:var(--silver);margin-left:4px">${s}</span>`).join('')}</span>
     </div>`).join('')+
     '<div class="note">რაც მეტი სისტემა გირჩევთ ერთსა და იმავე ქვას, მით ძლიერია რეკომენდაცია — ზედა ქვები პრიორიტეტულია.</div>';
   document.getElementById('p-syn').style.display='block';
@@ -242,14 +242,14 @@ async function fetchChartGems(payload){
     let html='<div style="font-size:11px;color:var(--silver);margin-bottom:10px">ქვა ავსებს იმას, რაც აკლია — სუსტი პლანეტის ქვის ტარება მის ენერგიას აძლიერებს (ვედური რემედიალური პრინციპი)</div>';
     for(const p of weak){
       const[g,c]=PLANET_GEM[p.key];
-      html+=`<div style="border-left:3px solid ${c};background:rgba(20,15,40,.55);border-radius:4px;padding:12px 14px;margin-bottom:10px">
+      html+=`<div style="border-left:3px solid ${c};background:rgba(17,33,38,.55);border-radius:4px;padding:12px 14px;margin-bottom:10px">
         <div style="font-size:10px;letter-spacing:2px;color:var(--silver)">სუსტი პლანეტა — ${PLANET_KA2[p.key]} <span style="opacity:.5">(ძალა ${p.power??p.percent??''})</span></div>
         <div style="font-size:16px;color:${c};margin-top:4px">💎 ${g}</div></div>`;
       synAdd(g,'სუსტი '+PLANET_KA2[p.key],c);
     }
     if(weakEl&&ELEMENT_STONE[weakEl.key]){
       const[st,c,ka]=ELEMENT_STONE[weakEl.key];
-      html+=`<div style="border-left:3px solid ${c};background:rgba(20,15,40,.55);border-radius:4px;padding:12px 14px">
+      html+=`<div style="border-left:3px solid ${c};background:rgba(17,33,38,.55);border-radius:4px;padding:12px 14px">
         <div style="font-size:10px;letter-spacing:2px;color:var(--silver)">დეფიციტური ელემენტი — ${ka}</div>
         <div style="font-size:14px;color:${c};margin-top:4px">💎 ${st}</div></div>`;
       st.split(',').slice(0,1).forEach(s=>synAdd(s.trim(),'ელემენტი '+ka,c));
@@ -272,9 +272,9 @@ async function fetchChartGems(payload){
     }else{
       html+=open.map(c=>{
         const[st,col]=CENTER_STONE[c];
-        return `<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 4px;border-bottom:1px solid rgba(201,168,76,.1);flex-wrap:wrap">
+        return `<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 4px;border-bottom:1px solid rgba(201,149,76,.1);flex-wrap:wrap">
           <span style="font-size:12px;color:${col}">○ ${CENTER_KA2[c]}</span>
-          <span style="font-size:12px;color:#d7dde6">💎 ${st}</span></div>`;
+          <span style="font-size:12px;color:#D7E6E4">💎 ${st}</span></div>`;
       }).join('');
       open.slice(0,3).forEach(c=>synAdd(CENTER_STONE[c][0].split(',')[0],'ღია '+CENTER_KA2[c],CENTER_STONE[c][1]));
     }
@@ -284,7 +284,7 @@ async function fetchChartGems(payload){
   }catch(e){out.innerHTML='<div class="note">⚠ HD ანალიზი ვერ ჩაიტვირთა</div>';}
 }function gemCard(title,n,note){
   const G=GEMS[n];
-  return `<div style="border-left:3px solid ${G.col};background:rgba(20,15,40,.55);border-radius:4px;padding:12px 14px;margin-bottom:12px">
+  return `<div style="border-left:3px solid ${G.col};background:rgba(17,33,38,.55);border-radius:4px;padding:12px 14px;margin-bottom:12px">
     <div style="font-size:10px;letter-spacing:2px;color:var(--silver)">${title} — რიცხვი <b style="color:var(--gold)">${n}</b> · ${G.gr}</div>
     <div style="font-size:17px;color:${G.col};margin:6px 0 4px">💎 ${G.gem}</div>
     <div style="font-size:11px;color:var(--silver);line-height:1.8">
@@ -322,7 +322,7 @@ function calcStones(){
   const el=KUA_EL[k],F=FENG_CRYSTALS[el];
   document.getElementById('feng-out').innerHTML=`
     <div style="font-size:11px;color:var(--silver);margin-bottom:8px">გუა ${k} · ელემენტი: <b style="color:${F.col}">${el}</b></div>
-    <div style="font-size:12.5px;line-height:2;color:#d7dde6">
+    <div style="font-size:12.5px;line-height:2;color:#D7E6E4">
       <b style="color:${F.col}">თქვენი ელემენტის კრისტალები:</b> ${F.own}<br>
       <b style="color:var(--jade)">გამაძლიერებელი:</b> ${F.feed}
     </div>
@@ -336,7 +336,7 @@ function calcStones(){
   let lsHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:260px;margin:0 auto 14px">'+
     LOSHU_POS.flat().map(n=>{
       const c=cnt[n]||0;
-      return `<div style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:4px;border:1px solid ${c?'rgba(201,168,76,.35)':'rgba(192,80,58,.55)'};background:${c?'rgba(20,15,40,.55)':'rgba(60,15,15,.4)'}">
+      return `<div style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:4px;border:1px solid ${c?'rgba(201,149,76,.35)':'rgba(192,80,58,.55)'};background:${c?'rgba(17,33,38,.55)':'rgba(60,15,15,.4)'}">
         <div style="font-family:'Cinzel Decorative',serif;font-size:20px;color:${c?'var(--gold)':'rgba(192,80,58,.9)'}">${n}</div>
         <div style="font-size:9px;color:var(--silver)">${c?('×'+c):'აკლია'}</div></div>`;
     }).join('')+'</div>';
@@ -344,9 +344,9 @@ function calcStones(){
     lsHTML+='<div style="font-size:11px;color:var(--silver);margin-bottom:8px">დაკარგული რიცხვი = დაკარგული გრაჰას/ელემენტის ენერგია — ქვა ავსებს მას:</div>'+
       missing.map(n=>{
         const G=GEMS[n],ce=NUM_EL[n];
-        return `<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 4px;border-bottom:1px solid rgba(201,168,76,.1);flex-wrap:wrap">
+        return `<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 4px;border-bottom:1px solid rgba(201,149,76,.1);flex-wrap:wrap">
           <span style="font-size:12px;color:${G.col}">${n} — ${G.gr}</span>
-          <span style="font-size:12px;color:#d7dde6">💎 ${G.gem} <span style="opacity:.5;font-size:10px">· ${ce}: ${CN_EL_STONE[ce]}</span></span></div>`;
+          <span style="font-size:12px;color:#D7E6E4">💎 ${G.gem} <span style="opacity:.5;font-size:10px">· ${ce}: ${CN_EL_STONE[ce]}</span></span></div>`;
       }).join('');
   }else{
     lsHTML+='<div class="note">ყველა რიცხვი წარმოდგენილია — ლო შუს კვადრატი სავსეა ✓</div>';
@@ -373,7 +373,7 @@ function calcStones(){
   // ── personal financial code ──
   const fc=[dsum(d),dsum(m),dsum(y),lp];
   document.getElementById('fin-out').innerHTML=
-    `<div style="text-align:center;font-family:'Cinzel Decorative',serif;font-size:44px;letter-spacing:14px;color:var(--gold);filter:drop-shadow(0 0 18px rgba(201,168,76,.35))">${fc.join('')}</div>
+    `<div style="text-align:center;font-family:'Cinzel Decorative',serif;font-size:44px;letter-spacing:14px;color:var(--gold);filter:drop-shadow(0 0 18px rgba(201,149,76,.35))">${fc.join('')}</div>
      <div style="text-align:center;font-size:10px;color:var(--silver);letter-spacing:1px;margin-top:4px">დღე ${fc[0]} · თვე ${fc[1]} · წელი ${fc[2]} · ბედის რიცხვი ${fc[3]}</div>
      <div class="note">პოპულარული ნუმეროლოგიური მეთოდი: პირადი კოდი საფულეში, PIN-ის ან პაროლის ნაწილად, ფინანსური მიზნების თარიღებად. ეს ტრადიციაა და არა გარანტია.</div>`;
   document.getElementById('p-fin').style.display='block';

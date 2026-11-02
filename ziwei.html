@@ -7,16 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/iztro@2.6.1/dist/iztro.min.js"></script>
 <style>
-:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
+:root{--bg:#091113;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#C8A36E;--gold-dim:rgba(200,163,110,0.3);--text:#E8E0D5;--muted:rgba(232,224,213,0.42);--vio:#DDBA8A}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(120,85,35,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(30,70,63,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,49,20,.15) 0%,transparent 55%)}
 .page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
 .page-header{text-align:center;margin-bottom:40px}
 .eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
 .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
-.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
+.page-title em{font-style:italic;color:rgba(232,224,213,.5)}
 .ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
 .ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
 .ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
@@ -25,30 +25,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
 .h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
 .note{font-size:11.5px;color:var(--muted);line-height:1.8}
-.note b{color:rgba(200,169,110,.9);font-weight:500}
+.note b{color:rgba(200,163,110,.9);font-weight:500}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
 .in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
-.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
-.sel option{background:#14121f}
+.in:focus,.sel:focus{border-color:rgba(200,163,110,.4)}
+.sel option{background:#121C1F}
 .in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
 .in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
-.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
-.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(221,186,138,.2),rgba(108,192,178,.1));border:1px solid rgba(221,186,138,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(221,186,138,.6);box-shadow:0 0 22px rgba(221,186,138,.2)}
 .pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
 .pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
 .pill:hover{color:var(--text)}
-.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
+.pill.active{color:var(--gold);border-color:rgba(200,163,110,.5);background:rgba(200,163,110,.07)}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
 .tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
 .tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
-.tbl tr.now td{background:rgba(200,169,110,.07)}
+.tbl tr.now td{background:rgba(200,163,110,.07)}
 .scroll{overflow-x:auto}
 .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
 .kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
 .kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
-.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
-.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
+.kv .t{font-size:11.5px;color:rgba(232,224,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,224,213,.78)}
 .txt b{color:var(--text);font-weight:500}
 .big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
 .sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
@@ -59,23 +59,23 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .zw{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,minmax(158px,auto));gap:5px;min-width:660px}
 .pc{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:8px;padding:6px 7px;font-size:11px;position:relative;display:flex;flex-direction:column;cursor:pointer;transition:background .2s}
 .pc:hover{background:rgba(255,255,255,.05)}
-.pc.life{border-color:rgba(200,169,110,.65);box-shadow:inset 0 0 18px rgba(200,169,110,.08)}
-.pc.dec{background:rgba(155,127,232,.1)}
+.pc.life{border-color:rgba(200,163,110,.65);box-shadow:inset 0 0 18px rgba(200,163,110,.08)}
+.pc.dec{background:rgba(221,186,138,.1)}
 .pc.yr{outline:1px dashed rgba(127,207,232,.75);outline-offset:-3px}
 .pc.sel{box-shadow:0 0 0 2px var(--gold)}
-.pc.tri{background:rgba(200,169,110,.06)}
+.pc.tri{background:rgba(200,163,110,.06)}
 .pc .pn{font-size:11.5px;color:var(--gold)}
-.pc .hp{font-size:9.5px;color:#b8a4f0}
+.pc .hp{font-size:9.5px;color:#E7CFAD}
 .pc .gz{position:absolute;top:6px;right:7px;font-family:'Noto Serif SC',serif;font-size:12px;color:var(--muted)}
 .pc .mj{margin-top:3px;line-height:1.5}
 .pc .mj div{font-size:12px;color:var(--text)}
 .pc .mj small{color:var(--muted);font-size:9.5px}
-.mut{display:inline-block;font-size:9px;border-radius:4px;padding:0 4px;margin-left:3px;color:#06050f;font-weight:500}
+.mut{display:inline-block;font-size:9px;border-radius:4px;padding:0 4px;margin-left:3px;color:#091113;font-weight:500}
 .mut.o{background:transparent!important;border:1px solid;color:inherit}
-.pc .mn{font-size:10px;color:rgba(232,226,213,.55);margin-top:3px;line-height:1.45}
-.pc .adj{font-size:9px;color:rgba(232,226,213,.35);margin-top:2px;line-height:1.35}
+.pc .mn{font-size:10px;color:rgba(232,224,213,.55);margin-top:3px;line-height:1.45}
+.pc .adj{font-size:9px;color:rgba(232,224,213,.35);margin-top:2px;line-height:1.35}
 .pc .ft{margin-top:auto;font-size:9.5px;color:var(--muted);padding-top:4px;display:flex;justify-content:space-between}
-.cen{grid-row:2/4;grid-column:2/4;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;background:radial-gradient(circle,rgba(155,127,232,.1),transparent 70%);border:1px solid var(--border);border-radius:10px;padding:10px}
+.cen{grid-row:2/4;grid-column:2/4;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;background:radial-gradient(circle,rgba(221,186,138,.1),transparent 70%);border:1px solid var(--border);border-radius:10px;padding:10px}
 .form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
 .form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
 .form2 .in,.form2 .sel{width:100%}
@@ -283,10 +283,10 @@ function palaceDetail(a,i){
     <div class="txt">${PAL_T[p.name]}</div>
     ${borrowed?`<div class="note" style="margin-top:8px">სასახლე ცარიელია — იკითხება მოპირდაპირე (${PAL[a.palaces[(i+6)%12].name]}) სასახლის ვარსკვლავებით, შესუსტებულად.</div>`:''}
     ${majors.map(s=>`<div class="rel"><b style="color:${MAJ[s.name][2]}">${MAJ[s.name][0]} — ${MAJ[s.name][1]}</b> <span class="note">${s.brightness?BR[s.brightness][0]:''}${s.mutagen?' · '+MUT[s.mutagen][0]+' '+MUT[s.mutagen][1]:''}</span><div class="txt">${MAJ[s.name][3]}</div>
-      <div class="txt" style="margin-top:4px;color:rgba(232,226,213,.62)">ამ სასახლეში: ${MAJ[s.name][1]}ის ენერგია ვლინდება სფეროში „${PAL[p.name]}“ — ${s.brightness&&BR[s.brightness][1]>0?'სრული ძალით, ღირსეულად':s.brightness&&BR[s.brightness][1]<0?'დაბრკოლებით, ცნობიერ მუშაობას საჭიროებს':'ზომიერად'}.${s.mutagen?' '+MUT[s.mutagen][3]:''}</div></div>`).join('')}
+      <div class="txt" style="margin-top:4px;color:rgba(232,224,213,.62)">ამ სასახლეში: ${MAJ[s.name][1]}ის ენერგია ვლინდება სფეროში „${PAL[p.name]}“ — ${s.brightness&&BR[s.brightness][1]>0?'სრული ძალით, ღირსეულად':s.brightness&&BR[s.brightness][1]<0?'დაბრკოლებით, ცნობიერ მუშაობას საჭიროებს':'ზომიერად'}.${s.mutagen?' '+MUT[s.mutagen][3]:''}</div></div>`).join('')}
     ${p.minorStars.length?`<div class="rel"><b>მცირე ვარსკვლავები</b>${p.minorStars.map(s=>`<div class="txt"><span style="color:${LUCKY.has(s.name)?'#9fd8a8':'#e8a0a0'}">${starName(s.name)} (${MIN[s.name]?MIN[s.name][1]:''})</span> — ${MIN[s.name]?MIN[s.name][2]:''}${s.mutagen?' · '+MUT[s.mutagen][1]:''}</div>`).join('')}</div>`:''}
     <div class="rel"><b>სამი მიმართულება, ოთხი ყურე (三方四正)</b><div class="txt">${tri.slice(1).map(k=>`${PAL[a.palaces[k].name]}: ${a.palaces[k].majorStars.map(s=>starName(s.name)).join(', ')||'—'}`).join(' · ')}</div>
-      <div class="txt" style="margin-top:4px">სასახლის საერთო ძალა: <b style="color:${score>2?'#7fcf8f':score<-1?'#e86b6b':'#c8a96e'}">${score>2?'ძლიერი':score<-1?'გამოწვევით':'საშუალო'}</b> <span class="note">(${score.toFixed(1)})</span></div></div>
+      <div class="txt" style="margin-top:4px">სასახლის საერთო ძალა: <b style="color:${score>2?'#7fcf8f':score<-1?'#e86b6b':'#C8A36E'}">${score>2?'ძლიერი':score<-1?'გამოწვევით':'საშუალო'}</b> <span class="note">(${score.toFixed(1)})</span></div></div>
     ${p.adjectiveStars.length?`<div class="note" style="margin-top:6px">დამატებითი ვარსკვლავები: ${p.adjectiveStars.map(s=>s.name).join(' · ')} · 12 სტადია: ${p.changsheng12} · ${p.boshi12}</div>`:''}</div>`;
 }
 function vChart(a){
@@ -328,7 +328,7 @@ function vFly(a){
   const li=pidx(a,'命宫'),lifeJi=loc(ZWF.SIHUA[gi(a.palaces[li].heavenlyStem)][3]);
   return `<div class="card"><div class="h">მფრინავი ტრანსფორმაციები (飞星四化)</div>
     <div class="note" style="margin-bottom:10px">ყოველი სასახლის ღერო „აგზავნის“ ოთხ ტრანსფორმაციას იმ სასახლეებში, სადაც შესაბამისი ვარსკვლავები ზის — ასე იკითხება მიზეზ-შედეგობრივი კავშირი სფეროებს შორის (ციმენის სკოლა).</div>
-    <div class="scroll"><table class="tbl"><tr><th>საიდან</th><th style="color:#7fcf8f">ლუ</th><th style="color:#e8c95a">ციუან</th><th style="color:#6fa8e8">კე</th><th style="color:#e86b6b">ძი</th></tr>${rows}</table></div></div>
+    <div class="scroll"><table class="tbl"><tr><th>საიდან</th><th style="color:#7fcf8f">ლუ</th><th style="color:#D5AA6D">ციუან</th><th style="color:#8ACDC2">კე</th><th style="color:#e86b6b">ძი</th></tr>${rows}</table></div></div>
   <div class="card"><div class="h">ძირითადი კავშირები</div>
     <div class="rel"><b>სიცოცხლის სასახლის ძი</b><div class="txt">შენი „მიჯაჭვულობა“ მიდის <b>${lifeJi>=0?PAL[a.palaces[lifeJi].name]:'—'}</b> სასახლეში — სფერო, რომელზეც ყველაზე მეტად ზრუნავ და სადაც ყველაზე მეტ ენერგიას ხარჯავ.</div></div>
     ${self.map(x=>`<div class="rel"><b style="color:${MUT[MUTK[x[1]]][2]}">თვითტრანსფორმაცია ⟲ · ${PAL[x[0]]}</b><div class="txt">${starName(x[2])} ${MUT[MUTK[x[1]]][1]} საკუთარ სასახლეშივე — ამ სფეროს ენერგია „გაედინება“: ${x[1]===3?'დანაკარგები და ცვალებადობა':'სიკეთე მოდის და მიდის, სტაბილურობა სჭირდება'}.</div></div>`).join('')}</div>`;
@@ -408,7 +408,7 @@ function show(S){
   for(const t of ST_TYPES){const cr=hasC&&S.conds.some(c=>c.t===t[0]);
     const rows=t[2].map(o=>{const b=(S.Bc[t[0]][o[0]]||0)/S.n*100,c=(CC[t[0]][o[0]]||0)/NN*100,sel=cr&&S.conds.some(cc=>cc.t===t[0]&&String(cc.v)===String(o[0]));return{o,b,c,sel,v:cr?b:c};}).filter(r=>r.b>0||r.c>0);
     const mx=Math.max(...rows.map(r=>r.v));
-    h+=`<div class="card"><div class="h">${t[1]}${cr?' <span style="color:#7fcfe8">· პირობა — მთელი ნიმუში</span>':''}</div>`+rows.map(r=>`<div class="elbar"><span class="n" style="${r.sel?'color:#7fcfe8':''}">${r.o[1]}</span><div class="b"><i style="width:${mx?r.v/mx*100:0}%;background:${cr?(r.sel?'#7fcfe8':'rgba(232,226,213,.25)'):'var(--gold)'}"></i></div><span class="v">${fp(r.v)}%${cr?'':lift(r.c,r.b)}</span></div>`).join('')+`</div>`;}
+    h+=`<div class="card"><div class="h">${t[1]}${cr?' <span style="color:#7fcfe8">· პირობა — მთელი ნიმუში</span>':''}</div>`+rows.map(r=>`<div class="elbar"><span class="n" style="${r.sel?'color:#7fcfe8':''}">${r.o[1]}</span><div class="b"><i style="width:${mx?r.v/mx*100:0}%;background:${cr?(r.sel?'#7fcfe8':'rgba(232,224,213,.25)'):'var(--gold)'}"></i></div><span class="v">${fp(r.v)}%${cr?'':lift(r.c,r.b)}</span></div>`).join('')+`</div>`;}
   h+=`<div class="card note">სწრაფი ძრავა (სიცოცხლის/სხეულის სასახლე, ბიურო, 14 მთავარი ვარსკვლავი, წლის ოთხი ტრანსფორმაცია) შედარებულია iztro-სთან — 300/300 დამთხვევა. ვარსკვლავების ჯამი სასახლეში &gt;100%-ია, რადგან სასახლეში ხშირად ორი მთავარი ვარსკვლავი ზის.</div>`;
   $('st-out').innerHTML=h;
 }
