@@ -28,12 +28,13 @@ const SECTIONS=[
   {key:'astrology',t:'ასტროლოგია',href:'index.html?g=astrology',pages:['astro.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','tzolkin.html','celtic.html','sky.html','mars.html']},
   {key:'numerology',t:'ნუმეროლოგია',href:'index.html?g=numerology',pages:['matrix.html','pythagoras.html','name.html','tarotborth.html','kabbalah.html','numerology.html']},
   {key:'hd',t:'ადამიანის დიზაინი',href:'index.html?g=hd',pages:['hd.html','genekeys.html','iching.html','types.html']},
-  {key:'life',t:'ცხოვრების რუქა',href:'life.html',pages:['life.html','work.html','duty.html','energy.html','body.html']},
+  {key:'life',t:'ცხოვრების რუქა',href:'life.html',parent:'stats',pages:['life.html','work.html','duty.html','energy.html','body.html']},
   {key:'compat',t:'შეთავსება',href:'compat.html',pages:['compat.html']},
   {key:'stats',t:'სტატისტიკა',href:'stats.html',pages:['stats.html']},
   {key:'health',t:'ჯანმრთელობა',href:'index.html?g=health',pages:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','cold.html','fasting.html','rhythm.html','recover.html','bio.html']},
   {key:'science',t:'მეცნიერებები',href:'index.html?g=science',pages:['math.html','math_classic.html','phys.html','chem.html','biology.html','sciencegames.html','fourier.html','vector.html','funcgame.html']},
-  {key:'games',t:'თამაშები',href:'games.html',pages:['games.html','intuition.html','memory.html','logic.html','hardest.html','sudoku.html','nonogram.html','pythagames.html']},
+  {key:'games',t:'თამაშები',href:'games.html',parent:'fun',pages:['games.html','intuition.html','memory.html','logic.html','hardest.html','sudoku.html','nonogram.html','pythagames.html']},
+  {key:'courses',t:'კურსები',href:'index.html?g=courses',pages:['course_astro.html','course_hd.html','course_num.html']},
   {key:'fun',t:'გასართობი',href:'index.html?g=fun',pages:['*']}
 ];
 const OWN={'account.html':'ჩემი ანგარიში','about.html':'ჩვენ შესახებ','contact.html':'კონტაქტი','privacy.html':'კონფიდენციალურობის პოლიტიკა',
@@ -93,6 +94,8 @@ function header(){
   const g=qs.get('g'),gs=g&&SECTIONS.find(s=>s.key===g);
   const h=document.createElement('header');h.id='mg-head';h.setAttribute('role','banner');
   let crumbs=`<a class="home" href="index.html">მთავარი</a>`;
+  const par=sec&&sec.parent&&SECTIONS.find(x=>x.key===sec.parent);
+  if(par&&P!=='index.html')crumbs+=`<span class="sep">›</span><a href="${par.href}">${esc(par.t)}</a>`;
   if(P==='index.html'&&gs)crumbs+=`<span class="sep">›</span><span class="cur">${esc(gs.t)}</span>`;
   else if(sec&&HUBS.has(P)&&sec.href===P)crumbs+=`<span class="sep">›</span><span class="cur">${esc(sec.t)}</span>`;
   else{if(sec)crumbs+=`<span class="sep">›</span><a href="${sec.href}">${esc(sec.t)}</a>`;
@@ -101,7 +104,7 @@ function header(){
   h.innerHTML=`<a class="brand" href="index.html" aria-label="MAGNUS — მთავარი მენიუ">MAGNUS</a>
     <div class="crumbs" aria-label="სად ხართ">${sec&&!(P==='index.html')?`<a href="${sec.href}" aria-label="უკან: ${esc(sec.t)}">←</a>`:''}${crumbs}</div>
     <button class="burger" type="button" aria-label="განყოფილებები" aria-expanded="false">☰<span class="w"> განყოფილებები</span></button>
-    <nav aria-label="განყოფილებები">${SECTIONS.map(s=>`<a href="${s.href}" class="${s.key===active?'on':''}">${s.t}</a>`).join('')}</nav>`;
+    <nav aria-label="განყოფილებები">${SECTIONS.filter(s=>!s.parent).map(s=>`<a href="${s.href}" class="${s.key===active||(sec&&sec.parent===s.key&&!gs)?'on':''}">${s.t}</a>`).join('')}</nav>`;
   const b=h.querySelector('.burger');b.onclick=()=>{const o=h.classList.toggle('open');b.setAttribute('aria-expanded',o);};
   document.body.insertBefore(h,document.body.firstChild);
   document.querySelectorAll('a.back,#grp-back').forEach(a=>{const href=a.getAttribute('href')||'';

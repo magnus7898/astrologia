@@ -74,7 +74,7 @@ const CSS=`
 .mg-tabs{display:flex;gap:4px;margin:0 0 6px}
 .mg-tabs button{all:unset;cursor:pointer;flex:1;text-align:center;padding:7px;border-radius:2px;font-size:13px;color:#B9BFBC;border:1px solid transparent}
 .mg-tabs button.on{border-color:rgba(184,137,74,.5);color:#E3BE84;background:rgba(184,137,74,.1)}
-.mg-ppl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 8px;position:relative}
+.mg-ppl{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 8px;position:relative;grid-column:1/-1}
 .mg-ppl button{all:unset;cursor:pointer;font:12px 'Noto Serif Georgian',system-ui,sans-serif;color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:4px 11px;background:rgba(184,137,74,.06)}
 .mg-ppl button:hover{background:rgba(184,137,74,.16)}
 .mg-drop{position:absolute;top:100%;left:0;z-index:9989;margin-top:4px;background:#101E24;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:4px;min-width:240px;max-height:300px;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.55)}

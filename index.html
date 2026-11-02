@@ -961,6 +961,46 @@
       <div class="card-sub">Cell · DNA · Evolution · Ecology</div>
     </a>
 
+    <a class="card c-pyth" href="games.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="24" height="15" rx="6"/><path d="M10 13.5v6M7 16.5h6"/><circle cx="21" cy="15" r="1.2"/><circle cx="24" cy="18" r="1.2"/></svg>
+      </div>
+      <div class="card-title">თამაშები</div>
+      <div class="card-sub">ინტუიცია · მეხსიერება · ლოგიკა · სუდოკუ…</div>
+    </a>
+
+    <a class="card c-astro" href="course_astro.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><circle cx="16" cy="16" r="7"/><path d="M16 4v5M16 23v5M4 16h5M23 16h5"/><path d="M13 16h6M16 13v6"/></svg>
+      </div>
+      <div class="card-title">ასტროლოგიის კურსი</div>
+      <div class="card-sub">Astrology Course</div>
+    </a>
+
+    <a class="card c-freq" href="course_hd.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l4 6h-8z"/><rect x="12.5" y="11" width="7" height="5"/><path d="M16 16l5 5-5 5-5-5z"/><path d="M9 20l-4 2v4M23 20l4 2v4"/></svg>
+      </div>
+      <div class="card-title">ადამიანის დიზაინის კურსი</div>
+      <div class="card-sub">Human Design Course</div>
+    </a>
+
+    <a class="card c-name" href="course_num.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="22" height="22"/><path d="M12.3 5v22M19.7 5v22M5 12.3h22M5 19.7h22"/><text x="8.6" y="10.6" font-size="4.6" fill="currentColor" stroke="none" text-anchor="middle">1</text><text x="16" y="18" font-size="4.6" fill="currentColor" stroke="none" text-anchor="middle">5</text><text x="23.4" y="25.4" font-size="4.6" fill="currentColor" stroke="none" text-anchor="middle">9</text></svg>
+      </div>
+      <div class="card-title">ნუმეროლოგიის კურსი</div>
+      <div class="card-sub">Numerology Course</div>
+    </a>
+
     <a class="card c-name" href="sciencegames.html">
       <div class="card-glow"></div>
       <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
@@ -1003,10 +1043,9 @@
      members:'*'  = every tile no other box took (new admin cards too).
      A box with a single member is that tile itself — a plain link.
      label: how a member is titled INSIDE its box (optional).            */
+  /* pages that live inside games.html (games is a tile in გასართობი) */
+  const IN_GAMES=['intuition.html','memory.html','logic.html','hardest.html','sudoku.html','nonogram.html','pythagames.html'];
   const GROUPS=[
-    {key:'life',title:'ცხოვრების რუქა',sub:'ქვეყანა · პროფესია · ფული · პარტნიორი · ჯანმრთელობა',css:'c-astro',art:'astro.html',href:'life.html',count:5,
-     sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="M4 16h24M16 4c4 4 4 20 0 24M16 4c-4 4-4 20 0 24"/><path d="M16 9l1.6 3.4 3.7.4-2.8 2.5.8 3.7-3.3-1.9-3.3 1.9.8-3.7-2.8-2.5 3.7-.4z" fill="currentColor" opacity=".25"/></svg>',
-     members:['astro.html','pythagoras.html','matrix.html','hd.html','vedic.html'],label:{},always:true},
     {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · Sidereal · Chinese · Tibetan · Maya…',css:'c-astro',art:'astro.html',
      members:['astro.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html'],
      label:{'astro.html':'დასავლური ასტროლოგია'}},
@@ -1014,6 +1053,9 @@
      members:['matrix.html','pythagoras.html','name.html','tarotborth.html','kabbalah.html'],label:{}},
     {key:'hd',title:'ადამიანის დიზაინი',sub:'Human Design · Gene Keys · I Ching',css:'c-freq',art:'hd.html',
      members:['hd.html','genekeys.html','iching.html'],label:{}},
+    {key:'courses',title:'კურსები',sub:'ასტროლოგია · ადამიანის დიზაინი · ნუმეროლოგია',css:'c-pyth',art:'course_astro.html',
+     sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7c4-1.5 8-1.5 12 1v18c-4-2.5-8-2.5-12-1z"/><path d="M28 7c-4-1.5-8-1.5-12 1v18c4-2.5 8-2.5 12-1z"/><path d="M7 11c2-.5 4-.4 6 .4M7 15c2-.5 4-.4 6 .4M19 11.4c2-.8 4-.9 6-.4M19 15.4c2-.8 4-.9 6-.4"/></svg>',
+     members:['course_astro.html','course_hd.html','course_num.html'],label:{},always:true},
     {key:'stats',title:'სტატისტიკა',sub:'Zodiac · Numerology · Pythagoras · Matrix · Human Design',css:'c-freq',art:'astro.html',href:'stats.html',count:7,
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27h22"/><rect x="7" y="17" width="3.5" height="10"/><rect x="14.2" y="10" width="3.5" height="17"/><rect x="21.5" y="14" width="3.5" height="13"/><path d="M6 13l7-6 6 4 7-6"/><circle cx="26" cy="5" r="1"/></svg>',
      members:['astro.html','pythagoras.html','matrix.html','hd.html'],label:{},always:true},
@@ -1024,9 +1066,7 @@
     {key:'science',title:'მეცნიერებები',sub:'მათემატიკა · ფიზიკა · ქიმია · ბიოლოგია',css:'c-astro',art:'phys.html',
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="16" cy="16" rx="12" ry="4.6"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(120 16 16)"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/></svg>',
      members:['math.html','phys.html','chem.html','biology.html','sciencegames.html'],label:{},always:true},
-    {key:'games',title:'თამაშები',sub:'პითაგორას კვადრატი · 9 უჯრა',css:'c-pyth',art:'intuition.html',href:'games.html',count:9,
-     members:['intuition.html','memory.html','logic.html','hardest.html'],label:{},always:true},
-    {key:'fun',title:'გასართობი',sub:'Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
+    {key:'fun',title:'გასართობი',sub:'Games · Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
   ];
   /* ?g=<key> → that box's own page (its tiles in the normal grid);
@@ -1040,7 +1080,7 @@
   {const bk=document.getElementById('grp-back');if(bk)bk.href=homeHref;}
   function groupTiles(G,all){
     const pos=el=>[...grid.children].indexOf(el);
-    const taken=new Set(GROUPS.filter(x=>x.members!=='*').flatMap(x=>x.members));
+    const taken=new Set(GROUPS.filter(x=>x.members!=='*').flatMap(x=>x.members).concat(IN_GAMES));
     return (G.members==='*'
       ?all.filter(t=>!taken.has(t.getAttribute('href')))
       :G.members.map(h=>all.find(t=>t.getAttribute('href')===h)).filter(Boolean))
@@ -1092,7 +1132,7 @@
       boxes.push(box);
     }
     grid.innerHTML='';grid.classList.remove('sub');grid.classList.add('main4');
-    grid.style.setProperty('--n',boxes.length>5?Math.ceil(boxes.length/2):boxes.length);  /* ≤5 → one row; more → two rows, last row centred */
+    grid.style.setProperty('--n',boxes.length===9?3:boxes.length>5?Math.ceil(boxes.length/2):boxes.length);  /* 9 → 3 × 3 */  /* ≤5 → one row; more → two rows, last row centred */
     boxes.forEach(b=>grid.appendChild(b));
     document.title='MAGNUS';
   }
@@ -1132,7 +1172,7 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','vedictrop.html','chem.html','phys.html','math.html','biology.html','sciencegames.html','hdastro.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['games.html','course_astro.html','course_hd.html','course_num.html','compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','vedictrop.html','chem.html','phys.html','math.html','biology.html','sciencegames.html','hdastro.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       /* a kept new tile sits next to its sibling, not at the very end */
       const AFTER={'vedictrop.html':'vedic.html','hdastro.html':'true_sidereal.html'};
       for(const [h,sib] of Object.entries(AFTER)){const t=[...frag.children].find(x=>x.getAttribute('href')===h),b=[...frag.children].find(x=>x.getAttribute('href')===sib);
