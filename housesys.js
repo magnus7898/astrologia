@@ -46,7 +46,7 @@ window.fetch=function(u,init){
   return of.call(this,u,init);
 };
 const CSS=`
-#hs-bar{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid rgba(184,137,74,.16);font-size:11.5px;color:#BCC0CA}
+#hs-bar{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;margin:14px 0 0;padding:12px 0 0;border-top:1px solid rgba(184,137,74,.16);font-size:11.5px;color:#BCC0CA}
 #hs-bar select{width:auto!important;min-width:170px;background:#0C1222;border:1px solid rgba(184,137,74,.4);color:#E3BE84;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px;max-width:100%}
 #hs-bar small{color:#7A8499;font-size:10.5px}
 #hs-bar .fb{color:#e8907a}`;
@@ -55,7 +55,9 @@ function inject(){
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
   const d=document.createElement('div');d.id='hs-bar';
   d.innerHTML=`<span>🏠 სახლების სისტემა</span><select id="hs-sel" aria-label="სახლების სისტემა">${HS.map(h=>`<option value="${h[0]}" title="${h[2]}"${h[0]===cur?' selected':''}>${h[1]}</option>`).join('')}</select><small id="hs-info"></small>`;
-  const fc=document.querySelector('.form-card');if(fc)fc.insertBefore(d,fc.firstChild);else bar.insertAdjacentElement('afterend',d);
+  const fc=document.querySelector('.form-card');if(fc){fc.appendChild(d);
+    /* stays the last thing in the data box when other tabs add their forms */
+    new MutationObserver(()=>{if(fc.lastElementChild!==d)fc.appendChild(d);}).observe(fc,{childList:true});}else bar.insertAdjacentElement('afterend',d);
   /* the page subtitle names the house system */
   const sub=[...document.querySelectorAll('header *, .header *, body *')].find(e=>e.children.length===0&&/Placidus Houses/.test(e.textContent));
   const EN={P:'Placidus',K:'Koch',W:'Whole Sign',E:'Equal',D:'Equal MC',V:'Vehlow',O:'Porphyry',R:'Regiomontanus',C:'Campanus',B:'Alcabitius',T:'Topocentric',M:'Morinus',X:'Meridian',H:'Horizon',U:'Krusinski',Y:'APC',L:'Pullen SD',Q:'Pullen SR',S:'Sripati',I:'Sunshine',J:'Savard-A',N:'Aries Equal'};

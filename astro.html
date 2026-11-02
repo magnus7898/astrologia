@@ -238,6 +238,11 @@ input[readonly]{background:#0E1628;color:var(--dim)}
   font-family:'Marcellus SC','Noto Serif Georgian',serif;letter-spacing:.2em;box-shadow:0 4px 16px rgba(0,0,0,.35)}
 .gen-btn:hover{background:linear-gradient(180deg,#2C3956,#1E2A45);box-shadow:0 0 18px rgba(184,137,74,.25)}
 .tz-display{margin-bottom:10px}
+.form-grid.dt5{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.45fr) minmax(0,1fr) minmax(0,1fr);gap:6px}
+.form-grid.dt5 input{padding:7px 8px;-moz-appearance:textfield;appearance:textfield}
+.form-grid.dt5 input::-webkit-inner-spin-button,.form-grid.dt5 input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+@media(max-width:420px){.form-grid.dt5{gap:5px}.form-grid.dt5 input{padding:7px 6px}}
+.mg-ppl{display:none!important}
 /* result boxes (planets, aspects, orbs, filters) in the same colour as the data box */
 .data-card,#orb-panel,#asp-filters{background:rgba(17,26,46,.55)!important;border:1px solid rgba(184,137,74,.3)!important;border-radius:3px!important}
 .data-card-title{background:rgba(24,34,58,.7)}
@@ -3264,6 +3269,26 @@ setToday('pd');
   <script src="livewhere.js"></script>
   <script src="astro_links.js"></script>
   <script src="pointvariants.js"></script>
+<script>
+/* დღე · თვე · წელი · საათი · წუთი — one line in every form (tabs added later too) */
+(function(){
+  function merge(){
+    document.querySelectorAll('.form-card input[id$="-day"]').forEach(d=>{
+      if(d.dataset.dt)return;const ga=d.closest('.form-grid');if(!ga)return;
+      const pre=d.id.slice(0,-4),sc=d.closest('.form-section')||ga.parentNode,h=sc.querySelector('[id="'+pre+'-hour"]'),m=sc.querySelector('[id="'+pre+'-minute"]');
+      if(!h)return;const gb=h.closest('.form-grid');if(!gb||gb===ga)return;
+      ga.appendChild(h.closest('.field'));if(m&&m.closest('.form-grid')===gb)ga.appendChild(m.closest('.field'));
+      ga.classList.add('dt5');gb.style.display='none';d.dataset.dt='1';
+    });
+  }
+  const o=window.toggleTU;
+  if(typeof o==='function')window.toggleTU=function(p){o.apply(this,arguments);
+    const c=document.getElementById(p+'-time-unknown'),u=!!(c&&c.checked);
+    ['hour','minute'].forEach(k=>{const cb=document.getElementById(p+'-time-unknown'),sc=cb&&cb.closest('.form-section'),e=sc?sc.querySelector('[id="'+p+'-'+k+'"]'):document.getElementById(p+'-'+k);if(e&&e.closest('.field'))e.closest('.field').classList.toggle('time-disabled',u);});};
+  merge();[300,1000,2500].forEach(t=>setTimeout(merge,t));
+  document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.tab-btn'))setTimeout(merge,50);});
+})();
+</script>
 <script src="site.js"></script>
 <script src="account.js"></script>
 </body>

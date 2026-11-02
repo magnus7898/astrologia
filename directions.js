@@ -235,7 +235,7 @@ function inject(){
     <div class="tz-display" id="dr-tz-display">⏳ ქალაქის შეყვანის შემდეგ სარტყელი განისაზღვრება</div>
     <button type="button" class="gen-btn" id="dr-run">↗ დირექციების გამოთვლა ✦</button>
     <div id="dr-out"></div>`;
-  card.insertBefore(sec,$('orb-panel')||null);
+  card.insertBefore(sec,[...card.children].find(x=>x.id==='hs-bar')||null);
   $('dr-run').addEventListener('click',run);
   $('dr-copy').addEventListener('click',copyFromNatal);
 }

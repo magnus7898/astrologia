@@ -71,7 +71,7 @@ function inject(){
     </div>
     <button type="button" class="gen-btn" id="tru-run">⚖ რექტიფიკაცია ✦</button>
     <div id="tru-out" style="margin-top:12px"></div>`;
-  card.insertBefore(sec,$('orb-panel')||null);
+  card.insertBefore(sec,[...card.children].find(x=>x.id==='hs-bar')||null);
   $('tru-run').addEventListener('click',run);
   $('tru-copy').addEventListener('click',copyFromNatal);
   fixSetMode();

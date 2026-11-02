@@ -191,7 +191,9 @@ function inject(){
   const panel=document.createElement('details');
   panel.id='orb-panel';
   panel.innerHTML='<summary></summary><div class="ob-in"></div>';
-  card.appendChild(panel);
+  /* lives with the chart (hidden until a chart is generated) */
+  const ca0=$('chart-area'),af0=$('asp-filters');
+  if(af0&&af0.parentNode)af0.parentNode.insertBefore(panel,af0.nextSibling);else if(ca0)ca0.insertBefore(panel,ca0.firstChild);else card.appendChild(panel);
   panel.addEventListener('input',onEdit);
   panel.addEventListener('change',onEdit);
   panel.addEventListener('click',e=>{
