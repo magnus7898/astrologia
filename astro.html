@@ -3260,7 +3260,6 @@ setToday('pd');
   <script src="planetnodes.js"></script>
   <script src="techniques.js"></script>
   <script src="directions.js"></script>
-  <script src="formulas.js"></script>
   <script src="people_core.js"></script>
   <script src="astropeople.js"></script>
   <script src="famous.js"></script>
@@ -3279,7 +3278,21 @@ setToday('pd');
       if(!h)return;const gb=h.closest('.form-grid');if(!gb||gb===ga)return;
       ga.appendChild(h.closest('.field'));if(m&&m.closest('.form-grid')===gb)ga.appendChild(m.closest('.field'));
       ga.classList.add('dt5');gb.style.display='none';d.dataset.dt='1';
+      same(pre,sc,ga);
     });
+  }
+  /* every person box like the natal one: name · date+time · city · latitude/longitude */
+  function same(pre,sc,ga){
+    const q=k=>sc.querySelector('[id="'+pre+'-'+k+'"]');
+    if(/^(tt|pd|lunar)$/.test(pre))return;
+    if(!q('name')){const f=document.createElement('div');f.className='field wide';f.style.marginBottom='10px';
+      f.innerHTML='<label>სახელი</label><input id="'+pre+'-name" placeholder="სახელი">';ga.parentNode.insertBefore(f,ga);}
+    const la=q('lat'),lo=q('lon'),city=q('city');
+    if(la&&lo&&la.type==='hidden'&&city&&city.closest('.field')){
+      const g=document.createElement('div');g.className='form-grid-2';g.style.marginBottom='8px';
+      [['განედი',la],['გრძედი',lo]].forEach(([t,i])=>{const f=document.createElement('div');f.className='field';f.innerHTML='<label>'+t+'</label>';
+        i.type='number';i.step='0.0001';i.readOnly=true;f.appendChild(i);g.appendChild(f);});
+      city.closest('.field').after(g);}
   }
   const o=window.toggleTU;
   if(typeof o==='function')window.toggleTU=function(p){o.apply(this,arguments);
