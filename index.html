@@ -172,9 +172,8 @@
   }
 
   /* ════ Destiny Matrix look: petrol ink plate, brass fittings, engraved brass medallions ════ */
-  :root{--ink:#0B1418;--ink-2:#101E24;--ink-3:#16272E;--brass:#B8894A;--brass-lt:#E3BE84;--brass-dk:#6B4F26;--patina:#4E8F82;--enamel:#EDE6D8;--enamel-2:#B9BFBC;--dim:#6E8087;
-    --void:#0B1418;--gold:#B8894A;--gold-pale:#E3BE84;--silver:#B9BFBC}
-  body{background:var(--ink);font-family:'Noto Serif Georgian',Georgia,serif}
+  :root{--ink:#0B1418;--ink-2:#101E24;--ink-3:#16272E;--brass:#B8894A;--brass-lt:#E3BE84;--brass-dk:#6B4F26;--patina:#4E8F82;--enamel:#EDE6D8;--enamel-2:#B9BFBC;--dim:#6E8087;}
+  body{background:var(--ink)}
   .stars{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
     radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(78,143,130,.12),transparent 70%),
     radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.07),transparent 70%)}
@@ -184,41 +183,10 @@
   .eyebrow{font-family:'Marcellus SC',serif;color:var(--dim);opacity:1;letter-spacing:.5em}
   h1{font-family:'Marcellus SC','Cinzel',serif;letter-spacing:.32em;text-indent:.32em;background:none;-webkit-text-fill-color:var(--brass-lt);color:var(--brass-lt);
     filter:none;text-shadow:0 1px 0 rgba(0,0,0,.6),0 0 30px rgba(184,137,74,.18)}
-  .subtitle{font-family:'Noto Serif Georgian',serif;font-style:normal;font-weight:300;color:var(--enamel-2);opacity:.75;font-size:13px}
+  .subtitle{font-family:'Noto Serif Georgian',serif;font-style:normal;font-weight:300;color:#B9BFBC;opacity:.75;font-size:13px}
   .dline{background:linear-gradient(90deg,transparent,rgba(184,137,74,.45),transparent)}
-  .dgem{background:var(--brass);opacity:.8}
+  .dgem{background:#B8894A;opacity:.8}
 
-  /* cards = small engraved plates */
-  .card{background:linear-gradient(165deg,rgba(22,39,46,.92),rgba(16,30,36,.92));border:1px solid rgba(184,137,74,.26);border-radius:2px;
-    box-shadow:inset 0 1px 0 rgba(227,190,132,.06),inset 0 0 0 4px rgba(11,20,24,.55),inset 0 0 0 5px rgba(184,137,74,.10),0 6px 18px rgba(0,0,0,.35)}
-  .card:hover{transform:translateY(-4px);border-color:rgba(227,190,132,.6);box-shadow:inset 0 0 0 4px rgba(11,20,24,.55),inset 0 0 0 5px rgba(184,137,74,.22),0 16px 36px rgba(0,0,0,.5),0 0 22px rgba(78,143,130,.12)}
-  .card .card-glow{background:radial-gradient(ellipse at 50% 115%,rgba(78,143,130,.16),transparent 65%)!important}
-  .card::after{background:linear-gradient(90deg,transparent,var(--brass-lt),transparent)}
-  /* brass screws in the corners */
-  .cn{width:7px;height:7px;border:0!important;border-radius:50%;background:radial-gradient(circle at 35% 30%,#F3D9A6,#B8894A 55%,#5E4422);box-shadow:0 1px 1px rgba(0,0,0,.6);opacity:.75}
-  .cn::after{content:'';position:absolute;left:1px;right:1px;top:3px;height:1px;background:rgba(60,40,15,.7);transform:rotate(35deg)}
-  .card:hover .cn{opacity:1}
-  .tl{top:7px;left:7px}.tr{top:7px;right:7px}.bl{bottom:7px;left:7px}.br{bottom:7px;right:7px}
-
-  /* icons: engraved brass inside an enamel medallion */
-  .sym{position:relative;width:52px!important;height:52px!important;padding:11px;margin-bottom:12px!important;opacity:1;border-radius:50%;
-    background:radial-gradient(circle at 50% 40%,#1B3038,#0E1A1F 72%);
-    box-shadow:inset 0 0 0 1px rgba(184,137,74,.55),inset 0 0 0 3px #0B1418,inset 0 0 0 4px rgba(184,137,74,.22),0 2px 6px rgba(0,0,0,.5)}
-  .sym svg,.card[class*=c-] .sym svg{color:var(--brass-lt)!important;stroke:var(--brass-lt)!important;filter:drop-shadow(0 1px 0 rgba(0,0,0,.7))}
-  .card:hover .sym{transform:scale(1.06);box-shadow:inset 0 0 0 1px var(--brass-lt),inset 0 0 0 3px #0B1418,inset 0 0 0 4px rgba(78,143,130,.45),0 0 16px rgba(78,143,130,.25)}
-  .card:hover .sym svg{stroke:#F3D9A6!important;color:#F3D9A6!important}
-  .grid.sub>.card .sym{width:60px!important;height:60px!important;padding:13px}
-  .grid.main4>.card.main .sym{width:76px!important;height:76px!important;padding:17px;margin-bottom:16px!important}
-
-  .card-title{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;color:var(--enamel);letter-spacing:.12em}
-  .card:hover .card-title{color:var(--brass-lt)}
-  .card-sub{font-family:'Noto Serif Georgian',serif;font-style:normal;color:var(--dim)}
-  .card:hover .card-sub{opacity:.9}
-  .card.grp .grp-n{color:var(--patina);opacity:.9;font-family:'JetBrains Mono',monospace}
-  .grp-head h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;color:var(--brass-lt);letter-spacing:.25em}
-  .grp-head a{color:var(--brass-lt);border-color:rgba(184,137,74,.35);border-radius:2px}
-  footer span{color:rgba(184,137,74,.35)}
-  @media (max-width:520px){.grid.main4>.card.main .sym{width:58px!important;height:58px!important;padding:13px}.sym{width:46px!important;height:46px!important;padding:10px}}
 </style>
 </head>
 <body>

@@ -284,9 +284,16 @@ function layoutTiles(){
   if(bench){const bw=+bench.dataset.boxW||900;bench.style.setProperty('--mg-box-w',bw+'px');bench.style.setProperty('--mg-bench-w',(L.w+22+bw)+'px');}
 }
 
+/* ── Destiny Matrix ground (background only — each page keeps its own boxes) ── */
+const BG_SKIP=new Set(['index.html','matrix.html','fool_journey.html','vector.html']);
+const BG_CSS=`html{background:#0B1418!important}
+body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
+ radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(78,143,130,.11),transparent 70%),
+ radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%),#0B1418!important;background-attachment:fixed!important}`;
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
+  if(!BG_SKIP.has(P)){const sb=document.createElement('style');sb.textContent=BG_CSS;document.head.appendChild(sb);}
   header();footer();consent(false);tabs();
   if(!NO_TABS.has(P)){const st2=document.createElement('style');st2.textContent=TILE_CSS;document.head.appendChild(st2);
     [0,500,1500,3500].forEach(t=>setTimeout(sideNav,t));
