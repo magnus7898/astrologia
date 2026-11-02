@@ -46,16 +46,16 @@ window.fetch=function(u,init){
   return of.call(this,u,init);
 };
 const CSS=`
-#hs-bar{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px auto 14px;font-size:11.5px;color:rgba(200,180,140,.8)}
-#hs-bar select{width:auto!important;min-width:170px;background:rgba(10,8,22,.7);border:1px solid rgba(201,162,76,.35);color:#ecd59a;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px;max-width:100%}
-#hs-bar small{color:rgba(200,180,140,.6);font-size:10.5px;flex-basis:100%;text-align:center}
+#hs-bar{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid rgba(184,137,74,.16);font-size:11.5px;color:#B9BFBC}
+#hs-bar select{width:auto!important;min-width:170px;background:#0B1418;border:1px solid rgba(184,137,74,.4);color:#E3BE84;border-radius:8px;padding:5px 8px;font:inherit;font-size:12px;max-width:100%}
+#hs-bar small{color:#6E8087;font-size:10.5px}
 #hs-bar .fb{color:#e8907a}`;
 function inject(){
   const bar=document.querySelector('.tab-bar');if(!bar)return false;if($('hs-bar'))return true;
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
   const d=document.createElement('div');d.id='hs-bar';
   d.innerHTML=`<span>🏠 სახლების სისტემა</span><select id="hs-sel" aria-label="სახლების სისტემა">${HS.map(h=>`<option value="${h[0]}" title="${h[2]}"${h[0]===cur?' selected':''}>${h[1]}</option>`).join('')}</select><small id="hs-info"></small>`;
-  bar.insertAdjacentElement('afterend',d);
+  const fc=document.querySelector('.form-card');if(fc)fc.insertBefore(d,fc.firstChild);else bar.insertAdjacentElement('afterend',d);
   /* the page subtitle names the house system */
   const sub=[...document.querySelectorAll('header *, .header *, body *')].find(e=>e.children.length===0&&/Placidus Houses/.test(e.textContent));
   const EN={P:'Placidus',K:'Koch',W:'Whole Sign',E:'Equal',D:'Equal MC',V:'Vehlow',O:'Porphyry',R:'Regiomontanus',C:'Campanus',B:'Alcabitius',T:'Topocentric',M:'Morinus',X:'Meridian',H:'Horizon',U:'Krusinski',Y:'APC',L:'Pullen SD',Q:'Pullen SR',S:'Sripati',I:'Sunshine',J:'Savard-A',N:'Aries Equal'};

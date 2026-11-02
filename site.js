@@ -215,59 +215,83 @@ function tabs(){
   setTimeout(tryOpen,location.hash?250:600);
 }
 
-/* ── the page's main tab bar becomes a menu on the right side (wide screens) ──
-   The bar keeps its own buttons and handlers; only its placement and look change. On phones
-   and narrow windows (< 1100px) it stays where the page put it.                            */
-const SIDE_CSS=`
-@media(min-width:1100px){
- html.mg-side body{padding-right:calc(var(--mg-side-w) + 36px)!important}
- html.mg-side #mg-head,html.mg-side #mg-foot{margin-right:calc(-1 * (var(--mg-side-w) + 36px))!important;width:calc(100% + var(--mg-side-w) + 36px)!important;max-width:none!important}
- .mg-sidenav{position:fixed!important;right:calc(16px + env(safe-area-inset-right,0px))!important;left:auto!important;width:var(--mg-side-w)!important;
-   top:var(--mg-side-top,80px)!important;max-height:calc(100vh - var(--mg-side-top,80px) - 80px)!important;overflow-y:auto!important;z-index:40!important;
-   display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:flex-start!important;gap:0!important;
-   margin:0!important;padding:8px 0!important;transform:none!important;
-   background:rgba(11,20,24,.94)!important;border:1px solid rgba(184,137,74,.28)!important;border-radius:0!important;box-shadow:0 10px 30px rgba(0,0,0,.45)!important}
- .mg-sidenav>a>i{margin-right:8px;font-style:normal}.mg-sidenav::before{content:attr(data-mg-title);display:block;padding:4px 16px 8px;margin-bottom:4px;border-bottom:1px solid rgba(184,137,74,.18);
-   font:400 10.5px/1.4 'Marcellus SC','Noto Serif Georgian',serif;letter-spacing:.2em;color:#6E8087;text-transform:uppercase}
- .mg-sidenav>*{display:block!important;width:100%!important;box-sizing:border-box!important;margin:0!important;padding:8px 16px!important;
-   text-align:left!important;justify-content:flex-start!important;white-space:normal!important;border:0!important;border-left:2px solid transparent!important;border-radius:0!important;
-   background:none!important;box-shadow:none!important;color:#B9BFBC!important;font-size:12.5px!important;letter-spacing:.04em!important;line-height:1.35!important;transform:none!important}
- .mg-sidenav>*:hover{color:#EDE6D8!important;background:rgba(184,137,74,.07)!important}
- .mg-sidenav>.active,.mg-sidenav>.on,.mg-sidenav>.sel,.mg-sidenav>[aria-selected=true]{color:#E3BE84!important;border-left-color:#B8894A!important;background:rgba(184,137,74,.12)!important}
+/* ── the page's main tab bar becomes a block of square tiles ──
+   Same buttons and handlers; only the look changes. On wide screens (≥ 1000px), when the bar
+   sits right before the page's data box, the tiles stand to the left of that box; otherwise
+   they stay where the page put them, as a centred block.                                   */
+const TILE_CSS=`
+.mg-tiles{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:stretch!important;align-content:flex-start!important;
+  gap:var(--mg-gap)!important;width:var(--mg-tiles-w)!important;max-width:100%!important;margin:18px auto!important;padding:0!important;
+  background:none!important;border:0!important;box-shadow:none!important;overflow:visible!important;flex-direction:row!important;position:relative!important;z-index:2}
+.mg-tiles>*{flex:0 0 var(--mg-tile)!important;width:var(--mg-tile)!important;height:var(--mg-tile)!important;min-width:0!important;box-sizing:border-box!important;margin:0!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:8px 6px!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;hyphens:auto;
+  background:linear-gradient(160deg,#16272E,#101E24)!important;border:1px solid rgba(184,137,74,.34)!important;border-radius:3px!important;
+  color:#B9BFBC!important;font:400 12.5px/1.3 'Noto Serif Georgian',Georgia,serif!important;letter-spacing:.02em!important;text-transform:none!important;text-decoration:none!important;
+  box-shadow:inset 0 1px 0 rgba(227,190,132,.06),0 2px 8px rgba(0,0,0,.35)!important;transform:none!important;cursor:pointer;transition:border-color .2s,color .2s,background .2s!important}
+.mg-tiles>* i{font-style:normal;display:block;font-size:20px;margin:0 0 4px}
+.mg-tiles>a{flex-direction:column!important}
+.mg-tiles>*:hover{border-color:#B8894A!important;color:#EDE6D8!important;background:linear-gradient(160deg,#1B3038,#132329)!important}
+.mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{color:#E3BE84!important;border-color:#E3BE84!important;
+  background:linear-gradient(160deg,#22343A,#16272E)!important;box-shadow:inset 0 0 0 1px rgba(227,190,132,.35),0 0 16px rgba(184,137,74,.22)!important}
+.mg-bench{position:relative;z-index:1;width:100%}
+@media(min-width:1000px){
+ .mg-bench{display:flex;align-items:flex-start;justify-content:center;gap:22px;margin:18px auto 0;max-width:var(--mg-bench-w)}
+ .mg-bench>.mg-tiles{margin:0!important;flex:0 0 auto!important;position:sticky!important;top:14px}
+ .mg-bench>.mg-box{flex:1 1 auto!important;min-width:0!important;margin:0!important;max-width:var(--mg-box-w)!important}
 }`;
 let sideEl=null;
+function tileLayout(n,bench){
+  const gap=8,vw=Math.min(innerWidth,document.documentElement.clientWidth||innerWidth);
+  let tile=bench?100:96,cols;
+  if(bench){let best=null;for(let c=2;c<=5;c++){const r=Math.ceil(n/c),k=[r*c-n,Math.abs(r-c),c<r?1:0];if(!best||k[0]<best.k[0]||(k[0]===best.k[0]&&(k[2]<best.k[2]||(k[2]===best.k[2]&&k[1]<best.k[1]))))best={c,k};}cols=best.c;}
+  else{cols=Math.min(n,n<=6?n:Math.ceil(n/Math.ceil(n/8)));
+    const room=vw-32;while(cols>1&&cols*tile+(cols-1)*gap>room){if(tile>80)tile-=4;else cols--;}
+    /* balanced rows: e.g. 7 → 4+3, not 6+1 */
+    const rows=Math.ceil(n/cols);cols=Math.ceil(n/rows);}
+  return{tile,cols,gap,w:cols*tile+(cols-1)*gap};
+}
+function findBox(g){
+  let x=g.nextElementSibling;
+  while(x){const r=x.getBoundingClientRect();
+    if(getComputedStyle(x).display!=='none'&&r.height>=120&&r.width>=280&&!/^(SCRIPT|STYLE)$/.test(x.tagName))
+      return (x.querySelector('input:not([type=hidden]),select,textarea')&&r.height<1100&&r.top-g.getBoundingClientRect().bottom<160)?x:null;
+    if(r.height>=120)return null;x=x.nextElementSibling;}
+  return null;
+}
 function sideNav(){
   if(NO_TABS.has(P))return;
   scanTabs();
-  const vis=GROUPS.filter(g=>g.el.offsetParent!==null||g.el.classList.contains('mg-sidenav'));
+  const vis=GROUPS.filter(g=>g.el.offsetParent!==null||g.el.classList.contains('mg-tiles'));
   const sn=document.getElementById('subnav');
   if(!vis.length&&sn&&sn.children.length>1)vis.push({el:sn,btns:[...sn.children]});
   if(!vis.length)return;
-  /* the main bar: most tabs; on a tie the first on the page */
   const main=vis.reduce((a,g)=>g.btns.length>a.btns.length?g:a,vis[0]);
-  if(sideEl===main.el)return;
-  if(sideEl)sideEl.classList.remove('mg-sidenav');
-  sideEl=main.el;sideEl.classList.add('mg-sidenav');
-  const sec=sectionOf(P);sideEl.dataset.mgTitle=(pageTitle()||(sec&&sec.t)||'').slice(0,32);
-  document.documentElement.classList.add('mg-side');
-  const w=Math.min(250,Math.max(190,Math.max(...main.btns.map(b=>tabLabel(b).length))*7.2+40));
-  document.documentElement.style.setProperty('--mg-side-w',Math.round(w)+'px');
-  placeSide();
+  const el=main.el;
+  if(sideEl!==el){
+    if(sideEl)sideEl.classList.remove('mg-tiles');
+    sideEl=el;el.classList.add('mg-tiles');
+    if(!el.closest('.mg-bench')){const box=findBox(el);
+      if(box){const b=document.createElement('div');b.className='mg-bench';el.parentNode.insertBefore(b,el);const mw=parseFloat(getComputedStyle(box).maxWidth);
+        b.appendChild(el);b.appendChild(box);box.classList.add('mg-box');b.dataset.boxW=isFinite(mw)&&mw>0?Math.max(mw,560):900;}}
+  }
+  layoutTiles();
 }
-function placeSide(){
-  const h=document.getElementById('mg-head');
-  const top=Math.max(14,h?h.getBoundingClientRect().bottom+12:14);
-  document.documentElement.style.setProperty('--mg-side-top',Math.round(top)+'px');
+function layoutTiles(){
+  if(!sideEl)return;const el=sideEl,n=el.children.length,bench=el.closest('.mg-bench'),wide=innerWidth>=1000;
+  const L=tileLayout(n,!!bench&&wide);const S=el.style;
+  S.setProperty('--mg-tile',L.tile+'px');S.setProperty('--mg-gap',L.gap+'px');S.setProperty('--mg-tiles-w',L.w+'px');
+  if(bench){const bw=+bench.dataset.boxW||900;bench.style.setProperty('--mg-box-w',bw+'px');bench.style.setProperty('--mg-bench-w',(L.w+22+bw)+'px');}
 }
 
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
   header();footer();consent(false);tabs();
-  if(!NO_TABS.has(P)){const st2=document.createElement('style');st2.textContent=SIDE_CSS;document.head.appendChild(st2);
+  if(!NO_TABS.has(P)){const st2=document.createElement('style');st2.textContent=TILE_CSS;document.head.appendChild(st2);
     [0,500,1500,3500].forEach(t=>setTimeout(sideNav,t));
     document.addEventListener("click",()=>{if(!sideEl)[300,1200].forEach(t=>setTimeout(sideNav,t));},true);
-    addEventListener('scroll',placeSide,{passive:true});addEventListener('resize',placeSide);}
+    addEventListener('resize',layoutTiles);}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();

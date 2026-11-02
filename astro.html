@@ -10,11 +10,11 @@
   /* warm brass ground: near-black with a brown cast, panels lifted by
      warmth rather than by purple; accents stay gold, the old --purple
      slot now carries a soft amber so existing rules keep working */
-  --void:#0A0705;--deep:#140E09;--surface:rgba(28,20,13,0.88);
-  --gold:#C9A24C;--gold-l:#F0D48A;--gold-d:#7A5A22;
-  --purple:#D9A860;--purple-d:#3A2712;
-  --txt:#EFE3CE;--dim:rgba(196,176,148,0.62);
-  --brd:rgba(122,90,34,0.55);
+  --void:#0B1418;--deep:#101E24;--surface:rgba(16,30,36,0.88);
+  --gold:#B8894A;--gold-l:#E3BE84;--gold-d:#6B4F26;
+  --purple:#E3BE84;--purple-d:#16272E;
+  --txt:#EDE6D8;--dim:rgba(185,191,188,0.62);
+  --brd:rgba(184,137,74,0.35);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -34,14 +34,14 @@ body::before{
     radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.5) 0,transparent 100%),
     radial-gradient(1px 1px at 50% 75%,rgba(255,255,255,.4) 0,transparent 100%),
     radial-gradient(1px 1px at 82% 80%,rgba(255,255,255,.35) 0,transparent 100%),
-    radial-gradient(1.5px 1.5px at 34% 51%,rgba(217,168,96,.25) 0,transparent 100%);
+    radial-gradient(1.5px 1.5px at 34% 51%,rgba(227,190,132,.25) 0,transparent 100%);
 }
 body:has(#acg-section[style*='flex']){overflow:hidden;padding:0;}
 body::after{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
     radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),
-    radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%);
+    radial-gradient(ellipse 500px 500px at 80% 70%,rgba(78,143,130,.06) 0,transparent 70%);
 }
 
 /* ── HERO ── */
@@ -56,7 +56,7 @@ body::after{
 }
 .hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:8px}
 .hero-divider{display:flex;align-items:center;gap:14px;margin:16px auto 0;max-width:300px}
-.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
+.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(184,137,74,.35),transparent)}
 .hero-gem{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.5;flex-shrink:0}
 
 /* ── TAB BAR ── */
@@ -67,9 +67,9 @@ body::after{
 }
 .tab-btn{
   font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;
-  color:rgba(217,168,96,.55);
-  background:rgba(8,6,20,.6);
-  border:1px solid rgba(122,90,34,.4);
+  color:rgba(227,190,132,.55);
+  background:rgba(11,20,24,.6);
+  border:1px solid rgba(184,137,74,.4);
   border-radius:20px;padding:8px 16px;cursor:pointer;
   transition:all .25s;white-space:nowrap;
 }
@@ -96,14 +96,14 @@ body::after{
 /* ── FORM CARD ── */
 .form-card{
   position:relative;z-index:1;
-  background:rgba(8,6,20,.75);border:1px solid rgba(122,90,34,.6);
+  background:rgba(11,20,24,.75);border:1px solid rgba(184,137,74,.6);
   border-radius:16px;padding:24px;width:100%;max-width:680px;
   margin:16px auto 0;backdrop-filter:blur(12px);
-  box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(217,168,96,.08);
+  box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(227,190,132,.08);
 }
 .form-card::before{
   content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(217,168,96,.4),transparent);
+  background:linear-gradient(90deg,transparent,rgba(227,190,132,.4),transparent);
 }
 .form-section{display:none;}
 .form-section.active{display:block;}
@@ -111,7 +111,7 @@ body::after{
 .person-label{
   font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;
   color:var(--gold);opacity:.6;margin-bottom:10px;padding-bottom:6px;
-  border-bottom:1px solid rgba(201,168,76,.15);
+  border-bottom:1px solid rgba(184,137,74,.15);
 }
 .person-b-label{color:#D9A860;opacity:.8;}
 
@@ -121,35 +121,35 @@ body::after{
 .field.wide{grid-column:span 3}
 label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
 input,select{
-  background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);
+  background:rgba(11,20,24,.7);border:1px solid rgba(184,137,74,.6);
   border-radius:8px;color:var(--txt);padding:9px 12px;font-size:13px;
   font-family:'Noto Sans Georgian',sans-serif;
   width:100%;transition:border-color .2s,box-shadow .2s;
 }
-input:focus,select:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
-input::placeholder{color:rgba(155,168,184,.35)}
-input[readonly]{background:rgba(6,5,18,.7);color:rgba(155,168,184,.6)}
+input:focus,select:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(184,137,74,.15)}
+input::placeholder{color:rgba(185,191,188,.35)}
+input[readonly]{background:rgba(11,20,24,.7);color:rgba(185,191,188,.6)}
 .city-hint{font-size:11px;color:var(--purple);margin-top:2px;min-height:14px;padding-left:2px}
-.city-list{display:flex;flex-direction:column;margin-top:4px;border:1px solid var(--brd);border-radius:8px;overflow:hidden;background:rgba(8,6,20,.92)}
-.city-list button{all:unset;box-sizing:border-box;display:flex;justify-content:space-between;gap:8px;width:100%;padding:10px 12px;min-height:40px;font-size:13px;color:var(--txt);cursor:pointer;border-top:1px solid rgba(122,90,34,.25);font-family:inherit}
+.city-list{display:flex;flex-direction:column;margin-top:4px;border:1px solid var(--brd);border-radius:8px;overflow:hidden;background:rgba(11,20,24,.92)}
+.city-list button{all:unset;box-sizing:border-box;display:flex;justify-content:space-between;gap:8px;width:100%;padding:10px 12px;min-height:40px;font-size:13px;color:var(--txt);cursor:pointer;border-top:1px solid rgba(184,137,74,.25);font-family:inherit}
 .city-list button:first-child{border-top:0}
-.city-list button:hover,.city-list button:focus-visible{background:rgba(217,168,96,.14)}
-.city-list button.on{background:rgba(217,168,96,.2);color:var(--gold)}
+.city-list button:hover,.city-list button:focus-visible{background:rgba(227,190,132,.14)}
+.city-list button.on{background:rgba(227,190,132,.2);color:var(--gold)}
 .city-list small{color:var(--dim);font-size:11px;white-space:nowrap}
 .tz-display{
   font-size:11px;color:var(--gold);margin-bottom:12px;
-  background:rgba(6,5,18,.5);border-radius:6px;padding:5px 10px;
-  border-left:2px solid rgba(201,168,76,.3);min-height:28px;
+  background:rgba(11,20,24,.5);border-radius:6px;padding:5px 10px;
+  border-left:2px solid rgba(184,137,74,.3);min-height:28px;
 }
-.person-sep{height:1px;background:rgba(122,90,34,.4);margin:16px 0;}
+.person-sep{height:1px;background:rgba(184,137,74,.4);margin:16px 0;}
 .gen-btn{
-  width:100%;background:linear-gradient(135deg,#6d28d9,#4c1d95);
-  color:#fff;border:1px solid rgba(124,58,237,.4);border-radius:10px;
+  width:100%;background:linear-gradient(135deg,#8A6532,#5E4422);
+  color:#fff;border:1px solid rgba(184,137,74,.4);border-radius:10px;
   padding:13px;font-size:13px;cursor:pointer;letter-spacing:2px;
   font-family:'Cinzel',serif;transition:all .3s;
-  box-shadow:0 4px 20px rgba(109,40,217,.3);margin-top:8px;
+  box-shadow:0 4px 20px rgba(184,137,74,.3);margin-top:8px;
 }
-.gen-btn:hover{background:linear-gradient(135deg,#7c3aed,#5b21b6);transform:translateY(-1px)}
+.gen-btn:hover{background:linear-gradient(135deg,#B8894A,#5b21b6);transform:translateY(-1px)}
 .gen-btn:disabled{opacity:.4;cursor:wait;transform:none}
 
 /* ── CHART AREA ── */
@@ -163,20 +163,20 @@ svg#wheel{width:100%;height:auto;display:block;overflow:visible}
   color:var(--gold);text-transform:uppercase;text-align:center;
   margin:28px 0 14px;display:flex;align-items:center;gap:14px;
 }
-.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(184,137,74,.3),transparent)}
 
 /* ── TABLES ── */
 .tables-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
 @media(max-width:600px){.tables-wrap{grid-template-columns:1fr}}
-.data-card{background:rgba(8,6,20,.75);border:1px solid rgba(122,90,34,.5);border-radius:12px;overflow:hidden;}
-.data-card-title{background:rgba(217,168,96,.07);padding:9px 14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(122,90,34,.5);}
+.data-card{background:rgba(11,20,24,.75);border:1px solid rgba(184,137,74,.5);border-radius:12px;overflow:hidden;}
+.data-card-title{background:rgba(227,190,132,.07);padding:9px 14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(184,137,74,.5);}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{color:rgba(155,168,184,.5);padding:6px 12px;text-align:left;font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(122,90,34,.4)}
+th{color:rgba(185,191,188,.5);padding:6px 12px;text-align:left;font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(184,137,74,.4)}
 td{padding:5px 12px;border-bottom:1px solid rgba(15,13,40,.8);vertical-align:middle;font-size:12px}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(19,16,58,.6)}
 .retro{color:#f87171;font-size:9px;margin-left:2px}
-.house-badge{display:inline-block;background:rgba(26,21,69,.8);border:1px solid rgba(61,42,138,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
+.house-badge{display:inline-block;background:rgba(26,21,69,.8);border:1px solid rgba(184,137,74,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
 .deg-val{font-family:'Cinzel',serif;font-size:11px;color:#c8d8f0;white-space:nowrap}
 .moon-sym{color:#b8d8ff;text-shadow:0 0 8px rgba(100,160,255,0.9);font-size:20px;font-family:serif}
 .p-sym{font-family:serif;font-size:18px;line-height:1;display:inline-block}
@@ -193,11 +193,11 @@ tr:hover td{background:rgba(19,16,58,.6)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="skydata.js"></script>
 <style>
-.acg-tip{background:rgba(8,6,20,.92)!important;border:1px solid rgba(100,65,200,.5)!important;color:#c8b8f0!important;font-family:"Noto Sans Georgian",sans-serif!important;font-size:11px!important;padding:4px 8px!important;border-radius:6px!important;}
+.acg-tip{background:rgba(11,20,24,.92)!important;border:1px solid rgba(78,143,130,.5)!important;color:#B9BFBC!important;font-family:"Noto Sans Georgian",sans-serif!important;font-size:11px!important;padding:4px 8px!important;border-radius:6px!important;}
 .acg-tip::before{display:none!important;}
 #acg-map{width:100%;height:100%;border-radius:0;border:none;background:#f8f8f8;}
-.acg-legend{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 16px;padding:10px 14px;background:rgba(8,6,20,.7);border-radius:10px;border:1px solid rgba(45,31,110,.4);}
-.acg-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(180,150,255,.8);cursor:pointer;}
+.acg-legend{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 16px;padding:10px 14px;background:rgba(11,20,24,.7);border-radius:10px;border:1px solid rgba(22,39,46,.4);}
+.acg-legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(227,190,132,.8);cursor:pointer;}
 .acg-legend-dot{width:12px;height:3px;border-radius:2px;}
 #acg-wheel-section{display:none;}
 #acg-section{width:85vw;min-width:500px;max-width:1150px;display:none;margin:0 auto;}
@@ -212,18 +212,43 @@ tr:hover td{background:rgba(19,16,58,.6)}
   min-height:36px;align-items:center;flex-shrink:0;
 }
 
-.acg-tip{background:rgba(8,6,20,.9);color:#e0d8ff;border:1px solid rgba(100,65,200,.4);border-radius:6px;font-family:'Noto Sans Georgian',sans-serif;font-size:11px;}
+.acg-tip{background:rgba(11,20,24,.9);color:#e0d8ff;border:1px solid rgba(78,143,130,.4);border-radius:6px;font-family:'Noto Sans Georgian',sans-serif;font-size:11px;}
+
+/* ── Destiny Matrix look: petrol ink, brass fittings, compact data box ── */
+body{font-family:'Noto Serif Georgian',Georgia,serif}
+body::before{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
+  radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(78,143,130,.10),transparent 70%),
+  radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%)!important}
+body::after{display:none}
+.hero{padding:26px 24px 6px}
+.hero-sigil{width:38px;height:38px;margin-bottom:10px}
+.hero-title{font-family:'Marcellus SC','Noto Serif Georgian',serif;letter-spacing:.14em;background:none;-webkit-text-fill-color:var(--gold-l);color:var(--gold-l)}
+.hero-eyebrow{color:var(--dim);opacity:1}
+.form-card{background:rgba(16,30,36,.55);border:1px solid rgba(184,137,74,.3);border-radius:3px;padding:16px 18px;max-width:640px;backdrop-filter:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(227,190,132,.05)}
+.form-card::before{display:none}
+.form-grid,.form-grid-2{gap:8px;margin-bottom:8px}
+.field{gap:3px}
+label{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:9.5px;letter-spacing:.18em;color:var(--dim);opacity:1}
+input,select{background:#0B1418;border:1px solid rgba(184,137,74,.26);border-radius:3px;padding:7px 10px;font-size:13px;color:var(--txt)}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(184,137,74,.15)}
+input[readonly]{background:#0E1A1F;color:var(--dim)}
+.person-label{font-family:'Marcellus SC',serif;color:var(--gold-l);opacity:.85}
+.gen-btn{background:linear-gradient(180deg,#22343A,#16272E);color:var(--gold-l);border:1px solid var(--gold);border-radius:3px;padding:11px;
+  font-family:'Marcellus SC','Noto Serif Georgian',serif;letter-spacing:.2em;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.gen-btn:hover{background:linear-gradient(180deg,#2A3F46,#1B3038);box-shadow:0 0 18px rgba(184,137,74,.25)}
+.tz-display{margin-bottom:10px}
 </style>
 </head>
 <body>
 
 <div class="hero">
   <svg class="hero-sigil" viewBox="0 0 56 56" fill="none">
-    <circle cx="28" cy="28" r="26.5" stroke="rgba(201,168,76,.25)" stroke-width=".5"/>
-    <circle cx="28" cy="28" r="17" stroke="rgba(201,168,76,.18)" stroke-width=".5"/>
-    <polygon points="28,3 51,43 5,43" stroke="rgba(201,168,76,.38)" stroke-width=".5" fill="none"/>
-    <polygon points="28,53 5,13 51,13" stroke="rgba(201,168,76,.38)" stroke-width=".5" fill="none"/>
-    <circle cx="28" cy="28" r="2.5" fill="rgba(201,168,76,.7)"/>
+    <circle cx="28" cy="28" r="26.5" stroke="rgba(184,137,74,.25)" stroke-width=".5"/>
+    <circle cx="28" cy="28" r="17" stroke="rgba(184,137,74,.18)" stroke-width=".5"/>
+    <polygon points="28,3 51,43 5,43" stroke="rgba(184,137,74,.38)" stroke-width=".5" fill="none"/>
+    <polygon points="28,53 5,13 51,13" stroke="rgba(184,137,74,.38)" stroke-width=".5" fill="none"/>
+    <circle cx="28" cy="28" r="2.5" fill="rgba(184,137,74,.7)"/>
   </svg>
   <div class="hero-eyebrow">სულის მეცნიერება</div>
   <h1 class="hero-title">ასტროლოგია</h1>
@@ -265,8 +290,8 @@ tr:hover td{background:rgba(19,16,58,.6)}
       <div class="field"><label>წამი</label><input type="number" id="n-second" value="0" min="0" max="59"></div>
     </div>
     <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
-      <input type="checkbox" id="n-time-unknown" onchange="toggleTU('n')" style="width:15px;height:15px;accent-color:#7c3aed;cursor:pointer">
-      <label style="font-size:11px;color:rgba(167,139,250,.7);letter-spacing:1px;text-transform:none;cursor:pointer" for="n-time-unknown">დრო უცნობია</label>
+      <input type="checkbox" id="n-time-unknown" onchange="toggleTU('n')" style="width:15px;height:15px;accent-color:#B8894A;cursor:pointer">
+      <label style="font-size:11px;color:rgba(227,190,132,.7);letter-spacing:1px;text-transform:none;cursor:pointer" for="n-time-unknown">დრო უცნობია</label>
     </div>
     <div class="field" style="margin-bottom:8px">
       <label>ქალაქი</label>
@@ -411,7 +436,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
       <div class="field"><label>წუთი</label><input type="number" id="tt-minute" value="0" min="0" max="59"></div>
       <div class="field"><label>წამი</label><input type="number" id="tt-second" value="0" min="0" max="59"></div>
     </div>
-    <button class="gen-btn" id="tr-today-btn" onclick="setToday('tt')" style="margin-top:4px;background:rgba(45,31,110,.6);font-size:11px;padding:8px;">📅 დღევანდელი თარიღი</button>
+    <button class="gen-btn" id="tr-today-btn" onclick="setToday('tt')" style="margin-top:4px;background:rgba(22,39,46,.6);font-size:11px;padding:8px;">📅 დღევანდელი თარიღი</button>
     <button class="gen-btn" onclick="generate()" style="margin-top:6px">✦ ტრანზიტის გენერაცია ✦</button>
   </div>
 
@@ -443,8 +468,8 @@ tr:hover td{background:rgba(19,16,58,.6)}
       <div class="field"><label>თვე</label><input type="number" id="pd-month" value="1" min="1" max="12"></div>
       <div class="field"><label>წელი</label><input type="number" id="pd-year" value="2025"></div>
     </div>
-    <button class="gen-btn" onclick="setToday('pd')" style="margin-top:4px;background:rgba(45,31,110,.6);font-size:11px;padding:8px;">📅 დღევანდელი თარიღი</button>
-    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:4px"><input type="checkbox" id="pr-compare" style="accent-color:#7c3aed;width:14px;height:14px"><label style="font-size:11px;color:rgba(167,139,250,.7);letter-spacing:1px">ნატალურთან შედარება</label></div>
+    <button class="gen-btn" onclick="setToday('pd')" style="margin-top:4px;background:rgba(22,39,46,.6);font-size:11px;padding:8px;">📅 დღევანდელი თარიღი</button>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:4px"><input type="checkbox" id="pr-compare" style="accent-color:#B8894A;width:14px;height:14px"><label style="font-size:11px;color:rgba(227,190,132,.7);letter-spacing:1px">ნატალურთან შედარება</label></div>
     <button class="gen-btn" onclick="generate()" style="margin-top:4px">✦ პროგრესიის გენერაცია ✦</button>
   </div>
 
@@ -480,7 +505,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
       </div>
     </div>
     <input type="hidden" id="sr-lat"><input type="hidden" id="sr-lon"><input type="hidden" id="sr-tz" value="UTC">
-    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:4px"><input type="checkbox" id="so-compare" style="accent-color:#7c3aed;width:14px;height:14px"><label style="font-size:11px;color:rgba(167,139,250,.7);letter-spacing:1px">ნატალურთან შედარება</label></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:4px"><input type="checkbox" id="so-compare" style="accent-color:#B8894A;width:14px;height:14px"><label style="font-size:11px;color:rgba(227,190,132,.7);letter-spacing:1px">ნატალურთან შედარება</label></div>
     <button class="gen-btn" onclick="generate()" style="margin-top:4px">✦ სოლარის გენერაცია ✦</button>
   </div>
 
@@ -514,7 +539,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
     </div>
     <input type="hidden" id="rl-lat"><input type="hidden" id="rl-lon"><input type="hidden" id="rl-tz" value="UTC">
     <div class="tz-display" id="rl-tz-display" style="margin-bottom:8px">—</div>
-    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:4px"><input type="checkbox" id="rl-compare" style="accent-color:#7c3aed;width:14px;height:14px"><label style="font-size:11px;color:rgba(167,139,250,.7);letter-spacing:1px">ნატალურთან შედარება</label></div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:4px"><input type="checkbox" id="rl-compare" style="accent-color:#B8894A;width:14px;height:14px"><label style="font-size:11px;color:rgba(227,190,132,.7);letter-spacing:1px">ნატალურთან შედარება</label></div>
     <button class="gen-btn" onclick="generate()">✦ რელოკაციის გენერაცია ✦</button>
   </div>
 
@@ -547,7 +572,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
     </div>
     <input type="hidden" id="dr-tz" value="UTC">
     <div class="tz-display" id="dr-tz-display">—</div>
-    <p style="font-size:10px;color:rgba(150,120,220,.6);margin:8px 0;font-style:italic">☊ ჩრდილოეთი კვანძი → ვერძი 0° · ყველა პლანეტი შესაბამისად გადაინაცვლებს</p>
+    <p style="font-size:10px;color:rgba(185,191,188,.6);margin:8px 0;font-style:italic">☊ ჩრდილოეთი კვანძი → ვერძი 0° · ყველა პლანეტი შესაბამისად გადაინაცვლებს</p>
     <button class="gen-btn" onclick="generate()" style="margin-top:6px">✦ დრაკონული გენერაცია ✦</button>
   </div>
 
@@ -580,7 +605,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
     </div>
     <input type="hidden" id="pl-tz" value="UTC">
     <div class="tz-display" id="pl-tz-display">—</div>
-    <p style="font-size:10px;color:rgba(150,120,220,.6);margin:8px 0;font-style:italic">☊ დრაკონული პლუტო → ეპოქა, როცა რეალური პლუტო იყო იმ ადგილას დაბადებამდე</p>
+    <p style="font-size:10px;color:rgba(185,191,188,.6);margin:8px 0;font-style:italic">☊ დრაკონული პლუტო → ეპოქა, როცა რეალური პლუტო იყო იმ ადგილას დაბადებამდე</p>
     <button class="gen-btn" onclick="generate()" style="margin-top:6px">🔮 ინკარნაციის ძებნა</button>
   </div>
 
@@ -612,7 +637,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
     </div>
     <input type="hidden" id="acg-tz" value="UTC">
     <div class="tz-display" id="acg-tz-display">—</div>
-    <p style="font-size:10px;color:rgba(150,120,220,.6);margin:8px 0;font-style:italic">🗺️ რუქაზე კლიკი → ავტომატური რელოკაციის რუქა</p>
+    <p style="font-size:10px;color:rgba(185,191,188,.6);margin:8px 0;font-style:italic">🗺️ რუქაზე კლიკი → ავტომატური რელოკაციის რუქა</p>
     <button class="gen-btn" onclick="generate()">✦ ასტროკარტოგრაფიის გენერაცია ✦</button>
   </div>
 </div><!-- /form-card -->
@@ -622,7 +647,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
   <div id="mode-label" class="sec-title"></div>
   <div id="legend-wrap" class="legend" style="display:none">
     <div class="legend-item"><div class="legend-dot" style="background:#f9c646"></div><span id="leg-a">პირველი</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div><span id="leg-b">მეორე</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:#E3BE84"></div><span id="leg-b">მეორე</span></div>
   </div>
   <div id="wheel-wrap"><svg id="wheel" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg"></svg></div>
   <!-- Astrocartography -->
@@ -630,26 +655,26 @@ tr:hover td{background:rgba(19,16,58,.6)}
 
 
 
-  <div id="asp-filters" style="display:none;margin:10px 0;background:rgba(8,6,20,.7);border:1px solid rgba(45,31,110,.5);border-radius:12px;padding:12px 16px;">
-    <div style="font-family:Cinzel,serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(167,139,250,.5);margin-bottom:10px">ასპექტ ფილტრი</div>
+  <div id="asp-filters" style="display:none;margin:10px 0;background:rgba(11,20,24,.7);border:1px solid rgba(22,39,46,.5);border-radius:12px;padding:12px 16px;">
+    <div style="font-family:Cinzel,serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(227,190,132,.5);margin-bottom:10px">ასპექტ ფილტრი</div>
     <div style="display:flex;gap:24px;flex-wrap:wrap;">
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-        <input type="checkbox" id="f-virtual" style="accent-color:#7c3aed;width:14px;height:14px;cursor:pointer">
-        <span style="font-size:11px;color:rgba(200,170,255,.9)">ვირტუალური წერტილები</span>
-        <span style="font-size:10px;color:rgba(150,120,200,.5)">ლილ · სელ · ბედ · კვანძ · Vx · AC · MC</span>
+        <input type="checkbox" id="f-virtual" style="accent-color:#B8894A;width:14px;height:14px;cursor:pointer">
+        <span style="font-size:11px;color:rgba(237,230,216,.9)">ვირტუალური წერტილები</span>
+        <span style="font-size:10px;color:rgba(185,191,188,.5)">ლილ · სელ · ბედ · კვანძ · Vx · AC · MC</span>
       </label>
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-        <input type="checkbox" id="f-asteroid" style="accent-color:#7c3aed;width:14px;height:14px;cursor:pointer">
-        <span style="font-size:11px;color:rgba(200,170,255,.9)">ასტეროიდები</span>
-        <span style="font-size:10px;color:rgba(150,120,200,.5)">ქირონი · იუნო</span>
+        <input type="checkbox" id="f-asteroid" style="accent-color:#B8894A;width:14px;height:14px;cursor:pointer">
+        <span style="font-size:11px;color:rgba(237,230,216,.9)">ასტეროიდები</span>
+        <span style="font-size:10px;color:rgba(185,191,188,.5)">ქირონი · იუნო</span>
       </label>
     </div>
   </div>
   <div id="lunar-badge" style="display:none;text-align:center;margin:12px 16px;padding:10px 20px;background:rgba(8,6,22,.8);border:1px solid rgba(100,70,200,.4);border-radius:12px;">
     <span style="font-size:20px;margin-right:8px">🌙</span>
     <span id="lunar-day" style="font-family:'Cinzel',serif;font-size:13px;color:#c8d8f0;font-weight:600"></span>
-    <span style="color:rgba(150,120,220,.5);margin:0 6px">·</span>
-    <span id="lunar-pct" style="font-size:11px;color:rgba(180,150,255,.65)"></span>
+    <span style="color:rgba(185,191,188,.5);margin:0 6px">·</span>
+    <span id="lunar-pct" style="font-size:11px;color:rgba(227,190,132,.65)"></span>
   </div>
   <div class="sec-title">პლანეტები</div>
   <div class="tables-wrap">
@@ -686,8 +711,8 @@ tr:hover td{background:rgba(19,16,58,.6)}
   <div class="data-card" id="cinderella-card" style="display:none;margin-top:14px">
     <div class="data-card-title">🕛 ცინდერელას კარიბჭე</div>
     <div id="cinderella-body" style="padding:12px 14px">
-      <button id="cind-btn" onclick="runCinderella()" style="background:linear-gradient(90deg,#7c3aed,#a78bfa);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">✨ გამოთვლა — 100 წელი დაბადებიდან</button>
-      <div style="font-size:10px;color:rgba(155,168,184,.55);margin-top:6px">ქირონი · ვენერა · იუპიტერი · ნეპტუნი — ჰარმონიული ტრანზიტული კარიბჭეები</div>
+      <button id="cind-btn" onclick="runCinderella()" style="background:linear-gradient(90deg,#B8894A,#E3BE84);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">✨ გამოთვლა — 100 წელი დაბადებიდან</button>
+      <div style="font-size:10px;color:rgba(185,191,188,.55);margin-top:6px">ქირონი · ვენერა · იუპიტერი · ნეპტუნი — ჰარმონიული ტრანზიტული კარიბჭეები</div>
     </div>
   </div>
 
@@ -695,7 +720,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
     <div class="data-card-title">⚠️ რთული პერიოდები</div>
     <div id="hardperiods-body" style="padding:12px 14px">
       <button id="hp-btn" onclick="runHardPeriods()" style="background:linear-gradient(90deg,#8a2020,#e84040);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">⚡ გამოთვლა — 100 წელი დაბადებიდან</button>
-      <div style="font-size:10px;color:rgba(155,168,184,.55);margin-top:6px">სატურნი · პლუტონი · ურანი · ნეპტუნი · მარსი — მრავალი მძიმე ასპექტის ერთდროული პერიოდები</div>
+      <div style="font-size:10px;color:rgba(185,191,188,.55);margin-top:6px">სატურნი · პლუტონი · ურანი · ნეპტუნი · მარსი — მრავალი მძიმე ასპექტის ერთდროული პერიოდები</div>
     </div>
   </div>
 
@@ -703,7 +728,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
     <div class="data-card-title">🔭 ასტრონომიული ცა (IAU)</div>
     <div id="skymap-body" style="padding:12px 14px">
       <button id="sky-btn" onclick="runSkymap()" style="background:linear-gradient(90deg,#1a4a7a,#3a8ac0);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">🌌 რეალური ასტრონომიული პოზიციები</button>
-      <div style="font-size:10px;color:rgba(155,168,184,.55);margin-top:6px">JPL/Swiss Ephemeris სიზუსტე · IAU 88 თანავარსკვლავედი · ფიქსირებული ვარსკვლავები</div>
+      <div style="font-size:10px;color:rgba(185,191,188,.55);margin-top:6px">JPL/Swiss Ephemeris სიზუსტე · IAU 88 თანავარსკვლავედი · ფიქსირებული ვარსკვლავები</div>
     </div>
   </div>
 
@@ -1040,10 +1065,10 @@ function renderSynastryScore(label,cross){
   if(label!=='სინასტრია'||!cross||!cross.length){card.style.display='none';return;}
   try{
     const s=scoreSynastry(cross);
-    const tile=(ico,n,lbl,col)=>`<div style="text-align:center;padding:10px 6px;background:rgba(45,31,110,.22);border:1px solid ${col}33;border-radius:10px">
+    const tile=(ico,n,lbl,col)=>`<div style="text-align:center;padding:10px 6px;background:rgba(22,39,46,.22);border:1px solid ${col}33;border-radius:10px">
       <div style="font-size:20px">${ico}</div>
       <div style="font-size:24px;font-weight:700;color:${col}">${n}</div>
-      <div style="font-size:10px;color:#9ba8b8;letter-spacing:1px">${lbl}</div></div>`;
+      <div style="font-size:10px;color:#B9BFBC;letter-spacing:1px">${lbl}</div></div>`;
     body.innerHTML=`
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px" class="syn-tiles">
         ${tile('💗',s.loveN,'სიყვარული','#f492b7')}
@@ -1314,7 +1339,7 @@ function plutoPassedTarget(deg1,deg2,target){
 }
 
 async function findPastLifeDate(targetDeg, resultEl, birthYear){
-  resultEl.innerHTML='<span style="color:#a78bfa">🔍 ისტორიული ძებნა...</span>';
+  resultEl.innerHTML='<span style="color:#E3BE84">🔍 ისტორიული ძებნა...</span>';
   const si=Math.floor(targetDeg/30)%12;
   const deg=Math.floor(targetDeg%30),mn=Math.floor((targetDeg%1)*60);
   const targetLabel=`${ZSYM[si]} ${deg}°${String(mn).padStart(2,'0')}' ${SIGN_KA[si]}`;
@@ -1324,7 +1349,7 @@ async function findPastLifeDate(targetDeg, resultEl, birthYear){
   for(let y=1700;y<=searchEnd;y+=5)years.push(y);
   if(!years.length){resultEl.textContent='⚠️ სამშობიარო წელი ძალიან ადრეა';return null;}
 
-  resultEl.innerHTML='<span style="color:#a78bfa">🔍 სკანირება 1700–'+searchEnd+'...</span>';
+  resultEl.innerHTML='<span style="color:#E3BE84">🔍 სკანირება 1700–'+searchEnd+'...</span>';
   const degs=await Promise.all(years.map(y=>fetchPlutoAt(y)));
 
   let bracket=null;
@@ -1338,7 +1363,7 @@ async function findPastLifeDate(targetDeg, resultEl, birthYear){
   }
   if(!bracket){resultEl.textContent='⚠️ 1700 წლამდე პერიოდში ვერ მოიძებნა';return null;}
 
-  resultEl.innerHTML='<span style="color:#a78bfa">🔍 წლის დადგენა ('+bracket[0]+'–'+bracket[1]+')...</span>';
+  resultEl.innerHTML='<span style="color:#E3BE84">🔍 წლის დადგენა ('+bracket[0]+'–'+bracket[1]+')...</span>';
   const yr0=Math.max(1600,bracket[0]-1),yr1=Math.min(searchEnd,bracket[1]+1);
   const yearRange=[];for(let y=yr0;y<=yr1;y++)yearRange.push(y);
   const yearDegs=await Promise.all(yearRange.map(y=>fetchPlutoAt(y)));
@@ -1349,7 +1374,7 @@ async function findPastLifeDate(targetDeg, resultEl, birthYear){
     if(orb<bestOrb){bestOrb=orb;bestYear=yearRange[i];}
   }
 
-  resultEl.innerHTML='<span style="color:#a78bfa">🔍 თვის დადგენა ('+bestYear+')...</span>';
+  resultEl.innerHTML='<span style="color:#E3BE84">🔍 თვის დადგენა ('+bestYear+')...</span>';
   const monthDegs=await Promise.all([1,2,3,4,5,6,7,8,9,10,11,12].map(m=>fetchPlutoAt(bestYear,m)));
   let bestMonth=6,bestMOrb=999;
   const MONTHS=['იანვ','თებ','მარ','აპრ','მაის','ივნ','ივლ','აგვ','სექ','ოქტ','ნოემ','დეკ'];
@@ -1359,7 +1384,7 @@ async function findPastLifeDate(targetDeg, resultEl, birthYear){
     if(orb<bestMOrb){bestMOrb=orb;bestMonth=m+1;}
   }
 
-  resultEl.innerHTML=`<div style="padding:8px;background:rgba(80,20,120,.3);border-radius:8px;border-left:3px solid #c050a0;font-size:11px;color:#c8b8f0;line-height:1.8">
+  resultEl.innerHTML=`<div style="padding:8px;background:rgba(80,20,120,.3);border-radius:8px;border-left:3px solid #c050a0;font-size:11px;color:#B9BFBC;line-height:1.8">
     🔮 <strong>წარსული ინკარნაცია</strong><br>
     პლუტო <span style="color:#c050a0">${targetLabel}</span>–ზე:<br>
     <span style="font-size:14px;color:#f9c646;font-family:Cinzel,serif">${MONTHS[bestMonth-1]}. ${bestYear}</span>
@@ -1430,7 +1455,7 @@ function initAcgMap(){
       const aD=Math.floor(d.asc%30),aM=Math.floor((d.asc%1)*60);
       const mD=Math.floor(d.mc%30),mM=Math.floor((d.mc%1)*60);
       titleEl.innerHTML='📍 '+lat.toFixed(2)+'°'+(lat>=0?'N':'S')+' '+Math.abs(lon).toFixed(2)+'°'+(lon>=0?'E':'W')+
-        ' &nbsp;·&nbsp; <span style="color:#a78bfa">AC: '+aD+'°'+String(aM).padStart(2,'0')+"' "+SIGN_KA[aS]+'</span>'+
+        ' &nbsp;·&nbsp; <span style="color:#E3BE84">AC: '+aD+'°'+String(aM).padStart(2,'0')+"' "+SIGN_KA[aS]+'</span>'+
         ' &nbsp;·&nbsp; <span style="color:#c9a84c">MC: '+mD+'°'+String(mM).padStart(2,'0')+"' "+SIGN_KA[mS]+'</span>';
       // Draw wheel into dedicated SVG
       const wheelSvg=document.getElementById('wheel-acg');
@@ -1451,7 +1476,7 @@ function initAcgMap(){
         d.houses.forEach((deg,i)=>{
           const si=Math.floor(deg/30)%12;const ang=ANG[i];
           const tr=document.createElement('tr');
-          tr.innerHTML='<td style="color:'+(ang?'#c084fc':'rgba(155,168,184,.7)')+';font-family:Cinzel,serif;font-size:11px">'+
+          tr.innerHTML='<td style="color:'+(ang?'#c084fc':'rgba(185,191,188,.7)')+';font-family:Cinzel,serif;font-size:11px">'+
             ROM[i]+(ang?' <span style="font-size:9px;opacity:.7">'+ang+'</span>':'')+
             '</td><td><span class="'+signClass(si)+'" style="font-size:13px;font-family:serif">'+ZSYM[si]+'</span> '+
             '<span style="font-size:10px;color:'+ZCOL[si]+'">'+SIGN_KA[si]+'</span></td>'+
@@ -1762,7 +1787,7 @@ function showAcgModal(lat,lon,title){
   const modal=document.getElementById('acg-modal');
   modal.style.display='flex';
   document.getElementById('acg-modal-title').textContent=title;
-  document.getElementById('acg-modal-wheel').innerHTML='<div style="text-align:center;padding:40px;color:#a78bfa">⏳ იტვირთება...</div>';
+  document.getElementById('acg-modal-wheel').innerHTML='<div style="text-align:center;padding:40px;color:#E3BE84">⏳ იტვირთება...</div>';
 }
 
 function showError(msg){
@@ -1878,11 +1903,11 @@ async function generate(){
           const si=Math.floor(dracoPl.degree/30)%12;
           const deg=Math.floor(dracoPl.degree%30),mn=Math.floor((dracoPl.degree%1)*60);
           let plWrap=document.getElementById('past-life-wrap');
-          if(!plWrap){plWrap=document.createElement('div');plWrap.id='past-life-wrap';plWrap.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(8,6,20,.8);border:1px solid rgba(100,30,180,.4);border-radius:12px;';document.getElementById('chart-area').appendChild(plWrap);}
+          if(!plWrap){plWrap=document.createElement('div');plWrap.id='past-life-wrap';plWrap.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(11,20,24,.8);border:1px solid rgba(78,143,130,.4);border-radius:12px;';document.getElementById('chart-area').appendChild(plWrap);}
           const plRId='pl-result-'+Date.now();
-          plWrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(167,139,250,.7);margin-bottom:8px">🔮 წარსული სიცოცხლე</div>
-            <div style="font-size:12px;color:#c8b8f0;margin-bottom:10px">დრაკონული პლუტო: <strong style="color:#c050a0">${ZSYM[si]} ${deg}°${String(mn).padStart(2,'0')}' ${SIGN_KA[si]}</strong></div>
-            <button id="pl-btn" style="font-family:Cinzel,serif;font-size:9px;letter-spacing:2px;background:rgba(80,30,150,.5);border:1px solid rgba(120,50,200,.4);color:#c8b8f0;border-radius:8px;padding:6px 14px;cursor:pointer;">✦ წარსული სიცოცხლის ეპოქა</button>
+          plWrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(227,190,132,.7);margin-bottom:8px">🔮 წარსული სიცოცხლე</div>
+            <div style="font-size:12px;color:#B9BFBC;margin-bottom:10px">დრაკონული პლუტო: <strong style="color:#c050a0">${ZSYM[si]} ${deg}°${String(mn).padStart(2,'0')}' ${SIGN_KA[si]}</strong></div>
+            <button id="pl-btn" style="font-family:Cinzel,serif;font-size:9px;letter-spacing:2px;background:rgba(80,30,150,.5);border:1px solid rgba(120,50,200,.4);color:#B9BFBC;border-radius:8px;padding:6px 14px;cursor:pointer;">✦ წარსული სიცოცხლის ეპოქა</button>
             <div id="${plRId}" style="margin-top:10px"></div>`;
           document.getElementById('pl-btn').onclick=()=>findPastLifeDate(dracoPl.degree,document.getElementById(plRId),p.year);
         }
@@ -1907,10 +1932,10 @@ async function generate(){
       document.getElementById('wheel-wrap').style.display='none';
       document.getElementById('acg-section').style.display='none';
       let plWrap=document.getElementById('past-life-wrap');
-      if(!plWrap){plWrap=document.createElement('div');plWrap.id='past-life-wrap';plWrap.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(8,6,20,.8);border:1px solid rgba(100,30,180,.4);border-radius:12px;';document.getElementById('chart-area').appendChild(plWrap);}
+      if(!plWrap){plWrap=document.createElement('div');plWrap.id='past-life-wrap';plWrap.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(11,20,24,.8);border:1px solid rgba(78,143,130,.4);border-radius:12px;';document.getElementById('chart-area').appendChild(plWrap);}
       const plRId='pl-result-direct';
-      plWrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(167,139,250,.7);margin-bottom:8px">🔮 წარსული სიცოცხლე</div>
-        <div style="font-size:12px;color:#c8b8f0;margin-bottom:10px">დრაკონული პლუტო: <strong style="color:#c050a0">${ZSYM[si]} ${deg}°${String(mn).padStart(2,'0')}' ${SIGN_KA[si]}</strong></div>
+      plWrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(227,190,132,.7);margin-bottom:8px">🔮 წარსული სიცოცხლე</div>
+        <div style="font-size:12px;color:#B9BFBC;margin-bottom:10px">დრაკონული პლუტო: <strong style="color:#c050a0">${ZSYM[si]} ${deg}°${String(mn).padStart(2,'0')}' ${SIGN_KA[si]}</strong></div>
         <div id="${plRId}"></div>`;
       document.getElementById('chart-area').scrollIntoView({behavior:'smooth',block:'start'});
       renderIncarnations(p);
@@ -1921,7 +1946,7 @@ async function generate(){
         const name=document.getElementById('pl-name').value||'';
         showSingleChart(histData,`🔮 ${name} — ინკარნაცია ${plResult.year}`,false);
         let pw=document.getElementById('past-life-wrap');
-        if(!pw){pw=document.createElement('div');pw.id='past-life-wrap';pw.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(8,6,20,.8);border:1px solid rgba(100,30,180,.4);border-radius:12px;';document.getElementById('chart-area').appendChild(pw);}
+        if(!pw){pw=document.createElement('div');pw.id='past-life-wrap';pw.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(11,20,24,.8);border:1px solid rgba(78,143,130,.4);border-radius:12px;';document.getElementById('chart-area').appendChild(pw);}
         pw.innerHTML=document.getElementById(plRId)?.innerHTML||'';
       }
 
@@ -2041,31 +2066,31 @@ function renderDominants(data){
   const r=DOMX.compute(P,data.houses.slice(0,12),RX);
   const SK=SIGN_KA;
   const bar=(lbl,pct,mx,hl)=>`<div style="display:flex;align-items:center;gap:8px;margin:3px 0">
-   <span style="width:92px;font-size:11px;color:${hl?'#e9d5ff':'#9ba8b8'};white-space:nowrap">${lbl}</span>
-   <div style="flex:1;height:9px;background:rgba(45,31,110,.3);border-radius:5px;overflow:hidden">
-    <div style="height:100%;width:${mx?pct/mx*100:0}%;border-radius:5px;background:linear-gradient(90deg,#7c3aed,#a78bfa)"></div></div>
-   <span style="width:44px;text-align:right;font-size:11px;color:${hl?'#a78bfa':'#9ba8b8'}">${pct.toFixed(1)}%</span></div>`;
+   <span style="width:92px;font-size:11px;color:${hl?'#EDE6D8':'#B9BFBC'};white-space:nowrap">${lbl}</span>
+   <div style="flex:1;height:9px;background:rgba(22,39,46,.3);border-radius:5px;overflow:hidden">
+    <div style="height:100%;width:${mx?pct/mx*100:0}%;border-radius:5px;background:linear-gradient(90deg,#B8894A,#E3BE84)"></div></div>
+   <span style="width:44px;text-align:right;font-size:11px;color:${hl?'#E3BE84':'#B9BFBC'}">${pct.toFixed(1)}%</span></div>`;
   const mp=r.planets[0]?.pct||1,ms=r.signs[0]?.pct||1;
   body.innerHTML=`
-   <div style="font-size:12px;color:#e9d5ff;margin-bottom:10px">👑 დომინანტი პლანეტა: <b style="color:#a78bfa">${DOMX_KA[r.planets[0].key]}</b>
-    &nbsp;·&nbsp; ნიშანი: <b style="color:#a78bfa">${SK[r.signs[0].sign-1]}</b>
-    &nbsp;·&nbsp; <b style="color:#a78bfa">${DOMX_ELKA[r.elements[0].key]}</b>
-    &nbsp;·&nbsp; <b style="color:#a78bfa">${DOMX_MOKA[r.modalities[0].key]}</b></div>
+   <div style="font-size:12px;color:#EDE6D8;margin-bottom:10px">👑 დომინანტი პლანეტა: <b style="color:#E3BE84">${DOMX_KA[r.planets[0].key]}</b>
+    &nbsp;·&nbsp; ნიშანი: <b style="color:#E3BE84">${SK[r.signs[0].sign-1]}</b>
+    &nbsp;·&nbsp; <b style="color:#E3BE84">${DOMX_ELKA[r.elements[0].key]}</b>
+    &nbsp;·&nbsp; <b style="color:#E3BE84">${DOMX_MOKA[r.modalities[0].key]}</b></div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" class="domx-grid">
     <div>${r.planets.map((p,i)=>bar(DOMX_KA[p.key]+(p.rx?' ℞':'')+(p.crit?' •':'')+(p.nasp?` <span style="opacity:.5;font-size:9px">${p.nasp}asp</span>`:''),p.pct,mp,i===0)).join('')}</div>
     <div>${r.signs.map((s,i)=>bar(SK[s.sign-1],s.pct,ms,i===0)).join('')}</div>
     <div>
-     <div style="font-size:10px;color:#9ba8b8;letter-spacing:2px;margin:6px 0 4px">ელემენტები</div>
+     <div style="font-size:10px;color:#B9BFBC;letter-spacing:2px;margin:6px 0 4px">ელემენტები</div>
      ${r.elements.map((e,i)=>bar(DOMX_ELKA[e.key],e.pct,r.elements[0].pct||1,i===0)).join('')}
-     <div style="font-size:10px;color:#9ba8b8;letter-spacing:2px;margin:10px 0 4px">მოდალობა</div>
+     <div style="font-size:10px;color:#B9BFBC;letter-spacing:2px;margin:10px 0 4px">მოდალობა</div>
      ${r.modalities.map((m,i)=>bar(DOMX_MOKA[m.key],m.pct,r.modalities[0].pct||1,i===0)).join('')}
     </div>
     <div>
-     <div style="font-size:10px;color:#9ba8b8;letter-spacing:2px;margin:6px 0 4px">სახლები</div>
+     <div style="font-size:10px;color:#B9BFBC;letter-spacing:2px;margin:6px 0 4px">სახლები</div>
      ${r.houses.map((x,i)=>bar(x.house+' სახლი',x.pct,r.houses[0].pct||1,i===0)).join('')}
     </div>
    </div>
-   <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">Astrolog −j (W. Pullen, ორიგინალი) · ℞ რეტროგრადი · • კრიტიკული გრადუსი (0°/29°) · Nasp ასპექტების რაოდენობა</div>`;
+   <div style="font-size:9px;color:rgba(185,191,188,.45);margin-top:8px;letter-spacing:1px">Astrolog −j (W. Pullen, ორიგინალი) · ℞ რეტროგრადი · • კრიტიკული გრადუსი (0°/29°) · Nasp ასპექტების რაოდენობა</div>`;
   if(window.matchMedia&&matchMedia('(max-width:600px)').matches)
    body.querySelector('.domx-grid').style.gridTemplateColumns='1fr';
   card.style.display='block';
@@ -2073,7 +2098,7 @@ function renderDominants(data){
 }
 
 /* ===== Past-life incarnations map (dragon chart + Sun-IC) ===== */
-const PL_COLORS=['#f0c96b','#a78bfa','#30c890','#e05585'];
+const PL_COLORS=['#E3BE84','#E3BE84','#30c890','#e05585'];
 function plPlaceTable(){
   const wrap=document.getElementById('pl-incarn-wrap');
   const wheel=document.getElementById('wheel-wrap');
@@ -2098,53 +2123,53 @@ function plShowChart(i){
 async function renderIncarnations(p){
   let wrap=document.getElementById('pl-incarn-wrap');
   if(!wrap){wrap=document.createElement('div');wrap.id='pl-incarn-wrap';
-    wrap.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(8,6,20,.8);border:1px solid rgba(100,30,180,.4);border-radius:12px;';
+    wrap.style.cssText='margin:12px 0;padding:14px 18px;background:rgba(11,20,24,.8);border:1px solid rgba(78,143,130,.4);border-radius:12px;';
     document.getElementById('chart-area').appendChild(wrap);}
-  wrap.innerHTML='<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(167,139,250,.7);margin-bottom:8px">🗺 ინკარნაციები — 2000 წელი</div><div style="color:#a78bfa;font-size:12px">⏳ სკანირება და რეზონანსის ანალიზი...</div>';
+  wrap.innerHTML='<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(227,190,132,.7);margin-bottom:8px">🗺 ინკარნაციები — 2000 წელი</div><div style="color:#E3BE84;font-size:12px">⏳ სკანირება და რეზონანსის ანალიზი...</div>';
   try{
     const res=await fetch(`${BACKEND}/api/pastlife`,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({...p,count:4,span_years:2000})});
     if(!res.ok)throw new Error('server');
     const r=await res.json();
     window._plData=r;
-    const GRADE={strong:['#f0c96b','★★★ ძლიერი რეზონანსი'],mid:['#a78bfa','★★ საშუალო'],weak:['#5a6472','★ სუსტი — მხოლოდ პლუტო']};
+    const GRADE={strong:['#E3BE84','★★★ ძლიერი რეზონანსი'],mid:['#E3BE84','★★ საშუალო'],weak:['#5a6472','★ სუსტი — მხოლოდ პლუტო']};
     const rows=r.incarnations.map((inc,i)=>{
       const c=inc.probable?PL_COLORS[(inc.rank-1)%4]:'#5a6472';
       const [gc,gl]=GRADE[inc.grade];
       const ew=inc.ic_lon>=0?'აღმ':'დას';
-      return `<details style="border-bottom:1px solid rgba(124,58,237,.15);padding:5px 0;${inc.probable?'':'opacity:.55'}">
+      return `<details style="border-bottom:1px solid rgba(184,137,74,.15);padding:5px 0;${inc.probable?'':'opacity:.55'}">
         <summary style="cursor:pointer;font-size:12px;display:flex;gap:9px;align-items:baseline;flex-wrap:wrap;list-style:none">
           <span style="width:12px;height:12px;border-radius:3px;background:${c};display:inline-block;align-self:center"></span>
-          <span style="color:#f9c646;font-family:Cinzel,serif;min-width:145px">${inc.probable?'🔮 ':''}${inc.date.label}${inc.date.julian_cal?' <span style="font-size:9px;color:#9ba8b8">(იულ.)</span>':''}</span>
+          <span style="color:#f9c646;font-family:Cinzel,serif;min-width:145px">${inc.probable?'🔮 ':''}${inc.date.label}${inc.date.julian_cal?' <span style="font-size:9px;color:#B9BFBC">(იულ.)</span>':''}</span>
           <span style="color:${gc};font-size:10.5px">${gl}</span>
-          <span style="color:#9ba8b8;font-size:11px">ქულა ${inc.score} · ${inc.n_connections} კავშირი${inc.geo_match?' · <b style="color:#7ee3bd">🌍 ნატალურ IC ხაზთან!</b>':''}</span>
-          <button onclick="event.preventDefault();plShowChart(${i})" style="background:none;border:1px solid rgba(240,201,107,.5);color:#f0c96b;border-radius:6px;padding:1px 9px;font-size:10px;cursor:pointer;font-family:inherit">📜 რუქა</button>
+          <span style="color:#B9BFBC;font-size:11px">ქულა ${inc.score} · ${inc.n_connections} კავშირი${inc.geo_match?' · <b style="color:#7ee3bd">🌍 ნატალურ IC ხაზთან!</b>':''}</span>
+          <button onclick="event.preventDefault();plShowChart(${i})" style="background:none;border:1px solid rgba(240,201,107,.5);color:#E3BE84;border-radius:6px;padding:1px 9px;font-size:10px;cursor:pointer;font-family:inherit">📜 რუქა</button>
         </summary>
-        <div style="font-size:11px;color:#c8b8f0;padding:5px 0 3px 21px">
+        <div style="font-size:11px;color:#B9BFBC;padding:5px 0 3px 21px">
           ${inc.years_ago} წლის წინ · მზე ${inc.sun.deg}° ${inc.sun.sign_ka} · IC მერიდიანი ${Math.abs(inc.ic_lon).toFixed(1)}° ${ew}
         </div>
-        <div style="font-size:10px;color:#c8b8f0;padding:0 0 8px 21px">🔁 პლუტოს გადაკვეთები (რეტრო მარყუჟები): ${(inc.crossing_dates&&inc.crossing_dates.length)?inc.crossing_dates.join(' · '):`${inc.crossings} გადაკვეთა / ${inc.span_days} დღე`}</div>
+        <div style="font-size:10px;color:#B9BFBC;padding:0 0 8px 21px">🔁 პლუტოს გადაკვეთები (რეტრო მარყუჟები): ${(inc.crossing_dates&&inc.crossing_dates.length)?inc.crossing_dates.join(' · '):`${inc.crossings} გადაკვეთა / ${inc.span_days} დღე`}</div>
       </details>`;}).join('');
     const new_=r.natal_ic_lon>=0?'აღმ':'დას';
-    wrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(167,139,250,.7);margin-bottom:8px">🗺 ინკარნაციები — 2000 წელი</div>
-      <div style="font-size:11px;color:#9ba8b8;margin-bottom:4px">დრაკონული პლუტო <b style="color:#c050a0">${r.target.deg}° ${r.target.sign_ka}</b> · ${r.total_passages} გავლა · რეზონანსი ნატალურ რუქასთან განასხვავებს ინკარნაციას შემთხვევითობისგან</div>
-      <div style="font-size:11px;color:#d7dde6;margin-bottom:6px">ნატალური მზე-IC ხაზი (ფესვები): <b style="color:#f0c96b">${Math.abs(r.natal_ic_lon).toFixed(1)}° ${new_}</b>
-        <button id="pl-natal-cbtn" onclick="plCountries(${r.natal_ic_lon},this)" style="background:none;border:1px solid rgba(240,201,107,.5);color:#f0c96b;border-radius:6px;padding:1px 8px;font-size:10px;cursor:pointer;font-family:inherit;margin-left:6px">🌍 ქვეყნები</button>
+    wrap.innerHTML=`<div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:rgba(227,190,132,.7);margin-bottom:8px">🗺 ინკარნაციები — 2000 წელი</div>
+      <div style="font-size:11px;color:#B9BFBC;margin-bottom:4px">დრაკონული პლუტო <b style="color:#c050a0">${r.target.deg}° ${r.target.sign_ka}</b> · ${r.total_passages} გავლა · რეზონანსი ნატალურ რუქასთან განასხვავებს ინკარნაციას შემთხვევითობისგან</div>
+      <div style="font-size:11px;color:#d7dde6;margin-bottom:6px">ნატალური მზე-IC ხაზი (ფესვები): <b style="color:#E3BE84">${Math.abs(r.natal_ic_lon).toFixed(1)}° ${new_}</b>
+        <button id="pl-natal-cbtn" onclick="plCountries(${r.natal_ic_lon},this)" style="background:none;border:1px solid rgba(240,201,107,.5);color:#E3BE84;border-radius:6px;padding:1px 8px;font-size:10px;cursor:pointer;font-family:inherit;margin-left:6px">🌍 ქვეყნები</button>
         <span class="pl-countries" style="font-size:10.5px;color:#7ee3bd;display:block;margin-top:3px"></span></div>
       ${rows}
-      <div id="pl-incarn-map" style="height:340px;border-radius:10px;margin-top:10px;border:1px solid rgba(124,58,237,.3)"></div>
-      <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:6px;letter-spacing:1px">ოქროსფერი წყვეტილი = ნატალური მზე-IC (წარსული სამშობლოს ქვეყნები ამ ხაზზეა) · მყარი ხაზები = სავარაუდო ინკარნაციები · წყვეტილი ნაცრისფერი = სუსტი (მხოლოდ პლუტო)</div>`;
+      <div id="pl-incarn-map" style="height:340px;border-radius:10px;margin-top:10px;border:1px solid rgba(184,137,74,.3)"></div>
+      <div style="font-size:9px;color:rgba(185,191,188,.45);margin-top:6px;letter-spacing:1px">ოქროსფერი წყვეტილი = ნატალური მზე-IC (წარსული სამშობლოს ქვეყნები ამ ხაზზეა) · მყარი ხაზები = სავარაუდო ინკარნაციები · წყვეტილი ნაცრისფერი = სუსტი (მხოლოდ პლუტო)</div>`;
     if(window._plMap){window._plMap.remove();window._plMap=null;}
     const map=L.map('pl-incarn-map',{zoomControl:true,attributionControl:false,worldCopyJump:false});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
     map.setView([25,0],1);
     // natal Sun-IC line — gold dashed
-    L.polyline([[-85,r.natal_ic_lon],[85,r.natal_ic_lon]],{color:'#f0c96b',weight:3,opacity:.95,dashArray:'8 6'}).addTo(map);
-    L.polyline([[-85,r.natal_ic_lon],[85,r.natal_ic_lon]],{color:'#f0c96b',weight:14,opacity:0})
+    L.polyline([[-85,r.natal_ic_lon],[85,r.natal_ic_lon]],{color:'#E3BE84',weight:3,opacity:.95,dashArray:'8 6'}).addTo(map);
+    L.polyline([[-85,r.natal_ic_lon],[85,r.natal_ic_lon]],{color:'#E3BE84',weight:14,opacity:0})
       .addTo(map).bindTooltip('ნატალური მზე-IC · ფესვები',{sticky:true});
     L.marker([72,r.natal_ic_lon],{interactive:false,icon:L.divIcon({className:'pl-lbl',
       iconSize:[0,0],iconAnchor:[0,6],
-      html:'<div style="color:#f0c96b;font-size:10px;font-weight:700;text-shadow:0 0 4px #000;white-space:nowrap;pointer-events:none">ნატალი</div>'})}).addTo(map);
+      html:'<div style="color:#E3BE84;font-size:10px;font-weight:700;text-shadow:0 0 4px #000;white-space:nowrap;pointer-events:none">ნატალი</div>'})}).addTo(map);
     r.incarnations.forEach((inc,i)=>{
       const strong=inc.probable;
       const c=strong?PL_COLORS[(inc.rank-1)%4]:'#5a6472';
@@ -2191,7 +2216,7 @@ function setupSkymapCard(){
     c.style.display='block';
     document.getElementById('skymap-body').innerHTML=`
       <button id="sky-btn" onclick="runSkymap()" style="background:linear-gradient(90deg,#1a4a7a,#3a8ac0);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">🌌 რეალური ასტრონომიული პოზიციები</button>
-      <div style="font-size:10px;color:rgba(155,168,184,.55);margin-top:6px">JPL/Swiss Ephemeris სიზუსტე · IAU 88 თანავარსკვლავედი · ფიქსირებული ვარსკვლავები</div>`;
+      <div style="font-size:10px;color:rgba(185,191,188,.55);margin-top:6px">JPL/Swiss Ephemeris სიზუსტე · IAU 88 თანავარსკვლავედი · ფიქსირებული ვარსკვლავები</div>`;
   }else c.style.display='none';
 }
 async function runSkymap(){
@@ -2207,19 +2232,19 @@ async function runSkymap(){
     const r=await res.json();
     window._skyData=r;
     const rows=r.bodies.map(b=>{
-      const st=b.stars.length?b.stars.map(s=>`<span style="white-space:nowrap;color:#f0c96b">✦ ${s.star_ka} <span style="opacity:.55">(${s.orb}°)</span></span>`).join('<br>'):'<span style="opacity:.35">—</span>';
+      const st=b.stars.length?b.stars.map(s=>`<span style="white-space:nowrap;color:#E3BE84">✦ ${s.star_ka} <span style="opacity:.55">(${s.orb}°)</span></span>`).join('<br>'):'<span style="opacity:.35">—</span>';
       return `<tr>
-        <td style="color:#e9d5ff">${b.name_ka}${b.retrograde?' ℞':''}</td>
+        <td style="color:#EDE6D8">${b.name_ka}${b.retrograde?' ℞':''}</td>
         <td><b style="color:#7ec8f0">${b.constellation_ka}</b> <span style="opacity:.45;font-size:9px">${b.constellation}</span></td>
-        <td style="font-size:10.5px;color:#9ba8b8;white-space:nowrap">${b.ra}</td>
-        <td style="font-size:10.5px;color:#9ba8b8;white-space:nowrap">${b.dec}</td>
+        <td style="font-size:10.5px;color:#B9BFBC;white-space:nowrap">${b.ra}</td>
+        <td style="font-size:10.5px;color:#B9BFBC;white-space:nowrap">${b.dec}</td>
         <td style="font-size:10.5px">${st}</td></tr>`;
     }).join('');
     body.innerHTML=`
-      <div style="font-size:11px;color:#9ba8b8;margin-bottom:8px">რეალური IAU თანავარსკვლავედები (განსხვავდება ზოდიაქოს ნიშნებისგან) — პლანეტები ~25 თანავარსკვლავედს გადიან, მათ შორის გველისმჭერს, ვეშაპსა და გველს</div>
+      <div style="font-size:11px;color:#B9BFBC;margin-bottom:8px">რეალური IAU თანავარსკვლავედები (განსხვავდება ზოდიაქოს ნიშნებისგან) — პლანეტები ~25 თანავარსკვლავედს გადიან, მათ შორის გველისმჭერს, ვეშაპსა და გველს</div>
       <table style="width:100%"><thead><tr><th>სხეული</th><th>თანავარსკვლავედი</th><th>RA</th><th>Dec</th><th>ვარსკვლავები (≤2°)</th></tr></thead>
       <tbody>${rows}</tbody></table>
-      <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">Roman 1987 IAU საზღვრები · J2000 → B1875 პრეცესია · sefstars.txt</div>`;
+      <div style="font-size:9px;color:rgba(185,191,188,.45);margin-top:8px;letter-spacing:1px">Roman 1987 IAU საზღვრები · J2000 → B1875 პრეცესია · sefstars.txt</div>`;
   }catch(e){
     body.innerHTML='<div style="color:#f87171;font-size:12px">ვერ მოხერხდა გამოთვლა — სცადეთ მოგვიანებით</div>';
   }
@@ -2399,7 +2424,7 @@ async function drawSkyPoster(){
   g.font='400 38px Cinzel, Georgia, serif';g.fillStyle='rgba(200,190,165,.75)';
   g.fillText(`${dt} · ${tm}`,CX,cy);
   cy+=58;
-  g.font='32px Georgia, serif';g.fillStyle='rgba(155,168,184,.6)';
+  g.font='32px Georgia, serif';g.fillStyle='rgba(185,191,188,.6)';
   g.fillText(`${la}   ${lo}`,CX,cy);
   cy+=84;
   g.strokeStyle='rgba(212,178,106,.35)';g.lineWidth=1.5;
@@ -2432,7 +2457,7 @@ function setupHardPeriodsCard(){
     c.style.display='block';
     document.getElementById('hardperiods-body').innerHTML=`
       <button id="hp-btn" onclick="runHardPeriods()" style="background:linear-gradient(90deg,#8a2020,#e84040);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">⚡ გამოთვლა — 100 წელი დაბადებიდან</button>
-      <div style="font-size:10px;color:rgba(155,168,184,.55);margin-top:6px">სატურნი · პლუტონი · ურანი · ნეპტუნი · მარსი — მრავალი მძიმე ასპექტის ერთდროული პერიოდები</div>`;
+      <div style="font-size:10px;color:rgba(185,191,188,.55);margin-top:6px">სატურნი · პლუტონი · ურანი · ნეპტუნი · მარსი — მრავალი მძიმე ასპექტის ერთდროული პერიოდები</div>`;
   }else c.style.display='none';
 }
 async function runHardPeriods(){
@@ -2464,18 +2489,18 @@ function renderHardPeriods(r){
       <summary style="cursor:pointer;font-size:11.5px;color:#d7dde6;display:flex;gap:8px;align-items:baseline;list-style:none">
         <span style="color:#e84040;width:38px;display:inline-block">${p.marks}</span>
         <span style="min-width:150px">${p.start} — ${p.end}</span>
-        <span style="color:#9ba8b8">ასაკი ${p.age}</span>
-        <span style="color:rgba(155,168,184,.5);font-size:10px">${p.days}დღ</span>
+        <span style="color:#B9BFBC">ასაკი ${p.age}</span>
+        <span style="color:rgba(185,191,188,.5);font-size:10px">${p.days}დღ</span>
       </summary>
       <div style="font-size:11px;color:#f0a04b;padding:4px 0 6px 46px">პიკი ${p.peak}: ${ln}</div>
     </details>`;
   }).join('');
   body.innerHTML=`
     <div style="position:relative;height:22px;background:rgba(90,20,20,.25);border-radius:4px;margin:2px 0 2px">${marks}</div>
-    <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(155,168,184,.5);margin-bottom:8px"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 წელი</span></div>
-    <div style="font-size:11px;color:#9ba8b8;margin-bottom:4px">ნაპოვნია ${r.total_periods} პერიოდი — ≥2-3 ერთდროული მძიმე ასპექტი (☌ □ ☍)</div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(185,191,188,.5);margin-bottom:8px"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 წელი</span></div>
+    <div style="font-size:11px;color:#B9BFBC;margin-bottom:4px">ნაპოვნია ${r.total_periods} პერიოდი — ≥2-3 ერთდროული მძიმე ასპექტი (☌ □ ☍)</div>
     <div style="max-height:340px;overflow-y:auto">${rows}</div>
-    <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">⚠ სიმძიმე · ტრანზიტები: სატურნი, პლუტონი, ურანი, ნეპტუნი, მარსი</div>`;
+    <div style="font-size:9px;color:rgba(185,191,188,.45);margin-top:8px;letter-spacing:1px">⚠ სიმძიმე · ტრანზიტები: სატურნი, პლუტონი, ურანი, ნეპტუნი, მარსი</div>`;
 }
 
 /* ===== Cinderella gate (ცინდერელას კარიბჭე) ===== */
@@ -2484,8 +2509,8 @@ function setupCinderellaCard(){
   if(window._cindReq){
     c.style.display='block';
     document.getElementById('cinderella-body').innerHTML=`
-      <button id="cind-btn" onclick="runCinderella()" style="background:linear-gradient(90deg,#7c3aed,#a78bfa);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">✨ გამოთვლა — 100 წელი დაბადებიდან</button>
-      <div style="font-size:10px;color:rgba(155,168,184,.55);margin-top:6px">ქირონი · ვენერა · იუპიტერი · ნეპტუნი — ჰარმონიული ტრანზიტული კარიბჭეები</div>`;
+      <button id="cind-btn" onclick="runCinderella()" style="background:linear-gradient(90deg,#B8894A,#E3BE84);border:none;color:#fff;padding:9px 18px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:12px;letter-spacing:1px">✨ გამოთვლა — 100 წელი დაბადებიდან</button>
+      <div style="font-size:10px;color:rgba(185,191,188,.55);margin-top:6px">ქირონი · ვენერა · იუპიტერი · ნეპტუნი — ჰარმონიული ტრანზიტული კარიბჭეები</div>`;
   }else c.style.display='none';
 }
 async function runCinderella(){
@@ -2513,33 +2538,33 @@ function renderCinderella(r){
   const marks=P.map(p=>{
     const l=(p.age/(r.years_scanned||100)*100).toFixed(2);
     const hgt=p.stars.length*5+4;
-    return `<div title="${p.peak} · ${p.stars}" style="position:absolute;left:${l}%;bottom:0;width:3px;height:${hgt}px;background:${p.stars.length>=3?'#f0c96b':'#a78bfa'};border-radius:2px"></div>`;
+    return `<div title="${p.peak} · ${p.stars}" style="position:absolute;left:${l}%;bottom:0;width:3px;height:${hgt}px;background:${p.stars.length>=3?'#E3BE84':'#E3BE84'};border-radius:2px"></div>`;
   }).join('');
   const rows=P.map(p=>{
     const ln=p.links.map(l=>`ტ.${l.t_ka} ${l.aspect} ნ.${l.n_ka} (${l.orb}°)`).join(', ');
     const tc=Object.entries(p.transit_chart).map(([k,v])=>
       `<span style="margin-right:9px;white-space:nowrap">${({chiron:'ქირონი',venus:'ვენერა',jupiter:'იუპიტერი',neptune:'ნეპტუნი'})[k]} ${v.deg}° ${v.sign_ka}${v.retro?' ℞':''}</span>`).join('');
-    return `<details style="border-bottom:1px solid rgba(124,58,237,.15);padding:5px 0">
+    return `<details style="border-bottom:1px solid rgba(184,137,74,.15);padding:5px 0">
       <summary style="cursor:pointer;font-size:11.5px;color:#d7dde6;display:flex;gap:8px;align-items:baseline;list-style:none">
-        <span style="color:#f0c96b;width:34px;display:inline-block">${p.stars}</span>
+        <span style="color:#E3BE84;width:34px;display:inline-block">${p.stars}</span>
         <span style="min-width:150px">${p.start} — ${p.end}</span>
-        <span style="color:#9ba8b8">ასაკი ${p.age}</span>
-        <span style="color:rgba(155,168,184,.5);font-size:10px">${p.days}დღ</span>
+        <span style="color:#B9BFBC">ასაკი ${p.age}</span>
+        <span style="color:rgba(185,191,188,.5);font-size:10px">${p.days}დღ</span>
       </summary>
-      <div style="font-size:11px;color:#a78bfa;padding:4px 0 2px 42px">${ln}</div>
-      <div style="font-size:10px;color:#9ba8b8;padding:0 0 6px 42px">პიკი ${p.peak} · ტრანზიტები: ${tc}</div>
+      <div style="font-size:11px;color:#E3BE84;padding:4px 0 2px 42px">${ln}</div>
+      <div style="font-size:10px;color:#B9BFBC;padding:0 0 6px 42px">პიკი ${p.peak} · ტრანზიტები: ${tc}</div>
     </details>`;
   }).join('');
   body.innerHTML=`
-    <div style="font-size:11px;color:#9ba8b8;margin-bottom:4px">ნატალური: ${natalRow}</div>
-    <div style="font-size:12px;color:#e9d5ff;margin-bottom:8px">${r.predisposed
-      ?`💫 ნატალური წინაპირობა: <b style="color:#a78bfa">${na}</b> — საკმარისია ერთი ჰარმონიული ტრანზიტიც`
+    <div style="font-size:11px;color:#B9BFBC;margin-bottom:4px">ნატალური: ${natalRow}</div>
+    <div style="font-size:12px;color:#EDE6D8;margin-bottom:8px">${r.predisposed
+      ?`💫 ნატალური წინაპირობა: <b style="color:#E3BE84">${na}</b> — საკმარისია ერთი ჰარმონიული ტრანზიტიც`
       :'ნატალური წინაპირობა არ არის — საჭიროა ≥2 ერთდროული ჰარმონიული ტრანზიტი'}</div>
-    <div style="position:relative;height:22px;background:rgba(45,31,110,.25);border-radius:4px;margin:6px 0 2px">${marks}</div>
-    <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(155,168,184,.5);margin-bottom:8px"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 წელი</span></div>
-    <div style="font-size:11px;color:#9ba8b8;margin-bottom:4px">ნაპოვნია ${r.total_periods} პერიოდი</div>
+    <div style="position:relative;height:22px;background:rgba(22,39,46,.25);border-radius:4px;margin:6px 0 2px">${marks}</div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(185,191,188,.5);margin-bottom:8px"><span>0</span><span>25</span><span>50</span><span>75</span><span>100 წელი</span></div>
+    <div style="font-size:11px;color:#B9BFBC;margin-bottom:4px">ნაპოვნია ${r.total_periods} პერიოდი</div>
     <div style="max-height:340px;overflow-y:auto">${rows}</div>
-    <div style="font-size:9px;color:rgba(155,168,184,.45);margin-top:8px;letter-spacing:1px">☌ შეერთება · △ ტრიგონი · ⚻ ინკონიუნქცია · ⚹ სექსტილი · ★ სიძლიერე</div>`;
+    <div style="font-size:9px;color:rgba(185,191,188,.45);margin-top:8px;letter-spacing:1px">☌ შეერთება · △ ტრიგონი · ⚻ ინკონიუნქცია · ⚹ სექსტილი · ★ სიძლიერე</div>`;
 }
 
 function redrawCurrent(){
@@ -2621,7 +2646,7 @@ function _renderDouble(d1,d2,name1,name2,label,crossAsp){
     swapBtn=document.createElement('button');
     swapBtn.id='swap-btn';
     swapBtn.onclick=swapPersons;
-    swapBtn.style.cssText='font-family:Cinzel,serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#a78bfa;background:rgba(8,6,20,.7);border:1px solid rgba(100,65,200,.4);border-radius:16px;padding:6px 14px;cursor:pointer;margin-left:12px;';
+    swapBtn.style.cssText='font-family:Cinzel,serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#E3BE84;background:rgba(11,20,24,.7);border:1px solid rgba(78,143,130,.4);border-radius:16px;padding:6px 14px;cursor:pointer;margin-left:12px;';
     document.getElementById('legend-wrap').appendChild(swapBtn);
   }
   swapBtn.textContent=_swapped?'↩ აღდგენა':'⇄ შებრუნება';
@@ -2800,9 +2825,9 @@ function drawWheel(data1,data2,dualAsp){
   // bg — a circle, not a rect, so the wheel sits on the page itself
   // instead of on a visible square panel
   const bgG=el('radialGradient',{id:'bgG',cx:'50%',cy:'50%',r:'50%'},defs);
-  el('stop',{offset:'0%','stop-color':'rgba(28,20,13,0.55)'},bgG);
-  el('stop',{offset:'70%','stop-color':'rgba(10,7,5,0.35)'},bgG);
-  el('stop',{offset:'100%','stop-color':'rgba(10,7,5,0)'},bgG);
+  el('stop',{offset:'0%','stop-color':'rgba(16,30,36,0.55)'},bgG);
+  el('stop',{offset:'70%','stop-color':'rgba(11,20,24,0.35)'},bgG);
+  el('stop',{offset:'100%','stop-color':'rgba(11,20,24,0)'},bgG);
   el('circle',{cx:CX,cy:CY,r:R1+6,fill:'url(#bgG)'},svg);
 
   // zodiac band
@@ -2823,7 +2848,7 @@ function drawWheel(data1,data2,dualAsp){
       const h1=data1.houses[i],h2=data1.houses[(i+1)%12];
       const span=((h2-h1)+360)%360,la=span>180?1:0;
       const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
-      el('path',{d:`M${p(h1,R2)} A${R2},${R2} 0 ${la},0 ${p(h2,R2)} L${p(h2,R3d)} A${R3d},${R3d} 0 ${la},1 ${p(h1,R3d)} Z`,fill:i%2?'rgba(6,5,18,1)':'rgba(10,8,26,1)'},svg);
+      el('path',{d:`M${p(h1,R2)} A${R2},${R2} 0 ${la},0 ${p(h2,R2)} L${p(h2,R3d)} A${R3d},${R3d} 0 ${la},1 ${p(h1,R3d)} Z`,fill:i%2?'rgba(11,20,24,1)':'rgba(10,8,26,1)'},svg);
     }
   }
 
@@ -2857,11 +2882,11 @@ function drawWheel(data1,data2,dualAsp){
       el('line',{x1:CX+Math.cos(a)*R_iz_out,y1:CY+Math.sin(a)*R_iz_out,x2:CX+Math.cos(a)*(R_iz_out-(is30?8:4)),y2:CY+Math.sin(a)*(R_iz_out-(is30?8:4)),stroke:is30?'rgba(200,160,255,.7)':'rgba(120,80,180,.5)','stroke-width':is30?1:.6},svg);
     }
     // inner fill circle
-    el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'rgba(4,3,14,1)'},svg);
-    el('circle',{cx:CX,cy:CY,r:R5d,fill:'rgba(4,3,14,1)'},svg);
-    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(120,80,200,.5)','stroke-width':1.2},svg);
+    el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'rgba(8,15,18,1)'},svg);
+    el('circle',{cx:CX,cy:CY,r:R5d,fill:'rgba(8,15,18,1)'},svg);
+    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(78,143,130,.5)','stroke-width':1.2},svg);
   }else{
-    el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(4,3,14,1)'},svg);
+    el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(8,15,18,1)'},svg);
   }
 
   // degree ticks
@@ -2869,7 +2894,7 @@ function drawWheel(data1,data2,dualAsp){
     const a=e2s(deg,asc),co=Math.cos(a),si2=Math.sin(a);
     const is30=deg%30===0,is10=deg%10===0,is5=deg%5===0;
     const len=is30?20:is10?13:is5?8:5;
-    const stroke=is30?'rgba(255,220,255,1)':is10?'rgba(180,130,255,0.95)':is5?'rgba(120,80,200,0.8)':'rgba(80,55,150,0.65)';
+    const stroke=is30?'rgba(255,220,255,1)':is10?'rgba(180,130,255,0.95)':is5?'rgba(78,143,130,0.8)':'rgba(80,55,150,0.65)';
     const sw=is30?2:is10?1.4:is5?0.9:0.5;
     el('line',{x1:CX+co*R1,y1:CY+si2*R1,x2:CX+co*(R1-len),y2:CY+si2*(R1-len),stroke,'stroke-width':sw},svg);
   }
@@ -2882,12 +2907,12 @@ function drawWheel(data1,data2,dualAsp){
 
   // circles
   el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(140,90,230,0.85)','stroke-width':1.8},svg);
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(100,65,200,0.8)','stroke-width':1.5},svg);
+  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(78,143,130,0.8)','stroke-width':1.5},svg);
   el('circle',{cx:CX,cy:CY,r:R3d,fill:'none',stroke:'rgba(70,45,160,0.75)','stroke-width':1.2},svg);
   if(data2){
-    el('circle',{cx:CX,cy:CY,r:R_iz_out,fill:'none',stroke:'rgba(100,65,200,.65)','stroke-width':1},svg);
-    el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'none',stroke:'rgba(167,139,250,.45)','stroke-width':1},svg);
-    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(120,80,200,.5)','stroke-width':1.2},svg);
+    el('circle',{cx:CX,cy:CY,r:R_iz_out,fill:'none',stroke:'rgba(78,143,130,.65)','stroke-width':1},svg);
+    el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1},svg);
+    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(78,143,130,.5)','stroke-width':1.2},svg);
   }else{
     el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(50,32,120,0.7)','stroke-width':1},svg);
   }
@@ -2906,12 +2931,12 @@ function drawWheel(data1,data2,dualAsp){
     for(let i=0;i<12;i++){
       const a=e2s(data1.houses[i],asc);
       const isAngle=[0,3,6,9].includes(i);
-      el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,x2:CX+Math.cos(a)*R3d,y2:CY+Math.sin(a)*R3d,stroke:isAngle?'#e8c06e':'rgba(100,65,200,.6)','stroke-width':isAngle?2:.8},svg);
+      el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,x2:CX+Math.cos(a)*R3d,y2:CY+Math.sin(a)*R3d,stroke:isAngle?'#e8c06e':'rgba(78,143,130,.6)','stroke-width':isAngle?2:.8},svg);
       const next=data1.houses[(i+1)%12];
       let mid=data1.houses[i]+((next-data1.houses[i]+360)%360)/2;
       if(mid>=360)mid-=360;
       const ma=e2s(mid,asc);
-      txt(svg,String(i+1),CX+Math.cos(ma)*(R2+R3d)/2,CY+Math.sin(ma)*(R2+R3d)/2,{fill:'rgba(180,150,255,0.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});
+      txt(svg,String(i+1),CX+Math.cos(ma)*(R2+R3d)/2,CY+Math.sin(ma)*(R2+R3d)/2,{fill:'rgba(227,190,132,0.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});
     }
   }
 
@@ -3007,7 +3032,7 @@ function drawWheel(data1,data2,dualAsp){
     for(const name of present){
       const info=PI[name]||{sym:'?',color:'#fff'};
       const tA=trueA[name];
-      const color=isInner?'#a78bfa':info.color;
+      const color=isInner?'#E3BE84':info.color;
       const symColor=isInner?info.color:info.color;
       let diff=dispA[name]-tA;
       while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
@@ -3106,7 +3131,7 @@ function drawWheel(data1,data2,dualAsp){
   // ASC/MC and houses for person 2 (inner circle) in dual mode
   if(data2&&!data2._timeUnknown&&data2.houses){
     const asc2=data2.asc;
-    const angCol2='#a78bfa';
+    const angCol2='#E3BE84';
     // house lines inside inner zodiac ring
     for(let i=0;i<12;i++){
       const h1=data2.houses[i],h2=data2.houses[(i+1)%12];
@@ -3115,13 +3140,13 @@ function drawWheel(data1,data2,dualAsp){
       el('path',{d:`M${p2(h1,R_iz_in)} A${R_iz_in},${R_iz_in} 0 ${la2},0 ${p2(h2,R_iz_in)} L${p2(h2,R5d)} A${R5d},${R5d} 0 ${la2},1 ${p2(h1,R5d)} Z`,fill:i%2?'rgba(6,4,18,.9)':'rgba(10,7,26,.9)'},svg);
       const a2=e2s(data2.houses[i],asc);
       const isAngle2=[0,3,6,9].includes(i);
-      el('line',{x1:CX+Math.cos(a2)*R_iz_in,y1:CY+Math.sin(a2)*R_iz_in,x2:CX+Math.cos(a2)*R5d,y2:CY+Math.sin(a2)*R5d,stroke:isAngle2?angCol2:'rgba(100,65,200,.45)','stroke-width':isAngle2?1.5:.7},svg);
+      el('line',{x1:CX+Math.cos(a2)*R_iz_in,y1:CY+Math.sin(a2)*R_iz_in,x2:CX+Math.cos(a2)*R5d,y2:CY+Math.sin(a2)*R5d,stroke:isAngle2?angCol2:'rgba(78,143,130,.45)','stroke-width':isAngle2?1.5:.7},svg);
       const next2=data2.houses[(i+1)%12];
       let mid2=data2.houses[i]+((next2-data2.houses[i]+360)%360)/2;
       if(mid2>=360)mid2-=360;
       const ma2=e2s(mid2,asc);
       const Rhn2=(R_iz_in+R5d)/2;
-      txt(svg,String(i+1),CX+Math.cos(ma2)*Rhn2,CY+Math.sin(ma2)*Rhn2,{fill:'rgba(167,139,250,.75)','font-size':8,'font-family':'Cinzel,serif','font-weight':'bold'});
+      txt(svg,String(i+1),CX+Math.cos(ma2)*Rhn2,CY+Math.sin(ma2)*Rhn2,{fill:'rgba(227,190,132,.75)','font-size':8,'font-family':'Cinzel,serif','font-weight':'bold'});
     }
     // inner ASC line
     const ascA2=e2s(asc2,asc);
@@ -3154,9 +3179,9 @@ function drawPlanetTable(planets,isB,tbodyId){
     const si=SIGN_KA.indexOf(d.sign);
     const sCol=si>=0?ZCOL[si]:'#aaa';
     const sc=si>=0?signClass(si):'';
-    const symCell=name==='მზე'?sunSVG(18):name==='მთვარე'?'<span class="moon-sym" style="font-size:16px">☽</span>':`<span class="p-sym" style="color:${isB?'#a78bfa':info.color};font-size:16px;font-family:serif">${info.sym}</span>`;
+    const symCell=name==='მზე'?sunSVG(18):name==='მთვარე'?'<span class="moon-sym" style="font-size:16px">☽</span>':`<span class="p-sym" style="color:${isB?'#E3BE84':info.color};font-size:16px;font-family:serif">${info.sym}</span>`;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${symCell}</td><td style="color:${isB?'#a78bfa':info.color};font-size:11px;white-space:nowrap">${name}</td><td class="deg-val">${fmtDeg(d.degree)}</td><td><span class="${sc}" style="font-size:13px;font-family:serif">${si>=0?ZSYM[si]:''}</span> <span style="font-size:10px;color:${sCol}">${d.sign}</span></td><td><span class="house-badge" style="${isB?'border-color:rgba(167,139,250,.4);color:#a78bfa':''}">H${d.house||'?'}</span></td><td>${d.retrograde?'<span class="retro">℞</span>':''}</td>`;
+    tr.innerHTML=`<td>${symCell}</td><td style="color:${isB?'#E3BE84':info.color};font-size:11px;white-space:nowrap">${name}</td><td class="deg-val">${fmtDeg(d.degree)}</td><td><span class="${sc}" style="font-size:13px;font-family:serif">${si>=0?ZSYM[si]:''}</span> <span style="font-size:10px;color:${sCol}">${d.sign}</span></td><td><span class="house-badge" style="${isB?'border-color:rgba(227,190,132,.4);color:#E3BE84':''}">H${d.house||'?'}</span></td><td>${d.retrograde?'<span class="retro">℞</span>':''}</td>`;
     tbody.appendChild(tr);
   }
 }
@@ -3173,7 +3198,7 @@ function drawHouseTable(data){
     const ang=ANG[i];
     const sc=signClass(si);
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td style="color:${ang?'#c084fc':'rgba(155,168,184,.7)'};font-family:'Cinzel',serif;font-size:11px;font-weight:${ang?'600':'400'}">${ROMAN[i]}${ang?` <span style="font-size:9px;opacity:.7">${ang}</span>`:''}</td><td><span class="${sc}" style="font-size:13px;font-family:serif">${ZSYM[si]||''}</span> <span style="font-size:10px;color:${ZCOL[si]}">${SIGN_KA[si]||''}</span></td><td class="deg-val">${fmtDeg(deg)}</td>`;
+    tr.innerHTML=`<td style="color:${ang?'#c084fc':'rgba(185,191,188,.7)'};font-family:'Cinzel',serif;font-size:11px;font-weight:${ang?'600':'400'}">${ROMAN[i]}${ang?` <span style="font-size:9px;opacity:.7">${ang}</span>`:''}</td><td><span class="${sc}" style="font-size:13px;font-family:serif">${ZSYM[si]||''}</span> <span style="font-size:10px;color:${ZCOL[si]}">${SIGN_KA[si]||''}</span></td><td class="deg-val">${fmtDeg(deg)}</td>`;
     tbody.appendChild(tr);
   }
 }
@@ -3192,7 +3217,7 @@ function drawAspectTable(aspects,tbodyId='aspect-tbody',titleId,titleText,isB){
     const ai1=ASP_ORDER.indexOf(a.type),ai2=ASP_ORDER.indexOf(b.type);
     return ai1-ai2;
   });
-  const col=isB?'#a78bfa':null;
+  const col=isB?'#E3BE84':null;
   for(const asp of aspects){
     const i1=PI[asp.p1]||{sym:'?',color:'#aaa'};
     const i2=PI[asp.p2]||{sym:'?',color:'#aaa'};
