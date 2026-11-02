@@ -4,8 +4,7 @@
    The silhouette is the single path.st0 of human_prepared.svg (its own colour
    #D9FFFC is kept). No blur, no glow:
      • fill  — almost clear in the middle, denser toward the edge (bubble skin)
-     • rim   — thin light-blue band just inside the outline
-     • gloss — soft white highlight upper-left, like light on a bubble       */
+     • gloss — two small, faint white gradients (head, left shoulder), no stroke       */
 (function(){
 'use strict';
 const NS='http://www.w3.org/2000/svg';
@@ -28,19 +27,16 @@ function bubble(svg){
   el('stop',{offset:'1','stop-color':TINT,'stop-opacity':'.30'},rg);
   /* gloss highlight */
   const hg=el('radialGradient',{id:id+'h'},defs);
-  el('stop',{offset:'0','stop-color':'#ffffff','stop-opacity':'.32'},hg);
+  el('stop',{offset:'0','stop-color':'#ffffff','stop-opacity':'.16'},hg);
   el('stop',{offset:'1','stop-color':'#ffffff','stop-opacity':'0'},hg);
   const cp=el('clipPath',{id:id+'c'},defs);el('path',Object.assign({d},tr?{transform:tr}:{}),cp);
 
   body.style.setProperty('fill',`url(#${id}f)`,'important');
   body.style.setProperty('stroke','none','important');
   const g=el('g',{'clip-path':`url(#${id}c)`,'pointer-events':'none'});
-  /* rim: a stroke clipped to the inside = thin band along the outline */
-  el('path',Object.assign({d},tr?{transform:tr}:{},{fill:'none',stroke:TINT,'stroke-width':'7','stroke-opacity':'.42'}),g);
-  el('path',Object.assign({d},tr?{transform:tr}:{},{fill:'none',stroke:'#ffffff','stroke-width':'1.6','stroke-opacity':'.45'}),g);
   /* gloss on the head and the left shoulder */
-  el('ellipse',{cx:b.x+b.w*.43,cy:b.y+b.h*.09,rx:b.w*.07,ry:b.h*.05,fill:`url(#${id}h)`},g);
-  el('ellipse',{cx:b.x+b.w*.22,cy:b.y+b.h*.42,rx:b.w*.12,ry:b.h*.09,fill:`url(#${id}h)`,opacity:'.7'},g);
+  el('ellipse',{cx:b.x+b.w*.43,cy:b.y+b.h*.09,rx:b.w*.05,ry:b.h*.035,fill:`url(#${id}h)`},g);
+  el('ellipse',{cx:b.x+b.w*.22,cy:b.y+b.h*.42,rx:b.w*.08,ry:b.h*.06,fill:`url(#${id}h)`,opacity:'.7'},g);
   body.after(g);
 }
 
