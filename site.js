@@ -52,6 +52,7 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;',
 const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1');let t=(h&&h.textContent.trim())||document.title.replace(/^MAGNUS\s*[·|—-]\s*/,'').replace(/\s*[·|—-]\s*MAGNUS$/,'');return t.replace(/[✦✧★☆⟡◆◇•·]/g,' ').replace(/\s+/g,' ').trim().slice(0,60);};
 
 const CSS=`
+#mg-head::before,#mg-head::after{content:none!important;display:none!important}
 #mg-head{flex-direction:row!important;justify-content:flex-start!important;text-align:left!important;margin-bottom:0!important;box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
   padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));margin:0 0 6px;
   background:rgba(12,18,34,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
@@ -289,6 +290,12 @@ function layoutTiles(){
 
 /* ── Destiny Matrix ground (background only — each page keeps its own boxes) ── */
 const BG_SKIP=new Set(['index.html','matrix.html','fool_journey.html','vector.html']);
+/* every box in the colour of the home-page cards */
+const CARD_SKIP=new Set(['cards.html','tarot.html','tarotborth.html','fool_journey.html','vector.html','index.html','matrix.html']);
+const BOX_SEL='.panel,.form-card,.form-shell,.data-card,.input-panel,.stat,.box,#orb-panel,#asp-filters,.mg-tiles>*'+(CARD_SKIP.has(P)?'':',.card');
+const BOX_CSS=`${BOX_SEL}{background:rgba(8,6,18,.72)!important;border-color:rgba(201,168,76,.16)!important}
+.mg-tiles>*:hover{background:rgba(14,11,28,.85)!important;border-color:rgba(201,168,76,.4)!important}
+.mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{background:rgba(14,11,28,.9)!important;border-color:#E3BE84!important}`;
 const BG_CSS=`html{background:#0C1222!important}
 body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
  radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(123,147,189,.11),transparent 70%),
@@ -302,6 +309,7 @@ function start(){
     [0,500,1500,3500].forEach(t=>setTimeout(sideNav,t));
     document.addEventListener("click",()=>{if(!sideEl)[300,1200].forEach(t=>setTimeout(sideNav,t));},true);
     addEventListener('resize',layoutTiles);}
+  if(!(P==='index.html'||P==='matrix.html')){const sx=document.createElement('style');sx.textContent=BOX_CSS;document.head.appendChild(sx);}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
