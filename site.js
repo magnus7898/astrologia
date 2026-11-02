@@ -51,7 +51,7 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;',
 const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1');let t=(h&&h.textContent.trim())||document.title.replace(/^MAGNUS\s*[·|—-]\s*/,'').replace(/\s*[·|—-]\s*MAGNUS$/,'');return t.replace(/[✦✧★☆⟡◆◇•·]/g,' ').replace(/\s+/g,' ').trim().slice(0,60);};
 
 const CSS=`
-#mg-head{box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
+#mg-head{flex-direction:row!important;justify-content:flex-start!important;text-align:left!important;margin-bottom:0!important;box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
   padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));margin:0 0 6px;
   background:rgba(11,20,24,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
   font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif;color:#B9BFBC;text-align:left}
@@ -215,10 +215,59 @@ function tabs(){
   setTimeout(tryOpen,location.hash?250:600);
 }
 
+/* ── the page's main tab bar becomes a menu on the right side (wide screens) ──
+   The bar keeps its own buttons and handlers; only its placement and look change. On phones
+   and narrow windows (< 1100px) it stays where the page put it.                            */
+const SIDE_CSS=`
+@media(min-width:1100px){
+ html.mg-side body{padding-right:calc(var(--mg-side-w) + 36px)!important}
+ html.mg-side #mg-head,html.mg-side #mg-foot{margin-right:calc(-1 * (var(--mg-side-w) + 36px))!important;width:calc(100% + var(--mg-side-w) + 36px)!important;max-width:none!important}
+ .mg-sidenav{position:fixed!important;right:calc(16px + env(safe-area-inset-right,0px))!important;left:auto!important;width:var(--mg-side-w)!important;
+   top:var(--mg-side-top,80px)!important;max-height:calc(100vh - var(--mg-side-top,80px) - 80px)!important;overflow-y:auto!important;z-index:40!important;
+   display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:flex-start!important;gap:0!important;
+   margin:0!important;padding:8px 0!important;transform:none!important;
+   background:rgba(11,20,24,.94)!important;border:1px solid rgba(184,137,74,.28)!important;border-radius:0!important;box-shadow:0 10px 30px rgba(0,0,0,.45)!important}
+ .mg-sidenav>a>i{margin-right:8px;font-style:normal}.mg-sidenav::before{content:attr(data-mg-title);display:block;padding:4px 16px 8px;margin-bottom:4px;border-bottom:1px solid rgba(184,137,74,.18);
+   font:400 10.5px/1.4 'Marcellus SC','Noto Serif Georgian',serif;letter-spacing:.2em;color:#6E8087;text-transform:uppercase}
+ .mg-sidenav>*{display:block!important;width:100%!important;box-sizing:border-box!important;margin:0!important;padding:8px 16px!important;
+   text-align:left!important;justify-content:flex-start!important;white-space:normal!important;border:0!important;border-left:2px solid transparent!important;border-radius:0!important;
+   background:none!important;box-shadow:none!important;color:#B9BFBC!important;font-size:12.5px!important;letter-spacing:.04em!important;line-height:1.35!important;transform:none!important}
+ .mg-sidenav>*:hover{color:#EDE6D8!important;background:rgba(184,137,74,.07)!important}
+ .mg-sidenav>.active,.mg-sidenav>.on,.mg-sidenav>.sel,.mg-sidenav>[aria-selected=true]{color:#E3BE84!important;border-left-color:#B8894A!important;background:rgba(184,137,74,.12)!important}
+}`;
+let sideEl=null;
+function sideNav(){
+  if(NO_TABS.has(P))return;
+  scanTabs();
+  const vis=GROUPS.filter(g=>g.el.offsetParent!==null||g.el.classList.contains('mg-sidenav'));
+  const sn=document.getElementById('subnav');
+  if(!vis.length&&sn&&sn.children.length>1)vis.push({el:sn,btns:[...sn.children]});
+  if(!vis.length)return;
+  /* the main bar: most tabs; on a tie the first on the page */
+  const main=vis.reduce((a,g)=>g.btns.length>a.btns.length?g:a,vis[0]);
+  if(sideEl===main.el)return;
+  if(sideEl)sideEl.classList.remove('mg-sidenav');
+  sideEl=main.el;sideEl.classList.add('mg-sidenav');
+  const sec=sectionOf(P);sideEl.dataset.mgTitle=(pageTitle()||(sec&&sec.t)||'').slice(0,32);
+  document.documentElement.classList.add('mg-side');
+  const w=Math.min(250,Math.max(190,Math.max(...main.btns.map(b=>tabLabel(b).length))*7.2+40));
+  document.documentElement.style.setProperty('--mg-side-w',Math.round(w)+'px');
+  placeSide();
+}
+function placeSide(){
+  const h=document.getElementById('mg-head');
+  const top=Math.max(14,h?h.getBoundingClientRect().bottom+12:14);
+  document.documentElement.style.setProperty('--mg-side-top',Math.round(top)+'px');
+}
+
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
   header();footer();consent(false);tabs();
+  if(!NO_TABS.has(P)){const st2=document.createElement('style');st2.textContent=SIDE_CSS;document.head.appendChild(st2);
+    [0,500,1500,3500].forEach(t=>setTimeout(sideNav,t));
+    document.addEventListener("click",()=>{if(!sideEl)[300,1200].forEach(t=>setTimeout(sideNav,t));},true);
+    addEventListener('scroll',placeSide,{passive:true});addEventListener('resize',placeSide);}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
 })();
