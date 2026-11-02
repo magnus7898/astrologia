@@ -1,46 +1,9 @@
-/* hd_silhouette.js — the body silhouette as a light-blue transparent bubble
-   for every bodygraph (natal, synastry, transit …). Self-injecting; hd.html
-   only needs   <script src="hd_silhouette.js"></script>
-   The silhouette is the single path.st0 of human_prepared.svg (its own colour
-   #D9FFFC is kept). No blur, no glow:
-     • fill  — almost clear in the middle, denser toward the edge (bubble skin)
-     • gloss — two small, faint white gradients (head, left shoulder), no stroke       */
+/* hd_silhouette.js — body silhouette as plain transparent blue, nothing else.
+   Self-injecting; hd.html only needs   <script src="hd_silhouette.js"></script>
+   The silhouette is the single path.st0 of human_prepared.svg.             */
 (function(){
 'use strict';
-const NS='http://www.w3.org/2000/svg';
-const BLUE='#D9FFFC',TINT='#9FE6FF';
-const BOX={x:498.9,y:109.6,w:473.3,h:641.8};   /* path.st0 bbox — fallback when hidden */
-let uid=0;
-function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
-
-function bubble(svg){
-  const body=svg.querySelector('path.st0');
-  if(!body||body.dataset.bubble)return;
-  body.dataset.bubble='1';
-  const id='hdb'+(++uid),d=body.getAttribute('d'),tr=body.getAttribute('transform');
-  let b=BOX;try{const r=body.getBBox();if(r.width>50)b={x:r.x,y:r.y,w:r.width,h:r.height};}catch(e){}
-  const defs=el('defs',{});svg.insertBefore(defs,svg.firstChild);
-  /* bubble skin: clear centre, more colour at the edge */
-  const rg=el('radialGradient',{id:id+'f',cx:'50%',cy:'42%',r:'65%'},defs);
-  el('stop',{offset:'0','stop-color':BLUE,'stop-opacity':'.05'},rg);
-  el('stop',{offset:'.6','stop-color':TINT,'stop-opacity':'.10'},rg);
-  el('stop',{offset:'1','stop-color':TINT,'stop-opacity':'.30'},rg);
-  /* gloss highlight */
-  const hg=el('radialGradient',{id:id+'h'},defs);
-  el('stop',{offset:'0','stop-color':'#ffffff','stop-opacity':'.16'},hg);
-  el('stop',{offset:'1','stop-color':'#ffffff','stop-opacity':'0'},hg);
-  const cp=el('clipPath',{id:id+'c'},defs);el('path',Object.assign({d},tr?{transform:tr}:{}),cp);
-
-  body.style.setProperty('fill',`url(#${id}f)`,'important');
-  body.style.setProperty('stroke','none','important');
-  const g=el('g',{'clip-path':`url(#${id}c)`,'pointer-events':'none'});
-  /* gloss on the head and the left shoulder */
-  el('ellipse',{cx:b.x+b.w*.43,cy:b.y+b.h*.09,rx:b.w*.05,ry:b.h*.035,fill:`url(#${id}h)`},g);
-  el('ellipse',{cx:b.x+b.w*.22,cy:b.y+b.h*.42,rx:b.w*.08,ry:b.h*.06,fill:`url(#${id}h)`,opacity:'.7'},g);
-  body.after(g);
-}
-
-function scan(root){(root.querySelectorAll?root.querySelectorAll('svg'):[]).forEach(bubble);if(root.tagName&&root.tagName.toLowerCase()==='svg')bubble(root);}
-new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n);}))).observe(document.documentElement,{childList:true,subtree:true});
-scan(document);
+const css=document.createElement('style');
+css.textContent='svg path.st0{fill:#9FE6FF!important;fill-opacity:.2!important;stroke:none!important}';
+document.head.appendChild(css);
 })();
