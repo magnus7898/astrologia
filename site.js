@@ -237,7 +237,7 @@ const TILE_CSS=`
 .mg-bench{position:relative;z-index:1;width:100%}
 @media(min-width:1000px){
  .mg-bench{display:flex;align-items:flex-start;justify-content:center;gap:22px;margin:18px auto 0;max-width:var(--mg-bench-w)}
- .mg-bench>.mg-tiles{margin:0!important;flex:0 0 auto!important;position:sticky!important;top:14px}
+ .mg-bench>.mg-tiles{margin:0!important;flex:0 0 auto!important;position:sticky!important;top:14px;order:2}
  .mg-bench>.mg-box{flex:1 1 auto!important;min-width:0!important;margin:0!important;max-width:var(--mg-box-w)!important}
 }`;
 let sideEl=null;
