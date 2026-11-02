@@ -7,12 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #091113;
+  --bg: #06050f;
   --surface: rgba(255,255,255,0.035);
   --border: rgba(255,255,255,0.07);
-  --gold: #C8A36E;
-  --text: #E8E0D5;
-  --muted: rgba(232,224,213,0.38);
+  --gold: #c8a96e;
+  --text: #e8e2d5;
+  --muted: rgba(232,226,213,0.38);
   --teal: #3aada4;
   --teal-dim: rgba(58,173,164,0.25);
 }
@@ -27,7 +27,7 @@ body::before {
   content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background:
     radial-gradient(ellipse 60% 50% at 10% 20%, rgba(20,80,75,0.22) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(39,91,82,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 80%, rgba(40,30,100,0.2) 0%, transparent 60%),
     radial-gradient(ellipse 40% 40% at 50% 50%, rgba(30,60,55,0.12) 0%, transparent 55%);
 }
 .page { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 64px 24px 100px; }
@@ -35,7 +35,7 @@ body::before {
 .page-header { text-align: center; margin-bottom: 44px; }
 .eyebrow { font-family:'Cinzel',serif; font-size:10px; letter-spacing:6px; color:var(--teal); text-transform:uppercase; margin-bottom:14px; opacity:.8; }
 .page-title { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(34px,7vw,56px); line-height:1.05; color:var(--text); }
-.page-title em { font-style:italic; color:rgba(232,224,213,0.45); }
+.page-title em { font-style:italic; color:rgba(232,226,213,0.45); }
 .lang-note { font-size:11px; color:var(--muted); margin-top:12px; letter-spacing:1px; }
 .ornament { display:flex; align-items:center; justify-content:center; gap:14px; margin-top:18px; }
 .ornament-line { height:1px; width:70px; background:linear-gradient(90deg,transparent,var(--teal-dim)); }
@@ -61,7 +61,7 @@ body::before {
 
 .script-chips { display:none; justify-content:center; gap:8px; margin-bottom:36px; }
 .schip { padding:3px 12px; border-radius:14px; font-size:10px; letter-spacing:2px; font-family:'Cinzel',serif;
-  color:rgba(200,163,110,.85); border:1px solid rgba(200,163,110,.25); background:rgba(200,163,110,.06); }
+  color:rgba(200,169,110,.85); border:1px solid rgba(200,169,110,.25); background:rgba(200,169,110,.06); }
 
 .breakdown { display:none; font-family:'Cormorant Garamond',serif; text-align:center; margin-bottom:40px;
   font-size:15px; color:var(--muted); letter-spacing:2px; line-height:2; font-style:italic; }
@@ -76,13 +76,13 @@ body::before {
   padding:22px 14px; text-align:center; position:relative; overflow:hidden; }
 .tcard::before { content:''; position:absolute; top:0; left:20%; right:20%; height:1px;
   background:linear-gradient(90deg,transparent,rgba(58,173,164,.4),transparent); }
-.tcard.main::before { background:linear-gradient(90deg,transparent,rgba(200,163,110,.55),transparent); }
+.tcard.main::before { background:linear-gradient(90deg,transparent,rgba(200,169,110,.55),transparent); }
 .tcard .tl { font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
 .tcard .tn { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:56px; line-height:1; color:#fff; }
-.tcard.main .tn { font-size:82px; text-shadow:0 0 50px rgba(200,163,110,.35); }
+.tcard.main .tn { font-size:82px; text-shadow:0 0 50px rgba(200,169,110,.35); }
 .tcard .ts { font-size:10px; color:var(--muted); margin-top:8px; letter-spacing:1px; line-height:1.6; }
 .tcard .master { display:inline-block; margin-top:6px; font-size:9px; letter-spacing:2px; color:var(--gold);
-  border:1px solid rgba(200,163,110,.3); border-radius:10px; padding:2px 10px; font-family:'Cinzel',serif; }
+  border:1px solid rgba(200,169,110,.3); border-radius:10px; padding:2px 10px; font-family:'Cinzel',serif; }
 
 /* Pythagorean square */
 .psq-wrap { display:none; margin-bottom:44px; }
@@ -94,7 +94,7 @@ body::before {
   transition:border-color .3s, box-shadow .3s; position:relative; }
 .pcell:hover { border-color:rgba(58,173,164,.35); box-shadow:0 0 18px rgba(58,173,164,.1); }
 .pcell .digs { font-family:'Cormorant Garamond',serif; font-size:clamp(17px,3.4vw,24px); letter-spacing:2px; color:#fff; min-height:1.2em; }
-.pcell .digs.empty { color:rgba(232,224,213,.14); }
+.pcell .digs.empty { color:rgba(232,226,213,.14); }
 .pcell .plabel { font-size:8.5px; letter-spacing:1px; color:var(--muted); text-transform:uppercase; font-family:'Cinzel',serif; text-align:center; padding:0 4px; }
 
 .interpretation { display:none; background:var(--surface); border:1px solid var(--border);
@@ -103,11 +103,11 @@ body::before {
   background:linear-gradient(90deg,transparent,rgba(58,173,164,.4),transparent); }
 .interp-title { font-family:'Cinzel',serif; font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--teal); margin-bottom:18px; opacity:.7; }
 .interp-headline { font-family:'Cormorant Garamond',serif; font-weight:400; font-size:clamp(22px,4vw,28px); color:var(--text); margin-bottom:16px; line-height:1.2; }
-.interp-body { font-weight:300; font-size:14px; line-height:1.85; color:rgba(232,224,213,.68); }
+.interp-body { font-weight:300; font-size:14px; line-height:1.85; color:rgba(232,226,213,.68); }
 .interp-body strong { color:var(--text); font-weight:500; }
 .subinterp { margin-top:22px; padding-top:18px; border-top:1px solid rgba(255,255,255,.05); }
 .subinterp .sh { font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); opacity:.75; margin-bottom:8px; }
-.subinterp .sb { font-size:13px; line-height:1.8; color:rgba(232,224,213,.6); }
+.subinterp .sb { font-size:13px; line-height:1.8; color:rgba(232,226,213,.6); }
 .keywords { display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
 .kw { padding:5px 14px; background:rgba(58,173,164,.08); border:1px solid rgba(58,173,164,.2);
   border-radius:20px; font-size:11px; letter-spacing:1.5px; color:rgba(58,173,164,.8); font-family:'Cinzel',serif; }
@@ -293,7 +293,7 @@ function calculate(){
 
   // breakdown (gold superscripts = vowels)
   const bdEl=document.getElementById("breakdown");
-  bdEl.innerHTML=bd+`<br><span style="font-size:13px;letter-spacing:1px;color:rgba(232,224,213,.4)">ჯამი: ${sumAll} · ხმოვნები: ${sumV} · თანხმოვნები: ${sumC}</span>`;
+  bdEl.innerHTML=bd+`<br><span style="font-size:13px;letter-spacing:1px;color:rgba(232,226,213,.4)">ჯამი: ${sumAll} · ხმოვნები: ${sumV} · თანხმოვნები: ${sumC}</span>`;
   bdEl.style.display="block";
 
   // trio

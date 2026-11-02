@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --void:#0A1012;--gold:#C9954C;--gold-l:#DFBF91;--gold-d:#845D26;
-  --purple:#E4C8A1;--purple-d:#2A6359;--txt:#E4F3F1;--dim:rgba(155,168,184,0.6);
+  --void:#04030a;--gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8a6a20;
+  --purple:#a78bfa;--purple-d:#2d1f6e;--txt:#e0d8ff;--dim:rgba(155,168,184,0.6);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -24,64 +24,64 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   radial-gradient(1px 1px at 88% 44%,rgba(255,255,255,.35) 0,transparent 100%),
   radial-gradient(1px 1px at 15% 68%,rgba(255,255,255,.3) 0,transparent 100%),
   radial-gradient(1px 1px at 50% 75%,rgba(255,255,255,.4) 0,transparent 100%),
-  radial-gradient(1.5px 1.5px at 34% 51%,rgba(228,200,161,.25) 0,transparent 100%),
-  radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,149,76,.18) 0,transparent 100%);}
+  radial-gradient(1.5px 1.5px at 34% 51%,rgba(167,139,250,.25) 0,transparent 100%),
+  radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,168,76,.18) 0,transparent 100%);}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
-  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(186,131,54,.08) 0,transparent 70%),
-  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(72,168,152,.06) 0,transparent 70%),
-  radial-gradient(ellipse 400px 300px at 50% 90%,rgba(178,126,52,.05) 0,transparent 70%);}
+  radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),
+  radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%),
+  radial-gradient(ellipse 400px 300px at 50% 90%,rgba(120,50,180,.05) 0,transparent 70%);}
 .hero{position:relative;z-index:1;text-align:center;padding:56px 24px 40px;width:100%}
 .hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:12px;font-family:'Cinzel',serif}
 .hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(18px,3.5vw,38px);font-weight:400;letter-spacing:3px;line-height:1.2;
-  background:linear-gradient(160deg,#EDDBC2 0%,var(--gold) 35%,#966A2C 60%,#E4C9A4 80%,#C08B40 100%);
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,#e8d5a0 80%,#c09040 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 0 28px rgba(201,149,76,.25));}
+  filter:drop-shadow(0 0 28px rgba(201,168,76,.25));}
 .hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--dim);margin-top:10px}
 .hero-divider{display:flex;align-items:center;gap:14px;margin:24px auto 0;max-width:300px}
-.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.35),transparent)}
+.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
 .hero-gem{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.5;flex-shrink:0}
-.form-card{position:relative;z-index:1;background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.6);
+.form-card{position:relative;z-index:1;background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.6);
   border-radius:16px;padding:24px;width:100%;max-width:620px;margin:32px auto;backdrop-filter:blur(12px);
-  box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(228,200,161,.08);}
+  box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(167,139,250,.08);}
 .form-card::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(228,200,161,.4),transparent);}
+  background:linear-gradient(90deg,transparent,rgba(167,139,250,.4),transparent);}
 .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 .field{display:flex;flex-direction:column;gap:5px}
 .field.wide{grid-column:span 3}
 label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
-input{background:rgba(12,23,26,.7);border:1px solid rgba(54,126,114,.6);border-radius:8px;
+input{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:8px;
   color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;
   width:100%;transition:border-color .2s,box-shadow .2s;}
-input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(207,157,88,.15)}
+input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
 input::placeholder{color:rgba(155,168,184,.35)}
 .coords-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.coords input{background:rgba(9,17,19,.7);color:rgba(155,168,184,.6)}
+.coords input{background:rgba(6,5,18,.7);color:rgba(155,168,184,.6)}
 #city-hint{font-size:11px;color:var(--purple);margin-top:3px;min-height:15px;padding-left:2px}
-#tz-display{font-size:11px;color:var(--gold);margin-bottom:16px;background:rgba(9,17,19,.5);border-radius:6px;padding:6px 10px;border-left:2px solid rgba(201,149,76,.3)}
-.gen-btn{width:100%;background:linear-gradient(135deg,#C68C3B,#8A6128);color:#fff;
-  border:1px solid rgba(207,157,88,.4);border-radius:10px;padding:13px;font-size:13px;
+#tz-display{font-size:11px;color:var(--gold);margin-bottom:16px;background:rgba(6,5,18,.5);border-radius:6px;padding:6px 10px;border-left:2px solid rgba(201,168,76,.3)}
+.gen-btn{width:100%;background:linear-gradient(135deg,#6d28d9,#4c1d95);color:#fff;
+  border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:13px;font-size:13px;
   cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;transition:all .3s;
-  box-shadow:0 4px 20px rgba(198,140,59,.3);}
-.gen-btn:hover{background:linear-gradient(135deg,#CF9D58,#A77530);transform:translateY(-1px)}
+  box-shadow:0 4px 20px rgba(109,40,217,.3);}
+.gen-btn:hover{background:linear-gradient(135deg,#7c3aed,#5b21b6);transform:translateY(-1px)}
 .time-disabled input{opacity:.3;pointer-events:none}
 #chart-area{position:relative;z-index:1;width:100%;max-width:800px;padding:0 16px}
 svg#wheel{width:100%;height:auto;display:block;overflow:visible}
 .sec-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:var(--gold);
   text-transform:uppercase;text-align:center;margin:32px 0 16px;display:flex;align-items:center;gap:14px;}
-.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.3),transparent)}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
 .tables-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
 @media(max-width:600px){.tables-wrap{grid-template-columns:1fr}}
-.data-card{background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.5);border-radius:12px;overflow:hidden;backdrop-filter:blur(8px)}
-.data-card-title{background:rgba(228,200,161,.07);padding:10px 16px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(42,99,89,.5)}
+.data-card{background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.5);border-radius:12px;overflow:hidden;backdrop-filter:blur(8px)}
+.data-card-title{background:rgba(167,139,250,.07);padding:10px 16px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(45,31,110,.5)}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{color:rgba(155,168,184,.5);padding:7px 12px;text-align:left;font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(42,99,89,.4)}
-td{padding:6px 12px;border-bottom:1px solid rgba(16,32,37,.8);vertical-align:middle;font-size:12px}
+th{color:rgba(155,168,184,.5);padding:7px 12px;text-align:left;font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(45,31,110,.4)}
+td{padding:6px 12px;border-bottom:1px solid rgba(15,13,40,.8);vertical-align:middle;font-size:12px}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(22,52,47,.6)}
+tr:hover td{background:rgba(19,16,58,.6)}
 .retro{color:#f87171;font-size:9px;margin-left:2px}
-.house-badge{display:inline-block;background:rgba(27,63,57,.8);border:1px solid rgba(54,126,114,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
-.deg-val{font-family:'Cinzel',serif;font-size:11px;color:#CEEAE5;white-space:nowrap}
-.moon-sym{color:#CDEAE5;text-shadow:0 0 8px rgba(146,209,198,.9),0 0 16px rgba(132,203,191,.5);font-size:20px;font-family:serif}
+.house-badge{display:inline-block;background:rgba(26,21,69,.8);border:1px solid rgba(61,42,138,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
+.deg-val{font-family:'Cinzel',serif;font-size:11px;color:#c8d8f0;white-space:nowrap}
+.moon-sym{color:#b8d8ff;text-shadow:0 0 8px rgba(100,160,255,.9),0 0 16px rgba(80,130,255,.5);font-size:20px;font-family:serif}
 .p-sym{font-family:serif;font-size:18px;line-height:1;display:inline-block}
 .pct-bar{display:inline-block;width:48px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;vertical-align:middle;margin-left:5px;position:relative}
 .pct-fill{position:absolute;left:0;top:0;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--gold))}
@@ -118,8 +118,8 @@ tr:hover td{background:rgba(22,52,47,.6)}
     <div class="field"><label>წამი</label><input type="number" id="second" value="0" min="0" max="59"></div>
   </div>
   <div style="margin-bottom:12px;display:flex;align-items:center;gap:10px">
-    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:rgba(228,200,161,0.7);letter-spacing:1px;text-transform:none">
-      <input type="checkbox" id="time-unknown" onchange="toggleTimeUnknown()" style="width:16px;height:16px;accent-color:#CF9D58;cursor:pointer">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11px;color:rgba(167,139,250,0.7);letter-spacing:1px;text-transform:none">
+      <input type="checkbox" id="time-unknown" onchange="toggleTimeUnknown()" style="width:16px;height:16px;accent-color:#7c3aed;cursor:pointer">
       დრო უცნობია (time unknown)
     </label>
   </div>
@@ -138,11 +138,11 @@ tr:hover td{background:rgba(22,52,47,.6)}
 </div>
 
 <div id="chart-area" style="display:none">
-  <div id="lunar-badge" style="display:none;text-align:center;margin-bottom:12px;padding:10px 20px;background:rgba(9,17,19,.8);border:1px solid rgba(87,183,167,.4);border-radius:12px;backdrop-filter:blur(8px)">
+  <div id="lunar-badge" style="display:none;text-align:center;margin-bottom:12px;padding:10px 20px;background:rgba(8,6,22,.8);border:1px solid rgba(100,70,200,.4);border-radius:12px;backdrop-filter:blur(8px)">
     <span style="font-size:20px;margin-right:8px">🌙</span>
-    <span id="lunar-day" style="font-family:'Cinzel',serif;font-size:13px;color:#CEEAE5;font-weight:600"></span>
-    <span style="color:rgba(217,178,123,.5);margin:0 6px">·</span>
-    <span id="lunar-pct" style="font-size:11px;color:rgba(231,207,174,.65)"></span>
+    <span id="lunar-day" style="font-family:'Cinzel',serif;font-size:13px;color:#c8d8f0;font-weight:600"></span>
+    <span style="color:rgba(150,120,220,.5);margin:0 6px">·</span>
+    <span id="lunar-pct" style="font-size:11px;color:rgba(180,150,255,.65)"></span>
   </div>
   <div class="sec-title">სიდერული ბორბალი · 13 კონსტელაცია</div>
   <svg id="wheel" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -610,7 +610,7 @@ function drawHouseTable(data){
     const ang=ANG[i];
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td style="color:${ang?'#D9B37D':'rgba(231,207,174,.7)'};font-family:'Cinzel',serif;font-size:11px;font-weight:${ang?600:400}">${ROMAN[i]}${ang?` <span style="font-size:9px">${ang}</span>`:''}</td>
+      <td style="color:${ang?'#e8c06e':'rgba(180,150,255,.7)'};font-family:'Cinzel',serif;font-size:11px;font-weight:${ang?600:400}">${ROMAN[i]}${ang?` <span style="font-size:9px">${ang}</span>`:''}</td>
       <td><span style="font-size:14px;font-family:serif;color:${conColor}">${conSym}\ufe0e</span> <span style="font-size:10px;color:${conColor}">${conKa}</span></td>
       <td class="deg-val">${inCon==null?'—':`${Math.floor(inCon)}°${String(Math.floor((inCon%1)*60)).padStart(2,'0')}'`}</td>`;
     tbody.appendChild(tr);
@@ -622,7 +622,7 @@ function drawAspectTable(data){
   const tbody=document.getElementById('aspect-tbody');
   tbody.innerHTML='';
   if(!data.aspects||!data.aspects.length){
-    tbody.innerHTML='<tr><td colspan="5" style="color:rgba(155,122,75,.5);text-align:center;padding:16px">ასპექტები არ მოიძებნა</td></tr>';
+    tbody.innerHTML='<tr><td colspan="5" style="color:rgba(100,80,150,.5);text-align:center;padding:16px">ასპექტები არ მოიძებნა</td></tr>';
     return;
   }
   for(const asp of data.aspects){
@@ -636,7 +636,7 @@ function drawAspectTable(data){
       <td><span style="font-size:16px;font-family:serif;color:${asp.color}">${asp.sym}</span></td>
       <td>${s2} <span style="font-size:10px;color:${i2.color}">${asp.p2}</span></td>
       <td style="color:${asp.color};font-size:10px;white-space:nowrap">${asp.type}</td>
-      <td style="color:rgba(200,158,100,.7);font-size:10px">${asp.orb}°</td>`;
+      <td style="color:rgba(140,100,200,.7);font-size:10px">${asp.orb}°</td>`;
     tbody.appendChild(tr);
   }
 }

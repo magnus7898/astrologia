@@ -6,10 +6,10 @@
 <title>სამეცნიერო თამაშები · MAGNUS</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--void:#0A1012;--surface:#0B161A;--raised:#112127;--gold:#C9954C;--gold-lt:#E4C8A2;--ink:#EFE4D4;--ink-mid:#B3A48F;--ink-dim:#6d6253;
-  --border:rgba(201,149,76,.16);--border-h:rgba(201,149,76,.45);--ok:#5fcf8a;--bad:#e2685c;--amber:#C99347;--chem:#C99347;--phys:#64BCAE;--math:#E0C094}
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c;--amber:#e0a030;--chem:#e0a030;--phys:#30b0f0;--math:#a585ef}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(100,188,174,.10),transparent 60%),var(--void);color:var(--ink);
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(48,176,240,.10),transparent 60%),var(--void);color:var(--ink);
   font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
 .page{max-width:780px;margin:0 auto;padding:28px 16px 60px}
 header{text-align:center;margin-bottom:14px;position:relative}
@@ -17,7 +17,7 @@ header{text-align:center;margin-bottom:14px;position:relative}
   border:1px solid var(--border);border-radius:3px;padding:6px 11px}
 .back:hover{opacity:1;border-color:var(--border-h)}
 h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(21px,4.4vw,34px);letter-spacing:3px;margin-top:4px;
-  background:linear-gradient(160deg,#EDDBC2,var(--gold) 40%,#966A2C 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px;margin-top:2px}
 @media(max-width:520px){.back{position:static;display:inline-block;margin-bottom:8px}}
 .tabs{display:flex;flex-direction:column;gap:6px;margin:12px 0}
@@ -38,12 +38,12 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(21px,4.
 .how b{color:var(--gold-lt);font-weight:400}
 .msg{text-align:center;font-size:13.5px;color:var(--ink-mid);min-height:22px;max-width:600px}
 .msg b{color:var(--gold-lt);font-weight:400}.ok{color:var(--ok)!important}.bad{color:var(--bad)!important}
-.btn{background:linear-gradient(135deg,#875F27,#C9954C);color:#091113;border:none;border-radius:6px;padding:10px 20px;font-family:'Cinzel',serif;
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:10px 20px;font-family:'Cinzel',serif;
   font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
 .btn:hover{filter:brightness(1.1)}.btn.ghost{background:none;color:var(--gold);border:1px solid var(--border-h);font-weight:400}
 .btn:disabled{opacity:.4;cursor:default}
 .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
-canvas{display:block;width:100%;border-radius:8px;background:#091113;border:1px solid var(--border)}
+canvas{display:block;width:100%;border-radius:8px;background:#07060f;border:1px solid var(--border)}
 /* element guess */
 .clues{width:min(100%,520px);display:flex;flex-direction:column;gap:6px}
 .clue{display:flex;justify-content:space-between;gap:10px;background:var(--raised);border:1px solid var(--border);border-radius:7px;padding:7px 12px;font-size:13px;
@@ -81,13 +81,13 @@ canvas{display:block;width:100%;border-radius:8px;background:#091113;border:1px 
 .ctl output{font-family:'Cinzel',serif;color:var(--gold-lt);min-width:70px;text-align:right}
 /* 24 */
 .cards24{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:min(100%,420px)}
-.c24{aspect-ratio:.75;border-radius:10px;background:linear-gradient(160deg,#17332E,#0F1D21);border:1px solid var(--border-h);color:var(--gold-lt);
+.c24{aspect-ratio:.75;border-radius:10px;background:linear-gradient(160deg,#1d1733,#120e22);border:1px solid var(--border-h);color:var(--gold-lt);
   font-family:'Cinzel',serif;font-size:clamp(22px,6vw,34px);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,border-color .15s}
-.c24.sel{border-color:var(--math);transform:translateY(-6px);box-shadow:0 6px 18px rgba(224,192,148,.25)}
+.c24.sel{border-color:var(--math);transform:translateY(-6px);box-shadow:0 6px 18px rgba(165,133,239,.25)}
 .c24.gone{visibility:hidden}.c24.win{border-color:var(--ok);color:var(--ok)}
 .c24 small{font-size:.55em}
 .ops24{display:flex;gap:10px}.ops24 button{width:52px;height:52px;border-radius:50%;border:1px solid var(--border-h);background:var(--raised);color:var(--ink);
-  font-size:24px;cursor:pointer}.ops24 button.sel{border-color:var(--math);background:rgba(224,192,148,.18)}
+  font-size:24px;cursor:pointer}.ops24 button.sel{border-color:var(--math);background:rgba(165,133,239,.18)}
 /* primes */
 .pg{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;width:min(100%,430px)}
 .pc{aspect-ratio:1;border-radius:8px;background:var(--raised);border:1px solid var(--border);font-family:'Cinzel',serif;font-size:clamp(15px,4.4vw,21px);

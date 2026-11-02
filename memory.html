@@ -6,10 +6,10 @@
 <title>მეხსიერების ბადე · MAGNUS</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--void:#0A1012;--surface:#0B161A;--raised:#112127;--gold:#C9954C;--gold-lt:#E4C8A2;--ink:#EFE4D4;--ink-mid:#B3A48F;--ink-dim:#6d6253;
-  --border:rgba(201,149,76,.16);--border-h:rgba(201,149,76,.45);--ok:#5fcf8a;--bad:#e2685c}
+:root{--void:#05040b;--surface:#0e0b1a;--raised:#161127;--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--ink-mid:#b3a68f;--ink-dim:#6d6253;
+  --border:rgba(201,168,76,.16);--border-h:rgba(201,168,76,.45);--ok:#5fcf8a;--bad:#e2685c}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(200,146,70,.13),transparent 60%),var(--void);color:var(--ink);
+body{background:radial-gradient(ellipse 800px 500px at 50% -10%,rgba(120,70,200,.13),transparent 60%),var(--void);color:var(--ink);
   font-family:'Noto Serif Georgian',serif;min-height:100vh;line-height:1.55}
 .page{max-width:760px;margin:0 auto;padding:28px 16px 60px}
 header{text-align:center;margin-bottom:18px;position:relative}
@@ -17,14 +17,14 @@ header{text-align:center;margin-bottom:18px;position:relative}
   border:1px solid var(--border);border-radius:3px;padding:6px 11px}
 .back:hover{opacity:1;border-color:var(--border-h)}
 h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5vw,38px);letter-spacing:3px;
-  background:linear-gradient(160deg,#EDDBC2,var(--gold) 40%,#966A2C 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  background:linear-gradient(160deg,#f5e8ba,var(--gold) 40%,#9a7028 70%,var(--gold-lt));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sub{font-size:12px;color:var(--ink-dim);letter-spacing:1px;margin-top:2px}
 .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .hud div{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 6px;text-align:center}
 .hud b{display:block;font-family:'Cinzel',serif;font-size:20px;color:var(--gold-lt);font-weight:400;line-height:1.2}
 .hud span{font-size:10px;color:var(--ink-dim);letter-spacing:.5px}
 .tbar{height:5px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:12px}
-.tbar i{display:block;height:100%;background:linear-gradient(90deg,#966A2C,var(--gold-lt));width:100%;transition:width .2s linear}
+.tbar i{display:block;height:100%;background:linear-gradient(90deg,#9a7028,var(--gold-lt));width:100%;transition:width .2s linear}
 .tbar.low i{background:linear-gradient(90deg,#a03a30,var(--bad))}
 .msg{text-align:center;font-size:13.5px;color:var(--ink-mid);min-height:24px;margin-bottom:10px}
 .msg b{color:var(--gold-lt);font-weight:400}
@@ -33,12 +33,12 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
   touch-action:manipulation;user-select:none}
 .board.shake{animation:shake .35s}
 @keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-.cell{position:relative;border-radius:var(--r,8px);background:var(--raised);border:1px solid rgba(201,149,76,.10);cursor:pointer;
+.cell{position:relative;border-radius:var(--r,8px);background:var(--raised);border:1px solid rgba(201,168,76,.10);cursor:pointer;
   display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,transform .1s}
 .board.input .cell:hover{border-color:var(--border-h)}
 .board.input .cell:active{transform:scale(.94)}
 .cell .o{position:absolute;inset:14%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--fs,26px);
-  color:#091113;background:radial-gradient(circle at 35% 30%,#F6EDE1,var(--gold) 55%,#765322);box-shadow:0 0 calc(var(--fs,26px)*.7) rgba(228,200,162,.55);
+  color:#120c02;background:radial-gradient(circle at 35% 30%,#fff6d8,var(--gold) 55%,#7a5a1e);box-shadow:0 0 calc(var(--fs,26px)*.7) rgba(236,213,154,.55);
   transform:scale(0)}
 .cell.show .o{transform:scale(1);transition:transform .22s cubic-bezier(.3,1.6,.5,1)}
 .cell.hit{background:rgba(95,207,138,.16);border-color:rgba(95,207,138,.6)}
@@ -47,18 +47,18 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 .cell.miss::after{content:'✕';color:var(--bad);font-size:var(--fs,26px)}
 .cell.lost .o{transform:scale(.7);opacity:.55}
 .overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px;
-  background:rgba(9,17,19,.92);border:1px solid var(--border-h);border-radius:12px;backdrop-filter:blur(3px);z-index:3;overflow:auto;justify-content:safe center}
+  background:rgba(8,6,18,.92);border:1px solid var(--border-h);border-radius:12px;backdrop-filter:blur(3px);z-index:3;overflow:auto;justify-content:safe center}
 .overlay[hidden]{display:none}
 .overlay h2{font-family:'Cinzel',serif;font-weight:400;letter-spacing:2px;color:var(--gold-lt);font-size:20px}
 .overlay p{font-size:13px;color:var(--ink-mid);max-width:420px}
 .big{font-family:'Cinzel',serif;font-size:52px;color:var(--gold-lt);line-height:1}
-.btn{background:linear-gradient(135deg,#875F27,#C9954C);color:#091113;border:none;border-radius:6px;padding:11px 22px;font-family:'Cinzel',serif;
+.btn{background:linear-gradient(135deg,#8a6a24,#c9a84c);color:#120c02;border:none;border-radius:6px;padding:11px 22px;font-family:'Cinzel',serif;
   font-size:12.5px;letter-spacing:2px;cursor:pointer;font-weight:600}
 .btn:hover{filter:brightness(1.1)}
 .btn.ghost{background:none;color:var(--gold);border:1px solid var(--border-h);font-weight:400}
 .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .seg button{background:none;border:1px solid var(--border);color:var(--ink-mid);border-radius:14px;padding:5px 12px;font:inherit;font-size:12px;cursor:pointer}
-.seg button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,149,76,.1)}
+.seg button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;max-width:420px}
 .stats div{border:1px solid var(--border);border-radius:8px;padding:7px 4px}
 .stats b{display:block;font-family:'Cinzel',serif;font-size:18px;color:var(--gold-lt);font-weight:400}
@@ -69,7 +69,7 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 .panel p,.panel li{font-size:12.5px;color:var(--ink-mid)}
 .panel ul{padding-left:18px}
 .hist{display:flex;align-items:flex-end;gap:4px;height:90px;margin-top:6px}
-.hist i{flex:1;max-width:26px;background:linear-gradient(0deg,#765322,var(--gold));border-radius:3px 3px 0 0;position:relative;min-height:3px}
+.hist i{flex:1;max-width:26px;background:linear-gradient(0deg,#7a5a1e,var(--gold));border-radius:3px 3px 0 0;position:relative;min-height:3px}
 .hist i span{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--ink-dim);font-style:normal}
 .lv{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
 .lv span{font-size:10.5px;border:1px solid var(--border);border-radius:10px;padding:1px 7px;color:var(--ink-dim)}
@@ -78,11 +78,11 @@ h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(24px,5v
 .opts label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .opts input{accent-color:var(--gold)}
 .music .mrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.music select,.music input[type=text],.opts select{background:rgba(10,19,22,.8);border:1px solid rgba(201,149,76,.25);border-radius:6px;color:var(--ink);padding:6px 9px;font:inherit;font-size:12.5px}
+.music select,.music input[type=text],.opts select{background:rgba(10,8,24,.8);border:1px solid rgba(201,168,76,.25);border-radius:6px;color:var(--ink);padding:6px 9px;font:inherit;font-size:12.5px}
 .music select{flex:1 1 220px;min-width:0}.music input[type=text]{flex:1 1 220px;min-width:0}
 .music input[type=range]{accent-color:var(--gold);width:110px}
 .mb{background:none;border:1px solid var(--border-h);color:var(--gold-lt);border-radius:6px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px}
-.mb:hover{background:rgba(201,149,76,.1)}
+.mb:hover{background:rgba(201,168,76,.1)}
 .mauto{font-size:12px;color:var(--ink-mid);display:flex;gap:6px;align-items:center;cursor:pointer}.mauto input{accent-color:var(--gold)}
 .mplayer{margin-top:10px;width:220px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;border:1px solid var(--border);background:#000}
 .mplayer iframe{width:100%;height:100%;display:block}

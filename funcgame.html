@@ -6,22 +6,22 @@
 <title>ფუნქციების თამაში · MAGNUS</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#091113;--card:#0E1B20;--line:rgba(201,149,76,.28);--gold:#C9954C;--gold-lt:#E4C8A2;--ink:#EFE4D4;--mid:#B3A48F;--dim:#6d6253;--vi:#E0C094;--ok:#6fcf8a;--bad:#e8705a}
-*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:radial-gradient(ellipse at 50% -20%,#162A31,#091113 60%) fixed;color:var(--ink);font-family:'Noto Serif Georgian',Georgia,serif}
+:root{--bg:#07060f;--card:#120e20;--line:rgba(201,168,76,.28);--gold:#c9a84c;--gold-lt:#ecd59a;--ink:#efe6d4;--mid:#b3a68f;--dim:#6d6253;--vi:#a585ef;--ok:#6fcf8a;--bad:#e8705a}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1b1433,#07060f 60%) fixed;color:var(--ink);font-family:'Noto Serif Georgian',Georgia,serif}
 .wrap{max-width:1100px;margin:0 auto;padding:16px max(14px,env(safe-area-inset-left)) 40px;display:grid;gap:12px}
 header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
 h1{margin:0;font-family:'Cinzel','Noto Serif Georgian',serif;font-weight:600;font-size:clamp(22px,4vw,32px);color:var(--gold-lt);letter-spacing:1px}
 .back{color:var(--gold);text-decoration:none;font-size:13px}
 .modes,.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 button{font:inherit;font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:18px;padding:6px 14px;cursor:pointer}
-button:hover{border-color:var(--gold)}button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,149,76,.1)}
-button.fire{background:linear-gradient(135deg,#E4C8A2,#C9954C);color:#0B1417;border:0;font-weight:600;padding:9px 22px;font-size:16px}
+button:hover{border-color:var(--gold)}button.on{border-color:var(--gold);color:var(--gold-lt);background:rgba(201,168,76,.1)}
+button.fire{background:linear-gradient(135deg,#ecd59a,#c9a84c);color:#1a1408;border:0;font-weight:600;padding:9px 22px;font-size:16px}
 button:disabled{opacity:.45;cursor:default}
-.board{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#091215}
+.board{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#0b0816}
 canvas{display:block;width:100%;height:auto;touch-action:none}
 .hud{position:absolute;left:12px;top:10px;font-size:13px;color:var(--mid);pointer-events:none;text-shadow:0 1px 3px #000}
 .hud b{color:var(--gold-lt)}
-.msg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(9,17,19,.92);border:1px solid var(--gold);border-radius:16px;padding:18px 24px;text-align:center;min-width:260px}
+.msg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(10,7,20,.92);border:1px solid var(--gold);border-radius:16px;padding:18px 24px;text-align:center;min-width:260px}
 .msg h2{margin:0 0 6px;color:var(--gold-lt);font-weight:600}.msg .st{font-size:28px;letter-spacing:4px;color:var(--gold-lt)}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:10px}
 .fx{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center}
@@ -30,7 +30,7 @@ canvas{display:block;width:100%;height:auto;touch-action:none}
 .small{font-size:12px;color:var(--mid)}label.small{display:flex;gap:5px;align-items:center;cursor:pointer}
 .score{display:flex;flex-wrap:wrap;gap:14px;font-size:14px}.score b{color:var(--gold-lt)}
 .hint{font-size:13px;color:var(--mid);line-height:1.6}
-.names input{background:#091215;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;width:130px}
+.names input{background:#0b0816;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;width:130px}
 @media (max-width:600px){.fx{grid-template-columns:minmax(0,1fr)}.fx .lab{display:none}}
 </style>
 </head>
@@ -47,7 +47,7 @@ canvas{display:block;width:100%;height:auto;touch-action:none}
       <button id="hintB" type="button">💡 მინიშნება</button><button id="reset" type="button">⟲ თავიდან</button><button id="edit" type="button" hidden>✎ წერტილების დასმა</button><button id="ready" type="button" hidden>✓ მზადაა</button></div>
     <div class="score" id="score"></div>
     <div class="names row" id="names" hidden>მოთამაშე 1: <input id="n1" value="მოთამაშე 1"> მოთამაშე 2: <input id="n2" value="მოთამაშე 2"></div>
-    <div class="hint" id="help">შენი წერტილი (თეთრი) მრუდზე „გასრიალდება“: მრუდი ავტომატურად გადაიწევა ისე, რომ შენს წერტილზე გაიაროს (y = f(x) − f(x₀) + y₀). შეეხე ყველა <b style="color:#E4C8A2">ოქროს წერტილს</b>. ხარისხი — ↑ ან x<sup>□</sup>, ფესვი — √, წილადი — /, ინდექსი — _. Enter — გასროლა.</div>
+    <div class="hint" id="help">შენი წერტილი (თეთრი) მრუდზე „გასრიალდება“: მრუდი ავტომატურად გადაიწევა ისე, რომ შენს წერტილზე გაიაროს (y = f(x) − f(x₀) + y₀). შეეხე ყველა <b style="color:#ecd59a">ოქროს წერტილს</b>. ხარისხი — ↑ ან x<sup>□</sup>, ფესვი — √, წილადი — /, ინდექსი — _. Enter — გასროლა.</div>
   </div>
 </div>
 <script src="mathinput.js"></script>

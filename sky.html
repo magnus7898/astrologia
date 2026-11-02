@@ -8,39 +8,39 @@
 <script src="skydata.js"></script>
 <script src="constellations.js"></script>
 <style>
-:root{--bg:#0A1012;--acc:#C9954C;--acc-l:#E4C9A4;--txt:#E9DFD0;--dim:rgba(155,168,184,.65);--card:rgba(9,18,21,.78);--brd:rgba(201,149,76,.2)}
+:root{--bg:#04030a;--acc:#c9a84c;--acc-l:#e8d5a0;--txt:#e9e2d0;--dim:rgba(155,168,184,.65);--card:rgba(10,8,22,.78);--brd:rgba(201,168,76,.2)}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:radial-gradient(ellipse 700px 500px at 20% 10%,rgba(194,136,56,.10),transparent 60%),
-  radial-gradient(ellipse 600px 500px at 85% 75%,rgba(74,171,155,.07),transparent 60%),var(--bg);
+body{background:radial-gradient(ellipse 700px 500px at 20% 10%,rgba(100,50,200,.10),transparent 60%),
+  radial-gradient(ellipse 600px 500px at 85% 75%,rgba(25,155,220,.07),transparent 60%),var(--bg);
   color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding:0 0 50px}
 .wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 14px}
 .back{display:inline-block;margin-top:22px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--acc);opacity:.75;
-  text-decoration:none;border:1px solid rgba(201,149,76,.25);border-radius:3px;padding:7px 12px}
+  text-decoration:none;border:1px solid rgba(201,168,76,.25);border-radius:3px;padding:7px 12px}
 .back:hover{opacity:1}
 .hero{text-align:center;padding:18px 20px 18px}
 .hero .eye{font-family:'Cinzel',serif;font-size:9px;letter-spacing:7px;color:var(--acc);opacity:.5;margin-bottom:10px}
 .hero h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5vw,42px);letter-spacing:2px;
-  background:linear-gradient(160deg,#EDDBC2 0%,var(--acc) 35%,#966A2C 60%,var(--acc-l) 80%);
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--acc) 35%,#9a7028 60%,var(--acc-l) 80%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-family:'IM Fell English','Noto Sans Georgian',serif;font-style:italic;font-size:13px;color:var(--dim);margin-top:6px}
 .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;background:var(--card);
   border:1px solid var(--brd);border-radius:14px;padding:14px 16px;margin-bottom:12px}
 .f{display:flex;flex-direction:column;gap:4px}
 label{font-size:9px;letter-spacing:2px;color:var(--acc);opacity:.8;font-family:'Cinzel',serif}
-input,select{background:rgba(255,255,255,.04);border:1px solid rgba(201,149,76,.25);border-radius:9px;color-scheme:dark;
+input,select{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.25);border-radius:9px;color-scheme:dark;
   color:var(--txt);padding:8px 10px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif}
 input:focus,select:focus{outline:none;border-color:var(--acc)}
 .w70{width:80px}.w54{width:54px}.w130{width:140px}
-button{background:rgba(9,18,21,.7);border:1px solid rgba(201,149,76,.3);color:var(--acc-l);
+button{background:rgba(10,8,22,.7);border:1px solid rgba(201,168,76,.3);color:var(--acc-l);
   border-radius:20px;padding:8px 13px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px;transition:all .2s}
-button:hover{border-color:var(--acc);background:rgba(201,149,76,.1)}
-button.on{background:linear-gradient(135deg,var(--acc-l),var(--acc));color:#091113;font-weight:600;border-color:transparent}
+button:hover{border-color:var(--acc);background:rgba(201,168,76,.1)}
+button.on{background:linear-gradient(135deg,var(--acc-l),var(--acc));color:#160f04;font-weight:600;border-color:transparent}
 .tog{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .main{display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start}
 @media(max-width:900px){.main{grid-template-columns:1fr}}
 .skyw{position:relative}
 #sky{display:block;width:100%;height:auto;border-radius:16px;
-  box-shadow:0 0 0 1px rgba(201,149,76,.25),0 0 60px rgba(94,186,171,.12);background:#0A1012;cursor:crosshair;touch-action:none}
+  box-shadow:0 0 0 1px rgba(201,168,76,.25),0 0 60px rgba(100,80,200,.12);background:#03040a;cursor:crosshair;touch-action:none}
 .zoom{position:absolute;right:6px;bottom:6px;display:flex;flex-direction:column;gap:6px}
 .zoom button{width:38px;height:38px;padding:0;font-size:18px;border-radius:50%}
 .side{display:flex;flex-direction:column;gap:12px}
@@ -48,7 +48,7 @@ button.on{background:linear-gradient(135deg,var(--acc-l),var(--acc));color:#0911
 .card h3{font-family:'Cinzel',serif;font-weight:400;font-size:10px;letter-spacing:3px;color:var(--acc);margin-bottom:10px}
 .vis{display:grid;gap:4px;font-size:12.5px}
 .vis div{display:grid;grid-template-columns:22px 1fr auto;gap:6px;align-items:center;padding:4px 6px;border-radius:7px;cursor:pointer}
-.vis div:hover{background:rgba(201,149,76,.08)}
+.vis div:hover{background:rgba(201,168,76,.08)}
 .vis div.dn{opacity:.4}
 .vis i{font-style:normal;font-family:serif;font-size:15px;text-align:center}
 .vis small{color:var(--dim);font-size:11px;white-space:nowrap}

@@ -7,12 +7,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --void:#0A1012;--deep:#0A1417;--surface:rgba(17,33,38,0.85);
-  --gold:#C9954C;--gold-l:#DFBF91;--gold-d:#845D26;
-  --purple:#E4C8A1;--purple-d:#2A6359;
-  --txt:#E4F3F1;--dim:rgba(155,168,184,0.6);
-  --brd:rgba(42,99,89,0.8);
-  --green:#34d399;--red:#f87171;--moon-col:#CAE8E3;
+  --void:#04030a;--deep:#07071a;--surface:rgba(15,13,42,0.85);
+  --gold:#c9a84c;--gold-l:#f0d080;--gold-d:#8a6a20;
+  --purple:#a78bfa;--purple-d:#2d1f6e;
+  --txt:#e0d8ff;--dim:rgba(155,168,184,0.6);
+  --brd:rgba(45,31,110,0.8);
+  --green:#34d399;--red:#f87171;--moon-col:#c4b5fd;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -34,15 +34,15 @@ body::before{
     radial-gradient(1px 1px at 15% 68%,rgba(255,255,255,.3) 0,transparent 100%),
     radial-gradient(1px 1px at 50% 75%,rgba(255,255,255,.4) 0,transparent 100%),
     radial-gradient(1px 1px at 82% 80%,rgba(255,255,255,.35) 0,transparent 100%),
-    radial-gradient(1.5px 1.5px at 34% 51%,rgba(228,200,161,.25) 0,transparent 100%),
-    radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,149,76,.18) 0,transparent 100%);
+    radial-gradient(1.5px 1.5px at 34% 51%,rgba(167,139,250,.25) 0,transparent 100%),
+    radial-gradient(1.5px 1.5px at 66% 44%,rgba(201,168,76,.18) 0,transparent 100%);
 }
 body::after{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(ellipse 600px 400px at 20% 20%,rgba(186,131,54,.08) 0,transparent 70%),
-    radial-gradient(ellipse 500px 500px at 80% 70%,rgba(72,168,152,.06) 0,transparent 70%),
-    radial-gradient(ellipse 400px 300px at 50% 90%,rgba(178,126,52,.05) 0,transparent 70%);
+    radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),
+    radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%),
+    radial-gradient(ellipse 400px 300px at 50% 90%,rgba(120,50,180,.05) 0,transparent 70%);
 }
 
 /* ── HERO ── */
@@ -54,50 +54,50 @@ body::after{
 .hero-title{
   font-family:'Cinzel Decorative',serif;
   font-size:clamp(28px,5vw,56px);font-weight:400;letter-spacing:3px;line-height:1.2;
-  background:linear-gradient(160deg,#EDDBC2 0%,var(--gold) 35%,#966A2C 60%,#E4C9A4 80%,#C08B40 100%);
+  background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,#e8d5a0 80%,#c09040 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 0 28px rgba(201,149,76,.25));
+  filter:drop-shadow(0 0 28px rgba(201,168,76,.25));
 }
 .hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--dim);margin-top:10px}
 .hero-divider{display:flex;align-items:center;gap:14px;margin:24px auto 0;max-width:300px}
-.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.35),transparent)}
+.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
 .hero-gem{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.5;flex-shrink:0}
 
 /* ── FORM CARD ── */
 .form-card{
   position:relative;z-index:1;
-  background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.6);
+  background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.6);
   border-radius:16px;padding:24px;width:100%;max-width:620px;
   margin:32px auto;backdrop-filter:blur(12px);
-  box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(228,200,161,.08);
+  box-shadow:0 8px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(167,139,250,.08);
 }
 .form-card::before{
   content:'';position:absolute;top:0;left:20%;right:20%;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(228,200,161,.4),transparent);
+  background:linear-gradient(90deg,transparent,rgba(167,139,250,.4),transparent);
 }
 .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 .field{display:flex;flex-direction:column;gap:5px}
 .field.wide{grid-column:span 3}
 label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
 input{
-  background:rgba(12,23,26,.7);border:1px solid rgba(54,126,114,.6);
+  background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);
   border-radius:8px;color:var(--txt);padding:9px 12px;font-size:13px;
   font-family:'Noto Sans Georgian',sans-serif;
   width:100%;transition:border-color .2s,box-shadow .2s;
 }
-input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(207,157,88,.15)}
+input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
 input::placeholder{color:rgba(155,168,184,.35)}
 .coords-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.coords input{background:rgba(9,17,19,.7);color:rgba(155,168,184,.6)}
+.coords input{background:rgba(6,5,18,.7);color:rgba(155,168,184,.6)}
 #city-hint{font-size:11px;color:var(--purple);margin-top:3px;min-height:15px;padding-left:2px}
 #tz-display{
   font-size:11px;color:var(--gold);margin-bottom:16px;
-  background:rgba(9,17,19,.5);border-radius:6px;padding:6px 10px;
-  border-left:2px solid rgba(201,149,76,.3);
+  background:rgba(6,5,18,.5);border-radius:6px;padding:6px 10px;
+  border-left:2px solid rgba(201,168,76,.3);
 }
 .utc-bar{
   display:none;align-items:center;gap:8px;padding:8px 12px;
-  background:rgba(207,157,88,.08);border:1px solid rgba(207,157,88,.2);
+  background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);
   border-radius:8px;margin-bottom:14px;font-size:11px;color:var(--dim);
   flex-wrap:wrap;
 }
@@ -107,13 +107,13 @@ input::placeholder{color:rgba(155,168,184,.35)}
 .dst-on{color:var(--green);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.07)}
 .dst-off{color:var(--dim);border-color:rgba(100,100,140,.2);background:rgba(100,100,140,.05)}
 .gen-btn{
-  width:100%;background:linear-gradient(135deg,#C68C3B,#8A6128);
-  color:#fff;border:1px solid rgba(207,157,88,.4);border-radius:10px;
+  width:100%;background:linear-gradient(135deg,#6d28d9,#4c1d95);
+  color:#fff;border:1px solid rgba(124,58,237,.4);border-radius:10px;
   padding:13px;font-size:13px;cursor:pointer;letter-spacing:2px;
   font-family:'Cinzel',serif;transition:all .3s;
-  box-shadow:0 4px 20px rgba(198,140,59,.3);
+  box-shadow:0 4px 20px rgba(109,40,217,.3);
 }
-.gen-btn:hover{background:linear-gradient(135deg,#CF9D58,#A77530);box-shadow:0 6px 28px rgba(207,157,88,.4);transform:translateY(-1px)}
+.gen-btn:hover{background:linear-gradient(135deg,#7c3aed,#5b21b6);box-shadow:0 6px 28px rgba(124,58,237,.4);transform:translateY(-1px)}
 .gen-btn:disabled{opacity:.4;cursor:default;transform:none}
 
 /* ── RESULT ── */
@@ -124,19 +124,19 @@ input::placeholder{color:rgba(155,168,184,.35)}
   color:var(--gold);text-transform:uppercase;text-align:center;
   margin:28px 0 16px;display:flex;align-items:center;gap:14px;
 }
-.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.3),transparent)}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
 
 .moon-card{
-  background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.5);
+  background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.5);
   border-radius:16px;overflow:hidden;backdrop-filter:blur(8px);
   padding:28px;margin-bottom:16px;text-align:center;
 }
 .moon-emoji-big{font-size:72px;line-height:1;margin-bottom:16px;
-  filter:drop-shadow(0 0 24px rgba(202,232,227,.7));}
+  filter:drop-shadow(0 0 24px rgba(196,181,253,.7));}
 .moon-age-num{
   font-family:'Cinzel Decorative',serif;
   font-size:56px;font-weight:400;color:var(--moon-col);line-height:1;
-  text-shadow:0 0 32px rgba(202,232,227,.5);margin-bottom:6px;
+  text-shadow:0 0 32px rgba(196,181,253,.5);margin-bottom:6px;
 }
 .moon-age-unit{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--dim);font-family:'Cinzel',serif;margin-bottom:12px}
 .moon-phase-name{
@@ -146,11 +146,11 @@ input::placeholder{color:rgba(155,168,184,.35)}
 .moon-bar-wrap{max-width:340px;margin:0 auto}
 .moon-bar-labels{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;font-family:'Cinzel',serif}
 .moon-bar-bg{height:6px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden}
-.moon-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#8A6128,var(--moon-col));box-shadow:0 0 10px rgba(202,232,227,.5);transition:width 1s cubic-bezier(.4,0,.2,1)}
+.moon-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#4c1d95,var(--moon-col));box-shadow:0 0 10px rgba(196,181,253,.5);transition:width 1s cubic-bezier(.4,0,.2,1)}
 
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .stat-card{
-  background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.5);
+  background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.5);
   border-radius:12px;padding:16px;text-align:center;backdrop-filter:blur(8px);
 }
 .stat-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
@@ -158,13 +158,13 @@ input::placeholder{color:rgba(155,168,184,.35)}
 .stat-unit{font-size:10px;color:var(--dim);margin-left:2px}
 
 .lunar-day-card{
-  background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.5);
+  background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.5);
   border-radius:12px;padding:16px 20px;backdrop-filter:blur(8px);
   display:flex;align-items:center;gap:16px;
 }
 .lunar-day-num{
   font-family:'Cinzel Decorative',serif;font-size:44px;color:var(--gold);
-  line-height:1;text-shadow:0 0 20px rgba(201,149,76,.4);flex-shrink:0;
+  line-height:1;text-shadow:0 0 20px rgba(201,168,76,.4);flex-shrink:0;
 }
 .lunar-day-info{text-align:left;flex:1}
 .lunar-day-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
@@ -174,8 +174,8 @@ input::placeholder{color:rgba(155,168,184,.35)}
 
 /* ── Tithi info (you fill the text in the TITHIS table) ── */
 .tithi-info{
-  background:rgba(9,17,19,.6);border:1px solid rgba(42,99,89,.4);
-  border-left:2px solid rgba(201,149,76,.45);border-radius:10px;
+  background:rgba(8,6,20,.6);border:1px solid rgba(45,31,110,.4);
+  border-left:2px solid rgba(201,168,76,.45);border-radius:10px;
   padding:16px 18px;margin-top:14px;backdrop-filter:blur(8px);
   font-size:14px;line-height:1.85;color:var(--txt);
 }
@@ -187,16 +187,16 @@ input::placeholder{color:rgba(155,168,184,.35)}
   font-family:'Cinzel',serif;font-size:13px;letter-spacing:1px;
   color:var(--moon-col);margin-top:8px;display:flex;align-items:center;gap:6px;
 }
-.lunar-day-zet .glyph{font-size:16px;filter:drop-shadow(0 0 6px rgba(202,232,227,.5))}
+.lunar-day-zet .glyph{font-size:16px;filter:drop-shadow(0 0 6px rgba(196,181,253,.5))}
 .lunar-day-progress{height:5px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:7px}
 .lunar-day-progress-fill{height:100%;border-radius:3px;width:0;
   background:linear-gradient(90deg,var(--gold-d),var(--gold-l));
-  box-shadow:0 0 8px rgba(201,149,76,.5);transition:width 1s cubic-bezier(.4,0,.2,1)}
+  box-shadow:0 0 8px rgba(201,168,76,.5);transition:width 1s cubic-bezier(.4,0,.2,1)}
 
 .dst-note{
   font-size:11px;color:var(--dim);line-height:1.7;
-  background:rgba(9,17,19,.5);border-radius:8px;padding:12px 16px;
-  border-left:2px solid rgba(201,149,76,.2);margin-top:12px;
+  background:rgba(6,5,18,.5);border-radius:8px;padding:12px 16px;
+  border-left:2px solid rgba(201,168,76,.2);margin-top:12px;
 }
 .dst-note strong{color:var(--gold);font-weight:400}
 </style>

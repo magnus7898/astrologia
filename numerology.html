@@ -9,17 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Georgian:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#0B1518; --navy2:#132429; --panel:#173631; --panel2:#14272E;
-    --gold:#BA8336; --gold-bright:#D5AA6D; --gold-dim:#886028;
-    --ink:#E7DFD4; --ink-dim:#9a9683; --line:rgba(186,131,54,.22);
-    --friend:#5db07a; --enemy:#c65a5a; --neutral:#6FB0A5;
+    --navy:#070b1c; --navy2:#0c1330; --panel:#101a3d; --panel2:#0e1734;
+    --gold:#c9a227; --gold-bright:#e8c65a; --gold-dim:#8a7326;
+    --ink:#e7e3d4; --ink-dim:#9a9683; --line:rgba(201,162,39,.22);
+    --friend:#5db07a; --enemy:#c65a5a; --neutral:#6f7bb0;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{
     background:
-      radial-gradient(1200px 700px at 78% -8%, rgba(186,131,54,.10), transparent 55%),
-      radial-gradient(900px 600px at 8% 108%, rgba(108,192,178,.10), transparent 55%),
+      radial-gradient(1200px 700px at 78% -8%, rgba(201,162,39,.10), transparent 55%),
+      radial-gradient(900px 600px at 8% 108%, rgba(80,110,220,.10), transparent 55%),
       var(--navy);
     color:var(--ink);
     font-family:"Noto Serif Georgian",Georgia,serif;
@@ -45,7 +45,7 @@
   .tab:hover{color:var(--ink)}
   .tab[aria-selected="true"]{color:var(--gold-bright);
     border:1px solid var(--line);border-bottom-color:transparent;
-    background:linear-gradient(180deg,rgba(186,131,54,.08),transparent)}
+    background:linear-gradient(180deg,rgba(201,162,39,.08),transparent)}
   .tab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
   /* inputs */
@@ -55,11 +55,11 @@
   .field{display:flex;flex-direction:column;gap:6px}
   label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
     color:var(--gold);opacity:.8}
-  input,select{background:#0D191D;border:1px solid var(--line);color:var(--ink);
+  input,select{background:#080d22;border:1px solid var(--line);color:var(--ink);
     font-family:inherit;font-size:15px;padding:9px 12px;border-radius:2px;min-width:150px}
   input:focus,select:focus{outline:none;border-color:var(--gold)}
   button.calc{background:linear-gradient(180deg,var(--gold-bright),var(--gold));
-    color:#0A1215;border:none;font-family:inherit;font-weight:600;font-size:14px;
+    color:#1a1405;border:none;font-family:inherit;font-weight:600;font-size:14px;
     letter-spacing:.08em;padding:11px 26px;border-radius:2px;cursor:pointer;
     transition:.18s;text-transform:uppercase}
   button.calc:hover{filter:brightness(1.08)}

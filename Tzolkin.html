@@ -6,16 +6,16 @@
 <title>მაიას ცოლკინი</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#091113;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#C8A36E;--gold-dim:rgba(200,163,110,0.3);--text:#E8E0D5;--muted:rgba(232,224,213,0.42);--vio:#DDBA8A}
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(120,85,35,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(30,70,63,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,49,20,.15) 0%,transparent 55%)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
 .page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
 .page-header{text-align:center;margin-bottom:40px}
 .eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
 .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
-.page-title em{font-style:italic;color:rgba(232,224,213,.5)}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
 .ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
 .ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
 .ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
@@ -24,30 +24,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
 .h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
 .note{font-size:11.5px;color:var(--muted);line-height:1.8}
-.note b{color:rgba(200,163,110,.9);font-weight:500}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
 .in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
-.in:focus,.sel:focus{border-color:rgba(200,163,110,.4)}
-.sel option{background:#121C1F}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
 .in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
 .in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
-.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(221,186,138,.2),rgba(108,192,178,.1));border:1px solid rgba(221,186,138,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
-.btn:hover{border-color:rgba(221,186,138,.6);box-shadow:0 0 22px rgba(221,186,138,.2)}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
 .pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
 .pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
 .pill:hover{color:var(--text)}
-.pill.active{color:var(--gold);border-color:rgba(200,163,110,.5);background:rgba(200,163,110,.07)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
 .tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
 .tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
-.tbl tr.now td{background:rgba(200,163,110,.07)}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
 .scroll{overflow-x:auto}
 .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
 .kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
 .kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
-.kv .t{font-size:11.5px;color:rgba(232,224,213,.62);line-height:1.55}
-.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,224,213,.78)}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
 .txt b{color:var(--text);font-weight:500}
 .big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
 .sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
@@ -67,10 +67,10 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .seal .rl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
 .cross{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;justify-items:center;align-items:center;max-width:480px;margin:0 auto}
 .grid260{display:grid;grid-template-columns:auto repeat(13,1fr);gap:2px;font-size:9.5px;min-width:520px}
-.grid260 div{height:20px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:rgba(232,224,213,.55)}
+.grid260 div{height:20px;display:flex;align-items:center;justify-content:center;border-radius:3px;color:rgba(232,226,213,.55)}
 .grid260 .lab{justify-content:flex-end;padding-right:6px;font-size:9px;color:var(--muted);white-space:nowrap}
 .grid260 .g{background:rgba(255,255,255,.035)}
-.grid260 .gap{background:rgba(127,207,143,.16);color:rgba(232,224,213,.8)}
+.grid260 .gap{background:rgba(127,207,143,.16);color:rgba(232,226,213,.8)}
 .grid260 .me{outline:2px solid var(--gold);color:#fff;font-weight:500}
 .grid260 .pt{outline:2px solid var(--vio);color:#fff}
 .grid260 .td{box-shadow:inset 0 0 0 1px rgba(127,207,232,.9)}
@@ -289,7 +289,7 @@ function compatView(A,B){
   if(analog(s1)===s2)sc+=20;if(guide(s1,t1)===s2||guide(s2,t2)===s1)sc+=14;if(occult(s1)===s2)sc+=12;if(antipode(s1)===s2)sc-=4;
   if(s1%5===s2%5&&s1!==s2)sc+=8;if(colOf(s1)===colOf(s2))sc+=5;if(t1+t2===14)sc+=8;if(t1===t2)sc+=4;if(Math.floor((k1-1)/13)===Math.floor((k2-1)/13))sc+=6;if(s1===s2)sc+=6;
   sc=Math.max(10,Math.min(98,sc));const ck=mod(k1+k2-1,260)+1,cs=sealOf(ck),ct=toneOf(ck);
-  return `<div class="card" style="text-align:center"><div class="big" style="color:${sc>=72?'#7fcf8f':sc>=55?'#C8A36E':'#e86b6b'}">${sc}%</div><div class="sub">ბეჭდებისა და ტონების ჰარმონია</div></div>`+compat(k1,k2,A,B)+
+  return `<div class="card" style="text-align:center"><div class="big" style="color:${sc>=72?'#7fcf8f':sc>=55?'#c8a96e':'#e86b6b'}">${sc}%</div><div class="sub">ბეჭდებისა და ტონების ჰარმონია</div></div>`+compat(k1,k2,A,B)+
    `<div class="card"><div class="h">წყვილის კინის ორაკული · ${ck}</div><div class="cross">
       <div></div>${sealCard(kinST(guide(cs,ct),ct),'მეგზური',1)}<div></div>
       ${sealCard(kinST(antipode(cs),ct),'ანტიპოდი',1)}${sealCard(ck,'წყვილი',1)}${sealCard(kinST(analog(cs),ct),'ანალოგი',1)}

@@ -6,53 +6,53 @@
 <title>ვედური ასტროლოგია · ჯიოტიში</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400&display=swap" rel="stylesheet">
 <style>
-:root{--void:#0A1012;--deep:#0A1417;--gold:#C9954C;--gold-l:#DFBF91;--purple:#E4C8A1;--purple-d:#2A6359;--txt:#E4F3F1;--dim:rgba(155,168,184,0.6);--brd:rgba(42,99,89,0.8);}
+:root{--void:#04030a;--deep:#07071a;--gold:#c9a84c;--gold-l:#f0d080;--purple:#a78bfa;--purple-d:#2d1f6e;--txt:#e0d8ff;--dim:rgba(155,168,184,0.6);--brd:rgba(45,31,110,0.8);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--void);color:var(--txt);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;overflow-x:hidden;position:relative;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.55) 0,transparent 100%),radial-gradient(1px 1px at 23% 35%,rgba(255,255,255,.35) 0,transparent 100%),radial-gradient(1px 1px at 41% 8%,rgba(255,255,255,.45) 0,transparent 100%),radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1.5px 1.5px at 34% 51%,rgba(228,200,161,.25) 0,transparent 100%);}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 600px 400px at 20% 20%,rgba(186,131,54,.08) 0,transparent 70%),radial-gradient(ellipse 500px 500px at 80% 70%,rgba(72,168,152,.06) 0,transparent 70%);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(1px 1px at 8% 12%,rgba(255,255,255,.55) 0,transparent 100%),radial-gradient(1px 1px at 23% 35%,rgba(255,255,255,.35) 0,transparent 100%),radial-gradient(1px 1px at 41% 8%,rgba(255,255,255,.45) 0,transparent 100%),radial-gradient(1px 1px at 77% 13%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1.5px 1.5px at 34% 51%,rgba(167,139,250,.25) 0,transparent 100%);}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 600px 400px at 20% 20%,rgba(100,40,200,.08) 0,transparent 70%),radial-gradient(ellipse 500px 500px at 80% 70%,rgba(40,80,200,.06) 0,transparent 70%);}
 .hero{position:relative;z-index:1;text-align:center;padding:40px 24px 24px;width:100%}
 .hero-eyebrow{font-size:9px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);opacity:.5;margin-bottom:10px;font-family:'Cinzel',serif}
-.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4vw,38px);font-weight:400;letter-spacing:3px;background:linear-gradient(160deg,#EDDBC2 0%,var(--gold) 35%,#966A2C 60%,#E4C9A4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-title{font-family:'Cinzel Decorative',serif;font-size:clamp(20px,4vw,38px);font-weight:400;letter-spacing:3px;background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,#e8d5a0 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:8px}
 .hero-divider{display:flex;align-items:center;gap:14px;margin:16px auto 0;max-width:300px}
-.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.35),transparent)}
+.hero-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.35),transparent)}
 .hero-gem{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:.5;flex-shrink:0}
-.form-card{position:relative;z-index:1;background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.6);border-radius:16px;padding:24px;width:100%;max-width:620px;margin:16px auto;backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,.5);}
+.form-card{position:relative;z-index:1;background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.6);border-radius:16px;padding:24px;width:100%;max-width:620px;margin:16px auto;backdrop-filter:blur(12px);box-shadow:0 8px 40px rgba(0,0,0,.5);}
 .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
 .field{display:flex;flex-direction:column;gap:4px}
 .field.wide{grid-column:span 3}
 label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.7;font-family:'Cinzel',serif}
-input{background:rgba(12,23,26,.7);border:1px solid rgba(54,126,114,.6);border-radius:8px;color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%;transition:border-color .2s;}
+input{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:8px;color:var(--txt);padding:9px 12px;font-size:13px;font-family:'Noto Sans Georgian',sans-serif;width:100%;transition:border-color .2s;}
 input:focus{outline:none;border-color:var(--purple)}
 input::placeholder{color:rgba(155,168,184,.35)}
 #city-hint{font-size:11px;color:var(--purple);margin-top:2px;min-height:14px}
-#tz-display{font-size:11px;color:var(--gold);margin-bottom:12px;background:rgba(9,17,19,.5);border-radius:6px;padding:5px 10px;border-left:2px solid rgba(201,149,76,.3);min-height:28px;}
-.gen-btn{width:100%;background:linear-gradient(135deg,#C68C3B,#8A6128);color:#fff;border:1px solid rgba(207,157,88,.4);border-radius:10px;padding:13px;font-size:13px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;transition:all .3s;box-shadow:0 4px 20px rgba(198,140,59,.3);margin-top:8px;}
-.gen-btn:hover{background:linear-gradient(135deg,#CF9D58,#A77530);transform:translateY(-1px)}
+#tz-display{font-size:11px;color:var(--gold);margin-bottom:12px;background:rgba(6,5,18,.5);border-radius:6px;padding:5px 10px;border-left:2px solid rgba(201,168,76,.3);min-height:28px;}
+.gen-btn{width:100%;background:linear-gradient(135deg,#6d28d9,#4c1d95);color:#fff;border:1px solid rgba(124,58,237,.4);border-radius:10px;padding:13px;font-size:13px;cursor:pointer;letter-spacing:2px;font-family:'Cinzel',serif;transition:all .3s;box-shadow:0 4px 20px rgba(109,40,217,.3);margin-top:8px;}
+.gen-btn:hover{background:linear-gradient(135deg,#7c3aed,#5b21b6);transform:translateY(-1px)}
 .gen-btn:disabled{opacity:.4;cursor:wait;transform:none}
 .time-disabled input{opacity:.3;pointer-events:none}
 #chart-area{position:relative;z-index:1;width:100%;max-width:840px;padding:0 16px}
 .sec-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;text-align:center;margin:28px 0 14px;display:flex;align-items:center;gap:14px;}
-.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,149,76,.3),transparent)}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.3),transparent)}
 .tables-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
 @media(max-width:600px){.tables-wrap{grid-template-columns:1fr}}
-.data-card{background:rgba(9,17,19,.75);border:1px solid rgba(42,99,89,.5);border-radius:12px;overflow:hidden;}
-.data-card-title{background:rgba(228,200,161,.07);padding:9px 14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(42,99,89,.5);}
+.data-card{background:rgba(8,6,20,.75);border:1px solid rgba(45,31,110,.5);border-radius:12px;overflow:hidden;}
+.data-card-title{background:rgba(167,139,250,.07);padding:9px 14px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;border-bottom:1px solid rgba(45,31,110,.5);}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{color:rgba(155,168,184,.5);padding:6px 12px;text-align:left;font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(42,99,89,.4)}
-td{padding:5px 12px;border-bottom:1px solid rgba(16,32,37,.8);vertical-align:middle;font-size:12px}
+th{color:rgba(155,168,184,.5);padding:6px 12px;text-align:left;font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid rgba(45,31,110,.4)}
+td{padding:5px 12px;border-bottom:1px solid rgba(15,13,40,.8);vertical-align:middle;font-size:12px}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(22,52,47,.6)}
+tr:hover td{background:rgba(19,16,58,.6)}
 .retro{color:#f87171;font-size:9px}
-.house-badge{display:inline-block;background:rgba(27,63,57,.8);border:1px solid rgba(54,126,114,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
-.deg-val{font-family:'Cinzel',serif;font-size:11px;color:#CEEAE5;white-space:nowrap}
+.house-badge{display:inline-block;background:rgba(26,21,69,.8);border:1px solid rgba(61,42,138,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
+.deg-val{font-family:'Cinzel',serif;font-size:11px;color:#c8d8f0;white-space:nowrap}
 .nak-name{font-family:'Cinzel',serif;font-size:11px;color:var(--gold-l)}
-.pada-badge{display:inline-block;background:rgba(42,99,89,.5);border:1px solid rgba(87,183,167,.4);border-radius:10px;padding:2px 8px;font-size:9px;color:var(--purple);font-family:'Cinzel',serif;letter-spacing:1px}
+.pada-badge{display:inline-block;background:rgba(45,31,110,.5);border:1px solid rgba(100,70,200,.4);border-radius:10px;padding:2px 8px;font-size:9px;color:var(--purple);font-family:'Cinzel',serif;letter-spacing:1px}
 .pct-bar{display:inline-block;width:48px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;vertical-align:middle;margin-left:5px;position:relative}
 .pct-fill{position:absolute;left:0;top:0;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--purple),var(--gold))}
-.moon-sym{color:#CDEAE5;text-shadow:0 0 8px rgba(146,209,198,.9);font-size:20px;font-family:serif}
+.moon-sym{color:#b8d8ff;text-shadow:0 0 8px rgba(100,160,255,.9);font-size:20px;font-family:serif}
 .p-sym{font-family:serif;font-size:18px;line-height:1;display:inline-block}
 /* Varga boxes (top of the chart area) */
 .vg-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 10px;
@@ -60,26 +60,26 @@ tr:hover td{background:rgba(22,52,47,.6)}
 .vg-head b{font-weight:400;color:var(--gold-l)}
 .vg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:8px;margin-bottom:6px}
 .vg{display:flex;flex-direction:column;gap:2px;text-align:left;padding:9px 10px 8px;border-radius:9px;cursor:pointer;
-  background:rgba(9,17,19,.78);border:1px solid rgba(42,99,89,.6);color:var(--txt);font-family:inherit;min-height:74px;
+  background:rgba(8,6,20,.78);border:1px solid rgba(45,31,110,.6);color:var(--txt);font-family:inherit;min-height:74px;
   transition:border-color .2s,transform .15s,background .2s;position:relative}
 .vg:hover{border-color:var(--purple);transform:translateY(-2px)}
-.vg.active{border-color:rgba(201,149,76,.75);background:rgba(42,99,89,.45);box-shadow:0 0 0 1px rgba(201,149,76,.3)}
+.vg.active{border-color:rgba(201,168,76,.75);background:rgba(45,31,110,.45);box-shadow:0 0 0 1px rgba(201,168,76,.3)}
 .vg b{font-family:'Cinzel',serif;font-size:15px;color:var(--gold-l);font-weight:600;line-height:1.1}
 .vg .k{font-size:11px;color:var(--txt);line-height:1.3}
 .vg .m{font-size:9.5px;color:var(--dim);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .vg.minor{display:none}
 .vg-grid.all .vg.minor,.vg.minor.active{display:flex}
-.vg.minor b{font-size:13px;color:rgba(223,191,145,.75)}
+.vg.minor b{font-size:13px;color:rgba(240,208,128,.75)}
 @media(max-width:520px){.vg-grid{grid-template-columns:repeat(3,1fr);gap:6px}.vg{min-height:66px;padding:7px 7px 6px}.vg .m{display:none}}
 /* aspects */
 .af{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px 4px}
-.af button{background:rgba(12,23,26,.7);border:1px solid rgba(54,126,114,.6);border-radius:14px;color:var(--dim);font-size:11px;
+.af button{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:14px;color:var(--dim);font-size:11px;
   padding:3px 10px;cursor:pointer;font-family:inherit}
-.af button.on{color:var(--gold-l);border-color:rgba(201,149,76,.6);background:rgba(42,99,89,.35)}
+.af button.on{color:var(--gold-l);border-color:rgba(201,168,76,.6);background:rgba(45,31,110,.35)}
 .af button i{font-style:normal;font-family:serif;margin-right:3px}
 .orb-bar{display:inline-block;width:40px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;vertical-align:middle;margin-left:6px;position:relative}
 .orb-bar i{position:absolute;left:0;top:0;height:100%;border-radius:2px}
-details.orbs{margin:0 12px 10px;border:1px solid rgba(42,99,89,.6);border-radius:10px;background:rgba(9,17,19,.5)}
+details.orbs{margin:0 12px 10px;border:1px solid rgba(45,31,110,.6);border-radius:10px;background:rgba(6,5,18,.5)}
 details.orbs summary{cursor:pointer;list-style:none;padding:8px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--gold)}
 details.orbs summary::-webkit-details-marker{display:none}
 .ob-in{padding:0 12px 12px}
@@ -87,32 +87,32 @@ details.orbs summary::-webkit-details-marker{display:none}
 .ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}
 @media(max-width:600px){.ob-grid{grid-template-columns:1fr}}
 .ob-r{display:flex;align-items:center;gap:7px;font-size:11px;padding:2px 0}
-.ob-r input[type=checkbox]{width:14px;height:14px;accent-color:#CF9D58;flex:none}
+.ob-r input[type=checkbox]{width:14px;height:14px;accent-color:#7c3aed;flex:none}
 .ob-r .g{width:20px;text-align:center;font-family:serif;font-size:14px;flex:none}
 .ob-r .n{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ob-r input[type=number]{width:62px;padding:4px 6px;font-size:12px;flex:none}
 .ob-r .u{width:12px;font-size:10px;color:var(--dim)}
 .ob-r .e{width:52px;text-align:right;font-size:10px;color:var(--dim)}
 .ob-r.off .n,.ob-r.off .g{opacity:.35}
-.ob-h{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(201,149,76,.75);margin:10px 0 6px;text-transform:uppercase}
+.ob-h{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(201,168,76,.75);margin:10px 0 6px;text-transform:uppercase}
 .ob-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .ob-bar label{text-transform:none;letter-spacing:0;font-size:11px;opacity:1;color:var(--txt);display:flex;align-items:center;gap:6px;font-family:inherit}
-.ob-bar button{background:none;border:1px solid rgba(201,149,76,.4);color:var(--gold-l);border-radius:6px;padding:3px 10px;font-size:10px;cursor:pointer}
+.ob-bar button{background:none;border:1px solid rgba(201,168,76,.4);color:var(--gold-l);border-radius:6px;padding:3px 10px;font-size:10px;cursor:pointer}
 /* old varga list (unused) */
 .varga-list::-webkit-scrollbar{width:4px}
-.varga-list::-webkit-scrollbar-track{background:rgba(9,17,19,.5)}
-.varga-list::-webkit-scrollbar-thumb{background:rgba(200,144,65,.4);border-radius:2px}
-.varga-item{display:flex;align-items:center;gap:6px;padding:6px 10px;cursor:pointer;border:1px solid rgba(16,32,37,.6);transition:background .15s;}
-.varga-item:hover{background:rgba(42,99,89,.4)}
-.varga-item.active{background:rgba(198,140,59,.25);border-left:2px solid var(--purple)}
+.varga-list::-webkit-scrollbar-track{background:rgba(8,6,20,.5)}
+.varga-list::-webkit-scrollbar-thumb{background:rgba(100,65,200,.4);border-radius:2px}
+.varga-item{display:flex;align-items:center;gap:6px;padding:6px 10px;cursor:pointer;border:1px solid rgba(15,13,40,.6);transition:background .15s;}
+.varga-item:hover{background:rgba(45,31,110,.4)}
+.varga-item.active{background:rgba(109,40,217,.25);border-left:2px solid var(--purple)}
 .varga-num{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);min-width:32px;font-weight:600}
 .varga-name{font-size:11px;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .varga-meaning{font-size:9px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .main-badge{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;opacity:.7}
 /* chart view toggle */
-.vt-btn{background:rgba(12,23,26,.7);border:1px solid rgba(54,126,114,.6);border-radius:8px;color:var(--dim);padding:6px 14px;font-size:11px;font-family:'Cinzel',serif;letter-spacing:1px;cursor:pointer;transition:.2s}
+.vt-btn{background:rgba(10,8,30,.7);border:1px solid rgba(61,42,138,.6);border-radius:8px;color:var(--dim);padding:6px 14px;font-size:11px;font-family:'Cinzel',serif;letter-spacing:1px;cursor:pointer;transition:.2s}
 .vt-btn:hover{color:var(--txt);border-color:var(--purple)}
-.vt-btn.active{color:var(--gold-l);border-color:rgba(201,149,76,.6);background:rgba(42,99,89,.35)}
+.vt-btn.active{color:var(--gold-l);border-color:rgba(201,168,76,.6);background:rgba(45,31,110,.35)}
 /* fixed square chart boxes — hard width+height, no aspect-ratio tricks */
 .chart-box{display:none;width:min(540px,92vw);height:min(540px,92vw);margin:0 auto}
 .chart-box svg{width:100%;height:100%;display:block}
@@ -148,8 +148,8 @@ details.orbs summary::-webkit-details-marker{display:none}
     <div class="field"><label>წამი</label><input type="number" id="second" value="0" min="0" max="59"></div>
   </div>
   <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px">
-    <input type="checkbox" id="time-unknown" onchange="toggleTU()" style="width:15px;height:15px;accent-color:#CF9D58;cursor:pointer">
-    <label style="font-size:11px;color:rgba(228,200,161,.7);letter-spacing:1px;text-transform:none;cursor:pointer" for="time-unknown">დრო უცნობია</label>
+    <input type="checkbox" id="time-unknown" onchange="toggleTU()" style="width:15px;height:15px;accent-color:#7c3aed;cursor:pointer">
+    <label style="font-size:11px;color:rgba(167,139,250,.7);letter-spacing:1px;text-transform:none;cursor:pointer" for="time-unknown">დრო უცნობია</label>
   </div>
   <div class="field" style="margin-bottom:8px">
     <label>ქალაქი</label>
@@ -166,7 +166,7 @@ details.orbs summary::-webkit-details-marker{display:none}
 </div>
 
 <div id="chart-area" style="display:none">
-  <div id="ayanamsa-bar" style="text-align:center;font-size:11px;color:rgba(201,149,76,.5);margin-bottom:6px;font-family:'Cinzel',serif;letter-spacing:1px"></div>
+  <div id="ayanamsa-bar" style="text-align:center;font-size:11px;color:rgba(201,168,76,.5);margin-bottom:6px;font-family:'Cinzel',serif;letter-spacing:1px"></div>
   <div class="vg-head">
     <span>ვარგები · <b id="vg-count">16 მთავარი</b></span>
     <button type="button" id="vg-all" class="vt-btn">ყველა 60 ▾</button>
@@ -461,7 +461,7 @@ function renderAspFilters(){
 function renderAspRows(){
   const tb=document.getElementById('asp-tbody');if(!tb)return;tb.innerHTML='';
   const L=_aspAll.filter(a=>ASP_F==='all'||a.asp.name===ASP_F);
-  if(!L.length){tb.innerHTML='<tr><td colspan="5" style="color:rgba(155,122,75,.6);text-align:center;padding:14px">ასპექტები არ მოიძებნა</td></tr>';}
+  if(!L.length){tb.innerHTML='<tr><td colspan="5" style="color:rgba(100,80,150,.6);text-align:center;padding:14px">ასპექტები არ მოიძებნა</td></tr>';}
   const sym=n=>n==='Sun'?sunSVG(14):`<span style="color:${pinfo(n).color};font-family:${n==='Lagna'?"'Cinzel',serif":'serif'};font-size:${n==='Lagna'?10:13}px">${pinfo(n).sym}</span>`;
   L.forEach(({n1,n2,asp,orb,allow})=>{
     const st=Math.max(0,1-orb/allow);
@@ -470,7 +470,7 @@ function renderAspRows(){
       <td><span style="color:${asp.color};font-size:15px">${asp.sym}</span></td>
       <td>${sym(n2)} <span style="font-size:10px;color:${pinfo(n2).color}">${n2}</span></td>
       <td style="color:${asp.color};font-size:10px;white-space:nowrap">${asp.name} ${asp.angle}°</td>
-      <td style="color:rgba(219,182,131,.85);font-size:10px;white-space:nowrap">${fmtOrb(orb)} <span style="opacity:.5">/ ${allow.toFixed(1)}°</span><span class="orb-bar"><i style="width:${st*100}%;background:${asp.color}"></i></span></td>`;
+      <td style="color:rgba(160,130,220,.85);font-size:10px;white-space:nowrap">${fmtOrb(orb)} <span style="opacity:.5">/ ${allow.toFixed(1)}°</span><span class="orb-bar"><i style="width:${st*100}%;background:${asp.color}"></i></span></td>`;
     tb.appendChild(tr);
   });
   const title=document.getElementById('asp-title');
@@ -681,16 +681,16 @@ function drawPlanetTable(data){
 function drawHouseTable(data){
   const tb=document.getElementById('house-tbody');tb.innerHTML='';
   const lsi=data.asc_sign_idx;
-  for(let i=0;i<12;i++){const si=(lsi+i)%12;const tr=document.createElement('tr');tr.innerHTML=`<td style="font-family:'Cinzel',serif;font-size:11px;color:${i===0?'#D9B37D':'rgba(231,207,174,.7)'}">${ROMAN[i]}${i===0?' · Lg':''}</td><td><span style="font-size:14px;font-family:serif;color:${RCOL[si]}">${ZSYM[si]}</span> <span style="font-size:10px;color:${RCOL[si]}">${RASHI[si]}</span></td>`;tb.appendChild(tr);}
+  for(let i=0;i<12;i++){const si=(lsi+i)%12;const tr=document.createElement('tr');tr.innerHTML=`<td style="font-family:'Cinzel',serif;font-size:11px;color:${i===0?'#e8c06e':'rgba(180,150,255,.7)'}">${ROMAN[i]}${i===0?' · Lg':''}</td><td><span style="font-size:14px;font-family:serif;color:${RCOL[si]}">${ZSYM[si]}</span> <span style="font-size:10px;color:${RCOL[si]}">${RASHI[si]}</span></td>`;tb.appendChild(tr);}
 }
 function drawNakTable(data){
   const tb=document.getElementById('nak-tbody');tb.innerHTML='';
   [...PORDER.filter(n=>data.planets[n]),'Lagna'].forEach(name=>{
     const isL=name==='Lagna',info=isL?{sym:'Lg',color:'#e8c06e'}:PI[name];
     const nak=isL?data.lagna_nak:data.planets[name]?.nakshatra;if(!nak)return;
-    const sym=isL?`<span style="color:#D9B37D;font-family:'Cinzel',serif;font-size:10px">Lg</span>`:name==='Sun'?sunSVG(16):name==='Moon'?'<span class="moon-sym" style="font-size:16px">☽</span>':`<span style="color:${info.color};font-family:serif;font-size:15px">${info.sym}</span>`;
+    const sym=isL?`<span style="color:#e8c06e;font-family:'Cinzel',serif;font-size:10px">Lg</span>`:name==='Sun'?sunSVG(16):name==='Moon'?'<span class="moon-sym" style="font-size:16px">☽</span>':`<span style="color:${info.color};font-family:serif;font-size:15px">${info.sym}</span>`;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${sym} <span style="font-size:10px;color:${info.color}">${name}</span></td><td><div class="nak-name">${nak.nakshatra}</div><div style="font-size:9px;color:var(--dim)">${nak.deity}</div></td><td><span class="pada-badge">Pada ${nak.pada}</span><br><span style="font-size:9px;color:var(--dim)">${nak.pada_sign}</span></td><td style="font-size:11px;color:rgba(231,207,174,.8)">${nak.nakshatra_ruler}</td><td style="font-size:11px;color:rgba(231,207,174,.8)">${nak.pada_ruler}</td><td><span style="font-size:10px;color:var(--gold)">${nak.pct}%</span><span class="pct-bar"><span class="pct-fill" style="width:${nak.pct}%"></span></span></td>`;
+    tr.innerHTML=`<td>${sym} <span style="font-size:10px;color:${info.color}">${name}</span></td><td><div class="nak-name">${nak.nakshatra}</div><div style="font-size:9px;color:var(--dim)">${nak.deity}</div></td><td><span class="pada-badge">Pada ${nak.pada}</span><br><span style="font-size:9px;color:var(--dim)">${nak.pada_sign}</span></td><td style="font-size:11px;color:rgba(180,150,255,.8)">${nak.nakshatra_ruler}</td><td style="font-size:11px;color:rgba(180,150,255,.8)">${nak.pada_ruler}</td><td><span style="font-size:10px;color:var(--gold)">${nak.pct}%</span><span class="pct-bar"><span class="pct-fill" style="width:${nak.pct}%"></span></span></td>`;
     tb.appendChild(tr);
   });
 }

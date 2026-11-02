@@ -7,16 +7,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;500&family=Noto+Sans+Georgian:wght@300;400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
 <style>
-:root{--bg:#091113;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#C8A36E;--gold-dim:rgba(200,163,110,0.3);--text:#E8E0D5;--muted:rgba(232,224,213,0.42);--vio:#DDBA8A}
+:root{--bg:#06050f;--surface:rgba(255,255,255,0.035);--border:rgba(255,255,255,0.07);--gold:#c8a96e;--gold-dim:rgba(200,169,110,0.3);--text:#e8e2d5;--muted:rgba(232,226,213,0.42);--vio:#9b7fe8}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(120,85,35,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(30,70,63,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,49,20,.15) 0%,transparent 55%)}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,35,120,.28) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 85% 75%,rgba(20,55,80,.22) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 55% 45%,rgba(70,20,50,.15) 0%,transparent 55%)}
 .page{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:56px 20px 100px}
 .page-header{text-align:center;margin-bottom:40px}
 .eyebrow{font-family:'Cinzel',serif;font-size:10px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:14px;opacity:.8}
 .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(34px,7vw,54px);line-height:1.05}
-.page-title em{font-style:italic;color:rgba(232,224,213,.5)}
+.page-title em{font-style:italic;color:rgba(232,226,213,.5)}
 .ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
 .ornament-line{height:1px;width:70px;background:linear-gradient(90deg,transparent,var(--gold-dim))}
 .ornament-line.r{background:linear-gradient(90deg,var(--gold-dim),transparent)}
@@ -25,30 +25,30 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
 .h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);opacity:.88;margin-bottom:14px}
 .note{font-size:11.5px;color:var(--muted);line-height:1.8}
-.note b{color:rgba(200,163,110,.9);font-weight:500}
+.note b{color:rgba(200,169,110,.9);font-weight:500}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center}
 .in,.sel{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Noto Sans Georgian',sans-serif;font-size:13px;padding:9px 11px;outline:none}
-.in:focus,.sel:focus{border-color:rgba(200,163,110,.4)}
-.sel option{background:#121C1F}
+.in:focus,.sel:focus{border-color:rgba(200,169,110,.4)}
+.sel option{background:#14121f}
 .in.date{font-family:'Cinzel',serif;letter-spacing:2px;width:160px;text-align:center;font-size:15px}
 .in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
-.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(221,186,138,.2),rgba(108,192,178,.1));border:1px solid rgba(221,186,138,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
-.btn:hover{border-color:rgba(221,186,138,.6);box-shadow:0 0 22px rgba(221,186,138,.2)}
+.btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
+.btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
 .pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
 .pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
 .pill:hover{color:var(--text)}
-.pill.active{color:var(--gold);border-color:rgba(200,163,110,.5);background:rgba(200,163,110,.07)}
+.pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
 .tbl th{font-family:'Cinzel',serif;font-weight:400;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:7px 5px;text-align:left;border-bottom:1px solid var(--border)}
 .tbl td{padding:7px 5px;border-bottom:1px solid rgba(255,255,255,.035);vertical-align:top}
-.tbl tr.now td{background:rgba(200,163,110,.07)}
+.tbl tr.now td{background:rgba(200,169,110,.07)}
 .scroll{overflow-x:auto}
 .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .kv>div{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
 .kv .k{font-size:9.5px;letter-spacing:1.5px;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
 .kv .v{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);line-height:1.25}
-.kv .t{font-size:11.5px;color:rgba(232,224,213,.62);line-height:1.55}
-.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,224,213,.78)}
+.kv .t{font-size:11.5px;color:rgba(232,226,213,.62);line-height:1.55}
+.txt{font-size:13.5px;font-weight:300;line-height:1.85;color:rgba(232,226,213,.78)}
 .txt b{color:var(--text);font-weight:500}
 .big{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:46px;line-height:1.1;color:var(--gold);text-align:center}
 .sub{font-size:12px;color:var(--muted);text-align:center;letter-spacing:.5px}
@@ -58,17 +58,17 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 
 .pillars{display:grid;gap:10px}
 .pl{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:12px;padding:12px 6px;text-align:center;overflow:hidden}
-.pl.dm{border-color:rgba(200,163,110,.55);box-shadow:0 0 22px rgba(200,163,110,.12)}
+.pl.dm{border-color:rgba(200,169,110,.55);box-shadow:0 0 22px rgba(200,169,110,.12)}
 .pl .ph{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
-.pl .ss{font-size:10.5px;color:rgba(232,224,213,.6);min-height:16px;margin-top:6px}
+.pl .ss{font-size:10.5px;color:rgba(232,226,213,.6);min-height:16px;margin-top:6px}
 .pl .ch{font-family:'Noto Serif SC',serif;font-size:40px;line-height:1.15}
-.pl .kn{font-size:11px;color:rgba(232,224,213,.7)}
+.pl .kn{font-size:11px;color:rgba(232,226,213,.7)}
 .pl .hid{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 .pl .hid span{font-size:10px;border:1px solid var(--border);border-radius:6px;padding:2px 5px}
 .pl .ny,.pl .st{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4}
-.pl .st{color:#E7CFAD}
+.pl .st{color:#b8a4f0}
 .pl .ksh{margin-top:6px;display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
-.pl .ksh span{font-size:9px;border-radius:5px;padding:1px 4px;background:rgba(200,163,110,.12);color:#E3C79F}
+.pl .ksh span{font-size:9px;border-radius:5px;padding:1px 4px;background:rgba(200,169,110,.12);color:#e8d29a}
 .elbar{display:flex;align-items:center;gap:10px;margin:6px 0}
 .elbar .n{width:92px;font-size:12.5px}
 .elbar .b{flex:1;height:10px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden}
@@ -77,7 +77,7 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .lucks{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
 .lk{min-width:78px;border:1px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center;font-size:10.5px;color:var(--muted);cursor:pointer}
 .lk .c{font-family:'Noto Serif SC',serif;font-size:22px;line-height:1.3}
-.lk.now{border-color:rgba(200,163,110,.6);background:rgba(200,163,110,.07)}
+.lk.now{border-color:rgba(200,169,110,.6);background:rgba(200,169,110,.07)}
 .lk.sel{outline:1px solid var(--vio)}
 .form2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:center}
 .form2 label{font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:3px;font-family:'Cinzel',serif}
@@ -427,7 +427,7 @@ function viewLuck(c){
   h+=`<div class="card"><div class="h">სვეტი ${d.getStartYear()}–${d.getEndYear()} · ${GAN[g]}${ZHI[z]}</div>
     <div class="txt">ღერო <b style="color:${EL_COL[ganEl(g)]}">${GAN[g]} ${EL[ganEl(g)]}</b> — ${SHISHEN[shishen(c.dm,g)][0]}: ${SS_TXT[shishen(c.dm,g)]||''}</div>
     <div class="txt" style="margin-top:6px">შტო <b style="color:${EL_COL[ZHI_EL[z]]}">${ZHI[z]} ${ANIMAL[z]}</b> — სტადია: ${STAGE_KA[stageOf(c.dm,z)]}. ${STAGE_T[stageOf(c.dm,z)]}</div>
-    <div class="txt" style="margin-top:6px">შეფასება: <b style="color:${good===2?'#7fcf8f':good===1?'#D5AA6D':'#e86b6b'}">${good===2?'ხელსაყრელი ათწლეული':good===1?'შერეული':'გამოწვევების ათწლეული'}</b> (ხელსაყრელი ელემენტების მიხედვით).</div>
+    <div class="txt" style="margin-top:6px">შეფასება: <b style="color:${good===2?'#7fcf8f':good===1?'#e8c95a':'#e86b6b'}">${good===2?'ხელსაყრელი ათწლეული':good===1?'შერეული':'გამოწვევების ათწლეული'}</b> (ხელსაყრელი ელემენტების მიხედვით).</div>
     ${I.length?`<div class="note" style="margin-top:8px">ურთიერთქმედება ნატალურ რუკასთან:</div>`+I.map(r=>`<div class="rel"><b style="color:${RELCOL[r[0]]}">${r[2]}</b> · <span class="note">${r[1]}</span></div>`).join(''):''}</div>`;
   /* annual pillars */
   const ln=d.getLiuNian(10);
@@ -544,7 +544,7 @@ function showStats(S){
       const sel=condRow&&S.conds.some(cc=>cc.t===t[0]&&String(cc.v)===String(k));
       const v=condRow?b:c;return {o,v,b,c,sel};});
     const mx=Math.max(...rows.map(r=>r.v));
-    h+=`<div class="card"><div class="h">${t[1]}${condRow?' <span style="color:#7fcfe8">· პირობა — მთელი ნიმუში</span>':''}</div>`+rows.map(r=>`<div class="elbar"><span class="n" style="width:170px;${r.sel?'color:#7fcfe8':''}">${r.o[1]}</span><div class="b"><i style="width:${mx?r.v/mx*100:0}%;background:${condRow?(r.sel?'#7fcfe8':'rgba(232,224,213,.25)'):'var(--gold)'}"></i></div><span class="v" style="width:74px">${fp(r.v)}%${condRow?'':lift(r.c,r.b)}</span></div>`).join('')+`</div>`;}
+    h+=`<div class="card"><div class="h">${t[1]}${condRow?' <span style="color:#7fcfe8">· პირობა — მთელი ნიმუში</span>':''}</div>`+rows.map(r=>`<div class="elbar"><span class="n" style="width:170px;${r.sel?'color:#7fcfe8':''}">${r.o[1]}</span><div class="b"><i style="width:${mx?r.v/mx*100:0}%;background:${condRow?(r.sel?'#7fcfe8':'rgba(232,226,213,.25)'):'var(--gold)'}"></i></div><span class="v" style="width:74px">${fp(r.v)}%${condRow?'':lift(r.c,r.b)}</span></div>`).join('')+`</div>`;}
   const Wv=(has?S.Wc:S.Wb).map(w=>w/NN*100);
   h+=`<div class="card"><div class="h">ელემენტების საშუალო წილი</div>${Wv.map((w,i)=>`<div class="elbar"><span class="n" style="color:${EL_COL[i]}">${EL[i]}</span><div class="b"><i style="width:${w/Math.max(...Wv)*100}%;background:${EL_COL[i]}"></i></div><span class="v" style="width:74px">${w.toFixed(1)}%${lift(w,S.Wb[i]/S.n*100)}</span></div>`).join('')}</div>
    <div class="card note">სწრაფი ძრავა: დღის სვეტი — იულიუსის დღის რიცხვით, თვე/წელი — მზის გრძედით (მეუსი + ΔT), შედარებულია lunar-javascript-თან: 1–9999 წლებში თვის სვეტის დამთხვევა ≥99.7%, დანარჩენი — 100%. „აკლია“ = ელემენტის წილი &lt;4%; ძალა: სუსტი &lt;36%, ძლიერი ≥48% მხარდაჭერა.</div>`;

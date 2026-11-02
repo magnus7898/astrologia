@@ -10,9 +10,9 @@
 /* Layout: an instrument bench — tab rail across the top, each tab a two-column bench (controls left, live illustration right) that stacks on phones. Single dark navy/gold theme (MAGNUS). */
 :root{
   color-scheme: dark;
-  --bg:#0E1A1E; --panel:#162A31; --panel-2:#1D433D; --rule:rgba(210,163,98,.22); --rule-2:rgba(210,163,98,.4);
-  --fg:#ECDFCC; --muted:#9b97ab; --gold:#D2A362; --gold-hi:#E4C8A2;
-  --c1:#D3A667; --c2:#6cc4c0; --c3:#e07a8a; --c4:#A4D8CF; --c5:#9cc76b; --c6:#E6D6C0;
+  --bg:#0a0f22; --panel:#111a36; --panel-2:#16214a; --rule:rgba(214,178,94,.22); --rule-2:rgba(214,178,94,.4);
+  --fg:#ece3cc; --muted:#9b97ab; --gold:#d6b25e; --gold-hi:#f3d993;
+  --c1:#e3a857; --c2:#6cc4c0; --c3:#e07a8a; --c4:#9d8cf0; --c5:#9cc76b; --c6:#e6dcc0;
   --ok:#7cc48a; --bad:#e27a6a;
   --display:"Cinzel","Noto Serif Georgian",Georgia,serif;
   --serif:"Noto Serif Georgian",Georgia,serif;
@@ -55,7 +55,7 @@ input.err{border-color:var(--bad)}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 button{font:500 13px var(--body);color:var(--fg);background:transparent;border:1px solid var(--rule);border-radius:4px;padding:7px 12px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
 button:hover{border-color:var(--gold);color:var(--gold-hi)}
-button.primary{background:rgba(210,163,98,.14);border-color:var(--rule-2);color:var(--gold-hi)}
+button.primary{background:rgba(214,178,94,.14);border-color:var(--rule-2);color:var(--gold-hi)}
 button:focus-visible,.tab:focus-visible,input:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font:500 12.5px var(--mono);padding:5px 10px;border-radius:999px}
@@ -68,7 +68,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .kv dt{color:var(--muted);font-size:12.5px}
 .kv dd{margin:0;font:500 15px var(--mono);color:var(--fg);overflow-wrap:anywhere}
 .kv dd.big{font-size:20px;color:var(--gold-hi)}
-.steps{margin:0;padding-left:20px;display:grid;gap:4px;font:400 13px var(--mono);color:#D8CAB6}
+.steps{margin:0;padding-left:20px;display:grid;gap:4px;font:400 13px var(--mono);color:#d8cfb6}
 .steps li::marker{color:var(--gold)}
 .msg{font-size:13px;color:var(--bad);margin:0}
 .ok{color:var(--ok)} .bad{color:var(--bad)}
@@ -79,9 +79,9 @@ input[type=range]{accent-color:var(--gold);width:100%}
 table{border-collapse:collapse;font:500 13px var(--mono);width:100%}
 th,td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:center;white-space:nowrap}
 th{color:var(--muted);font:500 12px var(--body)}
-tr.sel td{background:rgba(210,163,98,.1);color:var(--gold-hi)}
+tr.sel td{background:rgba(214,178,94,.1);color:var(--gold-hi)}
 tbody tr{cursor:pointer}
-tbody tr:hover td{background:rgba(210,163,98,.06)}
+tbody tr:hover td{background:rgba(214,178,94,.06)}
 
 /* canvas */
 .cv{width:100%;display:block;border-radius:4px;background:var(--bg);border:1px solid var(--rule);touch-action:none}

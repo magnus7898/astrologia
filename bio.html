@@ -7,19 +7,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@300;400;600;700&family=IM+Fell+English:ital@0;1&family=Noto+Sans+Georgian:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0A1012;
-    --surface: rgba(9,18,21,0.78);
-    --surface2: rgba(201,149,76,0.07);
-    --border: rgba(201,149,76,0.18);
+    --bg: #04030a;
+    --surface: rgba(10,8,22,0.78);
+    --surface2: rgba(201,168,76,0.07);
+    --border: rgba(201,168,76,0.18);
     --physical: #f07a4a;
     --emotional: #f08cb8;
-    --intellectual: #9BD4CB;
+    --intellectual: #7fb2f0;
     --intuitive: #5fc8b0;
-    --text: #E9DFD0;
+    --text: #e9e2d0;
     --muted: rgba(155,168,184,0.72);
-    --accent: #C9954C;
-    --gold-l: #E4C9A4;
-    --glow-p: 0 0 18px rgba(201,149,76,0.3);
+    --accent: #c9a84c;
+    --gold-l: #e8d5a0;
+    --glow-p: 0 0 18px rgba(201,168,76,0.3);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,8 +38,8 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(ellipse 700px 500px at 20% 15%, rgba(194,136,56,0.10), transparent 60%),
-      radial-gradient(ellipse 600px 500px at 82% 70%, rgba(74,171,155,0.07), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 20% 15%, rgba(100,50,200,0.10), transparent 60%),
+      radial-gradient(ellipse 600px 500px at 82% 70%, rgba(25,155,220,0.07), transparent 60%),
       radial-gradient(ellipse 500px 400px at 50% 95%, rgba(200,55,130,0.06), transparent 60%);
     pointer-events: none;
     z-index: 0;
@@ -65,7 +65,7 @@
   }
 
   .back { display:inline-block; margin-top:22px; font-family:'Cinzel',serif; font-size:10px; letter-spacing:2px; color:var(--accent);
-    opacity:.75; text-decoration:none; border:1px solid rgba(201,149,76,.25); border-radius:3px; padding:7px 12px; }
+    opacity:.75; text-decoration:none; border:1px solid rgba(201,168,76,.25); border-radius:3px; padding:7px 12px; }
   .back:hover { opacity:1; }
   .container {
     max-width: 1200px;
@@ -99,7 +99,7 @@
     font-weight: 400;
     letter-spacing: 2px;
     line-height: 1.2;
-    background: linear-gradient(160deg, #EDDBC2 0%, var(--accent) 35%, #966A2C 60%, var(--gold-l) 80%);
+    background: linear-gradient(160deg, #f5e8ba 0%, var(--accent) 35%, #9a7028 60%, var(--gold-l) 80%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -192,7 +192,7 @@
 
   .field input:focus, .field select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(201,149,76,0.12);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
   }
 
   .field input[type="date"] {
@@ -227,7 +227,7 @@
 
   .period-btn.active {
     background: linear-gradient(135deg, var(--gold-l), var(--accent));
-    color: #091113;
+    color: #160f04;
     font-weight: 700;
     box-shadow: var(--glow-p);
   }
@@ -241,8 +241,8 @@
   }
 
   .btn-calculate {
-    background: linear-gradient(135deg, rgba(201,149,76,0.3), rgba(95,200,176,0.16));
-    border: 1px solid rgba(201,149,76,0.5) !important;
+    background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(95,200,176,0.16));
+    border: 1px solid rgba(201,168,76,0.5) !important;
     color: var(--gold-l);
     font-family: 'Cinzel', serif;
     font-size: 12px;
@@ -260,7 +260,7 @@
 
   .btn-calculate:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 24px rgba(201,149,76,0.28);
+    box-shadow: 0 0 24px rgba(201,168,76,0.28);
   }
 
   /* ── LEGEND ── */
@@ -298,8 +298,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(201,149,76,0.1);
-    border: 1px solid rgba(201,149,76,0.3);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
     border-radius: 20px;
     padding: 4px 12px 4px 8px;
     font-family: 'Cinzel', serif;
@@ -342,7 +342,7 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(201,149,76,0.45), transparent);
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.45), transparent);
   }
 
   .chart-header {
@@ -535,7 +535,7 @@
   .tab-btn.active {
     background: var(--surface2);
     color: var(--text);
-    border-color: rgba(201,149,76,0.3);
+    border-color: rgba(201,168,76,0.3);
   }
 
   .table-wrap {
@@ -572,13 +572,13 @@
   }
 
   tbody tr {
-    border-bottom: 1px solid rgba(201,149,76,0.05);
+    border-bottom: 1px solid rgba(201,168,76,0.05);
     transition: background 0.15s;
   }
 
-  tbody tr:hover { background: rgba(201,149,76,0.03); }
+  tbody tr:hover { background: rgba(201,168,76,0.03); }
   tbody tr:last-child { border-bottom: none; }
-  tbody tr.today-row { background: rgba(201,149,76,0.06) !important; }
+  tbody tr.today-row { background: rgba(201,168,76,0.06) !important; }
 
   tbody td {
     padding: 6px 12px;
@@ -629,9 +629,9 @@
 
   .phase-high     { color: #6fd08c; border-color: rgba(111,208,140,0.3); background: rgba(111,208,140,0.07); }
   .phase-low      { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.07); }
-  .phase-critical { color: #CD9A52; border-color: rgba(205,154,82,0.3);  background: rgba(205,154,82,0.07); }
-  .phase-rising   { color: #8CCEC3; border-color: rgba(140,206,195,0.3);  background: rgba(140,206,195,0.07); }
-  .phase-falling  { color: #E3C69D; border-color: rgba(227,198,157,0.3); background: rgba(227,198,157,0.07); }
+  .phase-critical { color: #fbbf24; border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.07); }
+  .phase-rising   { color: #60a5fa; border-color: rgba(96,165,250,0.3);  background: rgba(96,165,250,0.07); }
+  .phase-falling  { color: #c084fc; border-color: rgba(192,132,252,0.3); background: rgba(192,132,252,0.07); }
 
   .no-data {
     text-align: center;
