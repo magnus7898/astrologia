@@ -2833,9 +2833,9 @@ function drawWheel(data1,data2,dualAsp){
   el('circle',{cx:CX,cy:CY,r:R1+6,fill:'url(#bgG)'},svg);
 
   // zodiac band
-  /* element colours of the sign segments (solid): fire #c42348 · earth #c9cba3 · air #a2d6f9 · water #004e98;
+  /* element colours of the sign segments (solid): fire #dc2f02 · earth #997f5e · air #778da9 · water #1982c4;
      sign dividers and band edges gold, sign glyphs black */
-  const ECOL={F:'#c42348',E:'#c9cba3',A:'#a2d6f9',W:'#004e98'},EOP={F:1,E:1,A:1,W:1},ZSTROKE='#c9a24c';
+  const ECOL={F:'#dc2f02',E:'#997f5e',A:'#778da9',W:'#1982c4'},EOP={F:1,E:1,A:1,W:1},ZSTROKE='#c9a24c';
   const EFILL=ZELEMENT.map(e=>ECOL[e]),EFOP=ZELEMENT.map(e=>EOP[e]);
   for(let i=0;i<12;i++){
     const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};

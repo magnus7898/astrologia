@@ -24,30 +24,39 @@ const PER={mercury:0.2408,venus:0.6152,earth:1,mars:1.8809,jupiter:11.862,saturn
 const SYN={mercury:0.317,venus:1.599,mars:2.135,jupiter:1.092,saturn:1.035,uranus:1.012,neptune:1.006,pluto:1.004,chiron:1.02};
 
 const CSS=`
-#form-orbits .ob-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
-#form-orbits .ob-btn{background:rgba(201,162,76,.08);border:1px solid rgba(201,162,76,.35);color:#E8C97A;border-radius:14px;padding:5px 12px;font-size:11.5px;cursor:pointer;font-family:inherit}
-#form-orbits .ob-btn.on{background:rgba(201,162,76,.25);border-color:#C9A24C;color:#F7E3A8}
+#form-orbits .ob-bar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:10px 0}
+#form-orbits .ob-btn{background:rgba(201,162,76,.1);border:1px solid rgba(201,162,76,.45);color:#F0D48A;border-radius:16px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+#form-orbits .ob-btn:hover{border-color:#F0D48A;color:#FFF0C8}
+#form-orbits .ob-btn.on{background:rgba(201,162,76,.3);border-color:#E3BE84;color:#FFF3D0}
+#form-orbits select{background:#0e0b1e;border:1px solid rgba(201,162,76,.5);color:#F3ECDC;border-radius:10px;padding:7px 10px;font-size:13px;font-family:inherit;max-width:180px}
+#form-orbits .ob-lab{font-size:13px;color:#E8D6AE;letter-spacing:.2px}
+#form-orbits .ob-hint{flex-basis:100%;font-size:12px;color:rgba(232,220,192,.72);line-height:1.5}
+#form-orbits .ob-dance-row{padding:10px 12px;border:1px solid rgba(201,162,76,.25);border-radius:12px;background:rgba(201,162,76,.05)}
+#form-orbits .field label{font-size:12px!important;color:#E8D6AE!important}
+#form-orbits>div:first-child,#form-orbits .ob-intro{font-size:13px;line-height:1.6;color:rgba(240,232,214,.88)}
+.form-card:has(#form-orbits.active){max-width:min(1240px,calc(100vw - 32px))!important}
 #form-orbits .ob-pl{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 2px}
-#form-orbits .ob-pl button{background:rgba(255,255,255,.03);border:1px solid rgba(201,162,76,.22);color:#e8dcc0;border-radius:12px;padding:4px 10px;font-size:11.5px;cursor:pointer;font-family:inherit}
+#form-orbits .ob-pl button{background:rgba(255,255,255,.04);border:1px solid rgba(201,162,76,.32);color:#f0e6cc;border-radius:14px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit}
 #form-orbits .ob-pl button.on{border-color:#C9A24C;background:rgba(201,162,76,.22);color:#F7E3A8}
 #form-orbits .ob-date{display:grid;grid-template-columns:60px 60px 84px 54px 54px auto;gap:6px;align-items:end}
 #form-orbits .ob-date input{text-align:center}
 @media(max-width:560px){#form-orbits .ob-date{grid-template-columns:1fr 1fr 1.3fr 1fr 1fr}}
 #ob-wrap{position:relative;width:100%;margin-top:8px;border-radius:14px;overflow:hidden;border:1px solid rgba(201,162,76,.22);background:#04030b}
 #ob-cv{display:block;width:100%;touch-action:pan-y;cursor:grab}
-#ob-hud{position:absolute;left:12px;top:10px;font-family:Cinzel,serif;color:#F0D48A;font-size:15px;letter-spacing:1px;text-shadow:0 0 6px #000;pointer-events:none}
-#ob-hud small{display:block;font-family:inherit;font-size:10.5px;color:rgba(200,180,140,.8);letter-spacing:.5px}
+#ob-hud{position:absolute;left:14px;top:12px;font-family:Cinzel,serif;color:#F7DE9A;font-size:18px;letter-spacing:1px;text-shadow:0 0 6px #000;pointer-events:none}
+#ob-hud small{display:block;font-family:'Noto Sans Georgian',sans-serif;font-size:12.5px;color:rgba(240,226,196,.9);letter-spacing:.5px}
 #ob-tip{position:absolute;pointer-events:none;background:rgba(10,8,22,.92);border:1px solid rgba(201,162,76,.4);border-radius:8px;padding:6px 9px;font-size:11.5px;color:#f3ecdc;display:none;white-space:nowrap}
-#ob-legend{position:absolute;right:10px;bottom:8px;font-size:10px;color:rgba(200,180,140,.65);text-align:right;pointer-events:none;line-height:1.5}
+#ob-legend{position:absolute;right:12px;bottom:10px;font-size:12px;color:rgba(232,218,188,.8);text-shadow:0 0 4px #000;text-align:right;pointer-events:none;line-height:1.5}
 #ob-fs{position:absolute;right:10px;top:10px;z-index:3;background:rgba(10,8,22,.78);border:1px solid rgba(201,162,76,.5);color:#F0D48A;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;font-family:inherit}
 #ob-fs:hover{border-color:#F0D48A}
 #ob-wrap.ob-full{position:fixed!important;inset:0;z-index:99999;width:100vw!important;height:100vh;margin:0!important;border-radius:0!important;border:0!important}
 #ob-wrap.ob-full #ob-cv{touch-action:none}
 #ob-fsbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:10px;z-index:3;gap:6px;flex-wrap:wrap;justify-content:center;max-width:96vw}
 #ob-wrap.ob-full #ob-fsbar{display:flex}
-#ob-fsbar button,#ob-fsbar select{background:rgba(10,8,22,.82);border:1px solid rgba(201,162,76,.45);color:#E8C97A;border-radius:14px;padding:5px 11px;font-size:11.5px;cursor:pointer;font-family:inherit}
-#ob-wrap.ob-full #ob-legend{bottom:52px}
+#ob-fsbar button,#ob-fsbar select{background:rgba(10,8,22,.86);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:14px;padding:7px 13px;font-size:13px;cursor:pointer;font-family:inherit}
+#ob-wrap.ob-full #ob-legend{display:none}
 #ob-fsbar select{max-width:150px;width:auto}
+#ob-fsbar button.on{background:rgba(201,162,76,.3);border-color:#E3BE84;color:#FFF3D0}
 .ob-birth{font-size:11.5px;color:rgba(200,180,140,.85);line-height:1.7;margin-top:6px}
 .ob-birth b{color:#F0D48A;font-weight:500}`;
 
@@ -101,7 +110,7 @@ function bgLayer(){
   g.beginPath();g.arc(0,0,Rz,0,7);g.stroke();g.beginPath();g.arc(0,0,Rz-20,0,7);g.stroke();
   for(let s=0;s<12;s++){const a=(s*30-pr)*D2R;g.strokeStyle='rgba(201,162,76,.25)';g.beginPath();g.moveTo(Math.cos(a)*(Rz-20),-Math.sin(a)*(Rz-20));g.lineTo(Math.cos(a)*Rz,-Math.sin(a)*Rz);g.stroke();
     for(let d=5;d<30;d+=5){const b=(s*30+d-pr)*D2R;g.beginPath();g.moveTo(Math.cos(b)*Rz,-Math.sin(b)*Rz);g.lineTo(Math.cos(b)*(Rz-(d%10?3:5)),-Math.sin(b)*(Rz-(d%10?3:5)));g.stroke();}
-    const m=(s*30+15-pr)*D2R;g.fillStyle=ZC[s%4];g.font='14px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(ZS[s]+'︎',Math.cos(m)*(Rz-10),-Math.sin(m)*(Rz-10));}
+    const m=(s*30+15-pr)*D2R;g.fillStyle=ZC[s%4];g.font='17px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(ZS[s]+'︎',Math.cos(m)*(Rz-10),-Math.sin(m)*(Rz-10));}
   g.restore();
   /* orbits */
   if(S.view==='helio'&&S.orbits){for(const [k,,,col] of PL){if(!visible(k))continue;const pts=S.orbits[k];if(!pts||pts.length<2)continue;
@@ -156,7 +165,7 @@ function strokeHist(g,k,h,from){const n=h.t.length;if(n-from<2)return;
   g.beginPath();for(let i=from;i<n;i++){const [x,y]=toXY([h.x[i],h.y[i]]);i===from?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
   g.globalAlpha=1;g.globalCompositeOperation='source-over';}
 function drawDance(g,from){const L=S.dl||[];if(L.length<=from)return;
-  g.globalCompositeOperation='lighter';g.strokeStyle='rgba(232,201,122,.13)';g.lineWidth=0.8;g.beginPath();
+  g.globalCompositeOperation='lighter';g.strokeStyle='rgba(240,206,120,.32)';g.lineWidth=1;g.beginPath();
   for(let i=from;i<L.length;i+=4){const [x1,y1]=toXY([L[i],L[i+1]]),[x2,y2]=toXY([L[i+2],L[i+3]]);g.moveTo(x1,y1);g.lineTo(x2,y2);}
   g.stroke();g.globalCompositeOperation='source-over';}
 /* advance every trail to the current moment */
@@ -229,7 +238,9 @@ function draw(){
     g.fillStyle=gr;g.beginPath();g.arc(x,y,sz*3,0,7);g.fill();g.fillStyle=col;g.beginPath();g.arc(x,y,sz,0,7);g.fill();
     if(k==='saturn'){g.strokeStyle='#ecd99ccc';g.lineWidth=1.2;g.beginPath();g.ellipse(x,y,sz*2.1,sz*0.8,-0.4,0,7);g.stroke();}
     if(k==='earth'){const a=(X.lon('moon',S.jd)-pr)*D2R;g.fillStyle='#dfe6ff';g.beginPath();g.arc(x+Math.cos(a)*11,y-Math.sin(a)*11,1.8,0,7);g.fill();}
-    g.fillStyle='rgba(243,236,220,.92)';g.font='10.5px sans-serif';g.textAlign='left';g.textBaseline='middle';g.fillText(gl+'︎ '+name,x+sz+4,y);}
+    g.font="600 13px 'Noto Sans Georgian',sans-serif";g.textAlign='left';g.textBaseline='middle';
+    g.lineJoin='round';g.lineWidth=3.2;g.strokeStyle='rgba(4,3,11,.9)';g.strokeText(gl+'︎ '+name,x+sz+5,y);
+    g.fillStyle='#F6EFDF';g.fillText(gl+'︎ '+name,x+sz+5,y);}
   if(S.view==='geo'){const a=(X.lon('moon',S.jd)-pr)*D2R,r=24;g.fillStyle='#dfe6ff';g.beginPath();g.arc(cx+Math.cos(a)*r,cy-Math.sin(a)*r,2.4,0,7);g.fill();}
   /* geocentric longitudes now — ticks on the ring */
   for(const [k,,,col] of PL){if(k==='earth'||!visible(k))continue;const l=X.lon(k,S.jd);if(!isFinite(l))continue;const a=(l-pr)*D2R;
@@ -312,15 +323,19 @@ function inject(){
      <span style="font-size:11px;color:rgba(200,180,140,.75)">კვალი:</span>
      <button type="button" class="ob-btn on" data-tm="keep">რჩება (გეომეტრია)</button><button type="button" class="ob-btn" data-tm="fade">ქრება</button><button type="button" class="ob-btn" data-tm="off">გამორთ.</button>
      <button type="button" class="ob-btn" id="ob-clr">🧹 გასუფთავება</button>
-     <span style="width:10px"></span>
-     <button type="button" class="ob-btn" id="ob-dance">✦ ორი პლანეტის ხაზები</button>
-     <select id="ob-da" style="max-width:130px">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select>
-     <select id="ob-db" style="max-width:130px">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select>
+   </div>
+   <div class="ob-bar ob-dance-row">
+     <span class="ob-lab">🌸 მოძრაობის ხაზები მზის გარშემო:</span>
+     <select id="ob-da" title="პირველი სხეული (ჩვეულებრივ — დედამიწა)">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select>
+     <span class="ob-lab" style="margin:0 2px">+</span>
+     <select id="ob-db" title="მეორე პლანეტა">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select>
+     <button type="button" class="ob-btn" id="ob-dance">✦ ხაზების ჩართვა</button>
+     <span class="ob-hint">ორი პლანეტა ერთმანეთს ხაზით უერთდება თანაბარ დროში — მზის გარშემო მოძრაობა ქმნის ნიმუშს (დედამიწა + ვენერა = ვარდი).</span>
    </div>
    <div class="ob-pl" id="ob-pl"><button data-f="all" class="on">✦ ყველა პლანეტა</button>${PL.filter(p=>p[0]!=='earth').map(p=>`<button data-f="${p[0]}" style="color:${p[3]}">${p[2]}︎ ${p[1]}</button>`).join('')}</div>
    <div id="ob-wrap"><canvas id="ob-cv"></canvas><div id="ob-hud"></div><div id="ob-tip"></div>
      <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
-     <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
+     <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
      <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
@@ -347,10 +362,17 @@ function inject(){
   sec.querySelectorAll('[data-tm]').forEach(x=>x.onclick=()=>{const m=x.dataset.tm;S.trails=m!=='off';S.keep=m==='keep';resetTrails();
     sec.querySelectorAll('[data-tm]').forEach(y=>y.classList.toggle('on',y===x));});
   $('ob-clr').onclick=()=>{resetTrails();};
-  $('ob-dance').onclick=e=>{S.dance.on=!S.dance.on;resetTrails();S.bgKey='';e.target.classList.toggle('on',S.dance.on);
-    if(S.dance.on&&S.speed<7){S.speed=7;$('ob-speed').value='7';}};
-  $('ob-da').onchange=e=>{S.dance.a=e.target.value;resetTrails();S.bgKey='';};
-  $('ob-db').onchange=e=>{S.dance.b=e.target.value;resetTrails();S.bgKey='';};
+  const danceSync=()=>{const on=S.dance.on;$('ob-dance').classList.toggle('on',on);$('ob-dance').textContent=on?'■ ხაზების გამორთვა':'✦ ხაზების ჩართვა';
+    ['ob-da','ob-db'].forEach((id,i)=>{const v=i?S.dance.b:S.dance.a;document.querySelectorAll(`#${id},[data-fs=${i?'db':'da'}]`).forEach(x=>x.value=v);});
+    const fb=document.querySelector('[data-fs=dance]');if(fb){fb.classList.toggle('on',on);fb.textContent=on?'■ ხაზები':'🌸 ხაზები';}};
+  const danceToggle=on=>{S.dance.on=on;resetTrails();S.bgKey='';
+    if(on&&S.view!=='helio'){const h=sec.querySelector('[data-vw=helio]');if(h)h.click();}
+    if(on&&S.speed<7){S.speed=7;$('ob-speed').value='7';}danceSync();};
+  const dancePick=(i,v)=>{if(i)S.dance.b=v;else S.dance.a=v;resetTrails();S.bgKey='';danceSync();};
+  window._obDance={toggle:()=>danceToggle(!S.dance.on),pick:dancePick};
+  $('ob-dance').onclick=()=>danceToggle(!S.dance.on);
+  $('ob-da').onchange=e=>dancePick(0,e.target.value);
+  $('ob-db').onchange=e=>dancePick(1,e.target.value);
   $('ob-sl').onclick=e=>{S.sight=!S.sight;e.target.classList.toggle('on',S.sight);};
   $('ob-nd').onclick=e=>{S.nodes=!S.nodes;e.target.classList.toggle('on',S.nodes);
     if(S.nodes&&S.view!=='helio'){const h=sec.querySelector('[data-vw=helio]');if(h)h.click();}};
@@ -394,7 +416,10 @@ function inject(){
     if((document.fullscreenElement||document.webkitFullscreenElement)&&ex)try{ex.call(document);}catch(_){}setFull(false);});
   wrap.querySelector('#ob-fsbar').addEventListener('click',e=>{const k=e.target.dataset&&e.target.dataset.fs;if(!k)return;
     if(k==='play')$('ob-play').click();else if(k==='rev')$('ob-rev').click();else if(k==='now')$('ob-now').click();
-    else if(k==='view'){const o=sec.querySelector(`[data-vw]:not(.on)`);if(o)o.click();}});
+    else if(k==='view'){const o=sec.querySelector(`[data-vw]:not(.on)`);if(o)o.click();}
+    else if(k==='dance')window._obDance.toggle();});
+  wrap.querySelector('[data-fs=da]').addEventListener('change',e=>window._obDance.pick(0,e.target.value));
+  wrap.querySelector('[data-fs=db]').addEventListener('change',e=>window._obDance.pick(1,e.target.value));
   wrap.querySelector('[data-fs=speed]').addEventListener('change',e=>{$('ob-speed').value=e.target.value;S.speed=+e.target.value;});
   resize();requestAnimationFrame(frame);
 }
