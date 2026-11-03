@@ -9,7 +9,7 @@
 'use strict';
 const P=(location.pathname.split('/').pop()||'index.html').toLowerCase();
 /* key of an original button: setMode('x') / setMethod(n) / known ids / text */
-const ID_KEY={'tru-tab-btn':'trutine','dr-tab-btn':'directions','fl-tab-btn':'futurelife','dv-tab-btn':'davison','cx-tab-btn':'compat','fx-tab-btn':'formulas',
+const ID_KEY={'tru-tab-btn':'trutine','dr-tab-btn':'directions','fl-tab-btn':'futurelife','dv-tab-btn':'davison','cx-tab-btn':'compat','zc-tab-btn':'zcompat','fx-tab-btn':'formulas',
   'pp-tab-btn':'people','tr-tab-btn':'transit','hf-tab-btn':'search','st-tab-btn':'stats',
   'btn-m1':'m1','btn-m2':'m2','btn-m3':'m3','btn-mc':'mc','btn-mp':'mp','btn-ms':'ms'};
 const V='\uFE0E';
@@ -18,7 +18,7 @@ const CONF={
     ['ნატალური',['natal','trutine'],'☉'+V],
     ['ორბიტები',['orbits'],'◎'],
     ['ადამიანები',['famous','people'],'✧'],
-    ['წყვილი',['synastry','composite','davison','compat'],'⚭'+V],
+    ['წყვილი',['synastry','composite','davison','compat','zcompat'],'⚭'+V],
     ['პროგნოზი',['transit','progression','directions','solar','lunar','daily'],'⟳'],
     ['ადგილი',['relocation','astrocartography'],'⌖'],
     ['ინკარნაცია',['pastlife','futurelife','draconic'],'∞'],

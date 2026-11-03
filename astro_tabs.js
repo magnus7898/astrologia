@@ -12,7 +12,7 @@
 const $=id=>document.getElementById(id);
 const COUPLE=new Set(['synastry','composite','davison','compat']);
 const BTN_TXT={synastry:'✦ სინასტრიის გენერაცია ✦',composite:'✦ კომპოზიტის გენერაცია ✦',davison:'✦ დევისონის გენერაცია ✦',compat:'✦ თავსებადობის ანალიზი ✦'};
-const IDS={davison:'dv-tab-btn',formulas:'fx-tab-btn',compat:'cx-tab-btn'};
+const IDS={davison:'dv-tab-btn',formulas:'fx-tab-btn',compat:'cx-tab-btn',zcompat:'zc-tab-btn'};
 let lastCouple=null,natalTxt=null;
 const cm=()=>(typeof currentMode!=='undefined'?currentMode:'');
 const setCM=m=>{try{currentMode=m;}catch(e){}};
@@ -50,6 +50,30 @@ function inject(){
 .cx-gender button{font:400 11px/1 'Noto Sans Georgian',sans-serif;letter-spacing:0;text-transform:none;background:rgba(255,255,255,.03);border:1px solid rgba(201,162,76,.3);color:rgba(220,210,190,.75);border-radius:10px;padding:4px 9px;cursor:pointer}
 .cx-gender button[data-g=m].on{border-color:#7fb2f0;color:#cfe3ff;background:rgba(127,178,240,.14)}
 .cx-gender button[data-g=f].on{border-color:#f08cb8;color:#ffd6e8;background:rgba(240,140,184,.14)}`;document.head.appendChild(st);
+  }
+  /* ნიშნების შეთავსება — the former home-page box (compat.html): pick two signs and genders, no birth data */
+  if(!$('zc-tab-btn')){
+    const cx=$('cx-tab-btn');
+    const b=document.createElement('button');b.className='tab-btn';b.id='zc-tab-btn';b.type='button';b.textContent='ნიშნების შეთავსება';
+    b.setAttribute('onclick',"setMode('zcompat')");
+    if(cx)cx.after(b);else bar.appendChild(b);
+  }
+  if(!$('form-zcompat')){
+    const card=document.querySelector('.form-card');
+    const sec=document.createElement('div');sec.id='form-zcompat';sec.className='form-section';
+    sec.innerHTML='<div id="zc-pick"></div><div id="zc-res" style="margin-top:14px"></div>';
+    if(card)card.appendChild(sec);
+    const st=document.createElement('style');st.textContent=`
+.form-card:has(#form-zcompat.active){max-width:min(1100px,calc(100vw - 32px))!important}
+#zc-pick{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){#zc-pick{grid-template-columns:1fr}}
+.zc-p{border:1px solid rgba(201,162,76,.22);border-radius:10px;padding:10px 12px;background:rgba(255,255,255,.02)}
+.zc-ph{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:13px;color:#E8D6AE}
+.zc-signs{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.zc-sg{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border:1px solid rgba(201,162,76,.18);border-radius:8px;background:rgba(10,8,22,.6);cursor:pointer;color:#ddd6c6;font:400 11px/1.2 'Noto Sans Georgian',sans-serif}
+.zc-sg i{font-style:normal;font-family:serif;font-size:19px}
+.zc-sg.on{border-color:#E3BE84;background:rgba(201,162,76,.18);color:#FFF3D0}
+@media(max-width:480px){.zc-signs{grid-template-columns:repeat(4,1fr)}}`;document.head.appendChild(st);
   }
   if(!$('fx-tab-btn')){
     const b=document.createElement('button');b.className='tab-btn';b.id='fx-tab-btn';b.type='button';b.textContent='ფორმულები';
@@ -104,6 +128,20 @@ async function runDavison(){
   showSingleChart(d,`დევისონი · ${n1} & ${n2} · ${q.year}-${pad(q.month)}-${pad(q.day)} ${pad(q.hour)}:${pad(q.minute)} UTC · ${q.lat.toFixed(2)}°, ${q.lon.toFixed(2)}°`,false);
 }
 
+/* ── ნიშნების შეთავსება (sign picker) ── */
+const ZC={a:1,ga:'m',b:7,gb:'f'};let zcTT=null;
+function zcRender(){
+  const C=window._compat,host=$('zc-pick');if(!C||!host)return;
+  const pk=(k)=>{const gk='g'+k;return `<div class="zc-p"><div class="zc-ph"><b>${k==='a'?'პირველი':'მეორე'}</b><span class="cx-gender">
+      <button type="button" data-k="${gk}" data-g="m" class="${ZC[gk]==='m'?'on':''}">♂ მამაკაცი</button><button type="button" data-k="${gk}" data-g="f" class="${ZC[gk]==='f'?'on':''}">♀ ქალი</button></span></div>
+    <div class="zc-signs">${C.S.map((s,i)=>`<button type="button" class="zc-sg${ZC[k]===i?' on':''}" data-k="${k}" data-i="${i}"><i style="color:${C.ELC[C.el(i)]}">${C.G(s.g)}</i>${s.n}</button>`).join('')}</div></div>`;};
+  host.innerHTML=pk('a')+pk('b');
+  host.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{ZC[b.dataset.k]=+b.dataset.i;zcRender();});
+  host.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{ZC[b.dataset.k]=b.dataset.g;zcRender();});
+  $('zc-res').innerHTML=window._synText?window._synText.signArticleBy(ZC.a,ZC.ga,ZC.b,ZC.gb,false):'';
+  if(typeof TAROT_TEXTS==='undefined'&&!zcTT){zcTT=new Promise(ok=>{const sc=document.createElement('script');sc.src='tarot_text.js';sc.onload=sc.onerror=()=>ok();document.head.appendChild(sc);}).then(zcRender);}
+}
+
 /* ── textual compatibility ── */
 async function runCompat(){
   const p1=getPersonData('s1'),p2=getPersonData('s2');
@@ -149,6 +187,7 @@ function hook(){
       if(lastCouple&&lastCouple!==m&&coupleReady())setTimeout(()=>window.generate(),0);
       return;
     }
+    if(m==='zcompat'){const r=oS.apply(this,arguments);setCM('zcompat');markActive('zcompat');showFx(false);zcRender();return r;}
     if(m==='formulas'){oS.call(this,'natal');setCM('formulas');markActive('formulas');relabel('formulas');return;}
     showFx(false);
     const r=oS.apply(this,arguments);relabel(m);

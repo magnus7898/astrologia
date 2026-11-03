@@ -25,11 +25,10 @@ if(/^admin/.test(P))return;
 
 /* sections = the boxes of index.html (GROUPS there); first match wins for a page in several boxes */
 const SECTIONS=[
-  {key:'astrology',t:'ასტროლოგია',href:'index.html?g=astrology',pages:['astro.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','tzolkin.html','celtic.html','sky.html','mars.html']},
+  {key:'astrology',t:'ასტროლოგია',href:'index.html?g=astrology',pages:['astro.html','compat.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','tzolkin.html','celtic.html','sky.html','mars.html']},
   {key:'numerology',t:'ნუმეროლოგია',href:'index.html?g=numerology',pages:['matrix.html','pythagoras.html','name.html','tarotborth.html','kabbalah.html','numerology.html']},
   {key:'hd',t:'ადამიანის დიზაინი',href:'index.html?g=hd',pages:['hd.html','genekeys.html','iching.html','types.html']},
   {key:'life',t:'ცხოვრების რუქა',href:'life.html',parent:'stats',pages:['life.html','work.html','duty.html','energy.html','body.html']},
-  {key:'compat',t:'შეთავსება',href:'compat.html',pages:['compat.html']},
   {key:'stats',t:'სტატისტიკა',href:'stats.html',pages:['stats.html']},
   {key:'health',t:'ჯანმრთელობა',href:'index.html?g=health',pages:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','cold.html','fasting.html','rhythm.html','recover.html','bio.html']},
   {key:'science',t:'მეცნიერებები',href:'index.html?g=science',pages:['math.html','math_classic.html','phys.html','chem.html','biology.html','sciencegames.html','fourier.html','vector.html','funcgame.html']},
@@ -39,7 +38,7 @@ const SECTIONS=[
 ];
 const OWN={'account.html':'ჩემი ანგარიში','about.html':'ჩვენ შესახებ','contact.html':'კონტაქტი','privacy.html':'კონფიდენციალურობის პოლიტიკა',
   'terms.html':'წესები და პირობები','refund.html':'თანხის დაბრუნება','article.html':'სტატია','systems.html':'სისტემები'};
-const HUBS=new Set(['life.html','stats.html','games.html','compat.html']);
+const HUBS=new Set(['life.html','stats.html','games.html']);
 function sectionOf(p){
   if(p==='index.html'||OWN[p])return null;
   /* came from a section page? keep that one */

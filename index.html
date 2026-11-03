@@ -1037,6 +1037,8 @@
      A box with a single member is that tile itself — a plain link.
      label: how a member is titled INSIDE its box (optional).            */
   /* pages that live inside games.html (games is a tile in გასართობი) */
+  /* pages that now live inside another page (not as a home tile): შეთავსება → astro.html, couple group */
+  const ELSEWHERE=['compat.html'];
   const IN_GAMES=['intuition.html','memory.html','logic.html','hardest.html','sudoku.html','nonogram.html','pythagames.html'];
   const GROUPS=[
     {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · Sidereal · Chinese · Tibetan · Maya…',css:'c-astro',art:'astro.html',
@@ -1052,8 +1054,6 @@
     {key:'stats',title:'სტატისტიკა',sub:'Zodiac · Numerology · Pythagoras · Matrix · Human Design',css:'c-freq',art:'astro.html',href:'stats.html',count:7,
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27h22"/><rect x="7" y="17" width="3.5" height="10"/><rect x="14.2" y="10" width="3.5" height="17"/><rect x="21.5" y="14" width="3.5" height="13"/><path d="M6 13l7-6 6 4 7-6"/><circle cx="26" cy="5" r="1"/></svg>',
      members:['astro.html','pythagoras.html','matrix.html','hd.html'],label:{},always:true},
-    {key:'compat',title:'შეთავსება',sub:'Zodiac Compatibility',css:'c-astro',art:'compat.html',
-     members:['compat.html'],label:{}},
     {key:'health',title:'ჯანმრთელობა',sub:'Breathing · Sleep · Memory · Meditation…',css:'c-name',art:'breath.html',
      members:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','cold.html','fasting.html','rhythm.html'],label:{},always:true},
     {key:'science',title:'მეცნიერებები',sub:'მათემატიკა · ფიზიკა · ქიმია · ბიოლოგია',css:'c-astro',art:'phys.html',
@@ -1073,7 +1073,7 @@
   {const bk=document.getElementById('grp-back');if(bk)bk.href=homeHref;}
   function groupTiles(G,all){
     const pos=el=>[...grid.children].indexOf(el);
-    const taken=new Set(GROUPS.filter(x=>x.members!=='*').flatMap(x=>x.members).concat(IN_GAMES));
+    const taken=new Set(GROUPS.filter(x=>x.members!=='*').flatMap(x=>x.members).concat(IN_GAMES,ELSEWHERE));
     return (G.members==='*'
       ?all.filter(t=>!taken.has(t.getAttribute('href')))
       :G.members.map(h=>all.find(t=>t.getAttribute('href')===h)).filter(Boolean))

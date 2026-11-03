@@ -157,8 +157,13 @@ function aspText(x,n1,n2){
 /* Georgian genitive of a name: ანა → ანას, გიო → გიოს, გიორგი → გიორგის, ნიკ → ნიკის */
 function gen(n){const t=n.trim(),c=t.slice(-1);if('აეოუი'.includes(c))return t+'ს';return t+'ის';}
 function signArticle(d1,d2,ga,gb){
-  const C=window._compat;const pa=pos(d1,'Su'),pb=pos(d2,'Su');if(!C||pa==null||pb==null)return '';
-  const a=Math.floor(pa/30),b=Math.floor(pb/30),R=C.compute(a,ga,b,gb),PA=C.GEN[ga].P[a],PB=C.GEN[gb].P[b],S=C.S;
+  const pa=pos(d1,'Su'),pb=pos(d2,'Su');if(pa==null||pb==null)return '';
+  return signArticleBy(Math.floor(pa/30),ga,Math.floor(pb/30),gb,true);
+}
+/* the article for two signs (0 = ♈ … 11 = ♓) and genders 'm'/'f' — also used by the ნიშნების შეთავსება tab */
+function signArticleBy(a,ga,b,gb,fromCharts){
+  const C=window._compat;if(!C)return '';
+  const R=C.compute(a,ga,b,gb),PA=C.GEN[ga].P[a],PB=C.GEN[gb].P[b],S=C.S;
   const lab=(i,g)=>`<span style="font-family:serif;color:${C.ELC[C.el(i)]}">${C.G(S[i].g)}</span> ${S[i].n} <span style="color:${g==='m'?'#9cc4f4':'#f4a8cc'}">${C.GEN[g].w}</span>`;
   const na=S[a].n+' '+C.GEN[ga].w,nb=S[b].n+' '+C.GEN[gb].w;
   return `<div class="sx-card"><div class="sx-h">☉ მზის ნიშნების თავსებადობა</div>
@@ -172,7 +177,7 @@ function signArticle(d1,d2,ga,gb){
      <p>რას უნდა გაუფრთხილდნენ: ${S[a].n} ${C.GEN[ga].gen} მხრიდან — ${PA[3]}, ${S[b].n} ${C.GEN[gb].gen} მხრიდან — ${PB[3]}. ${R.A[2]}</p>
    </div>
    <div class="sx-tth">✦ წყვილის ტაროს ბარათი</div>${C.tarotBlock(a,ga,b,gb)}
-   <div class="sx-sub" style="margin-top:10px">მზის ნიშნების ტექსტი — როგორც გვერდზე <a href="compat.html?a=${a}&ga=${ga}&b=${b}&gb=${gb}" style="color:#E3BE84">შეთავსება</a>. ქვემოთ — სრული რუკების სინასტრია.</div></div>`;
+   ${fromCharts?'<div class="sx-sub" style="margin-top:10px">მზის ნიშნების ტექსტი (ნიშნების შეთავსება). ქვემოთ — სრული რუკების სინასტრია.</div>':''}</div>`;
 }
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function render(d1,d2,n1,n2,host,g1,g2){
@@ -232,16 +237,16 @@ const CSS=`
 .sx-desc p:first-child{text-indent:0;color:#F0D48A;font-size:15.5px}
 .sx-desc b{font-weight:600;color:#F0D48A}
 .sx-tth{font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:#C9A24C;text-align:center;margin:18px 0 12px;border-top:1px solid rgba(201,168,76,.15);padding-top:16px}
-#cx-host .tarot{display:flex;gap:18px;align-items:flex-start}
-#cx-host .tarot .tc{flex:0 0 120px}
-#cx-host .tarot .tc img{width:120px;border-radius:8px;border:1px solid rgba(201,168,76,.35);box-shadow:0 6px 24px rgba(0,0,0,.5)}
-#cx-host .tarot .tn{font-size:17px;color:#F0D48A}
-#cx-host .tarot .tn span{font-size:13px;color:#f0a080}
-#cx-host .tarot .tk{font-size:12px;color:#C9A24C;margin:4px 0 8px;opacity:.85}
-#cx-host .tarot p{font-size:14px;line-height:1.85;color:#ddd6c6}
-#cx-host .tarot .tw{font-size:11.5px;color:rgba(188,192,202,.7);margin-top:8px;line-height:1.7}
-@media(max-width:560px){#cx-host .tarot{flex-direction:column;align-items:center;text-align:center}}
+:is(#cx-host,#zc-res) .tarot{display:flex;gap:18px;align-items:flex-start}
+:is(#cx-host,#zc-res) .tarot .tc{flex:0 0 120px}
+:is(#cx-host,#zc-res) .tarot .tc img{width:120px;border-radius:8px;border:1px solid rgba(201,168,76,.35);box-shadow:0 6px 24px rgba(0,0,0,.5)}
+:is(#cx-host,#zc-res) .tarot .tn{font-size:17px;color:#F0D48A}
+:is(#cx-host,#zc-res) .tarot .tn span{font-size:13px;color:#f0a080}
+:is(#cx-host,#zc-res) .tarot .tk{font-size:12px;color:#C9A24C;margin:4px 0 8px;opacity:.85}
+:is(#cx-host,#zc-res) .tarot p{font-size:14px;line-height:1.85;color:#ddd6c6}
+:is(#cx-host,#zc-res) .tarot .tw{font-size:11.5px;color:rgba(188,192,202,.7);margin-top:8px;line-height:1.7}
+@media(max-width:560px){:is(#cx-host,#zc-res) .tarot{flex-direction:column;align-items:center;text-align:center}}
 @media(max-width:700px){.sx-cols{grid-template-columns:1fr}.sx-bar{grid-template-columns:120px 1fr 42px;font-size:12px}}`;
 const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
-window._synText={render,cross,score};
+window._synText={render,cross,score,signArticleBy};
 })();
