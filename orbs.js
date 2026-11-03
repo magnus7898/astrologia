@@ -206,7 +206,8 @@ function inject(){
     }
   });
   /* shortcut from the aspect filter bar under the chart */
-  const af=$('asp-filters');
+  /* the ⚙ shortcut in the aspect filter bar was removed; the orb panel stays below the chart */
+  const af=null;
   if(af&&!$('ob-open')){
     const b=document.createElement('button');
     b.type='button';b.id='ob-open';b.textContent='⚙ ორბისები';

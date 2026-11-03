@@ -265,6 +265,7 @@ function findBox(g){
 }
 function sideNav(){
   if(NO_TABS.has(P))return;
+  if(document.documentElement.hasAttribute('data-tabmenu'))return;   /* tabmenu.js draws a grouped menu instead */
   scanTabs();
   const vis=GROUPS.filter(g=>g.el.offsetParent!==null||g.el.classList.contains('mg-tiles'));
   const sn=document.getElementById('subnav');

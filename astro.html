@@ -2790,7 +2790,7 @@ function highlightAspects(planetName,isInner){
       inv=line.dataset.p1===planetName||line.dataset.p2===planetName;
     }
     line.style.opacity=inv?'0.95':'0.04';
-    line.style.strokeWidth=inv?'2':'0.4';
+    line.style.strokeWidth=inv?'2.2':'0.5';
   });
   document.querySelectorAll('#aspect-tbody tr').forEach(tr=>{
     tr.style.opacity=tr.textContent.includes(planetName)?'1':'0.25';
@@ -2800,8 +2800,8 @@ function highlightAspects(planetName,isInner){
 function clearHighlight(){
   const svg=document.getElementById('wheel');
   svg.querySelectorAll('.asp-line').forEach(line=>{
-    line.style.opacity='0.45';
-    line.style.strokeWidth='0.8';
+    line.style.opacity='0.95';
+    line.style.strokeWidth='1.5';
   });
   document.querySelectorAll('#aspect-tbody tr,#planet-tbody tr,#planet-b-tbody tr').forEach(tr=>{
     tr.style.opacity='1';
@@ -2833,10 +2833,12 @@ function drawWheel(data1,data2,dualAsp){
   el('circle',{cx:CX,cy:CY,r:R1+6,fill:'url(#bgG)'},svg);
 
   // zodiac band
-  const EFILL=['#1a0808','#081008','#08101a','#08101a','#1a0808','#081008','#08101a','#081018','#1a0808','#081008','#08101a','#081018'];
+  /* element colours of the sign segments: fire red · earth grey-green · air light blue-grey · water blue */
+  const ECOL={F:'#c8323f',E:'#71886c',A:'#9fb3c4',W:'#2f66b8'},EOP={F:.62,E:.6,A:.5,W:.62};
+  const EFILL=ZELEMENT.map(e=>ECOL[e]),EFOP=ZELEMENT.map(e=>EOP[e]);
   for(let i=0;i<12;i++){
     const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
-    el('path',{d:`M${p(i*30,R1)} A${R1},${R1} 0 0,0 ${p((i+1)*30,R1)} L${p((i+1)*30,R2)} A${R2},${R2} 0 0,1 ${p(i*30,R2)} Z`,fill:EFILL[i]},svg);
+    el('path',{d:`M${p(i*30,R1)} A${R1},${R1} 0 0,0 ${p((i+1)*30,R1)} L${p((i+1)*30,R2)} A${R2},${R2} 0 0,1 ${p(i*30,R2)} Z`,fill:EFILL[i],'fill-opacity':EFOP[i]},svg);
     el('path',{d:`M${p(i*30,R2)} A${R2},${R2} 0 0,0 ${p((i+1)*30,R2)}`,fill:'none',stroke:ZCOL[i],'stroke-width':2,opacity:.6},svg);
   }
   for(let i=0;i<12;i++){
@@ -2859,10 +2861,10 @@ function drawWheel(data1,data2,dualAsp){
   const R_iz_in=data2?116:0;
   if(data2){
     // inner zodiac band fills (element tinted, darker)
-    const EFILL2=['#120606','#060a06','#060a12','#060a12','#120606','#060a06','#060a12','#060810','#120606','#060a06','#060a12','#060810'];
+    const EFILL2=EFILL;
     for(let i=0;i<12;i++){
       const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
-      el('path',{d:`M${p(i*30,R_iz_out)} A${R_iz_out},${R_iz_out} 0 0,0 ${p((i+1)*30,R_iz_out)} L${p((i+1)*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,1 ${p(i*30,R_iz_in)} Z`,fill:EFILL2[i]},svg);
+      el('path',{d:`M${p(i*30,R_iz_out)} A${R_iz_out},${R_iz_out} 0 0,0 ${p((i+1)*30,R_iz_out)} L${p((i+1)*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,1 ${p(i*30,R_iz_in)} Z`,fill:EFILL2[i],'fill-opacity':EFOP[i]*.6},svg);
       // inner edge colored border
       el('path',{d:`M${p(i*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,0 ${p((i+1)*30,R_iz_in)}`,fill:'none',stroke:ZCOL[i],'stroke-width':1.2,opacity:.5},svg);
     }
@@ -2875,7 +2877,7 @@ function drawWheel(data1,data2,dualAsp){
     const Rzs2=(R_iz_out+R_iz_in)/2;
     for(let i=0;i<12;i++){
       const a=e2s(i*30+15,asc);
-      const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs2,y:CY+Math.sin(a)*Rzs2,fill:ZCOL[i],'font-size':11,'font-family':'serif','font-weight':'bold'},svg);
+      const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs2,y:CY+Math.sin(a)*Rzs2,fill:'#f6f1e7','font-size':11,'font-family':'serif','font-weight':'bold'},svg);
       zt.textContent=ZSYM[i];
     }
     // degree ticks on inner zodiac outer edge
@@ -2923,7 +2925,7 @@ function drawWheel(data1,data2,dualAsp){
   const Rzs=(R1+R2)/2;
   for(let i=0;i<12;i++){
     const a=e2s(i*30+15,asc);
-    const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs,y:CY+Math.sin(a)*Rzs,fill:ZCOL[i],'font-size':20,'font-family':'serif','font-weight':'bold'},svg);
+    const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs,y:CY+Math.sin(a)*Rzs,fill:'#f6f1e7','font-size':20,'font-family':'serif','font-weight':'bold'},svg);
     zt.textContent=ZSYM[i];
   }
 
@@ -2967,7 +2969,7 @@ function drawWheel(data1,data2,dualAsp){
     if(deg1==null||deg2==null)continue;
     const a1=e2s(deg1,asc),a2=e2s(deg2,asc);
     const pp1=pxy(a1,aspR),pp2=pxy(a2,aspR);
-    const ln=el('line',{x1:pp1.x,y1:pp1.y,x2:pp2.x,y2:pp2.y,stroke:asp.color,'stroke-width':1,opacity:.5,'class':'asp-line'},svg);
+    const ln=el('line',{x1:pp1.x,y1:pp1.y,x2:pp2.x,y2:pp2.y,stroke:asp.color,'stroke-width':1.5,opacity:.95,'stroke-linecap':'round','class':'asp-line'},svg);
     ln.dataset.p1=asp.p1;ln.dataset.p2=asp.p2;
     if(data2)ln.dataset.dual='1';
   }
@@ -3269,6 +3271,8 @@ setToday('pd');
   <script src="astro_links.js"></script>
   <script src="pointvariants.js"></script>
   <script src="chartui.js"></script>
+  <script src="formulas.js"></script>
+  <script src="astro_tabs.js"></script>
 <script>
 /* დღე · თვე · წელი · საათი · წუთი — one line in every form (tabs added later too) */
 (function(){
@@ -3303,6 +3307,7 @@ setToday('pd');
   document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('.tab-btn'))setTimeout(merge,50);});
 })();
 </script>
+<script src="tabmenu.js"></script>
 <script src="site.js"></script>
 <script src="account.js"></script>
 </body>

@@ -11,6 +11,7 @@
 const KEY='magnus_pointvariants';
 const PV={lm:true,lt:false,nm:true,nt:false,sm:true};
 try{Object.assign(PV,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
+PV.sm=true;   /* Selena is always on the wheel — no switch for it any more */
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(PV));}catch(e){}};
 const TN={lil:'ჭ. ლილიტი',nn:'ჭ. ჩრდ. კვანძი',sn:'ჭ. სამხ. კვანძი'};
 if(typeof PI!=='undefined'){PI[TN.lil]={sym:'⚸',color:'#d0508a'};PI[TN.nn]={sym:'☊',color:'#3fd08a'};PI[TN.sn]={sym:'☋',color:'#e07a7a'};}
@@ -54,7 +55,6 @@ function ui(){const host=document.getElementById('asp-filters');if(!host||docume
   row.innerHTML=`<div style="font-family:Cinzel,serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(167,139,250,.5);width:100%">ფიქტიური წერტილები — საშუალო / ჭეშმარიტი</div>
    <div style="display:flex;gap:10px;align-items:center">⚸ ${cb('lm','საშუალო ლილიტი','Mean Black Moon — მთვარის ორბიტის საშუალო აპოგეუმი (თანაბარი მოძრაობა, ~9 წლიანი ციკლი)')}${cb('lt','ჭეშმარიტი ლილიტი','True / Osculating Lilith — მთვარის ორბიტის მყისიერი (ოსკულაციური) აპოგეუმი; საშუალოს ±30°-ით შორდება')}</div>
    <div style="display:flex;gap:10px;align-items:center">☊ ${cb('nm','საშუალო კვანძები','Mean Node — თანაბრად, ყოველთვის რეტროგრადულად მოძრავი კვანძი (18,6 წლიანი ციკლი)')}${cb('nt','ჭეშმარიტი კვანძები','True Node — მთვარის ორბიტის მყისიერი კვანძი; საშუალოს ±1,7°-ით რხევა, ზოგჯერ პირდაპირი მოძრაობით')}</div>
-   <div style="display:flex;gap:10px;align-items:center">⚪ ${cb('sm','სელენა (თეთრი მთვარე)','White Moon Selena — ფიქტიური წერტილი 7 წლიანი თანაბარი ციკლით')}${cb('st','ჭეშმ. სელენა','სელენას „ჭეშმარიტი“ ვარიანტი ასტრონომიულად არ არსებობს: ის მხოლოდ საშუალო, თანაბრად მოძრავი წერტილია',true)}</div>
    <a href="article.html?s=astro&k=about:points&h=${encodeURIComponent('საშუალო და ჭეშმარიტი წერტილები')}&t=${encodeURIComponent('საშუალო და ჭეშმარიტი წერტილები')}" target="_blank" rel="noopener" style="font-size:11px;color:#c9a84c;align-self:center">ⓘ რას ნიშნავს?</a>`;
   host.appendChild(row);
   row.addEventListener('change',e=>{const t=e.target;if(!t.dataset.pv)return;PV[t.dataset.pv]=t.checked;save();

@@ -204,6 +204,6 @@ function addFilter(){
   const f=l.querySelector('input');
   f.addEventListener('change',()=>{try{applyAspFilter();}catch(e){}});
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addFilter);else addFilter();
+/* the ★ checkbox is no longer shown in the aspect filter (stars stay in their own table) */
 window._fixedStars={FS,starPos,starsFor,starRows,get showAll(){return showAll;},set showAll(v){showAll=!!v;try{localStorage.setItem(ON_KEY,showAll?'1':'0');}catch(e){}}};
 })();

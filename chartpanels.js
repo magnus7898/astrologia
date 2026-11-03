@@ -2,7 +2,7 @@
    Self-injecting add-on. In astro.html, after the other add-ons:
        <script src="chartpanels.js"></script>
    Layout (wide screens):
-     [ big three ] [ elements ] [ moon day ] [ almuten + doryphory + charioteer ]
+     [ big three ] [ elements ] [ almuten + doryphory + charioteer ] [ moon day ]
                                              (the last box: natal only)
      [ wheel ]                [ aspect filter · aspects ]
      [ orb controller ]
@@ -40,8 +40,8 @@ function css(){
 #lay-strip{grid-template-columns:1fr;align-items:stretch;margin-bottom:10px}
 @media(min-width:800px){#lay-strip{grid-template-columns:1fr 1fr}#lay-strip>#lunar-badge{grid-column:1/-1}}
 @media(min-width:1100px){#lay-strip{grid-template-columns:1fr 1fr .55fr}#lay-strip>#lunar-badge{grid-column:auto;flex-direction:column}
-  #lay-strip.nat>#nx-alm{grid-column:1/-1}}
-@media(min-width:1500px){#lay-strip.nat{grid-template-columns:1fr 1fr .62fr 1.45fr}#lay-strip.nat>#nx-alm{grid-column:auto}}
+  #lay-strip.nat{grid-template-columns:1fr 1fr}#lay-strip.nat>#nx-alm,#lay-strip.nat>#lunar-badge{grid-column:1/-1}#lay-strip.nat>#lunar-badge{flex-direction:row}}
+@media(min-width:1500px){#lay-strip.nat{grid-template-columns:1fr 1fr 1.45fr .62fr}#lay-strip.nat>#nx-alm,#lay-strip.nat>#lunar-badge{grid-column:auto}#lay-strip.nat>#lunar-badge{flex-direction:column}}
 .nx-in{display:block}
 .nx-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:4px 18px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(45,31,110,.45)}
 .nx-row .nx-sb{border-bottom:none;padding:4px 0}
@@ -149,10 +149,10 @@ function layout(){
   const cl=document.createElement('aside');cl.className='cp';cl.id='cp-left';cl.style.display='none';
   const cr=document.createElement('aside');cr.className='cp';cr.id='cp-right';cr.style.display='none';
   strip.appendChild(cr);strip.appendChild(cl);
-  const lb=$('lunar-badge');if(lb)strip.appendChild(lb);
-  /* one box: almuten figuris + doryphory & charioteer */
+  /* one box: almuten figuris + doryphory & charioteer — then the moon day */
   const xa=document.createElement('aside');xa.className='cp nx';xa.id='nx-alm';xa.style.display='none';
   strip.appendChild(xa);
+  const lb=$('lunar-badge');if(lb)strip.appendChild(lb);
   top.appendChild(ww);top.appendChild(A);
   top.parentNode.insertBefore(orb,top.nextSibling);
   const af=$('asp-filters');if(af)A.appendChild(af);
