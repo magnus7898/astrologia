@@ -10,9 +10,9 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
-const COUPLE=new Set(['synastry','composite','davison']);
-const BTN_TXT={synastry:'✦ სინასტრიის გენერაცია ✦',composite:'✦ კომპოზიტის გენერაცია ✦',davison:'✦ დევისონის გენერაცია ✦'};
-const IDS={davison:'dv-tab-btn',formulas:'fx-tab-btn'};
+const COUPLE=new Set(['synastry','composite','davison','compat']);
+const BTN_TXT={synastry:'✦ სინასტრიის გენერაცია ✦',composite:'✦ კომპოზიტის გენერაცია ✦',davison:'✦ დევისონის გენერაცია ✦',compat:'✦ თავსებადობის ანალიზი ✦'};
+const IDS={davison:'dv-tab-btn',formulas:'fx-tab-btn',compat:'cx-tab-btn'};
 let lastCouple=null,natalTxt=null;
 const cm=()=>(typeof currentMode!=='undefined'?currentMode:'');
 const setCM=m=>{try{currentMode=m;}catch(e){}};
@@ -25,6 +25,17 @@ function inject(){
     const b=document.createElement('button');b.className='tab-btn';b.id='dv-tab-btn';b.type='button';b.textContent='დევისონი';
     b.setAttribute('onclick',"setMode('davison')");
     if(comp)comp.after(b);else bar.appendChild(b);
+  }
+  if(!$('cx-tab-btn')){
+    const dv=$('dv-tab-btn');
+    const b=document.createElement('button');b.className='tab-btn';b.id='cx-tab-btn';b.type='button';b.textContent='თავსებადობა';
+    b.setAttribute('onclick',"setMode('compat')");
+    if(dv)dv.after(b);else bar.appendChild(b);
+  }
+  if(!$('cx-sec')){
+    const ca=$('chart-area');const sec=document.createElement('div');sec.id='cx-sec';sec.style.cssText='display:none;margin:18px auto;max-width:1100px;padding:0 12px';
+    sec.innerHTML='<div id="cx-host"></div>';
+    if(ca&&ca.parentNode)ca.parentNode.insertBefore(sec,ca);else document.body.appendChild(sec);
   }
   if(!$('fx-tab-btn')){
     const b=document.createElement('button');b.className='tab-btn';b.id='fx-tab-btn';b.type='button';b.textContent='ფორმულები';
@@ -47,7 +58,8 @@ function relabel(m){
   const sb=genBtn('#form-synastry');if(sb&&BTN_TXT[m])sb.textContent=BTN_TXT[m];
   const nb=genBtn('#form-natal');if(nb){if(natalTxt==null)natalTxt=nb.textContent;nb.textContent=m==='formulas'?'✦ ფორმულების გამოთვლა ✦':natalTxt;}
 }
-const showFx=on=>{const s=$('fx-sec');if(s)s.style.display=on?'block':'none';};
+const showFx=on=>{const s=$('fx-sec');if(s)s.style.display=on?'block':'none';if(!on)showCx(false);};
+const showCx=on=>{const s=$('cx-sec');if(s)s.style.display=on?'block':'none';};
 const coupleReady=()=>['s1-lat','s1-lon','s2-lat','s2-lon'].every(id=>$(id)&&+$(id).value);
 
 /* the composite branch of generate() reads c1-* / c2-* — fill them from the shared form */
@@ -78,6 +90,19 @@ async function runDavison(){
   showSingleChart(d,`დევისონი · ${n1} & ${n2} · ${q.year}-${pad(q.month)}-${pad(q.day)} ${pad(q.hour)}:${pad(q.minute)} UTC · ${q.lat.toFixed(2)}°, ${q.lon.toFixed(2)}°`,false);
 }
 
+/* ── textual compatibility ── */
+async function runCompat(){
+  const p1=getPersonData('s1'),p2=getPersonData('s2');
+  if(!p1.lat||!p1.lon||!p2.lat||!p2.lon){showError('შეიყვანეთ ორივე ქალაქი');return;}
+  if(!window._synText){showError('თავსებადობის მოდული ვერ ჩაიტვირთა');return;}
+  const [d1,d2]=await Promise.all([fetchChart(p1),fetchChart(p2)]);
+  const ca=$('chart-area'),acg=$('acg-section');if(ca)ca.style.display='none';if(acg)acg.style.display='none';
+  const fx=$('fx-sec');if(fx)fx.style.display='none';
+  const n1=($('s1-name')&&$('s1-name').value)||'პირველი',n2=($('s2-name')&&$('s2-name').value)||'მეორე';
+  showCx(true);window._synText.render(d1,d2,n1,n2,$('cx-host'));
+  const s=$('cx-sec');if(s)s.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 /* ── Formulas tab ── */
 async function runFormulas(){
   const p=getPersonData('n');
@@ -103,7 +128,7 @@ function hook(){
   if(typeof window.setMode!=='function'||window.setMode._at)return;
   const oS=window.setMode;
   const S=function(m){
-    if(m==='composite'||m==='davison'){
+    if(m==='composite'||m==='davison'||m==='compat'){
       oS.call(this,'synastry');setCM(m);markActive(m);relabel(m);showFx(false);
       if(lastCouple&&lastCouple!==m&&coupleReady())setTimeout(()=>window.generate(),0);
       return;
@@ -119,6 +144,7 @@ function hook(){
   window.generate=async function(){
     const m=cm();
     if(m==='davison'){lastCouple=m;return busy(runDavison);}
+    if(m==='compat'){lastCouple=m;return busy(runCompat);}
     if(m==='formulas')return busy(runFormulas);
     showFx(false);
     if(m==='composite')copySC();
