@@ -156,8 +156,26 @@ function aspText(x,n1,n2){
 }
 /* Georgian genitive of a name: ანა → ანას, გიო → გიოს, გიორგი → გიორგის, ნიკ → ნიკის */
 function gen(n){const t=n.trim(),c=t.slice(-1);if('აეოუი'.includes(c))return t+'ს';return t+'ის';}
+function signArticle(d1,d2,ga,gb){
+  const C=window._compat;const pa=pos(d1,'Su'),pb=pos(d2,'Su');if(!C||pa==null||pb==null)return '';
+  const a=Math.floor(pa/30),b=Math.floor(pb/30),R=C.compute(a,ga,b,gb),PA=C.GEN[ga].P[a],PB=C.GEN[gb].P[b],S=C.S;
+  const lab=(i,g)=>`<span style="font-family:serif;color:${C.ELC[C.el(i)]}">${C.G(S[i].g)}</span> ${S[i].n} <span style="color:${g==='m'?'#9cc4f4':'#f4a8cc'}">${C.GEN[g].w}</span>`;
+  const na=S[a].n+' '+C.GEN[ga].w,nb=S[b].n+' '+C.GEN[gb].w;
+  return `<div class="sx-card"><div class="sx-h">☉ მზის ნიშნების თავსებადობა</div>
+   <div class="sx-ttl">${lab(a,ga)} &nbsp;+&nbsp; ${lab(b,gb)} <span class="sx-orb">${R.tot}% · ${C.verdict(R.tot)}</span></div>
+   <div class="sx-desc">
+     <p>${R.pr[1]}</p>
+     <p><b>${na}</b> — ${PA[0]} <b>${nb}</b> — ${PB[0]}</p>
+     <p>${na} ამ ურთიერთობაში აძლევს ${PA[1]} და პარტნიორისგან ელის ${PA[2]}. ${nb} კი აძლევს ${PB[1]} და ელის ${PB[2]}.</p>
+     <p>${R.A[1]} ${C.ELP[R.ek].replace(/^[^:]+:\s*/,'')} ${C.MOP[R.mk]}</p>
+     <p>${R.pol}</p>
+     <p>რას უნდა გაუფრთხილდნენ: ${S[a].n} ${C.GEN[ga].gen} მხრიდან — ${PA[3]}, ${S[b].n} ${C.GEN[gb].gen} მხრიდან — ${PB[3]}. ${R.A[2]}</p>
+   </div>
+   <div class="sx-tth">✦ წყვილის ტაროს ბარათი</div>${C.tarotBlock(a,ga,b,gb)}
+   <div class="sx-sub" style="margin-top:10px">მზის ნიშნების ტექსტი — როგორც გვერდზე <a href="compat.html?a=${a}&ga=${ga}&b=${b}&gb=${gb}" style="color:#E3BE84">შეთავსება</a>. ქვემოთ — სრული რუკების სინასტრია.</div></div>`;
+}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function render(d1,d2,n1,n2,host){
+function render(d1,d2,n1,n2,host,g1,g2){
   n1=esc(n1||'პირველი');n2=esc(n2||'მეორე');
   /* every body of the first chart against every body of the second: (a of 1, b of 2) and (b of 1, a of 2) are both in */
   const asps=cross(d1,d2).map(x=>({...x,dir:1}));
@@ -167,6 +185,8 @@ function render(d1,d2,n1,n2,host){
   <div class="sx-top"><div class="sx-big">${tot}%</div><div><div class="sx-ver">${verdict(tot)}</div>
   <div class="sx-sub">ჯვარედინი ასპექტები: ${asps.length} · ჰარმონიული ${harm} · დაძაბული ${tense} · შეერთება ${conj}</div></div></div>
   <div class="sx-bars">${CAT.map((c,i)=>`<div class="sx-bar"><span>${c}</span><div><i style="width:${sc[i]}%;background:${CATC[i]}"></i></div><b style="color:${CATC[i]}">${sc[i]}%</b></div>`).join('')}</div></div>`;
+  /* the sign-pair article (same texts as შეთავსება / compat.html) for the two Sun signs */
+  h+=signArticle(d1,d2,g1||'m',g2||'f');
   /* big four by sign */
   const row=k=>{const a=pos(d1,k),b=pos(d2,k);if(a==null||b==null)return '';const sa=Math.floor(a/30),sb=Math.floor(b/30),ek=[el(sa),el(sb)].sort().join('');
     return `<tr><td>${BD[k][1]}︎ ${BD[k][2]}</td><td>${SGG[sa]} ${SG[sa]}</td><td>${SGG[sb]} ${SG[sb]}</td><td>${EPAIR[ek]}</td></tr>`;};
@@ -207,6 +227,20 @@ const CSS=`
 .sx-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .sx-o{font-size:13px;color:rgba(226,220,207,.86);line-height:1.55;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .sx-o b{color:#F0E2BC;font-weight:600}
+.sx-ttl{font-size:19px;line-height:1.5;margin-bottom:12px;color:#EDE6D8}
+.sx-desc p{font-size:14.5px;line-height:1.9;color:#ddd6c6;margin-bottom:12px;text-indent:1.4em}
+.sx-desc p:first-child{text-indent:0;color:#F0D48A;font-size:15.5px}
+.sx-desc b{font-weight:600;color:#F0D48A}
+.sx-tth{font-family:Cinzel,serif;font-size:10px;letter-spacing:3px;color:#C9A24C;text-align:center;margin:18px 0 12px;border-top:1px solid rgba(201,168,76,.15);padding-top:16px}
+#cx-host .tarot{display:flex;gap:18px;align-items:flex-start}
+#cx-host .tarot .tc{flex:0 0 120px}
+#cx-host .tarot .tc img{width:120px;border-radius:8px;border:1px solid rgba(201,168,76,.35);box-shadow:0 6px 24px rgba(0,0,0,.5)}
+#cx-host .tarot .tn{font-size:17px;color:#F0D48A}
+#cx-host .tarot .tn span{font-size:13px;color:#f0a080}
+#cx-host .tarot .tk{font-size:12px;color:#C9A24C;margin:4px 0 8px;opacity:.85}
+#cx-host .tarot p{font-size:14px;line-height:1.85;color:#ddd6c6}
+#cx-host .tarot .tw{font-size:11.5px;color:rgba(188,192,202,.7);margin-top:8px;line-height:1.7}
+@media(max-width:560px){#cx-host .tarot{flex-direction:column;align-items:center;text-align:center}}
 @media(max-width:700px){.sx-cols{grid-template-columns:1fr}.sx-bar{grid-template-columns:120px 1fr 42px;font-size:12px}}`;
 const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
 window._synText={render,cross,score};

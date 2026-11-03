@@ -37,6 +37,20 @@ function inject(){
     sec.innerHTML='<div id="cx-host"></div>';
     if(ca&&ca.parentNode)ca.parentNode.insertBefore(sec,ca);else document.body.appendChild(sec);
   }
+  if(!$('s1-g')){
+    const labs=document.querySelectorAll('#form-synastry .person-label');
+    [['s1','m'],['s2','f']].forEach(([pf,def],i)=>{const lab=labs[i];if(!lab)return;
+      const w=document.createElement('span');w.className='cx-gender';
+      w.innerHTML=`<input type="hidden" id="${pf}-g" value="${def}"><button type="button" data-g="m" class="${def==='m'?'on':''}">♂ მამაკაცი</button><button type="button" data-g="f" class="${def==='f'?'on':''}">♀ ქალი</button>`;
+      lab.appendChild(w);
+      w.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$(pf+'-g').value=b.dataset.g;w.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+        if(cm()==='compat'&&lastCouple==='compat'&&coupleReady())window.generate();});
+    });
+    const st=document.createElement('style');st.textContent=`.cx-gender{display:inline-flex;gap:4px;margin-left:10px;vertical-align:middle}
+.cx-gender button{font:400 11px/1 'Noto Sans Georgian',sans-serif;letter-spacing:0;text-transform:none;background:rgba(255,255,255,.03);border:1px solid rgba(201,162,76,.3);color:rgba(220,210,190,.75);border-radius:10px;padding:4px 9px;cursor:pointer}
+.cx-gender button[data-g=m].on{border-color:#7fb2f0;color:#cfe3ff;background:rgba(127,178,240,.14)}
+.cx-gender button[data-g=f].on{border-color:#f08cb8;color:#ffd6e8;background:rgba(240,140,184,.14)}`;document.head.appendChild(st);
+  }
   if(!$('fx-tab-btn')){
     const b=document.createElement('button');b.className='tab-btn';b.id='fx-tab-btn';b.type='button';b.textContent='ფორმულები';
     b.setAttribute('onclick',"setMode('formulas')");bar.appendChild(b);
@@ -95,11 +109,13 @@ async function runCompat(){
   const p1=getPersonData('s1'),p2=getPersonData('s2');
   if(!p1.lat||!p1.lon||!p2.lat||!p2.lon){showError('შეიყვანეთ ორივე ქალაქი');return;}
   if(!window._synText){showError('თავსებადობის მოდული ვერ ჩაიტვირთა');return;}
-  const [d1,d2]=await Promise.all([fetchChart(p1),fetchChart(p2)]);
+  const tt=typeof TAROT_TEXTS!=='undefined'?null:new Promise(ok=>{const sc=document.createElement('script');sc.src='tarot_text.js';sc.onload=sc.onerror=()=>ok();document.head.appendChild(sc);});
+  const [d1,d2]=await Promise.all([fetchChart(p1),fetchChart(p2),tt]);
   const ca=$('chart-area'),acg=$('acg-section');if(ca)ca.style.display='none';if(acg)acg.style.display='none';
   const fx=$('fx-sec');if(fx)fx.style.display='none';
+  const g1=($('s1-g')&&$('s1-g').value)||'m',g2=($('s2-g')&&$('s2-g').value)||'f';
   const n1=($('s1-name')&&$('s1-name').value)||'პირველი',n2=($('s2-name')&&$('s2-name').value)||'მეორე';
-  showCx(true);window._synText.render(d1,d2,n1,n2,$('cx-host'));
+  showCx(true);window._synText.render(d1,d2,n1,n2,$('cx-host'),g1,g2);
   const s=$('cx-sec');if(s)s.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
