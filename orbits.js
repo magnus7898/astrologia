@@ -39,6 +39,15 @@ const CSS=`
 #ob-hud small{display:block;font-family:inherit;font-size:10.5px;color:rgba(200,180,140,.8);letter-spacing:.5px}
 #ob-tip{position:absolute;pointer-events:none;background:rgba(10,8,22,.92);border:1px solid rgba(201,162,76,.4);border-radius:8px;padding:6px 9px;font-size:11.5px;color:#f3ecdc;display:none;white-space:nowrap}
 #ob-legend{position:absolute;right:10px;bottom:8px;font-size:10px;color:rgba(200,180,140,.65);text-align:right;pointer-events:none;line-height:1.5}
+#ob-fs{position:absolute;right:10px;top:10px;z-index:3;background:rgba(10,8,22,.78);border:1px solid rgba(201,162,76,.5);color:#F0D48A;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+#ob-fs:hover{border-color:#F0D48A}
+#ob-wrap.ob-full{position:fixed!important;inset:0;z-index:99999;width:100vw!important;height:100vh;margin:0!important;border-radius:0!important;border:0!important}
+#ob-wrap.ob-full #ob-cv{touch-action:none}
+#ob-fsbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:10px;z-index:3;gap:6px;flex-wrap:wrap;justify-content:center;max-width:96vw}
+#ob-wrap.ob-full #ob-fsbar{display:flex}
+#ob-fsbar button,#ob-fsbar select{background:rgba(10,8,22,.82);border:1px solid rgba(201,162,76,.45);color:#E8C97A;border-radius:14px;padding:5px 11px;font-size:11.5px;cursor:pointer;font-family:inherit}
+#ob-wrap.ob-full #ob-legend{bottom:52px}
+#ob-fsbar select{max-width:150px;width:auto}
 .ob-birth{font-size:11.5px;color:rgba(200,180,140,.85);line-height:1.7;margin-top:6px}
 .ob-birth b{color:#F0D48A;font-weight:500}`;
 
@@ -245,7 +254,8 @@ function frame(t){
   if(S.play&&dt){S.jd+=S.dir*S.speed*dt;const lo=X.cal2jd(-2999,1,1),hi=X.cal2jd(10000,1,1);if(S.jd<lo||S.jd>hi){S.jd=Math.max(lo,Math.min(hi,S.jd));S.play=false;syncBtns();}}
   draw();
 }
-function resize(){const cv=$('ob-cv');if(!cv)return;const w=cv.parentNode.clientWidth||800,h=Math.round(Math.min(w,Math.max(420,(window._obVH||(window._obVH=window.innerHeight))*0.8)));
+function resize(){const cv=$('ob-cv');if(!cv)return;const full=cv.parentNode.classList.contains('ob-full');
+  const w=full?window.innerWidth:(cv.parentNode.clientWidth||800),h=full?window.innerHeight:Math.round(Math.min(w,Math.max(420,(window._obVH||(window._obVH=window.innerHeight))*0.8)));
   S.W=w;S.H=h;S.dpr=Math.min(2,window.devicePixelRatio||1);cv.width=w*S.dpr;cv.height=h*S.dpr;cv.style.height=h+'px';S.bgKey='';}
 
 /* ── birth moment from the natal form ── */
@@ -309,6 +319,8 @@ function inject(){
    </div>
    <div class="ob-pl" id="ob-pl"><button data-f="all" class="on">✦ ყველა პლანეტა</button>${PL.filter(p=>p[0]!=='earth').map(p=>`<button data-f="${p[0]}" style="color:${p[3]}">${p[2]}︎ ${p[1]}</button>`).join('')}</div>
    <div id="ob-wrap"><canvas id="ob-cv"></canvas><div id="ob-hud"></div><div id="ob-tip"></div>
+     <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
+     <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
      <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
@@ -366,6 +378,24 @@ function inject(){
   let _obW=window.innerWidth;
   window.addEventListener('resize',()=>{if(Math.abs(window.innerWidth-_obW)<2)return;_obW=window.innerWidth;resize();});
   new MutationObserver(()=>{if(sec.classList.contains('active'))resize();}).observe(sec,{attributes:true,attributeFilter:['class']});
+  /* ⛶ whole screen: Fullscreen API where it exists, a fixed overlay everywhere (iOS too) */
+  const wrap=$('ob-wrap');
+  const fsOn=()=>wrap.classList.contains('ob-full');
+  const setFull=on=>{wrap.classList.toggle('ob-full',on);$('ob-fs').textContent=on?'✕ გამოსვლა':'⛶ მთელ ეკრანზე';
+    document.documentElement.style.overflow=on?'hidden':'';S.zoom=1;S.panX=S.panY=0;resize();
+    const sp=wrap.querySelector('[data-fs=speed]');if(sp)sp.value=String(S.speed);};
+  $('ob-fs').onclick=()=>{
+    if(!fsOn()){setFull(true);const rq=wrap.requestFullscreen||wrap.webkitRequestFullscreen;if(rq)try{const r=rq.call(wrap);if(r&&r.catch)r.catch(()=>{});}catch(e){}}
+    else{const ex=document.exitFullscreen||document.webkitExitFullscreen;if((document.fullscreenElement||document.webkitFullscreenElement)&&ex)ex.call(document);setFull(false);}
+  };
+  const onFsChange=()=>{if(!(document.fullscreenElement||document.webkitFullscreenElement)&&fsOn())setFull(false);else resize();};
+  document.addEventListener('fullscreenchange',onFsChange);document.addEventListener('webkitfullscreenchange',onFsChange);
+  document.addEventListener('keydown',e=>{if(e.key!=='Escape'||!fsOn())return;const ex=document.exitFullscreen||document.webkitExitFullscreen;
+    if((document.fullscreenElement||document.webkitFullscreenElement)&&ex)try{ex.call(document);}catch(_){}setFull(false);});
+  wrap.querySelector('#ob-fsbar').addEventListener('click',e=>{const k=e.target.dataset&&e.target.dataset.fs;if(!k)return;
+    if(k==='play')$('ob-play').click();else if(k==='rev')$('ob-rev').click();else if(k==='now')$('ob-now').click();
+    else if(k==='view'){const o=sec.querySelector(`[data-vw]:not(.on)`);if(o)o.click();}});
+  wrap.querySelector('[data-fs=speed]').addEventListener('change',e=>{$('ob-speed').value=e.target.value;S.speed=+e.target.value;});
   resize();requestAnimationFrame(frame);
 }
 function syncBtns(){const p=$('ob-play');if(p){p.textContent=S.play?'⏸ პაუზა':'▶ გაშვება';p.classList.toggle('on',S.play);}

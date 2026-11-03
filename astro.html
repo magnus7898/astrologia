@@ -2833,17 +2833,18 @@ function drawWheel(data1,data2,dualAsp){
   el('circle',{cx:CX,cy:CY,r:R1+6,fill:'url(#bgG)'},svg);
 
   // zodiac band
-  /* element colours of the sign segments: fire red · earth grey-green · air light blue-grey · water blue */
-  const ECOL={F:'#c8323f',E:'#71886c',A:'#9fb3c4',W:'#2f66b8'},EOP={F:.62,E:.6,A:.5,W:.62};
+  /* element colours of the sign segments (solid): fire #c42348 · earth #c9cba3 · air #a2d6f9 · water #004e98;
+     sign dividers and band edges gold, sign glyphs black */
+  const ECOL={F:'#c42348',E:'#c9cba3',A:'#a2d6f9',W:'#004e98'},EOP={F:1,E:1,A:1,W:1},ZSTROKE='#c9a24c';
   const EFILL=ZELEMENT.map(e=>ECOL[e]),EFOP=ZELEMENT.map(e=>EOP[e]);
   for(let i=0;i<12;i++){
     const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
     el('path',{d:`M${p(i*30,R1)} A${R1},${R1} 0 0,0 ${p((i+1)*30,R1)} L${p((i+1)*30,R2)} A${R2},${R2} 0 0,1 ${p(i*30,R2)} Z`,fill:EFILL[i],'fill-opacity':EFOP[i]},svg);
-    el('path',{d:`M${p(i*30,R2)} A${R2},${R2} 0 0,0 ${p((i+1)*30,R2)}`,fill:'none',stroke:ZCOL[i],'stroke-width':2,opacity:.6},svg);
+    el('path',{d:`M${p(i*30,R2)} A${R2},${R2} 0 0,0 ${p((i+1)*30,R2)}`,fill:'none',stroke:ZSTROKE,'stroke-width':1.6,opacity:.9},svg);
   }
   for(let i=0;i<12;i++){
     const a=e2s(i*30,asc);
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,stroke:ZCOL[i],'stroke-width':1.2,opacity:.85},svg);
+    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,stroke:ZSTROKE,'stroke-width':1.4,opacity:.95},svg);
   }
 
   // house band (narrower in dual mode)
@@ -2864,20 +2865,20 @@ function drawWheel(data1,data2,dualAsp){
     const EFILL2=EFILL;
     for(let i=0;i<12;i++){
       const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
-      el('path',{d:`M${p(i*30,R_iz_out)} A${R_iz_out},${R_iz_out} 0 0,0 ${p((i+1)*30,R_iz_out)} L${p((i+1)*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,1 ${p(i*30,R_iz_in)} Z`,fill:EFILL2[i],'fill-opacity':EFOP[i]*.6},svg);
+      el('path',{d:`M${p(i*30,R_iz_out)} A${R_iz_out},${R_iz_out} 0 0,0 ${p((i+1)*30,R_iz_out)} L${p((i+1)*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,1 ${p(i*30,R_iz_in)} Z`,fill:EFILL2[i],'fill-opacity':.85},svg);
       // inner edge colored border
-      el('path',{d:`M${p(i*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,0 ${p((i+1)*30,R_iz_in)}`,fill:'none',stroke:ZCOL[i],'stroke-width':1.2,opacity:.5},svg);
+      el('path',{d:`M${p(i*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,0 ${p((i+1)*30,R_iz_in)}`,fill:'none',stroke:ZSTROKE,'stroke-width':1.2,opacity:.8},svg);
     }
     // divider lines inner zodiac
     for(let i=0;i<12;i++){
       const a=e2s(i*30,asc);
-      el('line',{x1:CX+Math.cos(a)*R_iz_out,y1:CY+Math.sin(a)*R_iz_out,x2:CX+Math.cos(a)*R_iz_in,y2:CY+Math.sin(a)*R_iz_in,stroke:ZCOL[i],'stroke-width':.9,opacity:.7},svg);
+      el('line',{x1:CX+Math.cos(a)*R_iz_out,y1:CY+Math.sin(a)*R_iz_out,x2:CX+Math.cos(a)*R_iz_in,y2:CY+Math.sin(a)*R_iz_in,stroke:ZSTROKE,'stroke-width':.9,opacity:.85},svg);
     }
     // inner zodiac symbols
     const Rzs2=(R_iz_out+R_iz_in)/2;
     for(let i=0;i<12;i++){
       const a=e2s(i*30+15,asc);
-      const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs2,y:CY+Math.sin(a)*Rzs2,fill:'#f6f1e7','font-size':11,'font-family':'serif','font-weight':'bold'},svg);
+      const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs2,y:CY+Math.sin(a)*Rzs2,fill:'#000','font-size':11,'font-family':'serif','font-weight':'bold'},svg);
       zt.textContent=ZSYM[i];
     }
     // degree ticks on inner zodiac outer edge
@@ -2925,7 +2926,7 @@ function drawWheel(data1,data2,dualAsp){
   const Rzs=(R1+R2)/2;
   for(let i=0;i<12;i++){
     const a=e2s(i*30+15,asc);
-    const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs,y:CY+Math.sin(a)*Rzs,fill:'#f6f1e7','font-size':20,'font-family':'serif','font-weight':'bold'},svg);
+    const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs,y:CY+Math.sin(a)*Rzs,fill:'#000','font-size':20,'font-family':'serif','font-weight':'bold'},svg);
     zt.textContent=ZSYM[i];
   }
 

@@ -14,7 +14,8 @@ const ID_KEY={'tru-tab-btn':'trutine','dr-tab-btn':'directions','fl-tab-btn':'fu
   'btn-m1':'m1','btn-m2':'m2','btn-m3':'m3','btn-mc':'mc','btn-mp':'mp','btn-ms':'ms'};
 const CONF={
   'astro.html':{bar:'.tab-bar',groups:[
-    ['ნატალური',['natal','trutine','orbits']],
+    ['ნატალური',['natal','trutine']],
+    ['ორბიტები',['orbits']],
     ['ადამიანები',['famous','people']],
     ['სინასტრია · კომპოზიტი',['synastry','composite','davison']],
     ['პროგნოზი',['transit','progression','directions','solar','lunar','daily']],
