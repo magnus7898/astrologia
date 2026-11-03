@@ -2834,8 +2834,14 @@ function drawWheel(data1,data2,dualAsp){
 
   // zodiac band
   /* element colours of the sign segments (solid): fire #dc2f02 · earth #588157 · air #778da9 · water #1982c4;
-     sign dividers, band edges and degree ticks black, sign glyphs black, other rings purple */
-  const ECOL={F:'#dc2f02',E:'#588157',A:'#778da9',W:'#1982c4'},EOP={F:1,E:1,A:1,W:1},ZSTROKE='#000';
+     sign dividers, band edges, degree ticks and sign glyphs golden-purple, other rings purple */
+  const ECOL={F:'#dc2f02',E:'#588157',A:'#778da9',W:'#1982c4'},EOP={F:1,E:1,A:1,W:1};
+  /* golden-purple: lines and sign glyphs run from gold to violet across the wheel */
+  {const gp=el('linearGradient',{id:'gpL',gradientUnits:'userSpaceOnUse',x1:CX-R1,y1:CY-R1,x2:CX+R1,y2:CY+R1},defs);
+   el('stop',{offset:'0','stop-color':'#f2d58e'},gp);el('stop',{offset:'.5','stop-color':'#d2a6c8'},gp);el('stop',{offset:'1','stop-color':'#a07cf0'},gp);
+   const gt=el('linearGradient',{id:'gpT',x1:'0',y1:'0',x2:'0',y2:'1'},defs);
+   el('stop',{offset:'0','stop-color':'#f6dc96'},gt);el('stop',{offset:'1','stop-color':'#b48cff'},gt);}
+  const ZSTROKE='url(#gpL)',ZGLYPH='url(#gpT)';
   const EFILL=ZELEMENT.map(e=>ECOL[e]),EFOP=ZELEMENT.map(e=>EOP[e]);
   for(let i=0;i<12;i++){
     const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
@@ -2878,13 +2884,13 @@ function drawWheel(data1,data2,dualAsp){
     const Rzs2=(R_iz_out+R_iz_in)/2;
     for(let i=0;i<12;i++){
       const a=e2s(i*30+15,asc);
-      const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs2,y:CY+Math.sin(a)*Rzs2,fill:'#000','font-size':11,'font-family':'serif','font-weight':'bold'},svg);
+      const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs2,y:CY+Math.sin(a)*Rzs2,fill:ZGLYPH,stroke:'#1a0f2e','stroke-width':.5,'paint-order':'stroke','font-size':11,'font-family':'serif','font-weight':'bold'},svg);
       zt.textContent=ZSYM[i];
     }
     // degree ticks on inner zodiac outer edge
     for(let deg=0;deg<360;deg+=10){
       const a=e2s(deg,asc),is30=deg%30===0;
-      el('line',{x1:CX+Math.cos(a)*R_iz_out,y1:CY+Math.sin(a)*R_iz_out,x2:CX+Math.cos(a)*(R_iz_out-(is30?8:4)),y2:CY+Math.sin(a)*(R_iz_out-(is30?8:4)),stroke:'#000','stroke-width':is30?1.1:.6},svg);
+      el('line',{x1:CX+Math.cos(a)*R_iz_out,y1:CY+Math.sin(a)*R_iz_out,x2:CX+Math.cos(a)*(R_iz_out-(is30?8:4)),y2:CY+Math.sin(a)*(R_iz_out-(is30?8:4)),stroke:ZSTROKE,'stroke-width':is30?1.1:.6},svg);
     }
     // inner fill circle
     el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'rgba(8,12,24,1)'},svg);
@@ -2899,18 +2905,18 @@ function drawWheel(data1,data2,dualAsp){
     const a=e2s(deg,asc),co=Math.cos(a),si2=Math.sin(a);
     const is30=deg%30===0,is10=deg%10===0,is5=deg%5===0;
     const len=is30?20:is10?13:is5?8:5;
-    const stroke='#000';
+    const stroke=ZSTROKE;
     const sw=is30?2:is10?1.3:is5?0.9:0.55;
     el('line',{x1:CX+co*R1,y1:CY+si2*R1,x2:CX+co*(R1-len),y2:CY+si2*(R1-len),stroke,'stroke-width':sw},svg);
   }
 
   // circles
-  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'#000','stroke-width':1.8},svg);
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'#000','stroke-width':1.5},svg);
+  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:ZSTROKE,'stroke-width':1.8},svg);
+  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:ZSTROKE,'stroke-width':1.5},svg);
   el('circle',{cx:CX,cy:CY,r:R3d,fill:'none',stroke:'#7b4fd6','stroke-width':1.2},svg);
   if(data2){
-    el('circle',{cx:CX,cy:CY,r:R_iz_out,fill:'none',stroke:'#000','stroke-width':1.2},svg);
-    el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'none',stroke:'#000','stroke-width':1.2},svg);
+    el('circle',{cx:CX,cy:CY,r:R_iz_out,fill:'none',stroke:ZSTROKE,'stroke-width':1.2},svg);
+    el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'none',stroke:ZSTROKE,'stroke-width':1.2},svg);
     el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'#7b4fd6','stroke-width':1.2},svg);
   }else{
     el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'#7b4fd6','stroke-width':1},svg);
@@ -2920,7 +2926,7 @@ function drawWheel(data1,data2,dualAsp){
   const Rzs=(R1+R2)/2;
   for(let i=0;i<12;i++){
     const a=e2s(i*30+15,asc);
-    const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs,y:CY+Math.sin(a)*Rzs,fill:'#000','font-size':20,'font-family':'serif','font-weight':'bold'},svg);
+    const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(a)*Rzs,y:CY+Math.sin(a)*Rzs,fill:ZGLYPH,stroke:'#1a0f2e','stroke-width':.7,'paint-order':'stroke','font-size':21,'font-family':'serif','font-weight':'bold'},svg);
     zt.textContent=ZSYM[i];
   }
 
