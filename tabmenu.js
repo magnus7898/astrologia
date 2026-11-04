@@ -15,16 +15,16 @@ const ID_KEY={'tru-tab-btn':'trutine','rc-tab-btn':'rectify','srq-tab-btn':'srec
 const V='\uFE0E';
 const CONF={
   'astro.html':{bar:'.tab-bar',groups:[
-    ['ნატალური',['natal'],'☉'+V],
-    ['რექტიფიკაცია',['trutine','rectify','srect'],'⧗'],
-    ['ორბიტები',['orbits','eclipses','precession'],'◎'],
-    ['ადამიანები',['famous','people'],'✧'],
-    ['წყვილი',['synastry','composite','davison','compat','zcompat'],'⚭'+V],
-    ['პროგნოზი',['transit','progression','directions','solar','lunar','daily'],'⟳'],
-    ['ადგილი',['relocation','astrocartography'],'⌖'],
-    ['ინკარნაცია',['pastlife','futurelife','draconic'],'∞'],
-    ['კვლევა',['astats','search'],'∑'],
-    ['ფორმულები',['formulas'],'ƒ']]},
+    ['ნატალური',['natal']],
+    ['რექტიფიკაცია',['trutine','rectify','srect']],
+    ['ორბიტები',['orbits','eclipses','precession']],
+    ['ადამიანები',['famous','people']],
+    ['წყვილი',['synastry','composite','davison','compat','zcompat']],
+    ['პროგნოზი',['transit','progression','directions','solar','lunar','daily']],
+    ['ადგილი',['relocation','astrocartography']],
+    ['ინკარნაცია',['pastlife','futurelife','draconic']],
+    ['კვლევა',['astats','search']],
+    ['ფორმულები',['formulas']]]},
   'hd.html':{bar:'.tab-bar',groups:[
     ['ნატალური',['natal'],'☉'+V],
     ['სინასტრია',['synastry'],'⚭'+V],
