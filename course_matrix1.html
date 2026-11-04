@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 1</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:760px;margin:26px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:78px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:96px}
+.date .note{flex-basis:100%;text-align:center;font-size:12px;color:#9aa3b6}
+.lesson{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+@media(max-width:860px){.lesson{grid-template-columns:1fr}}
+.fig{position:sticky;top:12px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:8px}
+@media(max-width:860px){.fig{position:static}}
+#mx{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:11.5px;color:#aab2c4;padding:6px 4px 2px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.steps button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+.steps button.on{background:rgba(201,162,76,.22);border-color:#E3BE84;color:#FFF0C8}
+.steps button.done{color:#F3DDA4}
+.card{border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:18px 18px 16px}
+.card h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em;margin-bottom:10px}
+.card p{font-size:14px;line-height:1.85;color:#e2e5ec;margin:8px 0}
+.card b{color:#F3DDA4;font-weight:600}
+.calc{margin:12px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}
+.calc small{color:#aab2c4}
+.tip{font-size:12.5px;line-height:1.7;color:#aab2c4;margin-top:10px}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.t td,table.t th{border-bottom:1px solid rgba(255,255,255,.08);padding:6px 6px;text-align:left}
+table.t th{color:#B8894A;font-weight:400;font-size:11.5px;letter-spacing:.06em}
+table.t td.n{color:#FFE7A0;font-weight:600;text-align:center;width:48px}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.nav button:disabled{opacity:.35;cursor:default}
+/* diagram */
+.ln{stroke:rgba(201,162,76,.28);stroke-width:1.3;fill:none}
+.ln.hi{stroke:#E3BE84;stroke-width:2.2}
+.pt circle{fill:#141a2c;stroke:rgba(201,162,76,.35);stroke-width:1.4;transition:fill .3s,stroke .3s}
+.pt text{fill:rgba(255,255,255,.25);font:600 15px 'Noto Sans Georgian',Arial,sans-serif;text-anchor:middle;dominant-baseline:central;transition:fill .3s}
+.pt .lb{font:400 10px 'Noto Sans Georgian',Arial,sans-serif;fill:rgba(170,178,196,.0)}
+.pt.known circle{stroke:rgba(201,162,76,.6)}
+.pt.known text{fill:#e9e2cf}
+.pt.hi circle{fill:#3a2c0e;stroke:#FFD36A;stroke-width:2.4}
+.pt.hi text{fill:#FFF3C4}
+.pt.hi .lb{fill:#FFD36A}
+.pt.src circle{stroke:#7ec8ff;stroke-width:2.2}
+.pt.src text{fill:#cfeaff}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 1 — მატრიცის აგება (მეთოდი 1)</h1>
+  <div class="sub">ბედისწერის მატრიცის ყველა რიცხვი დაბადების თარიღიდან, ნაბიჯ-ნაბიჯ, ილუსტრაციით</div>
+
+  <div class="intro">
+    მატრიცა არის <b>რვაქიმიანი ვარსკვლავი</b>: ორი კვადრატი — „პირდაპირი“ (მარცხენა, ზედა, მარჯვენა, ქვედა წერტილები) და „დიაგონალური“ (ოთხი კუთხე), საერთო ცენტრით.
+    ყოველი წერტილი არის <b>ენერგია 1-დან 22-მდე</b> — ტაროს 22 დიდი არკანის მიხედვით. მთელი მატრიცა მხოლოდ ორი მოქმედებით აიგება: <b>შეკრებით</b> და <b>22-მდე დაყვანით</b>.
+    ქვემოთ ჩაწერე ნებისმიერი თარიღი — ილუსტრაცია და ყველა გამოთვლა მასზე აიგება.
+  </div>
+
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+      <div class="note" id="dnote"></div>
+    </div>
+  </div>
+
+  <div class="lesson">
+    <div class="fig">
+      <svg id="mx" viewBox="0 0 560 560" role="img" aria-label="მატრიცის სქემა"></svg>
+      <div class="legend"><span><i style="background:#FFD36A"></i>ამ ნაბიჯში ვითვლით</span><span><i style="background:#7ec8ff"></i>რისგან ვითვლით</span><span><i style="background:#e9e2cf"></i>უკვე ცნობილია</span></div>
+    </div>
+    <div>
+      <div class="steps" id="steps"></div>
+      <div class="card" id="card"></div>
+      <div class="nav"><button id="prev">← წინა</button><button id="next">შემდეგი →</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+/* the same reduction the site's calculator uses: while > 22, add the digits */
+function r22(n){while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;}
+function r22steps(n){const s=[n];while(n>22){n=String(n).split('').reduce((a,d)=>a+ +d,0);s.push(n);}return s;}
+const red=n=>{const s=r22steps(n);return s.length===1?`<span class="r">${n}</span>`:s.slice(0,-1).join(' → ')+' → <span class="r">'+s[s.length-1]+'</span>';};
+
+/* ── all values of method 1 (identical to the site's calculator) ── */
+function calc(d,m,y){const v={};
+  v.L3=r22(d);v.T3=r22(m);v.R3=r22(y);v.B3=r22(v.L3+v.T3+v.R3);v.Cv=r22(v.L3+v.T3+v.R3+v.B3);
+  v.TL3=r22(v.L3+v.T3);v.TR3=r22(v.T3+v.R3);v.BR3=r22(v.R3+v.B3);v.BL3=r22(v.B3+v.L3);
+  v.RC1=r22(v.TL3+v.TR3+v.BR3+v.BL3);v.RC2=r22(v.RC1+v.Cv);
+  for(const k of ['L','T','R','B']){v[k+'1']=r22(v.Cv+v[k+'3']);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  for(const k of ['TL','TR','BR','BL']){v[k+'1']=r22(v[k+'3']+v.RC1);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  v.G1=r22(v.L1+v.Cv);v.G2=r22(v.T1+v.Cv);
+  v.W2=r22(v.B1+v.R1);v.W1=r22(v.B1+v.W2);v.W3=r22(v.R1+v.W2);
+  return v;}
+
+/* ── geometry ── */
+const C=280,RO=228;
+const DIR={L:180,T:90,R:0,B:270,TL:135,TR:45,BR:315,BL:225};
+const RAD={3:1,2:.73,1:.5};
+const P={};
+for(const k in DIR)for(const n of [3,2,1]){const a=DIR[k]*Math.PI/180,r=RO*RAD[n];P[k+n]=[C+Math.cos(a)*r,C-Math.sin(a)*r];}
+P.Cv=[C,C];
+P.RC1=[C+42,C-42];P.RC2=[C-42,C-42];
+P.G1=[C-RO*.26,C];P.G2=[C,C-RO*.26];
+{const a=P.B1,b=P.R1;for(const [k,t] of [['W1',.3],['W2',.5],['W3',.7]])P[k]=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}
+const SIZE=k=>k==='Cv'?27:(/^(W|G|RC)/.test(k)?15:(k.endsWith('3')?24:18));
+const LBL={L3:'დღე',T3:'თვე',R3:'წელი',B3:'ქვედა',Cv:'ცენტრი',RC1:'',RC2:'',TL3:'',TR3:'',BR3:'',BL3:'',W2:''};
+
+/* ── steps ── */
+const S=[
+ {t:'1. დაყვანა 22-მდე',hi:[],src:[],body:v=>`
+   <p>მატრიცაში მხოლოდ <b>22 ენერგიაა</b> (1–22). როცა შეკრებისას 22-ზე მეტი რიცხვი მიიღება, <b>ციფრებს ვკრებთ</b> — სანამ 22 ან ნაკლები არ დარჩება.</p>
+   <div class="calc">23 → 2+3 = <span class="r">5</span><br>39 → 3+9 = <span class="r">12</span><br>22 → რჩება <span class="r">22</span> <small>(22 ჯერ კიდევ შეიძლება)</small><br>1990 → 1+9+9+0 = <span class="r">19</span><br>1999 → 1+9+9+9 = 28 → 2+8 = <span class="r">10</span></div>
+   <p>ეს წესი <b>ყოველ</b> გამოთვლაზე მოქმედებს — ქვემოთ, სადაც წერია „=“, შედეგი უკვე დაყვანილია.</p>
+   <p class="tip">ყურადღება: 22 არ იყოფა — მატრიცაში 22 ცალკე ენერგიაა (შუტი / „თავისუფლება“), ამიტომ 22 რჩება, ხოლო 23-დან ვიწყებთ ციფრების შეკრებას.</p>`},
+ {t:'2. დღე — მარცხნივ',hi:['L3'],src:[],body:v=>`
+   <p>დაბადების <b>დღე</b> იწერება <b>მარცხენა</b> წერტილში. 22-ზე მეტი დღე (23–31) დაიყვანება.</p>
+   <div class="calc">დღე = ${red(D.d)}</div>
+   <p>ეს არის <b>პერსონის ხაზის</b> გარე წერტილი — „სავიზიტო ბარათი“: როგორს გვხედავენ სხვები პირველივე შეხვედრაზე.</p>`},
+ {t:'3. თვე — ზემოთ',hi:['T3'],src:[],body:v=>`
+   <p>დაბადების <b>თვე</b> (1–12) იწერება <b>ზედა</b> წერტილში — დაყვანა აქ არასოდეს სჭირდება.</p>
+   <div class="calc">თვე = <span class="r">${v.T3}</span></div>
+   <p>ზედა წერტილი — <b>შთაგონება</b>, ტალანტების ზონის დასაწყისი.</p>`},
+ {t:'4. წელი — მარჯვნივ',hi:['R3'],src:[],body:v=>`
+   <p>დაბადების <b>წლის ციფრებს ვკრებთ</b> და ვიყვანთ 22-მდე. შედეგი იწერება <b>მარჯვენა</b> წერტილში.</p>
+   <div class="calc">${D.y} → ${String(D.y).split('').join('+')} = ${red(String(D.y).split('').reduce((a,b)=>a+ +b,0))}</div>
+   <p>მარჯვენა წერტილი — <b>მატერიალური კარმის</b> ხაზის გარე წერტილი, მთავარი მატერიალური გაკვეთილი.</p>`},
+ {t:'5. ქვედა წერტილი',hi:['B3'],src:['L3','T3','R3'],body:v=>`
+   <p><b>ქვედა</b> = მარცხენა + ზედა + მარჯვენა.</p>
+   <div class="calc">${v.L3} + ${v.T3} + ${v.R3} = ${red(v.L3+v.T3+v.R3)}</div>
+   <p>ეს არის <b>კარმული კუდის</b> გარე წერტილი — <b>მთავარი ცხოვრებისეული გაკვეთილი</b>. ახლა „პირდაპირი“ კვადრატის ოთხივე კუთხე ცნობილია.</p>`},
+ {t:'6. ცენტრი',hi:['Cv'],src:['L3','T3','R3','B3'],body:v=>`
+   <p><b>ცენტრი</b> = ოთხივე გარე წერტილის ჯამი.</p>
+   <div class="calc">${v.L3} + ${v.T3} + ${v.R3} + ${v.B3} = ${red(v.L3+v.T3+v.R3+v.B3)}</div>
+   <p>ცენტრი — <b>კომფორტის ზონა</b>, პიროვნების გული: საიდანაც ყველა ხაზი იწყება და სადაც ადამიანი თავს საკუთარ თავად გრძნობს.</p>`},
+ {t:'7. დიაგონალური კვადრატი',hi:['TL3','TR3','BR3','BL3'],src:['L3','T3','R3','B3'],body:v=>`
+   <p>დიაგონალური (წინაპრების) კვადრატის ოთხი კუთხე — ორი <b>მეზობელი</b> პირდაპირი წერტილის ჯამია:</p>
+   <div class="calc">ზედა-მარცხენა = დღე + თვე = ${v.L3} + ${v.T3} = ${red(v.L3+v.T3)}<br>
+     ზედა-მარჯვენა = თვე + წელი = ${v.T3} + ${v.R3} = ${red(v.T3+v.R3)}<br>
+     ქვედა-მარჯვენა = წელი + ქვედა = ${v.R3} + ${v.B3} = ${red(v.R3+v.B3)}<br>
+     ქვედა-მარცხენა = ქვედა + დღე = ${v.B3} + ${v.L3} = ${red(v.B3+v.L3)}</div>
+   <p>ზედა კუთხეები — <b>ნიჭები წინაპრებისგან</b> (მარცხნივ კაცის ხაზი, მარჯვნივ ქალის), ქვედა კუთხეები — <b>წინაპრების კარმა</b> (მარჯვნივ კაცის, მარცხნივ ქალის).</p>`},
+ {t:'8. წინაპრების ცენტრი',hi:['RC1','RC2'],src:['TL3','TR3','BR3','BL3','Cv'],body:v=>`
+   <p>მეთოდ 1-ის თავისებურება: დიაგონალურ კვადრატს <b>საკუთარი ცენტრი</b> აქვს.</p>
+   <div class="calc">წინაპრების ცენტრი = ოთხი კუთხის ჯამი = ${v.TL3} + ${v.TR3} + ${v.BR3} + ${v.BL3} = ${red(v.TL3+v.TR3+v.BR3+v.BL3)}<br>
+     მეორე = წინაპრების ცენტრი + ცენტრი = ${v.RC1} + ${v.Cv} = ${red(v.RC1+v.Cv)}</div>
+   <p>ცენტრი, წინაპრების ცენტრი და მეორე რიცხვი ერთად ქმნიან <b>სექსუალურობის</b> კომბინაციას (${v.Cv}-${v.RC1}-${v.RC2}). წინაპრების ცენტრი შემდეგ ნაბიჯში დიაგონალებზე დაგვჭირდება.</p>`},
+ {t:'9. შიდა წერტილები — პირდაპირი ხაზები',hi:['L1','L2','T1','T2','R1','R2','B1','B2'],src:['L3','T3','R3','B3','Cv'],body:v=>`
+   <p>ყოველ ხაზზე გარე წერტილიდან ცენტრამდე კიდევ <b>ორი</b> წერტილია. ჯერ ვითვლით <b>ცენტრთან ახლოს</b> მყოფს, მერე — შუაში მყოფს:</p>
+   <div class="calc"><small>ცენტრთან ახლოს = ცენტრი + გარე · შუა = ცენტრთან ახლოს + გარე</small><br>
+     მარცხნივ: ${v.Cv}+${v.L3} → <span class="r">${v.L1}</span> · ${v.L1}+${v.L3} → <span class="r">${v.L2}</span><br>
+     ზემოთ: ${v.Cv}+${v.T3} → <span class="r">${v.T1}</span> · ${v.T1}+${v.T3} → <span class="r">${v.T2}</span><br>
+     მარჯვნივ: ${v.Cv}+${v.R3} → <span class="r">${v.R1}</span> · ${v.R1}+${v.R3} → <span class="r">${v.R2}</span><br>
+     ქვემოთ: ${v.Cv}+${v.B3} → <span class="r">${v.B1}</span> · ${v.B1}+${v.B3} → <span class="r">${v.B2}</span></div>
+   <p>ასე მიიღება ოთხი სამრიცხვიანი ხაზი: <b>პერსონა</b> (მარცხნივ ${v.L3}-${v.L2}-${v.L1}), <b>ტალანტების ზონა</b> (ზემოთ ${v.T3}-${v.T2}-${v.T1}), <b>მატერიალური კარმა</b> (მარჯვნივ ${v.R3}-${v.R2}-${v.R1}) და <b>კარმული კუდი</b> (ქვემოთ ${v.B3}-${v.B2}-${v.B1}).</p>`},
+ {t:'10. შიდა წერტილები — დიაგონალები',hi:['TL1','TL2','TR1','TR2','BR1','BR2','BL1','BL2'],src:['TL3','TR3','BR3','BL3','RC1'],body:v=>`
+   <p>დიაგონალებზე იგივე წესია, ოღონდ <b>მეთოდ 1-ში</b> ცენტრის ნაცვლად <b>წინაპრების ცენტრს</b> (${v.RC1}) ვიყენებთ:</p>
+   <div class="calc"><small>ცენტრთან ახლოს = კუთხე + წინაპრების ცენტრი · შუა = ცენტრთან ახლოს + კუთხე</small><br>
+     ზედა-მარცხნივ: ${v.TL3}+${v.RC1} → <span class="r">${v.TL1}</span> · ${v.TL1}+${v.TL3} → <span class="r">${v.TL2}</span><br>
+     ზედა-მარჯვნივ: ${v.TR3}+${v.RC1} → <span class="r">${v.TR1}</span> · ${v.TR1}+${v.TR3} → <span class="r">${v.TR2}</span><br>
+     ქვედა-მარჯვნივ: ${v.BR3}+${v.RC1} → <span class="r">${v.BR1}</span> · ${v.BR1}+${v.BR3} → <span class="r">${v.BR2}</span><br>
+     ქვედა-მარცხნივ: ${v.BL3}+${v.RC1} → <span class="r">${v.BL1}</span> · ${v.BL1}+${v.BL3} → <span class="r">${v.BL2}</span></div>
+   <p class="tip">სწორედ ეს განასხვავებს მეთოდ 1-ს მეთოდ 2-ისგან: მეთოდ 2-ში დიაგონალების შიდა წერტილებიც ჩვეულებრივი ცენტრით (${v.Cv}) ითვლება.</p>`},
+ {t:'11. სიყვარულისა და ფულის არხი',hi:['W1','W2','W3'],src:['B1','R1'],body:v=>`
+   <p>ქვედა და მარჯვენა ხაზებს შორის გადის <b>არხი</b>, რომელიც ურთიერთობებსა და ფულს აკავშირებს. მისი შუა წერტილი — ცენტრთან ახლოს მყოფი ქვედა და მარჯვენა რიცხვების ჯამია:</p>
+   <div class="calc">შუა = ${v.B1} + ${v.R1} → <span class="r">${v.W2}</span><br>
+     ურთიერთობების მხარე = ${v.B1} + ${v.W2} → <span class="r">${v.W1}</span><br>
+     ფულის მხარე = ${v.R1} + ${v.W2} → <span class="r">${v.W3}</span></div>
+   <p>${v.B1}-${v.W1}-${v.W2} — <b>პირადი ურთიერთობების ხაზი</b>; ${v.W1} — როგორი პარტნიორი შეგვეფერება, ${v.W3} — როგორი სამსახური შეგვეფერება; ${v.W2} — <b>ემოციური კმაყოფილება</b>.</p>`},
+ {t:'12. სურვილების წერტილები',hi:['G1','G2'],src:['L1','T1','Cv'],body:v=>`
+   <p>ცენტრის მახლობლად მარცხნივ და ზემოთ კიდევ ორი წერტილია:</p>
+   <div class="calc">ფიზიკური სურვილები = მარცხენა შიდა + ცენტრი = ${v.L1} + ${v.Cv} → <span class="r">${v.G1}</span><br>
+     სოციალური სურვილები = ზედა შიდა + ცენტრი = ${v.T1} + ${v.Cv} → <span class="r">${v.G2}</span></div>
+   <p>ორივე <b>გულის ჩაკრის</b> (ანაჰატა) რიგშიც მონაწილეობს.</p>`},
+ {t:'13. ხაზები და დანიშნულება',hi:[],src:['L3','T3','R3','B3','TL3','TR3','BR3','BL3'],lines:true,body:v=>{
+   const sT=r22(v.T3+v.B3),sB=r22(v.R3+v.L3),sM=r22(sT+sB),oT=r22(v.TL3+v.BR3),oB=r22(v.TR3+v.BL3),oM=r22(oT+oB),mi=r22(sM+oM);
+   return `<p>ბოლოს — მატრიცის <b>ხაზები</b>: გარე წერტილებს წყვილ-წყვილად ვკრებთ.</p>
+   <table class="t"><tr><th>რა</th><th>როგორ</th><th></th></tr>
+   <tr><td>ცა</td><td>ზედა + ქვედა = ${v.T3}+${v.B3}</td><td class="n">${sT}</td></tr>
+   <tr><td>მიწა</td><td>მარჯვენა + მარცხენა = ${v.R3}+${v.L3}</td><td class="n">${sB}</td></tr>
+   <tr><td><b>პირადი დანიშნულება</b></td><td>ცა + მიწა</td><td class="n">${sM}</td></tr>
+   <tr><td>კაცის ხაზი</td><td>ზედა-მარცხ. + ქვედა-მარჯვ. = ${v.TL3}+${v.BR3}</td><td class="n">${oT}</td></tr>
+   <tr><td>ქალის ხაზი</td><td>ზედა-მარჯვ. + ქვედა-მარცხ. = ${v.TR3}+${v.BL3}</td><td class="n">${oB}</td></tr>
+   <tr><td><b>სოციალური დანიშნულება</b></td><td>კაცის + ქალის</td><td class="n">${oM}</td></tr>
+   <tr><td><b>სულიერი დანიშნულება (მისია)</b></td><td>პირადი + სოციალური</td><td class="n">${mi}</td></tr></table>
+   <p>მატრიცა აგებულია! შემდეგ გაკვეთილებში — ჩაკრების ცხრილი, ასაკობრივი წერტილები და თითოეული ენერგიის მნიშვნელობა.</p>
+   <div class="nav" style="justify-content:center"><a href="matrix.html">✦ გამოთვალე შენი მატრიცა ✦</a></div>`;}},
+];
+let cur=0,D={d:15,m:5,y:1990},V=calc(15,5,1990);
+const known=i=>{const s=new Set();for(let j=0;j<=i;j++)S[j].hi.forEach(k=>s.add(k));return s;};
+
+function draw(){const st=S[cur],K=known(cur),hi=new Set(st.hi),src=new Set(st.src);
+  const svg=$('mx');let h='';
+  const L=(a,b,cls='')=>`<line class="ln ${cls}" x1="${P[a][0].toFixed(1)}" y1="${P[a][1].toFixed(1)}" x2="${P[b][0].toFixed(1)}" y2="${P[b][1].toFixed(1)}"/>`;
+  /* two squares + rays */
+  const sqHi=st.lines;
+  h+=L('L3','T3',sqHi?'hi':'')+L('T3','R3',sqHi?'hi':'')+L('R3','B3',sqHi?'hi':'')+L('B3','L3',sqHi?'hi':'');
+  h+=L('TL3','TR3',sqHi?'hi':'')+L('TR3','BR3',sqHi?'hi':'')+L('BR3','BL3',sqHi?'hi':'')+L('BL3','TL3',sqHi?'hi':'');
+  h+=L('L3','R3',sqHi?'hi':'')+L('T3','B3',sqHi?'hi':'')+L('TL3','BR3',sqHi?'hi':'')+L('TR3','BL3',sqHi?'hi':'');
+  h+=L('B1','R1',(hi.has('W2')?'hi':''));
+  for(const k in P){const [x,y]=P[k],r=SIZE(k),cls=hi.has(k)?'hi':src.has(k)?'src':K.has(k)?'known':'';
+    const val=(hi.has(k)||K.has(k))?V[k]:'?';
+    h+=`<g class="pt ${cls}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}"/><text x="${x.toFixed(1)}" y="${y.toFixed(1)}" style="font-size:${r>20?17:r>16?14:12}px">${val}</text>${LBL[k]?`<text class="lb" x="${x.toFixed(1)}" y="${(y+r+11).toFixed(1)}">${LBL[k]}</text>`:''}</g>`;}
+  svg.innerHTML=h;}
+function render(){
+  $('steps').innerHTML=S.map((s,i)=>`<button type="button" data-i="${i}" class="${i===cur?'on':i<cur?'done':''}">${i+1}</button>`).join('');
+  $('card').innerHTML=`<h2>${S[cur].t}</h2>${S[cur].body(V)}`;
+  $('prev').disabled=cur===0;$('next').disabled=cur===S.length-1;draw();}
+$('steps').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=+b.dataset.i;render();});
+$('prev').onclick=()=>{if(cur>0){cur--;render();}};
+$('next').onclick=()=>{if(cur<S.length-1){cur++;render();$('card').scrollIntoView({behavior:'smooth',block:'nearest'});}};
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12)||!(d>=1&&d<=dim[m-1])||!(y>=1000&&y<=2100)){$('dnote').textContent='შეიყვანე სწორი თარიღი';return;}
+  D={d,m,y};V=calc(d,m,y);$('dnote').textContent=`მაგალითი: ${String(d).padStart(2,'0')}.${String(m).padStart(2,'0')}.${y}`;render();}
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));
+upd();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
