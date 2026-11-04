@@ -54,7 +54,7 @@ const CSS=`
 #mg-head::before,#mg-head::after{content:none!important;display:none!important}
 #mg-head{flex-direction:row!important;justify-content:flex-start!important;text-align:left!important;margin-bottom:0!important;box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
   padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));margin:0 0 6px;
-  background:rgba(1,22,56,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
+  background:rgba(12,18,34,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
   font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:left}
 #mg-head a{color:inherit;text-decoration:none}
 #mg-head .brand{font:600 16px/1 'Marcellus SC','Noto Serif Georgian',Georgia,serif;letter-spacing:.14em;color:#E3BE84;white-space:nowrap}
@@ -74,7 +74,7 @@ const CSS=`
   #mg-head .burger .w{display:none}}
 #mg-foot{box-sizing:border-box;width:100%;align-self:stretch;clear:both;margin-top:40px;position:relative;z-index:1;
   padding:22px max(16px,env(safe-area-inset-right,0px)) calc(70px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
-  background:rgba(1,22,56,.96);border-top:1px solid rgba(184,137,74,.25);font:12.5px/1.6 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:center}
+  background:rgba(12,18,34,.96);border-top:1px solid rgba(184,137,74,.25);font:12.5px/1.6 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:center}
 #mg-foot .links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-bottom:10px}
 #mg-foot a{color:#E3BE84;text-decoration:none}#mg-foot a:hover{color:#E3BE84;text-decoration:underline}
 #mg-foot .note{max-width:760px;margin:0 auto 8px;font-size:11.5px;opacity:.85}
@@ -308,13 +308,13 @@ input::placeholder,textarea::placeholder{color:rgba(223,248,235,.45)!important}
 ${BOX_GREEN?BOX_SEL2+'{color:'+BOX_TEXT+'}':''}
 .mg-tiles>*:hover{background:${BOX_BG_HI}!important;border-color:#FFFFFF!important}
 .mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{background:${BOX_BG_HI}!important;border-color:#E3BE84!important}`;
-/* page background — deep purple */
-const BG_C='#011638';
+/* page background — the original dark blue */
+const BG_C='#0C1222';
 const BG_CSS=`html{background:${BG_C}!important}
 body{color:#DFF8EB}
-body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px),
- radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(90,140,220,.12),transparent 70%),
- radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.07),transparent 70%),${BG_C}!important;background-attachment:fixed!important}`;
+body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
+ radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(123,147,189,.11),transparent 70%),
+ radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%),${BG_C}!important;background-attachment:fixed!important}`;
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
