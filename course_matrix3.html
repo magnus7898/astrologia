@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 3</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:760px;margin:26px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:78px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:96px}
+.date .note{flex-basis:100%;text-align:center;font-size:12px;color:#9aa3b6}
+.lesson{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+@media(max-width:860px){.lesson{grid-template-columns:1fr}}
+.fig{position:sticky;top:12px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:8px}
+@media(max-width:860px){.fig{position:static}}
+#mx{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:11.5px;color:#aab2c4;padding:6px 4px 2px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.steps button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+.steps button.on{background:rgba(201,162,76,.22);border-color:#E3BE84;color:#FFF0C8}
+.steps button.done{color:#F3DDA4}
+.card{border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:18px 18px 16px}
+.card h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em;margin-bottom:10px}
+.card p{font-size:14px;line-height:1.85;color:#e2e5ec;margin:8px 0}
+.card b{color:#F3DDA4;font-weight:600}
+.calc{margin:12px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}
+.calc small{color:#aab2c4}
+.tip{font-size:12.5px;line-height:1.7;color:#aab2c4;margin-top:10px}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.t td,table.t th{border-bottom:1px solid rgba(255,255,255,.08);padding:6px 6px;text-align:left}
+table.t th{color:#B8894A;font-weight:400;font-size:11.5px;letter-spacing:.06em}
+table.t td.n{color:#FFE7A0;font-weight:600;text-align:center;width:48px}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.nav button:disabled{opacity:.35;cursor:default}
+/* diagram */
+.ln{stroke:rgba(201,162,76,.28);stroke-width:1.3;fill:none}
+.ln.hi{stroke:#E3BE84;stroke-width:2.2}
+.pt circle{fill:#141a2c;stroke:rgba(201,162,76,.35);stroke-width:1.4;transition:fill .3s,stroke .3s}
+.pt text{fill:rgba(255,255,255,.25);font:600 15px 'Noto Sans Georgian',Arial,sans-serif;text-anchor:middle;dominant-baseline:central;transition:fill .3s}
+.pt .lb{font:400 10px 'Noto Sans Georgian',Arial,sans-serif;fill:rgba(170,178,196,.0)}
+.pt.known circle{stroke:rgba(201,162,76,.6)}
+.pt.known text{fill:#e9e2cf}
+.pt.hi circle{fill:#3a2c0e;stroke:#FFD36A;stroke-width:2.4}
+.pt.hi text{fill:#FFF3C4}
+.pt.hi .lb{fill:#FFD36A}
+.pt.src circle{stroke:#7ec8ff;stroke-width:2.2}
+.pt.src text{fill:#cfeaff}
+.zoomwrap{position:relative;overflow:hidden;border-radius:10px;touch-action:none}
+#mx{cursor:grab;touch-action:none}#mx.drag{cursor:grabbing}
+.zb{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:5px}
+.zb button{width:34px;height:34px;border-radius:50%;background:rgba(8,10,20,.85);border:1px solid rgba(201,162,76,.6);color:#F3DDA4;font-size:17px;cursor:pointer;line-height:1}
+.agein{display:flex;gap:8px;align-items:center;margin:10px 0}
+.agein input{width:80px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:7px 9px;font-size:15px;font-family:inherit;text-align:center}
+.ages{max-height:330px;overflow:auto;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 3 — ასაკობრივი ენერგიები</h1>
+  <div class="sub">ასაკის წრე მატრიცის გარშემო: რომელი ენერგია მოქმედებს ცხოვრების რომელ წლებში</div>
+
+  <div class="intro">
+    მატრიცის გარშემო შემოვლებული წრე — <b>ასაკის წრეა</b>: ცხოვრების 80 წელი, 8 ნაწილად (თითო 10 წელი). ყოველ წერტილს თავისი <b>ენერგია</b> აქვს — ის განსაზღვრავს, რა ამოცანები, მოვლენები და გაკვეთილები მოდის ცხოვრების ამ პერიოდში.
+    წრე იგება გარე რვა წერტილიდან, რომლებიც <a href="course_matrix1.html" style="color:#E3BE84">გაკვეთილ 1-ში</a> გამოვთვალეთ.
+    სქემა <b>ზუმდება</b>: ბორბალი / ორი თითი — ზუმი, გადათრევა — გადაადგილება.
+  </div>
+
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+      <div class="note" id="dnote"></div>
+    </div>
+  </div>
+
+  <div class="lesson">
+    <div class="fig">
+      <div class="zoomwrap"><svg id="mx" viewBox="30 30 1140 1140" role="img" aria-label="მატრიცის სქემა"></svg>
+        <div class="zb"><button type="button" id="zin" title="გადიდება">＋</button><button type="button" id="zout" title="დაპატარავება">－</button><button type="button" id="zrst" title="მთელი მატრიცა">⟲</button></div></div>
+      <div class="legend"><span><i style="background:#FFD36A"></i>ამ ნაბიჯში ვითვლით</span><span><i style="background:#7ec8ff"></i>რისგან ვითვლით</span><span>ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება</span></div>
+    </div>
+    <div>
+      <div class="steps" id="steps"></div>
+      <div class="card" id="card"></div>
+      <div class="nav"><button id="prev">← წინა</button><button id="next">შემდეგი →</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+/* the same reduction the site's calculator uses: while > 22, add the digits */
+function r22(n){while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;}
+function r22steps(n){const s=[n];while(n>22){n=String(n).split('').reduce((a,d)=>a+ +d,0);s.push(n);}return s;}
+const red=n=>{const s=r22steps(n);return s.length===1?`<span class="r">${n}</span>`:s.slice(0,-1).join(' → ')+' → <span class="r">'+s[s.length-1]+'</span>';};
+
+/* ── all values of method 1 (identical to the site's calculator) ── */
+function calc(d,m,y){const v={};
+  v.L3=r22(d);v.T3=r22(m);v.R3=r22(y);v.B3=r22(v.L3+v.T3+v.R3);v.Cv=r22(v.L3+v.T3+v.R3+v.B3);
+  v.TL3=r22(v.L3+v.T3);v.TR3=r22(v.T3+v.R3);v.BR3=r22(v.R3+v.B3);v.BL3=r22(v.B3+v.L3);
+  v.RC1=r22(v.TL3+v.TR3+v.BR3+v.BL3);v.RC2=r22(v.RC1+v.Cv);
+  for(const k of ['L','T','R','B']){v[k+'1']=r22(v.Cv+v[k+'3']);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  for(const k of ['TL','TR','BR','BL']){v[k+'1']=r22(v[k+'3']+v.RC1);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  v.G1=r22(v.L1+v.Cv);v.G2=r22(v.T1+v.Cv);
+  v.W2=r22(v.B1+v.R1);v.W1=r22(v.B1+v.W2);v.W3=r22(v.R1+v.W2);
+  /* age circle — the same algorithm as the site (numcalc.age_points) */
+  const AN=[v.L3,v.TL3,v.T3,v.TR3,v.R3,v.BR3,v.B3,v.BL3];
+  for(let sc=0;sc<8;sc++){const a=AN[sc],b=AN[(sc+1)%8];v['N'+sc]=a;
+    const d4=r22(a+b),d2=r22(a+d4),d1=r22(a+d2),d3=r22(d2+d4),d6=r22(d4+b),d5=r22(d4+d6),d7=r22(d6+b);
+    [d1,d2,d3,d4,d5,d6,d7].forEach((e,d)=>v['A'+sc+'_'+d]=e);}
+  return v;}
+const fA=n=>n===Math.floor(n)?String(n):String(n).replace('.',',');
+const LABELS=sc=>{const s=sc*10+1;return [fA(s)+'-'+fA(s+1.5),fA(s+1.5)+'-'+fA(s+2.5),fA(s+2.5)+'-'+fA(s+3),fA(s+4),fA(s+5)+'-'+fA(s+6.5),fA(s+6.5)+'-'+fA(s+7.5),fA(s+7.5)+'-'+fA(s+8)];};
+const SEC_NAME=['დღე (მარცხენა)','ზედა-მარცხენა','თვე (ზედა)','ზედა-მარჯვენა','წელი (მარჯვენა)','ქვედა-მარჯვენა','ქვედა','ქვედა-მარცხენა'];
+const SEC_KEY=['L3','TL3','T3','TR3','R3','BR3','B3','BL3'];
+
+/* ── steps ── */
+const KEYS=d=>[0,1,2,3,4,5,6,7].map(sc=>'A'+sc+'_'+d);
+const ANCH=[0,1,2,3,4,5,6,7].map(sc=>'N'+sc);
+const secTable=(d,fn)=>`<table class="t"><tr><th>წლები</th><th>როგორ</th><th>ენერგია</th></tr>${[0,1,2,3,4,5,6,7].map(sc=>`<tr><td>${LABELS(sc)[d]}</td><td>${fn(sc)}</td><td class="n">${V['A'+sc+'_'+d]}</td></tr>`).join('')}</table>`;
+const S=[
+ {t:'1. ასაკის წრე',hi:[],src:[],vb:null,showAnch:true,body:v=>`
+   <p>წრე იწყება <b>მარცხნიდან</b> — დაბადების მომენტი (0 წელი) — და მიდის <b>საათის ისრის მიმართულებით</b>: ზემოთ, მარჯვნივ, ქვემოთ და ისევ მარცხნივ. ერთი სრული წრე = <b>80 წელი</b>; 80 წლის შემდეგ ციკლი თავიდან იწყება.</p>
+   <div class="calc">8 ნაწილი × 10 წელი<br>ყოველ ნაწილში: ათწლეულის წერტილი + <b>7 შუალედური</b> წერტილი<br>სულ: 8 + 56 = 64 ასაკობრივი წერტილი</div>
+   <p>წრის შიგნით პატარა ციფრები — <b>ასაკი</b> (მაგ. „1-2,5“), გარეთ — იმ ასაკის <b>ენერგია</b>. ყვითელი შუა წერტილი ყოველ ნაწილში — 5-ზე დამთავრებული ასაკი (5, 15, 25…).</p>`},
+ {t:'2. ათწლეულის წერტილები',hi:ANCH,src:['L3','TL3','T3','TR3','R3','BR3','B3','BL3'],vb:null,showAnch:true,body:v=>`
+   <p>რვა ყვითელი წერტილი წრეზე — <b>0, 10, 20 … 70 წელი</b>. მათი ენერგია არაფრით არ ითვლება: ეს უბრალოდ მატრიცის <b>გარე წერტილებია</b>, რომლებიც ზუსტად მათ გასწვრივ დგას:</p>
+   <table class="t"><tr><th>ასაკი</th><th>წერტილი</th><th>ენერგია</th></tr>${[0,1,2,3,4,5,6,7].map(sc=>`<tr><td>${sc*10} წ.</td><td>${SEC_NAME[sc]}</td><td class="n">${V[SEC_KEY[sc]]}</td></tr>`).join('')}</table>`},
+ {t:'3. შუა წერტილი — 5 წელი',hi:KEYS(3),src:['N0','N1','L3','TL3'],vb:0,body:v=>`
+   <p>ყოველი ათწლეულის შუაში (5, 15, 25 … 75 წელი) — ორი მეზობელი ათწლეულის წერტილის <b>ჯამი</b>:</p>
+   <div class="calc">5 წელი = 0 წლის + 10 წლის = ${v.N0} + ${v.N1} = ${red(v.N0+v.N1)}</div>
+   ${secTable(3,sc=>`${v['N'+sc]} + ${v['N'+((sc+1)%8)]}`)}
+   <p class="tip">სქემა გადიდებულია პირველ ათწლეულზე (0–10 წ.). დააჭირე ⟲ — მთელი წრე ჩანს.</p>`},
+ {t:'4. 2,5 და 7,5 წელი',hi:[...KEYS(1),...KEYS(5)],src:['N0','N1','A0_3'],vb:0,body:v=>`
+   <p>ახლა ათწლეულის ორივე ნახევარს ისევ შუაზე ვყოფთ:</p>
+   <div class="calc"><small>პირველი ნახევრის შუა = ათწლეულის დასაწყისი + შუა წერტილი · მეორე ნახევრის შუა = შუა წერტილი + შემდეგი ათწლეული</small><br>
+     2,5 წელი = ${v.N0} + ${v.A0_3} = ${red(v.N0+v.A0_3)}<br>7,5 წელი = ${v.A0_3} + ${v.N1} = ${red(v.A0_3+v.N1)}</div>
+   ${secTable(1,sc=>`${v['N'+sc]} + ${v['A'+sc+'_3']}`)}`},
+ {t:'5. დარჩენილი ოთხი წერტილი',hi:[...KEYS(0),...KEYS(2),...KEYS(4),...KEYS(6)],src:['N0','N1','A0_1','A0_3','A0_5'],vb:0,body:v=>`
+   <p>და კიდევ ერთხელ — ყოველ მეოთხედს შუაზე ვყოფთ. ყოველი ახალი წერტილი <b>ორი მეზობლის ჯამია</b>:</p>
+   <div class="calc">1-2,5 წ. = ${v.N0} + ${v.A0_1} = ${red(v.N0+v.A0_1)}<br>2,5-3 წ. = ${v.A0_1} + ${v.A0_3} = ${red(v.A0_1+v.A0_3)}<br>6-7,5 წ. = ${v.A0_3} + ${v.A0_5} = ${red(v.A0_3+v.A0_5)}<br>7,5-8 წ. = ${v.A0_5} + ${v.N1} = ${red(v.A0_5+v.N1)}</div>
+   <p>ასე ერთ ათწლეულში 8 წერტილი მიიღება: ${['N0','A0_0','A0_1','A0_2','A0_3','A0_4','A0_5','A0_6'].map(k=>v[k]).join(' · ')} — და შემდეგი ათწლეული ისევ ${v.N1}-ით იწყება.</p>
+   <p class="tip">მთელი პრინციპი ერთ წინადადებაში: <b>ყოველი წერტილი ორი მეზობლის ჯამია</b> — ჯერ შუა, მერე მეოთხედები, მერე მერვედები.</p>`},
+ {t:'6. მთელი წრე',hi:[],src:[],vb:null,showAnch:true,body:v=>`
+   <p>იგივე ყველა ათწლეულში — და წრე სავსეა. გადაადგილე და გაადიდე სქემა, რომ ყველა ასაკი წაიკითხო.</p>
+   <div class="ages"><table class="t"><tr><th>ასაკი</th><th>ენერგია</th></tr>${[0,1,2,3,4,5,6,7].map(sc=>`<tr><td><b>${sc*10} წ.</b></td><td class="n">${v['N'+sc]}</td></tr>`+LABELS(sc).map((l,d)=>`<tr><td>${l}</td><td class="n">${v['A'+sc+'_'+d]}</td></tr>`).join('')).join('')}</table></div>`},
+ {t:'7. ჩემი ასაკი',hi:[],src:[],vb:'me',showAnch:true,me:true,body:v=>{const m=MYAGE();
+   return `<p>რომელ წერტილში ხარ ახლა? ჩაწერე ასაკი (ან ის თავად დაითვლება თარიღიდან):</p>
+   <div class="agein"><input id="age" type="number" min="0" max="120" step="0.5" value="${AGE}"><span>წელი</span></div>
+   <div class="calc">ასაკი ${AGE} → წერტილი <b>${m.label}</b> წ. · ენერგია <span class="r">${V[m.k]}</span>${AGE>=80?`<br><small>80 წლის შემდეგ წრე თავიდან იწყება: ${AGE} − 80 = ${AGE-80}</small>`:''}</div>
+   <p>ეს ენერგია განსაზღვრავს ამ წლების <b>მთავარ თემას</b>. პლიუსში — მისი ძლიერი მხარეები ვლინდება, მინუსში — მისი გაკვეთილები და გამოცდები. ყოველი წერტილი თავის შუალედზე მოქმედებს (მაგ. „1-2,5“ — 1-დან 2,5 წლამდე), ხოლო ათწლეულის წერტილი — დაახლოებით ერთი წლით ადრე და გვიან.</p>
+   <p>მატრიცის გვერდზე შენი ამჟამინდელი წერტილი ავტომატურად ციმციმებს ოქროსფრად.</p>
+   <div class="nav" style="justify-content:center"><a href="matrix.html">✦ ნახე შენი ასაკის წრე ✦</a></div>`;}},
+];
+let AGE=30;
+/* which point holds a given age — same rule as the matrix page */
+function MYAGE(){let a=AGE%80;if(a<0)a+=80;const num=x=>parseFloat(String(x).replace(',','.'));const P=[];
+  for(let sc=0;sc<8;sc++){P.push({k:'N'+sc,label:String(sc*10),lo:sc*10-1,hi:sc*10+1});LABELS(sc).forEach((l,d)=>{const p=l.split('-');P.push({k:'A'+sc+'_'+d,label:l,lo:p.length>1?num(p[0]):num(p[0])-1,hi:p.length>1?num(p[1]):num(p[0])+1});});}
+  P.sort((x,y)=>x.lo-y.lo);let b=P.find(p=>a>=p.lo&&a<p.hi)||P.find(p=>p.lo>a)||P[0];return b;}
+const ageKnown=i=>{const s=new Set();for(let j=0;j<=i;j++){S[j].hi.forEach(k=>s.add(k));if(j>=5||S[j].me)for(const k in V)if(/^A|^N/.test(k))s.add(k);}return s;};
+let cur=0,D={d:15,m:5,y:1990},V=calc(15,5,1990);
+const known=i=>new Set(Object.keys(V));
+
+/* ── the matrix exactly as matrix.html draws it (same geometry, colours, lines, age ring) ── */
+const cx=600,cy=600,rc_r=60,r1_r=25,r2_r=40,r3_r=64,gap=180;
+const d1=rc_r+gap+r1_r,d2=d1+r1_r+r2_r,d3=d2+r2_r+r3_r,sq=Math.sqrt(2)/2;
+const dd1=Math.round(d1*sq),dd2=Math.round((d1+r1_r+r2_r)*sq),dd3=Math.round((d1+r1_r+r2_r+r2_r+r3_r)*sq),outerR=d3+r3_r;
+const dkFill='rgba(20,14,50,0.92)',dkStr='rgba(180,160,255,0.75)';
+const C1f='#4a8cc8',C1s='#1a5090',C2f='#2060a8',C2s='#0a3878';
+const Bx=cx,By=cy+d1,Rx=cx+d1,Ry=cy;
+const Wp=t=>[Math.round(Bx+t*(Rx-Bx)),Math.round(By+t*(Ry-By))];
+/* key → [x, y, r, fill, stroke] */
+const PT={
+ Cv:[cx,cy,rc_r,'#FFD700','#BA7517'],
+ G1:[cx-rc_r-gap/2,cy,r1_r,'#639922','#3B6D11'],G2:[cx,cy-rc_r-gap/2,r1_r,'#639922','#3B6D11'],
+ T1:[cx,cy-d1,r1_r,C1f,C1s],T2:[cx,cy-d2,r2_r,C2f,C2s],T3:[cx,cy-d3,r3_r,'#7F77DD','#534AB7'],
+ L1:[cx-d1,cy,r1_r,C1f,C1s],L2:[cx-d2,cy,r2_r,C2f,C2s],L3:[cx-d3,cy,r3_r,'#7F77DD','#534AB7'],
+ B1:[cx,cy+d1,r1_r,'#EF9F27','#BA7517'],B2:[cx,cy+d2,r2_r,dkFill,dkStr],B3:[cx,cy+d3,r3_r,'#E24B4A','#A32D2D'],
+ R1:[cx+d1,cy,r1_r,'#EF9F27','#BA7517'],R2:[cx+d2,cy,r2_r,dkFill,dkStr],R3:[cx+d3,cy,r3_r,'#E24B4A','#A32D2D'],
+ RC1:[cx+rc_r+r2_r,cy,r2_r,dkFill,dkStr],RC2:[cx+rc_r+r2_r*2+r1_r,cy,r1_r,dkFill,dkStr],
+ TL1:[cx-dd1,cy-dd1,r1_r,dkFill,dkStr],TL2:[cx-dd2,cy-dd2,r2_r,dkFill,dkStr],TL3:[cx-dd3,cy-dd3,r3_r,dkFill,dkStr],
+ TR1:[cx+dd1,cy-dd1,r1_r,dkFill,dkStr],TR2:[cx+dd2,cy-dd2,r2_r,dkFill,dkStr],TR3:[cx+dd3,cy-dd3,r3_r,dkFill,dkStr],
+ BL1:[cx-dd1,cy+dd1,r1_r,dkFill,dkStr],BL2:[cx-dd2,cy+dd2,r2_r,dkFill,dkStr],BL3:[cx-dd3,cy+dd3,r3_r,dkFill,dkStr],
+ BR1:[cx+dd1,cy+dd1,r1_r,dkFill,dkStr],BR2:[cx+dd2,cy+dd2,r2_r,dkFill,dkStr],BR3:[cx+dd3,cy+dd3,r3_r,dkFill,dkStr],
+ W1:[...Wp(.25),r1_r,dkFill,dkStr],W2:[...Wp(.5),r1_r,dkFill,dkStr],W3:[...Wp(.75),r1_r,dkFill,dkStr]};
+const NAME={L3:'დღე',T3:'თვე',R3:'წელი',B3:'ქვედა'};
+function draw(){const st={...S[cur]},K=known(cur),hi=new Set(st.hi),src=new Set(st.src);if(st.me){const m=MYAGE();st.me=m.k;}
+  const svg=$('mx');let h='';
+  const ln=(x1,y1,x2,y2,c,w)=>{h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}"/>`;};
+  /* frame lines (as on the matrix page) */
+  h+=`<polygon points="${cx},${cy-2*dd1} ${cx+2*dd1},${cy} ${cx},${cy+2*dd1} ${cx-2*dd1},${cy}" fill="none" stroke="rgba(127,119,221,0.9)" stroke-width="1.5"/>`;
+  h+=`<rect x="${cx-d1}" y="${cy-d1}" width="${d1*2}" height="${d1*2}" fill="none" stroke="rgba(220,200,255,0.9)" stroke-width="1.5"/>`;
+  const lc='rgba(220,200,255,0.75)',xE=d3+r3_r;
+  ln(cx-xE,cy,cx+xE,cy,lc,.8);ln(cx,cy-xE,cx,cy+xE,lc,.8);ln(cx,cy+d1,cx+d1,cy,lc,.8);
+  ln(cx+dd1,cy-dd1,cx-dd1,cy+dd1,'rgba(255,120,120,1)',1.5);ln(cx-dd1,cy-dd1,cx+dd1,cy+dd1,'rgba(210,110,255,1)',1.5);
+  h+=`<text x="670" y="493" font-size="13" font-weight="600" fill="rgba(255,130,130,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(-45,670,493)">ქალის ხაზი</text>`;
+  h+=`<text x="529" y="493" font-size="13" font-weight="600" fill="rgba(200,130,255,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(45,529,493)">მამაკაცის ხაზი</text>`;
+  h+=`<circle cx="${cx}" cy="${cy}" r="${outerR}" fill="none" stroke="rgba(180,160,255,0.95)" stroke-width="2.5"/>`;
+  /* age ring with energies (as on the matrix page) */
+  const aA=[180,225,270,315,0,45,90,135],AK=ageKnown(cur);
+  for(let sc=0;sc<8;sc++){const L=LABELS(sc);
+    for(let d=0;d<7;d++){const a=(aA[sc]+45*(d+1)/8)*Math.PI/180,mid=d===3,k='A'+sc+'_'+d,isH=hi.has(k),isS=src.has(k),kn=AK.has(k)||isH;
+      const px=Math.round(cx+outerR*Math.cos(a)),py=Math.round(cy+outerR*Math.sin(a));
+      h+=`<circle cx="${px}" cy="${py}" r="${mid?7:5}" fill="${mid?'#FFD700':'rgba(200,180,255,0.95)'}"/>`;
+      const tA=(aA[sc]+45*(0.20+(d/6)*0.60))*Math.PI/180,ins=outerR-18;
+      h+=`<text x="${Math.round(cx+ins*Math.cos(tA))}" y="${Math.round(cy+ins*Math.sin(tA))}" font-size="${mid?8:7}" font-weight="${mid?700:400}" fill="${mid?'#FFD700':'rgba(200,180,255,0.85)'}" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">${L[d]}</text>`;
+      const out=outerR+38,ex=Math.round(cx+out*Math.cos(a)),ey=Math.round(cy+out*Math.sin(a));
+      if(isH)h+=`<circle cx="${ex}" cy="${ey}" r="17" fill="rgba(255,211,106,.2)" stroke="#FFD36A" stroke-width="3"><animate attributeName="r" values="14;19;14" dur="1.8s" repeatCount="indefinite"/></circle>`;
+      else if(isS)h+=`<circle cx="${ex}" cy="${ey}" r="16" fill="none" stroke="#7ec8ff" stroke-width="3"/>`;
+      if(st.me===k)h+=`<circle cx="${px}" cy="${py}" r="16" fill="none" stroke="#FFD700" stroke-width="3"><animate attributeName="r" values="13;19;13" dur="1.8s" repeatCount="indefinite"/></circle>`;
+      h+=`<text x="${ex}" y="${ey}" font-size="${mid?17:15}" font-weight="${mid?700:600}" fill="${kn?(mid?'#FFD700':'rgba(167,139,250,0.95)'):'rgba(255,255,255,.45)'}" text-anchor="middle" dominant-baseline="central" font-family="Cinzel,serif">${kn?V[k]:'?'}</text>`;}
+    const a=aA[sc]*Math.PI/180,k='N'+sc,ax=Math.round(cx+(outerR+24)*Math.cos(a)),ay=Math.round(cy+(outerR+24)*Math.sin(a));
+    if(hi.has(k))h+=`<circle cx="${ax}" cy="${ay}" r="15" fill="none" stroke="#FFD36A" stroke-width="3"><animate attributeName="r" values="12;17;12" dur="1.8s" repeatCount="indefinite"/></circle>`;
+    else if(src.has(k))h+=`<circle cx="${ax}" cy="${ay}" r="14" fill="none" stroke="#7ec8ff" stroke-width="3"/>`;
+    if(st.me===k)h+=`<circle cx="${ax}" cy="${ay}" r="16" fill="none" stroke="#FFD700" stroke-width="3"><animate attributeName="r" values="13;19;13" dur="1.8s" repeatCount="indefinite"/></circle>`;
+    h+=`<circle cx="${ax}" cy="${ay}" r="7" fill="#FFD700" stroke="#a87f00"/>`;
+    if(st.showAnch){const lx=Math.round(cx+(outerR+56)*Math.cos(a)),ly=Math.round(cy+(outerR+56)*Math.sin(a));h+=`<text x="${lx}" y="${ly}" font-size="15" font-weight="700" fill="#FFD36A" text-anchor="middle" dominant-baseline="central" font-family="Cinzel,serif">${sc*10} წ.</text>`;}}
+  /* step 13: the four purpose lines */
+  if(st.lines){const g=(a,b,c)=>ln(PT[a][0],PT[a][1],PT[b][0],PT[b][1],c,6);
+    if(st.lines!=='mf'){g('T3','B3','rgba(126,200,255,.7)');g('L3','R3','rgba(160,220,140,.7)');}
+    if(st.lines!=='se'){g('TL3','BR3','rgba(210,110,255,.75)');g('TR3','BL3','rgba(255,120,120,.75)');}}
+  /* points */
+  for(const k in PT){const [x,y,r,f,sk]=PT[k],isHi=hi.has(k),isSrc=src.has(k),isK=K.has(k)||isHi;
+    const fs=Math.max(20,Math.round(r*1.3));
+    if(isHi)h+=`<circle cx="${x}" cy="${y}" r="${r+11}" fill="rgba(255,211,106,.18)" stroke="#FFD36A" stroke-width="4"><animate attributeName="r" values="${r+8};${r+14};${r+8}" dur="1.8s" repeatCount="indefinite"/></circle>`;
+    else if(isSrc)h+=`<circle cx="${x}" cy="${y}" r="${r+8}" fill="none" stroke="#7ec8ff" stroke-width="4"/>`;
+    h+=`<g><circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${sk}" stroke-width="1.5"/>`+
+       `<text x="${x}" y="${y}" font-size="${fs}" font-weight="700" fill="${isK?'white':'rgba(255,255,255,.55)'}" font-family="Cinzel,serif" text-anchor="middle" dominant-baseline="central">${isK?V[k]:'?'}</text></g>`;
+    if(NAME[k]){const out=k==='L3'?[x,y+r+22]:k==='R3'?[x,y+r+22]:k==='T3'?[x+r+34,y]:[x+r+34,y];
+      h+=`<text x="${out[0]}" y="${out[1]}" font-size="17" fill="${isHi?'#FFD36A':'rgba(232,214,174,.8)'}" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" dominant-baseline="central">${NAME[k]}</text>`;}}
+  /* ♥ and ₾ icons as on the matrix page */
+  for(const [k,t,c] of [['W1','♥','#ff6b8a'],['W3','₾','#7ec850']]){const [x,y]=PT[k];h+=`<text x="${x}" y="${y-r1_r-16}" font-size="16" text-anchor="middle" dominant-baseline="central" fill="${c}" transform="rotate(-45,${x},${y-r1_r-16})">${t}</text>`;}
+  svg.innerHTML=h;}
+function render(){
+  $('steps').innerHTML=S.map((s,i)=>`<button type="button" data-i="${i}" class="${i===cur?'on':i<cur?'done':''}">${i+1}</button>`).join('');
+  $('card').innerHTML=`<h2>${S[cur].t}</h2>${S[cur].body(V)}`;
+  $('prev').disabled=cur===0;$('next').disabled=cur===S.length-1;draw();
+  const ai=$('age');if(ai)ai.oninput=()=>{const x=parseFloat(ai.value);if(isFinite(x)&&x>=0){AGE=x;const c=$('card');const pos=ai.selectionStart;render();const n=$('age');n.focus();}};
+  const st=S[cur];if(st.vb===0)zoomTo(sectorVB(0));else if(st.vb==='me')zoomTo(pointVB(MYAGE().k));else if(st.vb===null&&lastVBstep!==cur)zoomTo(FULL);lastVBstep=cur;}
+/* ── zoom & pan ── */
+const FULL=[30,30,1140,1140];let VB=FULL.slice(),lastVBstep=-1,anim=0;
+function setVB(v){VB=v;$('mx').setAttribute('viewBox',v.map(x=>x.toFixed(1)).join(' '));}
+function zoomTo(t){cancelAnimationFrame(anim);const f=VB.slice(),t0=performance.now();
+  const step=n=>{const k=Math.min(1,(n-t0)/650),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;setVB(f.map((x,i)=>x+(t[i]-x)*e));if(k<1)anim=requestAnimationFrame(step);};anim=requestAnimationFrame(step);}
+function sectorVB(sc){const a0=[180,225,270,315,0,45,90,135][sc],pts=[];for(let i=0;i<=8;i++){const a=(a0+45*i/8)*Math.PI/180;for(const r of [outerR-40,outerR+70])pts.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const w=Math.max(x1-x0,y1-y0)+130;
+  return [(x0+x1)/2-w/2,(y0+y1)/2-w/2,w,w];}
+function pointVB(k){const m=/^A(\d)_(\d)$/.exec(k),n=/^N(\d)$/.exec(k),a0=[180,225,270,315,0,45,90,135];let a;
+  if(m)a=(a0[+m[1]]+45*(+m[2]+1)/8)*Math.PI/180;else a=a0[+n[1]]*Math.PI/180;const r=outerR+20,x=cx+r*Math.cos(a),y=cy+r*Math.sin(a),w=330;return [x-w/2,y-w/2,w,w];}
+function zoomAt(f,px,py){const svg=$('mx'),R=svg.getBoundingClientRect(),ux=VB[0]+(px-R.left)/R.width*VB[2],uy=VB[1]+(py-R.top)/R.height*VB[3];
+  const w=Math.min(1600,Math.max(120,VB[2]*f));setVB([ux-(ux-VB[0])*w/VB[2],uy-(uy-VB[1])*w/VB[3],w,w]);}
+{const svg=$('mx');
+  svg.addEventListener('wheel',e=>{e.preventDefault();cancelAnimationFrame(anim);zoomAt(Math.exp(e.deltaY*0.0015),e.clientX,e.clientY);},{passive:false});
+  const P=new Map();let pd=0;
+  svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);P.set(e.pointerId,[e.clientX,e.clientY]);svg.classList.add('drag');cancelAnimationFrame(anim);
+    if(P.size===2){const [a,b]=[...P.values()];pd=Math.hypot(a[0]-b[0],a[1]-b[1]);}});
+  svg.addEventListener('pointermove',e=>{if(!P.has(e.pointerId))return;const o=P.get(e.pointerId),R=svg.getBoundingClientRect();
+    if(P.size===1){setVB([VB[0]-(e.clientX-o[0])/R.width*VB[2],VB[1]-(e.clientY-o[1])/R.height*VB[3],VB[2],VB[3]]);P.set(e.pointerId,[e.clientX,e.clientY]);}
+    else{P.set(e.pointerId,[e.clientX,e.clientY]);const [a,b]=[...P.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pd)zoomAt(pd/d,(a[0]+b[0])/2,(a[1]+b[1])/2);pd=d;}});
+  const up=e=>{P.delete(e.pointerId);pd=0;if(!P.size)svg.classList.remove('drag');};svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  svg.addEventListener('dblclick',()=>zoomTo(FULL));
+  $('zin').onclick=()=>{const R=svg.getBoundingClientRect();zoomAt(1/1.4,R.left+R.width/2,R.top+R.height/2);};
+  $('zout').onclick=()=>{const R=svg.getBoundingClientRect();zoomAt(1.4,R.left+R.width/2,R.top+R.height/2);};
+  $('zrst').onclick=()=>zoomTo(FULL);}
+$('steps').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=+b.dataset.i;render();});
+$('prev').onclick=()=>{if(cur>0){cur--;render();}};
+$('next').onclick=()=>{if(cur<S.length-1){cur++;render();$('card').scrollIntoView({behavior:'smooth',block:'nearest'});}};
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12)||!(d>=1&&d<=dim[m-1])||!(y>=1000&&y<=2100)){$('dnote').textContent='შეიყვანე სწორი თარიღი';return;}
+  D={d,m,y};V=calc(d,m,y);{const t=new Date();let ag=t.getFullYear()-y;if((t.getMonth()+1)-m<0||((t.getMonth()+1)===m&&t.getDate()<d))ag--;if(ag>=0&&ag<130)AGE=ag;}$('dnote').textContent=`მაგალითი: ${String(d).padStart(2,'0')}.${String(m).padStart(2,'0')}.${y}`;render();}
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));
+upd();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
