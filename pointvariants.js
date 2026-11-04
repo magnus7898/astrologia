@@ -9,12 +9,15 @@
 (function(){
 'use strict';
 const KEY='magnus_pointvariants';
-const PV={lm:true,lt:false,nm:true,nt:false,sm:true};
+const PV={lm:true,lt:false,nm:true,nt:false,sm:true,pr:false};
 try{Object.assign(PV,JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){}
 PV.sm=true;   /* Selena is always on the wheel — no switch for it any more */
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(PV));}catch(e){}};
-const TN={lil:'ჭ. ლილიტი',nn:'ჭ. ჩრდ. კვანძი',sn:'ჭ. სამხ. კვანძი'};
+const TN={lil:'ჭ. ლილიტი',nn:'ჭ. ჩრდ. კვანძი',sn:'ჭ. სამხ. კვანძი'},PRN='პროზერპინა';
 if(typeof PI!=='undefined'){PI[TN.lil]={sym:'⚸',color:'#d0508a'};PI[TN.nn]={sym:'☊',color:'#3fd08a'};PI[TN.sn]={sym:'☋',color:'#e07a7a'};}
+if(typeof PI!=='undefined')PI[PRN]={sym:'⯘',color:'#b07ad8'};
+if(typeof ORB_TIER!=='undefined')ORB_TIER[PRN]='virtual';
+if(typeof PORDER!=='undefined'&&!PORDER.includes(PRN)){const k=PORDER.indexOf('პლუტონი');PORDER.splice(k>=0?k+1:PORDER.length,0,PRN);}
 if(typeof ORB_TIER!=='undefined'){ORB_TIER[TN.lil]='virtual';ORB_TIER[TN.nn]='virtual';ORB_TIER[TN.sn]='virtual';}
 if(typeof PORDER!=='undefined'){const i=PORDER.indexOf('სამხ. კვანძი');if(i>=0&&!PORDER.includes(TN.nn))PORDER.splice(i+1,0,TN.nn,TN.sn);const j=PORDER.indexOf('ლილიტი');if(j>=0&&!PORDER.includes(TN.lil))PORDER.splice(j+1,0,TN.lil);}
 
@@ -34,6 +37,17 @@ function osc(A,date){const t=A.MakeTime(date),dt=0.02,rot=A.Rotation_EQJ_ECT(t),
   const n360=x=>((x%360)+360)%360;return {node:n360(Math.atan2(h.x,-h.y)*180/Math.PI),apo:n360(Math.atan2(-e.y,-e.x)*180/Math.PI)};}
 function truePoints(A,date){const c=osc(A,date),p=osc(A,new Date(date.getTime()-43200000)),q=osc(A,new Date(date.getTime()+43200000)),dd=(x,y)=>((y-x+540)%360)-180;
   return {node:c.node,apo:c.apo,nodeRetro:dd(p.node,q.node)<0,apoRetro:dd(p.apo,q.apo)<0};}
+/* Proserpina — hypothetical trans-Plutonian planet (Globa / Russian school: rules Virgo).
+   Mean heliocentric longitude, uniform motion 27.6′/year, fitted to the published ephemerides
+   (ADB-Prof / Almagest / Timashev tables: 1 Jan 1900 ≈ 171°39′, 1950 ≈ 194°40′, 2000 ≈ 218°, 2025 ≈ 230°).
+   Seen from the Earth at the corresponding distance (~85 AU) it makes small yearly retrograde loops (±0.7°).
+   Earth's position comes from the chart's own Sun.                                                     */
+function proserpina(date,sunLon){
+  const yr=1950+(date.getTime()/864e5+2440587.5-2433282.4235)/365.2422;      /* 2433282.42 = 1950 Jan 0.92 */
+  const geo=(y,sl)=>{const L=(194.667+0.4605*(y-1950))*Math.PI/180,a=85,e=(sl+180)*Math.PI/180;
+    return ((Math.atan2(a*Math.sin(L)-Math.sin(e),a*Math.cos(L)-Math.cos(e))*180/Math.PI)+360)%360;};
+  const l0=geo(yr,sunLon),l1=geo(yr+1/365.2422,sunLon+0.9856);
+  return {lon:l0,retro:(((l1-l0+540)%360)-180)<0};}
 const SG=()=>(typeof SIGN_KA!=='undefined'&&SIGN_KA)||['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
 function setPt(P,name,deg,retro){const d=((deg%360)+360)%360,sd=Math.floor(d%30);P[name]={degree:Math.round(d*10000)/10000,sign:SG()[Math.floor(d/30)%12],sign_degree:sd,centesimal:Math.round((d%30-sd)*100),retrograde:!!retro,_true:true};}
 async function apply(d,req){if(!d||!d.planets||!req)return d;const P=d.planets,draco=typeof currentMode!=='undefined'&&currentMode==='draconic';
@@ -42,6 +56,7 @@ async function apply(d,req){if(!d||!d.planets||!req)return d;const P=d.planets,d
   if(P['ჩრდ. კვანძი']){if(T&&PV.nt){if(PV.nm||draco){setPt(P,TN.nn,T.node,T.nodeRetro);setPt(P,TN.sn,T.node+180,T.nodeRetro);}else{setPt(P,'ჩრდ. კვანძი',T.node,T.nodeRetro);setPt(P,'სამხ. კვანძი',T.node+180,T.nodeRetro);}}
     else if(!PV.nm&&!draco){delete P['ჩრდ. კვანძი'];delete P['სამხ. კვანძი'];}}
   if(!PV.sm)delete P['თეთრი მთვარე'];
+  if(PV.pr&&P['მზე']){const r=proserpina(toUTC(req),P['მზე'].degree);setPt(P,PRN,r.lon,r.retro);}
   if(Array.isArray(d.aspects))d.aspects=d.aspects.filter(a=>P[a.p1]&&P[a.p2]&&!P[a.p1]._true&&!P[a.p2]._true);
   d._pv={...PV};return d;}
 /* wrap fetchChart: every chart (natal, synastry, transit, progression…) goes through it */
@@ -55,10 +70,11 @@ function ui(){const host=document.getElementById('asp-filters');if(!host||docume
   row.innerHTML=`<div style="font-family:Cinzel,serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(167,139,250,.5);width:100%">ფიქტიური წერტილები — საშუალო / ჭეშმარიტი</div>
    <div style="display:flex;gap:10px;align-items:center">⚸ ${cb('lm','საშუალო ლილიტი','Mean Black Moon — მთვარის ორბიტის საშუალო აპოგეუმი (თანაბარი მოძრაობა, ~9 წლიანი ციკლი)')}${cb('lt','ჭეშმარიტი ლილიტი','True / Osculating Lilith — მთვარის ორბიტის მყისიერი (ოსკულაციური) აპოგეუმი; საშუალოს ±30°-ით შორდება')}</div>
    <div style="display:flex;gap:10px;align-items:center">☊ ${cb('nm','საშუალო კვანძები','Mean Node — თანაბრად, ყოველთვის რეტროგრადულად მოძრავი კვანძი (18,6 წლიანი ციკლი)')}${cb('nt','ჭეშმარიტი კვანძები','True Node — მთვარის ორბიტის მყისიერი კვანძი; საშუალოს ±1,7°-ით რხევა, ზოგჯერ პირდაპირი მოძრაობით')}</div>
+   <div style="display:flex;gap:10px;align-items:center">⯘ ${cb('pr','პროზერპინა','ჰიპოთეტური ტრანსპლუტონური პლანეტა (გლობას სკოლა: ქალწულის მმართველი) — საშუალო მოძრაობა ~27,6′ წელიწადში, ერთ ნიშანში ~65 წელი')}</div>
    <a href="article.html?s=astro&k=about:points&h=${encodeURIComponent('საშუალო და ჭეშმარიტი წერტილები')}&t=${encodeURIComponent('საშუალო და ჭეშმარიტი წერტილები')}" target="_blank" rel="noopener" style="font-size:11px;color:#c9a84c;align-self:center">ⓘ რას ნიშნავს?</a>`;
   host.appendChild(row);
   row.addEventListener('change',e=>{const t=e.target;if(!t.dataset.pv)return;PV[t.dataset.pv]=t.checked;save();
     if(window._lastChartReq&&typeof generate==='function'){try{generate();}catch(err){console.warn(err);}}});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ui);else ui();
-window.POINT_VARIANTS={PV,apply,truePoints,toUTC,loadAE};
+window.POINT_VARIANTS={PV,apply,truePoints,toUTC,loadAE,proserpina};
 })();
