@@ -57,6 +57,13 @@ const CSS=`
 #ob-wrap.ob-full #ob-legend{display:none}
 #ob-fsbar select{max-width:150px;width:auto}
 #ob-fsbar button.on{background:rgba(201,162,76,.3);border-color:#E3BE84;color:#FFF3D0}
+#ob-bary{position:absolute;left:12px;bottom:12px;z-index:2;width:250px;background:rgba(4,3,11,.86);border:1px solid rgba(201,162,76,.55);border-radius:12px;padding:6px 6px 7px;pointer-events:none}
+#ob-bary canvas{display:block;width:238px;height:238px}
+#ob-bary .bt{font:600 11px Cinzel,'Noto Serif Georgian',serif;letter-spacing:1.5px;color:#E3BE84;text-align:center;margin:1px 0 3px}
+#ob-bary .bc{font-size:11px;line-height:1.45;color:#F3ECDC;text-align:center}
+#ob-bary .bc b{color:#FFE7A0;font-weight:600}
+#ob-wrap.ob-nobary #ob-bary{display:none}
+@media(max-width:620px){#ob-bary{width:168px}#ob-bary canvas{width:156px;height:156px}#ob-bary .bc{font-size:10px}}
 .ob-birth{font-size:11.5px;color:rgba(200,180,140,.85);line-height:1.7;margin-top:6px}
 .ob-birth b{color:#F0D48A;font-weight:500}`;
 
@@ -72,6 +79,17 @@ function vv(k,jd,E){if(S.view==='helio')return hv(k,jd);
   if(k==='earth')return [0,0,0];
   if(k==='sun'){const e=E||hv('earth',jd);return [-e[0],-e[1],-e[2]];}
   const p=hv(k,jd),e=E||hv('earth',jd);return p?[p[0]-e[0],p[1]-e[1],p[2]-e[2]]:null;}
+/* ── barycentre: the Sun circles the centre of mass of the whole system ──
+   mass of each planet / mass of the Sun (IAU / DE440); Earth includes the Moon */
+const MU={mercury:1/6023657,venus:1/408523.72,earth:1/328900.56,mars:1/3098703.6,jupiter:1/1047.3486,saturn:1/3497.9018,uranus:1/22902.98,neptune:1/19412.26,pluto:1/136045556};
+const RSUN=0.0046505;                                    /* solar radius, AU */
+const MUSUM=1+Object.values(MU).reduce((a,b)=>a+b,0);
+/* Sun's centre relative to the barycentre (heliocentric vectors, J2000 ecliptic) + each planet's share */
+function sunBary(jd){const parts={};let x=0,y=0,z=0;
+  for(const k in MU){const v=hv(k,jd);if(!v)continue;const m=MU[k]/MUSUM;parts[k]=[v[0]*m,v[1]*m];x-=v[0]*m;y-=v[1]*m;z-=v[2]*m;}
+  return {s:[x,y,z],parts};}
+const BY={c:new Map(),step:20};
+function baryAt(i){let v=BY.c.get(i);if(!v){v=sunBary(i*BY.step).s;BY.c.set(i,v);if(BY.c.size>6000)BY.c.delete(BY.c.keys().next().value);}return v;}
 const precDeg=jd=>{const t=(jd-2451545)/36525;return (5029.0966*t+1.11113*t*t)/3600;};
 const visible=k=>(S.focus==='all'&&!(S.dance&&S.dance.on))||k===S.focus||k==='earth'||(S.view==='geo'&&k==='sun')||(S.dance&&S.dance.on&&(k===S.dance.a||k===S.dance.b));
 
@@ -246,7 +264,43 @@ function draw(){
   for(const [k,,,col] of PL){if(k==='earth'||!visible(k))continue;const l=X.lon(k,S.jd);if(!isFinite(l))continue;const a=(l-pr)*D2R;
     g.strokeStyle=col;g.lineWidth=2.2;g.beginPath();g.moveTo(cx+Math.cos(a)*(Rz+2),cy-Math.sin(a)*(Rz+2));g.lineTo(cx+Math.cos(a)*(Rz+10),cy-Math.sin(a)*(Rz+10));g.stroke();}
   {const a=(X.lon('sun',S.jd)-pr)*D2R;g.fillStyle='#ffd257';g.beginPath();g.arc(cx+Math.cos(a)*(Rz+6),cy-Math.sin(a)*(Rz+6),3.6,0,7);g.fill();}
-  S.scr=scr;S.now=now;hud();
+  S.scr=scr;S.now=now;hud();drawBary();
+}
+/* inset: the Sun's real motion around the barycentre, to scale (one solar radius = the disc) */
+let _bTxt='';
+function drawBary(){const wrap=$('ob-wrap'),cv=$('ob-bcv');if(!cv||!wrap||wrap.classList.contains('ob-nobary'))return;
+  const r=cv.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(2,devicePixelRatio||1),Wp=Math.round(r.width*dpr);
+  if(cv.width!==Wp){cv.width=Wp;cv.height=Wp;}const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  const W=r.width,c=W/2,K=(W/2-8)/(2.75*RSUN);                       /* ±2.75 solar radii fits the box */
+  const P=([x,y])=>[c+x*K,c-y*K];
+  g.clearRect(0,0,W,W);
+  /* reference rings: 1 and 2 solar radii around the barycentre */
+  g.strokeStyle='rgba(201,162,76,.18)';g.lineWidth=1;g.setLineDash([2,4]);
+  for(const m of [1,2]){g.beginPath();g.arc(c,c,m*RSUN*K,0,7);g.stroke();}g.setLineDash([]);
+  g.fillStyle='rgba(232,214,174,.5)';g.font="9px 'Noto Sans Georgian',sans-serif";g.textAlign='left';g.textBaseline='middle';
+  g.fillText('1 R☉',c+RSUN*K+2,c-6);g.fillText('2 R☉',c+2*RSUN*K+2,c-6);
+  /* path of the Sun's centre — last 60 years, fading */
+  const i1=Math.floor(S.jd/BY.step),N=Math.round(60*365.25/BY.step);let made=0;
+  g.lineWidth=1.3;let prev=null;
+  for(let i=i1-N;i<=i1;i++){if(!BY.c.has(i)){if(made>260){prev=null;continue;}made++;}
+    const q=P(baryAt(i));if(prev){g.strokeStyle=`rgba(255,210,87,${(0.08+0.75*(i-(i1-N))/N).toFixed(3)})`;g.beginPath();g.moveTo(prev[0],prev[1]);g.lineTo(q[0],q[1]);g.stroke();}prev=q;}
+  const B=sunBary(S.jd),sp=P(B.s);
+  /* the Sun to scale */
+  const sr=RSUN*K,gr=g.createRadialGradient(sp[0],sp[1],0,sp[0],sp[1],sr*1.5);
+  gr.addColorStop(0,'rgba(255,246,208,.95)');gr.addColorStop(.62,'rgba(255,210,87,.55)');gr.addColorStop(.67,'rgba(255,190,70,.25)');gr.addColorStop(1,'rgba(255,180,60,0)');
+  g.fillStyle=gr;g.beginPath();g.arc(sp[0],sp[1],sr*1.5,0,7);g.fill();
+  g.strokeStyle='rgba(255,220,120,.9)';g.lineWidth=1.2;g.beginPath();g.arc(sp[0],sp[1],sr,0,7);g.stroke();
+  g.fillStyle='#fff';g.beginPath();g.arc(sp[0],sp[1],2,0,7);g.fill();
+  /* each giant's pull on the centre of mass (arrows from the barycentre) */
+  for(const k of ['jupiter','saturn','neptune','uranus']){const v=B.parts[k];if(!v)continue;const col=PK[k][3],e=P(v),dx=e[0]-c,dy=e[1]-c,L=Math.hypot(dx,dy);if(L<3)continue;
+    g.strokeStyle=col;g.fillStyle=col;g.lineWidth=1.6;g.beginPath();g.moveTo(c,c);g.lineTo(e[0],e[1]);g.stroke();
+    const ux=dx/L,uy=dy/L;g.beginPath();g.moveTo(e[0],e[1]);g.lineTo(e[0]-ux*6-uy*3.5,e[1]-uy*6+ux*3.5);g.lineTo(e[0]-ux*6+uy*3.5,e[1]-uy*6-ux*3.5);g.closePath();g.fill();
+    g.font="12px 'Segoe UI Symbol','DejaVu Sans',serif";g.textAlign='center';g.fillText(PK[k][2]+'︎',e[0]+ux*9,e[1]+uy*9);}
+  /* the barycentre */
+  g.strokeStyle='#FFFFFF';g.lineWidth=1.5;g.beginPath();g.moveTo(c-6,c);g.lineTo(c+6,c);g.moveTo(c,c-6);g.lineTo(c,c+6);g.stroke();
+  const d=Math.hypot(B.s[0],B.s[1],B.s[2])/RSUN;
+  const t=`მასათა ცენტრი <b>+</b> მზის ცენტრიდან: <b>${d.toFixed(2)} R☉</b> (${Math.round(d*696000).toLocaleString('en-US')} კმ)<br>${d>1?'↑ მზის ზედაპირის <b>გარეთ</b>':'მზის <b>შიგნით</b>'} · ისრები — იუპიტერის, სატურნის, ურანისა და ნეპტუნის წვლილი`;
+  if(t!==_bTxt){$('ob-btx').innerHTML=t;_bTxt=t;}
 }
 function fmtJD(jd){const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
   const L=window._anc?window._anc.jdToLocal(jd,tz):(()=>{const d=new Date((jd-2440587.5)*864e5);return{year:d.getFullYear(),month:d.getMonth()+1,day:d.getDate(),hour:d.getHours(),minute:d.getMinutes()};})();
@@ -317,7 +371,7 @@ function inject(){
      <span style="width:10px"></span>
      <span style="font-size:11px;color:rgba(200,180,140,.75)">მასშტაბი:</span>
      <button type="button" class="ob-btn on" data-sc="pow">ყველა</button><button type="button" class="ob-btn" data-sc="inner">შიდა</button><button type="button" class="ob-btn" data-sc="lin">რეალური</button>
-     <button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button><button type="button" class="ob-btn" id="ob-nd" title="სად კვეთს თითო პლანეტის ორბიტა ეკლიპტიკას">☊ კვანძები</button>
+     <button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button><button type="button" class="ob-btn on" id="ob-by" title="მზე მოძრაობს მზის სისტემის მასათა ცენტრის (ბარიცენტრის) გარშემო — იუპიტერისა და სატურნის გამო">☉ მასათა ცენტრი</button><button type="button" class="ob-btn" id="ob-nd" title="სად კვეთს თითო პლანეტის ორბიტა ეკლიპტიკას">☊ კვანძები</button>
    </div>
    <div class="ob-bar">
      <span style="font-size:11px;color:rgba(200,180,140,.75)">კვალი:</span>
@@ -336,6 +390,7 @@ function inject(){
    <div id="ob-wrap"><canvas id="ob-cv"></canvas><div id="ob-hud"></div><div id="ob-tip"></div>
      <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
      <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
+     <div id="ob-bary"><div class="bt">☉ მზე და მასათა ცენტრი</div><canvas id="ob-bcv"></canvas><div class="bc" id="ob-btx"></div></div>
      <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
@@ -374,6 +429,7 @@ function inject(){
   $('ob-da').onchange=e=>dancePick(0,e.target.value);
   $('ob-db').onchange=e=>dancePick(1,e.target.value);
   $('ob-sl').onclick=e=>{S.sight=!S.sight;e.target.classList.toggle('on',S.sight);};
+  $('ob-by').onclick=e=>{const w=$('ob-wrap'),off=w.classList.toggle('ob-nobary');e.target.classList.toggle('on',!off);};
   $('ob-nd').onclick=e=>{S.nodes=!S.nodes;e.target.classList.toggle('on',S.nodes);
     if(S.nodes&&S.view!=='helio'){const h=sec.querySelector('[data-vw=helio]');if(h)h.click();}};
   /* zoom / pan / hover */
@@ -427,5 +483,5 @@ function syncBtns(){const p=$('ob-play');if(p){p.textContent=S.play?'⏸ პა�
   const r=$('ob-rev');if(r)r.textContent=S.dir>0?'◀ უკან':'▶ წინ';}
 function boot(){try{inject();}catch(e){console.warn('orbits.js',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else setTimeout(boot,0);
-window._orbits={S,setBirth,buildOrbits,draw};
+window._orbits={S,setBirth,buildOrbits,draw,sunBary};
 })();
