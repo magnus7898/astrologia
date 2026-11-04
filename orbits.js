@@ -387,7 +387,7 @@ function inject(){
      <span style="width:10px"></span>
      <span style="font-size:11px;color:rgba(200,180,140,.75)">მასშტაბი:</span>
      <button type="button" class="ob-btn on" data-sc="pow">ყველა</button><button type="button" class="ob-btn" data-sc="inner">შიდა</button><button type="button" class="ob-btn" data-sc="lin">რეალური</button>
-     <button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button><button type="button" class="ob-btn on" id="ob-by" title="მზე მოძრაობს მზის სისტემის მასათა ცენტრის (ბარიცენტრის) გარშემო — იუპიტერისა და სატურნის გამო">☉ მასათა ცენტრი</button><button type="button" class="ob-btn" id="ob-nd" title="სად კვეთს თითო პლანეტის ორბიტა ეკლიპტიკას">☊ კვანძები</button>
+     <button type="button" class="ob-btn on" id="ob-sl">ზოდიაქოს ხაზები</button><button type="button" class="ob-btn on" id="ob-by" title="მზე მოძრაობს მზის სისტემის მასათა ცენტრის (ბარიცენტრის) გარშემო — იუპიტერისა და სატურნის გამო">☉ მასათა ცენტრი: ჩართ.</button><button type="button" class="ob-btn" id="ob-nd" title="სად კვეთს თითო პლანეტის ორბიტა ეკლიპტიკას">☊ კვანძები</button>
    </div>
    <div class="ob-bar">
      <span style="font-size:11px;color:rgba(200,180,140,.75)">კვალი:</span>
@@ -405,7 +405,7 @@ function inject(){
    <div class="ob-pl" id="ob-pl"><button data-f="all" class="on">✦ ყველა პლანეტა</button>${PL.filter(p=>p[0]!=='earth').map(p=>`<button data-f="${p[0]}" style="color:${p[3]}">${p[2]}︎ ${p[1]}</button>`).join('')}</div>
    <div id="ob-wrap"><canvas id="ob-cv"></canvas><div id="ob-hud"></div><div id="ob-tip"></div>
      <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
-     <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
+     <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><button type="button" data-fs="bary" class="on" title="მასათა ცენტრი — ჩართვა / გამორთვა">☉ + ცენტრი</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
      <div id="ob-bary"><div class="bt">☉ მზე და მასათა ცენტრი</div><canvas id="ob-bcv"></canvas><div class="bc" id="ob-btx"></div></div>
      <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი<br>☉ მასათა ცენტრი (+) უძრავია; მზე და ორბიტები ერთად ირხევიან მის გარშემო. მზე და მისი რხევა ერთ მასშტაბშია — მანძილები პლანეტებამდე არა</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
@@ -445,7 +445,8 @@ function inject(){
   $('ob-da').onchange=e=>dancePick(0,e.target.value);
   $('ob-db').onchange=e=>dancePick(1,e.target.value);
   $('ob-sl').onclick=e=>{S.sight=!S.sight;e.target.classList.toggle('on',S.sight);};
-  $('ob-by').onclick=e=>{const w=$('ob-wrap'),off=w.classList.toggle('ob-nobary');e.target.classList.toggle('on',!off);};
+  $('ob-by').onclick=()=>{const w=$('ob-wrap'),off=w.classList.toggle('ob-nobary');$('ob-by').classList.toggle('on',!off);$('ob-by').textContent=off?'☉ მასათა ცენტრი: გამორთ.':'☉ მასათა ცენტრი: ჩართ.';
+    const f=w.querySelector('[data-fs=bary]');if(f)f.classList.toggle('on',!off);S.bgKey='';S.accKey='';};
   $('ob-nd').onclick=e=>{S.nodes=!S.nodes;e.target.classList.toggle('on',S.nodes);
     if(S.nodes&&S.view!=='helio'){const h=sec.querySelector('[data-vw=helio]');if(h)h.click();}};
   /* zoom / pan / hover */
@@ -489,7 +490,8 @@ function inject(){
   wrap.querySelector('#ob-fsbar').addEventListener('click',e=>{const k=e.target.dataset&&e.target.dataset.fs;if(!k)return;
     if(k==='play')$('ob-play').click();else if(k==='rev')$('ob-rev').click();else if(k==='now')$('ob-now').click();
     else if(k==='view'){const o=sec.querySelector(`[data-vw]:not(.on)`);if(o)o.click();}
-    else if(k==='dance')window._obDance.toggle();});
+    else if(k==='dance')window._obDance.toggle();
+    else if(k==='bary')$('ob-by').click();});
   wrap.querySelector('[data-fs=da]').addEventListener('change',e=>window._obDance.pick(0,e.target.value));
   wrap.querySelector('[data-fs=db]').addEventListener('change',e=>window._obDance.pick(1,e.target.value));
   wrap.querySelector('[data-fs=speed]').addEventListener('change',e=>{$('ob-speed').value=e.target.value;S.speed=+e.target.value;});
