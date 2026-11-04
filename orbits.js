@@ -104,7 +104,7 @@ function maxR(){ /* outer radius (AU) that should fit the ring */
 function radial(r){const R=Math.min(S.W,S.H)*0.43*S.zoom,M=maxR();
   if(S.focus!=='all'||S.dance.on||S.scale==='lin'||S.scale==='inner')return R*r/M;
   return R*Math.pow(r/M,0.42);}
-function toXY(v){const r=Math.hypot(v[0],v[1]),f=r?radial(r)/r:0;return [S.W/2+S.panX+v[0]*f,S.H/2+S.panY-v[1]*f];}
+function toXY(v){const r=Math.hypot(v[0],v[1]),f=r?radial(r)/r:0,o=S.boff||[0,0];return [S.W/2+S.panX+o[0]+v[0]*f,S.H/2+S.panY+o[1]-v[1]*f];}
 const ringR=()=>Math.min(S.W,S.H)*0.47;
 
 /* ── orbit polylines (heliocentric view) ── */
@@ -116,7 +116,7 @@ function buildOrbits(jd){const o={};
 /* ── static layer: stars, zodiac ring, orbits — cached ── */
 function stars(){const a=[];let s=7;const R=()=>{s=(s*16807)%2147483647;return s/2147483647;};for(let i=0;i<460;i++)a.push([R(),R(),R()*1.3+0.2,0.25+0.6*R()]);S.stars=a;}
 function bgLayer(){
-  const pr=precDeg(S.jd),key=[S.W,S.H,S.dpr,S.zoom.toFixed(3),S.panX|0,S.panY|0,S.scale,S.view,S.focus,S.dance.on,S.dance.a,S.dance.b,S.nodes,Math.round(pr*4),S.orbT].join('|');
+  const pr=precDeg(S.jd),key=[S.W,S.H,S.dpr,S.zoom.toFixed(3),S.panX|0,S.panY|0,S.scale,S.view,S.focus,S.dance.on,S.dance.a,S.dance.b,S.nodes,Math.round(pr*4),S.orbT,S.boff?Math.round(S.boff[0]):0,S.boff?Math.round(S.boff[1]):0].join('|');
   if(S.bg&&S.bgKey===key)return S.bg;
   const c=S.bg||document.createElement('canvas');c.width=S.W*S.dpr;c.height=S.H*S.dpr;
   const g=c.getContext('2d');g.setTransform(S.dpr,0,0,S.dpr,0,0);const W=S.W,H=S.H,cx=W/2+S.panX,cy=H/2+S.panY,Rz=ringR();
@@ -224,6 +224,9 @@ function drawHead(g,k,cur){const h=S.hist[k];if(!h||!h.t.length||!cur)return;con
 function draw(){
   const cv=$('ob-cv');if(!cv)return;const g=cv.getContext('2d');
   if(S.view==='helio'&&(!S.orbits||Math.abs(S.jd-S.orbT)>365.25*40))buildOrbits(S.jd);
+  /* barycentric frame: the Sun and every planet are displaced by the Sun's offset from the centre of mass (magnified) */
+  {const on=S.view==='helio'&&!$('ob-wrap').classList.contains('ob-nobary');
+   if(on){const F=Math.min(S.W,S.H)*0.055*S.zoom/(2.2*RSUN),v=sunBary(S.jd).s;S.boff=[v[0]*F,-v[1]*F];}else S.boff=null;}
   g.setTransform(1,0,0,1,0,0);g.drawImage(bgLayer(),0,0);
   g.setTransform(S.dpr,0,0,S.dpr,0,0);
   const W=S.W,H=S.H,cx=W/2+S.panX,cy=H/2+S.panY,Rz=ringR(),pr=precDeg(S.jd);
@@ -400,7 +403,7 @@ function inject(){
      <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
      <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
      <div id="ob-bary"><div class="bt">☉ მზე და მასათა ცენტრი</div><canvas id="ob-bcv"></canvas><div class="bc" id="ob-btx"></div></div>
-     <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი<br>☉ მზის რხევა მასათა ცენტრის (+) გარშემო ნაჩვენებია გადიდებით; რეალური მასშტაბი — ჩარჩოში</div></div>
+     <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი<br>☉ მასათა ცენტრი (+) უძრავია; მზე და პლანეტების ორბიტები ერთად ირხევიან მის გარშემო — გადიდებით; რეალური მასშტაბი — ჩარჩოში</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
   stars();S.jd=Date.now()/864e5+2440587.5;
