@@ -293,9 +293,16 @@ const BG_SKIP=new Set(['index.html','fool_journey.html','vector.html']);
 /* every box in the colour of the home-page cards */
 const CARD_SKIP=new Set(['cards.html','tarot.html','tarotborth.html','fool_journey.html','vector.html','index.html','matrix.html']);
 const BOX_SEL='.panel,.form-card,.form-shell,.data-card,.input-panel,.stat,.box,#orb-panel,#asp-filters,.mg-tiles>*'+(CARD_SKIP.has(P)?'':',.card');
-const BOX_CSS=`${BOX_SEL}{background:rgba(8,6,18,.72)!important;border-color:rgba(201,168,76,.16)!important}
-.mg-tiles>*:hover{background:rgba(14,11,28,.85)!important;border-color:rgba(201,168,76,.4)!important}
-.mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{background:rgba(14,11,28,.9)!important;border-color:#E3BE84!important}`;
+/* box colours — to go back to the old dark boxes set BOX_GREEN=false */
+const BOX_GREEN=true;
+const BOX_BG=BOX_GREEN?'rgba(10,40,30,.78)':'rgba(8,6,18,.72)';
+const BOX_BG_HI=BOX_GREEN?'rgba(14,54,40,.9)':'rgba(14,11,28,.88)';
+const BOX_LINE=BOX_GREEN?'rgba(201,162,76,.55)':'rgba(201,168,76,.16)';
+const BOX_SEL2=BOX_SEL+(BOX_GREEN?',.cp,.nx,#lunar-badge,.result-box,.info-box,.section-card,.chart-box,.panel-box':'');
+const BOX_CSS=`${BOX_SEL2}{background:${BOX_BG}!important;border-color:${BOX_LINE}!important}
+${BOX_GREEN?BOX_SEL2+'{border-style:solid;border-width:1px}':''}
+.mg-tiles>*:hover{background:${BOX_BG_HI}!important;border-color:#C9A24C!important}
+.mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{background:${BOX_BG_HI}!important;border-color:#E3BE84!important}`;
 const BG_CSS=`html{background:#0C1222!important}
 body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
  radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(123,147,189,.11),transparent 70%),
