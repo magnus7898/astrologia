@@ -119,37 +119,41 @@ function drawPole(g,W,H){
 /* ── view 3: the vernal point among the constellations ── */
 function drawBand(g,W,H){
   g.fillStyle='#04030b';g.fillRect(0,0,W,H);
+  /* frame: the TROPICAL zodiac is fixed (tied to the equinox) — the stars and the sidereal signs drift past it */
   const segs=segments();const vp=n360(-p(T.y));                         /* vernal point, J2000 ecliptic longitude */
-  const top=44,h1=46,h2=30,pxd=W/120,cx=W/2;                            /* a 120° window centred on the vernal point */
-  const X=l=>{let d=((l-vp)%360+540)%360-180;return cx-d*pxd;};          /* east to the left, as in the sky */
-  if(segs){g.font="600 12.5px 'Noto Sans Georgian',sans-serif";g.textBaseline='middle';g.textAlign='center';
-    segs.forEach(([a,b,c],i)=>{for(const off of [-360,0,360]){const x1=X(a+off),x2=X(b+off);const L=Math.min(x1,x2),R=Math.max(x1,x2);if(R<0||L>W||R-L>W)continue;
-      g.fillStyle=i%2?'rgba(120,140,220,.14)':'rgba(201,162,76,.12)';g.fillRect(L,top,R-L,h1);g.strokeStyle='rgba(201,162,76,.35)';g.beginPath();g.moveTo(L,top);g.lineTo(L,top+h1);g.stroke();
-      const mid=(L+R)/2;if(R-L>36&&mid>10&&mid<W-10){g.fillStyle='#EDE6D8';g.fillText(conKA(c),mid,top+h1/2);}}});}
-  /* sidereal (Lahiri) equal signs */
+  const pxd=W/120,cx=W/2;                                               /* a 120° window on 0° tropical Aries */
+  const yT=40,hT=28,yI=yT+hT+20,hI=58,yS=yI+hI+6,hS=28;                 /* rows: tropical · IAU · sidereal */
+  const X=l=>{let d=((l-vp)%360+540)%360-180;return cx-d*pxd;};          /* east (higher longitude) to the left, as in the sky */
+  const band=(a,b,y,h,fill,line,label,font,col,ly)=>{for(const off of [-360,0,360]){const x1=X(a+off),x2=X(b+off);const L=Math.min(x1,x2),R=Math.max(x1,x2);if(R<0||L>W||R-L>W)continue;
+    g.fillStyle=fill;g.fillRect(L,y,R-L,h);g.strokeStyle=line;g.beginPath();g.moveTo(L,y);g.lineTo(L,y+h);g.stroke();
+    const mid=(L+R)/2;if(label&&R-L>36&&mid>10&&mid<W-10){g.fillStyle=col;g.font=font;g.textAlign='center';g.textBaseline='middle';g.fillText(label,mid,y+(ly==null?h/2:ly));}}};
+  /* 1 tropical signs — fixed */
+  for(let s=0;s<12;s++)band(vp+s*30,vp+s*30+30,yT,hT,s%2?'rgba(243,221,164,.10)':'rgba(243,221,164,.18)','rgba(243,221,164,.45)',SGG[s]+' '+SG[s],"600 12px 'Noto Sans Georgian',sans-serif",'#F7E7BE');
+  /* 2 IAU constellations (unequal) — move with the stars */
+  if(segs)segs.forEach(([a,b,c],i)=>band(a,b,yI,hI,i%2?'rgba(120,140,220,.14)':'rgba(201,162,76,.12)','rgba(201,162,76,.35)',conKA(c),"600 12.5px 'Noto Sans Georgian',sans-serif",'#EDE6D8',15));
+  /* 3 sidereal equal signs — move with the stars */
   const ay=AYAN[T.ay][1]+p(T.y);
-  for(let s=0;s<12;s++){/* sidereal sign s starts at tropical longitude s·30+ay → J2000 longitude vp+(s·30+ay) */
-    const a=vp+s*30+ay,b=a+30;for(const off of [-360,0,360]){const x1=X(a+off),x2=X(b+off);const L=Math.min(x1,x2),R=Math.max(x1,x2);if(R<0||L>W||R-L>W)continue;
-      g.fillStyle=s%2?'rgba(255,255,255,.04)':'rgba(255,255,255,.08)';g.fillRect(L,top+h1+6,R-L,h2);g.strokeStyle='rgba(255,255,255,.18)';g.beginPath();g.moveTo(L,top+h1+6);g.lineTo(L,top+h1+6+h2);g.stroke();
-      const mid=(L+R)/2;if(mid>10&&mid<W-10){g.fillStyle='rgba(232,226,213,.8)';g.font="12px 'Noto Sans Georgian',sans-serif";g.fillText(SGG[s]+' '+SG[s],mid,top+h1+6+h2/2);}}}
-  g.textAlign='left';g.font="11px 'Noto Sans Georgian',sans-serif";g.fillStyle='rgba(232,214,174,.7)';
-  g.fillText('IAU თანავარსკვლავედები (არათანაბარი)',8,top-10);g.fillText(`სიდერიული ნიშნები (${AYAN[T.ay][0]}, 30°)`,8,top+h1+6+h2+14);
-  /* the gaps, measured: vernal point → sidereal 0° Aries (ayanamsa) and → the IAU border of Aries (true sidereal) */
+  for(let s=0;s<12;s++){const a=vp+s*30+ay;band(a,a+30,yS,hS,s%2?'rgba(255,255,255,.04)':'rgba(255,255,255,.08)','rgba(255,255,255,.18)',SGG[s]+' '+SG[s],"12px 'Noto Sans Georgian',sans-serif",'rgba(232,226,213,.8)');}
+  g.textAlign='left';g.textBaseline='middle';g.font="11px 'Noto Sans Georgian',sans-serif";
+  g.fillStyle='rgba(247,231,190,.85)';g.fillText('ტროპიკული ნიშნები — უძრავი (ბუნიობაზე მიბმული)',8,yT-10);
+  g.fillStyle='rgba(232,214,174,.7)';g.fillText('IAU თანავარსკვლავედები (არათანაბარი) — ვარსკვლავებთან ერთად',8,yI-9);
+  g.fillText(`სიდერიული ნიშნები (${AYAN[T.ay][0]}, 30°) — ვარსკვლავებთან ერთად`,8,yS+hS+12);
+  /* the gaps, measured: 0° tropical Aries → sidereal 0° Aries (ayanamsa) and → the IAU border of Aries (true sidereal) */
   const brk=(x1,x2,y,txt,col,below)=>{if(Math.abs(x2-x1)<4)return;g.strokeStyle=col;g.fillStyle=col;g.lineWidth=1.6;g.beginPath();g.moveTo(x1,y);g.lineTo(x2,y);g.stroke();
     for(const [x,dir] of [[x1,Math.sign(x2-x1)],[x2,Math.sign(x1-x2)]]){g.beginPath();g.moveTo(x,y);g.lineTo(x+dir*8,y-4);g.lineTo(x+dir*8,y+4);g.closePath();g.fill();g.beginPath();g.moveTo(x,y-7);g.lineTo(x,y+7);g.stroke();}
-    g.font="600 12.5px 'Noto Sans Georgian',sans-serif";g.textAlign='center';g.lineWidth=3;g.strokeStyle='rgba(4,3,11,.9)';const ty=below?y+16:y-9;g.strokeText(txt,(x1+x2)/2,ty);g.fillText(txt,(x1+x2)/2,ty);g.lineWidth=1;};
+    g.font="600 12.5px 'Noto Sans Georgian',sans-serif";g.textAlign='center';g.textBaseline='middle';g.lineWidth=3;g.strokeStyle='rgba(4,3,11,.9)';const ty=below?y+15:y-10;g.strokeText(txt,(x1+x2)/2,ty);g.fillText(txt,(x1+x2)/2,ty);g.lineWidth=1;};
   const dms=d=>{const a=Math.abs(d),D=Math.floor(a),M=Math.round((a-D)*60);return (d<0?'−':'')+D+'°'+String(M===60?0:M).padStart(2,'0')+'′';};
-  const sx=X(vp+ay);if(sx>-50&&sx<W+50)brk(cx,Math.max(2,Math.min(W-2,sx)),top+h1+6+h2+12,'აიანამშა '+dms(((ay+180)%360+360)%360-180),'#9fe0ff',true);
-  if(segs){const ar=segs.find(x=>x[2]==='Ari');if(ar){let d=((ar[0]-vp)%360+540)%360-180;T.iauGap=d;const ax2=X(vp+d);if(ax2>-50&&ax2<W+50)brk(cx,Math.max(2,Math.min(W-2,ax2)),top+h1/2-12,'IAU ვერძამდე '+dms(d),'#ffd28a');}}
-  /* vernal point */
-  g.strokeStyle='#F3DDA4';g.lineWidth=2;g.beginPath();g.moveTo(cx,top-6);g.lineTo(cx,top+h1+h2+12);g.stroke();g.lineWidth=1;
-  g.fillStyle='#F3DDA4';g.font='18px serif';g.textAlign='center';g.fillText(SGG[0],cx,top-20);
-  g.font="12px 'Noto Sans Georgian',sans-serif";g.fillText('გაზაფხულის ბუნიობის წერტილი = ტროპიკული 0° ვერძი',cx,top+h1+h2+50);
-  g.fillStyle='rgba(255,210,120,.75)';g.fillText('ზოდიაქოს საწინააღმდეგოდ მიდის (აქ — მარჯვნივ →) · ~1° ყოველ 71,6 წელიწადში',cx,top+h1+h2+68);
-  g.fillText('თანავარსკვლავედები მის ფონზე მარცხნივ იწევს',cx,top+h1+h2+86);
+  const sx=X(vp+ay);if(sx>-50&&sx<W+50)brk(cx,Math.max(2,Math.min(W-2,sx)),yS+hS+26,'აიანამშა '+dms(((ay+180)%360+360)%360-180),'#9fe0ff',true);
+  if(segs){const ar=segs.find(x=>x[2]==='Ari');if(ar){let d=((ar[0]-vp)%360+540)%360-180;T.iauGap=d;const ax2=X(vp+d);if(ax2>-50&&ax2<W+50)brk(cx,Math.max(2,Math.min(W-2,ax2)),yI+hI-11,'IAU ვერძამდე '+dms(d),'#ffd28a');}}
+  /* 0° tropical Aries = the vernal point (fixed in this frame) */
+  g.strokeStyle='#F3DDA4';g.lineWidth=2;g.beginPath();g.moveTo(cx,yT-4);g.lineTo(cx,yS+hS+6);g.stroke();g.lineWidth=1;
+  g.fillStyle='#F3DDA4';g.font='18px serif';g.textAlign='center';g.fillText(SGG[0],cx,yT-20);
+  const yt=yS+hS+62;g.font="12px 'Noto Sans Georgian',sans-serif";g.fillText('ტროპიკული 0° ვერძი = გაზაფხულის ბუნიობის წერტილი — უძრავია',cx,yt);
+  g.fillStyle='rgba(255,210,120,.8)';g.fillText('ვარსკვლავები და სიდერიული ნიშნები მის მიმართ ნელა იწევს წინ (აქ — მარცხნივ ←) · ~1° ყოველ 71,6 წელიწადში',cx,yt+18);
+  g.fillText('ამიტომ აიანამშა (ტროპიკულსა და სიდერიულს შორის სხვაობა) წლიდან წლამდე იზრდება',cx,yt+36);
   const con=typeof iauFromEcliptic==='function'?iauFromEcliptic(vp,0).abbr:null;
   const sid=n360(-ay),ss=Math.floor(sid/30);
-  $('pr-h3').innerHTML=`<div class="t">3 · ეპოქები</div><div>${fy(T.y)}: ბუნიობის წერტილი — <b>${con?conKA(con):'—'}</b> თანავარსკვლავედში (ასტრონომიული ეპოქა) · სიდერიულად ${SGG[ss]} ${SG[ss]} ${(sid%30).toFixed(1)}° · აიანამშა (${AYAN[T.ay][0]}) <b>${(((ay+180)%360+360)%360-180).toFixed(2)}°</b>${T.iauGap!=null?` · ნამდვილი (IAU) ვერძის საზღვრამდე <b>${T.iauGap.toFixed(1)}°</b>`:''}</div>`;
+  $('pr-h3').innerHTML=`<div class="t">3 · ეპოქები</div><div>${fy(T.y)}: ტროპიკული 0° ვერძი — <b>${con?conKA(con):'—'}</b> თანავარსკვლავედში (ასტრონომიული ეპოქა) · სიდერიულად ${SGG[ss]} ${SG[ss]} ${(sid%30).toFixed(1)}° · აიანამშა (${AYAN[T.ay][0]}) <b>${(((ay+180)%360+360)%360-180).toFixed(2)}°</b>${T.iauGap!=null?` · ნამდვილი (IAU) ვერძის საზღვრამდე <b>${T.iauGap.toFixed(1)}°</b>`:''}</div>`;
 }
 
 /* ── loop ── */
@@ -179,7 +183,7 @@ const CSS=`
 @media(max-width:900px){#pr-grid{grid-template-columns:1fr}}
 .pr-pane{position:relative;border:1px solid rgba(201,162,76,.22);border-radius:14px;overflow:hidden;background:#04030b}
 .pr-pane canvas{display:block;width:100%}
-#pr-c1,#pr-c2{height:min(60vh,520px)}#pr-c3{height:300px}
+#pr-c1,#pr-c2{height:min(60vh,520px)}#pr-c3{height:375px}
 .pr-h{position:absolute;left:14px;right:14px;top:10px;color:#F3ECDC;font-size:13px;line-height:1.55;text-shadow:0 0 6px #000;pointer-events:none}
 .pr-h .t{font-family:Cinzel,'Noto Serif Georgian',serif;font-size:15px;color:#F7DE9A}.pr-h b{color:#F3DDA4}
 #pr-c3h{bottom:auto}
@@ -192,7 +196,7 @@ const TEXT=`<h4>რატომ ხდება პრეცესია</h4>
 <p><b>მზე და მთვარე</b> გრავიტაციით ექაჩებიან ამ სარტყელს და ცდილობენ, ეკვატორი ეკლიპტიკის სიბრტყეში „ჩააწვინონ“. მაგრამ დედამიწა სწრაფად ბრუნავს, და მბრუნავი სხეული ასეთ ძალას არ ემორჩილება პირდაპირ — ის <b>გიროსკოპივით</b> პასუხობს: ღერძი არ ეცემა, არამედ ნელა შემოუვლის კონუსს ეკლიპტიკის პოლუსის გარშემო. ზუსტად ასე ტრიალებს დახრილი ბზრიალა.</p>
 <p>ეფექტის ≈ 2/3 მთვარისგანაა (ახლოა), ≈ 1/3 — მზისგან. ერთი სრული შემობრუნება გრძელდება <b>≈ 25 772 წელს</b> — წელიწადში 50,3″, ანუ 1° ყოველ 71,6 წელიწადში. მცირე „რხევა“ ზედ (<b>ნუტაცია</b>, ±9″) მთვარის კვანძების 18,6-წლიანი ციკლიდან მოდის — იგივე კვანძები, რომლებიც დაბნელებებს განსაზღვრავს.</p>
 <h4>რას ცვლის</h4>
-<p><b>1. გაზაფხულის ბუნიობის წერტილი</b> (ტროპიკული 0° ვერძი) ნელა მოძრაობს თანავარსკვლავედების ფონზე ზოდიაქოს საწინააღმდეგოდ. ამიტომ <b>ტროპიკული</b> (სეზონებზე მიბმული) და <b>სიდერიული</b> (ვარსკვლავებზე მიბმული) ზოდიაქო სულ უფრო შორდება ერთმანეთს — ეს სხვაობაა <b>აიანამშა</b>. რამდენია, სკოლაზეა დამოკიდებული (2026 წ.): ლაჰირი 24°13′, კრიშნამურტი 24°07′, <b>ფეგან-ბრედლი 25°06′</b>, რამანი 22°46′, დელუსი 28°11′. „ჭეშმარიტ სიდერიულში“ (IAU არათანაბარი თანავარსკვლავედები) ბუნიობის წერტილიდან ვერძის საზღვრამდე კიდევ მეტია — ~29°. სკოლების მიხედვით ორივე ზოდიაქო ახ.წ. ~220–500 წლებში ემთხვეოდა.</p>
+<p><b>1. ტროპიკული ზოდიაქო უძრავია</b> — ის ბუნიობებსა და მზებუდობებზეა მიბმული: 0° ვერძი ყოველთვის გაზაფხულის ბუნიობაა, 0° კირჩხიბი — ზაფხულის მზებუდობა. მოძრაობს <b>ვარსკვლავების ფონი</b>: თანავარსკვლავედები და მათზე მიბმული სიდერიული ნიშნები ტროპიკულის მიმართ ნელა იწევს წინ (ვარსკვლავის ტროპიკული გრძედი ყოველ წელს 50″-ით იზრდება; თუ ვარსკვლავებიდან ვუყურებთ, პირიქით — ბუნიობის წერტილი მიდის უკან). ამიტომ <b>ტროპიკული</b> (სეზონებზე მიბმული) და <b>სიდერიული</b> (ვარსკვლავებზე მიბმული) ზოდიაქო სულ უფრო შორდება ერთმანეთს — ეს სხვაობაა <b>აიანამშა</b>. რამდენია, სკოლაზეა დამოკიდებული (2026 წ.): ლაჰირი 24°13′, კრიშნამურტი 24°07′, <b>ფეგან-ბრედლი 25°06′</b>, რამანი 22°46′, დელუსი 28°11′. „ჭეშმარიტ სიდერიულში“ (IAU არათანაბარი თანავარსკვლავედები) ბუნიობის წერტილიდან ვერძის საზღვრამდე კიდევ მეტია — ~29°. სკოლების მიხედვით ორივე ზოდიაქო ახ.წ. ~220–500 წლებში ემთხვეოდა.</p>
 <p><b>2. ასტროლოგიური ეპოქები.</b> ბუნიობის წერტილი ერთ ნიშანს ~2150 წელიწადში გადის. ახლა ის თევზების თანავარსკვლავედშია და IAU საზღვრებით მერწყულში ~2600 წელს შევა (თანაბარი 30°-იანი ნიშნებით — სკოლის მიხედვით სხვადასხვა თარიღი).</p>
 <p><b>3. პოლარული ვარსკვლავი იცვლება.</b> ცის ჩრდილოეთის პოლუსი 23,4°-იან წრეს შემოუვლის:</p>
 <table><tr><td>ძვ.წ. ~2800</td><td><b>ტუბანი</b> (დრაკონი) — ეგვიპტის პირამიდების ეპოქა</td></tr><tr><td>~2100 წ.</td><td><b>პოლარისი</b> ყველაზე ახლოს (0,45°)</td></tr><tr><td>~4000</td><td><b>ერაი</b> (γ ცეფევსი)</td></tr><tr><td>~7500</td><td><b>ალდერამინი</b></td></tr><tr><td>~10 000</td><td><b>დენები</b> (გედი)</td></tr><tr><td>~13 700</td><td><b>ვეგა</b> — ყველაზე კაშკაშა პოლარული ვარსკვლავი</td></tr></table>
