@@ -235,7 +235,16 @@ function draw(){
   if(S.trails){for(const k of trailKeys()){if(!now[k])continue;S.keep?drawHead(g,k,now[k]):drawFade(g,k,now[k]);}}
   /* centre body */
   const cg=(r,c0,c1)=>{const gr=g.createRadialGradient(cx,cy,0,cx,cy,r);gr.addColorStop(0,c0);gr.addColorStop(.3,c1);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,r,0,7);g.fill();};
-  if(S.view==='helio')cg(26,'#fff6d0','#ffd257');else cg(16,'#e4f2ff','#58a8f0');
+  const byOn=S.view==='helio'&&!$('ob-wrap').classList.contains('ob-nobary');
+  if(byOn){ /* centre = barycentre (+); the Sun circles it — its offset is magnified so it can be seen */
+    const F=Math.min(W,H)*0.055*S.zoom/(2.2*RSUN),SP=v=>[cx+v[0]*F,cy-v[1]*F];
+    const i1=Math.floor(S.jd/BY.step),N=Math.round(60*365.25/BY.step);let prev=null,made=0;g.lineWidth=1.2;
+    for(let i=i1-N;i<=i1;i++){if(!BY.c.has(i)){if(made>260){prev=null;continue;}made++;}
+      const q=SP(baryAt(i));if(prev){g.strokeStyle=`rgba(255,210,87,${(0.05+0.6*(i-(i1-N))/N).toFixed(3)})`;g.beginPath();g.moveTo(prev[0],prev[1]);g.lineTo(q[0],q[1]);g.stroke();}prev=q;}
+    const sp=SP(sunBary(S.jd).s),gr=g.createRadialGradient(sp[0],sp[1],0,sp[0],sp[1],17);
+    gr.addColorStop(0,'#fff6d0');gr.addColorStop(.3,'#ffd257');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(sp[0],sp[1],17,0,7);g.fill();
+    g.strokeStyle='#FFFFFF';g.lineWidth=1.4;g.beginPath();g.moveTo(cx-5,cy);g.lineTo(cx+5,cy);g.moveTo(cx,cy-5);g.lineTo(cx,cy+5);g.stroke();}
+  else if(S.view==='helio')cg(26,'#fff6d0','#ffd257');else cg(16,'#e4f2ff','#58a8f0');
   /* birth markers */
   if(S.birth){const B=S.birth,Eb=B.e,E0=S.view==='helio'?toXY(Eb):[cx,cy];
     for(const [k,,gl,col] of PL){if(!visible(k)||!B.pos[k])continue;const v=S.view==='helio'?B.pos[k]:k==='earth'?null:[B.pos[k][0]-Eb[0],B.pos[k][1]-Eb[1],B.pos[k][2]-Eb[2]];if(!v)continue;
@@ -391,7 +400,7 @@ function inject(){
      <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
      <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
      <div id="ob-bary"><div class="bt">☉ მზე და მასათა ცენტრი</div><canvas id="ob-bcv"></canvas><div class="bc" id="ob-btx"></div></div>
-     <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი</div></div>
+     <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი<br>☉ მზის რხევა მასათა ცენტრის (+) გარშემო ნაჩვენებია გადიდებით; რეალური მასშტაბი — ჩარჩოში</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
   stars();S.jd=Date.now()/864e5+2440587.5;
