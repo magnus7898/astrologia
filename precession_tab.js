@@ -43,54 +43,123 @@ function segments(){
 }
 const conKA=c=>(typeof IAU_KA!=='undefined'&&IAU_KA[c])||c;
 
-/* ── view 1: the spinning top ── */
-function drawTop(g,W,H){
+/* ── view 1: the spinning top — Earth, bulge, Sun and Moon, gyroscope, nutation ──
+   Scene clock is schematic (Moon ≈ 8 s per orbit, its nodes ≈ 48 s per turn backwards, Earth spins
+   fast); the axis direction itself follows the year slider. Nutation shown hugely exaggerated.     */
+const OPT={moon:true,forces:true,nut:true};let sceneT=0;
+function drawTop(g,W,H,dt){
+  sceneT+=dt||0;
   g.fillStyle='#04030b';g.fillRect(0,0,W,H);
-  const cx=W*0.56,cy=H*0.52,r=Math.min(W,H)*0.22,el=16*D2R;
-  /* projection: ecliptic frame (x right, y away, z up) seen from slightly above */
-  const pr=(x,y,z)=>[cx+x,cy-(z*Math.cos(el)+y*Math.sin(el)),y*Math.cos(el)-z*Math.sin(el)];
+  const cx=W*0.55,cy=H*0.57,r=Math.min(W,H)*0.16,el=17*D2R;
+  const pr=(x,y,z)=>[cx+x,cy-(z*Math.cos(el)+y*Math.sin(el)),y*Math.cos(el)-z*Math.sin(el)];  /* dz<0 → in front */
+  const add=(a,b,k=1)=>[a[0]+b[0]*k,a[1]+b[1]*k,a[2]+b[2]*k],mul=(a,k)=>[a[0]*k,a[1]*k,a[2]*k];
+  const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],norm=a=>{const l=Math.hypot(...a);return mul(a,1/l);};
+  const line3=(A,B,col,w,dash)=>{const [x1,y1]=pr(...A),[x2,y2]=pr(...B);g.strokeStyle=col;g.lineWidth=w||1;g.setLineDash(dash||[]);g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.setLineDash([]);};
+  const arrow2=(x1,y1,x2,y2,col,w)=>{g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();const a=Math.atan2(y2-y1,x2-x1),k=6+w*2;
+    g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-k*Math.cos(a-0.4),y2-k*Math.sin(a-0.4));g.lineTo(x2-k*Math.cos(a+0.4),y2-k*Math.sin(a+0.4));g.closePath();g.fill();g.lineWidth=1;};
+  const lbl=(t,x,y,c,al)=>{g.font="600 12px 'Noto Sans Georgian',sans-serif";g.textAlign=al||'left';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=3;g.strokeStyle='rgba(4,3,11,.9)';g.strokeText(t,x,y);g.fillStyle=c;g.fillText(t,x,y);g.lineWidth=1;};
+  /* stars */
+  if(!T.st1)T.st1=[...Array(120)].map(()=>[Math.random(),Math.random(),Math.random()]);T.st1.forEach(([x,y,b])=>{g.fillStyle=`rgba(255,255,255,${.12+b*.3})`;g.fillRect(x*W,y*H,1,1);});
   /* ecliptic plane */
-  g.strokeStyle='rgba(201,162,76,.35)';g.setLineDash([5,5]);g.beginPath();for(let t=0;t<=360;t+=4){const [x,y]=pr(r*2.4*Math.cos(t*D2R),r*2.4*Math.sin(t*D2R),0);t?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.setLineDash([]);
-  g.fillStyle='rgba(201,162,76,.75)';g.font="12px 'Noto Sans Georgian',sans-serif";g.textAlign='left';g.fillText('ეკლიპტიკის სიბრტყე',cx+r*1.55,cy+r*0.62);
-  /* ecliptic pole */
-  {const [x1,y1]=pr(0,0,r*1.25),[x2,y2]=pr(0,0,r*2.05);g.strokeStyle='rgba(201,162,76,.5)';g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.fillStyle='rgba(232,214,174,.85)';g.fillText('ეკლიპტიკის პოლუსი',x2+6,y2);}
-  /* axis direction: tilt EPS, azimuth follows precession (the equinox moves → axis turns westwards) */
-  const phi=(-p(T.y)-90)*D2R,e=EPS*D2R;
+  g.strokeStyle='rgba(201,162,76,.3)';g.setLineDash([5,6]);g.beginPath();for(let t=0;t<=360;t+=4){const [x,y]=pr(r*3.1*Math.cos(t*D2R),r*3.1*Math.sin(t*D2R),0);t?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.setLineDash([]);
+  lbl('ეკლიპტიკის სიბრტყე',cx+r*2.3,cy+r*0.95,'rgba(201,162,76,.85)');
+  line3([0,0,r*1.15],[0,0,r*2.55],'rgba(201,162,76,.45)',1,[2,3]);{const [x,y]=pr(0,0,r*2.6);lbl('ეკლიპტიკის პოლუსი',x+6,y,'rgba(232,214,174,.85)');}
+  /* the Moon's node regresses (schematic), Moon runs around */
+  const OM=(-sceneT*2*Math.PI/48)%(2*Math.PI),MI=5.145*D2R*2.2;                  /* orbit tilt drawn ×2.2 so it shows */
+  const mN=[Math.sin(MI)*Math.sin(OM),-Math.sin(MI)*Math.cos(OM),Math.cos(MI)];   /* Moon orbit normal */
+  const mU=[Math.cos(OM),Math.sin(OM),0],mV=cross(mN,mU);                        /* mU → ascending node */
+  const th=sceneT*2*Math.PI/8,Rm=r*2.35,moonP=add(mul(mU,Rm*Math.cos(th)),mV,Rm*Math.sin(th));
+  /* axis: precession (year slider) + nutation (schematic, follows the node: Δψ ∝ −sin Ω, Δε ∝ cos Ω) */
+  const nutK=OPT.nut?1:0;
+  const dPsi=-nutK*5.5*Math.sin(OM)*D2R,dEps=nutK*3.0*Math.cos(OM)*D2R;          /* ≈ 17″ / 9″ shown as degrees */
+  const phi=(-p(T.y)-90)*D2R+dPsi,e=EPS*D2R+dEps;
   const ax=[Math.sin(e)*Math.cos(phi),Math.sin(e)*Math.sin(phi),Math.cos(e)];
-  /* cone traced by the axis */
-  g.strokeStyle='rgba(255,210,120,.45)';g.setLineDash([3,5]);
-  for(const s of [1,-1]){g.beginPath();for(let t=0;t<=360;t+=4){const v=[Math.sin(e)*Math.cos(t*D2R),Math.sin(e)*Math.sin(t*D2R),Math.cos(e)];const [x,y]=pr(s*v[0]*r*1.9,s*v[1]*r*1.9,s*v[2]*r*1.9);t?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();}
-  g.setLineDash([]);
-  /* basis on the equator */
-  const k=Math.hypot(ax[0],ax[1]);const u=[-ax[1]/k,ax[0]/k,0];const v=[ax[1]*u[2]-ax[2]*u[1],ax[2]*u[0]-ax[0]*u[2],ax[0]*u[1]-ax[1]*u[0]];
-  /* Sun and Moon on the left, their pull */
-  const sx=cx-r*2.55,sy=cy-r*0.05;const sg=g.createRadialGradient(sx,sy,0,sx,sy,r*0.42);sg.addColorStop(0,'#fff6d0');sg.addColorStop(.4,'#ffd257');sg.addColorStop(1,'rgba(255,190,60,0)');g.fillStyle=sg;g.beginPath();g.arc(sx,sy,r*0.42,0,7);g.fill();
-  g.fillStyle='#ffe9a8';g.textAlign='center';g.fillText('მზე',sx,sy+r*0.48);
-  const mxp=cx-r*1.55,myp=cy+r*0.95;g.fillStyle='#d9d6cf';g.beginPath();g.arc(mxp,myp,r*0.11,0,7);g.fill();g.fillStyle='#e8e4dc';g.fillText('მთვარე',mxp,myp+r*0.25);
-  /* earth body (back) */
-  const eg=g.createRadialGradient(cx-r*.3,cy-r*.3,r*.1,cx,cy,r*1.05);eg.addColorStop(0,'#7cc0ff');eg.addColorStop(.7,'#2c66b8');eg.addColorStop(1,'#163a72');
+  /* Sun on the left */
+  const sunW=[-r*3.35,0,r*0.15],[sx,sy]=pr(...sunW);
+  const sg=g.createRadialGradient(sx,sy,0,sx,sy,r*0.62);sg.addColorStop(0,'#fff6d0');sg.addColorStop(.35,'#ffd257');sg.addColorStop(1,'rgba(255,190,60,0)');g.fillStyle=sg;g.beginPath();g.arc(sx,sy,r*0.62,0,7);g.fill();
+  lbl('მზე',sx,sy+r*0.62,'#ffe9a8','center');
+  /* cone of the axis, with the nutation wave */
+  g.strokeStyle='rgba(255,210,120,.35)';g.setLineDash([3,5]);g.beginPath();
+  for(let t=0;t<=360;t+=3){const v=[Math.sin(EPS*D2R)*Math.cos(t*D2R),Math.sin(EPS*D2R)*Math.sin(t*D2R),Math.cos(EPS*D2R)];const [x,y]=pr(...mul(v,r*1.95));t?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.setLineDash([]);
+  if(OPT.nut){g.strokeStyle='rgba(255,170,120,.55)';g.beginPath();for(let k=0;k<=240;k++){const o=OM+k*0.09,ph=(-p(T.y)-90)*D2R-k*0.0035-5.5*Math.sin(o)*D2R,ee=EPS*D2R+3*Math.cos(o)*D2R;
+      const v=[Math.sin(ee)*Math.cos(ph),Math.sin(ee)*Math.sin(ph),Math.cos(ee)];const [x,y]=pr(...mul(v,r*1.95));k?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();}
+  /* Moon orbit: back half */
+  const orbit=(front)=>{g.lineWidth=1.4;g.beginPath();let first=true;for(let t=0;t<=360;t+=3){const P=add(mul(mU,Rm*Math.cos(t*D2R)),mV,Rm*Math.sin(t*D2R));const [x,y,dz]=pr(...P);
+    if((dz<0)!==front){first=true;continue;}first?g.moveTo(x,y):g.lineTo(x,y);first=false;}g.strokeStyle=front?'rgba(210,214,240,.7)':'rgba(210,214,240,.28)';g.stroke();g.lineWidth=1;};
+  const moonBehind=pr(...moonP)[2]>0;
+  if(OPT.moon){orbit(false);line3(mul(mU,-Rm*1.12),mul(mU,Rm*1.12),'rgba(190,150,255,.55)',1.2,[6,4]);}
+  const drawMoon=()=>{if(!OPT.moon)return;const [x,y]=pr(...moonP);const mg=g.createRadialGradient(x-3,y-3,1,x,y,r*0.16);mg.addColorStop(0,'#fbf8f0');mg.addColorStop(1,'#9d988e');g.fillStyle=mg;g.beginPath();g.arc(x,y,r*0.15,0,7);g.fill();lbl('მთვარე',x+r*0.2,y-r*0.12,'#ece8df');};
+  if(moonBehind)drawMoon();
+  /* Earth basis */
+  const k0=Math.hypot(ax[0],ax[1]);const u=[-ax[1]/k0,ax[0]/k0,0],v=cross(ax,u);
+  /* back part of the bulge ring */
+  const ring=(front,col,w)=>{g.lineWidth=w;g.strokeStyle=col;g.beginPath();let first=true;for(let t=0;t<=360;t+=3){const c=Math.cos(t*D2R),s2=Math.sin(t*D2R);const P=mul(add(mul(u,c),v,s2),r*1.17);const [x,y,dz]=pr(...P);
+      if((dz<0)!==front){first=true;continue;}first?g.moveTo(x,y):g.lineTo(x,y);first=false;}g.stroke();g.lineWidth=1;};
+  ring(false,'rgba(120,200,140,.35)',6);
+  line3(mul(ax,-r*1.95),mul(ax,-r*1.02),'#F3DDA4',2);
+  /* Earth: body, day/night, spinning meridians */
+  const eg=g.createRadialGradient(cx-r*.35,cy-r*.3,r*.1,cx,cy,r*1.05);eg.addColorStop(0,'#86c8ff');eg.addColorStop(.7,'#2c66b8');eg.addColorStop(1,'#14325f');
   g.fillStyle=eg;g.beginPath();g.arc(cx,cy,r,0,7);g.fill();
-  /* meridians spinning */
-  T.spin+=0.04;
-  for(let m=0;m<6;m++){const a0=T.spin+m*Math.PI/6;const w=[u[0]*Math.cos(a0)+v[0]*Math.sin(a0),u[1]*Math.cos(a0)+v[1]*Math.sin(a0),u[2]*Math.cos(a0)+v[2]*Math.sin(a0)];
-    g.beginPath();let first=true;for(let t=-90;t<=90;t+=6){const c=Math.cos(t*D2R),s=Math.sin(t*D2R);const P=[r*(w[0]*c+ax[0]*s),r*(w[1]*c+ax[1]*s),r*(w[2]*c+ax[2]*s)];const [x,y,dz]=pr(...P);
-      if(dz>0){first=true;continue;}first?g.moveTo(x,y):g.lineTo(x,y);first=false;}g.strokeStyle='rgba(200,230,255,.28)';g.lineWidth=1;g.stroke();}
-  /* equatorial bulge (exaggerated): a ring around the equator */
-  const ring=(front)=>{g.beginPath();let first=true;for(let t=0;t<=360;t+=3){const c=Math.cos(t*D2R),s=Math.sin(t*D2R);const P=[r*1.16*(u[0]*c+v[0]*s),r*1.16*(u[1]*c+v[1]*s),r*1.16*(u[2]*c+v[2]*s)];const [x,y,dz]=pr(...P);
-      if((dz<0)!==front){first=true;continue;}first?g.moveTo(x,y):g.lineTo(x,y);first=false;}g.stroke();};
-  g.lineWidth=5;g.strokeStyle='rgba(120,200,140,.35)';ring(false);
-  /* axis */
-  {const [x1,y1]=pr(-ax[0]*r*1.9,-ax[1]*r*1.9,-ax[2]*r*1.9),[x2,y2]=pr(ax[0]*r*1.9,ax[1]*r*1.9,ax[2]*r*1.9);g.strokeStyle='#F3DDA4';g.lineWidth=2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
-    g.fillStyle='#F3DDA4';g.beginPath();g.arc(x2,y2,4,0,7);g.fill();g.font="600 13px 'Noto Sans Georgian',sans-serif";g.textAlign='left';g.fillText('N — ღერძი',x2+8,y2);}
-  g.lineWidth=5;g.strokeStyle='rgba(140,230,160,.7)';ring(true);g.lineWidth=1;
-  /* pull arrows: Sun/Moon on the near and far bulge — the net turn (torque) tries to stand the equator up into the ecliptic */
-  const arrow=(x1,y1,x2,y2,c)=>{g.strokeStyle=c;g.fillStyle=c;g.lineWidth=2;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();const a=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-9*Math.cos(a-0.4),y2-9*Math.sin(a-0.4));g.lineTo(x2-9*Math.cos(a+0.4),y2-9*Math.sin(a+0.4));g.closePath();g.fill();};
-  /* the bulge points nearest/farthest from the Sun (on the equator ring, toward −x and +x) */
-  let best=null,worst=null;for(let t=0;t<360;t+=2){const c=Math.cos(t*D2R),s=Math.sin(t*D2R);const P=[r*1.16*(u[0]*c+v[0]*s),r*1.16*(u[1]*c+v[1]*s),r*1.16*(u[2]*c+v[2]*s)];if(!best||P[0]<best[0])best=P;if(!worst||P[0]>worst[0])worst=P;}
-  {const [x,y]=pr(...best);arrow(x,y,x-r*0.45,y+(best[2]>0?r*0.18:-r*0.18),'rgba(255,200,90,.9)');const [x2,y2]=pr(...worst);arrow(x2,y2,x2-r*0.22,y2+(worst[2]>0?r*0.1:-r*0.1),'rgba(255,200,90,.55)');}
-  g.font="12px 'Noto Sans Georgian',sans-serif";g.fillStyle='rgba(255,220,150,.9)';g.textAlign='left';
-  g.fillText('მზე და მთვარე ექაჩებიან ეკვატორის „სარტყელს“ →',14,H-34);g.fillText('ღერძი არ ეცემა, არამედ ნელა ტრიალებს (როგორც ბზრიალა)',14,H-16);
-  $('pr-h1').innerHTML=`<div class="t">1 · რატომ ხდება</div><div>ღერძის დახრა ${EPS.toFixed(2)}° · ერთი შემობრუნება ≈ ${PER.toLocaleString('en-US').replace(/,/g,' ')} წელი</div>`;
+  {const [sxp,syp]=pr(...norm(sunW));const ang=Math.atan2(syp-cy,sxp-cx);const ng=g.createLinearGradient(cx+Math.cos(ang)*r,cy+Math.sin(ang)*r,cx-Math.cos(ang)*r,cy-Math.sin(ang)*r);
+    ng.addColorStop(0,'rgba(0,0,0,0)');ng.addColorStop(.55,'rgba(0,0,0,.05)');ng.addColorStop(1,'rgba(2,4,14,.72)');g.fillStyle=ng;g.beginPath();g.arc(cx,cy,r,0,7);g.fill();}
+  T.spin+=(dt||0)*1.6;
+  for(let m=0;m<8;m++){const a0=T.spin+m*Math.PI/8;const w=add(mul(u,Math.cos(a0)),v,Math.sin(a0));
+    g.beginPath();let first=true;for(let t=-90;t<=90;t+=6){const P=mul(add(mul(w,Math.cos(t*D2R)),ax,Math.sin(t*D2R)),r);const [x,y,dz]=pr(...P);
+      if(dz>0){first=true;continue;}first?g.moveTo(x,y):g.lineTo(x,y);first=false;}g.strokeStyle='rgba(205,232,255,.22)';g.stroke();}
+  for(const la of [-60,-30,30,60]){g.beginPath();let first=true;for(let t=0;t<=360;t+=6){const c=Math.cos(la*D2R);const P=mul(add(add(mul(u,c*Math.cos(t*D2R)),v,c*Math.sin(t*D2R)),ax,Math.sin(la*D2R)),r);const [x,y,dz]=pr(...P);
+      if(dz>0){first=true;continue;}first?g.moveTo(x,y):g.lineTo(x,y);first=false;}g.strokeStyle='rgba(205,232,255,.14)';g.stroke();}
+  /* front: bulge ring, axis, L */
+  ring(true,'rgba(140,230,160,.75)',6);
+  line3(mul(ax,r*1.02),mul(ax,r*1.95),'#F3DDA4',2);
+  {const [x2,y2]=pr(...mul(ax,r*1.95));g.fillStyle='#F3DDA4';g.beginPath();g.arc(x2,y2,4,0,7);g.fill();}
+  if(OPT.forces){
+    /* spin angular momentum L along the axis */
+    {const [x1,y1]=pr(...mul(ax,r*1.95)),[x2,y2]=pr(...mul(ax,r*2.55));arrow2(x1,y1,x2,y2,'#9fe0ff',2.4);lbl('L — ბრუნვის იმპულსი',x2+8,y2-4,'#bfeaff');}
+    /* torque τ: perpendicular to the axis and to the ecliptic pole → moves the tip along the cone (westwards) */
+    const zt=[0,0,1],tau=norm(cross(zt,ax));const tip=mul(ax,r*1.95);
+    {const [x1,y1]=pr(...tip),[x2,y2]=pr(...add(tip,tau,-r*0.75));arrow2(x1,y1,x2,y2,'#ff9d7a',2.4);lbl('τ — ძალის მომენტი → ღერძი აქეთ მიდის',x2+(x2<x1?-8:8),y2+14,'#ffb89e',x2<x1?'right':'left');}
+    /* pulls on the bulge: Sun (left) and Moon — the Moon's arrow ≈ 2.2× (≈ 68 % of the effect) */
+    const pull=(srcW,k,col)=>{let best=null;for(let t=0;t<360;t+=3){const c=Math.cos(t*D2R),s2=Math.sin(t*D2R);const P=mul(add(mul(u,c),v,s2),r*1.17);const d=Math.hypot(P[0]-srcW[0],P[1]-srcW[1],P[2]-srcW[2]);if(!best||d<best.d)best={P,d};}
+      const [x1,y1]=pr(...best.P);const dir=norm([srcW[0]-best.P[0],srcW[1]-best.P[1],srcW[2]-best.P[2]]);const [x2,y2]=pr(...add(best.P,dir,r*0.5*k));arrow2(x1,y1,x2,y2,col,1.2+k);};
+    pull(sunW,1,'rgba(255,205,90,.95)');if(OPT.moon)pull(moonP,2.2,'rgba(225,225,245,.95)');
+  }
+  if(!moonBehind)drawMoon();
+  if(OPT.moon){orbit(true);
+    const nodeM=(sgn,lab,fill)=>{const P=mul(mU,sgn*Rm);const [x,y]=pr(...P);g.strokeStyle='#c8a8ff';g.fillStyle=fill?'#c8a8ff':'#04030b';g.lineWidth=1.6;g.beginPath();g.arc(x,y,4.5,0,7);g.fill();g.stroke();g.lineWidth=1;
+      g.font='15px serif';g.fillStyle='#e2d4ff';g.textAlign='center';g.fillText(lab,x,y-12);};
+    nodeM(1,'☊︎',true);nodeM(-1,'☋︎',false);}
+  lbl('N',...(()=>{const [x,y]=pr(...mul(ax,r*1.95));return [x-14,y+2];})(),'#F3DDA4');
+  $('pr-h1').innerHTML=`<div class="t">1 · რატომ ხდება</div><div style="font-size:12px">სარტყელს (მწვანე) ექაჩებიან მზე და მთვარე → τ ⟂ L → ღერძი კონუსზე მიდის</div>
+    <div style="opacity:.7;font-size:11px">მთვარე, კვანძები, ბრუნვა — სქემატური დრო${OPT.nut?' · ნუტაცია გაზვიადებული':''}</div>`;
+}
+
+/* ── panel: what the Moon does — share bar, nutation ellipse (real, for the slider's year) ── */
+function drawMoonPanel(g,W,H){
+  g.fillStyle='#04030b';g.fillRect(0,0,W,H);
+  const pad=16,bw=W-pad*2;
+  g.font="600 12.5px 'Noto Sans Georgian',sans-serif";g.textBaseline='middle';g.textAlign='left';g.fillStyle='#EDE6D8';
+  g.fillText('ვინ ატრიალებს ღერძს (ლუნი-სოლარული პრეცესია ≈ 50,4″ / წელი)',pad,18);
+  const mx=pad+bw*0.684;g.fillStyle='rgba(220,222,240,.85)';g.fillRect(pad,32,mx-pad,22);g.fillStyle='rgba(255,205,90,.9)';g.fillRect(mx,32,pad+bw-mx,22);
+  g.font="600 12px 'Noto Sans Georgian',sans-serif";g.fillStyle='#111';g.fillText('🌙 მთვარე ≈ 68 % · 34,4″',pad+8,43);g.textAlign='right';g.fillText('☀ მზე ≈ 32 % · 16,0″',pad+bw-8,43);
+  /* nutation: main terms, Ω = Moon's mean node, L = Sun's mean longitude (IAU 1980, leading terms) */
+  const ox=pad+bw*0.25,oy=H*0.62,sc=Math.min(bw*0.4/20,(H-110)/2/12);
+  g.strokeStyle='rgba(201,162,76,.25)';g.beginPath();g.moveTo(ox-20*sc,oy);g.lineTo(ox+20*sc,oy);g.moveTo(ox,oy-11*sc);g.lineTo(ox,oy+11*sc);g.stroke();
+  g.textAlign='center';g.font="11px 'Noto Sans Georgian',sans-serif";g.fillStyle='rgba(232,214,174,.75)';
+  g.fillText('Δψ — გრძედში (″)',ox,oy+11*sc+14);g.save();g.translate(ox-20*sc-12,oy);g.rotate(-Math.PI/2);g.fillText('Δε — დახრაში (″)',0,0);g.restore();
+  const nut=jdc=>{const Tc=jdc/36525,Om=(125.04452-1934.136261*Tc)*D2R,Ls=(280.4665+36000.7698*Tc)*D2R,Lm=(218.3165+481267.8813*Tc)*D2R;
+    return [-17.20*Math.sin(Om)-1.32*Math.sin(2*Ls)-0.23*Math.sin(2*Lm)+0.21*Math.sin(2*Om),9.20*Math.cos(Om)+0.57*Math.cos(2*Ls)+0.10*Math.cos(2*Lm)-0.09*Math.cos(2*Om)];};
+  const j0=(T.y-2000)*365.25;
+  g.strokeStyle='rgba(255,170,120,.75)';g.lineWidth=1.2;g.beginPath();for(let k=0;k<=6794;k+=1){const [a,b]=nut(j0-18.6*365.25+k);const x=ox+a*sc,y=oy-b*sc;k?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();g.lineWidth=1;
+  const [a0,b0]=nut(j0);g.fillStyle='#ffd28a';g.beginPath();g.arc(ox+a0*sc,oy-b0*sc,4.5,0,7);g.fill();
+  g.textAlign='left';g.font="12px 'Noto Sans Georgian',sans-serif";g.fillStyle='#EDE6D8';
+  const tx=pad+bw*0.52;let ty=78;const line=(t,c)=>{g.fillStyle=c||'#EDE6D8';g.fillText(t,tx,ty);ty+=19;};
+  line('ნუტაცია — ღერძის „თავის ქნევა“','#F3DDA4');
+  line('მთვარის ორბიტა ეკლიპტიკისადმი 5,1°-ითაა დახრილი');
+  line('და მისი კვანძები უკან ბრუნავს 18,6 წელიწადში —');
+  line('მთვარის „წევა“ ხან ძლიერდება, ხან სუსტდება.');
+  line(`ამის გამო ღერძი კონუსზე ტალღისებურად მიდის:`);
+  line(`±17,2″ გრძედში, ±9,2″ დახრაში (18,6 წ.)`);
+  line(`${fy(T.y)}: Δψ ${a0>=0?'+':''}${a0.toFixed(1)}″ · Δε ${b0>=0?'+':''}${b0.toFixed(1)}″`,'#ffd28a');
 }
 
 /* ── view 2: the pole among the stars ── */
@@ -164,9 +233,9 @@ function frame(ts){
   if(T.play){T.y+=dt*T.speed;if(T.y>13000)T.y=-13000;if(T.y<-13000)T.y=13000;}
   const sl=$('pr-slider');if(sl&&document.activeElement!==sl)sl.value=Math.round(T.y);
   $('pr-year').textContent=fy(T.y);
-  for(const [id,f] of [['pr-c1',drawTop],['pr-c2',drawPole],['pr-c3',drawBand]]){const c=$(id),r=c.getBoundingClientRect();if(!r.width)continue;const dpr=Math.min(2,devicePixelRatio||1);
+  for(const [id,f] of [['pr-c1',drawTop],['pr-c2',drawPole],['pr-c3',drawBand],['pr-c4',drawMoonPanel]]){const c=$(id),r=c.getBoundingClientRect();if(!r.width)continue;const dpr=Math.min(2,devicePixelRatio||1);
     if(c.width!==Math.round(r.width*dpr)||c.height!==Math.round(r.height*dpr)){c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr);}
-    const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);f(g,r.width,r.height);}
+    const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);f(g,r.width,r.height,dt);}
 }
 
 /* ── UI ── */
@@ -183,10 +252,12 @@ const CSS=`
 @media(max-width:900px){#pr-grid{grid-template-columns:1fr}}
 .pr-pane{position:relative;border:1px solid rgba(201,162,76,.22);border-radius:14px;overflow:hidden;background:#04030b}
 .pr-pane canvas{display:block;width:100%}
-#pr-c1,#pr-c2{height:min(60vh,520px)}#pr-c3{height:375px}
+#pr-c1,#pr-c2{height:min(64vh,560px)}#pr-c4{height:260px}#pr-c3{height:375px}
 .pr-h{position:absolute;left:14px;right:14px;top:10px;color:#F3ECDC;font-size:13px;line-height:1.55;text-shadow:0 0 6px #000;pointer-events:none}
 .pr-h .t{font-family:Cinzel,'Noto Serif Georgian',serif;font-size:15px;color:#F7DE9A}.pr-h b{color:#F3DDA4}
 #pr-c3h{bottom:auto}
+.pr-ck{display:flex;align-items:center;gap:6px;font-size:13px!important;color:#EDE6D8!important;cursor:pointer;letter-spacing:0!important;text-transform:none!important;font-family:'Noto Sans Georgian',sans-serif!important}
+.pr-ck input{width:15px!important;height:15px!important;accent-color:#C9A24C}
 .pr-txt{margin-top:14px;font-size:14px;line-height:1.8;color:rgba(236,228,210,.9)}
 .pr-txt h4{font-family:Cinzel,'Noto Serif Georgian',serif;font-weight:400;letter-spacing:2px;color:#E3BE84;font-size:13px;margin:14px 0 4px}
 .pr-txt p{margin:0 0 8px}.pr-txt b{color:#F3DDA4;font-weight:600}
@@ -195,6 +266,11 @@ const TEXT=`<h4>რატომ ხდება პრეცესია</h4>
 <p>დედამიწა იდეალური ბურთი არ არის: ბრუნვის გამო ეკვატორთან ოდნავ <b>გაბერილია</b> — ეკვატორული რადიუსი პოლარულზე ~21 კმ-ით მეტია. ეს „სარტყელი“ ეკლიპტიკის სიბრტყისადმი 23,4°-ით არის დახრილი.</p>
 <p><b>მზე და მთვარე</b> გრავიტაციით ექაჩებიან ამ სარტყელს და ცდილობენ, ეკვატორი ეკლიპტიკის სიბრტყეში „ჩააწვინონ“. მაგრამ დედამიწა სწრაფად ბრუნავს, და მბრუნავი სხეული ასეთ ძალას არ ემორჩილება პირდაპირ — ის <b>გიროსკოპივით</b> პასუხობს: ღერძი არ ეცემა, არამედ ნელა შემოუვლის კონუსს ეკლიპტიკის პოლუსის გარშემო. ზუსტად ასე ტრიალებს დახრილი ბზრიალა.</p>
 <p>ეფექტის ≈ 2/3 მთვარისგანაა (ახლოა), ≈ 1/3 — მზისგან. ერთი სრული შემობრუნება გრძელდება <b>≈ 25 772 წელს</b> — წელიწადში 50,3″, ანუ 1° ყოველ 71,6 წელიწადში. მცირე „რხევა“ ზედ (<b>ნუტაცია</b>, ±9″) მთვარის კვანძების 18,6-წლიანი ციკლიდან მოდის — იგივე კვანძები, რომლებიც დაბნელებებს განსაზღვრავს.</p>
+<h4>რას აკეთებს მთვარე</h4>
+<p><b>1. პრეცესიის ძირითადი მიზეზია.</b> მზე ბევრად მასიურია, მაგრამ მოქცევითი ძალა მანძილის კუბით სუსტდება, ამიტომ ახლო მთვარე ეკვატორის სარტყელს ≈ 2,2-ჯერ ძლიერად „წევს“: ლუნი-სოლარული პრეცესიის ≈ 68 % (34″/წ) მთვარისაა, ≈ 32 % (16″/წ) — მზის.</p>
+<p><b>2. ნუტაციას ქმნის.</b> მთვარის ორბიტა 5,1°-ითაა დახრილი და მისი კვანძები 18,6 წელიწადში უკან შემობრუნდება (ის კვანძები, რომლებიც დაბნელებებს განსაზღვრავს). მთვარის წევის მიმართულება ამიტომ პერიოდულად იცვლება და ღერძი პრეცესიის კონუსზე პატარა ტალღებს ხაზავს: ±17,2″ გრძედში, ±9,2″ დახრაში. ნუტაცია ჯეიმს ბრედლიმ აღმოაჩინა 1748 წელს.</p>
+<p><b>3. დახრას აწყნარებს.</b> მთვარის გარეშე დედამიწის ღერძის დახრა ქაოსურად იცვლებოდა (ათეულობით გრადუსით) და კლიმატი მკვეთრად ირყეოდა. მთვარე მას 22,1°–24,5°-ის ვიწრო ფარგლებში ინარჩუნებს.</p>
+<p><b>4. დღეს ახანგრძლივებს.</b> მოქცევის ხახუნი დედამიწის ბრუნვას ანელებს — დღე საუკუნეში ~2,3 მილიწამით გრძელდება — და მთვარე ყოველწლიურად ~3,8 სმ-ით შორდება.</p>
 <h4>რას ცვლის</h4>
 <p><b>1. ტროპიკული ზოდიაქო უძრავია</b> — ის ბუნიობებსა და მზებუდობებზეა მიბმული: 0° ვერძი ყოველთვის გაზაფხულის ბუნიობაა, 0° კირჩხიბი — ზაფხულის მზებუდობა. მოძრაობს <b>ვარსკვლავების ფონი</b>: თანავარსკვლავედები და მათზე მიბმული სიდერიული ნიშნები ტროპიკულის მიმართ ნელა იწევს წინ (ვარსკვლავის ტროპიკული გრძედი ყოველ წელს 50″-ით იზრდება; თუ ვარსკვლავებიდან ვუყურებთ, პირიქით — ბუნიობის წერტილი მიდის უკან). ამიტომ <b>ტროპიკული</b> (სეზონებზე მიბმული) და <b>სიდერიული</b> (ვარსკვლავებზე მიბმული) ზოდიაქო სულ უფრო შორდება ერთმანეთს — ეს სხვაობაა <b>აიანამშა</b>. რამდენია, სკოლაზეა დამოკიდებული (2026 წ.): ლაჰირი 24°13′, კრიშნამურტი 24°07′, <b>ფეგან-ბრედლი 25°06′</b>, რამანი 22°46′, დელუსი 28°11′. „ჭეშმარიტ სიდერიულში“ (IAU არათანაბარი თანავარსკვლავედები) ბუნიობის წერტილიდან ვერძის საზღვრამდე კიდევ მეტია — ~29°. სკოლების მიხედვით ორივე ზოდიაქო ახ.წ. ~220–500 წლებში ემთხვეოდა.</p>
 <p><b>2. ასტროლოგიური ეპოქები.</b> ბუნიობის წერტილი ერთ ნიშანს ~2150 წელიწადში გადის. ახლა ის თევზების თანავარსკვლავედშია და IAU საზღვრებით მერწყულში ~2600 წელს შევა (თანაბარი 30°-იანი ნიშნებით — სკოლის მიხედვით სხვადასხვა თარიღი).</p>
@@ -218,6 +294,11 @@ function inject(){
      <span id="pr-year"></span><input type="range" id="pr-slider" min="-13000" max="13000" step="1" value="${T.y}"></div>
    <div id="pr-grid"><div class="pr-pane"><canvas id="pr-c1"></canvas><div class="pr-h" id="pr-h1"></div></div>
      <div class="pr-pane"><canvas id="pr-c2"></canvas><div class="pr-h" id="pr-h2"></div></div></div>
+   <div class="ob-bar" style="margin:8px 0 0"><span class="ob-lab" style="font-size:13px;color:#E8D6AE">ჩვენება:</span>
+     <label class="pr-ck"><input type="checkbox" data-o="moon" checked> 🌙 მთვარე და მისი ორბიტა</label>
+     <label class="pr-ck"><input type="checkbox" data-o="forces" checked> ↗ ძალები (L, τ, მიზიდულობა)</label>
+     <label class="pr-ck"><input type="checkbox" data-o="nut" checked> 〰 ნუტაცია (გაზვიადებული)</label></div>
+   <div class="pr-pane" style="margin-top:12px"><canvas id="pr-c4"></canvas></div>
    <div class="pr-pane" style="margin-top:12px"><canvas id="pr-c3"></canvas><div class="pr-h" id="pr-h3" style="top:auto;bottom:8px"></div></div>
    <div class="pr-txt">${TEXT}</div>`;
   card.insertBefore(sec,$('form-relocation')||null);
@@ -227,6 +308,7 @@ function inject(){
   $('pr-now').onclick=()=>{T.y=new Date().getFullYear();};
   $('pr-go').onclick=()=>{const v=+$('pr-yin').value;if(isFinite(v))T.y=Math.max(-13000,Math.min(13000,v));};
   $('pr-slider').oninput=e=>{T.y=+e.target.value;};
+  sec.querySelectorAll('[data-o]').forEach(c=>c.onchange=()=>{OPT[c.dataset.o]=c.checked;});
   /* the IAU borders (Roman 1987) — loaded when the tab first opens */
   if(typeof iauFromEcliptic!=='function'){const s=document.createElement('script');s.src='constellations.js';document.head.appendChild(s);}
   requestAnimationFrame(frame);
