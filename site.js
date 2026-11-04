@@ -54,7 +54,7 @@ const CSS=`
 #mg-head::before,#mg-head::after{content:none!important;display:none!important}
 #mg-head{flex-direction:row!important;justify-content:flex-start!important;text-align:left!important;margin-bottom:0!important;box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
   padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));margin:0 0 6px;
-  background:rgba(12,18,34,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
+  background:rgba(22,12,40,.92);border-bottom:1px solid rgba(184,137,74,.28);backdrop-filter:blur(6px);
   font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:left}
 #mg-head a{color:inherit;text-decoration:none}
 #mg-head .brand{font:600 16px/1 'Marcellus SC','Noto Serif Georgian',Georgia,serif;letter-spacing:.14em;color:#E3BE84;white-space:nowrap}
@@ -74,7 +74,7 @@ const CSS=`
   #mg-head .burger .w{display:none}}
 #mg-foot{box-sizing:border-box;width:100%;align-self:stretch;clear:both;margin-top:40px;position:relative;z-index:1;
   padding:22px max(16px,env(safe-area-inset-right,0px)) calc(70px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
-  background:rgba(12,18,34,.96);border-top:1px solid rgba(184,137,74,.25);font:12.5px/1.6 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:center}
+  background:rgba(22,12,40,.96);border-top:1px solid rgba(184,137,74,.25);font:12.5px/1.6 'Noto Serif Georgian',system-ui,sans-serif;color:#BCC0CA;text-align:center}
 #mg-foot .links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-bottom:10px}
 #mg-foot a{color:#E3BE84;text-decoration:none}#mg-foot a:hover{color:#E3BE84;text-decoration:underline}
 #mg-foot .note{max-width:760px;margin:0 auto 8px;font-size:11.5px;opacity:.85}
@@ -295,18 +295,20 @@ const CARD_SKIP=new Set(['cards.html','tarot.html','tarotborth.html','fool_journ
 const BOX_SEL='.panel,.form-card,.form-shell,.data-card,.input-panel,.stat,.box,#orb-panel,#asp-filters,.mg-tiles>*'+(CARD_SKIP.has(P)?'':',.card');
 /* box colours — to go back to the old dark boxes set BOX_GREEN=false */
 const BOX_GREEN=true;
-const BOX_BG=BOX_GREEN?'rgba(50,40,30,.9)':'rgba(8,6,18,.72)';
-const BOX_BG_HI=BOX_GREEN?'rgba(68,52,36,.95)':'rgba(14,11,28,.88)';
-const BOX_LINE=BOX_GREEN?'rgba(201,162,76,.55)':'rgba(201,168,76,.16)';
+const BOX_BG=BOX_GREEN?'rgba(30,28,33,.92)':'rgba(8,6,18,.72)';
+const BOX_BG_HI=BOX_GREEN?'rgba(44,41,48,.96)':'rgba(14,11,28,.88)';
+const BOX_LINE=BOX_GREEN?'rgba(201,162,76,.65)':'rgba(201,168,76,.16)';
 const BOX_SEL2=BOX_SEL+(BOX_GREEN?',.cp,.nx,#lunar-badge,.result-box,.info-box,.section-card,.chart-box,.panel-box':'');
 const BOX_CSS=`${BOX_SEL2}{background:${BOX_BG}!important;border-color:${BOX_LINE}!important}
 ${BOX_GREEN?BOX_SEL2+'{border-style:solid;border-width:1px}':''}
 .mg-tiles>*:hover{background:${BOX_BG_HI}!important;border-color:#C9A24C!important}
 .mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{background:${BOX_BG_HI}!important;border-color:#E3BE84!important}`;
-const BG_CSS=`html{background:#0C1222!important}
-body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
- radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(123,147,189,.11),transparent 70%),
- radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%),#0C1222!important;background-attachment:fixed!important}`;
+/* page background — deep purple */
+const BG_C='#170C2A';
+const BG_CSS=`html{background:${BG_C}!important}
+body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px),
+ radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(150,100,220,.16),transparent 70%),
+ radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.07),transparent 70%),${BG_C}!important;background-attachment:fixed!important}`;
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
