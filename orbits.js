@@ -50,20 +50,19 @@ const CSS=`
 #ob-fs{position:absolute;right:10px;top:10px;z-index:3;background:rgba(10,8,22,.78);border:1px solid rgba(201,162,76,.5);color:#F0D48A;border-radius:8px;padding:6px 11px;font-size:12px;cursor:pointer;font-family:inherit}
 #ob-fs:hover{border-color:#F0D48A}
 #ob-wrap.ob-full{position:fixed!important;inset:0;z-index:99999;width:100vw!important;height:100vh;margin:0!important;border-radius:0!important;border:0!important}
+@supports(height:100dvh){#ob-wrap.ob-full{height:100dvh}}
+html.ob-fs-lock body>*:not(#ob-wrap){visibility:hidden!important}
+html.ob-fs-lock,html.ob-fs-lock body{overflow:hidden!important;overscroll-behavior:none}
 #ob-wrap.ob-full #ob-cv{touch-action:none}
 #ob-fsbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:10px;z-index:3;gap:6px;flex-wrap:wrap;justify-content:center;max-width:96vw}
 #ob-wrap.ob-full #ob-fsbar{display:flex}
 #ob-fsbar button,#ob-fsbar select{background:rgba(10,8,22,.86);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:14px;padding:7px 13px;font-size:13px;cursor:pointer;font-family:inherit}
 #ob-wrap.ob-full #ob-legend{display:none}
 #ob-fsbar select{max-width:150px;width:auto}
+@media(max-width:700px){#ob-fsbar{left:0;right:0;transform:none;max-width:none;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:0 10px;bottom:max(10px,env(safe-area-inset-bottom));scrollbar-width:none}
+ #ob-fsbar::-webkit-scrollbar{display:none}
+ #ob-fsbar>*{flex:0 0 auto}#ob-fsbar button,#ob-fsbar select{padding:6px 10px;font-size:12px}#ob-fsbar select{max-width:118px}}
 #ob-fsbar button.on{background:rgba(201,162,76,.3);border-color:#E3BE84;color:#FFF3D0}
-#ob-bary{position:absolute;left:12px;bottom:12px;z-index:2;width:250px;background:rgba(4,3,11,.86);border:1px solid rgba(201,162,76,.55);border-radius:12px;padding:6px 6px 7px;pointer-events:none}
-#ob-bary canvas{display:block;width:238px;height:238px}
-#ob-bary .bt{font:600 11px Cinzel,'Noto Serif Georgian',serif;letter-spacing:1.5px;color:#E3BE84;text-align:center;margin:1px 0 3px}
-#ob-bary .bc{font-size:11px;line-height:1.45;color:#F3ECDC;text-align:center}
-#ob-bary .bc b{color:#FFE7A0;font-weight:600}
-#ob-wrap.ob-nobary #ob-bary{display:none}
-@media(max-width:620px){#ob-bary{width:168px}#ob-bary canvas{width:156px;height:156px}#ob-bary .bc{font-size:10px}}
 .ob-birth{font-size:11.5px;color:rgba(200,180,140,.85);line-height:1.7;margin-top:6px}
 .ob-birth b{color:#F0D48A;font-weight:500}`;
 
@@ -280,43 +279,7 @@ function draw(){
   for(const [k,,,col] of PL){if(k==='earth'||!visible(k))continue;const l=X.lon(k,S.jd);if(!isFinite(l))continue;const a=(l-pr)*D2R;
     g.strokeStyle=col;g.lineWidth=2.2;g.beginPath();g.moveTo(cx+Math.cos(a)*(Rz+2),cy-Math.sin(a)*(Rz+2));g.lineTo(cx+Math.cos(a)*(Rz+10),cy-Math.sin(a)*(Rz+10));g.stroke();}
   {const a=(X.lon('sun',S.jd)-pr)*D2R;g.fillStyle='#ffd257';g.beginPath();g.arc(cx+Math.cos(a)*(Rz+6),cy-Math.sin(a)*(Rz+6),3.6,0,7);g.fill();}
-  S.scr=scr;S.now=now;hud();drawBary();
-}
-/* inset: the Sun's real motion around the barycentre, to scale (one solar radius = the disc) */
-let _bTxt='';
-function drawBary(){const wrap=$('ob-wrap'),cv=$('ob-bcv');if(!cv||!wrap||wrap.classList.contains('ob-nobary'))return;
-  const r=cv.getBoundingClientRect();if(!r.width)return;const dpr=Math.min(2,devicePixelRatio||1),Wp=Math.round(r.width*dpr);
-  if(cv.width!==Wp){cv.width=Wp;cv.height=Wp;}const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
-  const W=r.width,c=W/2,K=(W/2-8)/(2.75*RSUN);                       /* ±2.75 solar radii fits the box */
-  const P=([x,y])=>[c+x*K,c-y*K];
-  g.clearRect(0,0,W,W);
-  /* reference rings: 1 and 2 solar radii around the barycentre */
-  g.strokeStyle='rgba(201,162,76,.18)';g.lineWidth=1;g.setLineDash([2,4]);
-  for(const m of [1,2]){g.beginPath();g.arc(c,c,m*RSUN*K,0,7);g.stroke();}g.setLineDash([]);
-  g.fillStyle='rgba(232,214,174,.5)';g.font="9px 'Noto Sans Georgian',sans-serif";g.textAlign='left';g.textBaseline='middle';
-  g.fillText('1 R☉',c+RSUN*K+2,c-6);g.fillText('2 R☉',c+2*RSUN*K+2,c-6);
-  /* path of the Sun's centre — last 60 years, fading */
-  const i1=Math.floor(S.jd/BY.step),N=Math.round(60*365.25/BY.step);let made=0;
-  g.lineWidth=1.3;let prev=null;
-  for(let i=i1-N;i<=i1;i++){if(!BY.c.has(i)){if(made>260){prev=null;continue;}made++;}
-    const q=P(baryAt(i));if(prev){g.strokeStyle=`rgba(255,210,87,${(0.08+0.75*(i-(i1-N))/N).toFixed(3)})`;g.beginPath();g.moveTo(prev[0],prev[1]);g.lineTo(q[0],q[1]);g.stroke();}prev=q;}
-  const B=sunBary(S.jd),sp=P(B.s);
-  /* the Sun to scale */
-  const sr=RSUN*K,gr=g.createRadialGradient(sp[0],sp[1],0,sp[0],sp[1],sr*1.5);
-  gr.addColorStop(0,'rgba(255,246,208,.95)');gr.addColorStop(.62,'rgba(255,210,87,.55)');gr.addColorStop(.67,'rgba(255,190,70,.25)');gr.addColorStop(1,'rgba(255,180,60,0)');
-  g.fillStyle=gr;g.beginPath();g.arc(sp[0],sp[1],sr*1.5,0,7);g.fill();
-  g.strokeStyle='rgba(255,220,120,.9)';g.lineWidth=1.2;g.beginPath();g.arc(sp[0],sp[1],sr,0,7);g.stroke();
-  g.fillStyle='#fff';g.beginPath();g.arc(sp[0],sp[1],2,0,7);g.fill();
-  /* each giant's pull on the centre of mass (arrows from the barycentre) */
-  for(const k of ['jupiter','saturn','neptune','uranus']){const v=B.parts[k];if(!v)continue;const col=PK[k][3],e=P(v),dx=e[0]-c,dy=e[1]-c,L=Math.hypot(dx,dy);if(L<3)continue;
-    g.strokeStyle=col;g.fillStyle=col;g.lineWidth=1.6;g.beginPath();g.moveTo(c,c);g.lineTo(e[0],e[1]);g.stroke();
-    const ux=dx/L,uy=dy/L;g.beginPath();g.moveTo(e[0],e[1]);g.lineTo(e[0]-ux*6-uy*3.5,e[1]-uy*6+ux*3.5);g.lineTo(e[0]-ux*6+uy*3.5,e[1]-uy*6-ux*3.5);g.closePath();g.fill();
-    g.font="12px 'Segoe UI Symbol','DejaVu Sans',serif";g.textAlign='center';g.fillText(PK[k][2]+'︎',e[0]+ux*9,e[1]+uy*9);}
-  /* the barycentre */
-  g.strokeStyle='#FFFFFF';g.lineWidth=1.5;g.beginPath();g.moveTo(c-6,c);g.lineTo(c+6,c);g.moveTo(c,c-6);g.lineTo(c,c+6);g.stroke();
-  const d=Math.hypot(B.s[0],B.s[1],B.s[2])/RSUN;
-  const t=`მასათა ცენტრი <b>+</b> მზის ცენტრიდან: <b>${d.toFixed(2)} R☉</b> (${Math.round(d*696000).toLocaleString('en-US')} კმ)<br>${d>1?'↑ მზის ზედაპირის <b>გარეთ</b>':'მზის <b>შიგნით</b>'} · ისრები — იუპიტერის, სატურნის, ურანისა და ნეპტუნის წვლილი`;
-  if(t!==_bTxt){$('ob-btx').innerHTML=t;_bTxt=t;}
+  S.scr=scr;S.now=now;hud();
 }
 function fmtJD(jd){const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
   const L=window._anc?window._anc.jdToLocal(jd,tz):(()=>{const d=new Date((jd-2440587.5)*864e5);return{year:d.getFullYear(),month:d.getMonth()+1,day:d.getDate(),hour:d.getHours(),minute:d.getMinutes()};})();
@@ -406,7 +369,6 @@ function inject(){
    <div id="ob-wrap"><canvas id="ob-cv"></canvas><div id="ob-hud"></div><div id="ob-tip"></div>
      <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
      <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><button type="button" data-fs="bary" class="on" title="მასათა ცენტრი — ჩართვა / გამორთვა">☉ + ცენტრი</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
-     <div id="ob-bary"><div class="bt">☉ მზე და მასათა ცენტრი</div><canvas id="ob-bcv"></canvas><div class="bc" id="ob-btx"></div></div>
      <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი<br>☉ მასათა ცენტრი (+) უძრავია; მზე და ორბიტები ერთად ირხევიან მის გარშემო. მზე და მისი რხევა ერთ მასშტაბშია — მანძილები პლანეტებამდე არა</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
@@ -476,7 +438,11 @@ function inject(){
   /* ⛶ whole screen: Fullscreen API where it exists, a fixed overlay everywhere (iOS too) */
   const wrap=$('ob-wrap');
   const fsOn=()=>wrap.classList.contains('ob-full');
-  const setFull=on=>{wrap.classList.toggle('ob-full',on);$('ob-fs').textContent=on?'✕ გამოსვლა':'⛶ მთელ ეკრანზე';
+  let fsHome=null;   /* placeholder: in full screen the box moves to <body> so no parent (transform, footer, fixed bars) can show through */
+  const setFull=on=>{if(on===wrap.classList.contains('ob-full'))return;
+    if(on){fsHome=document.createComment('ob-wrap');wrap.parentNode.insertBefore(fsHome,wrap);document.body.appendChild(wrap);}
+    else if(fsHome&&fsHome.parentNode){fsHome.parentNode.insertBefore(wrap,fsHome);fsHome.remove();fsHome=null;}
+    wrap.classList.toggle('ob-full',on);document.documentElement.classList.toggle('ob-fs-lock',on);$('ob-fs').textContent=on?'✕ გამოსვლა':'⛶ მთელ ეკრანზე';
     document.documentElement.style.overflow=on?'hidden':'';S.zoom=1;S.panX=S.panY=0;resize();
     const sp=wrap.querySelector('[data-fs=speed]');if(sp)sp.value=String(S.speed);};
   $('ob-fs').onclick=()=>{
