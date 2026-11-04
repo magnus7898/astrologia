@@ -83,7 +83,7 @@ table.t td.n{color:#FFE7A0;font-weight:600;text-align:center;width:48px}
 
   <div class="lesson">
     <div class="fig">
-      <svg id="mx" viewBox="0 0 560 560" role="img" aria-label="მატრიცის სქემა"></svg>
+      <svg id="mx" viewBox="30 30 1140 1140" role="img" aria-label="მატრიცის სქემა"></svg>
       <div class="legend"><span><i style="background:#FFD36A"></i>ამ ნაბიჯში ვითვლით</span><span><i style="background:#7ec8ff"></i>რისგან ვითვლით</span><span><i style="background:#e9e2cf"></i>უკვე ცნობილია</span></div>
     </div>
     <div>
@@ -113,19 +113,6 @@ function calc(d,m,y){const v={};
   v.G1=r22(v.L1+v.Cv);v.G2=r22(v.T1+v.Cv);
   v.W2=r22(v.B1+v.R1);v.W1=r22(v.B1+v.W2);v.W3=r22(v.R1+v.W2);
   return v;}
-
-/* ── geometry ── */
-const C=280,RO=228;
-const DIR={L:180,T:90,R:0,B:270,TL:135,TR:45,BR:315,BL:225};
-const RAD={3:1,2:.73,1:.5};
-const P={};
-for(const k in DIR)for(const n of [3,2,1]){const a=DIR[k]*Math.PI/180,r=RO*RAD[n];P[k+n]=[C+Math.cos(a)*r,C-Math.sin(a)*r];}
-P.Cv=[C,C];
-P.RC1=[C+42,C-42];P.RC2=[C-42,C-42];
-P.G1=[C-RO*.26,C];P.G2=[C,C-RO*.26];
-{const a=P.B1,b=P.R1;for(const [k,t] of [['W1',.3],['W2',.5],['W3',.7]])P[k]=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}
-const SIZE=k=>k==='Cv'?27:(/^(W|G|RC)/.test(k)?15:(k.endsWith('3')?24:18));
-const LBL={L3:'დღე',T3:'თვე',R3:'წელი',B3:'ქვედა',Cv:'ცენტრი',RC1:'',RC2:'',TL3:'',TR3:'',BR3:'',BL3:'',W2:''};
 
 /* ── steps ── */
 const S=[
@@ -165,7 +152,7 @@ const S=[
    <p>მეთოდ 1-ის თავისებურება: დიაგონალურ კვადრატს <b>საკუთარი ცენტრი</b> აქვს.</p>
    <div class="calc">წინაპრების ცენტრი = ოთხი კუთხის ჯამი = ${v.TL3} + ${v.TR3} + ${v.BR3} + ${v.BL3} = ${red(v.TL3+v.TR3+v.BR3+v.BL3)}<br>
      მეორე = წინაპრების ცენტრი + ცენტრი = ${v.RC1} + ${v.Cv} = ${red(v.RC1+v.Cv)}</div>
-   <p>ცენტრი, წინაპრების ცენტრი და მეორე რიცხვი ერთად ქმნიან <b>სექსუალურობის</b> კომბინაციას (${v.Cv}-${v.RC1}-${v.RC2}). წინაპრების ცენტრი შემდეგ ნაბიჯში დიაგონალებზე დაგვჭირდება.</p>`},
+   <p>ცენტრი, წინაპრების ცენტრი და მეორე რიცხვი ერთად ქმნიან <b>სექსუალურობის</b> კომბინაციას (${v.Cv}-${v.RC1}-${v.RC2}). მატრიცაზე ეს ორი წრე <b>ცენტრის მარჯვნივ</b> დგას. წინაპრების ცენტრი შემდეგ ნაბიჯში დიაგონალებზე დაგვჭირდება.</p>`},
  {t:'9. შიდა წერტილები — პირდაპირი ხაზები',hi:['L1','L2','T1','T2','R1','R2','B1','B2'],src:['L3','T3','R3','B3','Cv'],body:v=>`
    <p>ყოველ ხაზზე გარე წერტილიდან ცენტრამდე კიდევ <b>ორი</b> წერტილია. ჯერ ვითვლით <b>ცენტრთან ახლოს</b> მყოფს, მერე — შუაში მყოფს:</p>
    <div class="calc"><small>ცენტრთან ახლოს = ცენტრი + გარე · შუა = ცენტრთან ახლოს + გარე</small><br>
@@ -210,18 +197,60 @@ const S=[
 let cur=0,D={d:15,m:5,y:1990},V=calc(15,5,1990);
 const known=i=>{const s=new Set();for(let j=0;j<=i;j++)S[j].hi.forEach(k=>s.add(k));return s;};
 
+/* ── the matrix exactly as matrix.html draws it (same geometry, colours, lines, age ring) ── */
+const cx=600,cy=600,rc_r=60,r1_r=25,r2_r=40,r3_r=64,gap=180;
+const d1=rc_r+gap+r1_r,d2=d1+r1_r+r2_r,d3=d2+r2_r+r3_r,sq=Math.sqrt(2)/2;
+const dd1=Math.round(d1*sq),dd2=Math.round((d1+r1_r+r2_r)*sq),dd3=Math.round((d1+r1_r+r2_r+r2_r+r3_r)*sq),outerR=d3+r3_r;
+const dkFill='rgba(20,14,50,0.92)',dkStr='rgba(180,160,255,0.75)';
+const C1f='#4a8cc8',C1s='#1a5090',C2f='#2060a8',C2s='#0a3878';
+const Bx=cx,By=cy+d1,Rx=cx+d1,Ry=cy;
+const Wp=t=>[Math.round(Bx+t*(Rx-Bx)),Math.round(By+t*(Ry-By))];
+/* key → [x, y, r, fill, stroke] */
+const PT={
+ Cv:[cx,cy,rc_r,'#FFD700','#BA7517'],
+ G1:[cx-rc_r-gap/2,cy,r1_r,'#639922','#3B6D11'],G2:[cx,cy-rc_r-gap/2,r1_r,'#639922','#3B6D11'],
+ T1:[cx,cy-d1,r1_r,C1f,C1s],T2:[cx,cy-d2,r2_r,C2f,C2s],T3:[cx,cy-d3,r3_r,'#7F77DD','#534AB7'],
+ L1:[cx-d1,cy,r1_r,C1f,C1s],L2:[cx-d2,cy,r2_r,C2f,C2s],L3:[cx-d3,cy,r3_r,'#7F77DD','#534AB7'],
+ B1:[cx,cy+d1,r1_r,'#EF9F27','#BA7517'],B2:[cx,cy+d2,r2_r,dkFill,dkStr],B3:[cx,cy+d3,r3_r,'#E24B4A','#A32D2D'],
+ R1:[cx+d1,cy,r1_r,'#EF9F27','#BA7517'],R2:[cx+d2,cy,r2_r,dkFill,dkStr],R3:[cx+d3,cy,r3_r,'#E24B4A','#A32D2D'],
+ RC1:[cx+rc_r+r2_r,cy,r2_r,dkFill,dkStr],RC2:[cx+rc_r+r2_r*2+r1_r,cy,r1_r,dkFill,dkStr],
+ TL1:[cx-dd1,cy-dd1,r1_r,dkFill,dkStr],TL2:[cx-dd2,cy-dd2,r2_r,dkFill,dkStr],TL3:[cx-dd3,cy-dd3,r3_r,dkFill,dkStr],
+ TR1:[cx+dd1,cy-dd1,r1_r,dkFill,dkStr],TR2:[cx+dd2,cy-dd2,r2_r,dkFill,dkStr],TR3:[cx+dd3,cy-dd3,r3_r,dkFill,dkStr],
+ BL1:[cx-dd1,cy+dd1,r1_r,dkFill,dkStr],BL2:[cx-dd2,cy+dd2,r2_r,dkFill,dkStr],BL3:[cx-dd3,cy+dd3,r3_r,dkFill,dkStr],
+ BR1:[cx+dd1,cy+dd1,r1_r,dkFill,dkStr],BR2:[cx+dd2,cy+dd2,r2_r,dkFill,dkStr],BR3:[cx+dd3,cy+dd3,r3_r,dkFill,dkStr],
+ W1:[...Wp(.25),r1_r,dkFill,dkStr],W2:[...Wp(.5),r1_r,dkFill,dkStr],W3:[...Wp(.75),r1_r,dkFill,dkStr]};
+const NAME={L3:'დღე',T3:'თვე',R3:'წელი',B3:'ქვედა'};
 function draw(){const st=S[cur],K=known(cur),hi=new Set(st.hi),src=new Set(st.src);
   const svg=$('mx');let h='';
-  const L=(a,b,cls='')=>`<line class="ln ${cls}" x1="${P[a][0].toFixed(1)}" y1="${P[a][1].toFixed(1)}" x2="${P[b][0].toFixed(1)}" y2="${P[b][1].toFixed(1)}"/>`;
-  /* two squares + rays */
-  const sqHi=st.lines;
-  h+=L('L3','T3',sqHi?'hi':'')+L('T3','R3',sqHi?'hi':'')+L('R3','B3',sqHi?'hi':'')+L('B3','L3',sqHi?'hi':'');
-  h+=L('TL3','TR3',sqHi?'hi':'')+L('TR3','BR3',sqHi?'hi':'')+L('BR3','BL3',sqHi?'hi':'')+L('BL3','TL3',sqHi?'hi':'');
-  h+=L('L3','R3',sqHi?'hi':'')+L('T3','B3',sqHi?'hi':'')+L('TL3','BR3',sqHi?'hi':'')+L('TR3','BL3',sqHi?'hi':'');
-  h+=L('B1','R1',(hi.has('W2')?'hi':''));
-  for(const k in P){const [x,y]=P[k],r=SIZE(k),cls=hi.has(k)?'hi':src.has(k)?'src':K.has(k)?'known':'';
-    const val=(hi.has(k)||K.has(k))?V[k]:'?';
-    h+=`<g class="pt ${cls}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}"/><text x="${x.toFixed(1)}" y="${y.toFixed(1)}" style="font-size:${r>20?17:r>16?14:12}px">${val}</text>${LBL[k]?`<text class="lb" x="${x.toFixed(1)}" y="${(y+r+11).toFixed(1)}">${LBL[k]}</text>`:''}</g>`;}
+  const ln=(x1,y1,x2,y2,c,w)=>{h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}"/>`;};
+  /* frame lines (as on the matrix page) */
+  h+=`<polygon points="${cx},${cy-2*dd1} ${cx+2*dd1},${cy} ${cx},${cy+2*dd1} ${cx-2*dd1},${cy}" fill="none" stroke="rgba(127,119,221,0.9)" stroke-width="1.5"/>`;
+  h+=`<rect x="${cx-d1}" y="${cy-d1}" width="${d1*2}" height="${d1*2}" fill="none" stroke="rgba(220,200,255,0.9)" stroke-width="1.5"/>`;
+  const lc='rgba(220,200,255,0.75)',xE=d3+r3_r;
+  ln(cx-xE,cy,cx+xE,cy,lc,.8);ln(cx,cy-xE,cx,cy+xE,lc,.8);ln(cx,cy+d1,cx+d1,cy,lc,.8);
+  ln(cx+dd1,cy-dd1,cx-dd1,cy+dd1,'rgba(255,120,120,1)',1.5);ln(cx-dd1,cy-dd1,cx+dd1,cy+dd1,'rgba(210,110,255,1)',1.5);
+  h+=`<text x="670" y="493" font-size="13" font-weight="600" fill="rgba(255,130,130,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(-45,670,493)">ქალის ხაზი</text>`;
+  h+=`<text x="529" y="493" font-size="13" font-weight="600" fill="rgba(200,130,255,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(45,529,493)">მამაკაცის ხაზი</text>`;
+  h+=`<circle cx="${cx}" cy="${cy}" r="${outerR}" fill="none" stroke="rgba(180,160,255,0.95)" stroke-width="2.5"/>`;
+  /* age ring — dots only (ages are a later lesson) */
+  const aA=[180,225,270,315,0,45,90,135];
+  for(let s=0;s<8;s++){for(let d=0;d<7;d++){const a=(aA[s]+45*(d+1)/8)*Math.PI/180,mid=d===3;
+      h+=`<circle cx="${Math.round(cx+outerR*Math.cos(a))}" cy="${Math.round(cy+outerR*Math.sin(a))}" r="${mid?7:5}" fill="${mid?'#FFD700':'rgba(200,180,255,0.95)'}"/>`;}
+    const a=aA[s]*Math.PI/180;h+=`<circle cx="${Math.round(cx+(outerR+24)*Math.cos(a))}" cy="${Math.round(cy+(outerR+24)*Math.sin(a))}" r="7" fill="#FFD700" stroke="#a87f00"/>`;}
+  /* step 13: the four purpose lines */
+  if(st.lines){const g=(a,b,c)=>ln(PT[a][0],PT[a][1],PT[b][0],PT[b][1],c,5);
+    g('T3','B3','rgba(255,211,106,.55)');g('L3','R3','rgba(255,211,106,.55)');g('TL3','BR3','rgba(210,110,255,.6)');g('TR3','BL3','rgba(255,120,120,.6)');}
+  /* points */
+  for(const k in PT){const [x,y,r,f,sk]=PT[k],isHi=hi.has(k),isSrc=src.has(k),isK=K.has(k)||isHi;
+    const fs=Math.max(20,Math.round(r*1.3));
+    if(isHi)h+=`<circle cx="${x}" cy="${y}" r="${r+11}" fill="rgba(255,211,106,.18)" stroke="#FFD36A" stroke-width="4"><animate attributeName="r" values="${r+8};${r+14};${r+8}" dur="1.8s" repeatCount="indefinite"/></circle>`;
+    else if(isSrc)h+=`<circle cx="${x}" cy="${y}" r="${r+8}" fill="none" stroke="#7ec8ff" stroke-width="4"/>`;
+    h+=`<g opacity="${isK?1:.38}"><circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${sk}" stroke-width="1.5"/>`+
+       `<text x="${x}" y="${y}" font-size="${fs}" font-weight="700" fill="white" font-family="Cinzel,serif" text-anchor="middle" dominant-baseline="central">${isK?V[k]:'?'}</text></g>`;
+    if(NAME[k]){const out=k==='L3'?[x,y+r+22]:k==='R3'?[x,y+r+22]:k==='T3'?[x+r+34,y]:[x+r+34,y];
+      h+=`<text x="${out[0]}" y="${out[1]}" font-size="17" fill="${isHi?'#FFD36A':'rgba(232,214,174,.8)'}" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" dominant-baseline="central">${NAME[k]}</text>`;}}
+  /* ♥ and ₾ icons as on the matrix page */
+  for(const [k,t,c] of [['W1','♥','#ff6b8a'],['W3','₾','#7ec850']]){const [x,y]=PT[k];h+=`<text x="${x}" y="${y-r1_r-16}" font-size="16" text-anchor="middle" dominant-baseline="central" fill="${c}" transform="rotate(-45,${x},${y-r1_r-16})">${t}</text>`;}
   svg.innerHTML=h;}
 function render(){
   $('steps').innerHTML=S.map((s,i)=>`<button type="button" data-i="${i}" class="${i===cur?'on':i<cur?'done':''}">${i+1}</button>`).join('');
