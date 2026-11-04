@@ -53,6 +53,10 @@ const CSS=`
 @supports(height:100dvh){#ob-wrap.ob-full{height:100dvh}}
 html.ob-fs-lock body>*:not(#ob-wrap){visibility:hidden!important}
 html.ob-fs-lock,html.ob-fs-lock body{overflow:hidden!important;overscroll-behavior:none}
+html.ob-fs-lock #mg-foot,html.ob-fs-lock #mg-head,html.ob-fs-lock #mg-consent,html.ob-fs-lock #mg-pill,html.ob-fs-lock #mg-toast,html.ob-fs-lock #mg-menu,html.ob-fs-lock body>footer,html.ob-fs-lock body>header,html.ob-fs-lock .tm-menu{display:none!important}
+#ob-wrap.ob-full{visibility:visible!important}
+@media(max-width:760px){#ob-wrap.ob-full #ob-fsbar{transition:opacity .35s,transform .35s}
+  #ob-wrap.ob-full.ob-barhide #ob-fsbar{opacity:0;transform:translateY(130%);pointer-events:none}}
 #ob-wrap.ob-full #ob-cv{touch-action:none}
 #ob-fsbar{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:10px;z-index:3;gap:6px;flex-wrap:wrap;justify-content:center;max-width:96vw}
 #ob-wrap.ob-full #ob-fsbar{display:flex}
@@ -444,7 +448,10 @@ function inject(){
     else if(fsHome&&fsHome.parentNode){fsHome.parentNode.insertBefore(wrap,fsHome);fsHome.remove();fsHome=null;}
     wrap.classList.toggle('ob-full',on);document.documentElement.classList.toggle('ob-fs-lock',on);$('ob-fs').textContent=on?'✕ გამოსვლა':'⛶ მთელ ეკრანზე';
     document.documentElement.style.overflow=on?'hidden':'';S.zoom=1;S.panX=S.panY=0;resize();
-    const sp=wrap.querySelector('[data-fs=speed]');if(sp)sp.value=String(S.speed);};
+    const sp=wrap.querySelector('[data-fs=speed]');if(sp)sp.value=String(S.speed);if(on)showBar();else{clearTimeout(barT);wrap.classList.remove('ob-barhide');}};
+  /* phones: the full-screen control bar hides after a few seconds; a tap on the sky brings it back */
+  let barT=0;const showBar=()=>{wrap.classList.remove('ob-barhide');clearTimeout(barT);if(fsOn()&&innerWidth<=760)barT=setTimeout(()=>wrap.classList.add('ob-barhide'),4500);};
+  wrap.addEventListener('pointerdown',showBar,true);
   $('ob-fs').onclick=()=>{
     if(!fsOn()){setFull(true);const rq=wrap.requestFullscreen||wrap.webkitRequestFullscreen;if(rq)try{const r=rq.call(wrap);if(r&&r.catch)r.catch(()=>{});}catch(e){}}
     else{const ex=document.exitFullscreen||document.webkitExitFullscreen;if((document.fullscreenElement||document.webkitFullscreenElement)&&ex)ex.call(document);setFull(false);}
