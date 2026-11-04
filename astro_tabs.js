@@ -86,6 +86,14 @@ function inject(){
   }
   return true;
 }
+/* composite: only the wheel, aspects (with their filter) and placements (planets, houses) */
+const CMP_CSS=`html.cm-composite #lay-strip,html.cm-composite #lay-orb,html.cm-composite #orb-panel,html.cm-composite #lay-mid2,
+html.cm-composite #lay-info,html.cm-composite #lay-bot,html.cm-composite #lunar-badge,html.cm-composite #nx-alm,html.cm-composite #fs-card,
+html.cm-composite #dominants-card,html.cm-composite #pnodes-card,html.cm-composite #tech-card,html.cm-composite #lw-card,
+html.cm-composite #cinderella-card,html.cm-composite #hardperiods-card,html.cm-composite #skymap-card,html.cm-composite #skychart-card,
+html.cm-composite #synastry-score-card,html.cm-composite #chart-area .sec-title:not(#mode-label){display:none!important}`;
+(()=>{const st=document.createElement('style');st.textContent=CMP_CSS;document.head.appendChild(st);})();
+const cmpMode=m=>document.documentElement.classList.toggle('cm-composite',m==='composite');
 function markActive(m){
   document.querySelectorAll('.tab-bar .tab-btn').forEach(b=>b.classList.remove('active'));
   const b=IDS[m]?$(IDS[m]):document.querySelector(`.tab-bar .tab-btn[onclick*="'${m}'"]`);
@@ -182,6 +190,7 @@ function hook(){
   if(typeof window.setMode!=='function'||window.setMode._at)return;
   const oS=window.setMode;
   const S=function(m){
+    cmpMode(m);
     if(m==='composite'||m==='davison'||m==='compat'){
       oS.call(this,'synastry');setCM(m);markActive(m);relabel(m);showFx(false);
       if(lastCouple&&lastCouple!==m&&coupleReady())setTimeout(()=>window.generate(),0);
