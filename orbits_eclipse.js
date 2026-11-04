@@ -35,7 +35,7 @@ const st={type:'both',cur:null,anim:null};
 function lists(){const E=window.ECLIPSES,o=[];if(st.type!=='lunar')o.push(['solar',E.solar]);if(st.type!=='solar')o.push(['lunar',E.lunar]);return o;}
 function bsearch(a,x){let lo=0,hi=a.length;while(lo<hi){const m=(lo+hi)>>1;if(a[m]<=x)lo=m+1;else hi=m;}return lo;}  /* first index with a[i] > x */
 function step(dir){
-  const S=window._orbits&&window._orbits.S,map=S?S.jd-2451545:Date.now()/864e5-10957.5;
+  const S=window._orbits&&window._orbits.S,map=st.now?st.now():(S?S.jd-2451545:Date.now()/864e5-10957.5);
   /* keep stepping from the last eclipse found — unless the map was moved since (then from the map date) */
   const moved=st.mapAt==null||Math.abs(map-st.mapAt)>0.01;
   const from=st.cur&&(!moved||Math.abs(map-st.cur.ut)<0.05)?st.cur.ut:map;
@@ -50,6 +50,7 @@ function info(){const c=st.cur,el=$('ecl-info');if(!el)return;if(!c){el.innerHTM
   el.innerHTML=`<b>${c.t==='solar'?'☀ მზის':'🌙 მთვარის'} ${KIND[c.t][c.kind]} დაბნელება</b> · ${fmt(c.ut)} <span style="opacity:.75">(${TZ})</span> · ${SGG[c.sign]} ${SGN[c.sign]}`;
   $('ecl-go').disabled=$('ecl-play').disabled=false;}
 function jump(){const c=st.cur;if(!c)return;
+  if(st.onJump){st.onJump(c);return;}
   const d=new Date((c.ut+10957.5)*864e5);const v=(id,x)=>{const e=$(id);if(e)e.value=x;};
   try{const o={};new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',hourCycle:'h23',era:'short'}).formatToParts(d).forEach(p=>o[p.type]=p.value);
     const y=o.era&&/B/.test(o.era)?1-(+o.year):+o.year;v('ob-d',+o.day);v('ob-m',+o.month);v('ob-y',y);v('ob-h',+o.hour);v('ob-mi',+o.minute);}
@@ -92,35 +93,41 @@ function overlap(d,r1,r2){/* area of circle r1 covered by circle r2 at centre di
 }
 
 /* ── animation ── */
-async function play(){
-  const c=st.cur;if(!c)return;
-  const btn=$('ecl-play');btn.disabled=true;btn.textContent='⏳ …';
-  try{await needAE();}catch(e){btn.textContent='▶ ანიმაცია';btn.disabled=false;alert('ასტრონომიული ბიბლიოთეკა ვერ ჩაიტვირთა');return;}
-  btn.textContent='▶ ანიმაცია';btn.disabled=false;
-  const t0=A.MakeTime(c.ut);let peak=c.ut,half,obs=null,kindTxt=KIND[c.t][c.kind],extra='';
+/* one eclipse → everything the drawing needs (peak, half-span, observer, fixed scale, texts) */
+const PREP=new Map();
+async function prepare(c){
+  await needAE();
+  const key=c.t+c.ut;if(PREP.has(key))return PREP.get(key);
+  let peak=c.ut,half,obs=null,kindTxt=KIND[c.t][c.kind],extra='';
   if(c.t==='lunar'){const r=A.SearchLunarEclipse(A.MakeTime(c.ut-1));peak=r.peak.ut;half=(Math.max(r.sd_penum,60)+25)/1440;
     if(r.sd_total)extra=`სრული ფაზა ${Math.round(r.sd_total*2)} წთ`;else if(r.sd_partial)extra=`ჩრდილის ფაზა ${Math.round(r.sd_partial*2)} წთ`;}
   else{const r=A.SearchGlobalSolarEclipse(A.MakeTime(c.ut-1));peak=r.peak.ut;
     if(r.latitude!=null&&isFinite(r.latitude)){obs=new A.Observer(r.latitude,r.longitude,0);extra=`ხედი უდიდესი დაბნელების წერტილიდან: ${r.latitude.toFixed(1)}°, ${r.longitude.toFixed(1)}°`;}
     else{obs=bestObserver(r.peak);extra=obs?`ხედი მაქსიმალური ფაზის ადგილიდან: ${obs.latitude.toFixed(0)}°, ${obs.longitude.toFixed(0)}° (ცენტრალური ზოლი არ აქვს)`:'ხედი დედამიწის ცენტრიდან';}
     half=1.7/24;}
-  void t0;
+  const P={c,peak,half,obs,kindTxt,extra};
+  if(c.t==='lunar'){const q=lunarAt(A.MakeTime(peak));P.scaleDeg=Math.max(q.pen+q.rM*2.2,1.6);}
+  else{const q=solarAt(A.MakeTime(peak),obs);P.scaleDeg=q.rS*4.2;}
+  PREP.set(key,P);return P;
+}
+async function play(){
+  const c=st.cur;if(!c)return;
+  const btn=$('ecl-play');btn.disabled=true;btn.textContent='⏳ …';
+  let P;try{P=await prepare(c);}catch(e){btn.textContent='▶ ანიმაცია';btn.disabled=false;alert('ასტრონომიული ბიბლიოთეკა ვერ ჩაიტვირთა');return;}
+  btn.textContent='▶ ანიმაცია';btn.disabled=false;
   close();
-  const wrap=$('ob-wrap');if(!wrap)return;
+  const wrap=st.host?st.host():$('ob-wrap');if(!wrap)return;
   const box=document.createElement('div');box.id='ecl-ov';
   box.innerHTML=`<canvas id="ecl-cv"></canvas><div id="ecl-hud"></div>
     <div id="ecl-ctl"><button type="button" data-e="pp">⏸</button><input type="range" id="ecl-t" min="0" max="1000" value="0"><button type="button" data-e="x">✕ დახურვა</button></div>`;
   wrap.appendChild(box);
   const cv=$('ecl-cv'),g=cv.getContext('2d');
-  const A0={c,peak,half,obs,kindTxt,extra,run:true,u:0,last:0};st.anim=A0;
+  const A0={...P,run:true,u:0,last:0};st.anim=A0;
   const size=()=>{const r=box.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);cv.width=r.width*dpr;cv.height=r.height*dpr;g.setTransform(dpr,0,0,dpr,0,0);A0.W=r.width;A0.H=r.height;};
   size();A0.rs=new ResizeObserver(size);A0.rs.observe(box);
   box.querySelector('[data-e=pp]').onclick=e=>{A0.run=!A0.run;e.target.textContent=A0.run?'⏸':'▶';};
   box.querySelector('[data-e=x]').onclick=close;
   $('ecl-t').oninput=e=>{A0.u=+e.target.value/1000;A0.run=false;box.querySelector('[data-e=pp]').textContent='▶';};
-  /* fixed scale for the whole run */
-  if(c.t==='lunar'){const q=lunarAt(A.MakeTime(peak));A0.scaleDeg=Math.max(q.pen+q.rM*2.2,1.6);}
-  else{const q=solarAt(A.MakeTime(peak),obs);A0.scaleDeg=q.rS*4.2;}
   const frame=ts=>{if(st.anim!==A0)return;
     const dt=A0.last?Math.min(0.1,(ts-A0.last)/1000):0;A0.last=ts;
     if(A0.run){A0.u+=dt/14;if(A0.u>1)A0.u=0;$('ecl-t').value=Math.round(A0.u*1000);}
@@ -177,12 +184,12 @@ function draw(g,S){
   else{ear(x0+290,y0);mon(x0+205,y0+ofs*.6,'#bbb');g.beginPath();g.moveTo(x0,y0-9);g.lineTo(x0+290,y0);g.moveTo(x0,y0+9);g.lineTo(x0+290,y0);g.stroke();}
   g.font="11px 'Noto Sans Georgian',sans-serif";g.fillStyle='rgba(232,220,192,.75)';g.textAlign='center';
   g.fillText('მზე',x0,y0+22);g.fillText('დედამიწა',c.t==='lunar'?x0+190:x0+290,y0+22);g.fillText('მთვარე',c.t==='lunar'?x0+262:x0+205,y0+22);g.restore();
-  $('ecl-hud').innerHTML=`<div class="t">${c.t==='solar'?'☀ მზის':'🌙 მთვარის'} ${S.kindTxt} დაბნელება</div><div>${fmt(ut)} · <span style="opacity:.8">${TZ}</span></div><div class="p">${phase}</div><div class="x">${S.extra}</div>`;
+  const hudEl=S.hud||$('ecl-hud');if(hudEl)hudEl.innerHTML=`<div class="t">${c.t==='solar'?'☀ მზის':'🌙 მთვარის'} ${S.kindTxt} დაბნელება</div><div>${fmt(ut)} · <span style="opacity:.8">${TZ}</span></div><div class="p">${phase}</div><div class="x">${S.extra}</div>`;
 }
 
 /* ── UI ── */
 const CSS=`
-#form-orbits .ob-ecl-row{padding:10px 12px;border:1px solid rgba(201,162,76,.25);border-radius:12px;background:rgba(120,140,220,.05)}
+#form-eclipses .ob-ecl-row{padding:10px 12px;border:1px solid rgba(201,162,76,.25);border-radius:12px;background:rgba(120,140,220,.05)}
 #ecl-info{flex-basis:100%;font-size:13px;color:#EDE6D8;line-height:1.6;min-height:20px}
 #ecl-info b{color:#F3DDA4;font-weight:600}
 #ecl-ov{position:absolute;inset:0;z-index:5;background:#03030a}
@@ -194,16 +201,15 @@ const CSS=`
 #ecl-ctl input{flex:1;accent-color:#C9A24C}
 #ecl-ctl button{background:rgba(10,8,22,.86);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:14px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit}`;
 function inject(){
-  const sec=$('form-orbits'),wrap=$('ob-wrap');if(!sec||!wrap||$('ecl-row'))return!!$('ecl-row');
+  const host=$('ecx-ctl'),sec=$('form-eclipses');if(!host||!sec||$('ecl-row'))return!!$('ecl-row');
   const st2=document.createElement('style');st2.textContent=CSS;document.head.appendChild(st2);
   const row=document.createElement('div');row.className='ob-bar ob-ecl-row';row.id='ecl-row';
   row.innerHTML=`<span class="ob-lab">🌘 დაბნელებები:</span>
     <select id="ecl-type"><option value="both">☀ + 🌙 ორივე</option><option value="solar">☀ მზის</option><option value="lunar">🌙 მთვარის</option></select>
     <button type="button" class="ob-btn" id="ecl-prev">◀ წინა</button><button type="button" class="ob-btn" id="ecl-next">შემდეგი ▶</button>
     <button type="button" class="ob-btn" id="ecl-go" disabled>↪ რუკაზე</button><button type="button" class="ob-btn on" id="ecl-play" disabled>▶ ანიმაცია</button>
-    <div id="ecl-info"><span style="opacity:.7">აირჩიე „შემდეგი ▶“ — უახლოესი დაბნელება რუკაზე ნაჩვენები თარიღიდან.</span></div>`;
-  const anchor=sec.querySelector('.ob-dance-row')||$('ob-pl');
-  if(anchor&&anchor.nextSibling)anchor.parentNode.insertBefore(row,anchor.nextSibling);else wrap.parentNode.insertBefore(row,wrap);
+    <div id="ecl-info"><span style="opacity:.7">„შემდეგი ▶“ — უახლოესი დაბნელება ნაჩვენები დროიდან.</span></div>`;
+  host.appendChild(row);
   const nav=async d=>{try{await needEC();}catch(e){$('ecl-info').textContent='დაბნელებების ცხრილი ვერ ჩაიტვირთა';return;}step(d);};
   $('ecl-next').onclick=()=>nav(1);$('ecl-prev').onclick=()=>nav(-1);
   $('ecl-type').onchange=e=>{st.type=e.target.value;if(st.cur){const u=st.cur.ut;st.cur={ut:u-1e-6,t:'',kind:'',sign:0};nav(1);}};
@@ -214,5 +220,6 @@ function inject(){
 }
 function boot(){if(!inject()){let n=0;const t=setInterval(()=>{if(inject()||++n>60)clearInterval(t);},250);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-window._orbEclipse={step,play,close,lunarAt,solarAt};
+window._orbEclipse={st,step,play,close,prepare,draw,lunarAt,solarAt,needAE,needEC,fmt,KIND,info,
+  get A(){return A;}};
 })();
