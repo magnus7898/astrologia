@@ -295,26 +295,25 @@ const CARD_SKIP=new Set(['cards.html','tarot.html','tarotborth.html','fool_journ
 const BOX_SEL='.panel,.form-card,.form-shell,.data-card,.input-panel,.stat,.box,#orb-panel,#asp-filters,.mg-tiles>*'+(CARD_SKIP.has(P)?'':',.card');
 /* box colours — to go back to the old dark boxes set BOX_GREEN=false */
 const BOX_GREEN=true;
-const BOX_BG=BOX_GREEN?'rgba(54,65,86,.96)':'rgba(8,6,18,.72)';
-const BOX_BG_HI=BOX_GREEN?'rgba(66,79,104,.97)':'rgba(14,11,28,.88)';
-const BOX_LINE=BOX_GREEN?'#CDCDCD':'rgba(201,168,76,.16)';
-const BOX_TEXT='#DFF8EB';
+const BOX_BG=BOX_GREEN?'rgba(0,0,0,.9)':'rgba(8,6,18,.72)';
+const BOX_BG_HI=BOX_GREEN?'rgba(16,16,20,.95)':'rgba(14,11,28,.88)';
+const BOX_LINE=BOX_GREEN?'#C9A24C':'rgba(201,168,76,.16)';
+const BOX_TEXT='#FFFFFF';
 const BOX_SEL2=BOX_SEL+(BOX_GREEN?',.cp,.nx,#lunar-badge,.result-box,.info-box,.section-card,.chart-box,.panel-box':'');
 const BOX_CSS=`${BOX_SEL2}{background:${BOX_BG}!important;border-color:${BOX_LINE}!important}
 ${BOX_GREEN?BOX_SEL2+'{border-style:solid;border-width:1px}':''}
 html body{color:${BOX_TEXT}}
 label,input,select,textarea,p,.field label,.rc-note,.tz-display{color:${BOX_TEXT}!important}
-input::placeholder,textarea::placeholder{color:rgba(223,248,235,.45)!important}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.45)!important}
 ${BOX_GREEN?BOX_SEL2+'{color:'+BOX_TEXT+'}':''}
-.mg-tiles>*:hover{background:${BOX_BG_HI}!important;border-color:#FFFFFF!important}
+.mg-tiles>*:hover{background:${BOX_BG_HI}!important;border-color:#E3BE84!important}
 .mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{background:${BOX_BG_HI}!important;border-color:#E3BE84!important}`;
 /* page background — the original dark blue */
 const BG_C='#0C1222';
 const BG_CSS=`html{background:${BG_C}!important}
-body{color:#DFF8EB}
-body{background:repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px),
- radial-gradient(ellipse 1100px 520px at 50% -12%,rgba(123,147,189,.11),transparent 70%),
- radial-gradient(ellipse 800px 600px at 50% 115%,rgba(184,137,74,.06),transparent 70%),${BG_C}!important;background-attachment:fixed!important}`;
+body{color:#FFFFFF}
+body{background:${BG_C}!important}
+body::before,body::after{background:none!important;background-image:none!important}`;
 function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);

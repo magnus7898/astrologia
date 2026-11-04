@@ -21,7 +21,7 @@ const CSS=`
 .mg-shrink.open{height:var(--mg-open,auto)!important;max-height:none!important}
 .mg-shrink.mg-measure{height:auto!important;max-height:none!important}
 .mg-shrink.mg-tall:not(.open)::after{content:'▾ სრულად';position:absolute;left:0;right:0;bottom:0;height:52px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;
-  background:linear-gradient(rgba(54,65,86,0),rgba(54,65,86,.98) 70%);color:#E3BE84;font:400 11.5px 'Noto Sans Georgian',sans-serif;letter-spacing:1px;pointer-events:none}
+  background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.97) 70%);color:#E3BE84;font:400 11.5px 'Noto Sans Georgian',sans-serif;letter-spacing:1px;pointer-events:none}
 .mg-shrink:not(.open):hover::after{color:#FFF0C8}
 .mg-fold{display:none;position:absolute;top:6px;right:8px;z-index:2;background:rgba(10,8,22,.85);border:1px solid rgba(184,137,74,.5);color:#E3BE84;border-radius:6px;padding:1px 8px;font-size:12px;cursor:pointer;line-height:1.6}
 .mg-shrink.open>.mg-fold{display:block}`;
