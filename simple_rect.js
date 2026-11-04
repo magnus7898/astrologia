@@ -134,7 +134,7 @@ const CSS=`
 #form-srect .rc-row2 .field{margin:0}#form-srect .rc-row2 input{width:auto}
 #form-srect .ob-btn{background:rgba(201,162,76,.1);border:1px solid rgba(201,162,76,.45);color:#F0D48A;border-radius:16px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
 #srq-out{margin-top:14px;display:grid;gap:12px}
-#srq-out .rc-card{border:1px solid rgba(201,162,76,.45);border-radius:10px;padding:12px 14px;background:rgba(30,28,33,.7)}
+#srq-out .rc-card{border:1px solid rgba(201,162,76,.45);border-radius:10px;padding:12px 14px;background:rgba(36,37,44,.75)}
 #srq-out .rc-h{font-family:Cinzel,'Noto Serif Georgian',serif;letter-spacing:2px;color:#E3BE84;font-size:12px;margin-bottom:8px}
 #srq-out .rc-sub{font-size:11.5px;color:rgba(200,204,212,.8);margin-top:8px;line-height:1.55}
 #form-srect .rc-err{color:#ff9a8a;font-size:13px;margin-top:10px}
