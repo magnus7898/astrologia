@@ -83,6 +83,8 @@ function vv(k,jd,E){if(S.view==='helio')return hv(k,jd);
    mass of each planet / mass of the Sun (IAU / DE440); Earth includes the Moon */
 const MU={mercury:1/6023657,venus:1/408523.72,earth:1/328900.56,mars:1/3098703.6,jupiter:1/1047.3486,saturn:1/3497.9018,uranus:1/22902.98,neptune:1/19412.26,pluto:1/136045556};
 const RSUN=0.0046505;                                    /* solar radius, AU */
+/* main view: the Sun's disc radius in px — its offset from the barycentre uses the SAME scale, so the + sits where it really is relative to the Sun's size */
+const sunPx=()=>Math.max(6,Math.min(S.W,S.H)*0.011*Math.sqrt(S.zoom));
 const MUSUM=1+Object.values(MU).reduce((a,b)=>a+b,0);
 /* Sun's centre relative to the barycentre (heliocentric vectors, J2000 ecliptic) + each planet's share */
 function sunBary(jd){const parts={};let x=0,y=0,z=0;
@@ -226,7 +228,7 @@ function draw(){
   if(S.view==='helio'&&(!S.orbits||Math.abs(S.jd-S.orbT)>365.25*40))buildOrbits(S.jd);
   /* barycentric frame: the Sun and every planet are displaced by the Sun's offset from the centre of mass (magnified) */
   {const on=S.view==='helio'&&!$('ob-wrap').classList.contains('ob-nobary');
-   if(on){const F=Math.min(S.W,S.H)*0.055*S.zoom/(2.2*RSUN),v=sunBary(S.jd).s;S.boff=[v[0]*F,-v[1]*F];}else S.boff=null;}
+   if(on){const F=sunPx()/RSUN,v=sunBary(S.jd).s;S.boff=[v[0]*F,-v[1]*F];}else S.boff=null;}
   g.setTransform(1,0,0,1,0,0);g.drawImage(bgLayer(),0,0);
   g.setTransform(S.dpr,0,0,S.dpr,0,0);
   const W=S.W,H=S.H,cx=W/2+S.panX,cy=H/2+S.panY,Rz=ringR(),pr=precDeg(S.jd);
@@ -240,12 +242,14 @@ function draw(){
   const cg=(r,c0,c1)=>{const gr=g.createRadialGradient(cx,cy,0,cx,cy,r);gr.addColorStop(0,c0);gr.addColorStop(.3,c1);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(cx,cy,r,0,7);g.fill();};
   const byOn=S.view==='helio'&&!$('ob-wrap').classList.contains('ob-nobary');
   if(byOn){ /* centre = barycentre (+); the Sun circles it — its offset is magnified so it can be seen */
-    const F=Math.min(W,H)*0.055*S.zoom/(2.2*RSUN),SP=v=>[cx+v[0]*F,cy-v[1]*F];
+    const F=sunPx()/RSUN,SP=v=>[cx+v[0]*F,cy-v[1]*F];
     const i1=Math.floor(S.jd/BY.step),N=Math.round(60*365.25/BY.step);let prev=null,made=0;g.lineWidth=1.2;
     for(let i=i1-N;i<=i1;i++){if(!BY.c.has(i)){if(made>260){prev=null;continue;}made++;}
       const q=SP(baryAt(i));if(prev){g.strokeStyle=`rgba(255,210,87,${(0.05+0.6*(i-(i1-N))/N).toFixed(3)})`;g.beginPath();g.moveTo(prev[0],prev[1]);g.lineTo(q[0],q[1]);g.stroke();}prev=q;}
-    const sp=SP(sunBary(S.jd).s),gr=g.createRadialGradient(sp[0],sp[1],0,sp[0],sp[1],17);
-    gr.addColorStop(0,'#fff6d0');gr.addColorStop(.3,'#ffd257');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(sp[0],sp[1],17,0,7);g.fill();
+    const sp=SP(sunBary(S.jd).s),rs=sunPx(),gr=g.createRadialGradient(sp[0],sp[1],rs*.9,sp[0],sp[1],rs*2.2);
+    gr.addColorStop(0,'rgba(255,210,87,.45)');gr.addColorStop(1,'rgba(255,210,87,0)');g.fillStyle=gr;g.beginPath();g.arc(sp[0],sp[1],rs*2.2,0,7);g.fill();
+    const gd=g.createRadialGradient(sp[0]-rs*.3,sp[1]-rs*.3,0,sp[0],sp[1],rs);gd.addColorStop(0,'#fff8dc');gd.addColorStop(1,'#ffc94a');
+    g.fillStyle=gd;g.beginPath();g.arc(sp[0],sp[1],rs,0,7);g.fill();
     g.strokeStyle='#FFFFFF';g.lineWidth=1.4;g.beginPath();g.moveTo(cx-5,cy);g.lineTo(cx+5,cy);g.moveTo(cx,cy-5);g.lineTo(cx,cy+5);g.stroke();}
   else if(S.view==='helio')cg(26,'#fff6d0','#ffd257');else cg(16,'#e4f2ff','#58a8f0');
   /* birth markers */
@@ -403,7 +407,7 @@ function inject(){
      <button type="button" id="ob-fs" title="მთელ ეკრანზე (Esc — გამოსვლა)">⛶ მთელ ეკრანზე</button>
      <div id="ob-fsbar"><button type="button" data-fs="play">⏯</button><button type="button" data-fs="rev">◀▶</button><button type="button" data-fs="now">● ახლა</button><button type="button" data-fs="view">☉ / ⊕</button><button type="button" data-fs="dance">🌸 ხაზები</button><select data-fs="da">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='earth'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="db">${[['sun','☉ მზე'],...PL.map(p=>[p[0],p[2]+'\uFE0E '+p[1]])].map(([k,n])=>`<option value="${k}"${k==='venus'?' selected':''}>${n}</option>`).join('')}</select><select data-fs="speed">${SPEEDS.map(s=>`<option value="${s[0]}"${s[0]===30.44?' selected':''}>${s[1]}</option>`).join('')}</select></div>
      <div id="ob-bary"><div class="bt">☉ მზე და მასათა ცენტრი</div><canvas id="ob-bcv"></canvas><div class="bc" id="ob-btx"></div></div>
-     <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი<br>☉ მასათა ცენტრი (+) უძრავია; მზე და პლანეტების ორბიტები ერთად ირხევიან მის გარშემო — გადიდებით; რეალური მასშტაბი — ჩარჩოში</div></div>
+     <div id="ob-legend">ბორბალი / თითები — ზუმი · გადათრევა — გადაადგილება · ორჯერ დაჭერა — ცენტრი<br>☉ მასათა ცენტრი (+) უძრავია; მზე და ორბიტები ერთად ირხევიან მის გარშემო. მზე და მისი რხევა ერთ მასშტაბშია — მანძილები პლანეტებამდე არა</div></div>
    <div class="ob-birth" id="ob-binfo"></div>`;
   card.insertBefore(sec,$('form-relocation')||null);
   stars();S.jd=Date.now()/864e5+2440587.5;
