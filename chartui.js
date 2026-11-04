@@ -5,7 +5,7 @@
 (function(){
 'use strict';
 const CSS=`
-#chart-area .cp,#chart-area .nx,#lunar-badge,#chart-area .data-card{border-radius:3px!important}
+#chart-area .cp,#chart-area .nx,#lunar-badge,#chart-area .data-card{border-radius:14px!important}
 .mg-col>.mg-col-t{cursor:pointer;user-select:none;position:relative;padding-right:34px!important}
 .mg-col>.mg-col-t::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#B8894A;font-size:12px;transition:transform .2s}
 .mg-col:not(.open)>.mg-col-t::after{transform:translateY(-50%) rotate(-90deg)}

@@ -300,7 +300,9 @@ const BOX_BG_HI=BOX_GREEN?'rgba(16,16,20,.95)':'rgba(14,11,28,.88)';
 const BOX_LINE=BOX_GREEN?'#C9A24C':'rgba(201,168,76,.16)';
 const BOX_TEXT='#FFFFFF';
 const BOX_SEL2=BOX_SEL+(BOX_GREEN?',.cp,.nx,#lunar-badge,.result-box,.info-box,.section-card,.chart-box,.panel-box':'');
-const BOX_CSS=`${BOX_SEL2}{background:${BOX_BG}!important;border-color:${BOX_LINE}!important}
+const BOX_R='14px';   /* corner radius of every box */
+const BOX_CSS=`${BOX_SEL2}{background:${BOX_BG}!important;border-color:${BOX_LINE}!important;border-radius:${BOX_R}!important}
+.data-card-title:first-child{border-top-left-radius:${BOX_R};border-top-right-radius:${BOX_R}}
 ${BOX_GREEN?BOX_SEL2+'{border-style:solid;border-width:1px}':''}
 html body{color:${BOX_TEXT}}
 label,input,select,textarea,p,.field label,.rc-note,.tz-display{color:${BOX_TEXT}!important}
