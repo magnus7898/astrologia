@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 6</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:760px;margin:26px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:78px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:96px}
+.date .note{flex-basis:100%;text-align:center;font-size:12px;color:#9aa3b6}
+.lesson{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+@media(max-width:860px){.lesson{grid-template-columns:1fr}}
+.fig{position:sticky;top:12px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:8px}
+@media(max-width:860px){.fig{position:static}}
+#mx{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:11.5px;color:#aab2c4;padding:6px 4px 2px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.steps button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+.steps button.on{background:rgba(201,162,76,.22);border-color:#E3BE84;color:#FFF0C8}
+.steps button.done{color:#F3DDA4}
+.card{border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:18px 18px 16px}
+.card h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em;margin-bottom:10px}
+.card p{font-size:14px;line-height:1.85;color:#e2e5ec;margin:8px 0}
+.card b{color:#F3DDA4;font-weight:600}
+.calc{margin:12px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}
+.calc small{color:#aab2c4}
+.tip{font-size:12.5px;line-height:1.7;color:#aab2c4;margin-top:10px}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.t td,table.t th{border-bottom:1px solid rgba(255,255,255,.08);padding:6px 6px;text-align:left}
+table.t th{color:#B8894A;font-weight:400;font-size:11.5px;letter-spacing:.06em}
+table.t td.n{color:#FFE7A0;font-weight:600;text-align:center;width:48px}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.nav button:disabled{opacity:.35;cursor:default}
+/* diagram */
+.ln{stroke:rgba(201,162,76,.28);stroke-width:1.3;fill:none}
+.ln.hi{stroke:#E3BE84;stroke-width:2.2}
+.pt circle{fill:#141a2c;stroke:rgba(201,162,76,.35);stroke-width:1.4;transition:fill .3s,stroke .3s}
+.pt text{fill:rgba(255,255,255,.25);font:600 15px 'Noto Sans Georgian',Arial,sans-serif;text-anchor:middle;dominant-baseline:central;transition:fill .3s}
+.pt .lb{font:400 10px 'Noto Sans Georgian',Arial,sans-serif;fill:rgba(170,178,196,.0)}
+.pt.known circle{stroke:rgba(201,162,76,.6)}
+.pt.known text{fill:#e9e2cf}
+.pt.hi circle{fill:#3a2c0e;stroke:#FFD36A;stroke-width:2.4}
+.pt.hi text{fill:#FFF3C4}
+.pt.hi .lb{fill:#FFD36A}
+.pt.src circle{stroke:#7ec8ff;stroke-width:2.2}
+.pt.src text{fill:#cfeaff}
+table.ck{width:100%;border-collapse:separate;border-spacing:0 3px;margin-top:16px;font-size:13px}
+table.ck th{font-weight:400;font-size:11px;letter-spacing:.08em;color:#B8894A;padding:4px 8px;text-align:center}
+table.ck th:first-child{text-align:left}
+table.ck td{padding:7px 8px;text-align:center;font-weight:600;transition:opacity .3s,box-shadow .3s}
+table.ck td:first-child{text-align:left;font-weight:500;border-radius:8px 0 0 8px}
+table.ck td:last-child{border-radius:0 8px 8px 0}
+table.ck tr.dim td{opacity:1}
+table.ck tr.on td{box-shadow:inset 0 0 0 2px #FFD36A}
+table.ck td.q{color:rgba(255,255,255,.55)}
+.row-sahasrara td{background:#5B4A86;color:#F0EAF8}.row-ajna td{background:#3E6C93;color:#EAF2F8}.row-vishudha td{background:#8FB6D4;color:#0B1F33}
+.row-anahata td{background:#5E8F63;color:#0C2110}.row-manipura td{background:#C8A63C;color:#241703}.row-svadhistana td{background:#C07A2C;color:#241100}
+.row-muladhara td{background:#A5453F;color:#F8ECEA}.row-total td{background:#1a2236;color:#F3DDA4}
+.ens{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+a.en{display:flex;align-items:center;gap:9px;border:1px solid rgba(184,137,74,.45);border-radius:12px;padding:7px 12px 7px 7px;text-decoration:none;color:#EDE6D8;background:rgba(201,162,76,.06);transition:background .2s}
+a.en:hover{background:rgba(201,162,76,.18)}
+a.en .nm{display:flex;flex-direction:column;line-height:1.3}
+a.en .nm small{font-size:10.5px;color:#9aa3b6;letter-spacing:.04em}
+a.en .nm span{font-size:13px;color:#F3DDA4}
+a.en b{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#3a2c0e;border:1.5px solid #FFD36A;color:#FFF3C4;font-weight:700;font-size:15px}
+.combo{font-family:'Marcellus SC',serif;font-size:22px;color:#FFE7A0;letter-spacing:.12em;text-align:center;margin:6px 0 2px}
+.combo small{display:block;font-family:'Noto Serif Georgian',serif;font-size:11px;color:#9aa3b6;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 6 — წყვილის მატრიცა</h1>
+  <div class="sub">შეთავსების მატრიცა: როგორ ვაგებთ ორი ადამიანის საერთო მატრიცას და რას გვეუბნება თითოეული ზონა</div>
+
+  <div class="intro">
+    როცა ორი ადამიანი ერთად არის, ჩნდება მესამე „ორგანიზმი“ — <b>წყვილი</b>, თავისი ენერგიით, ამოცანებით და კარმით. წყვილის მატრიცა ორივე პარტნიორის მატრიციდან იკრიბება და აჩვენებს, <b>რისთვის შეხვდნენ</b>, რა უნდა გაიარონ ერთად და რა აძლიერებს მათ კავშირს.
+    ზონების კითხვა <a href="course_matrix5.html" style="color:#E3BE84">გაკვეთილი 5-ში</a> ვისწავლეთ — აქ იგივე წრეებს წყვილის მნიშვნელობა აქვს.
+  </div>
+
+  <div class="panel">
+    <div class="date">
+      <div style="flex-basis:100%;text-align:center;font-size:12px;letter-spacing:.12em;color:#d28aff">პირველი პარტნიორი</div>
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+      <div style="flex-basis:100%;text-align:center;font-size:12px;letter-spacing:.12em;color:#ff8c8c;margin-top:6px">მეორე პარტნიორი</div>
+      <div><label>დღე</label><input id="dd2" type="number" min="1" max="31" value="3"></div>
+      <div><label>თვე</label><input id="mm2" type="number" min="1" max="12" value="11"></div>
+      <div><label>წელი</label><input id="yy2" class="y" type="number" min="1000" max="2100" value="1987"></div>
+      <div class="note" id="dnote"></div>
+    </div>
+  </div>
+
+  <div class="lesson">
+    <div class="fig">
+      <svg id="mx" viewBox="30 30 1140 1140" role="img" aria-label="მატრიცის სქემა"></svg>
+      <div class="legend"><span><i style="background:#FFD36A"></i>ზონის რიცხვები</span><span><i style="background:#7ec8ff"></i>დამატებითი წერტილები</span></div>
+    </div>
+    <div>
+      <div class="steps" id="steps"></div>
+      <div class="card" id="card"></div>
+      <div class="nav"><button id="prev">← წინა</button><button id="next">შემდეგი →</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="matrix_arcana.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+/* the same reduction the site's calculator uses: while > 22, add the digits */
+function r22(n){while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;}
+function r22steps(n){const s=[n];while(n>22){n=String(n).split('').reduce((a,d)=>a+ +d,0);s.push(n);}return s;}
+const red=n=>{const s=r22steps(n);return s.length===1?`<span class="r">${n}</span>`:s.slice(0,-1).join(' → ')+' → <span class="r">'+s[s.length-1]+'</span>';};
+
+/* ── one person's base (corners, diagonals, centre) and the couple matrix — identical to the site's calculator ── */
+function base(d,m,y){const v={L3:r22(d),T3:r22(m),R3:r22(y)};v.B3=r22(v.L3+v.T3+v.R3);v.Cv=r22(v.L3+v.T3+v.R3+v.B3);
+  v.TL3=r22(v.L3+v.T3);v.TR3=r22(v.T3+v.R3);v.BR3=r22(v.R3+v.B3);v.BL3=r22(v.B3+v.L3);return v;}
+function calc(a,b){const v={};
+  for(const k of ['L3','T3','R3','B3','Cv','TL3','TR3','BR3','BL3'])v[k]=r22(a[k]+b[k]);
+  v.RC1=r22(v.TL3+v.TR3+v.BR3+v.BL3);v.RC2=r22(v.RC1+v.Cv);
+  for(const k of ['L','T','R','B']){v[k+'1']=r22(v.Cv+v[k+'3']);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  v.G1=r22(v.L1+v.Cv);v.G2=r22(v.T1+v.Cv);
+  v.W2=r22(v.B1+v.R1);v.W1=r22(v.B1+v.W2);v.W3=r22(v.R1+v.W2);
+  return v;}
+/* ── steps ── */
+const AR=()=>window.MX_ARCANA||[];
+const WH={L3:'დღე · სავიზიტო ბარათი',L2:'ბავშვობა, ხედვა',L1:'მშობელი–შვილი',T3:'თვე · შთაგონება',T2:'მენტალური უნარები',T1:'ნიჭი, კომუნიკაცია',
+ B3:'მთავარი გაკვეთილი',B2:'კარმული კუდის შუა',B1:'როგორ შევდივართ ურთიერთობებში',R3:'მატერიალური გაკვეთილი',R2:'მატერიალური კარმის შუა',R1:'თვისებები სამუშაოში',
+ Cv:'ცენტრი · კომფორტის ზონა',G1:'ფიზიკური სურვილები',G2:'სოციალური სურვილები',RC1:'გვარის ცენტრი',RC2:'გვარის ცენტრი 2',
+ TL3:'კაცის ხაზი, გარე',TL2:'კაცის ხაზი, შუა',TL1:'კაცის ხაზი, შიდა',TR3:'ქალის ხაზი, გარე',TR2:'ქალის ხაზი, შუა',TR1:'ქალის ხაზი, შიდა',
+ BR3:'კაცის კარმა, გარე',BR2:'კაცის კარმა, შუა',BR1:'კაცის კარმა, შიდა',BL3:'ქალის კარმა, გარე',BL2:'ქალის კარმა, შუა',BL1:'ქალის კარმა, შიდა',
+ W1:'♥ რა პარტნიორი გვიხდება',W2:'არხის ცენტრი',W3:'₾ რა სამსახური გვიხდება'};
+const chip=k=>{const n=V[k],a=AR()[n-1];return `<a class="en" href="course_matrix4.html#${n}" title="${a?a.k:''}"><b>${n}</b><span class="nm"><small>${k} · ${WH[k]||''}</small><span>${a?a.t:''}</span></span></a>`;};
+const chips=ks=>`<div class="ens">${ks.map(chip).join('')}</div>`;
+const combo=(ks,lab)=>`<div class="combo">${ks.map(k=>V[k]).join(' – ')}<small>${lab||ks.join(' · ')}</small></div>`;
+const Z=(t,hi,src,txt,extra)=>({t,hi,src:src||[],body:v=>combo(hi)+chips(hi)+txt+(extra?extra(v):'')});
+Object.assign(WH,{Cv:'ვინ არიან ერთმანეთისთვის',L3:'საჯარო იმიჯი',L2:'პერსონის შუა',L1:'როგორი მშობლები არიან',T3:'უმაღლესი მისია',T2:'მისიის შუა',T1:'მისიის გამოვლენა',B3:'წყვილის მთავარი გაკვეთილი',B2:'კუდის შუა',B1:'როგორ შედიან ურთიერთობაში',R3:'მატერიალური გაკვეთილი',R2:'შუა',R1:'როგორ შოულობენ ერთად',TL3:'კაცი ამ ურთიერთობაში',TR3:'ქალი ამ ურთიერთობაში',BR3:'კაცი წარსულ ცხოვრებაში',BL3:'ქალი წარსულ ცხოვრებაში',W1:'♥ სასიყვარულო თემა',W2:'არხის ცენტრი',W3:'₾ ფულის თემა'});
+const S0=[
+ {t:'1. როგორ იკრიბება — კუთხეები',nz:true,hi:['L3','T3','R3','B3'],src:[],body:v=>{const k={L3:'დღე',T3:'თვე',R3:'წელი',B3:'ქვედა'};return `
+   <p>ჯერ თითოეული პარტნიორის მატრიცის <b>ოთხ კუთხეს</b> ვითვლით (როგორც გაკვეთილ 1-ში), შემდეგ კი ერთნაირ კუთხეებს ვკრებთ და 22-მდე ვიყვანთ:</p>
+   <div class="calc">${['L3','T3','R3','B3'].map(x=>`${k[x]}: ${P1[x]} + ${P2[x]} = ${red(P1[x]+P2[x])}`).join('<br>')}</div>
+   <p>ანუ წყვილის „დღე“ ორივეს დღეების ჯამია, „თვე“ — თვეების და ა.შ. აქედან ყველაფერი ისე გრძელდება, როგორც ჩვეულებრივ მატრიცაში.</p>`;}},
+ {t:'2. დიაგონალები და ცენტრი',nz:true,hi:['TL3','TR3','BR3','BL3','Cv'],src:[],body:v=>{const k={TL3:'ზედა მარცხენა',TR3:'ზედა მარჯვენა',BR3:'ქვედა მარჯვენა',BL3:'ქვედა მარცხენა',Cv:'ცენტრი'};return `
+   <p>მნიშვნელოვანი დეტალი: დიაგონალებს და ცენტრს წყვილის კუთხეებიდან <b>არ</b> ვითვლით. ვკრებთ თითოეული პარტნიორის <b>საკუთარ</b> დიაგონალებს და ცენტრებს:</p>
+   <div class="calc">${['TL3','TR3','BR3','BL3','Cv'].map(x=>`${k[x]}: ${P1[x]} + ${P2[x]} = ${red(P1[x]+P2[x])}`).join('<br>')}</div>
+   <p>ამიტომ წყვილის ცენტრი ორი ადამიანის ბირთვის შეხვედრაა და არა უბრალოდ ოთხი კუთხის ჯამი. დანარჩენი წერტილები (შიდა წრეები, მწვანე, არხი) ჩვეულებრივად ითვლება წყვილის ცენტრიდან და კუთხეებიდან.</p>
+   <p class="tip">შეთავსების მატრიცაში დიაგონალებზე მხოლოდ გარე წრეებს ვიყენებთ — ისინი ორივე პარტნიორის როლს აღწერს.</p>`;}},
+ Z('3. ცენტრი — ვინ არიან ერთმანეთისთვის',['Cv'],[],`
+   <p>წყვილის ცენტრი მთავარი რიცხვია: <b>რისთვის შეხვდნენ</b> ეს ორი ადამიანი, რა ენერგია ცოცხლობს მათ შორის. ეს ის ატმოსფეროა, რომელსაც ორივე გრძნობს, როცა ერთად არიან.</p>
+   <p>პლიუსში ცენტრი წყვილის ძალაა — ის, რაც მათ აერთიანებს რთულ დროსაც. მინუსში იგივე ენერგია მათი მთავარი გამოცდა ხდება. წაიკითხე ამ ენერგიის აღწერა და ჰკითხე საკუთარ თავს: რომელ მხარეს ცხოვრობს ეს წყვილი ახლა?</p>`),
+ Z('4. პერსონა — იმიჯი და მშობლობა',['L3','L2','L1'],[],`
+   <p>მარცხენა ხაზი წყვილისთვის ორ რამეს ნიშნავს: როგორ <b>ხედავენ მათ სხვები</b> — წყვილის საჯარო იმიჯი, და <b>როგორი მშობლები</b> არიან ისინი ერთად.</p>
+   <p>L1, ცენტრთან ახლოს, განსაკუთრებით ბავშვებთან ურთიერთობაზე მიუთითებს: რას გადასცემენ შვილებს, რა სტილით ზრდიან.</p>`),
+ Z('5. ტალანტების ზონა — წყვილის მისია',['T3','T2','T1'],[],`
+   <p>ზედა ხაზი წყვილის <b>უმაღლესი მისიაა</b> — რა შეუძლიათ ერთად, რაც ცალ-ცალკე ვერ შეძლებდნენ. ეს შეიძლება იყოს საერთო საქმე, შემოქმედება, ოჯახის ტიპი ან ის, რასაც სხვებს აძლევენ.</p>
+   <p>როცა წყვილი საკუთარ მისიას ცხოვრობს, ურთიერთობა აზრს და სიღრმეს იძენს — უბრალოდ „ერთად ყოფნიდან“ ერთობლივ გზად იქცევა.</p>`),
+ Z('6. წყვილის კარმული კუდი',['B3','B2','B1'],[],`
+   <p>ქვედა ხაზი — რა <b>დაუმთავრებელი ამბავი</b> მოიტანეს ერთად წარსულიდან და რა გაკვეთილი უნდა გაიარონ, როგორც წყვილმა.</p>
+   <p>ეს ის სიტუაციებია, რომლებიც მათ ურთიერთობაში მეორდება — ერთი და იგივე კამათი, ერთი და იგივე გამოცდა. კუდის ენერგიის გაცნობიერება წყვილს საშუალებას აძლევს, ეს წრე გაარღვიოს. B1 აჩვენებს, როგორ შევიდნენ ისინი ამ ურთიერთობაში.</p>`),
+ Z('7. წყვილის მატერიალური კარმა',['R3','R2','R1'],[],`
+   <p>მარჯვენა ხაზი — წყვილის ურთიერთობა <b>ფულთან და მატერიასთან</b>: როგორ შოულობენ და ხარჯავენ ერთად, რა მატერიალური გაკვეთილი აქვთ საერთო.</p>
+   <p>ხშირად წყვილის ფინანსური ბედი თითოეულის ცალკე ბედისგან სრულიად განსხვავებულია — ზოგჯერ ერთად ბევრად მეტს აღწევენ, ზოგჯერ კი სწორედ აქ ხვდებიან ყველაზე დიდ გამოწვევას.</p>`),
+ Z('8. კაცი და ქალი — ახლა და წარსულში',['TL3','TR3','BR3','BL3'],[],`
+   <p>დიაგონალების გარე წრეები წყვილში <b>როლებს</b> აღწერს:</p>
+   <div class="calc"><b>TL3</b> — როგორ იქცევა კაცი ამ ურთიერთობაში<br><b>TR3</b> — როგორ იქცევა ქალი ამ ურთიერთობაში<br><b>BR3</b> — როგორ იქცეოდა კაცი წარსულ ცხოვრებაში<br><b>BL3</b> — როგორ იქცეოდა ქალი წარსულ ცხოვრებაში</div>
+   <p>ზედა წერტილები — აწმყოა, ქვედა — წარსული. თუ წარსულის როლი მძიმეა, აწმყო ხშირად მისი გამოსწორების შანსია. ერთსქესიან წყვილში ეს წერტილები უფრო „აქტიური“ და „მიმღები“ როლის აღწერად შეიძლება წავიკითხოთ.</p>`),
+ Z('9. სიყვარული და ფული',['W1','W3','W2'],[],`
+   <p>არხის წერტილები წყვილის ორ ყველაზე ყოველდღიურ თემას აჩვენებს:</p>
+   <div class="calc"><b>W1 ♥</b> — წყვილის სასიყვარულო თემა: რა სახის სიყვარული ცოცხლობს მათ შორის და რა ითხოვს ყურადღებას.<br><b>W3 ₾</b> — წყვილის ფულის თემა: რა ენერგიით მოდის მათთან ფული.<br><b>W2</b> — სადაც ორივე თემა ხვდება ერთმანეთს.</div>
+   <p>როგორც ჩვეულებრივ მატრიცაში, აქაც სიყვარული და ფული ერთ არხზეა: წყვილში, სადაც ურთიერთობა ჰარმონიულია, ფულიც უფრო თავისუფლად მოძრაობს.</p>`),
+ {t:'10. როგორ ვკითხულობთ წყვილს',hi:[],src:[],body:v=>{const sh=['L3','T3','R3','B3','Cv'].filter(k=>P1[k]===V[k]||P2[k]===V[k]);return `
+   <p>თანმიმდევრობა:</p>
+   <div class="calc">1. <b>ცენტრი</b> — რისთვის შეხვდნენ<br>2. <b>მისია</b> (ზედა) და <b>კარმული კუდი</b> (ქვედა) — საით მიდიან და რისგან უნდა გათავისუფლდნენ<br>3. <b>როლები</b> — კაცი და ქალი, აწმყო და წარსული<br>4. <b>სიყვარული და ფული</b><br>5. <b>პერსონა</b> და <b>მატერიალური კარმა</b></div>
+   <p>შეადარე წყვილის მატრიცა თითოეული პარტნიორის საკუთარ მატრიცას: თუ წყვილის რომელიმე მთავარი რიცხვი ერთ-ერთი პარტნიორის მატრიცაშიც ჩნდება, ეს პარტნიორი ამ თემას „ატარებს“ ურთიერთობაში.</p>
+   ${sh.length?`<p class="tip">ამ წყვილში ასეთი დამთხვევა: ${sh.map(k=>`<b>${k}</b> = ${V[k]} (${P1[k]===V[k]?'პირველთან':'მეორესთან'})`).join(', ')}.</p>`:''}
+   <p>და მთავარი: შეთავსების მატრიცა არ ამბობს „შეეფერებიან თუ არა“. ის აჩვენებს, <b>რა ამოცანით</b> შეხვდნენ — ყველა წყვილს თავისი სიძლიერე და თავისი გამოცდა აქვს.</p>
+   <div class="nav" style="justify-content:center"><a href="matrix.html">✦ მატრიცის გვერდზე — „შეთავსება“ რეჟიმი ✦</a></div>
+   <div class="nav" style="justify-content:center"><a href="course_num.html">← გაკვეთილების სია</a></div>`;}},
+];
+const S=S0.map((x,i)=>i===7||i===8?Object.assign(x,{nz:true}):x);
+let cur=0,P1=base(15,5,1990),P2=base(3,11,1987),V=calc(P1,P2);
+const known=i=>new Set(Object.keys(V));
+
+/* ── the matrix exactly as matrix.html draws it (same geometry, colours, lines, age ring) ── */
+const cx=600,cy=600,rc_r=60,r1_r=25,r2_r=40,r3_r=64,gap=180;
+const d1=rc_r+gap+r1_r,d2=d1+r1_r+r2_r,d3=d2+r2_r+r3_r,sq=Math.sqrt(2)/2;
+const dd1=Math.round(d1*sq),dd2=Math.round((d1+r1_r+r2_r)*sq),dd3=Math.round((d1+r1_r+r2_r+r2_r+r3_r)*sq),outerR=d3+r3_r;
+const dkFill='rgba(20,14,50,0.92)',dkStr='rgba(180,160,255,0.75)';
+const C1f='#4a8cc8',C1s='#1a5090',C2f='#2060a8',C2s='#0a3878';
+const Bx=cx,By=cy+d1,Rx=cx+d1,Ry=cy;
+const Wp=t=>[Math.round(Bx+t*(Rx-Bx)),Math.round(By+t*(Ry-By))];
+/* key → [x, y, r, fill, stroke] */
+const PT={
+ Cv:[cx,cy,rc_r,'#FFD700','#BA7517'],
+ G1:[cx-rc_r-gap/2,cy,r1_r,'#639922','#3B6D11'],G2:[cx,cy-rc_r-gap/2,r1_r,'#639922','#3B6D11'],
+ T1:[cx,cy-d1,r1_r,C1f,C1s],T2:[cx,cy-d2,r2_r,C2f,C2s],T3:[cx,cy-d3,r3_r,'#7F77DD','#534AB7'],
+ L1:[cx-d1,cy,r1_r,C1f,C1s],L2:[cx-d2,cy,r2_r,C2f,C2s],L3:[cx-d3,cy,r3_r,'#7F77DD','#534AB7'],
+ B1:[cx,cy+d1,r1_r,'#EF9F27','#BA7517'],B2:[cx,cy+d2,r2_r,dkFill,dkStr],B3:[cx,cy+d3,r3_r,'#E24B4A','#A32D2D'],
+ R1:[cx+d1,cy,r1_r,'#EF9F27','#BA7517'],R2:[cx+d2,cy,r2_r,dkFill,dkStr],R3:[cx+d3,cy,r3_r,'#E24B4A','#A32D2D'],
+ RC1:[cx+rc_r+r2_r,cy,r2_r,dkFill,dkStr],RC2:[cx+rc_r+r2_r*2+r1_r,cy,r1_r,dkFill,dkStr],
+ TL1:[cx-dd1,cy-dd1,r1_r,dkFill,dkStr],TL2:[cx-dd2,cy-dd2,r2_r,dkFill,dkStr],TL3:[cx-dd3,cy-dd3,r3_r,dkFill,dkStr],
+ TR1:[cx+dd1,cy-dd1,r1_r,dkFill,dkStr],TR2:[cx+dd2,cy-dd2,r2_r,dkFill,dkStr],TR3:[cx+dd3,cy-dd3,r3_r,dkFill,dkStr],
+ BL1:[cx-dd1,cy+dd1,r1_r,dkFill,dkStr],BL2:[cx-dd2,cy+dd2,r2_r,dkFill,dkStr],BL3:[cx-dd3,cy+dd3,r3_r,dkFill,dkStr],
+ BR1:[cx+dd1,cy+dd1,r1_r,dkFill,dkStr],BR2:[cx+dd2,cy+dd2,r2_r,dkFill,dkStr],BR3:[cx+dd3,cy+dd3,r3_r,dkFill,dkStr],
+ W1:[...Wp(.25),r1_r,dkFill,dkStr],W2:[...Wp(.5),r1_r,dkFill,dkStr],W3:[...Wp(.75),r1_r,dkFill,dkStr]};
+const NAME={};
+function draw(){const st=S[cur],K=known(cur),hi=new Set(st.hi),src=new Set(st.src);
+  const svg=$('mx');let h='';
+  const ln=(x1,y1,x2,y2,c,w)=>{h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}"/>`;};
+  /* frame lines (as on the matrix page) */
+  h+=`<polygon points="${cx},${cy-2*dd1} ${cx+2*dd1},${cy} ${cx},${cy+2*dd1} ${cx-2*dd1},${cy}" fill="none" stroke="rgba(127,119,221,0.9)" stroke-width="1.5"/>`;
+  h+=`<rect x="${cx-d1}" y="${cy-d1}" width="${d1*2}" height="${d1*2}" fill="none" stroke="rgba(220,200,255,0.9)" stroke-width="1.5"/>`;
+  const lc='rgba(220,200,255,0.75)',xE=d3+r3_r;
+  ln(cx-xE,cy,cx+xE,cy,lc,.8);ln(cx,cy-xE,cx,cy+xE,lc,.8);ln(cx,cy+d1,cx+d1,cy,lc,.8);
+  ln(cx+dd1,cy-dd1,cx-dd1,cy+dd1,'rgba(255,120,120,1)',1.5);ln(cx-dd1,cy-dd1,cx+dd1,cy+dd1,'rgba(210,110,255,1)',1.5);
+  h+=`<text x="670" y="493" font-size="13" font-weight="600" fill="rgba(255,130,130,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(-45,670,493)">ქალის ხაზი</text>`;
+  h+=`<text x="529" y="493" font-size="13" font-weight="600" fill="rgba(200,130,255,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(45,529,493)">მამაკაცის ხაზი</text>`;
+  h+=`<circle cx="${cx}" cy="${cy}" r="${outerR}" fill="none" stroke="rgba(180,160,255,0.95)" stroke-width="2.5"/>`;
+  /* age ring — dots only (ages are a later lesson) */
+  const aA=[180,225,270,315,0,45,90,135];
+  for(let s=0;s<8;s++){for(let d=0;d<7;d++){const a=(aA[s]+45*(d+1)/8)*Math.PI/180,mid=d===3;
+      h+=`<circle cx="${Math.round(cx+outerR*Math.cos(a))}" cy="${Math.round(cy+outerR*Math.sin(a))}" r="${mid?7:5}" fill="${mid?'#FFD700':'rgba(200,180,255,0.95)'}"/>`;}
+    const a=aA[s]*Math.PI/180;h+=`<circle cx="${Math.round(cx+(outerR+24)*Math.cos(a))}" cy="${Math.round(cy+(outerR+24)*Math.sin(a))}" r="7" fill="#FFD700" stroke="#a87f00"/>`;}
+  /* step 13: the four purpose lines */
+  if(st.lines){const g=(a,b,c)=>ln(PT[a][0],PT[a][1],PT[b][0],PT[b][1],c,5);
+    g('T3','B3','rgba(255,211,106,.55)');g('L3','R3','rgba(255,211,106,.55)');g('TL3','BR3','rgba(210,110,255,.6)');g('TR3','BL3','rgba(255,120,120,.6)');}
+  /* zone strokes: every 3 highlighted points form one line */
+  if(!st.nz)for(let i=0;i+1<st.hi.length;i+=3){const g=st.hi.slice(i,i+3);for(let j=0;j+1<g.length;j++){const A=PT[g[j]],B=PT[g[j+1]];ln(A[0],A[1],B[0],B[1],'rgba(255,211,106,.55)',7);}}
+  /* points */
+  for(const k in PT){if(!(k in V))continue;const [x,y,r,f,sk]=PT[k],isHi=hi.has(k),isSrc=src.has(k),isK=K.has(k)||isHi;
+    const fs=Math.max(20,Math.round(r*1.3));
+    if(isHi)h+=`<circle cx="${x}" cy="${y}" r="${r+11}" fill="rgba(255,211,106,.18)" stroke="#FFD36A" stroke-width="4"><animate attributeName="r" values="${r+8};${r+14};${r+8}" dur="1.8s" repeatCount="indefinite"/></circle>`;
+    else if(isSrc)h+=`<circle cx="${x}" cy="${y}" r="${r+8}" fill="none" stroke="#7ec8ff" stroke-width="4"/>`;
+    h+=`<g><circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${sk}" stroke-width="1.5"/>`+
+       `<text x="${x}" y="${y}" font-size="${fs}" font-weight="700" fill="${isK?'white':'rgba(255,255,255,.55)'}" font-family="Cinzel,serif" text-anchor="middle" dominant-baseline="central">${isK?V[k]:'?'}</text></g>`;
+    if(NAME[k]){const out=k==='L3'?[x,y+r+22]:k==='R3'?[x,y+r+22]:k==='T3'?[x+r+34,y]:[x+r+34,y];
+      h+=`<text x="${out[0]}" y="${out[1]}" font-size="17" fill="${isHi?'#FFD36A':'rgba(232,214,174,.8)'}" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" dominant-baseline="central">${NAME[k]}</text>`;}}
+  /* ♥ and ₾ icons as on the matrix page */
+  for(const [k,t,c] of [['W1','♥','#ff6b8a'],['W3','₾','#7ec850']]){const [x,y]=PT[k];h+=`<text x="${x}" y="${y-r1_r-16}" font-size="16" text-anchor="middle" dominant-baseline="central" fill="${c}" transform="rotate(-45,${x},${y-r1_r-16})">${t}</text>`;}
+  svg.innerHTML=h;}
+function render(){
+  $('steps').innerHTML=S.map((s,i)=>`<button type="button" data-i="${i}" class="${i===cur?'on':i<cur?'done':''}">${i+1}</button>`).join('');
+  $('card').innerHTML=`<h2>${S[cur].t}</h2>${S[cur].body(V)}`;
+  $('prev').disabled=cur===0;$('next').disabled=cur===S.length-1;draw();}
+$('steps').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=+b.dataset.i;render();});
+$('prev').onclick=()=>{if(cur>0){cur--;render();}};
+$('next').onclick=()=>{if(cur<S.length-1){cur++;render();$('card').scrollIntoView({behavior:'smooth',block:'nearest'});}};
+function ok(d,m,y){const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];return m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100;}
+function upd(){const a=['dd','mm','yy'].map(i=>+$(i).value),b=['dd2','mm2','yy2'].map(i=>+$(i).value);
+  if(!ok(...a)||!ok(...b)){$('dnote').textContent='შეიყვანე სწორი თარიღები';return;}
+  P1=base(...a);P2=base(...b);V=calc(P1,P2);const f=x=>`${String(x[0]).padStart(2,'0')}.${String(x[1]).padStart(2,'0')}.${x[2]}`;
+  $('dnote').textContent=`წყვილი: ${f(a)} + ${f(b)}`;render();}
+['dd','mm','yy','dd2','mm2','yy2'].forEach(id=>$(id).addEventListener('input',upd));
+upd();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
