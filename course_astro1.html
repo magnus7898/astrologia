@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ასტროლოგია — გაკვეთილი 1</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ასტროლოგიის კურსი · მოდული 1 · საფუძვლები</div>
+  <h1>გაკვეთილი 1 — ზოდიაქო და ეკლიპტიკა</h1>
+  <div class="sub">მზის წლიური გზა, ბუნიობები და მზებუდობები, პრეცესია — ტროპიკული, სიდერული და ჭეშმარიტი სიდერული ზოდიაქო</div>
+
+  <div class="intro">ასტროლოგიის ენა ერთი წრით იწყება — <b>ეკლიპტიკით</b>. ამ გაკვეთილში ვნახავთ, საიდან მოდის ზოდიაქო, რატომ იწყება ის ვერძით და რატომ განსხვავდება ერთმანეთისგან <b>ტროპიკული</b>, <b>სიდერული</b> და <b>ჭეშმარიტი სიდერული</b> ზოდიაქო. ყველა სურათი ცოცხალია: დააჭირე ▶-ს ან გადაწიე სლაიდერი. მე-5 ნაწილში შენი დაბადების თარიღს ჩაწერ და ნახავ, სად დგას შენი მზე სამივე ზოდიაქოში.</div>
+
+  <div class="sec"><h2>1 · ეკლიპტიკა — მზის წლიური გზა</h2>
+   <div class="duo"><div>
+    <p>დედამიწა მზის გარშემო წელიწადში ერთ სრულ წრეს აკეთებს. დედამიწიდან კი ისე ჩანს, თითქოს მზე მოძრაობს: ვარსკვლავების ფონზე ის ყოველდღე დაახლოებით 1°-ით (ზუსტად 0,9856°-ით) გადაინაცვლებს და წლის ბოლოს იმავე წერტილს უბრუნდება. მზის ამ ხილულ გზას ცაზე <b>ეკლიპტიკა</b> ჰქვია. სახელი ბერძნულიდან მოდის და „დაბნელებას“ ნიშნავს: მზისა და მთვარის დაბნელებები მხოლოდ ამ ხაზის ახლოს ხდება.</p>
+    <p>ასტროლოგიაში ეკლიპტიკა 360-გრადუსიანი წრეა, რომელიც 12 თანაბარ, 30-გრადუსიან ნაწილად იყოფა — ესენი <b>ნიშნებია</b>. როცა ვამბობთ „მზე ლომშია“, ეს ნიშნავს: დედამიწიდან დანახული მზე ეკლიპტიკის 120°–150° მონაკვეთშია.</p>
+    <p>სურათზე ორი ხედია. <b>ჰელიოცენტრულში</b> მზე ცენტრშია და დედამიწა მის გარშემო ბრუნავს. <b>გეოცენტრულში</b> დედამიწაა ცენტრში და მზე ბრუნავს მის გარშემო. ორივე ერთსა და იმავეს აჩვენებს: ხაზი დედამიწიდან მზისკენ ზოდიაქოს იმ ნიშანზე გადის, რომელშიც მზე „დგას“. ასტროლოგია გეოცენტრულ ხედს იყენებს, რადგან ჩვენ დედამიწაზე ვცხოვრობთ. ზოდიაქო რეალურად უზარმაზარ მანძილზეა, სურათის მასშტაბი პირობითია.</p>
+    <div class="calc">ეკლიპტიკური გრძედი = ნიშნის რიგითი ნომერი × 30° + გრადუსი ნიშანში<br><small>ვერძი = 0, კურო = 1 … თევზები = 11.</small> მაგ.: 15° ლომი = 4 × 30° + 15° = <span class="r">135°</span></div>
+   </div><div class="stage">
+    <canvas id="cvA" aria-label="მზის წლიური გზა ზოდიაქოს წრეზე"></canvas>
+    <div class="ctl"><button type="button" id="aPl" aria-label="დაკვრა">▶</button><input type="range" id="aSl" min="0" max="365" step="0.25" aria-label="წლის დღე"></div>
+    <div class="ctl"><button type="button" id="aH" class="on">ჰელიოცენტრული</button><button type="button" id="aG">გეოცენტრული</button></div>
+    <div class="ro" id="aRo"></div>
+   </div></div>
+  </div>
+
+  <div class="sec"><h2>2 · ზოდიაქოს სარტყელი — სადაც პლანეტები დადიან</h2>
+    <p>მზის სისტემის პლანეტები თითქმის ერთ სიბრტყეში ბრუნავენ, ამიტომ ცაზე ისინიც ეკლიპტიკის ახლოს მოძრაობენ — მისგან დაახლოებით 8–9 გრადუსის ფარგლებში. ამ ზოლს <b>ზოდიაქოს სარტყელი</b> ჰქვია. სიტყვა „ზოდიაქო“ ბერძნულია და „ცხოველების წრეს“ ნიშნავს: ნიშნების უმეტესობას ცხოველის სახელი აქვს.</p>
+    <p>მთვარის ორბიტა ეკლიპტიკისკენ 5,1°-ით არის დახრილი, ამიტომ მთვარე ხან ეკლიპტიკის ზემოთაა, ხან ქვემოთ და თვეში ორჯერ კვეთს მას. გადაკვეთის წერტილებს <b>მთვარის კვანძები</b> ჰქვია: ☊ ჩრდილოეთი და ☋ სამხრეთი. როცა ახალმთვარე ან სავსემთვარე კვანძთან ახლოს ხდება, დაბნელება ხდება. ქვემოთ მზე და მთვარე მათი ნამდვილი პოზიციებითაა დახატული (მიახლოებით): დააჭირე ▶-ს და ნახე, როდის ემთხვევა მთვარე მზეს ან მის საპირისპირო წერტილს კვანძთან. კვანძები მე-11 გაკვეთილში დაწვრილებით გვექნება.</p>
+    <p>პლუტონის ორბიტა 17°-ით არის დახრილი და ის ზოგჯერ სარტყლიდან გადის. ნიშანს ეს არ ცვლის: ასტროლოგიაში ყოველი სხეული ეკლიპტიკაზე <b>პროეცირდება</b> და მხოლოდ მისი გრძედი ითვლება.</p>
+    <div class="stage" style="margin-top:12px">
+     <canvas id="cvB" class="wide" aria-label="ზოდიაქოს სარტყელი, მზე, მთვარე და მთვარის კვანძები"></canvas>
+     <div class="ctl"><button type="button" id="bPl" aria-label="დაკვრა">▶</button><button type="button" id="bFs">×5</button><input type="range" id="bSl" min="0" max="730" step="0.05" aria-label="დღე"></div>
+     <div class="legend"><span><i style="background:rgba(227,190,132,.25)"></i>ზოდიაქოს სარტყელი ±9°</span><span><i style="background:#E3BE84"></i>ეკლიპტიკა</span><span><i style="background:#c9d3e6"></i>მთვარის გზა</span></div>
+     <div class="ro" id="bRo"></div>
+    </div>
+  </div>
+
+  <div class="sec"><h2>3 · ციური ეკვატორი, ბუნიობა და მზებუდობა — სად იწყება ზოდიაქო</h2>
+   <div class="duo"><div>
+    <p>დედამიწის ღერძი ორბიტის სიბრტყისკენ 23,44°-ით არის დახრილი. ამიტომ ცაზე ორი დიდი წრეა: <b>ციური ეკვატორი</b>, ანუ დედამიწის ეკვატორის პროექცია ცაზე, და <b>ეკლიპტიკა</b>, რომელიც მასთან 23,44°-იან კუთხეს ქმნის. ეს ორი წრე ერთმანეთს ორ წერტილში კვეთს.</p>
+    <ul>
+     <li><b>0° ვერძი — გაზაფხულის ბუნიობა</b> (≈ 20–21 მარტი): მზე ეკვატორს სამხრეთიდან ჩრდილოეთისკენ კვეთს, დღე ღამის ტოლია. აქედან იწყება ზოდიაქო.</li>
+     <li><b>0° კირჩხიბი — ზაფხულის მზებუდობა</b> (≈ 21 ივნისი): მზე ეკვატორიდან ყველაზე შორს არის ჩრდილოეთით (+23,44°). წლის ყველაზე გრძელი დღეა.</li>
+     <li><b>0° სასწორი — შემოდგომის ბუნიობა</b> (≈ 22–23 სექტემბერი): დღე ისევ ღამის ტოლია.</li>
+     <li><b>0° თხის რქა — ზამთრის მზებუდობა</b> (≈ 21–22 დეკემბერი): მზე ყველაზე დაბლაა (−23,44°). წლის ყველაზე მოკლე დღეა.</li>
+    </ul>
+    <p>ეს ოთხი წერტილი ოთხ <b>კარდინალურ</b> ნიშანს იწყებს: ვერძს, კირჩხიბს, სასწორს და თხის რქას. დანარჩენი ნიშნები სეზონის შუას (ფიქსირებული ნიშნები) და დასასრულს (ცვალებადი ნიშნები) აღნიშნავს. ამას მე-3 გაკვეთილში დავუბრუნდებით.</p>
+    <p>მზის მანძილს ციური ეკვატორიდან <b>დახრილობა</b> (δ) ჰქვია. სურათზე ის წყვეტილი ხაზით ჩანს: როცა δ დადებითია, ჩრდილოეთ ნახევარსფეროში დღე ღამეზე გრძელია.</p>
+   </div><div class="stage">
+    <canvas id="cvC" aria-label="ციური სფერო: ეკვატორი და ეკლიპტიკა"></canvas>
+    <div class="ctl"><button type="button" id="cPl" aria-label="დაკვრა">▶</button><input type="range" id="cSl" min="0" max="365" step="0.25" aria-label="წლის დღე"></div>
+    <div class="legend"><span><i style="background:#6fc3d9"></i>ციური ეკვატორი</span><span><i style="background:#E3BE84"></i>ეკლიპტიკა (დახრილია 23,44°-ით)</span><span>↔ გადაატრიალე სფერო თითით ან მაუსით</span></div>
+    <div class="ro" id="cRo"></div>
+   </div></div>
+  </div>
+
+  <div class="sec"><h2>4 · პრეცესია — რატომ არ ემთხვევა ნიშნები თანავარსკვლავედებს</h2>
+   <div class="duo"><div>
+    <p>დედამიწის ღერძი ბზრიალასავით ნელა ტრიალებს და ერთ სრულ წრეს დაახლოებით 25 770 წელიწადში აკეთებს. ამას <b>პრეცესია</b> ჰქვია. მისი გამო გაზაფხულის ბუნიობის წერტილი ვარსკვლავების ფონზე ნელა უკან მოძრაობს — დაახლოებით 1°-ით ყოველ 71,6 წელიწადში.</p>
+    <p>ტროპიკული ზოდიაქო ბუნიობის წერტილზეა მიბმული და სეზონებს მიჰყვება. ვარსკვლავები კი ამ დროს „გადაინაცვლებენ“. ჩვენი წელთაღრიცხვის პირველ საუკუნეებში (ლაჰირის მიხედვით — დაახლოებით 285 წელს) ტროპიკული და სიდერული ზოდიაქო ერთმანეთს ემთხვეოდა. დღეს მათ შორის 24°-ზე მეტი სხვაობაა. ამ სხვაობას <b>აიანამშა</b> ჰქვია.</p>
+    <ul>
+     <li><b>ტროპიკული ზოდიაქო</b> — 12 თანაბარი ნიშანი, რომლის დასაწყისი გაზაფხულის ბუნიობაა. ასე მუშაობს დასავლური ასტროლოგია და MAGNUS-ის ნატალური რუკა.</li>
+     <li><b>სიდერული ზოდიაქო</b> — იგივე 12 თანაბარი ნიშანი, ოღონდ ვარსკვლავებზე მიბმული: ტროპიკულ გრძედს აიანამშა აკლდება (ლაჰირი). ასე მუშაობს ვედური ასტროლოგია.</li>
+     <li><b>ჭეშმარიტი სიდერული</b> — ნამდვილი, ასტრონომიული თანავარსკვლავედები IAU-ს საზღვრებით. ისინი თანაბარი არ არის: ეკლიპტიკაზე მორიელი მხოლოდ ~6,6°-ია, ქალწული ~44°, და მათ შორის მე-13 თანავარსკვლავედიც გვხვდება — გველისმჭერი (⛎).</li>
+    </ul>
+    <p>ასტროლოგიური „ეპოქებიც“ ამ მოძრაობიდან მოდის. ახლა გაზაფხულის წერტილი თევზების თანავარსკვლავედშია და IAU-ს საზღვრებით მერწყულში დაახლოებით 2600 წელს გადავა — ეს არის „მერწყულის ეპოქა“. სხვა ავტორები მის დაწყებას სხვა თარიღს უკავშირებენ, რადგან თანავარსკვლავედების საზღვრები პირობითია. გადაწიე წლები და ნახე, როგორ ტრიალებს გარე რგოლები შიგა, სეზონურ რგოლთან შედარებით.</p>
+   </div><div class="stage">
+    <canvas id="cvD" aria-label="სამი ზოდიაქოს რგოლი და პრეცესია"></canvas>
+    <div class="ctl"><button type="button" id="dPl" aria-label="დაკვრა">▶</button><input type="range" id="dSl" min="-3000" max="4500" step="1" aria-label="წელი"><button type="button" id="dNow">დღეს</button></div>
+    <div class="legend"><span><i style="background:rgba(232,135,90,.55)"></i>გარე — თანავარსკვლავედები (IAU)</span><span><i style="background:rgba(143,196,106,.55)"></i>შუა — სიდერული ნიშნები</span><span><i style="background:rgba(90,168,232,.55)"></i>შიგა — ტროპიკული ნიშნები</span></div>
+    <div class="ro" id="dRo"></div>
+   </div></div>
+  </div>
+
+  <div class="sec"><h2>5 · შენი მზე სამ ზოდიაქოში</h2>
+    <p>ჩაწერე დაბადების თარიღი. მზის პოზიცია დღის შუადღისთვის (UTC) ითვლება. მზე დღეში მხოლოდ ~1°-ს გადის, ამიტომ დრო აქ თითქმის არაფერს ცვლის. გამონაკლისია დღე, როცა მზე ნიშანს იცვლის: მაშინ ზუსტი დრო ნატალურ რუკაში გჭირდება.</p>
+    <div class="panel" style="margin-top:12px"><div class="date">
+      <div><label for="dd">დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label for="mm">თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label for="yy">წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div></div>
+    <div class="duo" style="margin-top:12px"><div>
+      <div class="zc3" id="zc"></div>
+      <p id="zTx"></p>
+      <p style="font-size:13px;color:#aab2c4">ზუსტი პოზიციები წუთის სიზუსტით და ყველა პლანეტა — <a href="astro.html">ნატალურ რუკაში</a> (ტროპიკული), <a href="vedic.html">ვედურ რუკაში</a> (სიდერული) და <a href="true_sidereal.html">ჭეშმარიტ სიდერულში</a> (IAU).</p>
+    </div><div class="stage"><canvas id="cvE" aria-label="შენი მზე სამ ზოდიაქოში"></canvas></div></div>
+  </div>
+
+  <div class="sec"><h2>6 · რატომ ტროპიკული?</h2>
+    <p>ორივე სისტემა სწორია, უბრალოდ სხვადასხვა რამეს ზომავს. <b>ტროპიკული ზოდიაქო</b> მზისა და დედამიწის ურთიერთობის კალენდარია — სინათლისა და სიბნელის წლიური რიტმი. ვერძი ყოველთვის გაზაფხულის პირველი იმპულსია, კირჩხიბი — ზაფხულის ზენიტი და „ბუდე“, სასწორი — დღისა და ღამის წონასწორობა, თხის რქა — წლის ყველაზე გრძელი ღამე და სტრუქტურა. ნიშნების მნიშვნელობები სწორედ სეზონებიდან მოდის, ამიტომ პრეცესია მათ არ ცვლის.</p>
+    <p><b>სიდერული ზოდიაქო</b> ვარსკვლავების და ნაქშატრების, ანუ მთვარის 27 სადგომის სისტემაა. მასზეა აგებული ვედური ასტროლოგია, დაშები და ვარგა-რუკები. MAGNUS-ზე ოთხივე ვარიანტი გაქვს: <a href="astro.html">ნატალური რუკა</a> — ტროპიკული; <a href="vedic.html">ვედური</a> — სიდერული (ლაჰირი); <a href="true_sidereal.html">ჭეშმარიტი სიდერული</a> — IAU-ს თანავარსკვლავედები; <a href="vedictrop.html">ვედური და ტროპიკული</a> — ვედური ტექნიკები ტროპიკულ პოზიციებზე.</p>
+    <p>სამხრეთ ნახევარსფეროში სეზონები შებრუნებულია, მაგრამ ტრადიცია ნიშნებს არ ცვლის. ზოდიაქოს საწყისს ეკვატორისა და ეკლიპტიკის გადაკვეთა განსაზღვრავს, ეს წერტილი კი ორივე ნახევარსფეროსთვის ერთია.</p>
+  </div>
+
+  <div class="sec"><h2>7 · 12 ნიშანი და წლის რიტმი</h2>
+    <p>თარიღები გამოთვლილია <b id="tY"></b> წლისთვის (UTC): პირველ სვეტში — როდის შედის მზე ტროპიკულ ნიშანში, მეორეში — როდის არის ის ნამდვილად იმავე სახელის თანავარსკვლავედში. სეზონის ფაზა წინასწარ აჩვენებს მე-3 გაკვეთილის ჯვრებს. ბოლო სვეტი ტაროს კურსის დიდ არკანს გიჩვენებს, რომელიც ტრადიციულად ამ ნიშანს შეესაბამება.</p>
+    <div class="tw"><table class="zt"><thead><tr><th></th><th>ნიშანი</th><th>ტროპიკული</th><th>თანავარსკვლავედი (IAU)</th><th>სეზონის ფაზა</th><th>არსი</th><th>ტარო</th></tr></thead><tbody id="zt"></tbody></table></div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 2 — მალე →</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),D=Math.PI/180,VS='︎';
+const SG=[['♈','ვერძი'],['♉','კურო'],['♊','ტყუპები'],['♋','კირჩხიბი'],['♌','ლომი'],['♍','ქალწული'],['♎','სასწორი'],['♏','მორიელი'],['♐','მშვილდოსანი'],['♑','თხის რქა'],['♒','მერწყული'],['♓','თევზები']];
+const EC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
+const MON=['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი','ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+const GOLD='#E3BE84',SYM='"Noto Sans Symbols 2","Segoe UI Symbol","Apple Symbols","DejaVu Sans",sans-serif',GEO='"Noto Sans Georgian","Noto Serif Georgian",sans-serif';
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const norm=x=>((x%360)+360)%360;
+function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;}
+function jd(y,m,d,h){if(m<=2){y-=1;m+=12;}const A=Math.floor(y/100),B=(y>1582||(y===1582&&(m>10||(m===10&&d>=15))))?2-A+Math.floor(A/4):0;return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+(h||0)/24+B-1524.5;}
+function cal(J){const Z=Math.floor(J+0.5),F=J+0.5-Z;let A=Z;if(Z>=2299161){const a=Math.floor((Z-1867216.25)/36524.25);A=Z+1+a-Math.floor(a/4);}
+  const B=A+1524,C=Math.floor((B-122.1)/365.25),E0=Math.floor(365.25*C),E=Math.floor((B-E0)/30.6001),d=B-E0-Math.floor(30.6001*E)+F,m=E<14?E-1:E-13;return {y:m>2?C-4716:C-4715,m,d:Math.floor(d)};}
+/* low-precision Sun (≈0.01°) and Moon (≈0.3°) — enough to teach; the natal chart uses Swiss Ephemeris */
+function sunLon(J){const n=J-2451545,L=280.460+0.9856474*n,g=(357.528+0.9856003*n)*D;return norm(L+1.915*Math.sin(g)+0.020*Math.sin(2*g));}
+function moon(J){const n=J-2451545,L=218.316+13.176396*n,M=(134.963+13.064993*n)*D,Ms=(357.529+0.98560028*n)*D,E=(297.850+12.190749*n)*D,F=(93.272+13.229350*n)*D;
+  const lon=L+6.289*Math.sin(M)-1.274*Math.sin(2*E-M)+0.658*Math.sin(2*E)+0.214*Math.sin(2*M)-0.186*Math.sin(Ms)-0.114*Math.sin(2*F);
+  const lat=5.128*Math.sin(F)+0.281*Math.sin(M+F)+0.278*Math.sin(M-F)+0.173*Math.sin(2*E-F);return {lon:norm(lon),lat,node:norm(125.045-0.0529538*n)};}
+const PREC=y=>(y-2000)*50.29/3600,AYAN=y=>23.857+PREC(y);
+/* IAU constellation boundaries on the ecliptic, J2000 (from the Roman 1987 table, as in constellations.js) */
+const IAU=[[0,'Psc'],[28.69,'Ari'],[53.42,'Tau'],[90.14,'Gem'],[117.99,'Cnc'],[138.04,'Leo'],[173.86,'Vir'],[217.82,'Lib'],[241.05,'Sco'],[247.64,'Oph'],[266.24,'Sgr'],[299.66,'Cap'],[327.49,'Aqr'],[351.66,'Psc']];
+const CN={Ari:0,Tau:1,Gem:2,Cnc:3,Leo:4,Vir:5,Lib:6,Sco:7,Sgr:8,Cap:9,Aqr:10,Psc:11};
+const cname=a=>a==='Oph'?'გველისმჭერი':SG[CN[a]][1],cglyph=a=>a==='Oph'?'⛎':SG[CN[a]][0],ccol=a=>a==='Oph'?'#b07840':EC[CN[a]%4];
+const SEG=IAU.slice(1).map((b,i,a)=>({a:b[0],b:i+1<a.length?a[i+1][0]:IAU[1][0]+360,k:b[1]}));
+function iauAt(l){l=norm(l);let r='Psc';for(const b of IAU)if(l>=b[0])r=b[1];return r;}
+const dm=x=>{let d=Math.floor(x),m=Math.round((x-d)*60);if(m===60){d++;m=0;}return d+'°'+String(m).padStart(2,'0')+'′';};
+const inSign=x=>dm(norm(x)%30),sidx=x=>Math.floor(norm(x)/30);
+const sdeg=x=>(x<0?'−':'')+dm(Math.abs(x));
+const yrs=y=>y<=0?(1-y)+' ძვ. წ.':String(y);
+function fit(cv,ratio){const dpr=Math.min(2,window.devicePixelRatio||1),w=Math.max(260,cv.clientWidth||300),h=Math.round(w*ratio);cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h};}
+const pt=(cx,cy,r,l)=>[cx-r*Math.cos(l*D),cy+r*Math.sin(l*D)];
+function sector(c,cx,cy,r1,r2,a,b){c.beginPath();c.arc(cx,cy,r2,Math.PI-a*D,Math.PI-b*D,true);c.arc(cx,cy,r1,Math.PI-b*D,Math.PI-a*D,false);c.closePath();}
+function txt(c,t,x,y,size,col,font,al){c.font=size+'px '+(font||SYM);c.fillStyle=col;c.textAlign=al||'center';c.textBaseline='middle';c.fillText(t,x,y);}
+function glow(c,x,y,r){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'#fff6c9');g.addColorStop(.35,'#FFD36A');g.addColorStop(1,'rgba(255,211,106,0)');c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill();}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const Y0=new Date().getFullYear(),J0=jd(Y0,1,1,0);
+const dateOf=J=>{const k=cal(J);return k.d+' '+MON[k.m-1];};
+let doy=jd(Y0,3,20,12)-J0;
+
+/* ── A: the ecliptic, heliocentric ⇄ geocentric ── */
+const A={cv:$('cvA'),t:0,tt:0,play:false,g:null};
+function drawA(){const {c,w,h}=A.g;c.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,R=Math.min(w,h)/2-4,Ri=R*.8,ro=Ri*.52,J=J0+doy,L=sunLon(J),si=sidx(L);
+  for(let k=0;k<12;k++){sector(c,cx,cy,Ri,R,30*k,30*k+30);c.fillStyle=hexA(EC[k%4],k===si?.45:.13);c.fill();c.strokeStyle='rgba(227,190,132,.35)';c.lineWidth=1;c.stroke();
+    const p=pt(cx,cy,(R+Ri)/2,30*k+15);txt(c,SG[k][0]+VS,p[0],p[1],Math.max(13,R*.085),k===si?'#fff':hexA(EC[k%4],.95));}
+  c.strokeStyle='rgba(227,190,132,.5)';for(let l=0;l<360;l+=10){const a=pt(cx,cy,Ri,l),b=pt(cx,cy,Ri-(l%30?4:9),l);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}
+  c.setLineDash([3,5]);c.strokeStyle='rgba(237,230,216,.25)';c.beginPath();c.arc(cx,cy,ro,0,7);c.stroke();c.setLineDash([]);
+  [[0,'გაზ. ბუნიობა'],[90,'ზაფ. მზებუდობა'],[180,'შემ. ბუნიობა'],[270,'ზამ. მზებუდობა']].forEach(([l,t])=>{const p=pt(cx,cy,(ro+Ri)/2+4,l);txt(c,t,p[0],p[1],Math.max(9,R*.036),'rgba(237,230,216,.5)',GEO);});
+  const e=ease(A.t),sg=pt(cx,cy,ro,L),eh=pt(cx,cy,ro,L+180);
+  const S=[cx+(sg[0]-cx)*e,cy+(sg[1]-cy)*e],E=[eh[0]+(cx-eh[0])*e,eh[1]+(cy-eh[1])*e];
+  const dx=-Math.cos(L*D),dy=Math.sin(L*D),fx=E[0]-cx,fy=E[1]-cy,bq=fx*dx+fy*dy,k=-bq+Math.sqrt(Math.max(0,bq*bq-(fx*fx+fy*fy-Ri*Ri))),H=[E[0]+dx*k,E[1]+dy*k];
+  c.strokeStyle='rgba(255,211,106,.85)';c.lineWidth=1.5;c.beginPath();c.moveTo(E[0],E[1]);c.lineTo(H[0],H[1]);c.stroke();
+  c.fillStyle='#FFD36A';c.beginPath();c.arc(H[0],H[1],4,0,7);c.fill();
+  glow(c,S[0],S[1],R*.1);
+  const er=Math.max(5,R*.032);c.fillStyle='#4f8fd9';c.beginPath();c.arc(E[0],E[1],er,0,7);c.fill();
+  c.strokeStyle='#cfe3ff';c.lineWidth=1;const ta=23.44*D;c.beginPath();c.moveTo(E[0]-Math.sin(ta)*er*1.9,E[1]+Math.cos(ta)*er*1.9);c.lineTo(E[0]+Math.sin(ta)*er*1.9,E[1]-Math.cos(ta)*er*1.9);c.stroke();
+  const fs=Math.max(10,R*.042);txt(c,'მზე',S[0],S[1]+R*.12,fs,'#FFE7A0',GEO);txt(c,'დედამიწა',E[0],E[1]+er+fs,fs,'#9fc4ee',GEO);
+  $('aRo').innerHTML=`<b>${dateOf(J)}</b> · მზე: <b>${inSign(L)} ${SG[si][1]}</b> · ეკლიპტიკური გრძედი <b>${L.toFixed(1)}°</b>`;
+  $('aSl').value=doy.toFixed(2);}
+
+/* ── B: the zodiac belt with the Sun, the Moon and the lunar nodes ── */
+const B={cv:$('cvB'),J:J0,play:false,fast:false,ev:'',evJ:0,evT:0,g:null};
+function drawB(){const {c,w,h}=B.g;c.clearRect(0,0,w,h);
+  const pl=6,pr=6,top=h*.17,bot=h*.08,x=l=>pl+norm(l)/360*(w-pl-pr),cy=top+(h-top-bot)/2,sc=(h-top-bot)/2/11,y=b=>cy-b*sc;
+  c.fillStyle='rgba(227,190,132,.08)';c.fillRect(pl,y(9),w-pl-pr,y(-9)-y(9));
+  c.setLineDash([4,4]);c.strokeStyle='rgba(227,190,132,.35)';c.lineWidth=1;[9,-9].forEach(b=>{c.beginPath();c.moveTo(pl,y(b));c.lineTo(w-pr,y(b));c.stroke();});c.setLineDash([]);
+  const fs=Math.max(11,Math.min(18,w/52));
+  for(let k=0;k<12;k++){const x0=x(30*k);c.strokeStyle='rgba(237,230,216,.12)';c.beginPath();c.moveTo(x0,y(10.6));c.lineTo(x0,y(-10.6));c.stroke();txt(c,SG[k][0]+VS,x(30*k+15),top*.5,fs,hexA(EC[k%4],.95));}
+  txt(c,'+9°',pl+2,y(9)-7,9,'rgba(237,230,216,.45)',GEO,'left');txt(c,'−9°',pl+2,y(-9)+8,9,'rgba(237,230,216,.45)',GEO,'left');
+  c.strokeStyle=GOLD;c.lineWidth=1.5;c.beginPath();c.moveTo(pl,cy);c.lineTo(w-pr,cy);c.stroke();
+  const mo=moon(B.J),L=sunLon(B.J);
+  c.strokeStyle='rgba(201,211,230,.6)';c.lineWidth=1;c.setLineDash([2,3]);const xs=l=>pl+l/360*(w-pl-pr);c.beginPath();for(let l=0;l<=360;l+=2){const b=5.145*Math.sin((l-mo.node)*D);l?c.lineTo(xs(l),y(b)):c.moveTo(xs(l),y(b));}c.stroke();c.setLineDash([]);
+  txt(c,'☊'+VS,x(mo.node),cy-13,15,'#c9d3e6');txt(c,'☋'+VS,x(mo.node+180),cy+14,15,'#c9d3e6');
+  glow(c,x(L),cy,Math.max(10,h*.07));
+  const mx=x(mo.lon),my=y(mo.lat),mr=Math.max(4.5,h*.025);c.fillStyle='#e8ecf5';c.beginPath();c.arc(mx,my,mr,0,7);c.fill();
+  const el=norm(mo.lon-L);
+  if((el<1.2||el>358.8)&&Math.abs(mo.lat)<1.4){B.ev='☀ მზის დაბნელება';B.evJ=B.J;B.evT=110;}
+  else if(Math.abs(el-180)<1.2&&Math.abs(mo.lat)<1.05){B.ev='☾ მთვარის დაბნელება';B.evJ=B.J;B.evT=110;}
+  if(B.evT>0){c.strokeStyle='rgba(255,179,138,'+Math.min(1,B.evT/40)+')';c.lineWidth=2;c.beginPath();c.arc(B.ev[0]==='☀'?x(L):mx,B.ev[0]==='☀'?cy:my,mr*3,0,7);c.stroke();}
+  const k=cal(B.J),ph=el<180?el:360-el;
+  $('bRo').innerHTML=`<b>${k.d} ${MON[k.m-1]} ${k.y}</b> · მზე <b>${inSign(L)} ${SG[sidx(L)][1]}</b> · მთვარე <b>${inSign(mo.lon)} ${SG[sidx(mo.lon)][1]}</b>, ეკლიპტიკიდან ${mo.lat>=0?'+':'−'}${Math.abs(mo.lat).toFixed(1)}°`+
+    (B.evT>0?`<br><span class="ev">${B.ev} ≈ ${dateOf(B.evJ)} ${cal(B.evJ).y}</span>`:`<br><small style="color:#7f889b">${ph<12?'ახალმთვარე':ph>168?'სავსემთვარე':'მთვარე და მზე '+Math.round(ph)+'°-ით არიან დაშორებული'}</small>`);
+  $('bSl').value=(B.J-J0).toFixed(2);}
+
+/* ── C: the celestial sphere — equator, ecliptic, equinoxes, solstices ── */
+const EPS=23.4393,C={cv:$('cvC'),az:-38,el:20,play:false,g:null};
+function drawC(){const {c,w,h}=C.g;c.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2+6,R=Math.min(w,h)*.36,az=C.az*D,ph=C.el*D,ce=Math.cos(EPS*D),se=Math.sin(EPS*D);
+  const P=(x,y,z)=>{const x1=x*Math.cos(az)-y*Math.sin(az),y1=x*Math.sin(az)+y*Math.cos(az);return [cx+x1*R,cy-(y1*Math.sin(ph)+z*Math.cos(ph))*R,-y1*Math.cos(ph)+z*Math.sin(ph)];};
+  const g=c.createRadialGradient(cx-R*.3,cy-R*.3,R*.1,cx,cy,R);g.addColorStop(0,'rgba(90,120,180,.16)');g.addColorStop(1,'rgba(20,30,60,.05)');c.fillStyle=g;c.beginPath();c.arc(cx,cy,R,0,7);c.fill();
+  c.strokeStyle='rgba(237,230,216,.18)';c.lineWidth=1;c.stroke();
+  function curve(f,col,lw,dash){let p0=null;c.setLineDash(dash||[]);for(let i=0;i<=144;i++){const p=f(i/144*2*Math.PI);if(p0){c.beginPath();c.strokeStyle=col;c.globalAlpha=(p[2]+p0[2])<0?.28:1;c.lineWidth=lw;c.moveTo(p0[0],p0[1]);c.lineTo(p[0],p[1]);c.stroke();}p0=p;}c.globalAlpha=1;c.setLineDash([]);}
+  const a1=P(0,0,-1.25),a2=P(0,0,1.25);c.strokeStyle='rgba(237,230,216,.4)';c.setLineDash([5,4]);c.beginPath();c.moveTo(a1[0],a1[1]);c.lineTo(a2[0],a2[1]);c.stroke();c.setLineDash([]);
+  const fs=Math.max(10,R*.075);txt(c,'ჩრდ. პოლუსი',a2[0],a2[1]-9,fs,'rgba(237,230,216,.6)',GEO);
+  curve(t=>P(Math.cos(t),Math.sin(t),0),'#6fc3d9',2);
+  curve(l=>P(Math.cos(l),Math.sin(l)*ce,Math.sin(l)*se),GOLD,2.2);
+  c.fillStyle='#3d6fb0';c.beginPath();c.arc(cx,cy,R*.09,0,7);c.fill();c.strokeStyle='#9fc4ee';c.lineWidth=1;c.stroke();
+  for(let k=0;k<12;k++){const l=(30*k+15)*D,p=P(Math.cos(l)*1.13,Math.sin(l)*ce*1.13,Math.sin(l)*se*1.13);c.globalAlpha=p[2]<0?.35:1;txt(c,SG[k][0]+VS,p[0],p[1],Math.max(11,R*.085),hexA(EC[k%4],.95));}
+  c.globalAlpha=1;
+  [[0,'♈ 0°'],[90,'♋ 0°'],[180,'♎ 0°'],[270,'♑ 0°']].forEach(([l,t])=>{const r=l*D,p=P(Math.cos(r),Math.sin(r)*ce,Math.sin(r)*se);c.globalAlpha=p[2]<0?.45:1;c.fillStyle='#fff';c.beginPath();c.arc(p[0],p[1],3.5,0,7);c.fill();txt(c,t,p[0]+(p[0]<cx?-10:10),p[1]-10,Math.max(11,R*.08),'#fff',SYM,p[0]<cx?'right':'left');});
+  c.globalAlpha=1;
+  const L=sunLon(J0+doy),lr=L*D,ra=Math.atan2(Math.sin(lr)*ce,Math.cos(lr)),dec=Math.asin(Math.sin(lr)*se);
+  c.strokeStyle='rgba(255,211,106,.8)';c.setLineDash([3,3]);c.lineWidth=1.2;c.beginPath();for(let i=0;i<=20;i++){const d=dec*(1-i/20),p=P(Math.cos(d)*Math.cos(ra),Math.cos(d)*Math.sin(ra),Math.sin(d));i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]);}c.stroke();c.setLineDash([]);
+  const s=P(Math.cos(lr),Math.sin(lr)*ce,Math.sin(lr)*se);c.globalAlpha=s[2]<0?.6:1;glow(c,s[0],s[1],R*.13);c.globalAlpha=1;
+  const dd=dec/D,sea=['გაზაფხული','ზაფხული','შემოდგომა','ზამთარი'][Math.floor(L/90)];
+  $('cRo').innerHTML=`<b>${dateOf(J0+doy)}</b> · მზე <b>${inSign(L)} ${SG[sidx(L)][1]}</b> · დახრილობა <b>${dd>=0?'+':'−'}${Math.abs(dd).toFixed(1)}°</b><br><small style="color:#9aa3b6">ჩრდილოეთ ნახევარსფეროში — ${sea}; დღე ${Math.abs(dd)<0.6?'ღამის ტოლია':dd>0?'ღამეზე გრძელია':'ღამეზე მოკლეა'}</small>`;
+  $('cSl').value=doy.toFixed(2);}
+(function(){let d=null;C.cv.addEventListener('pointerdown',e=>{d=[e.clientX,e.clientY];C.cv.setPointerCapture&&C.cv.setPointerCapture(e.pointerId);});
+  C.cv.addEventListener('pointermove',e=>{if(!d)return;C.az-=(e.clientX-d[0])*.45;C.el=Math.max(-5,Math.min(70,C.el+(e.clientY-d[1])*.3));d=[e.clientX,e.clientY];drawC();});
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>C.cv.addEventListener(t,()=>{d=null;}));})();
+
+/* ── D/E: three zodiacs as rings (tropical · sidereal · IAU) ── */
+function poleStar(y){return y<-1800?'თუბანი (α დრაკონი)':y<500?'ზუსტი პოლარული ვარსკვლავი არ იყო (ახლოს — კოხაბი, β პატარა დათვი)':y<3400?'პოლარისი (α პატარა დათვი)':'ერაი (γ ცეფეოსი)';}
+function rings(c,w,h,year,sun,inset){c.clearRect(0,0,w,h);
+  const cx=w/2,cy=h/2,R=Math.min(w,h)/2-4,o1=R*.8,m2=R*.78,m1=R*.61,i2=R*.59,i1=R*.42,pr=PREC(year),ay=AYAN(year);
+  const sT=sun==null?-1:sidx(sun),sS=sun==null?-1:sidx(sun-ay),sI=sun==null?'':iauAt(sun-pr);
+  SEG.forEach(s=>{const a=s.a+pr,b=s.b+pr,on=s.k===sI;sector(c,cx,cy,o1,R,a,b);c.fillStyle=hexA(ccol(s.k),on?.5:.2);c.fill();c.strokeStyle='rgba(227,190,132,.45)';c.lineWidth=1;c.stroke();
+    const p=pt(cx,cy,(o1+R)/2,(a+b)/2),wd=b-a;txt(c,cglyph(s.k)+VS,p[0],p[1],wd<9?Math.max(9,R*.05):Math.max(12,R*.075),on?'#fff':hexA(ccol(s.k),1));});
+  for(let k=0;k<12;k++){const a=ay+30*k;sector(c,cx,cy,m1,m2,a,a+30);c.fillStyle=hexA(EC[k%4],k===sS?.5:.15);c.fill();c.strokeStyle='rgba(227,190,132,.3)';c.stroke();const p=pt(cx,cy,(m1+m2)/2,a+15);txt(c,SG[k][0]+VS,p[0],p[1],Math.max(11,R*.068),k===sS?'#fff':hexA(EC[k%4],.95));}
+  for(let k=0;k<12;k++){sector(c,cx,cy,i1,i2,30*k,30*k+30);c.fillStyle=hexA(EC[k%4],k===sT?.5:.15);c.fill();c.strokeStyle='rgba(227,190,132,.3)';c.stroke();const p=pt(cx,cy,(i1+i2)/2,30*k+15);txt(c,SG[k][0]+VS,p[0],p[1],Math.max(11,R*.062),k===sT?'#fff':hexA(EC[k%4],.95));}
+  const v1=pt(cx,cy,i1-6,0),v2=pt(cx,cy,R+3,0);c.strokeStyle='#FFD36A';c.lineWidth=2;c.beginPath();c.moveTo(v1[0],v1[1]);c.lineTo(v2[0],v2[1]);c.stroke();
+  txt(c,'♈ 0°',v1[0]+5,v1[1],Math.max(10,R*.05),'#FFD36A',SYM,'left');
+  if(sun!=null){const s1=pt(cx,cy,i1*.55,sun),s2=pt(cx,cy,R+3,sun);c.strokeStyle='rgba(255,231,160,.9)';c.lineWidth=1.5;c.beginPath();c.moveTo(s1[0],s1[1]);c.lineTo(s2[0],s2[1]);c.stroke();glow(c,s1[0],s1[1],R*.08);
+    txt(c,String(Math.round(year)),cx,cy+R*.2,Math.max(11,R*.06),'rgba(237,230,216,.7)',GEO);}
+  else{txt(c,yrs(Math.round(year)),cx,cy-R*.07,Math.max(16,R*.11),'#F3DDA4',GEO);txt(c,'აიანამშა ≈ '+sdeg(ay),cx,cy+R*.08,Math.max(10,R*.055),'rgba(237,230,216,.75)',GEO);}
+  if(inset){const ix=w-30,iy=34,L=24,tl=23.44*D,th=2*Math.PI*(year-2000)/25772;
+    c.strokeStyle='rgba(237,230,216,.3)';c.lineWidth=1;c.beginPath();c.ellipse(ix,iy-L*Math.cos(tl),L*Math.sin(tl),L*Math.sin(tl)*.35,0,0,7);c.stroke();
+    const tx=ix+L*Math.sin(tl)*Math.cos(th),ty=iy-L*Math.cos(tl)+L*Math.sin(tl)*.35*Math.sin(th);
+    c.fillStyle='#3d6fb0';c.beginPath();c.arc(ix,iy,9,0,7);c.fill();c.strokeStyle='#cfe3ff';c.beginPath();c.moveTo(2*ix-tx,2*iy-ty);c.lineTo(tx,ty);c.stroke();c.fillStyle='#FFE7A0';c.beginPath();c.arc(tx,ty,2.5,0,7);c.fill();}
+}
+const Dd={cv:$('cvD'),year:Y0,play:false,g:null};
+const GEN={Psc:'თევზების',Aqr:'მერწყულის',Ari:'ვერძის',Tau:'კუროს',Gem:'ტყუპების',Cap:'თხის რქის',Cnc:'კირჩხიბის',Leo:'ლომის',Vir:'ქალწულის',Lib:'სასწორის',Sco:'მორიელის',Oph:'გველისმჭერის',Sgr:'მშვილდოსნის'};
+function drawD(){const {c,w,h}=Dd.g;rings(c,w,h,Dd.year,null,true);const y=Math.round(Dd.year),vp=iauAt(-PREC(Dd.year));
+  $('dRo').innerHTML=`<b>${yrs(y)}</b> · აიანამშა ≈ <b>${sdeg(AYAN(Dd.year))}</b> · გაზაფხულის წერტილი <b>${GEN[vp]}</b> თანავარსკვლავედშია — ${GEN[vp]} ეპოქა<br><small style="color:#9aa3b6">ჩრდილოეთის პოლარული ვარსკვლავი: ${poleStar(y)}</small>`;
+  $('dSl').value=y;}
+
+/* ── E: your Sun ── */
+const E={cv:$('cvE'),g:null};
+function calcE(){let d=+$('dd').value||1,m=+$('mm').value||1,y=+$('yy').value||1990;m=Math.min(12,Math.max(1,m));y=Math.min(2100,Math.max(1000,y));
+  const dim=new Date(Date.UTC(y,m,0)).getUTCDate();d=Math.min(dim,Math.max(1,d));
+  const J=jd(y,m,d,12),L=sunLon(J),yf=y+(J-jd(y,1,1,0))/365.25,ay=AYAN(yf),Ls=norm(L-ay),con=iauAt(L-PREC(yf)),seg=SEG.find(s=>s.k===con)||{a:0,b:0};
+  const card=(h,g,col,n,s)=>`<div class="zc"><div class="h">${h}</div><div class="g" style="color:${col}">${g}${VS}</div><div class="n">${n}</div><div class="s">${s}</div></div>`;
+  $('zc').innerHTML=card('ტროპიკული',SG[sidx(L)][0],EC[sidx(L)%4],`${inSign(L)} ${SG[sidx(L)][1]}`,'MAGNUS · ნატალური რუკა')+
+    card('სიდერული (ლაჰირი)',SG[sidx(Ls)][0],EC[sidx(Ls)%4],`${inSign(Ls)} ${SG[sidx(Ls)][1]}`,`აიანამშა ≈ ${sdeg(ay)}`)+
+    card('ჭეშმარიტი სიდერული',cglyph(con),ccol(con),cname(con),`IAU თანავარსკვლავედი · ეკლიპტიკაზე ${(seg.b-seg.a).toFixed(1)}°`);
+  const same=Math.max(0,Math.min(100,(30-ay)/30*100));
+  $('zTx').innerHTML=`${d} ${MON[m-1]} ${y}: მზის ტროპიკული გრძედია <b>${L.toFixed(2)}°</b>. სიდერულ ზოდიაქოში მას აიანამშა (≈ ${sdeg(ay)}) აკლდება და გამოდის <b>${Ls.toFixed(2)}°</b> — ${sidx(L)===sidx(Ls)?'ნიშანი იგივე რჩება':'ეს უკვე წინა ნიშანია'}. ასტრონომიულად მზე ამ დღეს <b>${GEN[con]}</b> თანავარსკვლავედშია. ${y} წელს დაბადებულთა დაახლოებით <b>${Math.round(same)}%</b>-ს სიდერული მზე ტროპიკულს ემთხვევა, დანარჩენ ~${Math.round(100-same)}%-ს წინა ნიშანში აქვს.`;
+  E.sun=L;E.year=yf;if(E.g)rings(E.g.c,E.g.w,E.g.h,yf,L,false);}
+
+/* ── the sign table ── */
+function ingress(shiftFn,bounds){const out={},Js=jd(Y0,1,1,12);let prev=null;
+  const at=J=>bounds(norm(sunLon(J)-shiftFn(J)));
+  for(let t=-40;t<=372;t++){const J=Js+t,k=at(J);
+    if(prev!==null&&k!==prev){let lo=J-1,hi=J;for(let i=0;i<24;i++){const mid=(lo+hi)/2;if(at(mid)===k)hi=mid;else lo=mid;}const c0=cal(hi);if(c0.y===Y0&&out[k]==null)out[k]=hi;}prev=k;}return out;}
+function buildTable(){$('tY').textContent=Y0;
+  const yfrac=J=>Y0+(J-jd(Y0,1,1,0))/365.25;
+  const trop=ingress(()=>0,l=>String(sidx(l))),iau=ingress(J=>PREC(yfrac(J)),l=>iauAt(l));
+  const f=J=>{const k=cal(J);return String(k.d).padStart(2,'0')+'.'+String(k.m).padStart(2,'0');},fe=J=>f(J-1);
+  const ORD=['Ari','Tau','Gem','Cnc','Leo','Vir','Lib','Sco','Oph','Sgr','Cap','Aqr','Psc'];
+  const iauRange=a=>{const i=ORD.indexOf(a),nx=ORD[(i+1)%13];return iau[a]&&iau[nx]?f(iau[a])+' – '+fe(iau[nx]):'—';};
+  const PH=['გაზაფხულის დასაწყისი','გაზაფხულის შუა','გაზაფხულის ბოლო','ზაფხულის დასაწყისი','ზაფხულის შუა','ზაფხულის ბოლო','შემოდგომის დასაწყისი','შემოდგომის შუა','შემოდგომის ბოლო','ზამთრის დასაწყისი','ზამთრის შუა','ზამთრის ბოლო'];
+  const ES=['გაღვიძება, პირველი იმპულსი, გამბედაობა — „მე ვარ“','აყვავება, ნაყოფიერება, მიწასთან კავშირი — „მე მაქვს“','მრავალფეროვნება, მოძრაობა, ცნობისმოყვარეობა — „მე ვფიქრობ“','წლის ყველაზე გრძელი დღე; ბუდე, ზრუნვა — „მე ვგრძნობ“','სიცხე და ზენიტი; თვითგამოხატვა, შემოქმედება — „მე ვქმნი“','მოსავლის აღება და დახარისხება; შრომა, ანალიზი — „მე ვაანალიზებ“','დღე ღამის ტოლია; ბალანსი, პარტნიორობა — „მე ვაწონასწორებ“','ფოთოლცვენა; სიღრმე, გარდაქმნა — „მე მსურს“','შორეული გზა; აზრი, რწმენა, ხედვა — „მე ვხედავ“','წლის ყველაზე გრძელი ღამე; სტრუქტურა, მიზანი — „მე ვიყენებ“','ყინვა და სიცხადე; თავისუფლება, მომავალი — „მე ვიცი“','თოვლის დნობა; შერწყმა, სიზმარი, თანაგრძნობა — „მე მწამს“'];
+  const TR=[[4,'IV · იმპერატორი'],[5,'V · იეროფანტი'],[6,'VI · შეყვარებულები'],[7,'VII · ეტლი'],[8,'VIII · ძალა'],[9,'IX · განდეგილი'],[11,'XI · სამართლიანობა'],[13,'XIII · სიკვდილი'],[14,'XIV · ზომიერება'],[15,'XV · ეშმაკი'],[17,'XVII · ვარსკვლავი'],[18,'XVIII · მთვარე']];
+  let html='';
+  for(let k=0;k<12;k++){const a=ORD.filter(x=>x!=='Oph')[k];
+    html+=`<tr><td class="gl" style="color:${EC[k%4]}">${SG[k][0]}${VS}</td><td><b style="color:#F3DDA4;font-weight:600">${SG[k][1]}</b><br><small>${30*k}°–${30*k+30}°</small></td><td class="dt">${trop[k]&&trop[(k+1)%12]?f(trop[k])+' – '+fe(trop[(k+1)%12]):'—'}</td><td class="dt">${iauRange(a)}</td><td>${PH[k]}</td><td>${ES[k]}</td><td><a href="course_tarot6.html#${TR[k][0]}">${TR[k][1]}</a></td></tr>`;
+    if(k===7)html+=`<tr class="oph"><td class="gl" style="color:#b07840">⛎</td><td>გველისმჭერი<br><small>ნიშანი არ არის</small></td><td class="dt">—</td><td class="dt">${iauRange('Oph')}</td><td colspan="3">მე-13 თანავარსკვლავედი, რომელსაც ეკლიპტიკა კვეთს. ტროპიკულ და სიდერულ ზოდიაქოში ის არ ითვლება; მას მხოლოდ ჭეშმარიტი სიდერული იყენებს.</td></tr>`;}
+  $('zt').innerHTML=html;}
+
+/* ── quiz ── */
+const Q=[['რა არის ეკლიპტიკა?',['დედამიწის ეკვატორი, ცაზე გადატანილი','მზის ხილული წლიური გზა ვარსკვლავების ფონზე','მთვარის ორბიტა','ირმის ნახტომის ზოლი'],1,'ეკლიპტიკა მზის ხილული წლიური გზაა. ის დედამიწის ორბიტის სიბრტყეს ემთხვევა.'],
+ ['სად იწყება ტროპიკული ზოდიაქო (0° ვერძი)?',['ვერძის თანავარსკვლავედის პირველ ვარსკვლავზე','გაზაფხულის ბუნიობის წერტილში','ზამთრის მზებუდობაზე','მზის ყველაზე მაღალ წერტილში'],1,'0° ვერძი არის ციური ეკვატორისა და ეკლიპტიკის გადაკვეთა, სადაც მზე გაზაფხულის ბუნიობაზე დგას.'],
+ ['რას ჰქვია აიანამშა?',['ეკლიპტიკის დახრილობას','ტროპიკულ და სიდერულ ზოდიაქოს შორის სხვაობას','მთვარის კვანძს','პლანეტის რეტროგრადულობას'],1,'აიანამშა არის სხვაობა ბუნიობის წერტილსა და სიდერული ზოდიაქოს საწყისს შორის.'],
+ ['დაახლოებით რამდენი გრადუსია დღეს აიანამშა (ლაჰირი)?',['0°','12°','24°','30°'],2,'დაახლოებით 24°-ია და ყოველ 71,6 წელიწადში 1°-ით იზრდება.'],
+ ['რამდენ ხანში აკეთებს დედამიწის ღერძი პრეცესიის ერთ სრულ წრეს?',['365 დღეში','2 160 წელიწადში','≈ 25 770 წელიწადში','მილიონ წელიწადში'],2,'≈ 25 770 წელიწადში. 2 160 წელი ერთი „ეპოქის“, ანუ 30°-ის საშუალო ხანგრძლივობაა.'],
+ ['რატომ იყენებს MAGNUS-ის ნატალური რუკა ტროპიკულ ზოდიაქოს?',['რადგან ვარსკვლავები არ მოძრაობენ','რადგან ნიშნების მნიშვნელობა სეზონების რიტმიდან მოდის','რადგან სიდერული ზოდიაქო არასწორია','რადგან ასე უფრო მარტივია გამოთვლა'],1,'ტროპიკული ნიშნები სეზონების ფაზებს აღწერს. სიდერულიც სწორია, უბრალოდ სხვა რამეს ზომავს — ვარსკვლავებთან კავშირს.']];
+const QA=[];
+function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+  $('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+    box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+    const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+    const n=QA.filter(x=>x!=null).length;if(n===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});}
+
+/* ── loop, controls, sizes ── */
+let raf=0;
+function loop(){raf=0;let more=false;
+  if(A.play||C.play){doy=(doy+(A.play?.5:.35))%365.25;more=true;}
+  if(Math.abs(A.t-A.tt)>.001){A.t+=Math.sign(A.tt-A.t)*Math.min(.035,Math.abs(A.tt-A.t));more=true;}
+  if(B.play){B.J+=B.fast?.25:.05;if(B.J>J0+730)B.J=J0;more=true;}
+  if(B.evT>0){B.evT--;more=true;}
+  if(Dd.play){Dd.year+=8;if(Dd.year>4500)Dd.year=-3000;more=true;}
+  drawA();drawC();drawB();drawD();
+  if(more)raf=requestAnimationFrame(loop);}
+const kick=()=>{if(!raf)raf=requestAnimationFrame(loop);};
+function btn(id,o){const b=$(id);b.onclick=()=>{o.play=!o.play;b.textContent=o.play?'❚❚':'▶';b.setAttribute('aria-label',o.play?'პაუზა':'დაკვრა');kick();};}
+btn('aPl',A);btn('cPl',C);btn('bPl',B);btn('dPl',Dd);
+$('aH').onclick=()=>{A.tt=0;$('aH').classList.add('on');$('aG').classList.remove('on');kick();};
+$('aG').onclick=()=>{A.tt=1;$('aG').classList.add('on');$('aH').classList.remove('on');kick();};
+$('bFs').onclick=()=>{B.fast=!B.fast;$('bFs').classList.toggle('on',B.fast);};
+$('aSl').oninput=e=>{doy=+e.target.value;kick();};$('cSl').oninput=e=>{doy=+e.target.value;kick();};
+$('bSl').oninput=e=>{B.J=J0+(+e.target.value);kick();};
+$('dSl').oninput=e=>{Dd.year=+e.target.value;kick();};$('dNow').onclick=()=>{Dd.year=Y0;kick();};
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',calcE));
+function sizes(){A.g=fit(A.cv,1);C.g=fit(C.cv,.92);B.g=fit(B.cv,B.cv.clientWidth<560?.62:.36);Dd.g=fit(Dd.cv,1);E.g=fit(E.cv,1);
+  drawA();drawC();drawB();drawD();if(E.sun!=null)rings(E.g.c,E.g.w,E.g.h,E.year,E.sun,false);}
+let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
+B.J=jd(Y0,1,1,0)+ (new Date()-new Date(Date.UTC(Y0,0,1)))/864e5;
+sizes();calcE();buildTable();quiz();
+if(!RM){A.play=true;$('aPl').textContent='❚❚';$('aPl').setAttribute('aria-label','პაუზა');kick();}
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>

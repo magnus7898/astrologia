@@ -7,21 +7,89 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300;display:flex;flex-direction:column;align-items:center}
-.page{width:100%;max-width:760px;padding:56px 18px 80px;text-align:center;flex:1}
+.page{width:100%;max-width:1400px;padding:56px 18px 80px;text-align:center;flex:1}
 h1{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(24px,4vw,36px);letter-spacing:.12em;color:#E3BE84}
 .sub{margin-top:8px;color:#7A8499;font-size:13px;letter-spacing:.06em}
-.box{margin:34px auto 0;border:1px solid rgba(184,137,74,.3);background:rgba(17,26,46,.55);padding:30px 22px;max-width:520px}
-.box p{color:#BCC0CA;line-height:1.8;font-size:14px}
-.soon{display:inline-block;margin-bottom:14px;font-family:'Marcellus SC',serif;letter-spacing:.3em;font-size:11px;color:#B8894A;border:1px solid rgba(184,137,74,.4);padding:5px 14px}
+.lead{max-width:760px;margin:18px auto 0;color:#BCC0CA;font-size:14px;line-height:1.8}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start;margin-top:30px;text-align:left}
+@media(max-width:1100px){.cols{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+.box{border:1px solid rgba(184,137,74,.3);background:rgba(17,26,46,.55);padding:22px 20px}
+.soon{display:inline-block;margin-bottom:8px;font-family:'Marcellus SC','Noto Serif Georgian',serif;letter-spacing:.12em;font-size:12px;color:#B8894A;border:1px solid rgba(184,137,74,.4);padding:5px 12px}
+.les{display:flex;gap:14px;align-items:center;padding:11px 4px;border-bottom:1px solid rgba(255,255,255,.07);color:#EDE6D8;text-decoration:none}
+.les:last-child{border-bottom:0}
+.les .no{flex:0 0 34px;height:34px;border-radius:50%;border:1px solid #C9A24C;display:flex;align-items:center;justify-content:center;font-family:'Marcellus SC',serif;color:#F3DDA4}
+.les b{display:block;font-weight:600;color:#F3DDA4;font-size:14.5px}.les small{display:block;color:#9aa3b6;font-size:12px;margin-top:3px}
+a.les:hover b{color:#FFF0C8}a.les:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}.les.off{opacity:.45}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>ასტროლოგიის კურსი</h1>
-  <div class="sub">Astrology Course</div>
-  <div class="box">
-    <div class="soon">მალე</div>
-    <p>კურსი მზადდება.</p>
+  <div class="sub">Astrology Course · 41 გაკვეთილი · 10 მოდული</div>
+  <div class="lead">კურსი საფუძვლებიდან სინთეზამდე მიდის: ყოველი გაკვეთილი მხოლოდ იმას იყენებს, რაც უკვე ნასწავლია, და საიტის შესაბამის ინსტრუმენტს — შენს რუკაზე. ტროპიკული ზოდიაქო, პლაციდუსის სახლები და MAGNUS-ის მმართველობის სისტემა.</div>
+  <div class="cols">
+  <div class="box"><div class="soon">მოდული 1 · საფუძვლები</div>
+    <a class="les" href="course_astro1.html"><span class="no">1</span><span><b>ზოდიაქო და ეკლიპტიკა</b><small>ტროპიკული, სიდერული და ჭეშმარიტი სიდერული ზოდიაქო — ანიმაციებით</small></span></a>
+    <div class="les off"><span class="no">2</span><span><b>ნატალური რუკის აგება</b><small>დრო, ადგილი, ASC, MC · მალე</small></span></div>
+    <div class="les off"><span class="no">3</span><span><b>სტიქიები, ჯვრები, პოლარობა</b><small>მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 2 · ნიშნები და მმართველები</div>
+    <div class="les off"><span class="no">4</span><span><b>12 ნიშანი</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">5</span><span><b>მმართველობა</b><small>MAGNUS-ის სისტემა, ეგზალტაცია, განდევნა, დაცემა · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 3 · პლანეტები</div>
+    <div class="les off"><span class="no">6</span><span><b>მზე და მთვარე</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">7</span><span><b>მერკური, ვენერა, მარსი</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">8</span><span><b>იუპიტერი და სატურნი</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">9</span><span><b>ურანი, ნეპტუნი, პლუტონი</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">10</span><span><b>რეტროგრადული პლანეტები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">11</span><span><b>კვანძები, ლილიტი, სელენა, ქირონი, ასტეროიდები</b><small>მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 4 · სახლები</div>
+    <div class="les off"><span class="no">12</span><span><b>სახლების სისტემები და კუთხეები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">13</span><span><b>12 სახლი</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">14</span><span><b>სახლის მმართველები</b><small>მეორე და მესამე მმართველი · მალე</small></span></div>
+    <div class="les off"><span class="no">15</span><span><b>დისპოზიტორების ჯაჭვი</b><small>მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 5 · ასპექტები</div>
+    <div class="les off"><span class="no">16</span><span><b>მაჟორული ასპექტები და ორბისები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">17</span><span><b>მინორული ასპექტები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">18</span><span><b>ასპექტური ფიგურები</b><small>დიდი ტრიგონი, T-კვადრატი, იოდი, სტელიუმი · მალე</small></span></div>
+    <div class="les off"><span class="no">19</span><span><b>კრიტიკული გრადუსები</b><small>მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 6 · რუკის წაკითხვა</div>
+    <div class="les off"><span class="no">20</span><span><b>დომინანტები</b><small>ქულების სისტემა · მალე</small></span></div>
+    <div class="les off"><span class="no">21</span><span><b>ხასიათის პორტრეტი ნაბიჯ-ნაბიჯ</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">22</span><span><b>პროფესიის ფორმულები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">23</span><span><b>ფული და კარიერა</b><small>2, 6, 10 სახლი, იუპიტერი · მალე</small></span></div>
+    <div class="les off"><span class="no">24</span><span><b>სიყვარული და ოჯახი ნატალში</b><small>4, 5, 7 სახლი, ვენერა, მარსი · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 7 · პროგნოზი</div>
+    <div class="les off"><span class="no">25</span><span><b>ტრანზიტები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">26</span><span><b>პროგრესიები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">27</span><span><b>დირექციები</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">28</span><span><b>სოლარი და ლუნარი</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">29</span><span><b>ციკლები</b><small>სატურნის დაბრუნება, კვანძები, რეტრო პერიოდები, უკურსო მთვარე · მალე</small></span></div>
+    <div class="les off"><span class="no">30</span><span><b>მთვარის დღეები</b><small>გლობას სისტემა · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 8 · წყვილი</div>
+    <div class="les off"><span class="no">31</span><span><b>სინასტრია</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">32</span><span><b>კომპოზიტი და დევისონი</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">33</span><span><b>თავსებადობის შეფასება</b><small>მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 9 · სპეციალური მეთოდები</div>
+    <div class="les off"><span class="no">34</span><span><b>რელოკაცია და ასტროკარტოგრაფია</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">35</span><span><b>რექტიფიკაცია — ჰერმესის ტრუტინა</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">36</span><span><b>დრაკონის რუკა, წარსული და მომავალი სიცოცხლე</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">37</span><span><b>ვედური ასტროლოგია</b><small>ნაქშატრები, D1/D9, დაშა · მალე</small></span></div>
+    <div class="les off"><span class="no">38</span><span><b>ჭეშმარიტი სიდერული ზოდიაქო</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">39</span><span><b>სტატისტიკა და ძიება</b><small>ფაქტორის შემოწმება · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 10 · სინთეზი</div>
+    <div class="les off"><span class="no">40</span><span><b>სრული ანალიზი ცნობილი ადამიანის რუკაზე</b><small>მალე</small></span></div>
+    <div class="les off"><span class="no">41</span><span><b>ასტროლოგია + ადამიანის დიზაინი + მატრიცა</b><small>მალე</small></span></div>
+  </div>
   </div>
 </div>
 <script src="site.js"></script>
