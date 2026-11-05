@@ -247,7 +247,7 @@ table.pt{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:6px}
     <div class="quiz" id="qz"></div><div id="qs"></div>
   </div>
 
-  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro1.html">← ზოდიაქო და ეკლიპტიკა</a><a href="course_astro.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 3 — მალე →</a></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro1.html">← ზოდიაქო და ეკლიპტიკა</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro3.html">სტიქიები, ჯვრები, პოლარობა →</a></div>
 </div>
 <script>
 (function(){
@@ -310,6 +310,12 @@ const p2=n=>String(n).padStart(2,'0');
 const hms=deg=>{let s=Math.round(norm(deg)/15*3600);const h=Math.floor(s/3600);s-=h*3600;return `${p2(h%24)}სთ ${p2(Math.floor(s/60))}წთ ${p2(s%60)}წმ`;};
 const offS=m=>(m<0?'−':'+')+Math.floor(Math.abs(m)/60)+':'+p2(Math.round(Math.abs(m)%60));
 const hm=min=>{min=((Math.round(min)%1440)+1440)%1440;return p2(Math.floor(min/60))+':'+p2(min%60);};
+/* ── birth data shared between lessons (this browser only) ── */
+const BKEY='magnus_astro_birth';
+function saveBirth(o){try{localStorage.setItem(BKEY,JSON.stringify(o));}catch(e){}}
+function loadBirth(){try{return JSON.parse(localStorage.getItem(BKEY)||'null');}catch(e){return null;}}
+function fillBirth(){const b=loadBirth();if(!b)return;['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>{if(b[k]!=null&&$(k))$(k).value=b[k];});if(b.city!=null&&$('city'))$('city').value=b.city;if(b.auto!=null&&$('auto'))$('auto').checked=b.auto;if(b.unk!=null&&$('unk'))$('unk').checked=b.unk;}
+function keepBirth(){const o={};['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>{if($(k))o[k]=$(k).value;});o.city=$('city').value;o.auto=$('auto').checked;if($('unk'))o.unk=$('unk').checked;saveBirth(o);}
 /* ── canvas helpers ── */
 function fit(cv,ratio){const dpr=Math.min(2,window.devicePixelRatio||1),w=Math.max(260,cv.clientWidth||300),h=Math.round(w*ratio);cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h};}
 const pt=(cx,cy,r,l)=>[cx-r*Math.cos(l*D),cy+r*Math.sin(l*D)];
@@ -349,7 +355,7 @@ function readIn(){const g=id=>+$(id).value;let y=cl(Math.round(g('yy'))||1990,18
   let off=Math.round(g('off')*60);if($('auto').checked&&ci>=0){off=zoneOff(CITIES[ci][3],y,m,d,hh,mi);$('off').value=+(off/60).toFixed(2);}
   $('off').disabled=$('auto').checked&&ci>=0;$('auto').disabled=ci<0;
   return {y,m,d,hh,mi,lat,lon,off,ci};}
-function compute(){const I=readIn(),u=Date.UTC(I.y,I.m-1,I.d,I.hh,I.mi)/6e4-I.off,ud=new Date(u*6e4);
+function compute(){keepBirth();const I=readIn(),u=Date.UTC(I.y,I.m-1,I.d,I.hh,I.mi)/6e4-I.off,ud=new Date(u*6e4);
   const J=jd(ud.getUTCFullYear(),ud.getUTCMonth()+1,ud.getUTCDate(),ud.getUTCHours()+ud.getUTCMinutes()/60);
   CH={I,u,ud,J,pls:planets(J),hs:houses(J,I.lat,I.lon),gm:gmst(J)};CH.lst=norm(CH.gm+I.lon);
   T.off=0;updateAll();}
@@ -449,7 +455,7 @@ $('city').innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}</option>`).j
 ['dd','mm','yy','th','tm','city','lat','lon','off','auto'].forEach(id=>$(id).addEventListener(id==='city'||id==='auto'?'change':'input',compute));
 function sizes(){T.g=fit(T.cv,1);Rb.g=fit(Rb.cv,Rb.cv.clientWidth<560?.5:.24);W.g=fit(W.cv,1);if(CH){drawT();drawR();drawW();}}
 let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
-sizes();compute();quiz();
+fillBirth();sizes();compute();quiz();
 const io=('IntersectionObserver' in window)?new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting&&!W.started&&!RM){W.started=true;W.play=true;$('wPl').textContent='❚❚';kick();}});},{threshold:.35}):null;
 if(io)io.observe(W.cv);
 })();
