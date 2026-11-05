@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ტარო — გაკვეთილი 6</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · ტარო</div>
+  <h1>გაკვეთილი 6 — სიმბოლოები — ანიმაციური ტური</h1>
+  <div class="sub">დიდი არკანის ყოველი ბარათი დეტალურად: ბარათი თავად აჩვენებს და ადიდებს თითოეულ სიმბოლოს</div>
+  <div class="intro">დიდი არკანის თითოეული ბარათი სიმბოლოებით არის სავსე — ყოველი დეტალი, ფერი და ჟესტი რაღაცას ნიშნავს. აირჩიე ბარათი და დააჭირე <b>▶</b>: ბარათი თავად მიგიყვანს თითოეულ სიმბოლოსთან, გაადიდებს მას და აგიხსნის. შეგიძლია ხელითაც გადახვიდე სიმბოლოებს შორის.</div>
+  <div class="picker" id="pk"></div>
+  <div class="tour">
+    <div class="vwrap"><div class="vp" id="vp"><img id="vi" alt=""><div class="ring" id="ring"></div></div>
+      <div class="ctl"><button type="button" id="b-pv" aria-label="წინა">◀</button><button type="button" id="b-pl" aria-label="დაკვრა">▶</button><button type="button" id="b-nx" aria-label="შემდეგი">▶▶</button></div>
+      <div class="bar"><i id="pb"></i></div></div>
+    <div class="txt"><h2 id="th"></h2><div class="st" id="sn"></div><div id="tx"></div><div class="chips" id="ch"></div>
+      <div class="more" id="more"></div></div>
+  </div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_tarot5.html">← როგორ ვკითხულობთ</a><a href="course_num.html">გაკვეთილების სია</a></div>
+</div>
+<script src="tarot_text.js"></script>
+<script src="tarot_course.js"></script>
+<script src="tarot_symbols.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),TC=window.TC;
+document.head.insertAdjacentHTML('beforeend','<style>'+TC.CSS+'</style>');
+const TS=window.TS||{};let n=0,st=0,timer=null,play=false;
+const h=parseInt(location.hash.slice(1),10);if(h>=0&&h<=21)n=h;
+document.head.insertAdjacentHTML('beforeend',`<style>
+.picker{display:flex;gap:6px;overflow-x:auto;padding:12px 2px 8px;margin-top:14px;scrollbar-width:thin}
+.picker button{flex:0 0 58px;border:1px solid rgba(184,137,74,.35);border-radius:8px;padding:3px;background:none;cursor:pointer;color:#d6cbb2;font:600 10px Cinzel,serif}
+.picker button img{width:100%;aspect-ratio:7/11.5;object-fit:cover;border-radius:5px;display:block}
+.picker button.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.35)}
+.tour{display:grid;grid-template-columns:minmax(0,400px) 1fr;gap:22px;margin-top:14px;align-items:start}
+@media(max-width:820px){.tour{grid-template-columns:1fr}.vwrap{max-width:400px;margin:0 auto;width:100%}}
+.vwrap{position:sticky;top:12px}
+.vp{position:relative;width:100%;aspect-ratio:1200/1976;overflow:hidden;border-radius:14px;border:1px solid rgba(184,137,74,.45);background:#0e1424}
+.vp img{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:0 0;transition:transform 1.5s cubic-bezier(.65,.05,.25,1);will-change:transform}
+.ring{position:absolute;width:26%;aspect-ratio:1;border:2px solid #FFD36A;border-radius:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;box-shadow:0 0 18px rgba(255,211,106,.55);transition:opacity .4s}
+.ring.on{opacity:1;animation:rp 1.8s ease-in-out infinite}
+@keyframes rp{0%,100%{transform:translate(-50%,-50%) scale(.85)}50%{transform:translate(-50%,-50%) scale(1.05)}}
+.ctl{display:flex;justify-content:center;gap:10px;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:7px 16px;font-size:14px;cursor:pointer;font-family:inherit;min-width:56px}
+.bar{height:3px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#C9A24C}
+.txt h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:24px;color:#E3BE84}
+.txt .st{font-size:13px;color:#B8894A;margin-top:4px;letter-spacing:.05em}
+.txt #tx{margin-top:10px;font-size:15px;line-height:1.9;color:#eef0f4;min-height:120px;animation:fi .6s ease}
+.txt #tx b{color:#F3DDA4}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.chips button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:4px 11px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.chips button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}.chips button.done{color:#F3DDA4}
+.more{margin-top:16px;font-size:13px;color:#aab2c4}.more a{color:#E3BE84}
+</style>`);
+function steps(){const t=TS[n]||{s:[]};return [[.5,.5,1,'ბარათი მთლიანად',t.i]].concat(t.s).concat([[.5,.5,1,'ყველაფერი ერთად',t.e]]);}
+function picker(){$('pk').innerHTML=TC.MAJ.map((m,i)=>`<button type="button" class="${i===n?'on':''}" data-i="${i}" title="${m[0]}"><img loading="lazy" src="${TC.majImg(i)}" alt="">${TC.ROM[i]}</button>`).join('');
+  const b=$('pk').querySelector('.on');if(b)b.scrollIntoView({block:'nearest',inline:'center'});}
+function view(){const S=steps(),[x,y,z]=S[st],vp=$('vp'),W=vp.clientWidth,H=vp.clientHeight;
+  let tx=W/2-x*W*z,ty=H/2-y*H*z;tx=Math.min(0,Math.max(W-W*z,tx));ty=Math.min(0,Math.max(H-H*z,ty));
+  $('vi').style.transform=`translate(${tx}px,${ty}px) scale(${z})`;
+  const r=$('ring');if(z>1.01){r.style.left=(x*W*z+tx)+'px';r.style.top=(y*H*z+ty)+'px';r.classList.remove('on');setTimeout(()=>{if(steps()[st]&&steps()[st][2]>1.01)r.classList.add('on');},1300);}else r.classList.remove('on');}
+function text(){const S=steps(),s=S[st],m=TC.MAJ[n];
+  $('th').textContent=`${TC.ROM[n]} · ${m[0]}`;$('sn').textContent=st===0?`${m[1]} · ${S.length-2} სიმბოლო`:st===S.length-1?'შეჯამება':`${st} / ${S.length-2} · ${s[3]}`;
+  $('tx').innerHTML=(st>0&&st<S.length-1?`<b>${s[3]}.</b> `:'')+s[4];$('tx').style.animation='none';void $('tx').offsetWidth;$('tx').style.animation='';
+  $('ch').innerHTML=S.map((q,i)=>`<button type="button" data-s="${i}" class="${i===st?'on':i<st?'done':''}">${i===0?'ბარათი':i===S.length-1?'შეჯამება':q[3]}</button>`).join('');
+  const mx=TC.toMatrix(n);$('more').innerHTML=`<a href="course_tarot2.html#${n}">პირდაპირი და შებრუნებული მნიშვნელობა →</a> · <a href="course_matrix4.html#${mx}">მატრიცის ენერგია ${mx} →</a>`;
+  $('pb').style.width=(st/(S.length-1)*100)+'%';}
+function go(i){const L=steps().length;st=Math.max(0,Math.min(L-1,i));view();text();}
+function load(i){n=i;st=0;$('vi').style.transition='none';$('vi').src=TC.majImg(n);$('vi').alt=TC.MAJ[n][0];view();void $('vi').offsetWidth;$('vi').style.transition='';text();picker();try{history.replaceState(null,'','#'+n);}catch(e){}}
+function tick(){if(!play)return;const L=steps().length;if(st<L-1){go(st+1);timer=setTimeout(tick,st===L-1?9000:Math.max(6500,steps()[st][4].length*55));}else{stop();}}
+function start(){play=true;$('b-pl').textContent='❚❚';if(st>=steps().length-1)go(0);timer=setTimeout(tick,st===0?Math.max(6000,steps()[0][4].length*50):800);}
+function stop(){play=false;clearTimeout(timer);$('b-pl').textContent='▶';}
+$('b-pl').onclick=()=>play?stop():start();
+$('b-nx').onclick=()=>{stop();go(st+1);};$('b-pv').onclick=()=>{stop();go(st-1);};
+$('ch').addEventListener('click',e=>{const b=e.target.closest('button');if(b){stop();go(+b.dataset.s);}});
+$('pk').addEventListener('click',e=>{const b=e.target.closest('button');if(b){stop();load(+b.dataset.i);}});
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){stop();go(st+1);}else if(e.key==='ArrowLeft'){stop();go(st-1);}});
+window.addEventListener('resize',view);
+load(n);
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>

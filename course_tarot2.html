@@ -103,6 +103,7 @@ function show(i,sc){cur=i;const m=TC.MAJ[i],x=TC.T()['M'+i]||{},mx=TC.toMatrix(i
    <h3 class="up">პირდაპირი</h3><p><b>${x.k||''}</b></p><p>${x.x||''}</p>
    <h3 class="rv">შებრუნებული</h3><p><b>${x.kr||''}</b></p><p>${x.xr||''}</p>
    <h3>სიყვარული</h3><p>${x.l||''}</p><h3>საქმე და ფინანსები</h3><p>${x.w||''}</p><h3>რჩევა</h3><p><i>${x.a||''}</i></p>
+   <p style="margin-top:12px"><a href="course_tarot6.html#${i}" style="display:inline-block;border:1px solid #C9A24C;border-radius:999px;padding:7px 16px;text-decoration:none;color:#F3DDA4">✦ სიმბოლოების ტური — ბარათი დეტალურად →</a></p>
    <div class="nav"><button type="button" id="pv">←</button><button type="button" id="nx">→</button></div></div></div>`;
   $('pv').onclick=()=>show((i+21)%22,true);$('nx').onclick=()=>show((i+1)%22,true);grid();try{history.replaceState(null,'','#'+i);}catch(e){}
   if(sc)$('det').scrollIntoView({behavior:'smooth',block:'start'});}
