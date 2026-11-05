@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · პითაგორას კვადრატი — გაკვეთილი 1</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · პითაგორას კვადრატი</div>
+  <h1>გაკვეთილი 1 — როგორ ვითვლით</h1>
+  <div class="sub">დაბადების თარიღიდან ცხრა უჯრამდე — ნაბიჯ-ნაბიჯ, შენს თარიღზე</div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+  </div>
+  <div class="intro">პითაგორას კვადრატი (ფსიქომატრიცა) <b>ცხრა უჯრაა</b> — თითოეული ციფრი 1-დან 9-მდე ერთ თვისებას აღწერს. რამდენჯერაც გვხვდება ციფრი დაბადების თარიღში და „სამუშაო რიცხვებში“, იმდენი ციფრი იწერება მის უჯრაში. ნული არ ითვლება. ნაბიჯ-ნაბიჯ ავაგოთ.</div>
+  <div class="sec"><h2>1. თარიღის ციფრები</h2><div id="s1"></div></div>
+  <div class="sec"><h2>2. ოთხი სამუშაო რიცხვი</h2><p>კლასიკურ მეთოდში თარიღის გვერდით ოთხ რიცხვს ვითვლით:</p><div id="s2"></div></div>
+  <div class="sec"><h2>3. ციფრების დათვლა</h2><p>ახლა ვწერთ ყველა ციფრს — თარიღისასაც და ოთხი სამუშაო რიცხვისასაც — და ვთვლით, რამდენჯერ გვხვდება თითოეული 1-დან 9-მდე. ნულებს არ ვითვლით.</p><div id="s3"></div></div>
+  <div class="sec"><h2>4. კვადრატი</h2><p>ციფრები ასე ლაგდება: პირველ სვეტში <b>1 · 2 · 3</b>, მეორეში <b>4 · 5 · 6</b>, მესამეში <b>7 · 8 · 9</b>. ანუ ზედა სტრიქონია 1 · 4 · 7, შუა — 2 · 5 · 8, ქვედა — 3 · 6 · 9. დააჭირე უჯრას — ნახავ ციფრის გაკვეთილს.</p><div id="s4"></div>
+   <p>სვეტები, სტრიქონები და ორი დიაგონალი კიდევ 8 „ხაზს“ ქმნის — მათ ბოლო გაკვეთილში ვისწავლით.</p></div>
+  <div class="sec"><h2>5. კორექტირებული და კრიზისული კვადრატი</h2>
+   <p>MAGNUS-ის პითაგორას გვერდზე კიდევ ორი ვარიანტია:</p>
+   <ul><li><b>კორექტირებული</b> — საუკუნის შესწორება: 19xx წლებში მეორე სამუშაო რიცხვის ნაცვლად იწერება <b>−2</b> (ორიანი ემატება კვადრატს) და III = I − 2; 20xx წლებში — <b>+19</b> (ერთიანი და ცხრიანი ემატება) და III = I + 19. IV ისევ III-ის ციფრთა ჯამია.</li>
+   <li><b>კრიზისული</b> — როგორ იქცევა ადამიანი სტრესში: I′ = |I − 9|, II′ = I′-ის ციფრთა ჯამი, III′ = |I′ − 2 × დღის პირველი ციფრი|, IV′ = III′-ის ციფრთა ჯამი.</li></ul>
+   <div class="tabs3" id="mt"></div><div id="s5"></div></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">გაკვეთილების სია</a><a href="course_pyth2.html">ციფრები 1–9 →</a></div>
+</div>
+<script src="pyth_course.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),PY=window.PY;
+document.head.insertAdjacentHTML('beforeend','<style>'+PY.CSS+'</style>');
+function date(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100))return null;
+  return [String(d).padStart(2,'0'),String(m).padStart(2,'0'),String(y)];}
+let mode='c';
+function render(D){if(!D)return;const r=PY.calc(...D),[d,m,y]=D;
+  $('s1').innerHTML=`<div class="calc">${d}.${m}.${y} → <span class="r">${r.birth.join(' ')}</span><br><small>დღის პირველი ციფრი (თუ ნულია — მეორე): <b>${r.fd}</b></small></div>`;
+  const s=r.birth.join(' + ');
+  $('s2').innerHTML=`<div class="calc"><b>I</b> = თარიღის ყველა ციფრის ჯამი = ${s} = <span class="r">${r.I}</span><br>
+   <b>II</b> = I-ის ციფრთა ჯამი = ${String(r.I).split('').join(' + ')} = <span class="r">${r.II}</span><br>
+   <b>III</b> = I − 2 × ${r.fd} = ${r.I} − ${2*r.fd} = <span class="r">${r.III}</span> <small>(უარყოფითის შემთხვევაში მოდული)</small><br>
+   <b>IV</b> = III-ის ციფრთა ჯამი = ${String(r.III).split('').join(' + ')} = <span class="r">${r.IV}</span></div>`;
+  const all=r.birth.concat(r.extra).filter(x=>x>0);
+  $('s3').innerHTML=`<div class="calc">თარიღი: ${r.birth.join(' ')} &nbsp;|&nbsp; სამუშაო რიცხვები: ${r.I} · ${r.II} · ${r.III} · ${r.IV}<br><small>ნულის გარეშე:</small> ${all.join(' ')}<br>${PY.ORDER.slice().sort((a,b)=>a-b).map(n=>`${n} → <span class="r">${r.count[n]}</span>`).join(' · ')}</div>`;
+  $('s4').innerHTML=PY.square(r.count);
+  $('mt').innerHTML=[['c','კლასიკური'],['k','კორექტირებული'],['x','კრიზისული']].map(([k,t])=>`<button type="button" data-m="${k}" class="${k===mode?'on':''}">${t}</button>`).join('');
+  const M=mode==='c'?{disp:[r.I,r.II,r.III,r.IV],count:r.count}:mode==='k'?r.corrected:r.crisis;
+  $('s5').innerHTML=`<div class="calc" style="text-align:center">სამუშაო რიცხვები: <span class="r">${M.disp.join(' · ')}</span>${M.note?` <small>(${M.note})</small>`:''}</div>`+PY.square(M.count);}
+document.addEventListener('click',e=>{const b=e.target.closest('#mt button');if(b){mode=b.dataset.m;render(date());return;}
+  const c=e.target.closest('.pq-c');if(c)location.href='course_pyth'+(+c.dataset.n+2)+'.html';});
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',()=>{const D=date();if(D)render(D);}));
+render(date());
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>

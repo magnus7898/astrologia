@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · პითაგორას კვადრატი — გაკვეთილი 11</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · პითაგორას კვადრატი</div>
+  <h1>გაკვეთილი 11 — ციფრი 9</h1>
+  <div class="sub">9 · 99 · 999 · 9999 … — რას ნიშნავს თითოეული რაოდენობა</div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+  </div>
+  <div class="intro" id="core"></div>
+  <div class="sec"><div id="sq"></div><div class="mine" id="mine"></div></div>
+  <div class="sec"><h2>ყველა ვარიანტი</h2><p>ქვემოთ ყველა შესაძლო რაოდენობაა — შენი მონიშნულია. პატარა ციფრი — რამდენ ადამიანს აქვს ეს ვარიანტი (კლასიკური კვადრატი, ყველა დღე 1900–2029).</p><div class="lvls" id="lv"></div></div>
+  <div class="sec"><h2>როგორ განვავითაროთ</h2><p id="dev"></p></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_pyth10.html">← ციფრი 8</a><a href="course_num.html">გაკვეთილების სია</a><a href="course_pyth12.html">ხაზები →</a></div>
+</div>
+<script src="pyth_course.js"></script>
+<script src="pyth_stats.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),PY=window.PY;
+document.head.insertAdjacentHTML('beforeend','<style>'+PY.CSS+'</style>');
+function date(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100))return null;
+  return [String(d).padStart(2,'0'),String(m).padStart(2,'0'),String(y)];}
+const n=9,X=PY.N[n];
+$('core').innerHTML=`<b style="color:${PY.COLOR[n]}">ციფრი ${n} — ${X.name}.</b> ${X.core}`;$('dev').textContent=X.dev;
+const ST=(window.PY_STATS||{})[n]||null;
+function render(D){if(!D)return;const r=PY.calc(...D),c=r.count[n];$('sq').innerHTML=PY.square(r.count,{hi:[n]});
+  $('mine').innerHTML=`შენს კვადრატში: <b>${PY.rep(n,c)}</b> (${c})`;
+  $('lv').innerHTML=X.lv.map((t,i)=>`<div class="lv${Math.min(c,6)===i?' my':''}"><div class="d" style="color:${i?PY.COLOR[n]:'rgba(232,226,213,.4)'}">${i===0?'—':i===6?PY.rep(n,6)+'+':PY.rep(n,i)}<small>${i===6?'6 და მეტი':i}</small></div><div><p>${t}</p>${ST?`<div class="st">${ST[i]}% ადამიანებს</div>`:''}</div></div>`).join('');}
+document.addEventListener('click',e=>{const c=e.target.closest('.pq-c');if(c&&+c.dataset.n!==n)location.href='course_pyth'+(+c.dataset.n+2)+'.html';});
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',()=>{const D=date();if(D)render(D);}));
+render(date());
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
