@@ -109,7 +109,8 @@ function show(r,sc){cur=r;const s=TC.SUITS[su],x=TC.T()[su+r]||{},nm=`${TC.RANK[
    <p style="font-size:13px;color:#cfd5e2;margin-top:6px">${r<=10?'რიცხვი':'ფიგურა'} + მასტი: ${num[1]}</p>
    <h3 class="up">პირდაპირი</h3><p><b>${x.k||''}</b></p><p>${x.x||''}</p>
    <h3 class="rv">შებრუნებული</h3><p><b>${x.kr||''}</b></p><p>${x.xr||''}</p>
-   <h3>სიყვარული</h3><p>${x.l||''}</p><h3>საქმე და ფინანსები</h3><p>${x.w||''}</p><h3>რჩევა</h3><p><i>${x.a||''}</i></p></div></div>`;
+   <h3>სიყვარული</h3><p>${x.l||''}</p><h3>საქმე და ფინანსები</h3><p>${x.w||''}</p><h3>რჩევა</h3><p><i>${x.a||''}</i></p>
+   <p style="margin-top:12px"><a href="course_tarot6.html#${su}${r}" style="display:inline-block;border:1px solid #C9A24C;border-radius:999px;padding:7px 16px;text-decoration:none;color:#F3DDA4">✦ სიმბოლოების ტური — ბარათი დეტალურად →</a></p></div></div>`;
   grid();if(sc)$('det').scrollIntoView({behavior:'smooth',block:'start'});}
 $('st').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;su=b.dataset.s;cur=null;tabs();grid();$('d').innerHTML='';});
 $('g').addEventListener('click',e=>{const b=e.target.closest('.tc');if(b)show(+b.dataset.r,true);});tabs();grid();

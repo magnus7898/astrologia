@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ტარო — გაკვეთილი 7</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · ტარო</div>
+  <h1>გაკვეთილი 7 — ფერები და ფარული კავშირები</h1>
+  <div class="sub">ფერების ენა, ფონის ფერები და 78 ბარათს შორის დამალული კავშირები — ანიმაციური შედარებით</div>
+  <div class="intro">რაიდერ–უეიტის დასტა შემთხვევით არ არის დახატული. პამელა კოლმენ სმიტმა და არტურ უეიტმა ბარათები ერთმანეთთან <b>ფერებით, ფიგურებით და სიმბოლოებით</b> დააკავშირეს: ერთი და იგივე ქალი ჩნდება იმპერატრიცაზე და ძალაზე, იეროფანტი — სიკვდილის წინაშე, იმპერატორის წითელი სამოსი — სამართლიანობაზე. ამ გაკვეთილში ჯერ ფერების ენას ვსწავლობთ, შემდეგ კი ფარული კავშირების ტურს გავდივართ — ორივე ბარათი გვერდიგვერდ გადიდდება და დეტალს გაჩვენებს.</div>
+  <div class="sec"><h2>1 · ფერების ენა</h2>
+    <p>დასტაში ფერები ერთ ენაზე „ლაპარაკობს“: თუ იცი, რას ნიშნავს ფერი, ბარათის წაკითხვა მის ფიგურებამდეც შეგიძლია.</p>
+    <div class="cl" id="cl"></div>
+    <ul id="rules" style="margin-top:14px"></ul>
+  </div>
+  <div class="sec"><h2>2 · ფონის ფერი — სად ხდება ამბავი</h2>
+    <p>დიდი არკანი ფონის ფერით ექვს ჯგუფად იყოფა (ამ საიტის დასტის მიხედვით — ძველ გამოცემებში ზოგი ფონი სხვა ტონისაა). დააჭირე ბარათს — სიმბოლოების ტურში გაიხსნება „ფერების“ ნაბიჯით.</p>
+    <div id="bg"></div>
+  </div>
+  <div class="sec" id="tour"><h2>3 · ფარული კავშირები — ტური</h2>
+    <p>ყოველ კავშირში ორი ბარათია: მარცხნივ და მარჯვნივ ერთდროულად დიდდება ის დეტალი, რომელიც მათ აკავშირებს. დააჭირე <b>▶</b> — ტური თავად გადავა შემდეგ კავშირზე; ან აირჩიე ქვემოთ სიიდან.</p>
+    <div class="flt" id="flt"></div>
+    <div class="tctl"><button type="button" id="b-pv" aria-label="წინა">◀</button><button type="button" id="b-pl" aria-label="დაკვრა">▶</button><button type="button" id="b-nx" aria-label="შემდეგი">▶▶</button><span id="cnt"></span></div>
+    <div class="bar"><i id="pb"></i></div>
+    <div id="cmp" style="margin-top:12px"></div>
+    <div class="lkl" id="all"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_tarot6.html">← სიმბოლოების ტური</a><a href="course_num.html">გაკვეთილების სია</a></div>
+</div>
+<script src="tarot_text.js"></script>
+<script src="tarot_course.js"></script>
+<script src="tarot_colors.js"></script>
+<script src="tarot_links.js"></script>
+<script src="tarot_cmp.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),TC=window.TC;
+document.head.insertAdjacentHTML('beforeend','<style>'+TC.CSS+'</style>');
+
+const CM=window.TCMP,COL=window.TCOL,TL=window.TL,TLG=window.TLG;CM.css();
+document.head.insertAdjacentHTML('beforeend',`<style>
+.cl{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin-top:12px}
+.cl div{display:flex;gap:10px;align-items:flex-start;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px}
+.cl i{flex:0 0 26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.3)}
+.cl b{display:block;color:#F3DDA4;font-weight:600;font-size:14px}.cl span{font-size:13px;line-height:1.65;color:#d8dbe2}
+.bgg{display:grid;grid-template-columns:170px 1fr;gap:14px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:12px;margin-top:10px;align-items:start}
+@media(max-width:640px){.bgg{grid-template-columns:1fr}}
+.bgg .sw{height:10px;border-radius:5px;margin-bottom:8px}.bgg h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:16px;color:#E3BE84}
+.bgg p{font-size:13.5px!important;margin-top:6px!important}
+.bgc{display:flex;flex-wrap:wrap;gap:6px}.bgc a{width:54px;text-align:center;text-decoration:none;color:#d6cbb2;font:600 10px Cinzel,serif}
+.bgc img{width:100%;aspect-ratio:7/11.5;object-fit:cover;border-radius:5px;display:block;border:1px solid rgba(184,137,74,.35);margin-bottom:2px}
+.flt{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.flt button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.flt button.on{background:var(--c);color:#0C1222;font-weight:600}
+.tctl{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px}
+.tctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:7px 16px;font-size:14px;cursor:pointer;font-family:inherit;min-width:56px}
+.tctl span{font:600 13px Cinzel,serif;color:#B8894A;min-width:60px;text-align:center}
+.bar{height:3px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#C9A24C}
+#all{margin-top:16px}
+</style>`);
+$('cl').innerHTML=COL.L.map(c=>`<div><i style="background:${c[1]}"></i><span><b>${c[0]}</b>${c[2]}</span></div>`).join('');
+$('rules').innerHTML=COL.R.map(r=>`<li>${r}</li>`).join('');
+const BG=[['ყვითელი ფონი','#F2C94C',[0,1,3,7],'ცნობიერი მოქმედების ბარათები: სულელის ნაბიჯი, მაგის ნება, იმპერატრიცას შემოქმედება და ეტლის გამარჯვება — ყველაფერი „დღის“ სინათლეში ხდება, ადამიანის ნებით და ცნობიერებით.'],
+ ['ფორთოხლისფერ-წითელი ფონი','#E8873A',[4],'მხოლოდ იმპერატორი: ცეცხლი, მარსი, ვერძი. ძალაუფლება და ქმედება — ასეთი ცხელი ფონი სხვა დიდ არკანს არ აქვს.'],
+ ['რუხი და თეთრი ფონი','#9AA0A8',[2,5,8,11,12,13,14],'სიბრძნის, კანონის და გარდამავალი მდგომარეობის ბარათები: ტაძრის სვეტები (II, V, XI), შინაგანი ძალის სიწმინდე (VIII), შეჩერებული დრო (XII), გადასვლა (XIII) და ბალანსი (XIV). რუხი — არც შავია, არც თეთრი: აქ ემოცია ჩუმდება და ჭეშმარიტება ჩანს.'],
+ ['ცისფერი ცა','#5B9BD5',[6,10,17,18,19,20,21],'სული, ზეცა და კოსმოსი: ანგელოზის კურთხევა, ბედის ბორბალი, ვარსკვლავი, მთვარე, მზე, განსჯა და სამყარო. ღია ცის ქვეშ ხდება ის, რაც ადამიანზე დიდია.'],
+ ['მუქი ღამის ფონი','#4A6470',[9],'განდეგილი — შინაგანი ღამე, სიჩუმე, სადაც მხოლოდ საკუთარი ფარანი ანათებს.'],
+ ['შავი ფონი','#1B1B1F',[15,16],'ეშმაკი და კოშკი — სულის ბნელი ღამე: ერთადერთი ორი შავი ფონი დიდ არკანში, თანაც ზედიზედ. მათ შემდეგ ვარსკვლავი (XVII) ცას კვლავ ცისფრად ხსნის.']];
+$('bg').innerHTML=BG.map(g=>`<div class="bgg"><div><div class="sw" style="background:${g[1]}"></div><h3>${g[0]}</h3></div><div><div class="bgc">${g[2].map(n=>`<a href="course_tarot6.html#${n}" title="${TC.MAJ[n][0]}"><img loading="lazy" src="${TC.majImg(n)}" alt="">${TC.ROM[n]}</a>`).join('')}</div><p>${g[3]}</p></div></div>`).join('');
+let f='*',cur=0,play=false,timer=null;
+const list=()=>TL.map((l,i)=>i).filter(i=>f==='*'||TL[i].g===f);
+(function(){const m=/^L(\d+)$/.exec(location.hash.slice(1));if(m&&TL[+m[1]])cur=+m[1];})();
+function flt(){const G=[['*',`ყველა · ${TL.length}`,'#C9A24C']].concat(Object.entries(TLG).map(([k,g])=>[k,`${g[0]} · ${TL.filter(l=>l.g===k).length}`,g[1]]));
+  $('flt').innerHTML=G.map(g=>`<button type="button" data-f="${g[0]}" style="--c:${g[2]}" class="${g[0]===f?'on':''}">${g[1]}</button>`).join('');}
+function show(i,sc){cur=i;const L=list(),k=L.indexOf(i);
+  CM.render($('cmp'),i,{});$('cnt').textContent=`${k+1} / ${L.length}`;$('pb').style.width=((k+1)/L.length*100)+'%';
+  $('all').innerHTML=L.map(j=>CM.pair(j,j===i)).join('');
+  try{history.replaceState(null,'','#L'+i);}catch(e){}
+  if(sc)$('cmp').scrollIntoView({behavior:'smooth',block:'nearest'});}
+function step(d){const L=list();let k=L.indexOf(cur);k=(k+d+L.length)%L.length;show(L[k],true);}
+function tick(){if(!play)return;const L=list(),k=L.indexOf(cur);if(k>=L.length-1){stop();return;}step(1);timer=setTimeout(tick,Math.max(9000,TL[cur].d.length*60));}
+function start(){play=true;$('b-pl').textContent='❚❚';timer=setTimeout(tick,Math.max(8000,TL[cur].d.length*55));}
+function stop(){play=false;clearTimeout(timer);$('b-pl').textContent='▶';}
+$('b-pl').onclick=()=>play?stop():start();$('b-nx').onclick=()=>{stop();step(1);};$('b-pv').onclick=()=>{stop();step(-1);};
+$('flt').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;stop();f=b.dataset.f;flt();const L=list();show(L.includes(cur)?cur:L[0]);});
+$('all').addEventListener('click',e=>{const b=e.target.closest('.lk');if(b){stop();show(+b.dataset.l,true);}});
+flt();show(cur);if(/^#L\d+$/.test(location.hash))setTimeout(()=>$('tour').scrollIntoView({block:'start'}),300);
+
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
