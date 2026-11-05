@@ -18,10 +18,15 @@ function calc(d,m,y){const v={};
 const empty=t=>!String(t||'').replace(/<[^>]+>|&nbsp;|\s/g,'');
 function entry(db,code){const D=window.MATRIX_DB||{},c=(D[db]||{}).combos||{};const e=c[code];if(e)return e;
   if(!EXACT.has(db)){const r=c[code.split('-').reverse().join('-')];if(r)return r;}return null;}
+function shared(code){const c=((window.MATRIX_DB||{}).ch_names||{}).combos||{};return c[code]||c[code.split('-').reverse().join('-')]||null;}
+function anyName(code){const D=window.MATRIX_DB||{},r=code.split('-').reverse().join('-');
+  for(const n in D){if(n==='ch_names')continue;const c=(D[n]||{}).combos||{},x=c[code]||c[r];if(x&&String(x.title||'').trim()&&!x._c)return x.title;}return '';}
 function title(z,code){const e=entry(z.db,code);if(e&&String(e.title||'').trim())return e.title;
+  if(z.chakra){const sh=shared(code);if(sh&&String(sh.title||'').trim())return sh.title;}
   const D=window.MATRIX_DB||{},r=code.split('-').reverse().join('-');
-  for(const n of NAMEZ){const c=(D[n]||{}).combos||{},x=c[code]||c[r];if(x&&String(x.title||'').trim())return x.title;}return '';}
+  for(const n of NAMEZ){const c=(D[n]||{}).combos||{},x=c[code]||c[r];if(x&&String(x.title||'').trim())return x.title;}return z.chakra?anyName(code):'';}
 function article(z,code){const e=entry(z.db,code);if(e&&!empty(e.text))return e.text;
+  if(z.chakra){const sh=shared(code);if(sh&&!empty(sh.text))return sh.text;}
   try{return typeof window.autoCombo==='function'?(window.autoCombo(z.db,code.split('-').map(Number))||''):'';}catch(_){return '';}}
 let zi=0,cur=null,flt=0,q='',MY={};
 function zone(){return CL.zones[zi];}
@@ -52,7 +57,9 @@ $('cl-grid').addEventListener('click',e=>{const b=e.target.closest('.cl-c');if(b
 function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
   const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
   if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100)){MY={};all();return;}
-  const v=calc(d,m,y);MY={};CL.zones.forEach((z,i)=>MY[i]=z.keys.map(k=>v[k]).join('-'));cur=MY[zi];all();}
+  const v=calc(d,m,y);const R={sahasrara:['T3','L3'],ajna:['T2','L2'],vishudha:['T1','L1'],anahata:['G2','G1'],manipura:['Cv','Cv'],svadhistana:['B1','R1'],muladhara:['B3','R3']};
+  let se=0,sp=0,ss=0;for(const k in R){const E=v[R[k][0]],P=v[R[k][1]],S=r22(E+P);v['ch_'+k]=`${E}-${S}-${P}`;se+=E;sp+=P;ss+=S;}v.ch_total=`${r22(se)}-${r22(ss)}-${r22(sp)}`;
+  MY={};CL.zones.forEach((z,i)=>MY[i]=z.myKey?v[z.myKey]:z.keys.map(k=>v[k]).join('-'));cur=MY[zi];all();}
 ['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));
 upd();
 try{if(window.ART)window.ART.load('matrix').then(()=>{window.ART._apply('matrix');all();}).catch(()=>{});}catch(e){}
