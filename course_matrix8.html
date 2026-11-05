@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 8</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:760px;margin:26px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:78px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:96px}
+.date .note{flex-basis:100%;text-align:center;font-size:12px;color:#9aa3b6}
+.lesson{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+@media(max-width:860px){.lesson{grid-template-columns:1fr}}
+.fig{position:sticky;top:12px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:8px}
+@media(max-width:860px){.fig{position:static}}
+#mx{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:11.5px;color:#aab2c4;padding:6px 4px 2px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.steps{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.steps button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+.steps button.on{background:rgba(201,162,76,.22);border-color:#E3BE84;color:#FFF0C8}
+.steps button.done{color:#F3DDA4}
+.card{border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:18px 18px 16px}
+.card h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em;margin-bottom:10px}
+.card p{font-size:14px;line-height:1.85;color:#e2e5ec;margin:8px 0}
+.card b{color:#F3DDA4;font-weight:600}
+.calc{margin:12px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}
+.calc small{color:#aab2c4}
+.tip{font-size:12.5px;line-height:1.7;color:#aab2c4;margin-top:10px}
+table.t{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+table.t td,table.t th{border-bottom:1px solid rgba(255,255,255,.08);padding:6px 6px;text-align:left}
+table.t th{color:#B8894A;font-weight:400;font-size:11.5px;letter-spacing:.06em}
+table.t td.n{color:#FFE7A0;font-weight:600;text-align:center;width:48px}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.nav button:disabled{opacity:.35;cursor:default}
+/* diagram */
+.ln{stroke:rgba(201,162,76,.28);stroke-width:1.3;fill:none}
+.ln.hi{stroke:#E3BE84;stroke-width:2.2}
+.pt circle{fill:#141a2c;stroke:rgba(201,162,76,.35);stroke-width:1.4;transition:fill .3s,stroke .3s}
+.pt text{fill:rgba(255,255,255,.25);font:600 15px 'Noto Sans Georgian',Arial,sans-serif;text-anchor:middle;dominant-baseline:central;transition:fill .3s}
+.pt .lb{font:400 10px 'Noto Sans Georgian',Arial,sans-serif;fill:rgba(170,178,196,.0)}
+.pt.known circle{stroke:rgba(201,162,76,.6)}
+.pt.known text{fill:#e9e2cf}
+.pt.hi circle{fill:#3a2c0e;stroke:#FFD36A;stroke-width:2.4}
+.pt.hi text{fill:#FFF3C4}
+.pt.hi .lb{fill:#FFD36A}
+.pt.src circle{stroke:#7ec8ff;stroke-width:2.2}
+.pt.src text{fill:#cfeaff}
+table.ck{width:100%;border-collapse:separate;border-spacing:0 3px;margin-top:16px;font-size:13px}
+table.ck th{font-weight:400;font-size:11px;letter-spacing:.08em;color:#B8894A;padding:4px 8px;text-align:center}
+table.ck th:first-child{text-align:left}
+table.ck td{padding:7px 8px;text-align:center;font-weight:600;transition:opacity .3s,box-shadow .3s}
+table.ck td:first-child{text-align:left;font-weight:500;border-radius:8px 0 0 8px}
+table.ck td:last-child{border-radius:0 8px 8px 0}
+table.ck tr.dim td{opacity:1}
+table.ck tr.on td{box-shadow:inset 0 0 0 2px #FFD36A}
+table.ck td.q{color:rgba(255,255,255,.55)}
+.row-sahasrara td{background:#5B4A86;color:#F0EAF8}.row-ajna td{background:#3E6C93;color:#EAF2F8}.row-vishudha td{background:#8FB6D4;color:#0B1F33}
+.row-anahata td{background:#5E8F63;color:#0C2110}.row-manipura td{background:#C8A63C;color:#241703}.row-svadhistana td{background:#C07A2C;color:#241100}
+.row-muladhara td{background:#A5453F;color:#F8ECEA}.row-total td{background:#1a2236;color:#F3DDA4}
+.ens{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+a.en{display:flex;align-items:center;gap:9px;border:1px solid rgba(184,137,74,.45);border-radius:12px;padding:7px 12px 7px 7px;text-decoration:none;color:#EDE6D8;background:rgba(201,162,76,.06);transition:background .2s}
+a.en:hover{background:rgba(201,162,76,.18)}
+a.en .nm{display:flex;flex-direction:column;line-height:1.3}
+a.en .nm small{font-size:10.5px;color:#9aa3b6;letter-spacing:.04em}
+a.en .nm span{font-size:13px;color:#F3DDA4}
+a.en b{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#3a2c0e;border:1.5px solid #FFD36A;color:#FFF3C4;font-weight:700;font-size:15px}
+.combo{font-family:'Marcellus SC',serif;font-size:22px;color:#FFE7A0;letter-spacing:.12em;text-align:center;margin:6px 0 2px}
+.combo small{display:block;font-family:'Noto Serif Georgian',serif;font-size:11px;color:#9aa3b6;letter-spacing:.06em}
+.sel{border:1px solid rgba(184,137,74,.45);border-radius:14px;padding:18px}
+.sel .hd{display:flex;gap:14px;align-items:center}
+.sel .dot{flex:0 0 58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 22px Cinzel,serif;color:#fff;border:2px solid}
+.sel h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;color:#E3BE84;line-height:1.3}
+.sel .kk{font-size:12px;color:#9aa3b6;letter-spacing:.06em;margin-top:2px}
+.sel p{font-size:14px;line-height:1.85;color:#e2e5ec;margin:10px 0}
+.sel b{color:#F3DDA4;font-weight:600}
+.zt{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.zt span{font-size:11.5px;border:1px solid rgba(184,137,74,.4);border-radius:999px;padding:2px 9px;color:#d6cbb2}
+.en2{margin-top:12px;border:1px solid rgba(201,162,76,.35);border-radius:12px;padding:12px 14px;background:rgba(201,162,76,.05)}
+.en2 .t{display:flex;align-items:center;gap:10px}.en2 .t b{font:700 18px Cinzel,serif;color:#FFE7A0}
+.en2 .t span{font-size:16px;color:#F3DDA4}.en2 .k{font-size:12.5px;color:#aab2c4;margin-top:4px}
+.en2 p{font-size:13.5px;margin:8px 0 4px}.en2 a{color:#E3BE84;font-size:13px}
+details.art{margin-top:12px;border:1px solid rgba(184,137,74,.3);border-radius:12px}
+details.art summary{cursor:pointer;list-style:none;padding:10px 14px;color:#E3BE84;font-size:13.5px}
+details.art summary::-webkit-details-marker{display:none}
+details.art .in{padding:0 14px 12px;font-size:13.5px;line-height:1.85;color:#e2e5ec}
+.groups{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.grp{border:1px solid rgba(184,137,74,.3);border-radius:14px;padding:12px 14px}
+.grp h3{display:flex;align-items:center;gap:8px;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:13.5px;color:#E3BE84;letter-spacing:.05em;margin-bottom:8px}
+.grp h3 i{width:14px;height:14px;border-radius:50%;border:1.5px solid}
+.grp p{font-size:12.5px;line-height:1.7;color:#aab2c4;margin-bottom:8px}
+.grp .ks{display:flex;flex-wrap:wrap;gap:5px}
+.grp button{background:none;border:1px solid rgba(184,137,74,.4);color:#e9e2cf;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+.grp button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#mx g.pk{cursor:pointer}
+.hint{text-align:center;font-size:12px;color:#9aa3b6;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 8 — ყველა პოზიცია</h1>
+  <div class="sub">მატრიცის ყოველი წრე: სახელი, ფერი, მნიშვნელობა და შენი ენერგია ამ ადგილას</div>
+  <div class="intro">
+    მატრიცის თითოეულ წრეს თავისი <b>სახელი</b> და <b>ფერი</b> აქვს — ფერი გვეუბნება, რა ტიპის წერტილია: იისფერი — ზემოდან მოცემული, ლურჯი — ცნობიერი და სოციალური, წითელი — კარმული და მატერიალური გაკვეთილები, ნარინჯისფერი — ყოველდღიური გამოვლინება, ოქროსფერი — ცენტრი, მწვანე — სურვილები, მუქი — გვარის და დამხმარე წერტილები.
+    <b>დააჭირე ნებისმიერ წრეს</b> — ნახავ, რას ნიშნავს ეს პოზიცია, რომელი ენერგიაა შენთან ამ ადგილას და როგორ იკითხება ის სწორედ აქ.
+  </div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+      <div class="note" id="dnote"></div>
+    </div>
+  </div>
+  <div class="lesson">
+    <div class="fig">
+      <svg id="mx" viewBox="30 30 1140 1140" role="img" aria-label="მატრიცის სქემა"></svg>
+      <div class="hint">დააჭირე წრეს</div>
+    </div>
+    <div><div class="sel" id="sel"></div></div>
+  </div>
+  <div class="groups" id="groups"></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">← გაკვეთილების სია</a><a href="matrix.html">✦ ნახე შენი მატრიცა ✦</a></div>
+</div>
+<script src="matrix_arcana.js"></script>
+<script src="matrix_combos.js"></script>
+<script src="articles.js"></script>
+<script src="matrix_autotext.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),A=window.MX_ARCANA||[];
+function r22(n){while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;}
+function calc(d,m,y){const v={};
+  v.L3=r22(d);v.T3=r22(m);v.R3=r22(y);v.B3=r22(v.L3+v.T3+v.R3);v.Cv=r22(v.L3+v.T3+v.R3+v.B3);
+  v.TL3=r22(v.L3+v.T3);v.TR3=r22(v.T3+v.R3);v.BR3=r22(v.R3+v.B3);v.BL3=r22(v.B3+v.L3);
+  v.RC1=r22(v.TL3+v.TR3+v.BR3+v.BL3);v.RC2=r22(v.RC1+v.Cv);
+  for(const k of ['L','T','R','B']){v[k+'1']=r22(v.Cv+v[k+'3']);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  for(const k of ['TL','TR','BR','BL']){v[k+'1']=r22(v[k+'3']+v.RC1);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  v.G1=r22(v.L1+v.Cv);v.G2=r22(v.T1+v.Cv);
+  v.W2=r22(v.B1+v.R1);v.W1=r22(v.B1+v.W2);v.W3=r22(v.R1+v.W2);
+  return v;}
+/* groups: id, title, fill, stroke, text */
+const G={
+ vi:['იისფერი — ზემოდან მოცემული','#7F77DD','#534AB7','დაბადების დღე და თვე — ის, რაც სულს თავიდანვე მოყვა: პირველი სახე და შთაგონების წყარო.'],
+ bl:['ლურჯი — ცნობიერება და კომუნიკაცია','#2060a8','#0a3878','პიროვნების და ტალანტის შიდა წრეები: როგორ ვაზროვნებთ, ვხედავთ, ვლაპარაკობთ, რა გადავეცით მშობლებისგან.'],
+ rd:['წითელი — მთავარი გაკვეთილები','#E24B4A','#A32D2D','კარმული და მატერიალური გაკვეთილი — ორი უღრმესი ამოცანა, რომლითაც სული ამ ცხოვრებაში მოვიდა.'],
+ or:['ნარინჯისფერი — ყოველდღიური გამოვლინება','#EF9F27','#BA7517','სადაც კარმა და მატერია ყოველდღიურ ქმედებად იქცევა: ურთიერთობებში შესვლა და სამუშაო თვისებები.'],
+ go:['ოქროსფერი — ცენტრი','#FFD700','#BA7517','მთელი მატრიცის გული, ხასიათის ბირთვი და კომფორტის ზონა.'],
+ gr:['მწვანე — სურვილები','#639922','#3B6D11','გულის ჩაკრის წერტილები: რა გვინდა სხეულისთვის და რა — საზოგადოებაში.'],
+ dk:['მუქი — გვარი, კარმის შუა და არხი','rgba(20,14,50,0.92)','rgba(180,160,255,0.75)','გვარის დიაგონალები, კარმული ხაზების შუა წრეები, გვარის ცენტრი და ფულისა და სიყვარულის არხი.']};
+/* key: [name, group, explanation, matrix-page box id (single article), zones] */
+const P={
+ L3:['სავიზიტო ბარათი, უმაღლესი მე','vi','დაბადების დღის ენერგია. ასე გვხედავენ პირველივე წამიდან — ჩვენი პირველი სახე სამყაროსთვის. ეს ის ენერგიაა, რომლითაც ადამიანი „შედის ოთახში“, ჯერ კიდევ სანამ რამეს იტყვის.','l3',['პერსონა','ჩაკრა: საჰასრარა (ფიზიკა)','სულის ძიება']],
+ L2:['ბავშვობის შთაბეჭდილებები, ხედვა','bl','როგორ ვხედავთ სამყაროს და რა შთაბეჭდილებები დაგვიტოვა ბავშვობამ. აქ ჩანს ის, რაც ადრეულ წლებში ჩამოგვიყალიბდა — ზოგჯერ როგორც ძალა, ზოგჯერ როგორც ტრავმა, რომელიც დღესაც მოქმედებს.','l2',['პერსონა','ჩაკრა: აჯნა (ფიზიკა)']],
+ L1:['მშობელი–შვილის ურთიერთობა','bl','რა მივიღეთ მშობლებისგან და რას გადავცემთ შვილებს. ეს წერტილი აჩვენებს მშობლობის სტილს და იმ ენერგიას, რომელიც თაობიდან თაობაში გადადის.','l1',['პერსონა','ჩაკრა: ვიშუდჰა (ფიზიკა)']],
+ T3:['შთაგონება','vi','დაბადების თვის ენერგია. რა გვაძლევს სიცოცხლის ხალისს და ძალას, რა გვაღვიძებს დილით. ეს ზემოდან მოცემული ნიჭია — როცა მას მივყვებით, ენერგია ბუნებრივად მოედინება.','t3',['ტალანტების ზონა','ჩაკრა: საჰასრარა (ენერგია)','სულის ძიება']],
+ T2:['მენტალური უნარები','bl','როგორ ვაზროვნებთ, ვსწავლობთ და ვაანალიზებთ. აქ ჩანს გონების ტიპი — ლოგიკური, ინტუიციური, შემოქმედებითი — და რა ცოდნა გვეძლევა ადვილად.','t2',['ტალანტების ზონა','ჩაკრა: აჯნა (ენერგია)']],
+ T1:['ნიჭი, კომუნიკაცია','bl','როგორ გადავცემთ ჩვენს ნიჭს სხვებს: სიტყვით, საქმით, შემოქმედებით. ეს ტალანტის ის ნაწილია, რომელიც ყოველდღიურად ჩანს — როგორ ვლაპარაკობთ, ვასწავლით, ვზიარებთ.','t1',['ტალანტების ზონა','ჩაკრა: ვიშუდჰა (ენერგია)']],
+ B3:['მთავარი ცხოვრებისეული გაკვეთილი','rd','კარმული კუდის გარე წრე. ენერგია, რომლის პლიუსში გადაყვანაც სულმა წარსულში ვერ მოასწრო. ხშირად თავიდან მინუსში ვლინდება — როგორც განმეორებადი სირთულე — და გაცნობიერების შემდეგ ყველაზე ძლიერ რესურსად იქცევა.','b3',['კარმული კუდი','ჩაკრა: მულადჰარა (ენერგია)','სულის ძიება']],
+ B2:['კარმული კუდის შუა — წარსულის სცენარი','dk','როგორ განვითარდა კარმული ამბავი წარსულში და რა სცენარს ცდილობს ის, რომ გაიმეოროს ახლაც. ერთნაირი სიტუაციები და ადამიანები ცხოვრებაში — სწორედ ამ წერტილის ხმაა.','',['კარმული კუდი']],
+ B1:['როგორ შევდივართ ურთიერთობებში','or','კარმული კუდის შიდა წრე — ახლანდელი გამოვლინება და გასაღები. აქედან იწყება სიყვარულის ხაზი: ეს არის ის, თუ როგორ ვიწყებთ ურთიერთობას, რას ვეძებთ და რას მოვიტანთ მასში.','b1',['კარმული კუდი','სიყვარულის ხაზი','ჩაკრა: სვადჰისტანა (ენერგია)']],
+ R3:['მთავარი მატერიალური გაკვეთილი','rd','დაბადების წლის ენერგია. ჩვენი ურთიერთობა ფულთან, მატერიასთან და მიწიერ საყრდენთან — რა უნდა ვისწავლოთ, რომ მატერიალური სამყარო მეგობრად იქცეს.','r3',['მატერიალური კარმა','ჩაკრა: მულადჰარა (ფიზიკა)','სულის ძიება']],
+ R2:['მატერიალური კარმის შუა','dk','როგორ გვიწყობს ცხოვრება მატერიალურ გაკვეთილს: რა სიტუაციებით მოდის ფულის, შრომის და საკუთრების გამოცდები.','',['მატერიალური კარმა']],
+ R1:['რა თვისებები გვჭირდება სამუშაოში','or','მატერიალური კარმის შიდა წრე. ის თვისებები, რომლებიც სამუშაოში წარმატებას მოგვიტანს — და აქედან იწყება ფულის ხაზი.','r1',['მატერიალური კარმა','ფულის ხაზი','ჩაკრა: სვადჰისტანა (ფიზიკა)']],
+ Cv:['კომფორტის ზონა, ხასიათის ბირთვი','go','ყველა ხაზის შეხვედრის ადგილი. ენერგია, რომელშიც თავს ყველაზე ბუნებრივად ვგრძნობთ, სადაც ძალა გვიბრუნდება. ის თითქმის ყოველთვის ჩანს ხასიათში — პლიუსში მთელ მატრიცას აძლიერებს, მინუსში — ამძიმებს.','comfort',['ცენტრი','ჩაკრა: მანიპურა','სექსუალურობა']],
+ G1:['ფიზიკური სურვილები','gr','რა სჭირდება სხეულს და პირად ცხოვრებას, რომ კომფორტულად ვიყოთ: სიამოვნება, სიახლოვე, ყოველდღიური ბედნიერება.','g1',['ჩაკრა: ანაჰატა (ფიზიკა)']],
+ G2:['სოციალური სურვილები','gr','რა გვინდა საზოგადოებაში: აღიარება, როლი, ადგილი ადამიანებს შორის. ეს სურვილები გვამოძრავებს გარე სამყაროში.','g2',['ჩაკრა: ანაჰატა (ენერგია)']],
+ RC1:['გვარის ცენტრი','dk','ოთხივე გვარის დიაგონალის ჯამი — მთელი გვარის ენერგიის შეხვედრის წერტილი. ის ცენტრთან ერთად სექსუალურობის და სასიცოცხლო ძალის ზონას ქმნის.','',['სექსუალურობა','გვარის ხაზები']],
+ RC2:['გვარის ცენტრი + ცენტრი','dk','RC1 და ცენტრის ჯამი: როგორ ერწყმის გვარის ძალა პირად ბირთვს — ვნება, შემოქმედებითი ენერგია, გვარის გაგრძელების ძალა.','',['სექსუალურობა']],
+ TL3:['ნიჭი მამის ხაზით — გარე','dk','ზედა მარცხენა დიაგონალი, მამაკაცის ხაზი. მამის მხარის წინაპრების უმთავრესი ნიჭი და ძალა, რომელიც ჩვენამდე მოვიდა.','',['ნიჭები კაცის ხაზით','მამაკაცის ხაზი','სოციალიზაცია']],
+ TL2:['ნიჭი მამის ხაზით — შუა','dk','როგორ გარდაიქმნება მამის გვარის ნიჭი ჩვენს ცხოვრებაში.','',['ნიჭები კაცის ხაზით']],
+ TL1:['ნიჭი მამის ხაზით — შიდა','dk','როგორ ვიყენებთ მამის გვარის ძალას ყოველდღიურად.','',['ნიჭები კაცის ხაზით']],
+ TR3:['ნიჭი დედის ხაზით — გარე','dk','ზედა მარჯვენა დიაგონალი, ქალის ხაზი. დედის მხარის წინაპრების უმთავრესი ნიჭი და ძალა.','',['ნიჭები ქალის ხაზით','ქალის ხაზი','სოციალიზაცია']],
+ TR2:['ნიჭი დედის ხაზით — შუა','dk','როგორ გარდაიქმნება დედის გვარის ნიჭი ჩვენს ცხოვრებაში.','',['ნიჭები ქალის ხაზით']],
+ TR1:['ნიჭი დედის ხაზით — შიდა','dk','როგორ ვიყენებთ დედის გვარის ძალას ყოველდღიურად.','',['ნიჭები ქალის ხაზით']],
+ BR3:['მამის ხაზის კარმა — გარე','dk','ქვედა მარჯვენა დიაგონალი, მამაკაცის ხაზის გაგრძელება. რა ამოცანა ვერ გადაწყვიტეს მამის მხარის წინაპრებმა — ხშირად ოჯახში განმეორებადი სცენარი.','',['კაცი წინაპრების კარმა','მამაკაცის ხაზი','სოციალიზაცია']],
+ BR2:['მამის ხაზის კარმა — შუა','dk','როგორ ვლინდება მამის გვარის კარმა ჩვენს ცხოვრებაში.','',['კაცი წინაპრების კარმა']],
+ BR1:['მამის ხაზის კარმა — შიდა','dk','რა ყოველდღიურ ქმედებაში ვხსნით მამის გვარის კარმას.','',['კაცი წინაპრების კარმა']],
+ BL3:['დედის ხაზის კარმა — გარე','dk','ქვედა მარცხენა დიაგონალი, ქალის ხაზის გაგრძელება. რა ამოცანა ვერ გადაწყვიტეს დედის მხარის წინაპრებმა.','',['ქალი წინაპრების კარმა','ქალის ხაზი','სოციალიზაცია']],
+ BL2:['დედის ხაზის კარმა — შუა','dk','როგორ ვლინდება დედის გვარის კარმა ჩვენს ცხოვრებაში.','',['ქალი წინაპრების კარმა']],
+ BL1:['დედის ხაზის კარმა — შიდა','dk','რა ყოველდღიურ ქმედებაში ვხსნით დედის გვარის კარმას.','',['ქალი წინაპრების კარმა']],
+ W1:['♥ როგორი პარტნიორი გვიხდება','dk','სიყვარულის ხაზის შუა წერტილი. აღწერს ადამიანს, რომელთანაც ურთიერთობა ჰარმონიულად აეწყობა — მის ხასიათს და ენერგიას.','heart',['სიყვარულის ხაზი']],
+ W2:['არხის ცენტრი — სიყვარული და ფული','dk','B1–R1 არხის შუა, სადაც სიყვარული და ფული ხვდება ერთმანეთს. იგივე რიცხვია, რაც სვადჰისტანას ემოცია ჩაკრების ცხრილში: სიამოვნების და მიღების უნარი.','',['სიყვარულის ხაზი','ფულის ხაზი','ჩაკრა: სვადჰისტანა (ემოცია)']],
+ W3:['₾ როგორი სამსახური გვიხდება','dk','ფულის ხაზის შუა წერტილი. რა სახის საქმე და სამუშაო გარემო მოიტანს ფულს ყველაზე ბუნებრივად.','gel',['ფულის ხაზი']]};
+/* ── the matrix exactly as matrix.html draws it (same geometry, colours, lines, age ring) ── */
+const cx=600,cy=600,rc_r=60,r1_r=25,r2_r=40,r3_r=64,gap=180;
+const d1=rc_r+gap+r1_r,d2=d1+r1_r+r2_r,d3=d2+r2_r+r3_r,sq=Math.sqrt(2)/2;
+const dd1=Math.round(d1*sq),dd2=Math.round((d1+r1_r+r2_r)*sq),dd3=Math.round((d1+r1_r+r2_r+r2_r+r3_r)*sq),outerR=d3+r3_r;
+const dkFill='rgba(20,14,50,0.92)',dkStr='rgba(180,160,255,0.75)';
+const C1f='#4a8cc8',C1s='#1a5090',C2f='#2060a8',C2s='#0a3878';
+const Bx=cx,By=cy+d1,Rx=cx+d1,Ry=cy;
+const Wp=t=>[Math.round(Bx+t*(Rx-Bx)),Math.round(By+t*(Ry-By))];
+/* key → [x, y, r, fill, stroke] */
+const PT={
+ Cv:[cx,cy,rc_r,'#FFD700','#BA7517'],
+ G1:[cx-rc_r-gap/2,cy,r1_r,'#639922','#3B6D11'],G2:[cx,cy-rc_r-gap/2,r1_r,'#639922','#3B6D11'],
+ T1:[cx,cy-d1,r1_r,C1f,C1s],T2:[cx,cy-d2,r2_r,C2f,C2s],T3:[cx,cy-d3,r3_r,'#7F77DD','#534AB7'],
+ L1:[cx-d1,cy,r1_r,C1f,C1s],L2:[cx-d2,cy,r2_r,C2f,C2s],L3:[cx-d3,cy,r3_r,'#7F77DD','#534AB7'],
+ B1:[cx,cy+d1,r1_r,'#EF9F27','#BA7517'],B2:[cx,cy+d2,r2_r,dkFill,dkStr],B3:[cx,cy+d3,r3_r,'#E24B4A','#A32D2D'],
+ R1:[cx+d1,cy,r1_r,'#EF9F27','#BA7517'],R2:[cx+d2,cy,r2_r,dkFill,dkStr],R3:[cx+d3,cy,r3_r,'#E24B4A','#A32D2D'],
+ RC1:[cx+rc_r+r2_r,cy,r2_r,dkFill,dkStr],RC2:[cx+rc_r+r2_r*2+r1_r,cy,r1_r,dkFill,dkStr],
+ TL1:[cx-dd1,cy-dd1,r1_r,dkFill,dkStr],TL2:[cx-dd2,cy-dd2,r2_r,dkFill,dkStr],TL3:[cx-dd3,cy-dd3,r3_r,dkFill,dkStr],
+ TR1:[cx+dd1,cy-dd1,r1_r,dkFill,dkStr],TR2:[cx+dd2,cy-dd2,r2_r,dkFill,dkStr],TR3:[cx+dd3,cy-dd3,r3_r,dkFill,dkStr],
+ BL1:[cx-dd1,cy+dd1,r1_r,dkFill,dkStr],BL2:[cx-dd2,cy+dd2,r2_r,dkFill,dkStr],BL3:[cx-dd3,cy+dd3,r3_r,dkFill,dkStr],
+ BR1:[cx+dd1,cy+dd1,r1_r,dkFill,dkStr],BR2:[cx+dd2,cy+dd2,r2_r,dkFill,dkStr],BR3:[cx+dd3,cy+dd3,r3_r,dkFill,dkStr],
+ W1:[...Wp(.25),r1_r,dkFill,dkStr],W2:[...Wp(.5),r1_r,dkFill,dkStr],W3:[...Wp(.75),r1_r,dkFill,dkStr]};
+
+let V=calc(15,5,1990),cur='Cv';
+function art(k){const id=P[k][3];if(!id)return '';const n=V[k];try{const db=window.MATRIX_DB||{},x=((db[id]||{}).singles||{})[String(n)],t=x&&String(x.text||'');
+  if(t&&t.replace(/<[^>]+>|&nbsp;|\s/g,''))return t;return typeof window.autoSingle==='function'?(window.autoSingle(id,n)||''):'';}catch(e){return '';}}
+function sel(){const k=cur,p=P[k],g=G[p[1]],n=V[k],a=A[n-1]||{},t=art(k);
+  $('sel').innerHTML=`<div class="hd"><div class="dot" style="background:${g[1]};border-color:${g[2]}">${n}</div><div><h2>${p[0]}</h2><div class="kk">${k} · ${g[0]}</div></div></div>
+   <div class="zt">${p[4].map(z=>`<span>${z}</span>`).join('')}</div>
+   <p>${p[2]}</p>
+   <div class="en2"><div class="t"><b>${n}</b><span>${a.t||''}</span></div><div class="k">${a.k||''}</div><p>${a.e||''}</p><a href="course_matrix4.html#${n}">→ ენერგია ${n} სრულად (გაკვეთილი 4)</a></div>
+   ${t?`<details class="art" open><summary>${p[0]} = ${n} — სტატია მატრიცის გვერდიდან</summary><div class="in">${t}</div></details>`:''}`;}
+function groups(){$('groups').innerHTML=Object.entries(G).map(([gid,g])=>{const ks=Object.keys(P).filter(k=>P[k][1]===gid);
+  return `<div class="grp"><h3><i style="background:${g[1]};border-color:${g[2]}"></i>${g[0]}</h3><p>${g[3]}</p><div class="ks">${ks.map(k=>`<button type="button" data-k="${k}" class="${k===cur?'on':''}">${k} · ${V[k]}</button>`).join('')}</div></div>`;}).join('');}
+function draw(){const svg=$('mx');let h='';
+  const ln=(x1,y1,x2,y2,c,w)=>{h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}"/>`;};
+  h+=`<polygon points="${cx},${cy-2*dd1} ${cx+2*dd1},${cy} ${cx},${cy+2*dd1} ${cx-2*dd1},${cy}" fill="none" stroke="rgba(127,119,221,0.9)" stroke-width="1.5"/>`;
+  h+=`<rect x="${cx-d1}" y="${cy-d1}" width="${d1*2}" height="${d1*2}" fill="none" stroke="rgba(220,200,255,0.9)" stroke-width="1.5"/>`;
+  const lc='rgba(220,200,255,0.75)',xE=d3+r3_r;
+  ln(cx-xE,cy,cx+xE,cy,lc,.8);ln(cx,cy-xE,cx,cy+xE,lc,.8);ln(cx,cy+d1,cx+d1,cy,lc,.8);
+  ln(cx+dd1,cy-dd1,cx-dd1,cy+dd1,'rgba(255,120,120,1)',1.5);ln(cx-dd1,cy-dd1,cx+dd1,cy+dd1,'rgba(210,110,255,1)',1.5);
+  h+=`<text x="670" y="493" font-size="13" font-weight="600" fill="rgba(255,130,130,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(-45,670,493)">ქალის ხაზი</text>`;
+  h+=`<text x="529" y="493" font-size="13" font-weight="600" fill="rgba(200,130,255,0.95)" font-family="Noto Sans Georgian,sans-serif" text-anchor="middle" transform="rotate(45,529,493)">მამაკაცის ხაზი</text>`;
+  h+=`<circle cx="${cx}" cy="${cy}" r="${outerR}" fill="none" stroke="rgba(180,160,255,0.95)" stroke-width="2.5"/>`;
+  const aA=[180,225,270,315,0,45,90,135];
+  for(let s=0;s<8;s++){for(let d=0;d<7;d++){const a=(aA[s]+45*(d+1)/8)*Math.PI/180,mid=d===3;
+      h+=`<circle cx="${Math.round(cx+outerR*Math.cos(a))}" cy="${Math.round(cy+outerR*Math.sin(a))}" r="${mid?7:5}" fill="${mid?'#FFD700':'rgba(200,180,255,0.95)'}"/>`;}
+    const a=aA[s]*Math.PI/180;h+=`<circle cx="${Math.round(cx+(outerR+24)*Math.cos(a))}" cy="${Math.round(cy+(outerR+24)*Math.sin(a))}" r="7" fill="#FFD700" stroke="#a87f00"/>`;}
+  for(const k in PT){const [x,y,r,f,sk]=PT[k],on=k===cur,fs=Math.max(20,Math.round(r*1.3));
+    h+=`<g class="pk" data-k="${k}">`;
+    if(on)h+=`<circle cx="${x}" cy="${y}" r="${r+11}" fill="rgba(255,211,106,.18)" stroke="#FFD36A" stroke-width="4"><animate attributeName="r" values="${r+8};${r+14};${r+8}" dur="1.8s" repeatCount="indefinite"/></circle>`;
+    h+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${sk}" stroke-width="1.5"/>`+
+       `<text x="${x}" y="${y}" font-size="${fs}" font-weight="700" fill="white" font-family="Cinzel,serif" text-anchor="middle" dominant-baseline="central">${V[k]}</text></g>`;}
+  for(const [k,t,c] of [['W1','♥','#ff6b8a'],['W3','₾','#7ec850']]){const [x,y]=PT[k];h+=`<text x="${x}" y="${y-r1_r-16}" font-size="16" text-anchor="middle" dominant-baseline="central" fill="${c}" transform="rotate(-45,${x},${y-r1_r-16})" pointer-events="none">${t}</text>`;}
+  svg.innerHTML=h;}
+function render(){draw();sel();groups();}
+function pick(k,scroll){if(!P[k])return;cur=k;render();if(scroll&&window.innerWidth<860)$('sel').scrollIntoView({behavior:'smooth',block:'start'});}
+$('mx').addEventListener('click',e=>{const g=e.target.closest('g.pk');if(g)pick(g.dataset.k,true);});
+$('groups').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(b){pick(b.dataset.k,false);$('sel').scrollIntoView({behavior:'smooth',block:'nearest'});}});
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100)){$('dnote').textContent='შეიყვანე სწორი თარიღი';return;}
+  V=calc(d,m,y);$('dnote').textContent=`მაგალითი: ${String(d).padStart(2,'0')}.${String(m).padStart(2,'0')}.${y}`;render();}
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));
+upd();
+try{if(window.ART)window.ART.load('matrix').then(()=>{window.ART._apply('matrix');sel();}).catch(()=>{});}catch(e){}
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
