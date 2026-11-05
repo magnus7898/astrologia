@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 11</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.lines{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
+@media(max-width:860px){.lines{grid-template-columns:1fr}}
+.ln{border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.ln h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:17px;color:#E3BE84;letter-spacing:.04em}
+.ln .f{font-size:12px;color:#9aa3b6;margin-top:2px}
+.ln p{font-size:13.5px;line-height:1.8;color:#e2e5ec;margin-top:8px}
+.ci{display:flex;align-items:center;justify-content:center;gap:34px;margin:14px 0 26px}
+.ci .col{display:flex;flex-direction:column;gap:16px}
+.c{width:52px;height:52px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1.5px solid rgba(180,160,255,.75);background:rgba(20,14,50,.92);cursor:pointer;color:#fff;font:700 18px Cinzel,serif;position:relative}
+.c small{position:absolute;bottom:-17px;font:400 10px 'Noto Sans Georgian',sans-serif;color:#aab2c4;white-space:nowrap}
+.c.big{width:70px;height:70px;font-size:24px;background:#3a2c0e;border-color:#FFD36A}
+.c.on{box-shadow:0 0 0 3px rgba(255,211,106,.55)}
+.c.m{border-color:rgba(210,110,255,.9)}.c.w{border-color:rgba(255,120,120,.9)}
+.mis{margin-top:16px;border:1px solid rgba(255,211,106,.45);border-radius:14px;padding:14px 16px;text-align:center}
+.mis h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:18px;color:#FFE7A0}
+.mis p{font-size:13.5px;line-height:1.8;color:#e2e5ec;max-width:760px;margin:8px auto}
+.mis .ci{margin-bottom:18px}
+#pd{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#pd .hd{display:flex;gap:14px;align-items:center}
+#pd .big{width:64px;height:64px;border-radius:50%;border:2px solid #C9A24C;display:flex;align-items:center;justify-content:center;font:700 26px Cinzel,serif;color:#FFE7A0;flex:0 0 auto}
+#pd h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:21px;color:#E3BE84}
+#pd .kk{font-size:12.5px;color:#9aa3b6}
+#pd p,#pd li{font-size:14px;line-height:1.85;color:#e2e5ec}
+#pd p{margin-top:10px}#pd ul{padding-left:20px;margin-top:6px}
+#pd .fr{margin-top:12px;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:13.5px;line-height:1.8}
+#pd a{color:#E3BE84}
+.calc{font-size:12.5px;color:#cfd5e2;margin-top:8px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 11 — დანიშნულებები</h1>
+  <div class="sub">სულის ძიება, სოციალიზაცია და სულიერი ცოდნა — როგორ ვითვლით და რას ნიშნავს თითოეული წერტილი</div>
+  <div class="intro">
+    მატრიცის ოთხი დიდი ხაზი — ვერტიკალი, ჰორიზონტალი და ორი დიაგონალი — ერთად <b>ადამიანის დანიშნულებას</b> აჩვენებს (<a href="course_matrix1.html">გაკვეთილი 1</a>). ორი სწორი ხაზი — <b>სულის ძიებაა</b> (პირადი დანიშნულება), ორი დიაგონალი — <b>სოციალიზაცია</b> (სოციალური დანიშნულება), მათი ჯამი კი — <b>სულიერი ცოდნა</b>, უმაღლესი მისია.
+    დააჭირე ნებისმიერ წრეს — ნახავ, რას ნიშნავს ეს პოზიცია და შენი ენერგია მასში.
+  </div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+  </div>
+  <div class="lines" id="lines"></div>
+  <div class="mis" id="mis"></div>
+  <div id="pd"></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">← გაკვეთილების სია</a><a href="matrix.html">✦ ნახე შენი მატრიცა ✦</a></div>
+</div>
+<script src="matrix_arcana.js"></script>
+<script src="matrix_arcana_x.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),A=window.MX_ARCANA||[],X=window.MX_ARCANA_X||{};
+const r22=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
+/* key: [name, formula, line, cls, what the position means] */
+const P={
+ sky:['ცა','T3 + B3','soul','','ვერტიკალი — ცა და მიწა ერთ ხაზზე. „ცა“ სულიერი მხარეა: რისკენ მიიწევს სული, რა იდეალს ეძებს, რა აძლევს ცხოვრებას აზრს ზემოდან. ეს ენერგია გვეუბნება, საიდან მოდის შინაგანი მოწოდება.'],
+ earth:['მიწა','L3 + R3','soul','','ჰორიზონტალი — პიროვნება და მატერია. „მიწა“ მატერიალური მხარეა: რით ვაშენებთ ცხოვრებას ხელშესახებად — სხეული, ფული, სახლი, უნარები. ეს ენერგია აჩვენებს, როგორ უნდა „დავამიწოთ“ სულის მოწოდება.'],
+ soul:['პირადი დანიშნულება','ცა + მიწა','soul','big','სულის ძიების ჯამი — პირადი დანიშნულება 40 წლამდე. ეს არის ის, რაც ადამიანმა საკუთარი თავისთვის უნდა იპოვოს: ცის და მიწის, სულის და მატერიის შეერთება ერთ ცხოვრებად. როცა ეს ენერგია პლიუსშია, ადამიანი გრძნობს, რომ „თავის ადგილზეა“.'],
+ male:['მამაკაცის ხაზი','TL3 + BR3','soc','m','მამის მხარის გვარის ხაზი — ნიჭი (TL3) და კარმა (BR3) ერთად. აჩვენებს, რა სოციალურ როლს და მოქმედების სტილს გვთავაზობს მამის გვარი: როგორ ვაღწევთ, ვიცავთ, ვხელმძღვანელობთ.'],
+ female:['ქალის ხაზი','TR3 + BL3','soc','w','დედის მხარის გვარის ხაზი — ნიჭი (TR3) და კარმა (BL3) ერთად. აჩვენებს, რა მოგვცა დედის გვარმა ურთიერთობებისთვის: როგორ ვზრუნავთ, ვიღებთ, ვქმნით სითბოს ადამიანებს შორის.'],
+ soc:['სოციალური დანიშნულება','მამაკაცი + ქალი','soc','big','სოციალიზაციის ჯამი — სოციალური დანიშნულება, 40-დან 60 წლამდე. რა როლი უნდა შევასრულოთ საზოგადოებაში და გვარში: რას ვაძლევთ სხვებს, როგორ ვრეალიზდებით ადამიანებს შორის.'],
+ mis:['სულიერი დანიშნულება','პირადი + სოციალური','mis','big','უმაღლესი მისია, 60 წლის შემდეგ და მთელი ცხოვრების გასწვრივ. ის აერთიანებს პირადს და სოციალურს: რისთვის მოვიდა სული ამ ცხოვრებაში, რა სიბრძნე უნდა დააგროვოს და გადასცეს.']};
+let V={},cur='soul';
+function calc(d,m,y){const L3=r22(d),T3=r22(m),R3=r22(y),B3=r22(L3+T3+R3),TL3=r22(L3+T3),TR3=r22(T3+R3),BR3=r22(R3+B3),BL3=r22(B3+L3);
+  const v={L3,T3,R3,B3,TL3,TR3,BR3,BL3};v.sky=r22(T3+B3);v.earth=r22(R3+L3);v.soul=r22(v.sky+v.earth);
+  v.male=r22(TL3+BR3);v.female=r22(TR3+BL3);v.soc=r22(v.male+v.female);v.mis=r22(v.soul+v.soc);return v;}
+const SL={sky:'ცა',earth:'მიწა',soul:'პირადი',male:'მამაკაცი',female:'ქალი',soc:'სოციალური',mis:'სულიერი'};
+const C=k=>`<div class="c ${P[k][3]}${k===cur?' on':''}" data-k="${k}">${V[k]}<small>${SL[k]}</small></div>`;
+function sum(a,b,k){const s=V[a]+V[b];return `${P[k][0]}: ${V[a]} + ${V[b]} = ${s}${s>22?' → '+V[k]:''}`;}
+function render(){
+  $('lines').innerHTML=`<div class="ln"><h2>სულის ძიება</h2><div class="f">პირადი დანიშნულება · 20–40 წელი</div>
+     <div class="ci"><div class="col">${C('sky')}<div style="height:6px"></div>${C('earth')}</div>${C('soul')}</div>
+     <div class="calc">${sum('T3','B3','sky')}<br>${sum('R3','L3','earth')}<br>${sum('sky','earth','soul')}</div>
+     <p>რას ეძებს სული საკუთარ თავში: ცის (სულიერის) და მიწის (მატერიალურის) შეხვედრა.</p></div>
+   <div class="ln"><h2>სოციალიზაცია</h2><div class="f">სოციალური დანიშნულება · 40–60 წელი</div>
+     <div class="ci"><div class="col">${C('male')}<div style="height:6px"></div>${C('female')}</div>${C('soc')}</div>
+     <div class="calc">${sum('TL3','BR3','male')}<br>${sum('TR3','BL3','female')}<br>${sum('male','female','soc')}</div>
+     <p>როგორ ვრეალიზდებით ადამიანებს შორის: მამის და დედის გვარის ძალა ერთად.</p></div>
+   <div class="ln"><h2>როგორ ვითვლით</h2><div class="f">ოთხი დიდი ხაზი</div>
+     <p><b style="color:#F3DDA4">ცა</b> = ზედა + ქვედა გარე წრე, <b style="color:#F3DDA4">მიწა</b> = მარცხენა + მარჯვენა გარე წრე. <b style="color:#d28aff">მამაკაცის ხაზი</b> = ზედა მარცხენა + ქვედა მარჯვენა დიაგონალი, <b style="color:#ff8c8c">ქალის ხაზი</b> = ზედა მარჯვენა + ქვედა მარცხენა.</p>
+     <p>ყველა ჯამი 22-მდე დაიყვანება. ბოლოს ორივე ჯამი ერთიანდება — <b style="color:#FFE7A0">სულიერ ცოდნად</b>.</p></div>`;
+  $('mis').innerHTML=`<h2>სულიერი ცოდნა — უმაღლესი მისია</h2><div class="ci">${C('mis')}</div><div class="calc">${sum('soul','soc','mis')}</div>
+     <p>რისთვის მოვიდა სული: პირადი და სოციალური დანიშნულება ერთ გზად. ეს ენერგია ცხოვრების მეორე ნახევარში იხსნება ყველაზე სრულად.</p>`;
+  pd();}
+function pd(){const k=cur,p=P[k],n=V[k],a=A[n-1]||{},x=X[n]||{};
+  let extra='';
+  if(k==='soul'&&x.sd)extra=`<div class="fr"><b>რა უნდა გააკეთო:</b><ul>${x.sd.d.map(t=>`<li>${t}</li>`).join('')}</ul><b>რაზე თქვი უარი:</b><ul>${x.sd.n.map(t=>`<li>${t}</li>`).join('')}</ul></div>`;
+  else if(k==='soc')extra=`<div class="fr"><b>ნიჭი და როლი საზოგადოებაში:</b> ${a.tal||''}<br><b>სფეროები:</b> ${a.pr||''}</div>`;
+  else if(k==='mis'&&x.dp)extra=`<div class="fr"><b>სულიერი გზა:</b> ${x.dp}</div>`;
+  else extra=`<div class="fr"><b>${n} — ${a.t||''}</b> ამ წერტილში: ${a.e||''}</div>`;
+  $('pd').innerHTML=`<div class="hd"><div class="big">${n}</div><div><h2>${p[0]} — ${a.t||''}</h2><div class="kk">${p[1]} · ${a.k||''}</div></div></div>
+   <p>${p[4]}</p>${extra}
+   <p style="font-size:13px"><a href="course_matrix4.html#${n}">→ ენერგია ${n} სრულად (გაკვეთილი 4)</a></p>`;}
+document.addEventListener('click',e=>{const c=e.target.closest('.c[data-k]');if(!c)return;cur=c.dataset.k;render();$('pd').scrollIntoView({behavior:'smooth',block:'nearest'});});
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100))return;V=calc(d,m,y);render();}
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));upd();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
