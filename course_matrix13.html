@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 13</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.jobs{display:flex;flex-wrap:wrap;gap:6px}.jobs span{border:1px solid rgba(126,200,80,.45);border-radius:999px;padding:4px 11px;font-size:13px;color:#dff3d2}
+.jobs span.x{background:rgba(126,200,80,.2);border-color:#7ec850;color:#fff}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 13 — სიყვარულის და ფულის ხაზები</h1>
+  <div class="sub">ფულისა და სიყვარულის არხის ყველა კომბინაცია — და პროფესიები ფულის ხაზის მიხედვით</div>
+  <div class="intro">მატრიცის ქვედა მარჯვენა მხარეს, B1-დან R1-მდე, <b>ფულისა და სიყვარულის არხი</b> გადის (<a href="course_matrix5.html">გაკვეთილი 5</a>). მისი ორი ნახევარი ორ ცალკე ხაზს ქმნის: <b>სიყვარულის ხაზს</b> (B1 · W1 · W2) და <b>ფულის ხაზს</b> (R1 · W3 · W2). ორივე ხაზი ერთ ცენტრში — W2-ში — ხვდება: ფული და სიყვარული ორივე „მიღების“ უნარია, ამიტომ ერთი მეორეს ყოველთვის ეხმიანება.
+    ქვემოთ ორივე ხაზის <b>ყველა კომბინაციაა</b>, რომელიც რეალურად გვხვდება, სახელით და სტატიით, როგორც მატრიცის გვერდზე. ფულის ხაზს — <b>პროფესიებიც</b>.</div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+  </div>
+  <div id="cl-tabs"></div>
+  <div id="cl-about"></div>
+  <div class="tools"><div id="cl-f"></div><input id="cl-q" type="search" placeholder="ძებნა: კოდი ან სახელი"></div>
+  <div id="cl-grid"></div>
+  <div id="cl-det"></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">← გაკვეთილების სია</a><a href="matrix.html">✦ ნახე შენი მატრიცა ✦</a></div>
+</div>
+<script src="matrix_arcana.js"></script>
+<script src="matrix_pos.js"></script>
+<script src="matrix_combo_sets.js"></script>
+<script src="matrix_combos.js"></script>
+<script src="articles.js"></script>
+<script src="matrix_autotext.js"></script>
+<script>
+window.CL={zones:[
+ {set:'love',db:'love',title:'სიყვარულის ხაზი ♥',keys:['B1','W1','W2'],pos:['როგორ შევდივართ ურთიერთობაში','როგორი პარტნიორი გვიხდება','არხის ცენტრი'],color:'#ff6b8a',
+  about:'B1-დან არხის ცენტრამდე — პირადი ურთიერთობების ხაზი. B1 აჩვენებს, როგორ ვიწყებთ ურთიერთობას და რას მოვიტანთ მასში; W1 — როგორი ადამიანი გვიხდება, რა ენერგიის პარტნიორთან აეწყობა ურთიერთობა ჰარმონიულად; W2 — სადაც სიყვარული ფულს ხვდება: სიამოვნების და მიღების უნარი.'},
+ {set:'money',db:'money',title:'ფულის ხაზი ₾',keys:['R1','W3','W2'],pos:['რა თვისებები გვჭირდება სამუშაოში','როგორი სამსახური გვიხდება','არხის ცენტრი'],color:'#7ec850',
+  about:'R1-დან არხის ცენტრამდე — ფულის ხაზი. R1 — თვისებები, რომლებიც სამუშაოში წარმატებას მოგვიტანს; W3 — როგორი საქმე და სამუშაო გარემო მოიტანს ფულს ყველაზე ბუნებრივად; W2 — არხის ცენტრი. ყოველ კომბინაციას ქვემოთ შესაფერისი პროფესიებიც ახლავს — ისინი სამივე ენერგიიდან არის შერჩეული, ყველაზე მეტად კი W3-ზეა დამოკიდებული.'}]};
+window.CL_EXTRA=function(z,ns){if(z.set!=='money')return '';const A=window.MX_ARCANA||[];
+  const L=i=>String((A[ns[i]-1]||{}).pr||'').split(',').map(t=>t.trim()).filter(Boolean);
+  const sc={},src={},add=(i,w)=>L(i).forEach((t,j)=>{sc[t]=(sc[t]||0)+w-j*0.05;(src[t]=src[t]||new Set()).add(i);});
+  add(1,3);add(0,2);add(2,1.5);
+  const top=Object.keys(sc).sort((a,b)=>(src[b].size-src[a].size)||(sc[b]-sc[a])).slice(0,12);
+  return `<div class="cl-art" style="border-top-color:#7ec85066"><h3 style="color:#a6e08a">₾ შესაფერისი პროფესიები</h3>
+   <div class="jobs">${top.map(t=>`<span class="${src[t].size>1?'x':''}">${t}</span>`).join('')}</div>
+   <p style="font-size:12.5px;color:#9aa3b6;margin-top:8px">პროფესიები შერჩეულია სამივე ენერგიიდან: ყველაზე დიდი წონა აქვს W3-ს (როგორი სამსახური გვიხდება), შემდეგ R1-ს და W2-ს. მონიშნულია ის, რაც ერთზე მეტ ენერგიაში მეორდება — ეს ყველაზე ძლიერი მიმართულებებია.</p></div>`;};
+</script>
+<script src="matrix_combo_lesson.js"></script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>

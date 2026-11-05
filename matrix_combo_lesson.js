@@ -45,6 +45,7 @@ function grid(){const z=zone(),qq=q.trim().toLowerCase();
 function show(code,scroll){const z=zone();if(!code||freq(code)==null)return;cur=code;const ns=code.split('-').map(Number),t=article(z,code),pt=window.CL_POSTEXT&&window.CL_POSTEXT(z,ns);
   $('cl-det').innerHTML=`<div class="hd"><div class="code" style="color:${z.color}">${code}</div><div><h2>${title(z,code)||code}</h2><div class="sub2">${z.title} · ${freq(code)}% ადამიანებს${code===MY[zi]?' · <b style="color:#FFD36A">შენი კომბინაცია</b>':''}</div></div></div>
    <div class="cl-three">${ns.map((n,i)=>{const a=A[n-1]||{};return `<a href="course_matrix4.html#${n}" style="border-color:${z.color}55"><div class="t"><span style="background:${z.color}">${n}</span>${z.keys[i]} · ${z.pos[i]}</div><div class="n">${a.t||''}</div><div class="k">${a.k||''}</div>${pt&&pt[i]?`<div class="r">${pt[i]}</div>`:''}</a>`;}).join('')}</div>
+   ${window.CL_EXTRA?(window.CL_EXTRA(z,ns)||''):''}
    ${t?`<div class="cl-art"><h3>${title(z,code)||'აღწერა'}</h3><div>${t}</div></div>`:''}
    <div class="nav"><button type="button" id="cl-pv">←</button><button type="button" id="cl-nx">→</button></div>`;
   const L=codes(),i=L.indexOf(code);$('cl-pv').onclick=()=>show(L[(i+L.length-1)%L.length],true);$('cl-nx').onclick=()=>show(L[(i+1)%L.length],true);
