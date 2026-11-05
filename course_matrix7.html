@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 7</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+h2.sec{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;color:#E3BE84;letter-spacing:.05em;margin:34px 0 12px;text-align:center}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+.res{text-align:center;margin-top:12px;font-size:13.5px;color:#cfd5e2;line-height:1.8}
+.res b{color:#FFE7A0;font-family:Cinzel,serif;font-size:18px}
+.res button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:5px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;margin-left:6px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:760px){.three{grid-template-columns:1fr}}
+.bx{border:1px solid rgba(184,137,74,.3);border-radius:14px;padding:14px 16px}
+.bx h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:14px;letter-spacing:.08em;color:#E3BE84;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.bx p,.bx li{font-size:13.5px;line-height:1.8;color:#e2e5ec}
+.bx p+p{margin-top:6px}
+.bx b{color:#F3DDA4;font-weight:600}
+.cd{flex:0 0 30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font:700 12px Cinzel,serif;color:#fff;border:1.5px solid}
+.cd.b3{background:#E24B4A;border-color:#A32D2D}.cd.b2{background:rgba(20,14,50,.92);border-color:rgba(180,160,255,.75)}.cd.b1{background:#EF9F27;border-color:#BA7517}.cd.r3{background:#E24B4A;border-color:#A32D2D}
+.cd.em{background:#A5453F;border-color:#7a2f2a}
+.red{border-color:rgba(226,75,74,.55);background:rgba(165,69,63,.08)}
+.red h3{color:#ff9a8a}
+.rv{display:flex;align-items:center;gap:10px;margin:10px 0 4px;flex-wrap:wrap}
+.rv a{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(226,75,74,.5);border-radius:999px;padding:4px 12px 4px 4px;color:#F3DDA4;text-decoration:none;font-size:13px}
+.rv a:hover{background:rgba(226,75,74,.15)}
+.rv a i{font-style:normal;width:28px;height:28px;border-radius:50%;background:#E24B4A;display:flex;align-items:center;justify-content:center;color:#fff;font:700 13px Cinzel,serif}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px}
+.tl{position:relative;border:1px solid rgba(184,137,74,.4);border-radius:14px;padding:12px 8px 10px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:transform .15s,border-color .15s,box-shadow .15s}
+.tl:hover{transform:translateY(-2px);border-color:#E3BE84}
+.tl.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.35)}
+.tl.my{background:rgba(226,75,74,.12)}
+.tl .no{font-family:Cinzel,serif;font-size:19px;color:#F3DDA4;letter-spacing:.06em}
+.tl .nm{font-size:12.5px;margin-top:5px;color:#EDE6D8;line-height:1.3}
+.tl .fr{font-size:10.5px;color:#7f889b;margin-top:4px}
+.det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+.det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.det .code{font-family:Cinzel,serif;font-size:30px;color:#FFE7A0;letter-spacing:.08em}
+.det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:23px;color:#E3BE84}
+.det .ess{font-size:15px;line-height:1.85;color:#eef0f4;margin:12px 0 4px}
+.pos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+@media(max-width:760px){.pos{grid-template-columns:1fr}}
+.pos a{display:block;border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.pos a:hover{border-color:#E3BE84}
+.pos .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A;letter-spacing:.05em}
+.pos .n{font-size:15px;color:#F3DDA4;margin-top:6px}
+.pos .k{font-size:12.5px;color:#aab2c4;line-height:1.6;margin-top:3px}
+.pos .r{font-size:13px;color:#e2e5ec;line-height:1.7;margin-top:6px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+.bx.past h3{color:#c9a6ff}.bx.now h3{color:#8fd19a}
+details.full{margin-top:12px;border:1px solid rgba(184,137,74,.3);border-radius:12px}
+details.full summary{cursor:pointer;list-style:none;padding:10px 14px;color:#E3BE84;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:14px;letter-spacing:.05em}
+details.full summary::-webkit-details-marker{display:none}
+details.full .in{padding:0 14px 12px;font-size:13.5px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.tip{font-size:12.5px;color:#9aa3b6;line-height:1.7;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 7 — 26 კარმული კუდი</h1>
+  <div class="sub">მატრიცის ქვედა ხაზი: სამი რიცხვი, რომლებიც წარსულიდან მოტანილ ამოცანაზე მოგვითხრობს — და წითელი წერტილები</div>
+  <div class="intro">
+    <b>კარმული კუდი</b> მატრიცის ქვედა ხაზია — B3, B2, B1 (<a href="course_matrix5.html">გაკვეთილი 5</a>). საინტერესო ფაქტი: რა თარიღიც არ უნდა ავიღოთ, კუდი ყოველთვის <b>26 კომბინაციიდან ერთ-ერთია</b> — 1900-დან 2030 წლამდე ყველა დღე შევამოწმეთ და სხვა კომბინაცია არ გამოჩნდა. ამიტომ თითოეულ კუდს თავისი სახელი და ისტორია აქვს.
+    კუდი იკითხება <b>გარედან შიგნით</b>: B3 – B2 – B1. პირველი ორი რიცხვი წარსულზე მოგვითხრობს, ბოლო — იმაზე, თუ როგორ ვლინდება ის ახლა და სად არის გასაღები.
+  </div>
+
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+    <div class="res" id="res"></div>
+  </div>
+
+  <h2 class="sec">სამი პოზიცია</h2>
+  <div class="three">
+    <div class="bx"><h3><span class="cd b3">B3</span>გარე წრე — წითელი</h3>
+      <p><b>მთავარი ცხოვრებისეული გაკვეთილი.</b> ენერგია, რომლის პლიუსში გადაყვანაც სულმა წარსულში ვერ მოასწრო. ეს ყველაზე ღრმა წერტილია — ის, რაზეც მთელი ცხოვრება „დგას“.</p>
+      <p>ხშირად ადამიანი ამ ენერგიას თავიდან მინუსში ცხოვრობს და მხოლოდ გაცნობიერების შემდეგ ხვდება, რომ სწორედ ეს არის მისი უდიდესი ძალა.</p></div>
+    <div class="bx"><h3><span class="cd b2">B2</span>შუა წრე</h3>
+      <p><b>წარსულის სცენარი.</b> როგორ განვითარდა ამბავი წინა ცხოვრებაში — რა მოხდა, რა შეცდომა დაუშვა ადამიანმა ან რა განიცადა.</p>
+      <p>ეს ენერგია ახლაც ცდილობს ძველი სცენარის გამეორებას: ერთნაირი სიტუაციები, ერთნაირი ხალხი, ერთნაირი არჩევანი. მისი დანახვა წრის გარღვევის პირველი ნაბიჯია.</p></div>
+    <div class="bx"><h3><span class="cd b1">B1</span>შიდა წრე</h3>
+      <p><b>ახლანდელი გამოვლინება და გასაღები.</b> როგორ იჩენს კუდი თავს ამ ცხოვრებაში და რა თვისებით გამოისყიდება. ეს წერტილი ცენტრთან ყველაზე ახლოსაა — ყოველდღიური ქმედების დონე.</p>
+      <p>B1 ასევე აჩვენებს, <b>როგორ შევდივართ ურთიერთობებში</b> — აქედან იწყება სიყვარულის ხაზი.</p></div>
+  </div>
+
+  <h2 class="sec">წითელი ენერგია, წითელი ფიზიკა, წითელი ემოცია</h2>
+  <div class="bx red">
+    <p>მატრიცაში <b>ორი წითელი წრეა</b>: ქვემოთ — <b>B3</b> (კარმული კუდის გარე წრე) და მარჯვნივ — <b>R3</b> (მატერიალური კარმის გარე წრე, დაბადების წელი). ჩაკრების ცხრილში (<a href="course_matrix2.html" style="color:#E3BE84">გაკვეთილი 2</a>) სწორედ ისინი ავსებენ ბოლო, წითელ რიგს — <b>მულადჰარას</b>, ფუძის ჩაკრას:</p>
+    <div class="three" style="margin-top:12px">
+      <div><h3><span class="cd b3">E</span>წითელი ენერგია = B3</h3><p>კარმული საყრდენი — რა ენერგია მოგვყვა წარსულიდან „ფესვებში“. ეს არის ის, რაზეც სხეული და ინსტინქტები დგას: როგორ ვუძლებთ, როგორ ვიცავთ თავს, რისი გვეშინია ყველაზე ღრმად. როცა B3 პლიუსშია, ადამიანს აქვს მტკიცე შინაგანი საფუძველი.</p></div>
+      <div><h3><span class="cd r3">P</span>წითელი ფიზიკა = R3</h3><p>მატერიალური საყრდენი — როგორ ვლინდება ეს ყველაფერი ხელშესახებად: სხეულში, ფულში, სახლში, უსაფრთხოების განცდაში. R3 აჩვენებს, რა მატერიალური გაკვეთილით აშენებს ადამიანი თავის ცხოვრებას მიწაზე.</p></div>
+      <div><h3><span class="cd em">S</span>წითელი ემოცია = B3 + R3</h3><p>როგორ <b>განვიცდით</b> უსაფრთხოებას: სიმშვიდეს თუ შფოთვას, ნდობას თუ შიშს. ეს ემოციური რეაქციაა იმ გამოცდებზე, რომლებიც კარმიდან (B3) და მატერიიდან (R3) მოდის. რიცხვი 22-მდე დაიყვანება.</p></div>
+    </div>
+    <div class="rv" id="red"></div>
+    <p class="tip">ფუძის ჩაკრის რიგი ასე იკითხება: ენერგია – ემოცია – ფიზიკა. ის თითქოს ხიდია კარმულ კუდსა და მატერიალურ კარმას შორის: რაც კარმიდან მოვიდა, ფიზიკაში ვლინდება, ემოცია კი გვეუბნება, როგორ ვცხოვრობთ ამ ორს შორის.</p>
+  </div>
+
+  <h2 class="sec">26 კარმული კუდი</h2>
+  <div class="tip" style="text-align:center">დააჭირე კუდს — გაიხსნება აღწერა. პატარა ციფრი ბარათზე = რამდენად ხშირია ეს კუდი (1900–2030 წლების ყველა დღიდან).</div>
+  <div class="grid" id="grid"></div>
+  <div class="det" id="det"></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">← გაკვეთილების სია</a><a href="matrix.html">✦ ნახე შენი მატრიცა ✦</a></div>
+</div>
+
+<script src="matrix_arcana.js"></script>
+<script src="matrix_combos.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),A=window.MX_ARCANA||[];
+const r22=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
+/* code B3-B2-B1 · title · share of all days 1900–2029 (%) · essence · past · now */
+const T=[
+['10-13-3','სუიციდი',.31,'სიცოცხლის უარყოფის კარმა: სული წარსულში ცხოვრებას ნებით გაექცა ან მას არაფრად აგდებდა.',
+ 'სიცოცხლე შეწყდა ნებით, ან ადამიანი თავს უაზრო რისკში აგდებდა; ნებისმიერი დაბრკოლება გადაულახავად ეჩვენებოდა და დეპრესიაში გადიოდა.',
+ 'ისწავლო სიცოცხლის სიყვარული და დაინახო წინაღობაში შანსი. გასაღები — შექმნა (3): ბავშვები, შემოქმედება, ბაღი, ყველაფერი, რაც ცოცხლობს და იზრდება.'],
+['10-4-21','უუფლებო სული',8.55,'საკუთარ ცხოვრებაზე ძალაუფლების დაკარგვა.',
+ 'ადამიანი სხვის ნებაზე ცხოვრობდა — ქვეშევრდომი, მსახური, დამოკიდებული; პასუხისმგებლობას სხვას აბარებდა და ბედს ემორჩილებოდა.',
+ 'აიღო საკუთარი ცხოვრების საჭე: შენ წყვეტ, შენ აშენებ შენს სამყაროს (21). ახლაც ხშირად ჩნდება ცდუნება, ვინმე „უფროსს“ ანდო გადაწყვეტილებები — სწორედ აქ არის სამუშაო.'],
+['19-22-3','დაუბადებელი ბავშვი',2.25,'ბავშვობის, სიცოცხლის დასაწყისის ჭრილობა.',
+ 'ბავშვი ვერ დაიბადა ან ადრე წავიდა, ან მშობელმა ბავშვზე უარი თქვა; მზე (19) — ბავშვობა და სიხარული — ვერ გაიშალა.',
+ 'შინაგანი ბავშვის მოვლა, სიხარულის და თავისუფლების (22) უფლება, მშობლობის გულით მიღება. მნიშვნელოვანია ბავშვებთან თბილი ურთიერთობა და შემოქმედება.'],
+['11-8-15','მოძალადე',4.24,'ძალის ბოროტად გამოყენება.',
+ 'ძალა (11) სხვებზე ძალადობისთვის, სისასტიკისთვის, კანონის (8) გადალახვისთვის იყო გამოყენებული; ვნებები და აგრესია (15) მართავდა.',
+ 'ისწავლო ძალის მართვა: სიმტკიცე — სისასტიკის გარეშე, სამართლიანობა — შურისძიების გარეშე. სპორტი, ცხოველებზე ზრუნვა და სუსტების დაცვა კარმას ხურავს.'],
+['11-17-6','დაკარგული ნიჭი',4.38,'ნიჭი, რომელიც წარსულში მიწაში ჩაიფლა.',
+ 'ადამიანს ჰქონდა დიდი ნიჭი (17), მაგრამ ვერ გამოიყენა — აუკრძალეს, შეეშინდა ან სხვა გზა აირჩია.',
+ 'ნიჭის აღმოჩენა და გაზიარება სიყვარულით (6). ძალა (11) ახლა ითხოვს, რომ ნიჭი არ დაიმალოს — სცადე, აჩვენე, ისწავლე.'],
+['20-8-6','გვარის ღალატი',2.48,'გვართან კავშირის გაწყვეტა.',
+ 'ადამიანმა მიატოვა ოჯახი, უარყო ფესვები ან გვარის ინტერესები პირადს შესწირა; უსამართლობა (8) ოჯახის მიმართ.',
+ 'გვარის მიღება და მისი ისტორიის პატივისცემა, ურთიერთობის აღდგენა, ოჯახის შეკრება. სიყვარული (6) ნათესავებისადმი — მაშინაც, როცა ძნელია.'],
+['3-12-9','მარტოხელა ქალი',4.28,'ქალური ენერგიის და კავშირის უარყოფა, მარტოობის არჩევანი.',
+ 'ადამიანი მარტოობაში ცხოვრობდა, ხშირად ქალი, რომელმაც ვერ მიიღო საკუთარი ქალურობა ან დაკარგვის შემდეგ სამყაროს ჩაეკეტა.',
+ 'მიიღოს ქალური ენერგია (3) — ზრუნვა, სილამაზე, ნაყოფიერება — და გამოვიდეს იზოლაციიდან. მარტოობა (9) სიბრძნისთვის კი, მაგრამ არა სამყაროსგან დასამალად.'],
+['12-3-18','ფიზიკური ტანჯვა',4.11,'სხეულის ტანჯვის და შეზღუდვის კარმა.',
+ 'ავადმყოფობა, ინვალიდობა ან ფიზიკური ზღუდვა (12), რომელიც შიშებად და ილუზიებად (18) დარჩა.',
+ 'სხეულის მიღება და მოვლა, შიშებისგან გათავისუფლება. ქალური ზრუნვა (3) — საკუთარ თავზეც და სხვებზეც; ხშირად ასეთი ადამიანები თავად ხდებიან მკურნალები.'],
+['21-3-9','ჯალათი, ზედამხედველი',2.72,'სხვების თავისუფლების წართმევა.',
+ 'დესპოტი ან ზედამხედველი, რომელიც თვლიდა, რომ მხოლოდ მას აქვს ჭეშმარიტება, და სხვების შეზღუდვაში ფარულ სიამოვნებას გრძნობდა.',
+ 'სიმკაცრის ნაცვლად მზრუნველობა (3), სხვების გზის და თავისუფლების პატივისცემა, სიბრძნე (9), რომელიც არ იძულებს.'],
+['4-16-12','იმპერატორი',6.73,'ძალაუფლების და კონტროლის კარმა.',
+ 'ძალაუფლება (4) ამპარტავნებად იქცა და დაეცა (16) — მმართველი, რომელიც სხვებს ჩაგრავდა.',
+ 'ლიდერობა, რომელიც ემსახურება და არ ჩაგრავს. ახლა ადამიანი ხშირად ეჯიბრება სხვებს — სამუშაოა შეჯიბრის ნაცვლად თანამშრომლობა და სხვის თვალით დანახვა (12).'],
+['13-7-21','მასობრივი სიკვდილი',1.43,'დიდი დანაკარგის ან ომის მძიმე კარმა.',
+ 'ადამიანი ომის, ეპიდემიის ან დიდი კატასტროფის მონაწილე იყო — მეთაური, რომელმაც ბევრი სიცოცხლე შესწირა, ან მოწმე.',
+ 'სიცოცხლის პატივისცემა, სხვებისთვის დახმარება და მკურნალობა, მშვიდობა (21). ცვლილებებისადმი (13) შიში — სამუშაო მასალაა.'],
+['22-7-3','თავისუფლება წართმეული სული',2.95,'ტყვეობის და შებოჭილობის გამოცდილება.',
+ 'ციხე, ტყვეობა, ჩაკეტილი ცხოვრება — სული (22) თავისუფლებას მოკლებული იყო.',
+ 'შინაგანი თავისუფლების მოპოვება ნებისმიერ გარემოში, მოძრაობა და მოგზაურობა (7), შემოქმედება (3). ახლა ხშირად ჩნდება ჩარჩოების შიში ან თავად ქმნის საკუთარ „ციხეს“.'],
+['5-20-15','მეამბოხე',10.09,'ტრადიციების და მასწავლებლების წინააღმდეგ აჯანყება.',
+ 'ადამიანი ებრძოდა წესრიგს, რელიგიას, ოჯახის ტრადიციებს (5), გვარს (20) — ხშირად ვნებით და ამპარტავნებით (15).',
+ 'ტრადიციის პატივისცემა და საკუთარი გზის გაერთიანება; ცოდნის მიღება და გადაცემა. ამბოხის ენერგია ახლა შეიძლება პოზიტიური ცვლილებების ძალად იქცეს.'],
+['14-20-6','მსხვერპლი',1.03,'თავის გაწირვა და მსხვერპლის როლი.',
+ 'ადამიანი თავს სწირავდა სხვების გულისთვის ან თავად იყო მსხვერპლი; ზომიერება (14) დაკარგული იყო.',
+ 'ზომიერება და ბალანსი: სიყვარული (6) საკუთარი თავის გაწირვის გარეშე. ისწავლო „არა“-ს თქმა და ის, რომ შენი საჭიროებებიც მნიშვნელოვანია.'],
+['6-6-18','სასიყვარულო მაგია',6.46,'სიყვარულის მოპოვება ძალით და მაგიით.',
+ 'სიყვარულის (6) მოსაპოვებლად ადამიანი მაგიას, შელოცვას, მანიპულაციას (18) იყენებდა — სხვის ნებაზე ძალადობდა.',
+ 'სიყვარულის თავისუფლება: უყვარდე და გიყვარდეს ისე, რომ არავის ნება არ დაირღვეს. ილუზიების გარეშე ნახო ადამიანი, როგორიც არის.'],
+['6-15-9','ზღაპრული სამყარო',3.41,'სიამოვნებებში და ილუზიებში ცხოვრება.',
+ 'ადამიანი ტკბილ, „ზღაპრულ“ ცხოვრებაში იყო ჩაფლული — ვნებების (15) და სიამოვნებების მონა, სიღრმის გარეშე.',
+ 'სიყვარული (6) რეალობაში, ზომიერება სიამოვნებებში, სიბრძნე (9) — შინაგანი სამყაროს აშენება, რომელიც გარე სიტკბოზე არ არის დამოკიდებული.'],
+['15-6-18','შავი მაგი',1.25,'ბნელი ცოდნის და მანიპულაციის კარმა.',
+ 'ადამიანი იყენებდა ფარულ ცოდნას (18) ძალაუფლებისთვის და სხვების მართვისთვის, ვნებებით (15) იყო შეპყრობილი.',
+ 'ცოდნის მხოლოდ სინათლისთვის გამოყენება, სიყვარული (6) და გულწრფელობა. ასეთ ადამიანებს ხშირად აქვთ ძლიერი ზემოქმედების ძალა — მთავარია, რისთვის გამოიყენებენ.'],
+['7-10-21','რწმენის რაინდი',.32,'იდეისთვის თავგამოდების კარმა.',
+ 'ადამიანი იდეისთვის, რწმენისთვის ან ბრძოლისთვის (7) სწირავდა თავს და სხვებს, ხშირად ფანატიკურად.',
+ 'რწმენა ფანატიზმის გარეშე; ბედის (10) მიღება და სამყაროს (21) მთლიანობის დანახვა. ბრძოლა იდეისთვის — მაგრამ არა ადამიანების წინააღმდეგ.'],
+['7-19-12','მეომარი',9.3,'ომის და ძალით გამარჯვების კარმა.',
+ 'მეომარი, რომელიც ძალით (7) იმარჯვებდა და ამაში ხედავდა სიცოცხლის აზრს (19); სხვების მსხვერპლი ავიწყდებოდა.',
+ 'ენერგიის მიმართვა შემოქმედებაზე და მშვიდობიან მიზნებზე, სხვების თვალით დანახვა (12), მსხვერპლის (12) ნაცვლად მსახურება.'],
+['16-10-21','სულიერი წინამძღოლი',1.5,'სულიერი ძალაუფლების კარმა.',
+ 'სულიერი ლიდერი ან მასწავლებელი, რომელმაც მიმდევრები შეცდომაში შეიყვანა ან ამპარტავნდა — და მისი სამყარო დაინგრა (16).',
+ 'თავმდაბალი სულიერი გზა, ცოდნის პატიოსნად გადაცემა. ცხოვრება ხშირად „ანგრევს“ ყალბ საყრდენებს, რომ ნამდვილი სამყარო (21) აშენდეს.'],
+['8-5-15','ღალატი, ოჯახური პრობლემები',9.24,'ოჯახის და ნდობის ღალატი.',
+ 'ადამიანი ოჯახში ღალატობდა, არღვევდა ტრადიციებს (5), ვნებებს (15) ემორჩილებოდა; ოჯახში უსამართლობა (8).',
+ 'ერთგულება, ოჯახური ფასეულობები, პატიოსნება და კანონის (8) პატივისცემა. ახლა ოჯახში ხშირად ჩნდება ნდობის გამოცდები.'],
+['8-14-6','დიქტატორი',.12,'ურთიერთობებში და ოჯახში დიქტატის კარმა.',
+ 'ადამიანი ახლობლებს თავის ნებას ახვევდა, აკონტროლებდა, ბალანსს (14) არღვევდა.',
+ 'თანასწორობა ურთიერთობებში (6), ზომიერება, სხვისი არჩევანის პატივისცემა. სამართლიანობა (8) — საკუთარ თავზეც.'],
+['17-5-6','სიამაყე',1.76,'ამპარტავნების და ქედმაღლობის კარმა.',
+ 'ნიჭიერი, ცნობილი ადამიანი (17), რომელიც სხვებზე მაღლა აყენებდა თავს და ტრადიციებს (5) ზემოდან უყურებდა.',
+ 'თავმდაბლობა, ნიჭის გაზიარება, სიყვარული (6) და ადამიანების თანასწორად მიღება. ვარსკვლავი ანათებს სხვებისთვის, არა სხვებზე მაღლა.'],
+['9-9-18','ჯადოქარი',8.91,'ფარული ცოდნა და მარტოობა.',
+ 'განდეგილი, რომელიც ფლობდა ფარულ ცოდნას (9, 9) და მაგიას (18), მაგრამ მარტოობაში იკეტებოდა და ცოდნას მალავდა.',
+ 'ცოდნის გაზიარება, მარტოობიდან გამოსვლა, ინტუიციის სიკეთისთვის გამოყენება. შიშები და ილუზიები (18) — მთავარი სამუშაო.'],
+['9-18-9','მაგიური მსხვერპლი',.21,'მაგიური რიტუალის მსხვერპლი ან მონაწილე.',
+ 'ადამიანი მაგიური პრაქტიკების (18) მსხვერპლი იყო, ან მონაწილეობდა მათში და ამან ღრმა შიში დატოვა.',
+ 'შიშებისგან გათავისუფლება, ნათელი ცოდნა და სიბრძნე (9). ასეთ ადამიანებს ხშირად აქვთ ძლიერი ინტუიცია — მნიშვნელოვანია, ენდონ მას და არ შეეშინდეთ.'],
+['18-9-9','ჯადოქარი',1.99,'მისტიკური ძალის და ილუზიების კარმა.',
+ 'მისტიკოსი, რომელიც ძალას (18) ბოროტად იყენებდა ან ილუზიებში ცხოვრობდა; სიბრძნე (9) მარტოობაში დარჩა.',
+ 'ილუზიებისგან გათავისუფლება, ინტუიციის პატიოსნად გამოყენება, სიბრძნის (9) გაზიარება სხვებისთვის.']];
+const TAIL={};T.forEach(t=>TAIL[t[0]]=t);
+const POS=[['b3','B3','მთავარი გაკვეთილი'],['b2','B2','წარსულის სცენარი'],['b1','B1','ახლა · გასაღები']];
+let cur='10-13-3',MY=null;
+function dbText(code){try{const db=window.MATRIX_DB||{},x=((db.karmic_tail||{}).combos||{})[code];
+  if(!x||!x.text||x.text.length<600||code==='6-6-18')return '';return x.text;}catch(e){return '';}}
+function grid(){$('grid').innerHTML=T.map(t=>`<button type="button" class="tl${t[0]===cur?' on':''}${t[0]===MY?' my':''}" data-c="${t[0]}"><div class="no">${t[0]}</div><div class="nm">${t[1]}</div><div class="fr">${t[2]}%</div></button>`).join('');}
+function show(code,scroll){const t=TAIL[code];if(!t)return;cur=code;const ns=code.split('-').map(Number),full=dbText(code);
+  $('det').innerHTML=`<div class="hd"><div class="code">${code}</div><div><h2>${t[1]}</h2><div style="font-size:12.5px;color:#9aa3b6">${t[2]}% ადამიანებს აქვს ეს კუდი${MY===code?' · <b style="color:#ff9a8a">შენი კუდი</b>':''}</div></div></div>
+   <div class="ess">${t[3]}</div>
+   <div class="pos">${POS.map((p,i)=>{const n=ns[i],a=A[n-1]||{};return `<a href="course_matrix4.html#${n}"><div class="t"><span class="cd ${p[0]}">${n}</span>${p[1]} · ${p[2]}</div><div class="n">${a.t||''}</div><div class="k">${a.k||''}</div></a>`;}).join('')}</div>
+   <div class="cols"><div class="bx past"><h3>წარსულ ცხოვრებაში</h3><p>${t[4]}</p></div><div class="bx now"><h3>ამ ცხოვრებაში — ამოცანა</h3><p>${t[5]}</p></div></div>
+   ${full?`<details class="full"><summary>＋ სრული აღწერა</summary><div class="in">${full}</div></details>`:''}
+   <div class="nav"><button type="button" id="pv">←</button><button type="button" id="nx">→</button></div>`;
+  const i=T.findIndex(x=>x[0]===code);$('pv').onclick=()=>show(T[(i+T.length-1)%T.length][0],true);$('nx').onclick=()=>show(T[(i+1)%T.length][0],true);
+  grid();try{history.replaceState(null,'','#'+code);}catch(e){}
+  if(scroll)$('det').scrollIntoView({behavior:'smooth',block:'start'});}
+$('grid').addEventListener('click',e=>{const b=e.target.closest('.tl');if(b)show(b.dataset.c,true);});
+function chip(n,lab){const a=A[n-1]||{};return `<a href="course_matrix4.html#${n}"><i>${n}</i>${lab} · ${a.t||''}</a>`;}
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100)){$('res').textContent='შეიყვანე სწორი თარიღი';return;}
+  const L=r22(d),Tm=r22(m),R=r22(y),B3=r22(L+Tm+R),C=r22(L+Tm+R+B3),B1=r22(C+B3),B2=r22(B1+B3),code=`${B3}-${B2}-${B1}`,em=r22(B3+R);
+  MY=TAIL[code]?code:null;
+  $('res').innerHTML=`შენი კარმული კუდი: <b>${code}</b> ${MY?`— ${TAIL[code][1]} <button type="button" id="go">გახსნა</button>`:''}`;
+  if(MY)$('go').onclick=()=>show(MY,true);
+  $('red').innerHTML=chip(B3,'ენერგია (B3)')+chip(em,'ემოცია')+chip(R,'ფიზიკა (R3)')+`<span style="font-size:12.5px;color:#aab2c4">ემოცია: ${B3} + ${R} = ${B3+R}${B3+R>22?' → '+em:''}</span>`;
+  if(MY)cur=MY;grid();show(cur,false);}
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));
+const h=decodeURIComponent(location.hash.slice(1));
+upd();if(TAIL[h])show(h,false);
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
