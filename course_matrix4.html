@@ -47,6 +47,19 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
 .nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
 .nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
 .where{margin-top:12px;font-size:12.5px;color:#aab2c4;line-height:1.7}
+details.sx{border:1px solid rgba(184,137,74,.3);border-radius:12px;margin-top:10px;overflow:hidden}
+details.sx summary{cursor:pointer;list-style:none;padding:11px 14px;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:14px;letter-spacing:.06em;color:#E3BE84;display:flex;justify-content:space-between;align-items:center}
+details.sx summary::-webkit-details-marker{display:none}
+details.sx summary::after{content:'＋';color:#C9A24C;font-size:15px}
+details.sx[open] summary::after{content:'－'}
+details.sx .in{padding:0 14px 12px;font-size:13.5px;line-height:1.8;color:#e2e5ec}
+details.sx .in ul{padding-left:18px;margin:4px 0}
+details.sx .in h4{font-weight:600;font-size:12.5px;color:#B8894A;margin:8px 0 2px;letter-spacing:.04em}
+details.sx .in .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:700px){details.sx .in .two{grid-template-columns:1fr}}
+.xbar{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.xbar h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:16px;color:#E3BE84;letter-spacing:.06em}
+.xbar button{background:none;border:1px solid rgba(201,162,76,.5);color:#F3DDA4;border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit}
 </style>
 </head>
 <body>
@@ -70,6 +83,7 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
   <div class="det" id="det"></div>
 </div>
 <script src="matrix_arcana.js"></script>
+<script src="matrix_arcana_x.js"></script>
 <script>
 (function(){
 'use strict';
@@ -77,6 +91,19 @@ const $=id=>document.getElementById(id),A=window.MX_ARCANA;
 const r22=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
 let cur=1,MINE={};
 function grid(){$('grid').innerHTML=A.map(a=>`<button type="button" class="ar${a.n===cur?' on':''}${MINE[a.n]?' my':''}" data-n="${a.n}"><span class="dot"></span><div class="no">${a.n}</div><div class="nm">${a.t}</div></button>`).join('');}
+function xsec(n){const x=(window.MX_ARCANA_X||{})[n];if(!x)return '';
+  const ul=l=>`<ul>${l.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+  const D=(t,h)=>`<details class="sx"><summary>${t}</summary><div class="in">${h}</div></details>`;
+  return `<div class="xbar"><h3>დეტალურად</h3><button type="button" id="xall">ყველას გახსნა</button></div>`+
+   D('წარსული ცხოვრების ამოცანები',`<p>${x.pl[0]}</p><h4>რა უნდა ისწავლო ამ ცხოვრებაში</h4>${ul(x.pl[1])}`)+
+   D('სულის ამოცანა 40 წლამდე',`<p>${x.s40[0]}</p><h4>რა გეხმარება</h4>${ul(x.s40[1])}`)+
+   D('პირადი და სოციალური დანიშნულება',`<div class="two"><div><h4>რა უნდა გააკეთო</h4>${ul(x.sd.d)}</div><div><h4>რაზე თქვი უარი</h4>${ul(x.sd.n)}</div></div><h4>კითხვები საკუთარი თავისთვის</h4>${ul(x.sd.q)}`)+
+   D('სულიერი დანიშნულება',`<p>${x.dp}</p>`)+
+   D('გვარის ამოცანები',`<h4>წინაპრების შეცდომები</h4>${ul(x.an.e)}<h4>როგორ გამოასწორო</h4><p>${x.an.f}</p>`)+
+   D('ჰარმონიის და კომფორტის წერტილი',ul(x.hp))+
+   D('ფული: რა ბლოკავს და რა ავითარებს',`<div class="two"><div><h4>ბლოკავს</h4>${ul(x.mb)}</div><div><h4>ავითარებს</h4>${ul(x.md)}</div></div>`)+
+   D('მშობლები და შვილები',`<p>${x.pc}</p>`)+
+   D('დღის ენერგია',`<h4 style="color:#8fd19a">დადებით დღეს</h4><p>${x['dy+']}</p><h4 style="color:#ff9a8a">უარყოფით დღეს</h4><p>${x['dy-']}</p>`);}
 function show(n,scroll){cur=n;const a=A[n-1],li=x=>`<ul>${x.map(s=>`<li>${s}</li>`).join('')}</ul>`;
   $('det').innerHTML=`<div class="hd"><div class="big">${a.n}</div><div><h2>${a.t}</h2><div class="kw">${a.k}</div></div></div>
    <div class="es">${a.e}</div>
@@ -88,9 +115,11 @@ function show(n,scroll){cur=n;const a=A[n-1],li=x=>`<ul>${x.map(s=>`<li>${s}</li
      <div class="bx"><h3>ჯანმრთელობა</h3><p>${a.h}</p></div></div>
    <div class="bx" style="margin-top:12px"><h3>როგორც წლის / პერიოდის ენერგია</h3><p>${a.y} <a href="course_matrix3.html" style="color:#E3BE84">→ ასაკის წრე</a></p></div>
    <div class="adv">„${a.a}“</div>
+   ${xsec(n)}
    <div class="nav"><button type="button" id="pv">← ${n>1?A[n-2].n+'. '+A[n-2].t:''}</button><button type="button" id="nx">${n<22?A[n].n+'. '+A[n].t:''} →</button></div>`;
   $('pv').disabled=n===1;$('nx').disabled=n===22;$('pv').style.visibility=n===1?'hidden':'';$('nx').style.visibility=n===22?'hidden':'';
   $('pv').onclick=()=>show(n-1,true);$('nx').onclick=()=>show(n+1,true);
+  {const b=$('xall');if(b)b.onclick=()=>{const ds=[...$('det').querySelectorAll('details.sx')],op=!ds.every(d=>d.open);ds.forEach(d=>d.open=op);b.textContent=op?'ყველას დახურვა':'ყველას გახსნა';};}
   grid();try{history.replaceState(null,'','#'+n);}catch(e){}
   if(scroll)$('det').scrollIntoView({behavior:'smooth',block:'start'});}
 $('grid').addEventListener('click',e=>{const b=e.target.closest('.ar');if(b)show(+b.dataset.n,true);});
