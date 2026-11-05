@@ -21,7 +21,7 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
 .date .note{flex-basis:100%;text-align:center;font-size:12px;color:#9aa3b6}
 .lesson{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
 @media(max-width:860px){.lesson{grid-template-columns:1fr}}
-.fig{position:sticky;top:12px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:8px}
+.fig{position:sticky;top:12px;align-self:start;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:8px}
 @media(max-width:860px){.fig{position:static}}
 #mx{display:block;width:100%;height:auto}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;font-size:11.5px;color:#aab2c4;padding:6px 4px 2px}
@@ -105,6 +105,22 @@ details.art .in{padding:0 14px 12px;font-size:13.5px;line-height:1.85;color:#e2e
 .grp button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
 #mx g.pk{cursor:pointer}
 .hint{text-align:center;font-size:12px;color:#9aa3b6;margin-top:4px}
+.legend2{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:11.5px;color:#aab2c4;margin-bottom:10px}
+.legend2 i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1.5px solid}
+.zh{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;letter-spacing:.05em;margin:18px 0 8px;padding-bottom:4px;border-bottom:1px solid rgba(184,137,74,.25)}
+.zh:first-child{margin-top:0}
+.pc{display:grid;grid-template-columns:46px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:border-color .2s,background .2s;scroll-margin-top:14px}
+.pc:hover{border-color:rgba(227,190,132,.6)}
+.pc.on{border-color:#FFD36A;background:rgba(255,211,106,.06)}
+.pc .c{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 17px Cinzel,serif;color:#fff;border:2px solid}
+.pc h3{font-size:14.5px;font-weight:600;color:#F3DDA4;line-height:1.35}
+.pc h3 small{font-weight:400;font-size:11.5px;color:#9aa3b6;margin-left:6px;letter-spacing:.04em}
+.pc .ex{font-size:13px;line-height:1.7;color:#cfd5e2;margin-top:4px}
+.pc .en{margin-top:7px;font-size:13px;line-height:1.7;color:#e9e2cf}
+.pc .en b{color:#FFE7A0}.pc .en a{color:#E3BE84;text-decoration:none}
+.pc .ps{margin-top:6px;font-size:13px;line-height:1.7;color:#eef0f4;border-left:2px solid;padding-left:9px}
+.pc details{margin-top:6px}.pc summary{cursor:pointer;font-size:12.5px;color:#E3BE84;list-style:none}
+.pc summary::-webkit-details-marker{display:none}.pc details .in{font-size:13px;line-height:1.75;color:#e2e5ec;margin-top:4px}
 </style>
 </head>
 <body>
@@ -114,7 +130,7 @@ details.art .in{padding:0 14px 12px;font-size:13.5px;line-height:1.85;color:#e2e
   <div class="sub">მატრიცის ყოველი წრე: სახელი, ფერი, მნიშვნელობა და შენი ენერგია ამ ადგილას</div>
   <div class="intro">
     მატრიცის თითოეულ წრეს თავისი <b>სახელი</b> და <b>ფერი</b> აქვს — ფერი გვეუბნება, რა ტიპის წერტილია: იისფერი — ზემოდან მოცემული, ლურჯი — ცნობიერი და სოციალური, წითელი — კარმული და მატერიალური გაკვეთილები, ნარინჯისფერი — ყოველდღიური გამოვლინება, ოქროსფერი — ცენტრი, მწვანე — სურვილები, მუქი — გვარის და დამხმარე წერტილები.
-    <b>დააჭირე ნებისმიერ წრეს</b> — ნახავ, რას ნიშნავს ეს პოზიცია, რომელი ენერგიაა შენთან ამ ადგილას და როგორ იკითხება ის სწორედ აქ.
+    მარჯვნივ <b>ყველა პოზიციაა</b>, ზონების მიხედვით: სახელი, მნიშვნელობა და შენი ენერგია ამ ადგილას. დააჭირე წრეს სქემაზე — სია შესაბამის ბარათზე გადავა; დააჭირე ბარათს — წრე მოინიშნება სქემაზე.
   </div>
   <div class="panel">
     <div class="date">
@@ -129,9 +145,8 @@ details.art .in{padding:0 14px 12px;font-size:13.5px;line-height:1.85;color:#e2e
       <svg id="mx" viewBox="30 30 1140 1140" role="img" aria-label="მატრიცის სქემა"></svg>
       <div class="hint">დააჭირე წრეს</div>
     </div>
-    <div><div class="sel" id="sel"></div></div>
+    <div><div class="legend2" id="legend2"></div><div class="plist" id="plist"></div></div>
   </div>
-  <div class="groups" id="groups"></div>
   <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">← გაკვეთილების სია</a><a href="matrix.html">✦ ნახე შენი მატრიცა ✦</a></div>
 </div>
 <script src="matrix_arcana.js"></script>
@@ -222,15 +237,18 @@ const PT={
 let V=calc(15,5,1990),cur='Cv';
 function art(k){const id=P[k][3];if(!id)return '';const n=V[k];try{const db=window.MATRIX_DB||{},x=((db[id]||{}).singles||{})[String(n)],t=x&&String(x.text||'');
   if(t&&t.replace(/<[^>]+>|&nbsp;|\s/g,''))return t;return typeof window.autoSingle==='function'?(window.autoSingle(id,n)||''):'';}catch(e){return '';}}
-function sel(){const k=cur,p=P[k],g=G[p[1]],n=V[k],a=A[n-1]||{},t=art(k);
-  $('sel').innerHTML=`<div class="hd"><div class="dot" style="background:${g[1]};border-color:${g[2]}">${n}</div><div><h2>${p[0]}</h2><div class="kk">${k} · ${g[0]}</div></div></div>
-   <div class="zt">${p[4].map(z=>`<span>${z}</span>`).join('')}</div>
-   <p>${p[2]}</p>
-   ${(window.MX_POS||{})[k]?`<div class="en2" style="border-color:${g[2]}"><div class="t"><b>${n}</b><span>${a.t||''} — ${{B3:'მთავარი გაკვეთილი',B2:'წარსულის შეცდომა',B1:'ახლა · გასაღები',R3:'მატერიალური გაკვეთილი',R2:'წარსულის მატერიალური შეცდომა',R1:'სამუშაო თვისებები'}[k]}</span></div><p>${window.MX_POS[k][n]}</p></div>`:''}
-   <div class="en2"><div class="t"><b>${n}</b><span>${a.t||''}</span></div><div class="k">${a.k||''}</div><p>${a.e||''}</p><a href="course_matrix4.html#${n}">→ ენერგია ${n} სრულად (გაკვეთილი 4)</a></div>
-   ${t?`<details class="art" open><summary>${p[0]} = ${n} — სტატია მატრიცის გვერდიდან</summary><div class="in">${t}</div></details>`:''}`;}
-function groups(){$('groups').innerHTML=Object.entries(G).map(([gid,g])=>{const ks=Object.keys(P).filter(k=>P[k][1]===gid);
-  return `<div class="grp"><h3><i style="background:${g[1]};border-color:${g[2]}"></i>${g[0]}</h3><p>${g[3]}</p><div class="ks">${ks.map(k=>`<button type="button" data-k="${k}" class="${k===cur?'on':''}">${k} · ${V[k]}</button>`).join('')}</div></div>`;}).join('');}
+const ZONES=[['ცენტრი და სურვილები',['Cv','G1','G2']],['პერსონა — მარცხენა ხაზი',['L3','L2','L1']],['ტალანტები — ზედა ხაზი',['T3','T2','T1']],
+ ['კარმული კუდი — ქვედა ხაზი',['B3','B2','B1']],['მატერიალური კარმა — მარჯვენა ხაზი',['R3','R2','R1']],['ფულისა და სიყვარულის არხი',['W1','W2','W3']],
+ ['გვარის ნიჭი — მამის ხაზი',['TL3','TL2','TL1']],['გვარის ნიჭი — დედის ხაზი',['TR3','TR2','TR1']],['გვარის კარმა — მამის ხაზი',['BR3','BR2','BR1']],['გვარის კარმა — დედის ხაზი',['BL3','BL2','BL1']],['გვარის ცენტრი',['RC1','RC2']]];
+const PSL={B3:'მთავარი გაკვეთილი',B2:'წარსულის შეცდომა',B1:'ახლა · გასაღები',R3:'მატერიალური გაკვეთილი',R2:'წარსულის მატერიალური შეცდომა',R1:'სამუშაო თვისებები'};
+function card(k){const p=P[k],g=G[p[1]],n=V[k],a=A[n-1]||{},t=art(k),ps=((window.MX_POS||{})[k]||{})[n];
+  return `<div class="pc${k===cur?' on':''}" id="pc-${k}" data-k="${k}"><div class="c" style="background:${g[1]};border-color:${g[2]}">${n}</div><div>
+   <h3>${p[0]}<small>${k}</small></h3><div class="ex">${p[2]}</div>
+   <div class="en"><b>${n} · ${a.t||''}</b> — ${a.k||''}. <a href="course_matrix4.html#${n}">ენერგია სრულად →</a></div>
+   ${ps?`<div class="ps" style="border-color:${g[1]}"><b style="color:#F3DDA4">${PSL[k]}:</b> ${ps}</div>`:''}
+   ${t?`<details><summary>＋ სტატია მატრიცის გვერდიდან</summary><div class="in">${t}</div></details>`:''}</div></div>`;}
+function sel(){$('plist').innerHTML=ZONES.map(([t,ks])=>`<div class="zh">${t}</div>`+ks.map(card).join('')).join('');}
+function groups(){$('legend2').innerHTML=Object.values(G).map(g=>`<span><i style="background:${g[1]};border-color:${g[2]}"></i>${g[0].split(' — ')[0]}</span>`).join('');}
 function draw(){const svg=$('mx');let h='';
   const ln=(x1,y1,x2,y2,c,w)=>{h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}"/>`;};
   h+=`<polygon points="${cx},${cy-2*dd1} ${cx+2*dd1},${cy} ${cx},${cy+2*dd1} ${cx-2*dd1},${cy}" fill="none" stroke="rgba(127,119,221,0.9)" stroke-width="1.5"/>`;
@@ -253,9 +271,9 @@ function draw(){const svg=$('mx');let h='';
   for(const [k,t,c] of [['W1','♥','#ff6b8a'],['W3','₾','#7ec850']]){const [x,y]=PT[k];h+=`<text x="${x}" y="${y-r1_r-16}" font-size="16" text-anchor="middle" dominant-baseline="central" fill="${c}" transform="rotate(-45,${x},${y-r1_r-16})" pointer-events="none">${t}</text>`;}
   svg.innerHTML=h;}
 function render(){draw();sel();groups();}
-function pick(k,scroll){if(!P[k])return;cur=k;render();if(scroll&&window.innerWidth<860)$('sel').scrollIntoView({behavior:'smooth',block:'start'});}
+function pick(k,scroll){if(!P[k])return;cur=k;draw();document.querySelectorAll('.pc.on').forEach(e=>e.classList.remove('on'));const c=$('pc-'+k);if(c){c.classList.add('on');if(scroll)c.scrollIntoView({behavior:'smooth',block:'start'});}}
 $('mx').addEventListener('click',e=>{const g=e.target.closest('g.pk');if(g)pick(g.dataset.k,true);});
-$('groups').addEventListener('click',e=>{const b=e.target.closest('button[data-k]');if(b){pick(b.dataset.k,false);$('sel').scrollIntoView({behavior:'smooth',block:'nearest'});}});
+$('plist').addEventListener('click',e=>{if(e.target.closest('a,summary,details .in'))return;const c=e.target.closest('.pc');if(c)pick(c.dataset.k,false);});
 function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
   const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
   if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100)){$('dnote').textContent='შეიყვანე სწორი თარიღი';return;}
