@@ -84,6 +84,7 @@ details.sx .in .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 </div>
 <script src="matrix_arcana.js"></script>
 <script src="matrix_arcana_x.js"></script>
+<script src="matrix_arcana_d.js"></script>
 <script>
 (function(){
 'use strict';
@@ -91,7 +92,18 @@ const $=id=>document.getElementById(id),A=window.MX_ARCANA;
 const r22=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
 let cur=1,MINE={};
 function grid(){$('grid').innerHTML=A.map(a=>`<button type="button" class="ar${a.n===cur?' on':''}${MINE[a.n]?' my':''}" data-n="${a.n}"><span class="dot"></span><div class="no">${a.n}</div><div class="nm">${a.t}</div></button>`).join('');}
-function xsec(n){const x=(window.MX_ARCANA_X||{})[n];if(!x)return '';
+function dsec(t){const esc=v=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;');let out='',cur=null,body='',ul=false;
+  const close=()=>{if(ul){body+='</ul>';ul=false;}};const flush=()=>{close();if(cur!==null)out+=`<details class="sx"><summary>${cur}</summary><div class="in">${body}</div></details>`;body='';};
+  t.split('\n').forEach(L=>{L=L.trim();if(!L)return;
+   if(L.startsWith('== ')){flush();cur=esc(L.slice(3));return;}
+   if(L.startsWith('- ')){if(!ul){body+='<ul>';ul=true;}body+=`<li>${esc(L.slice(2))}</li>`;return;}
+   close();
+   if(L.startsWith('# '))body+=`<h4>${esc(L.slice(2))}</h4>`;
+   else if(L.startsWith('+ '))body+=`<h4 style="color:#8fd19a">${esc(L.slice(2))}</h4>`;
+   else if(L.startsWith('! '))body+=`<h4 style="color:#ff9a8a">${esc(L.slice(2))}</h4>`;
+   else body+=`<p>${esc(L)}</p>`;});
+  flush();return `<div class="xbar"><h3>დეტალურად</h3><button type="button" id="xall">ყველას გახსნა</button></div>`+out;}
+function xsec(n){const dd=(window.MX_ARCANA_D||{})[n];if(dd)return dsec(dd);const x=(window.MX_ARCANA_X||{})[n];if(!x)return '';
   const ul=l=>`<ul>${l.map(t=>`<li>${t}</li>`).join('')}</ul>`;
   const D=(t,h)=>`<details class="sx"><summary>${t}</summary><div class="in">${h}</div></details>`;
   return `<div class="xbar"><h3>დეტალურად</h3><button type="button" id="xall">ყველას გახსნა</button></div>`+
