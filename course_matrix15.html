@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 15</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.st{margin-top:14px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 18px;display:grid;grid-template-columns:44px 1fr;gap:12px}
+.st .i{width:40px;height:40px;border-radius:50%;border:1.5px solid #C9A24C;display:flex;align-items:center;justify-content:center;font:600 16px Cinzel,serif;color:#F3DDA4}
+.st h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:17px;color:#E3BE84;letter-spacing:.03em;display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.st h2 small{font-family:'Noto Serif Georgian',serif;font-size:12px;color:#9aa3b6;letter-spacing:0}
+.st .code{font:600 18px Cinzel,serif;color:#FFE7A0;letter-spacing:.06em}
+.st .nmx{color:#F3DDA4;font-size:15px}
+.st p,.st li{font-size:13.8px;line-height:1.8;color:#e2e5ec}.st p{margin-top:6px}.st ul{padding-left:18px;margin-top:4px}
+.st b{color:#F3DDA4;font-weight:600}.st a{color:#E3BE84}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips a{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:3px 10px 3px 3px;text-decoration:none;color:#EDE6D8;font-size:12.5px}
+.chips a i{font-style:normal;width:24px;height:24px;border-radius:50%;background:#3a2c0e;border:1px solid #FFD36A;display:flex;align-items:center;justify-content:center;font:700 11px Cinzel,serif;color:#FFF3C4}
+.jobs{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.jobs span{border:1px solid rgba(126,200,80,.45);border-radius:999px;padding:3px 10px;font-size:12.5px;color:#dff3d2}
+.how{margin-top:24px;border:1px solid rgba(255,211,106,.4);border-radius:14px;padding:16px 18px}
+.how h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#FFE7A0}
+.how p,.how li{font-size:14px;line-height:1.85;color:#e2e5ec}.how ul{padding-left:20px;margin-top:6px}.how b{color:#F3DDA4}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 15 — სინთეზი</h1>
+  <div class="sub">როგორ შევკრათ ყველაფერი ერთ კითხვად: ნაბიჯ-ნაბიჯ, ერთი მატრიცის მაგალითზე</div>
+  <div class="intro">
+    სინთეზი — ეს არ არის ყველა ბოქსის რიგრიგობით წაკითხვა. ეს არის <b>თემების ძებნა</b>: რომელი ენერგიები მეორდება, სად ეხმარება ერთი ზონა მეორეს და სად ეწინააღმდეგება. ქვემოთ შენი მატრიცა იმ თანმიმდევრობით არის დალაგებული, რომლითაც კონსულტაციაზე ვკითხულობთ — ყოველ ნაბიჯს ბმული ახლავს გაკვეთილზე, სადაც ეს თემა დეტალურადაა.
+  </div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+  </div>
+  <div id="out"></div>
+  <div class="how">
+    <h2>როგორ ვკრავთ ერთად</h2>
+    <ul>
+      <li><b>განმეორებები</b> — ერთი და იგივე რიცხვი რამდენიმე ზონაში ცხოვრების მთავარი თემაა. ის ერთდროულად უდიდესი ძალაცაა და უდიდესი გამოცდაც.</li>
+      <li><b>ცენტრი ყველაფერს აფერადებს</b> — ნებისმიერი ზონა იკითხება ცენტრის ენერგიის „ფონზე“: როცა ცენტრი პლიუსშია, ყველა ზონა უკეთ მუშაობს.</li>
+      <li><b>ზედა და ქვედა ნაწილი</b> — ზემოთ (პერსონა, ტალანტები, გვარის ნიჭი) ის, რაც გვეძლევა; ქვემოთ (კარმული კუდი, მატერიალური კარმა, გვარის კარმა) ის, რაც უნდა გადავამუშაოთ. ხშირად ზედა ნიჭი არის ის ინსტრუმენტი, რომლითაც ქვედა ამოცანა იხსნება.</li>
+      <li><b>კუდი და არხი</b> — B1 ერთდროულად კარმული კუდის დასასრულია და სიყვარულის ხაზის დასაწყისი, R1 — მატერიალური კარმის დასასრული და ფულის ხაზის დასაწყისი. ამიტომ კარმის გადამუშავება პირდაპირ აისახება ურთიერთობებზე და ფულზე.</li>
+      <li><b>დრო</b> — ასაკის წრე (გაკვეთილი 3) გვიჩვენებს, როდის რომელი თემა ხდება აქტუალური; დანიშნულებები (გაკვეთილი 11) — ცხოვრების დიდი ეტაპები.</li>
+      <li><b>პლიუსი და მინუსი</b> — ენერგია არასოდეს არის „კარგი“ ან „ცუდი“. ჩვენი ამოცანაა, დავინახოთ, რომელ მხარეს ცხოვრობს ადამიანი ახლა და რა დაეხმარება პლიუსში გადასვლაში.</li>
+    </ul>
+  </div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">← გაკვეთილების სია</a><a href="matrix.html">✦ ნახე შენი მატრიცა ✦</a></div>
+</div>
+<script src="matrix_arcana.js"></script>
+<script src="matrix_arcana_x.js"></script>
+<script src="matrix_pos.js"></script>
+<script src="matrix_combos.js"></script>
+<script src="articles.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),A=window.MX_ARCANA||[],X=window.MX_ARCANA_X||{},PS=window.MX_POS||{};
+const r22=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
+function calc(d,m,y){const v={};
+  v.L3=r22(d);v.T3=r22(m);v.R3=r22(y);v.B3=r22(v.L3+v.T3+v.R3);v.Cv=r22(v.L3+v.T3+v.R3+v.B3);
+  v.TL3=r22(v.L3+v.T3);v.TR3=r22(v.T3+v.R3);v.BR3=r22(v.R3+v.B3);v.BL3=r22(v.B3+v.L3);
+  v.RC1=r22(v.TL3+v.TR3+v.BR3+v.BL3);v.RC2=r22(v.RC1+v.Cv);
+  for(const k of ['L','T','R','B']){v[k+'1']=r22(v.Cv+v[k+'3']);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  for(const k of ['TL','TR','BR','BL']){v[k+'1']=r22(v[k+'3']+v.RC1);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  v.G1=r22(v.L1+v.Cv);v.G2=r22(v.T1+v.Cv);v.W2=r22(v.B1+v.R1);v.W1=r22(v.B1+v.W2);v.W3=r22(v.R1+v.W2);
+  v.sky=r22(v.T3+v.B3);v.earth=r22(v.R3+v.L3);v.soul=r22(v.sky+v.earth);v.male=r22(v.TL3+v.BR3);v.female=r22(v.TR3+v.BL3);v.soc=r22(v.male+v.female);v.mis=r22(v.soul+v.soc);return v;}
+const EX=new Set(['karmic_tail']);
+function nm(db,ns){const D=window.MATRIX_DB||{},c=(D[db]||{}).combos||{},k=ns.join('-'),r=[...ns].reverse().join('-');const e=c[k]||(!EX.has(db)&&c[r]);return e&&String(e.title||'').trim()||'';}
+const a=n=>A[n-1]||{};
+const chip=(n,l)=>`<a href="course_matrix4.html#${n}"><i>${n}</i>${l?l+' · ':''}${a(n).t||''}</a>`;
+function step(i,t,sub,code,name,body,link){return `<div class="st"><div class="i">${i}</div><div><h2>${t}${sub?`<small>${sub}</small>`:''}</h2>${code?`<div><span class="code">${code}</span>${name?` <span class="nmx">— ${name}</span>`:''}</div>`:''}${body}${link?`<p style="font-size:12.5px"><a href="${link[0]}">→ ${link[1]}</a></p>`:''}</div></div>`;}
+function jobs(v){const L=i=>String(a(i).pr||'').split(',').map(t=>t.trim()).filter(Boolean),sc={},src={};
+  [[v.W3,3],[v.R1,2],[v.W2,1.5]].forEach(([n,w],j)=>L(n).forEach((t,q)=>{sc[t]=(sc[t]||0)+w-q*.05;(src[t]=src[t]||new Set()).add(j);}));
+  return Object.keys(sc).sort((x,y)=>(src[y].size-src[x].size)||(sc[y]-sc[x])).slice(0,10);}
+function render(v){let h='',i=1;const c3=(db,ks)=>{const ns=ks.map(k=>v[k]);return [ns.join('-'),nm(db,ns)];};
+  h+=step(i++,'ცენტრი — ხასიათის ბირთვი','Cv',v.Cv,a(v.Cv).t,`<p>${a(v.Cv).e||''}</p><p>ეს ენერგია ყველა დანარჩენ ზონას აფერადებს. პლიუსში: ${(a(v.Cv).p||[]).slice(0,2).join('; ')}. მინუსში: ${(a(v.Cv).m||[]).slice(0,2).join('; ')}.</p>`,['course_matrix8.html','ყველა პოზიცია']);
+  let [k,n]=c3('persona',['L3','L2','L1']);
+  h+=step(i++,'პერსონა — როგორ გვხედავენ','L3 · L2 · L1',k,n,`<div class="chips">${chip(v.L3,'სავიზიტო ბარათი')}${chip(v.L2,'ბავშვობა')}${chip(v.L1,'მშობელი–შვილი')}</div>`,['course_matrix9.html','პირადი კომბინაციები']);
+  [k,n]=c3('talent_zone',['T3','T2','T1']);
+  h+=step(i++,'ტალანტები — რა გვეძლევა ზემოდან','T3 · T2 · T1',k,n,`<div class="chips">${chip(v.T3,'შთაგონება')}${chip(v.T2,'მენტალური')}${chip(v.T1,'კომუნიკაცია')}</div><p>${a(v.T3).tal||''}</p>`,['course_matrix5.html','ზონები და ხაზები']);
+  [k,n]=c3('karmic_tail',['B3','B2','B1']);
+  h+=step(i++,'კარმული კუდი — მთავარი გაკვეთილი','B3 · B2 · B1',k,n,`<ul><li><b>გაკვეთილი (${v.B3}):</b> ${(PS.B3||{})[v.B3]||''}</li><li><b>წარსულის შეცდომა (${v.B2}):</b> ${(PS.B2||{})[v.B2]||''}</li><li><b>ახლა და გასაღები (${v.B1}):</b> ${(PS.B1||{})[v.B1]||''}</li></ul>`,['course_matrix7.html#'+k,'26 კარმული კუდი']);
+  [k,n]=c3('material_karma',['R3','R2','R1']);
+  h+=step(i++,'მატერიალური კარმა','R3 · R2 · R1',k,n,`<ul><li><b>გაკვეთილი (${v.R3}):</b> ${(PS.R3||{})[v.R3]||''}</li><li><b>წარსულის შეცდომა (${v.R2}):</b> ${(PS.R2||{})[v.R2]||''}</li><li><b>სამუშაო თვისებები (${v.R1}):</b> ${(PS.R1||{})[v.R1]||''}</li></ul>`,['course_matrix8.html','ყველა პოზიცია']);
+  [k,n]=c3('money',['R1','W3','W2']);
+  h+=step(i++,'ფულის ხაზი ₾','R1 · W3 · W2',k,n,`<div class="chips">${chip(v.W3,'რა სამსახური გვიხდება')}</div><div class="jobs">${jobs(v).map(t=>`<span>${t}</span>`).join('')}</div>`,['course_matrix13.html','სიყვარულის და ფულის ხაზები']);
+  [k,n]=c3('love',['B1','W1','W2']);
+  h+=step(i++,'სიყვარულის ხაზი ♥','B1 · W1 · W2',k,n,`<div class="chips">${chip(v.W1,'როგორი პარტნიორი გვიხდება')}</div><p>${a(v.W1).l||''}</p>`,['course_matrix13.html','სიყვარულის და ფულის ხაზები']);
+  const an=[['tl','TL','ნიჭი მამის ხაზით'],['tr','TR','ნიჭი დედის ხაზით'],['br','BR','მამის ხაზის კარმა'],['bl','BL','დედის ხაზის კარმა']].map(([db,p,t])=>{const ns=[v[p+'3'],v[p+'2'],v[p+'1']];return `<li><b>${t}:</b> ${ns.join('-')}${nm(db,ns)?' — '+nm(db,ns):''}</li>`;}).join('');
+  h+=step(i++,'გვარი — მშობლების ხაზები','ოთხი დიაგონალი','','',`<ul>${an}</ul>`,['course_matrix10.html','მშობლების კომბინაციები']);
+  h+=step(i++,'დანიშნულებები','პირადი · სოციალური · სულიერი','','',`<div class="chips">${chip(v.soul,'პირადი')}${chip(v.soc,'სოციალური')}${chip(v.mis,'სულიერი')}</div><p>${(X[v.mis]||{}).dp||''}</p>`,['course_matrix11.html','დანიშნულებები']);
+  const R=[['საჰასრარა',v.T3,v.L3],['აჯნა',v.T2,v.L2],['ვიშუდჰა',v.T1,v.L1],['ანაჰატა',v.G2,v.G1],['მანიპურა',v.Cv,v.Cv],['სვადჰისტანა',v.B1,v.R1],['მულადჰარა',v.B3,v.R3]];
+  const gap=R.map(([t,e,p])=>[t,e,p,Math.abs(e-p)]).sort((x,y)=>y[3]-x[3]);
+  h+=step(i++,'ჩაკრები','ენერგია ↔ ფიზიკა','','',`<p>ყველაზე დიდი სხვაობა ენერგიასა და ფიზიკას შორის — <b>${gap[0][0]}</b> (${gap[0][1]} და ${gap[0][2]}): აქ ყველაზე მეტი შინაგანი დაძაბულობაა — რასაც გრძნობ და რასაც აკეთებ, ერთმანეთს ნაკლებად ემთხვევა. ყველაზე ჰარმონიული — <b>${gap[gap.length-1][0]}</b> (${gap[gap.length-1][1]} და ${gap[gap.length-1][2]}).</p>`,['course_matrix12.html','ჩაკრების კომბინაციები']);
+  const keys=['L3','L2','L1','T3','T2','T1','B3','B2','B1','R3','R2','R1','Cv','G1','G2','TL3','TR3','BR3','BL3','RC1','RC2','W1','W2','W3'],cnt={};keys.forEach(x=>cnt[v[x]]=(cnt[v[x]]||0)+1);
+  const top=Object.entries(cnt).sort((x,y)=>y[1]-x[1]).filter(e=>e[1]>2).slice(0,4);
+  h+=step(i++,'მთავარი თემები — განმეორებები','',' ','',top.length?`<p>ეს ენერგიები შენს მატრიცაში ყველაზე ხშირად მეორდება — ისინი ცხოვრების მთავარი თემებია:</p><div class="chips">${top.map(([n,c])=>chip(+n,c+'-ჯერ')).join('')}</div><p>${top.map(([n])=>`<b>${n} — ${a(+n).t}:</b> ${a(+n).e}`).join('<br>')}</p>`:'<p>ამ მატრიცაში ენერგიები თანაბრად არის განაწილებული — არცერთი არ მეორდება სამჯერ ან მეტჯერ.</p>',null);
+  $('out').innerHTML=h;}
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100))return;render(calc(d,m,y));}
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));upd();
+try{if(window.ART)window.ART.load('matrix').then(()=>{window.ART._apply('matrix');upd();}).catch(()=>{});}catch(e){}
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
