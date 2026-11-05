@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 4</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+.mine{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.mine button{background:rgba(201,162,76,.1);border:1px solid rgba(201,162,76,.5);color:#F3DDA4;border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.mine button b{font-family:Cinzel,serif;font-size:14px;margin-right:4px;color:#fff}
+.mine small{flex-basis:100%;text-align:center;color:#9aa3b6;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-top:22px}
+.ar{position:relative;border:1px solid rgba(184,137,74,.4);border-radius:14px;padding:14px 8px 12px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:transform .15s,border-color .15s,box-shadow .15s}
+.ar:hover{transform:translateY(-2px);border-color:#E3BE84}
+.ar.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.35)}
+.ar .no{font-family:Cinzel,serif;font-size:28px;color:#F3DDA4;line-height:1}
+.ar .nm{font-size:12.5px;margin-top:6px;color:#EDE6D8;line-height:1.3}
+.ar .dot{position:absolute;top:8px;right:9px;width:7px;height:7px;border-radius:50%;background:#FFD36A;display:none}
+.ar.my .dot{display:block}
+.det{margin-top:22px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px 20px 18px;scroll-margin-top:12px}
+.det .hd{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.det .big{width:74px;height:74px;border-radius:50%;border:2px solid #C9A24C;display:flex;align-items:center;justify-content:center;font-family:Cinzel,serif;font-size:32px;color:#FFE7A0;flex:0 0 auto}
+.det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:24px;color:#E3BE84;letter-spacing:.04em}
+.det .kw{font-size:13px;color:#aab2c4;margin-top:4px}
+.det .es{font-size:15px;line-height:1.85;color:#eef0f4;margin:16px 0 6px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+@media(max-width:700px){.cols{grid-template-columns:1fr}}
+.bx{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.bx h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:13px;letter-spacing:.12em;color:#B8894A;margin-bottom:8px}
+.bx p,.bx li{font-size:13.5px;line-height:1.75;color:#e2e5ec}
+.bx ul{padding-left:18px}
+.bx.plus h3{color:#8fd19a}.bx.minus h3{color:#ff9a8a}
+.adv{margin-top:14px;text-align:center;font-size:15px;color:#FFE7A0;font-style:italic}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.where{margin-top:12px;font-size:12.5px;color:#aab2c4;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 4 — 22 ენერგია</h1>
+  <div class="sub">მატრიცის ყოველი რიცხვი — ერთი ენერგიაა. რას ნიშნავს თითოეული პლიუსში და მინუსში</div>
+  <div class="intro">
+    მატრიცაში მხოლოდ <b>22 ენერგიაა</b> — ტაროს 22 დიდი არკანის მიხედვით (8 — სამართლიანობა, 11 — ძალა, 22 — სულელი). ერთი და იგივე ენერგია სხვადასხვა წერტილში სხვადასხვა სფეროზე საუბრობს: მარცხნივ — პიროვნებაზე, ქვემოთ — კარმულ გაკვეთილზე, მარჯვნივ — ფულზე, ცენტრში — კომფორტის ზონაზე (<a href="course_matrix1.html">გაკვეთილი 1</a>).
+    ყოველ ენერგიას ორი მხარე აქვს: <b>პლიუსი</b> — როცა ადამიანი მის ძალას იყენებს, და <b>მინუსი</b> — როცა ენერგია ჩაკეტილია ან დამახინჯებულია. ამოცანაა, ენერგია პლიუსში გადავიყვანოთ.
+  </div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" placeholder="დდ"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" placeholder="თთ"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" placeholder="წწწწ"></div>
+    </div>
+    <div class="mine" id="mine"><small>ჩაწერე თარიღი — დაინახავ, რომელი ენერგიებია შენი მატრიცის მთავარ წერტილებში.</small></div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="det" id="det"></div>
+</div>
+<script src="matrix_arcana.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),A=window.MX_ARCANA;
+const r22=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
+let cur=1,MINE={};
+function grid(){$('grid').innerHTML=A.map(a=>`<button type="button" class="ar${a.n===cur?' on':''}${MINE[a.n]?' my':''}" data-n="${a.n}"><span class="dot"></span><div class="no">${a.n}</div><div class="nm">${a.t}</div></button>`).join('');}
+function show(n,scroll){cur=n;const a=A[n-1],li=x=>`<ul>${x.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+  $('det').innerHTML=`<div class="hd"><div class="big">${a.n}</div><div><h2>${a.t}</h2><div class="kw">${a.k}</div></div></div>
+   <div class="es">${a.e}</div>
+   ${MINE[n]?`<div class="where">შენს მატრიცაში: <b style="color:#FFE7A0">${MINE[n].join(' · ')}</b></div>`:''}
+   <div class="cols"><div class="bx plus"><h3>პლიუსში</h3>${li(a.p)}</div><div class="bx minus"><h3>მინუსში</h3>${li(a.m)}</div></div>
+   <div class="cols"><div class="bx"><h3>ნიჭი და პროფესიები</h3><p>${a.tal}</p><p style="margin-top:6px;color:#F3DDA4">${a.pr}</p></div>
+     <div class="bx"><h3>ურთიერთობები</h3><p>${a.l}</p></div>
+     <div class="bx"><h3>ფული</h3><p>${a.$}</p></div>
+     <div class="bx"><h3>ჯანმრთელობა</h3><p>${a.h}</p></div></div>
+   <div class="bx" style="margin-top:12px"><h3>როგორც წლის / პერიოდის ენერგია</h3><p>${a.y} <a href="course_matrix3.html" style="color:#E3BE84">→ ასაკის წრე</a></p></div>
+   <div class="adv">„${a.a}“</div>
+   <div class="nav"><button type="button" id="pv">← ${n>1?A[n-2].n+'. '+A[n-2].t:''}</button><button type="button" id="nx">${n<22?A[n].n+'. '+A[n].t:''} →</button></div>`;
+  $('pv').disabled=n===1;$('nx').disabled=n===22;$('pv').style.visibility=n===1?'hidden':'';$('nx').style.visibility=n===22?'hidden':'';
+  $('pv').onclick=()=>show(n-1,true);$('nx').onclick=()=>show(n+1,true);
+  grid();try{history.replaceState(null,'','#'+n);}catch(e){}
+  if(scroll)$('det').scrollIntoView({behavior:'smooth',block:'start'});}
+$('grid').addEventListener('click',e=>{const b=e.target.closest('.ar');if(b)show(+b.dataset.n,true);});
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;MINE={};
+  if(d>=1&&d<=31&&m>=1&&m<=12&&y>=1000&&y<=2100){
+    const L=r22(d),T=r22(m),R=r22(y),B=r22(L+T+R),C=r22(L+T+R+B),P=[['პიროვნება (დღე)',L],['შთაგონება (თვე)',T],['მატერიალური გაკვეთილი (წელი)',R],['კარმული გაკვეთილი (ქვედა)',B],['კომფორტის ზონა (ცენტრი)',C]];
+    P.forEach(([t,n])=>(MINE[n]=MINE[n]||[]).push(t));
+    $('mine').innerHTML=P.map(([t,n])=>`<button type="button" data-n="${n}"><b>${n}</b>${t}</button>`).join('')+'<small>დააჭირე — გაიხსნება აღწერა. ყვითელი წერტილი ბარათზე = შენი ენერგია.</small>';
+    $('mine').querySelectorAll('button').forEach(b=>b.onclick=()=>show(+b.dataset.n,true));}
+  show(cur,false);}
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',upd));
+const h=parseInt(location.hash.slice(1),10);if(h>=1&&h<=22)cur=h;
+grid();show(cur,false);
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
