@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · მატრიცა — გაკვეთილი 14</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:24px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:12px}
+table.t th,table.t td{border-bottom:1px solid rgba(255,255,255,.08);padding:7px 8px;text-align:center}
+table.t th{color:#B8894A;font-weight:400;font-size:12px;letter-spacing:.05em}
+table.t td:first-child,table.t th:first-child{text-align:left}
+table.t td.d{color:#FFE7A0;font-weight:600}table.t td.s{color:#9aa3b6}
+.nm{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+@media(max-width:700px){.nm{grid-template-columns:1fr}}
+.nm label{display:block;font-size:11.5px;letter-spacing:.08em;color:#B8894A;margin-bottom:4px}
+.nm input{width:100%;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit}
+.nm .br{font-size:12px;color:#aab2c4;margin-top:4px;min-height:18px;line-height:1.6}
+.lt{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-top:10px;font-size:13px;text-align:center}
+.lt div{border:1px solid rgba(184,137,74,.25);border-radius:6px;padding:4px 0}.lt b{display:block;color:#FFE7A0}
+.lt .h{border:none;color:#B8894A;font-size:11px}
+.rw td:first-child{border-radius:8px 0 0 8px}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+a.en{color:#E3BE84}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · მატრიცა</div>
+  <h1>გაკვეთილი 14 — მეთოდი 2 და მეთოდი 3</h1>
+  <div class="sub">მატრიცის ორი სხვა ვარიანტი: რა იცვლება, როგორ ითვლება და როდის ვიყენებთ</div>
+  <div class="intro">
+    აქამდე ყველაფერი <b>მეთოდი 1</b>-ით ვისწავლეთ. მატრიცის გვერდზე კიდევ ორი მეთოდია. სამივეში კუთხეები, ცენტრი, სწორი ხაზები და არხი ერთნაირად ითვლება — განსხვავება <b>გვარის დიაგონალებშია</b>: საიდან ვითვლით მათ შიდა წრეებს (მეთოდი 2) და საიდან ვიღებთ თავად კუთხეებს (მეთოდი 3).
+  </div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h2>მეთოდი 2 — დიაგონალები ცენტრიდან</h2>
+    <p>მეთოდ 1-ში დიაგონალების შიდა წრეები <b>გვარის ცენტრიდან</b> (RC1 — ოთხი დიაგონალის ჯამი) ითვლება: <b>TL1 = TL3 + RC1</b>. მეთოდ 2-ში კი — <b>პირადი ცენტრიდან</b>: <b>TL1 = TL3 + Cv</b>. მეორე წრე ორივეში ერთნაირად: TL2 = TL1 + TL3.</p>
+    <p>აზრი ასეთია: მეთოდი 1 გვარის ხაზებს გვარის საერთო ენერგიით კითხულობს — „როგორ მოქმედებს გვარი მთლიანად“; მეთოდი 2 კი ამავე ხაზებს ადამიანის <b>საკუთარი ბირთვით</b> — „როგორ ვატარებ მე პირადად ჩემი გვარის ნიჭს და კარმას“. ამიტომ მეთოდ 2-ში გვარის ცენტრის წრეები (RC1, RC2) და სექსუალურობის ზონა არ გამოიყენება.</p>
+    <div id="m2"></div>
+    <p style="font-size:13px;color:#9aa3b6">დანარჩენი ყველაფერი — კუთხეები, ცენტრი, პერსონა, ტალანტები, კარმული კუდი, მატერიალური კარმა, არხი, ჩაკრები (7 რიგი) და ასაკის წრე — ორივე მეთოდში ერთნაირია.</p>
+  </div>
+
+  <div class="sec">
+    <h2>მეთოდი 3 — სახელები გვარის კუთხეებში</h2>
+    <p>მეთოდ 3-ში დიაგონალების <b>გარე კუთხეები</b> დაბადების თარიღიდან კი არა, <b>სახელებიდან</b> ითვლება — ქართული ანბანის რიცხვითი მნიშვნელობებით. თითოეული ასოს რიცხვს ვკრებთ და 22-მდე ვიყვანთ:</p>
+    <ul>
+      <li><span class="dot" style="background:#1F6E5C"></span><b>ზედა მარცხენა (TL3) — გვარი</b>: მამის გვარის ძალა, რომელსაც სახელით ვატარებთ.</li>
+      <li><span class="dot" style="background:#3A6EA5"></span><b>ზედა მარჯვენა (TR3) — სახელი</b>: საკუთარი სახელის ენერგია, რომლითაც სამყარო გვიცნობს.</li>
+      <li><span class="dot" style="background:#1F6E5C"></span><b>ქვედა მარჯვენა (BR3) — მამის სახელი</b>: მამის პირადი ენერგია, რომელიც ჩვენამდე მოვიდა.</li>
+      <li><span class="dot" style="background:#3A6EA5"></span><b>ქვედა მარცხენა (BL3) — დედის გვარი</b>: დედის გვარის ხაზი.</li>
+    </ul>
+    <p>თუ რომელიმე ველი ცარიელია, იმ კუთხეში თარიღიდან გამოთვლილი რიცხვი რჩება. სახელით შეცვლილი კუთხეები ფერად ხაზებად იქცევა: <b style="color:#5fb39c">კოპალა</b> — მამაკაცის ხაზი (TL3 · BR3), <b style="color:#7fa8d8">დალი</b> — ქალის ხაზი (TR3 · BL3). დიაგონალების შიდა წრეები, როგორც მეთოდ 2-ში, ცენტრიდან ითვლება.</p>
+    <div class="lt" id="lt"></div>
+    <div class="nm">
+      <div><label>გვარი (TL3)</label><input id="gv" value="ბერიძე"><div class="br" id="b-gv"></div></div>
+      <div><label>სახელი (TR3)</label><input id="sx" value="ნინო"><div class="br" id="b-sx"></div></div>
+      <div><label>მამის სახელი (BR3)</label><input id="ma" value="გიორგი"><div class="br" id="b-ma"></div></div>
+      <div><label>დედის გვარი (BL3)</label><input id="de" value="კაპანაძე"><div class="br" id="b-de"></div></div>
+    </div>
+    <div id="m3"></div>
+    <h2 style="font-size:17px;margin-top:18px">ცხრა ჩაკრა</h2>
+    <p>მეთოდ 3-ში ჩაკრების ცხრილი <b>9 რიგია</b>: გულის თავზე ორი ახალი ჩაკრა ჩნდება — <b>დალი</b> (ქალის ხაზი: TR3 · BL3) და <b>კოპალა</b> (მამაკაცის ხაზი: TL3 · BR3). გულის ჩაკრა ორი ცენტრით ივსება — პირადი ცენტრით (Cv) და სახელების ცენტრით (ოთხი სახელის კუთხის ჯამი, რომელიც მატრიცის ცენტრში მეორე მწვანე ნახევრად ჩანს). ქვედა სამი ჩაკრა ერთი წრით ქვემოთ ჩადის: მანიპურა — B1·R1, სვადჰისტანა — B2·R2, მულადჰარა — B3·R3.</p>
+    <div id="ck3"></div>
+  </div>
+
+  <div class="sec">
+    <h2>როდის რომელი მეთოდი</h2>
+    <p><b>მეთოდი 1</b> — ძირითადი: ყველა ზონა, სექსუალურობა და გვარის ცენტრი. ყველა სხვა გაკვეთილი მასზეა აგებული.</p>
+    <p><b>მეთოდი 2</b> — როცა გვინდა გვარის ხაზები ადამიანის პირადი ცენტრიდან წავიკითხოთ: რას ვაკეთებ მე ჩემი გვარის ენერგიით.</p>
+    <p><b>მეთოდი 3</b> — როცა სახელი და გვარი ცნობილია: ის აჩვენებს, როგორ ცვლის სახელები გვარის ხაზებს, და ცხრა ჩაკრის სისტემას ხსნის. საინტერესოა შედარება — როგორ შეიცვალა ხაზები ქორწინებით გვარის შეცვლის შემდეგ, ან სხვა სახელის არჩევისას.</p>
+  </div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_num.html">← გაკვეთილების სია</a><a href="matrix.html">✦ მატრიცის გვერდზე სამივე მეთოდია ✦</a></div>
+</div>
+<script src="matrix_arcana.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),A=window.MX_ARCANA||[];
+const r22=n=>{while(n>22)n=String(n).split('').reduce((a,d)=>a+ +d,0);return n;};
+const GEO={'ა':1,'ბ':2,'გ':3,'დ':4,'ე':5,'ვ':6,'ზ':7,'ჱ':8,'თ':9,'ი':1,'კ':2,'ლ':3,'მ':4,'ნ':5,'ჲ':6,'ო':7,'პ':8,'ჟ':9,'რ':1,'ს':2,'ტ':3,'უ':4,'ფ':5,'ქ':6,'ღ':7,'ყ':8,'შ':9,'ჩ':1,'ც':2,'ძ':3,'წ':4,'ჭ':5,'ხ':6,'ჯ':7,'ჰ':8};
+const geo=s=>{const L=[...String(s||'')].filter(c=>GEO[c]);const sum=L.reduce((a,c)=>a+GEO[c],0);return {L,sum,n:sum?r22(sum):0};};
+const nm=n=>{const a=A[n-1];return a?`<a class="en" href="course_matrix4.html#${n}">${n} · ${a.t}</a>`:n;};
+/* exactly the site's calculator (matrix_values in numcalc.py) */
+function calc(d,m,y,method,names){const v={};v.L3=r22(d);v.T3=r22(m);v.R3=r22(y);v.B3=r22(v.L3+v.T3+v.R3);v.Cv=r22(v.L3+v.T3+v.R3+v.B3);
+  v.TL3=r22(v.L3+v.T3);v.TR3=r22(v.T3+v.R3);v.BR3=r22(v.R3+v.B3);v.BL3=r22(v.B3+v.L3);v.m3Cv2=0;
+  if(method===3){const g=names;if(g.gv)v.TL3=g.gv;if(g.sx)v.TR3=g.sx;if(g.ma)v.BR3=g.ma;if(g.de)v.BL3=g.de;v.m3Cv2=r22(v.TL3+v.TR3+v.BR3+v.BL3);}
+  v.RC1=r22(v.TL3+v.TR3+v.BR3+v.BL3);v.RC2=r22(v.RC1+v.Cv);
+  for(const k of ['L','T','R','B']){v[k+'1']=r22(v.Cv+v[k+'3']);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  const dc=method===1?v.RC1:v.Cv;for(const k of ['TL','TR','BR','BL']){v[k+'1']=r22(v[k+'3']+dc);v[k+'2']=r22(v[k+'1']+v[k+'3']);}
+  v.G1=r22(v.L1+v.Cv);v.G2=r22(v.T1+v.Cv);v.W2=r22(v.B1+v.R1);v.W1=r22(v.B1+v.W2);v.W3=r22(v.R1+v.W2);return v;}
+const DG=[['TL','ზედა მარცხენა — ნიჭი მამის ხაზით'],['TR','ზედა მარჯვენა — ნიჭი დედის ხაზით'],['BR','ქვედა მარჯვენა — მამის ხაზის კარმა'],['BL','ქვედა მარცხენა — დედის ხაზის კარმა']];
+function letters(){$('lt').innerHTML='<div class="h">1</div><div class="h">2</div><div class="h">3</div><div class="h">4</div><div class="h">5</div><div class="h">6</div><div class="h">7</div><div class="h">8</div><div class="h">9</div>'+
+  (()=>{const rows=[[],[],[],[]];for(const [c,n] of Object.entries(GEO)){const i=rows.findIndex(r=>!r[n-1]);rows[i][n-1]=c;}return rows.map(r=>[...Array(9)].map((_,i)=>`<div>${r[i]?`<b>${r[i]}</b>`:'&nbsp;'}</div>`).join('')).join('');})();}
+function upd(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100))return;
+  const g={};for(const k of ['gv','sx','ma','de']){const r=geo($(k).value);g[k]=r.n;
+    $('b-'+k).innerHTML=r.L.length?`${r.L.map(c=>c+'='+GEO[c]).join(' + ')} = ${r.sum}${r.sum>22?' → '+r.n:''} · ${nm(r.n)}`:'ცარიელია — რჩება თარიღიდან';}
+  const v1=calc(d,m,y,1),v2=calc(d,m,y,2),v3=calc(d,m,y,3,g);
+  $('m2').innerHTML=`<table class="t"><tr><th>დიაგონალი</th><th>გარე (3)</th><th>შუა (2) · მ1</th><th>შიდა (1) · მ1</th><th>შუა (2) · მ2</th><th>შიდა (1) · მ2</th></tr>${DG.map(([k,t])=>`<tr><td>${k} — ${t}</td><td>${v1[k+'3']}</td><td class="s">${v1[k+'2']}</td><td class="s">${v1[k+'1']}</td><td class="${v2[k+'2']!==v1[k+'2']?'d':''}">${v2[k+'2']}</td><td class="${v2[k+'1']!==v1[k+'1']?'d':''}">${v2[k+'1']}</td></tr>`).join('')}</table>
+   <p style="font-size:13px">შენს თარიღში: RC1 = <b>${v1.RC1}</b>, ცენტრი = <b>${v1.Cv}</b>. მაგალითად, TL1 მეთოდ 1-ში: ${v1.TL3} + ${v1.RC1} = ${v1.TL3+v1.RC1}${v1.TL3+v1.RC1>22?' → '+v1.TL1:''}; მეთოდ 2-ში: ${v2.TL3} + ${v2.Cv} = ${v2.TL3+v2.Cv}${v2.TL3+v2.Cv>22?' → '+v2.TL1:''}. ყვითლად მონიშნულია ის, რაც შეიცვალა.</p>`;
+  $('m3').innerHTML=`<table class="t"><tr><th>დიაგონალი</th><th>თარიღით</th><th>მეთოდი 3</th><th>შუა (2)</th><th>შიდა (1)</th></tr>${DG.map(([k,t])=>`<tr><td>${k} — ${t}</td><td class="s">${v1[k+'3']}</td><td class="${v3[k+'3']!==v1[k+'3']?'d':''}">${nm(v3[k+'3'])}</td><td>${v3[k+'2']}</td><td>${v3[k+'1']}</td></tr>`).join('')}</table>
+   <p style="font-size:13px">სახელების ცენტრი (მეორე მწვანე ნახევარი): ${v3.TL3} + ${v3.TR3} + ${v3.BR3} + ${v3.BL3} = ${v3.TL3+v3.TR3+v3.BR3+v3.BL3} → ${nm(v3.m3Cv2)}</p>`;
+  const R=[['საჰასრარა','#5B4A86',v3.T3,v3.L3],['აჯნა','#3E6C93',v3.T2,v3.L2],['ვიშუდჰა','#8FB6D4',v3.T1,v3.L1],['დალი — ქალის ხაზი','#3A6EA5',v3.TR3,v3.BL3],['კოპალა — მამაკაცის ხაზი','#1F6E5C',v3.TL3,v3.BR3],['ანაჰატა','#5E8F63',v3.Cv,v3.m3Cv2],['მანიპურა','#C8A63C',v3.B1,v3.R1],['სვადჰისტანა','#C07A2C',v3.B2,v3.R2],['მულადჰარა','#A5453F',v3.B3,v3.R3]];
+  let se=0,sp=0,ss=0;const rows=R.map(([t,c,e,p])=>{const s=r22(e+p);se+=e;sp+=p;ss+=s;return `<tr><td><span class="dot" style="background:${c}"></span>${t}</td><td>${e}</td><td>${p}</td><td class="d">${s}</td></tr>`;}).join('');
+  $('ck3').innerHTML=`<table class="t"><tr><th>ჩაკრა</th><th>ენერგია</th><th>ფიზიკა</th><th>ემოცია</th></tr>${rows}<tr><td><b>სულ</b></td><td class="d">${r22(se)}</td><td class="d">${r22(sp)}</td><td class="d">${r22(ss)}</td></tr></table>`;}
+['dd','mm','yy','gv','sx','ma','de'].forEach(id=>$(id).addEventListener('input',upd));
+letters();upd();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
