@@ -92,8 +92,8 @@ details.full .in{padding:0 14px 12px;font-size:13.5px;line-height:1.85;color:#e2
     <div class="bx"><h3><span class="cd b3">B3</span>გარე წრე — წითელი</h3>
       <p><b>მთავარი ცხოვრებისეული გაკვეთილი.</b> ენერგია, რომლის პლიუსში გადაყვანაც სულმა წარსულში ვერ მოასწრო. ეს ყველაზე ღრმა წერტილია — ის, რაზეც მთელი ცხოვრება „დგას“.</p>
       <p>ხშირად ადამიანი ამ ენერგიას თავიდან მინუსში ცხოვრობს და მხოლოდ გაცნობიერების შემდეგ ხვდება, რომ სწორედ ეს არის მისი უდიდესი ძალა.</p></div>
-    <div class="bx"><h3><span class="cd b2">B2</span>შუა წრე</h3>
-      <p><b>წარსულის სცენარი.</b> როგორ განვითარდა ამბავი წინა ცხოვრებაში — რა მოხდა, რა შეცდომა დაუშვა ადამიანმა ან რა განიცადა.</p>
+    <div class="bx"><h3><span class="cd b2">B2</span>შუა წრე — წითელსა და ნარინჯისფერს შორის</h3>
+      <p><b>წარსული ცხოვრების შეცდომა.</b> რა გააკეთა ან რა ვერ გააკეთა სულმა წინა ცხოვრებაში — სწორედ ამის გამო დარჩა B3-ის გაკვეთილი დაუსრულებელი.</p>
       <p>ეს ენერგია ახლაც ცდილობს ძველი სცენარის გამეორებას: ერთნაირი სიტუაციები, ერთნაირი ხალხი, ერთნაირი არჩევანი. მისი დანახვა წრის გარღვევის პირველი ნაბიჯია.</p></div>
     <div class="bx"><h3><span class="cd b1">B1</span>შიდა წრე</h3>
       <p><b>ახლანდელი გამოვლინება და გასაღები.</b> როგორ იჩენს კუდი თავს ამ ცხოვრებაში და რა თვისებით გამოისყიდება. ეს წერტილი ცენტრთან ყველაზე ახლოსაა — ყოველდღიური ქმედების დონე.</p>
@@ -108,6 +108,7 @@ details.full .in{padding:0 14px 12px;font-size:13.5px;line-height:1.85;color:#e2
 </div>
 
 <script src="matrix_arcana.js"></script>
+<script src="matrix_pos.js"></script>
 <script src="matrix_combos.js"></script>
 <script src="articles.js"></script>
 <script src="matrix_autotext.js"></script>
@@ -197,7 +198,7 @@ const T=[
  'მისტიკოსი, რომელიც ძალას (18) ბოროტად იყენებდა ან ილუზიებში ცხოვრობდა; სიბრძნე (9) მარტოობაში დარჩა.',
  'ილუზიებისგან გათავისუფლება, ინტუიციის პატიოსნად გამოყენება, სიბრძნის (9) გაზიარება სხვებისთვის.']];
 const TAIL={};T.forEach(t=>TAIL[t[0]]=t);
-const POS0=0;const POS=[['b3','B3','მთავარი გაკვეთილი'],['b2','B2','წარსულის სცენარი'],['b1','B1','ახლა · გასაღები']];
+const POS0=0;const POS=[['b3','B3','მთავარი გაკვეთილი'],['b2','B2','წარსულის შეცდომა'],['b1','B1','ახლა · გასაღები']];
 let cur='10-13-3',MY=null;
 function dbText(code){try{const db=window.MATRIX_DB||{},x=((db.karmic_tail||{}).combos||{})[code],txt=x&&String(x.text||'');
   if(txt&&txt.replace(/<[^>]+>|&nbsp;|\s/g,''))return txt;
@@ -206,7 +207,7 @@ function grid(){$('grid').innerHTML=T.map(t=>`<button type="button" class="tl${t
 function show(code,scroll){const t=TAIL[code];if(!t)return;cur=code;const ns=code.split('-').map(Number),full=dbText(code);
   $('det').innerHTML=`<div class="hd"><div class="code">${code}</div><div><h2>${t[1]}</h2><div style="font-size:12.5px;color:#9aa3b6">${t[2]}% ადამიანებს აქვს ეს კუდი${MY===code?' · <b style="color:#ff9a8a">შენი კუდი</b>':''}</div></div></div>
    <div class="ess">${t[3]}</div>
-   <div class="pos">${POS.map((p,i)=>{const n=ns[i],a=A[n-1]||{};return `<a href="course_matrix4.html#${n}"><div class="t"><span class="cd ${p[0]}">${n}</span>${p[1]} · ${p[2]}</div><div class="n">${a.t||''}</div><div class="k">${a.k||''}</div></a>`;}).join('')}</div>
+   <div class="pos">${POS.map((p,i)=>{const n=ns[i],a=A[n-1]||{};return `<a href="course_matrix4.html#${n}"><div class="t"><span class="cd ${p[0]}">${n}</span>${p[1]} · ${p[2]}</div><div class="n">${a.t||''}</div><div class="k">${a.k||''}</div><div class="r">${((window.MX_POS||{})[p[1]]||{})[n]||''}</div></a>`;}).join('')}</div>
    <div class="cols"><div class="bx past"><h3>წარსულ ცხოვრებაში</h3><p>${t[4]}</p></div><div class="bx now"><h3>ამ ცხოვრებაში — ამოცანა</h3><p>${t[5]}</p></div></div>
    ${full?`<details class="full" open><summary>სტატია — როგორც მატრიცის გვერდზე</summary><div class="in">${full}</div></details>`:''}
    <div class="nav"><button type="button" id="pv">←</button><button type="button" id="nx">→</button></div>`;
