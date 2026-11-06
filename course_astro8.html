@@ -242,7 +242,7 @@ table.rt{border-collapse:collapse;width:100%;min-width:480px;font-size:13.5px}
     <div class="quiz" id="qz"></div><div id="qs"></div>
   </div>
 
-  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro7.html">← მერკური, ვენერა, მარსი</a><a href="course_astro.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 9 — მალე →</a></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro7.html">← მერკური, ვენერა, მარსი</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro9.html">ურანი, ნეპტუნი, პლუტონი →</a></div>
 </div>
 <script>
 (function(){
@@ -400,7 +400,7 @@ const GC=(()=>{const o=[];let pe=null;for(let J=J1800;J<=J2050;J+=5){const e=el(
     if(!o.length||b-o[o.length-1].J>1500)o.push({J:b,lon:lonOf('ju',b)});}pe=e;}return o;})();
 /* ── 1 · the sky ── */
 const S={J:jd(1955,1,1,0),rate:730,play:!RM,g:null};
-function drawS(){if(!S.g)return;const {c,w,h}=S.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.84,J=S.J,rJ=ri*.7,rS=ri*.5;
+function drawS(){if(!S.g)return;const {c,w,h}=S.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.84,J=S.J,rJ=ri*.5,rS=ri*.72;
   ring(c,cx,cy,ri,R,-1);
   [rJ,rS].forEach(r=>{c.strokeStyle='rgba(227,190,132,.14)';c.lineWidth=1;c.setLineDash([2,4]);c.beginPath();c.arc(cx,cy,r,0,7);c.stroke();c.setLineDash([]);});
   const past=GC.filter(g=>g.J<=J);
