@@ -207,7 +207,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <div class="quiz" id="qz"></div><div id="qs"></div>
   </div>
 
-  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro3.html">← სტიქიები, ჯვრები, პოლარობა</a><a href="course_astro.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 5 — მალე →</a></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro3.html">← სტიქიები, ჯვრები, პოლარობა</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro5.html">მმართველობა →</a></div>
 </div>
 <script>
 (function(){
@@ -269,6 +269,7 @@ const sidx=x=>Math.floor(norm(x)/30),inS=x=>dm(norm(x)%30);
 const fl=x=>`${inS(x)} ${SG[sidx(x)][0]}${VS} ${SG[sidx(x)][1]}`;
 const p2=n=>String(n).padStart(2,'0');
 const ord=n=>n===1?'1-ლი':'მე-'+n;
+const locS=s=>(s.endsWith('ი')?s.slice(0,-1):s)+'ში';
 const hms=deg=>{let s=Math.round(norm(deg)/15*3600);const h=Math.floor(s/3600);s-=h*3600;return `${p2(h%24)}სთ ${p2(Math.floor(s/60))}წთ ${p2(s%60)}წმ`;};
 const offS=m=>(m<0?'−':'+')+Math.floor(Math.abs(m)/60)+':'+p2(Math.round(Math.abs(m)%60));
 const hm=min=>{min=((Math.round(min)%1440)+1440)%1440;return p2(Math.floor(min/60))+':'+p2(min%60);};
