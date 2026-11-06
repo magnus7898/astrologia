@@ -120,7 +120,8 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 .inp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px;align-items:end}
 .inp label{display:block;font-size:11px;letter-spacing:.1em;color:#B8894A;margin-bottom:4px}
 .inp input,.inp select{width:100%;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:14.5px;font-family:inherit}
-.inp .two{display:flex;gap:6px}.inp .two input{text-align:center}
+.inp .two{display:flex;gap:6px}.inp .two input{text-align:center;flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px}
+@media(min-width:560px){.inp>div:first-child{grid-column:span 2}}
 .inp .ck{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#cfd5e2;padding-bottom:9px}
 .inp .ck input{width:auto;accent-color:#C9A24C}.inp .ck label{margin:0;letter-spacing:0;font-size:12.5px;color:#cfd5e2}
 .sum{margin-top:12px;font-size:13px;color:#cfd5e2;line-height:1.8;text-align:center}.sum b{color:#FFE7A0;font-weight:600}

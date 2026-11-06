@@ -120,14 +120,15 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 .inp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px;align-items:end}
 .inp label{display:block;font-size:11px;letter-spacing:.1em;color:#B8894A;margin-bottom:4px}
 .inp input,.inp select{width:100%;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:14.5px;font-family:inherit}
-.inp .two{display:flex;gap:6px}.inp .two input{text-align:center}
+.inp .two{display:flex;gap:6px}.inp .two input{text-align:center;flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px}
+@media(min-width:560px){.inp>div:first-child{grid-column:span 2}}
 .inp .ck{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#cfd5e2;padding-bottom:9px}
 .inp .ck input{width:auto;accent-color:#C9A24C}.inp .ck label{margin:0;letter-spacing:0;font-size:12.5px;color:#cfd5e2}
 .sum{margin-top:12px;font-size:13px;color:#cfd5e2;line-height:1.8;text-align:center}.sum b{color:#FFE7A0;font-weight:600}
 
-.tabs{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
-.tabs button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
-.tabs button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.seg button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.seg button.on{background:#C9A24C;color:#0C1222;font-weight:600}
 .tw{overflow-x:auto;margin-top:12px}
 table.rt{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px}
 .rt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;padding:7px 8px;border-bottom:1px solid rgba(184,137,74,.45)}
@@ -167,7 +168,7 @@ table.dg{border-collapse:collapse;width:100%;min-width:640px;font-size:12px;text
     <p>ყოველ პლანეტას ორი სახლი აქვს: <b>დღის</b> სახლი (იანი ნიშანი) და <b>ღამის</b> სახლი (ინი ნიშანი). დააჭირე ▶-ს და ნახე, როგორ შენდება კიბე. ზედა ჩანართებით კი ტრადიციული, თანამედროვე და MAGNUS-ის სისტემები შეადარე.</p>
    </div><div class="stage">
     <canvas id="cvL" aria-label="ნიშნების მმართველები — ქალდეური კიბე"></canvas>
-    <div class="tabs" id="sysT"><button type="button" data-s="trad" class="on">ტრადიციული</button><button type="button" data-s="mod">თანამედროვე</button><button type="button" data-s="mag">MAGNUS</button></div>
+    <div class="seg" id="sysT"><button type="button" data-s="trad" class="on">ტრადიციული</button><button type="button" data-s="mod">თანამედროვე</button><button type="button" data-s="mag">MAGNUS</button></div>
     <div class="ctl"><button type="button" id="lPl" aria-label="თავიდან">↻</button></div>
     <div class="ro" id="lRo"></div>
    </div></div>
@@ -195,7 +196,7 @@ table.dg{border-collapse:collapse;width:100%;min-width:640px;font-size:12px;text
    <div class="duo"><div>
     <p>აირჩიე პლანეტა: ის ზოდიაქოში იმოგზაურებს და წრეზე ფერით გამოჩნდება მისი მდგომარეობა ყოველ ნიშანში. ოქროსფერი — სახლი, მკრთალი ოქროსფერი — მეორე მმართველობა (MAGNUS), მწვანე — ეგზალტაცია, წითელი — განდევნა, მუქი წითელი — დაცემა. ცარიელი ნიშანი ნეიტრალურია: პლანეტა იქ „პერეგრინია“, მოგზაური, რომელსაც საკუთარი ძალა არ აქვს და დისპოზიტორზეა დამოკიდებული.</p>
     <p>შკალა აჩვენებს მდგომარეობას უილიამ ლილის კლასიკური ქულებით (XVII საუკუნე): სახლი +5, ეგზალტაცია +4, დაცემა −4, განდევნა −5. MAGNUS-ის მეორე მმართველობას აქ +3 ქულით ვაჩვენებთ, მის განდევნას −3-ით.</p>
-    <div class="tabs" id="sysJ"><button type="button" data-s="trad">ტრადიციული</button><button type="button" data-s="mag" class="on">MAGNUS</button></div>
+    <div class="seg" id="sysJ"><button type="button" data-s="trad">ტრადიციული</button><button type="button" data-s="mag" class="on">MAGNUS</button></div>
    </div><div class="stage">
     <canvas id="cvJ" aria-label="პლანეტის მდგომარეობა ყოველ ნიშანში"></canvas>
     <div class="pbtn" id="pbt"></div>
@@ -233,7 +234,7 @@ table.dg{border-collapse:collapse;width:100%;min-width:640px;font-size:12px;text
     <div class="quiz" id="qz"></div><div id="qs"></div>
   </div>
 
-  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro4.html">← 12 ნიშანი</a><a href="course_astro.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 6 — მალე →</a></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro4.html">← 12 ნიშანი</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro6.html">მზე და მთვარე →</a></div>
 </div>
 <script>
 (function(){
