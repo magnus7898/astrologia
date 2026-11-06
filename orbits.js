@@ -18,7 +18,7 @@ const PL=[ /* key, name, glyph, colour, dot size */
  ['mars','მარსი','♂','#ef6c4a',3.8],['jupiter','იუპიტერი','♃','#e3b27c',7.5],['saturn','სატურნი','♄','#ecd99c',6.5],
  ['uranus','ურანი','♅','#86e0e8',5.2],['neptune','ნეპტუნი','♆','#6a8cf4',5.2],['pluto','პლუტონი','♇','#c9a08e',3],['chiron','ქირონი','⚷','#a6e09a',2.8]];
 const PK=Object.fromEntries(PL.map(p=>[p[0],p]));
-const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'],ZC=['#e0703a','#8fa05a','#d8c060','#4a90c8'];
+const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'],ZC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'],ZF=['rgba(232,135,90,.14)','rgba(143,196,106,.14)','rgba(201,211,230,.14)','rgba(90,168,232,.14)'];
 const SPEEDS=[[1/24,'1 სთ/წმ'],[1,'1 დღე/წმ'],[7,'1 კვირა/წმ'],[30.44,'1 თვე/წმ'],[182.6,'½ წელი/წმ'],[365.25,'1 წელი/წმ'],[3652.5,'10 წელი/წმ'],[36525,'100 წელი/წმ']];
 const PER={mercury:0.2408,venus:0.6152,earth:1,mars:1.8809,jupiter:11.862,saturn:29.457,uranus:84.01,neptune:164.8,pluto:247.9,chiron:50.4};
 const SYN={mercury:0.317,venus:1.599,mars:2.135,jupiter:1.092,saturn:1.035,uranus:1.012,neptune:1.006,pluto:1.004,chiron:1.02};
@@ -131,7 +131,8 @@ function bgLayer(){
   /* zodiac ring (equinox of date) */
   g.save();g.translate(cx,cy);g.strokeStyle='rgba(201,162,76,.3)';g.lineWidth=1;
   g.beginPath();g.arc(0,0,Rz,0,7);g.stroke();g.beginPath();g.arc(0,0,Rz-20,0,7);g.stroke();
-  for(let s=0;s<12;s++){const a=(s*30-pr)*D2R;g.strokeStyle='rgba(201,162,76,.25)';g.beginPath();g.moveTo(Math.cos(a)*(Rz-20),-Math.sin(a)*(Rz-20));g.lineTo(Math.cos(a)*Rz,-Math.sin(a)*Rz);g.stroke();
+  for(let s=0;s<12;s++){const a0=(s*30-pr)*D2R,a1=a0+30*D2R;g.beginPath();g.arc(0,0,Rz,-a0,-a1,true);g.arc(0,0,Rz-20,-a1,-a0,false);g.closePath();g.fillStyle=ZF[s%4];g.fill();}
+  for(let s=0;s<12;s++){const a=(s*30-pr)*D2R;g.strokeStyle='rgba(227,190,132,.35)';g.beginPath();g.moveTo(Math.cos(a)*(Rz-20),-Math.sin(a)*(Rz-20));g.lineTo(Math.cos(a)*Rz,-Math.sin(a)*Rz);g.stroke();
     for(let d=5;d<30;d+=5){const b=(s*30+d-pr)*D2R;g.beginPath();g.moveTo(Math.cos(b)*Rz,-Math.sin(b)*Rz);g.lineTo(Math.cos(b)*(Rz-(d%10?3:5)),-Math.sin(b)*(Rz-(d%10?3:5)));g.stroke();}
     const m=(s*30+15-pr)*D2R;g.fillStyle=ZC[s%4];g.font='17px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(ZS[s]+'︎',Math.cos(m)*(Rz-10),-Math.sin(m)*(Rz-10));}
   g.restore();

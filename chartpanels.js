@@ -18,8 +18,8 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
-const EL=[{k:'fire',ka:'ცეცხლი',c:'#e0603a',ic:'🜂'},{k:'earth',ka:'მიწა',c:'#8aab6e',ic:'🜃'},
-          {k:'air',ka:'ჰაერი',c:'#d8c070',ic:'🜁'},{k:'water',ka:'წყალი',c:'#5b8ec4',ic:'🜄'}];
+const EL=[{k:'fire',ka:'ცეცხლი',c:'#e8875a',ic:'🜂'},{k:'earth',ka:'მიწა',c:'#8fc46a',ic:'🜃'},
+          {k:'air',ka:'ჰაერი',c:'#c9d3e6',ic:'🜁'},{k:'water',ka:'წყალი',c:'#5aa8e8',ic:'🜄'}];
 const MOD=[{ka:'კარდინალური',c:'#c084fc'},{ka:'ფიქსირებული',c:'#f0c060'},{ka:'მუტაბელური',c:'#60c8d0'}];
 const W={'მზე':3,'მთვარე':3,'მერკური':2,'ვენერა':2,'მარსი':2,'იუპიტერი':1.5,'სატურნი':1.5,
          'ურანი':1,'ნეპტუნი':1,'პლუტონი':1,'AC':3,'MC':1};
@@ -202,7 +202,7 @@ function left(d){
   h+='<h3>⟳ მოდალობა</h3>';
   MOD.forEach((m,i)=>{h+=bar(m.ka,M[i],tot,m.c)+(MG[i].length?`<div class="cp-gl">${MG[i].join(' ')}</div>`:'');});
   const yang=E[0]+E[2],yin=E[1]+E[3];
-  h+=`<h3>☯ პოლარობა</h3><div class="cp-split"><i style="width:${pct(yang,tot)}%;background:linear-gradient(90deg,#e0603a,#d8c070)"></i><i style="width:${pct(yin,tot)}%;background:linear-gradient(90deg,#8aab6e,#5b8ec4)"></i></div>
+  h+=`<h3>☯ პოლარობა</h3><div class="cp-split"><i style="width:${pct(yang,tot)}%;background:linear-gradient(90deg,#e8875a,#c9d3e6)"></i><i style="width:${pct(yin,tot)}%;background:linear-gradient(90deg,#8fc46a,#5aa8e8)"></i></div>
     <div class="cp-row"><span>იანი (აქტიური) ${pct(yang,tot)}%</span><span>ინი (რეცეპტიული) ${pct(yin,tot)}%</span></div>`;
   const eMax=E.indexOf(Math.max(...E)),mMax=M.indexOf(Math.max(...M));
   const lack=EL.filter((e,i)=>E[i]===0).map(e=>e.ka);

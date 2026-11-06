@@ -224,8 +224,8 @@ const NS='http://www.w3.org/2000/svg';
 
 const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎'];
 const RASHI=['მეშ.','ვრიშ.','მით.','კარკ.','სიმჰ.','კანია','თულა','ვრიშჩ.','დჰანუ','მაკ.','კუმბ.','მინა'];
-const RCOL=['#e05252','#8aab6e','#89b4d4','#5b8ec4','#e05252','#8aab6e','#89b4d4','#5b8ec4','#e05252','#8aab6e','#89b4d4','#5b8ec4'];
-const EFILL=['#1a0808','#081008','#08101a','#08101a','#1a0808','#081008','#08101a','#081018','#1a0808','#081008','#08101a','#081018'];
+const RCOL=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
+const EFILL=['#2b222a','#1e2b2c','#262d3d','#17273e','#2b222a','#1e2b2c','#262d3d','#17273e','#2b222a','#1e2b2c','#262d3d','#17273e'];
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 const PI={
   'Sun':{sym:'sun',color:'#f9c646'},'Moon':{sym:'☽',color:'#c8d8f0'},
@@ -612,18 +612,18 @@ function drawWheel(data, svgId){
     const p=(a,r)=>`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;
     el('path',{d:`M${p(a0,R2)} L${p(a0,R1)} A${R1},${R1} 0 0,0 ${p(a1,R1)} L${p(a1,R2)} A${R2},${R2} 0 0,1 ${p(a0,R2)} Z`,fill:EFILL[si]},svg);
     el('path',{d:`M${p(a0,R3)} L${p(a0,R2)} A${R2},${R2} 0 0,0 ${p(a1,R2)} L${p(a1,R3)} A${R3},${R3} 0 0,1 ${p(a0,R3)} Z`,fill:i%2?'rgba(6,5,18,1)':'rgba(10,8,26,1)'},svg);
-    el('line',{x1:CX+Math.cos(a0)*R1,y1:CY+Math.sin(a0)*R1,x2:CX+Math.cos(a0)*R2,y2:CY+Math.sin(a0)*R2,stroke:RCOL[si],'stroke-width':1.2,opacity:.85},svg);
+    el('line',{x1:CX+Math.cos(a0)*R1,y1:CY+Math.sin(a0)*R1,x2:CX+Math.cos(a0)*R2,y2:CY+Math.sin(a0)*R2,stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
     const am=v2a(lagStart+i*30+15,lagStart),Rzs=(R1+R2)/2;
     const zt=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:CX+Math.cos(am)*Rzs,y:CY+Math.sin(am)*Rzs,fill:RCOL[si],'font-size':20,'font-family':'serif','font-weight':'bold'},svg);
     zt.textContent=ZSYM[si];
     txt(svg,ROMAN[i],CX+Math.cos(v2a(lagStart+i*30+15,lagStart))*(R2+R3)/2,CY+Math.sin(v2a(lagStart+i*30+15,lagStart))*(R2+R3)/2,{fill:'rgba(180,150,255,.75)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});
   }
   el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(4,3,14,1)'},svg);
-  for(let d=0;d<360;d++){const a=v2a(lagStart+d,lagStart),is30=d%30===0,is10=d%10===0;const len=is30?20:is10?13:5;el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*(R1-len),y2:CY+Math.sin(a)*(R1-len),stroke:is30?'rgba(255,220,255,1)':is10?'rgba(180,130,255,.9)':'rgba(80,55,150,.6)','stroke-width':is30?2:is10?1.4:.5},svg);}
-  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(140,90,230,.85)','stroke-width':1.8},svg);
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(100,65,200,.8)','stroke-width':1.5},svg);
-  el('circle',{cx:CX,cy:CY,r:R3,fill:'none',stroke:'rgba(70,45,160,.75)','stroke-width':1.2},svg);
-  el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(50,32,120,.7)','stroke-width':1},svg);
+  for(let d=0;d<360;d++){const a=v2a(lagStart+d,lagStart),is30=d%30===0,is10=d%10===0;const len=is30?20:is10?13:5;el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*(R1-len),y2:CY+Math.sin(a)*(R1-len),stroke:is30?'rgba(243,221,164,.95)':is10?'rgba(227,190,132,.75)':'rgba(227,190,132,.28)','stroke-width':is30?2:is10?1.4:.5},svg);}
+  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(227,190,132,.6)','stroke-width':1.6},svg);
+  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.3},svg);
+  el('circle',{cx:CX,cy:CY,r:R3,fill:'none',stroke:'rgba(227,190,132,.3)','stroke-width':1.1},svg);
+  el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(227,190,132,.25)','stroke-width':1},svg);
 
   // ── LAGNA ──
   if(!data._timeUnknown){

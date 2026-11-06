@@ -181,7 +181,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
 .moon-sym{color:#b8d8ff;text-shadow:0 0 8px rgba(100,160,255,0.9);font-size:20px;font-family:serif}
 .p-sym{font-family:serif;font-size:18px;line-height:1;display:inline-block}
 .asp-sym{font-size:16px;font-family:serif}
-.sign-fire{color:#e05252}.sign-earth{color:#8aab6e}.sign-air{color:#89b4d4}.sign-water{color:#5b8ec4}
+.sign-fire{color:#e8875a}.sign-earth{color:#8fc46a}.sign-air{color:#c9d3e6}.sign-water{color:#5aa8e8}
 .time-disabled input{opacity:.3;pointer-events:none}
 
 /* legend */
@@ -787,7 +787,8 @@ let currentMode='natal';
 
 const SIGN_KA=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
 const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎'];
-const ZCOL=['#e05252','#8aab6e','#89b4d4','#5b8ec4','#d4602e','#7a9e6a','#7fb8d8','#4a7ab0','#c84a32','#6b9062','#90c0dc','#6688c0'];
+/* zodiac palette shared with the course wheels: fire · earth · air · water */
+const ZCOL=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
 const ZELEMENT=['F','E','A','W','F','E','A','W','F','E','A','W'];
 const PI={
   'მზე':{sym:'sun',color:'#f9c646'},'მთვარე':{sym:'☽',color:'#c8d8f0'},
@@ -2833,15 +2834,15 @@ function drawWheel(data1,data2,dualAsp){
   el('circle',{cx:CX,cy:CY,r:R1+6,fill:'url(#bgG)'},svg);
 
   // zodiac band
-  const EFILL=['#1a0808','#081008','#08101a','#08101a','#1a0808','#081008','#08101a','#081018','#1a0808','#081008','#08101a','#081018'];
+  const EFILL=['#2b222a','#1e2b2c','#262d3d','#17273e','#2b222a','#1e2b2c','#262d3d','#17273e','#2b222a','#1e2b2c','#262d3d','#17273e'];
   for(let i=0;i<12;i++){
     const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
     el('path',{d:`M${p(i*30,R1)} A${R1},${R1} 0 0,0 ${p((i+1)*30,R1)} L${p((i+1)*30,R2)} A${R2},${R2} 0 0,1 ${p(i*30,R2)} Z`,fill:EFILL[i]},svg);
-    el('path',{d:`M${p(i*30,R2)} A${R2},${R2} 0 0,0 ${p((i+1)*30,R2)}`,fill:'none',stroke:ZCOL[i],'stroke-width':2,opacity:.6},svg);
+    el('path',{d:`M${p(i*30,R2)} A${R2},${R2} 0 0,0 ${p((i+1)*30,R2)}`,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
   }
   for(let i=0;i<12;i++){
     const a=e2s(i*30,asc);
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,stroke:ZCOL[i],'stroke-width':1.2,opacity:.85},svg);
+    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2,stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
   }
 
   // house band (narrower in dual mode)
@@ -2850,7 +2851,7 @@ function drawWheel(data1,data2,dualAsp){
       const h1=data1.houses[i],h2=data1.houses[(i+1)%12];
       const span=((h2-h1)+360)%360,la=span>180?1:0;
       const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
-      el('path',{d:`M${p(h1,R2)} A${R2},${R2} 0 ${la},0 ${p(h2,R2)} L${p(h2,R3d)} A${R3d},${R3d} 0 ${la},1 ${p(h1,R3d)} Z`,fill:i%2?'rgba(12,18,34,1)':'rgba(10,8,26,1)'},svg);
+      el('path',{d:`M${p(h1,R2)} A${R2},${R2} 0 ${la},0 ${p(h2,R2)} L${p(h2,R3d)} A${R3d},${R3d} 0 ${la},1 ${p(h1,R3d)} Z`,fill:i%2?'rgba(12,18,34,1)':'rgba(16,23,42,1)'},svg);
     }
   }
 
@@ -2859,17 +2860,17 @@ function drawWheel(data1,data2,dualAsp){
   const R_iz_in=data2?116:0;
   if(data2){
     // inner zodiac band fills (element tinted, darker)
-    const EFILL2=['#120606','#060a06','#060a12','#060a12','#120606','#060a06','#060a12','#060810','#120606','#060a06','#060a12','#060810'];
+    const EFILL2=['#221e28','#192429','#1f2536','#142136','#221e28','#192429','#1f2536','#142136','#221e28','#192429','#1f2536','#142136'];
     for(let i=0;i<12;i++){
       const p=(d,r)=>{const a=e2s(d,asc);return`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;};
       el('path',{d:`M${p(i*30,R_iz_out)} A${R_iz_out},${R_iz_out} 0 0,0 ${p((i+1)*30,R_iz_out)} L${p((i+1)*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,1 ${p(i*30,R_iz_in)} Z`,fill:EFILL2[i]},svg);
       // inner edge colored border
-      el('path',{d:`M${p(i*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,0 ${p((i+1)*30,R_iz_in)}`,fill:'none',stroke:ZCOL[i],'stroke-width':1.2,opacity:.5},svg);
+      el('path',{d:`M${p(i*30,R_iz_in)} A${R_iz_in},${R_iz_in} 0 0,0 ${p((i+1)*30,R_iz_in)}`,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1},svg);
     }
     // divider lines inner zodiac
     for(let i=0;i<12;i++){
       const a=e2s(i*30,asc);
-      el('line',{x1:CX+Math.cos(a)*R_iz_out,y1:CY+Math.sin(a)*R_iz_out,x2:CX+Math.cos(a)*R_iz_in,y2:CY+Math.sin(a)*R_iz_in,stroke:ZCOL[i],'stroke-width':.9,opacity:.7},svg);
+      el('line',{x1:CX+Math.cos(a)*R_iz_out,y1:CY+Math.sin(a)*R_iz_out,x2:CX+Math.cos(a)*R_iz_in,y2:CY+Math.sin(a)*R_iz_in,stroke:'rgba(227,190,132,.45)','stroke-width':.9},svg);
     }
     // inner zodiac symbols
     const Rzs2=(R_iz_out+R_iz_in)/2;
@@ -2886,7 +2887,7 @@ function drawWheel(data1,data2,dualAsp){
     // inner fill circle
     el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'rgba(8,12,24,1)'},svg);
     el('circle',{cx:CX,cy:CY,r:R5d,fill:'rgba(8,12,24,1)'},svg);
-    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(123,147,189,.5)','stroke-width':1.2},svg);
+    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(227,190,132,.3)','stroke-width':1.1},svg);
   }else{
     el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(8,12,24,1)'},svg);
   }
@@ -2896,7 +2897,7 @@ function drawWheel(data1,data2,dualAsp){
     const a=e2s(deg,asc),co=Math.cos(a),si2=Math.sin(a);
     const is30=deg%30===0,is10=deg%10===0,is5=deg%5===0;
     const len=is30?20:is10?13:is5?8:5;
-    const stroke=is30?'rgba(255,220,255,1)':is10?'rgba(180,130,255,0.95)':is5?'rgba(123,147,189,0.8)':'rgba(80,55,150,0.65)';
+    const stroke=is30?'rgba(243,221,164,.95)':is10?'rgba(227,190,132,.75)':is5?'rgba(227,190,132,.5)':'rgba(227,190,132,.28)';
     const sw=is30?2:is10?1.4:is5?0.9:0.5;
     el('line',{x1:CX+co*R1,y1:CY+si2*R1,x2:CX+co*(R1-len),y2:CY+si2*(R1-len),stroke,'stroke-width':sw},svg);
   }
@@ -2904,19 +2905,19 @@ function drawWheel(data1,data2,dualAsp){
     if(deg%30===0)continue;
     const a=e2s(deg,asc),nr=R1-33;
     const nx=CX+Math.cos(a)*nr,ny=CY+Math.sin(a)*nr;
-    txt(svg,String(deg%30),nx,ny,{fill:'rgba(160,120,240,0.9)','font-size':7.5,'font-family':'serif'});
+    txt(svg,String(deg%30),nx,ny,{fill:'rgba(227,190,132,.75)','font-size':7.5,'font-family':'serif'});
   }
 
   // circles
-  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(140,90,230,0.85)','stroke-width':1.8},svg);
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(123,147,189,0.8)','stroke-width':1.5},svg);
-  el('circle',{cx:CX,cy:CY,r:R3d,fill:'none',stroke:'rgba(70,45,160,0.75)','stroke-width':1.2},svg);
+  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(227,190,132,.6)','stroke-width':1.6},svg);
+  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.3},svg);
+  el('circle',{cx:CX,cy:CY,r:R3d,fill:'none',stroke:'rgba(227,190,132,.3)','stroke-width':1.1},svg);
   if(data2){
-    el('circle',{cx:CX,cy:CY,r:R_iz_out,fill:'none',stroke:'rgba(123,147,189,.65)','stroke-width':1},svg);
+    el('circle',{cx:CX,cy:CY,r:R_iz_out,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1},svg);
     el('circle',{cx:CX,cy:CY,r:R_iz_in,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1},svg);
-    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(123,147,189,.5)','stroke-width':1.2},svg);
+    el('circle',{cx:CX,cy:CY,r:R5d,fill:'none',stroke:'rgba(227,190,132,.3)','stroke-width':1.1},svg);
   }else{
-    el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(50,32,120,0.7)','stroke-width':1},svg);
+    el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(227,190,132,.25)','stroke-width':1},svg);
   }
 
   // zodiac symbols outer

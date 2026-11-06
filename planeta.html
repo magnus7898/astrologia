@@ -198,7 +198,7 @@ const SPICA_LON=203.8375,SPICA_LAT=-2.0545;
 
 const SIGN_KA=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
 const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏︎','♐︎','♑︎','♒︎','♓︎'];
-const ZCOL=['#e05252','#8aab6e','#89b4d4','#5b8ec4','#d4602e','#7a9e6a','#7fb8d8','#4a7ab0','#c84a32','#6b9062','#90c0dc','#6688c0'];
+const ZCOL=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
 
 /* Keplerian elements: a,e,I,L,varpi,Omega + rates per century */
 const KEP={
@@ -576,7 +576,7 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO,POS){
     const s1=WDIR>0?0:1,s2=1-s1;
     el('path',{d:'M'+p(b.s,RO)+' A'+RO+','+RO+' 0 '+la+','+s1+' '+p(b.e,RO)+
                  ' L'+p(b.e,RSi)+' A'+RSi+','+RSi+' 0 '+la+','+s2+' '+p(b.s,RSi)+' Z',
-      fill:'rgba(14,18,38,.85)',stroke:b.col,'stroke-width':.8,opacity:.9},svg);
+      fill:b.col,'fill-opacity':.14,stroke:'rgba(227,190,132,.45)','stroke-width':.8},svg);
     if(span>2.2){
       const a=e2s(b.s+span/2,asc);
       txt(svg,b.sym,CX+Math.cos(a)*(RSi+24),CY+Math.sin(a)*(RSi+24),
@@ -588,11 +588,11 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO,POS){
   for(let d=0;d<360;d++){
     const a=e2s(d,asc),co=Math.cos(a),si=Math.sin(a);
     el('line',{x1:CX+co*RO,y1:CY+si*RO,x2:CX+co*(RO-7),y2:CY+si*(RO-7),
-      stroke:'rgba(150,178,220,.5)','stroke-width':.7},svg);
+      stroke:'rgba(227,190,132,.35)','stroke-width':.7},svg);
   }
   /* ── circles, angles, aspect web ── */
-  el('circle',{cx:CX,cy:CY,r:RO,fill:'none',stroke:'rgba(190,214,248,.7)','stroke-width':1.7},svg);
-  el('circle',{cx:CX,cy:CY,r:RSi,fill:'none',stroke:'rgba(124,154,208,.5)','stroke-width':1.2},svg);
+  el('circle',{cx:CX,cy:CY,r:RO,fill:'none',stroke:'rgba(227,190,132,.6)','stroke-width':1.6},svg);
+  el('circle',{cx:CX,cy:CY,r:RSi,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
   [0,3,6,9].forEach(function(i){
     const a=e2s(houses[i],asc);
     el('line',{x1:CX+Math.cos(a)*R4,y1:CY+Math.sin(a)*R4,

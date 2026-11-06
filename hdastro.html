@@ -153,7 +153,7 @@ const $=id=>document.getElementById(id);
 const VS='︎';
 const SIGN_G=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(s=>s+VS);
 const SIGN_KA=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
-const ELEM_COL=['#ff7a5c','#9ccf6a','#f2d46b','#6fb6ff'];      /* fire earth air water */
+const ELEM_COL=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];      /* fire earth air water */
 const PG={"Sun":"☉","Earth":"⊕","Moon":"☽","North Node":"☊","South Node":"☋","Mercury":"☿","Venus":"♀","Mars":"♂",
   "Jupiter":"♃","Saturn":"♄","Uranus":"♅","Neptune":"♆","Pluto":"♇"};
 const PKA={"Sun":"მზე","Earth":"დედამიწა","Moon":"მთვარე","North Node":"ჩრდ. კვანძი","South Node":"სამხ. კვანძი","Mercury":"მერკური",
@@ -237,7 +237,7 @@ function draw(){
   /* zodiac ring */
   for(let i=0;i<12;i++){
     const a=i*30,col=ELEM_COL[i%4];
-    s+=`<path d="${wedge(R.zi,R.zo,a,a+30)}" fill="${col}" fill-opacity=".055" stroke="#c9a84c" stroke-opacity=".35" stroke-width=".8"/>`;
+    s+=`<path d="${wedge(R.zi,R.zo,a,a+30)}" fill="${col}" fill-opacity=".14" stroke="#E3BE84" stroke-opacity=".35" stroke-width=".8"/>`;
     s+=txt((R.zo+R.zi)/2,a+15,SIGN_G[i],`fill="${col}" font-size="26" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`);
   }
   /* degree ticks */

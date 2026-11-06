@@ -207,16 +207,16 @@ const PORDER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn',
 
 // Element colors by constellation
 const CON_COLORS={
-  'Aries':'#e05252','Taurus':'#8aab6e','Gemini':'#89b4d4','Cancer':'#5b8ec4',
-  'Leo':'#d4602e','Virgo':'#7a9e6a','Libra':'#7fb8d8','Scorpius':'#4a7ab0',
-  'Ophiuchus':'#9060d0','Sagittarius':'#c84a32','Capricornus':'#6b9062',
-  'Aquarius':'#90c0dc','Pisces':'#6688c0'
+  'Aries':'#e8875a','Taurus':'#8fc46a','Gemini':'#c9d3e6','Cancer':'#5aa8e8',
+  'Leo':'#e8875a','Virgo':'#8fc46a','Libra':'#c9d3e6','Scorpius':'#5aa8e8',
+  'Ophiuchus':'#b07840','Sagittarius':'#e8875a','Capricornus':'#8fc46a',
+  'Aquarius':'#c9d3e6','Pisces':'#5aa8e8'
 };
 const CON_FILLS={
-  'Aries':'#1a0808','Taurus':'#081008','Gemini':'#08101a','Cancer':'#08101a',
-  'Leo':'#1a0a06','Virgo':'#081008','Libra':'#08101a','Scorpius':'#100818',
-  'Ophiuchus':'#0e0818','Sagittarius':'#1a0808','Capricornus':'#081008',
-  'Aquarius':'#08101a','Pisces':'#080c18'
+  'Aries':'#2b222a','Taurus':'#1e2b2c','Gemini':'#262d3d','Cancer':'#17273e',
+  'Leo':'#2b222a','Virgo':'#1e2b2c','Libra':'#262d3d','Scorpius':'#17273e',
+  'Ophiuchus':'#232026','Sagittarius':'#2b222a','Capricornus':'#1e2b2c',
+  'Aquarius':'#262d3d','Pisces':'#17273e'
 };
 
 // ROMAN numerals
@@ -400,7 +400,7 @@ function drawWheel(data){
     },svg);
     // Colored inner edge arc
     el('path',{d:`M${p(a0,R2)} A${R2},${R2} 0 ${la},0 ${p(a1,R2)}`,
-      fill:'none',stroke:color,'stroke-width':2,opacity:.6},svg);
+      fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
     // House band R3→R2
     el('path',{
       d:`M${p(a0,R3)} L${p(a0,R2)} A${R2},${R2} 0 ${la},0 ${p(a1,R2)} L${p(a1,R3)} A${R3},${R3} 0 ${la},1 ${p(a0,R3)} Z`,
@@ -409,7 +409,7 @@ function drawWheel(data){
     // Divider line at start
     el('line',{x1:CX+Math.cos(a0)*R1,y1:CY+Math.sin(a0)*R1,
       x2:CX+Math.cos(a0)*R2,y2:CY+Math.sin(a0)*R2,
-      stroke:color,'stroke-width':1.2,opacity:.85},svg);
+      stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
 
     // Symbol at midpoint of outer ring
     const mt=con.start+con.span/2;          // works across 0° (Pisces) too
@@ -449,14 +449,14 @@ function drawWheel(data){
     const a=t2a(trop,ascRef);
     el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
       x2:CX+Math.cos(a)*(R1-7),y2:CY+Math.sin(a)*(R1-7),
-      stroke:'rgba(90,60,155,0.6)','stroke-width':0.6},svg);
+      stroke:'rgba(227,190,132,.3)','stroke-width':0.6},svg);
   }
 
   // ── CIRCLES ──
-  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(140,90,230,.85)','stroke-width':1.8},svg);
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(100,65,200,.8)','stroke-width':1.5},svg);
-  el('circle',{cx:CX,cy:CY,r:R3,fill:'none',stroke:'rgba(70,45,160,.75)','stroke-width':1.2},svg);
-  el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(50,32,120,.7)','stroke-width':1},svg);
+  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(227,190,132,.6)','stroke-width':1.6},svg);
+  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.3},svg);
+  el('circle',{cx:CX,cy:CY,r:R3,fill:'none',stroke:'rgba(227,190,132,.3)','stroke-width':1.1},svg);
+  el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(227,190,132,.25)','stroke-width':1},svg);
 
   // ── PLACIDUS HOUSE LINES + NUMBERS + ASC/MC ──
   if(!data._timeUnknown){

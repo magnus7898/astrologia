@@ -14,7 +14,7 @@ const $=id=>document.getElementById(id);
 const L=()=>window._orbEclipse;
 const D2R=Math.PI/180,INC=5.145;
 const SPEEDS=[[1/86400,'რეალური დრო'],[1/1440,'1 წთ/წმ'],[1/24,'1 სთ/წმ'],[0.25,'6 სთ/წმ'],[1,'1 დღე/წმ'],[7,'1 კვირა/წმ'],[30.44,'1 თვე/წმ']];
-const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(x=>x+'︎'),ZC=['#e0703a','#8fa05a','#d8c060','#4a90c8'];
+const ZS=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(x=>x+'︎'),ZC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'],ZF=['rgba(232,135,90,.14)','rgba(143,196,106,.14)','rgba(201,211,230,.14)','rgba(90,168,232,.14)'];
 const SGN=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
 const T={ut:Date.now()/864e5-10957.5,speed:1,play:true,slow:true,saved:null,live:null,liveP:null,last:0,W:800,H:600,iW:400,iH:400,nextEv:null,nextAt:null};
 let A=null;
@@ -43,6 +43,8 @@ function drawSystem(g,G){
   const P=(r,l,ox=cx,oy=cy)=>[ox+r*Math.cos(l*D2R),oy-r*Math.sin(l*D2R)];
   /* zodiac ring (heliocentric longitudes) */
   const Rz=Math.min(W,H)*0.47;g.strokeStyle='rgba(201,162,76,.28)';g.lineWidth=1;g.beginPath();g.arc(cx,cy,Rz,0,7);g.stroke();g.beginPath();g.arc(cx,cy,Rz-22,0,7);g.stroke();
+  for(let s=0;s<12;s++){g.beginPath();g.arc(cx,cy,Rz,-s*30*D2R,-(s+1)*30*D2R,true);g.arc(cx,cy,Rz-22,-(s+1)*30*D2R,-s*30*D2R,false);g.closePath();g.fillStyle=ZF[s%4];g.fill();}
+  g.strokeStyle='rgba(227,190,132,.35)';
   for(let s=0;s<12;s++){const [x1,y1]=P(Rz-22,s*30),[x2,y2]=P(Rz,s*30);g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
     const [x,y]=P(Rz-11,s*30+15);g.fillStyle=ZC[s%4];g.font='16px serif';g.textAlign='center';g.textBaseline='middle';g.fillText(ZS[s],x,y);}
   /* Earth orbit + Sun */
