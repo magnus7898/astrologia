@@ -152,7 +152,8 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 .tw{overflow-x:auto}
 
 .tb{width:100%;border-collapse:collapse;font-size:14px}.tb th{font-weight:400;color:rgba(227,190,132,.8);text-align:left;padding:5px 8px;border-bottom:1px solid rgba(184,137,74,.3)}.tb td{padding:4px 8px;border-bottom:1px solid rgba(255,255,255,.06)}
-.stage.wide canvas{max-width:none}#cvM{cursor:pointer}
+.stage.wide canvas{max-width:none}
+.bgw{width:100%;max-width:520px;margin:0 auto;aspect-ratio:580/780;background:#f6f1e7;border-radius:10px;overflow:hidden}.bgw svg{width:100%;height:100%;display:block}#cvM{cursor:pointer}
 .tlx{display:flex;flex-direction:column;gap:0;margin-left:6px}.hi{display:grid;grid-template-columns:150px 1fr;gap:12px}.hd{font-family:'Cinzel',serif;font-size:13px;text-align:right;padding-top:10px}.hb{border-left:3px solid;padding:8px 0 12px 14px;font-size:14.5px;line-height:1.7}
 @media(max-width:600px){.hi{grid-template-columns:1fr;gap:0}.hd{text-align:left;padding-top:6px}}
 </style>
@@ -188,7 +189,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
   <div class="sec"><h2>2 · ოთხი წყარო</h2>
     <p>დააჭირე წყაროს — ბოდიგრაფზე გამოჩნდება, რა „აიღო“ ადამიანის დიზაინმა თითოეულისგან.</p>
     <div class="seg" id="sT"><button type="button" data-s="all" class="on">ბოდიგრაფი</button><button type="button" data-s="ch">ჩაკრები</button><button type="button" data-s="kb">კაბალა</button><button type="button" data-s="ic">ი-ძინი</button><button type="button" data-s="as">ასტროლოგია</button></div>
-    <div class="duo" style="margin-top:10px"><div class="stage"><canvas id="cvB" aria-label="ბოდიგრაფი და მისი წყაროები"></canvas></div>
+    <div class="duo" style="margin-top:10px"><div class="stage"><div id="bgW" class="bgw" aria-label="ბოდიგრაფი და მისი წყაროები"></div><canvas id="cvB" aria-label="ბოდიგრაფი და მისი წყაროები" style="display:none"></canvas></div>
      <div><div class="ptx" id="sX"></div></div></div>
   </div>
 
@@ -412,7 +413,31 @@ function drawB(){const G=S.g.b;if(!G)return;const {c,w,h}=G;c.clearRect(0,0,w,h)
     PA.forEach(([a,b])=>line(c,P(SE[a][1],SE[a][2]),P(SE[b][1],SE[b][2]),'rgba(143,200,242,.6)',1.8));SE.forEach(([nm,x,y],i)=>{const q=P(x,y);c.beginPath();c.arc(q[0],q[1],15*k*1.2,0,7);c.fillStyle=i===3?'rgba(14,20,36,.9)':'rgba(40,80,130,.85)';c.fill();c.strokeStyle='#8fc8f2';c.setLineDash(i===3?[3,3]:[]);c.lineWidth=1.6;c.stroke();c.setLineDash([]);const t=P(x+(x<735?-24:x>735?24:30),y);txt(c,nm,t[0],t[1],fs*.95,'#cfe6ff',GEO,x<735?'right':'left');});}
   if(m==='ic'){Object.keys(SHP).forEach(n=>{const [x,y]=CPX[n],q=P(n==='Spleen'?x-60:n==='Solar Plexus'?x+60:n==='Heart'?x+50:x+66,y);txt(c,CENTER_GATES[n].length+' კარ.',q[0],q[1],fs,'#FFD36A',GEO,n==='Spleen'?'right':'left');});}
   if(m==='as'){const PLN=['☉','⊕','☊','☋','☽','☿','♀','♂','♃','♄','♅','♆','♇'];PLN.forEach((g,i)=>{const q=P(545+i*31,758);txt(c,g+VS,q[0],q[1],fs*1.15,i<2?'#FFD36A':'#c9d3e6');});const q=P(735,100);txt(c,'13 სხეული × 2 მომენტი = 26 აქტივაცია',q[0],q[1],fs,'#FFD36A',GEO);}}
-const SRC={all:`<b>ბოდიგრაფი</b> — 9 <b>ცენტრი</b> (გეომეტრიული ფიგურები), 36 <b>არხი</b> (ხაზები მათ შორის) და 64 <b>კარიბჭე</b> (არხების ბოლოები). ფერადი ცენტრი — <b>განსაზღვრული</b>: მისი ენერგია მუდმივია; თეთრი — <b>ღია</b>: გარემოს ენერგიას იღებს და აძლიერებს. ოქროსფერი არხი — შენს რუკაში ჩართული (ორივე კარიბჭე აქტიურია). კარიბჭის ფერი: შავი — პიროვნება, წითელი — დიზაინი, ყავისფერი — ორივე. ხაზის ნახევარი — ცალკე აქტიური კარიბჭე („ჩამოკიდებული“).`,
+/* the site's own painted bodygraph (backend static/human_prepared.svg, as hd.html loads it); canvas drawing above is only the offline fallback */
+const API_BASE='https://astrology-production-b165.up.railway.app';
+const SVGNS='http://www.w3.org/2000/svg';
+async function loadBG(){try{const t=await fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();});const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
+  const w=$('bgW');w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
+  const ss=sv.querySelector('#hd-activation');if(ss){const o=document.getElementById('hd-act-l1');if(o)o.remove();const d=document.createElement('style');d.id='hd-act-l1';d.textContent=ss.textContent;document.head.appendChild(d);ss.remove();}
+  sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));S.sv=sv;$('cvB').style.display='none';w.style.display='';applyBG();}
+ catch(e){S.sv=null;$('bgW').style.display='none';$('cvB').style.display='';sizes();}}
+function applyBG(){const sv=S.sv;if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));
+  const on=g=>S.pg.includes(g)||S.dg.includes(g);
+  for(let g=1;g<=64;g++){const p=S.pg.includes(g),d=S.dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}
+  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});
+  const old=sv.querySelector('#l1ovl');if(old)old.remove();const m=S.src;if(m==='all')return;
+  const el=(t,a,txt0)=>{const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt0!=null)e.textContent=txt0;return e;},g=el('g',{id:'l1ovl'}),T=(x,y,t,col,sz,anc)=>g.appendChild(el('text',{x,y,fill:col,'font-size':sz||17,'text-anchor':anc||'middle','dominant-baseline':'middle','font-family':'Noto Sans Georgian,sans-serif',stroke:'#0a0e1a','stroke-width':4,'paint-order':'stroke'},t));
+  g.appendChild(el('rect',{x:420,y:40,width:580,height:780,fill:'rgba(10,14,26,.62)'}));
+  if(m==='ch'){[['სახასრარა',135,'#b08ad8'],['აჯნა',215,'#7a7ae8'],['ვიშუდჰა',316,'#5aa8e8'],['ანაჰატა',440,'#8fc46a'],['მანიპურა',522,'#FFD36A'],['სვადჰისტჰანა',602,'#e8875a'],['მულადჰარა',708,'#ef6b5a']].forEach(([nm,y,col],i)=>{g.appendChild(el('circle',{cx:735,cy:y,r:22,fill:hexA(col,.5),stroke:col,'stroke-width':3}));T(i%2?650:820,y,nm,col,18,i%2?'end':'start');});
+    ['Spleen','Solar Plexus','Heart'].forEach(n=>T(...CPX[n],'+','#FFD36A',34));}
+  if(m==='kb'){const SE=[['კეთერი',735,120],['ხოხმა',805,205],['ბინა',665,205],['დაათი',735,316],['ხესედი',835,385],['გებურა',635,385],['თიფერეთი',735,440],['ნეცახი',880,560],['ჰოდი',590,560],['იესოდი',735,612],['მალხუთი',735,722]],PA=[[0,1],[0,2],[1,2],[0,6],[1,6],[2,6],[1,4],[2,5],[4,5],[4,6],[5,6],[4,7],[5,8],[6,7],[6,8],[7,8],[6,9],[7,9],[8,9],[9,10],[7,10],[8,10]];
+    PA.forEach(([a,b])=>g.appendChild(el('line',{x1:SE[a][1],y1:SE[a][2],x2:SE[b][1],y2:SE[b][2],stroke:'#8fc8f2','stroke-width':2.5,opacity:.8})));
+    SE.forEach(([nm,x,y],i)=>{g.appendChild(el('circle',{cx:x,cy:y,r:17,fill:i===3?'#0e1424':'#28507f',stroke:'#8fc8f2','stroke-width':2.5,'stroke-dasharray':i===3?'5 4':'none'}));T(x+(x<735?-26:26),y,nm,'#cfe6ff',17,x<735?'end':'start');});}
+  if(m==='ic'){const LB={Head:[790,150,'start'],Ajna:[790,215,'start'],Throat:[790,316,'start'],G:[675,428,'end'],Heart:[860,470,'start'],'Solar Plexus':[906,672,'middle'],Spleen:[564,672,'middle'],Sacral:[784,640,'start'],Root:[735,766,'middle']};
+    Object.keys(LB).forEach(n=>{const [x,y,a]=LB[n];T(x,y,CENTER_GATES[n].length+' კარ.','#FFD36A',18,a);});}
+  if(m==='as'){['☉','⊕','☊','☋','☽','☿','♀','♂','♃','♄','♅','♆','♇'].forEach((s0,i)=>T(520+i*36,790,s0+VS,i<2?'#FFD36A':'#c9d3e6',26));T(735,70,'13 სხეული × 2 მომენტი = 26 აქტივაცია','#FFD36A',19);}
+  sv.appendChild(g);}
+const SRC={all:`<b>ბოდიგრაფი</b> — 9 <b>ცენტრი</b> (გეომეტრიული ფიგურები), 36 <b>არხი</b> (ხაზები მათ შორის) და 64 <b>კარიბჭე</b> (არხების ბოლოები). ფერადი ცენტრი — <b>განსაზღვრული</b>: მისი ენერგია მუდმივია; თეთრი — <b>ღია</b>: გარემოს ენერგიას იღებს და აძლიერებს. ბოდიგრაფი იგივეა, რაც ადამიანის დიზაინის გვერდზე: შავი — პიროვნების აქტივაცია, წითელი — დიზაინის, ორივე ფერი — ორივე მომენტში. არხი ჩართულია, როცა მისი ორივე კარიბჭე აქტიურია; ცალკე აქტიური კარიბჭე — „ჩამოკიდებული“.`,
  ch:`<b>ჩაკრები</b> — ინდური სისტემის 7 ენერგეტიკული ცენტრი სხეულის ღერძზე. ადამიანის დიზაინი 9 ცენტრს იყენებს: გულის ჩაკრა „იყოფა“ G-ცენტრად და გულად (ეგო), მანიპურა — მზის წნულად და ელენთად. ტრადიციის მიხედვით, ეს „მუტაცია“ 1781 წელს მოხდა (ურანის აღმოჩენის წელს): შვიდცენტრიანი ადამიანიდან ცხრაცენტრიანზე გადასვლა.`,
  kb:`<b>კაბალის სიცოცხლის ხე</b> — 10 სეფირა და 22 ბილიკი. ბოდიგრაფის ფორმა მის ზუსტ სქემას იმეორებს: ცენტრები სეფიროტის ადგილებზეა, არხები — ბილიკებზე. თავი ≈ კეთერი, აჯნა ≈ ხოხმა/ბინა, ყელი ≈ დაათი (ფარული სეფირა — „ცოდნა“, გამოვლინება), G ≈ თიფერეთი (სილამაზე, გული), საკრალური ≈ იესოდი, ფუძე ≈ მალხუთი. სხვა კავშირები — მეტაფორებია და არა ერთი-ერთზე შესაბამისობა.`,
  ic:`<b>ი-ძინი</b> — ცვლილებების წიგნი, 64 ჰექსაგრამა. თითოეული ჰექსაგრამა ბოდიგრაფში <b>კარიბჭეა</b> და ერთ ცენტრს ეკუთვნის (რიცხვი — რამდენი კარიბჭეა ცენტრში: სულ 64). ჰექსაგრამის 6 ხაზი — კარიბჭის 6 ხაზი; პროფილი (მაგ. 4/6) სწორედ ხაზებიდან იბადება. ბიოქიმიური ანალოგია, რომელსაც სისტემა ეყრდნობა: დნმ-ის 64 კოდონი.`,
@@ -448,9 +473,9 @@ function hist(){$('hL').innerHTML=HIST.map(([d,t,x,c])=>`<div class="hi"><div cl
 function upd(){S.CH=chartNow();const I=S.CH.I;$('sum').innerHTML=`${p2(I.d)}.${p2(I.m)}.${I.y} ${I.unk?'(დრო უცნობია)':p2(I.hh)+':'+p2(I.mi)} · ${I.ci>=0?CITIES[I.ci][0]:'სხვა ადგილი'} · UTC${offS(I.off)}`;
   $('yW').innerHTML=I.unk?'დაბადების დრო უცნობია: მთვარის კარიბჭე და ზოგი ხაზი შეიძლება სხვა იყოს.':'';
   S.dJ=designJ(S.CH.J);S.sun=lonOf('su',S.CH.J);S.dsun=lonOf('su',S.dJ);const A=acts(S.CH.J),B=acts(S.dJ);S.pg=A.map(a=>a.g);S.dg=B.map(a=>a.g);if(S.gsel==null)S.gsel=A[0].g;
-  drawB();$('sX').innerHTML=SRC[S.src];drawM();hexText();drawP();pText();}
+  drawB();applyBG();$('sX').innerHTML=SRC[S.src];drawM();hexText();drawP();pText();}
 window.MG_H1=()=>({dJ:S.dJ,J:S.CH.J,pg:acts(S.CH.J).map(a=>a.g+'.'+a.line),dg:acts(S.dJ).map(a=>a.g+'.'+a.line)});
-$('sT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.src=b.dataset.s;$('sT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawB();$('sX').innerHTML=SRC[S.src];});
+$('sT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.src=b.dataset.s;$('sT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawB();applyBG();$('sX').innerHTML=SRC[S.src];});
 $('cvM').addEventListener('click',e=>{const G=S.g.m,r=$('cvM').getBoundingClientRect(),x=(e.clientX-r.left)*G.w/r.width-G.w/2,y=(e.clientY-r.top)*G.h/r.height-G.h/2,l=norm(Math.atan2(y,-x)/D);S.gsel=gOf(l).g;drawM();hexText();});
 function sizes(){const m=innerWidth<700;S.g.b=fit($('cvB'),1.3);S.g.m=fit($('cvM'),1);S.g.h=fit($('cvH'),m?.5:.42);S.g.p=fit($('cvP'),m?.36:.14);if(S.CH){drawB();drawM();drawH();drawP();}}
 let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
@@ -469,7 +494,7 @@ function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p
     const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
     if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});}
 
-sizes();hist();initPanel(upd);upd();quiz();
+sizes();hist();initPanel(upd);upd();quiz();loadBG();
 })();
 </script>
 <script src="site.js"></script>
