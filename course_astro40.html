@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ასტროლოგია — გაკვეთილი 40</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+
+.inp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px;align-items:end}
+.inp label{display:block;font-size:11px;letter-spacing:.1em;color:#B8894A;margin-bottom:4px}
+.inp input,.inp select{width:100%;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:14.5px;font-family:inherit}
+.inp .two{display:flex;gap:6px}.inp .two input{text-align:center;flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px}
+@media(min-width:560px){.inp>div:first-child{grid-column:span 2}}
+.inp .ck{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#cfd5e2;padding-bottom:9px}
+.inp .ck input{width:auto;accent-color:#C9A24C}.inp .ck label{margin:0;letter-spacing:0;font-size:12.5px;color:#cfd5e2}
+.sum{margin-top:12px;font-size:13px;color:#cfd5e2;line-height:1.8;text-align:center}.sum b{color:#FFE7A0;font-weight:600}
+
+.seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.seg button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.seg button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ztx,.ptx{border:1px solid rgba(184,137,74,.38);border-radius:12px;padding:12px 15px;margin-top:10px;font-size:14px;line-height:1.85;color:#e9ecf2}
+.ztx b,.ptx b{color:#F3DDA4;font-weight:600}.ztx small,.ptx small{color:#9aa3b6;font-size:12.5px}
+.fi{animation:fi .5s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.duo>div{min-width:0}
+.warn{margin-top:10px;font-size:13px;color:#ffcf9a;line-height:1.7;text-align:center}
+.hc{border:1px solid rgba(184,137,74,.38);border-radius:12px;padding:11px 14px;margin-top:10px;font-size:13.5px;line-height:1.8}
+.hc h3{margin:0 0 4px;font-size:15px;color:#FFD36A;font-weight:600}.hc b{color:#F3DDA4}.hc small{color:#9aa3b6}
+.fb{display:grid;gap:6px;margin-top:10px}
+.fb div{display:grid;grid-template-columns:minmax(120px,1fr) 2fr 44px;gap:8px;align-items:center;font-size:13px}
+.fb span.b{background:rgba(255,255,255,.07);border-radius:4px;display:block}.fb i{display:block;height:8px;border-radius:4px}
+.fb small{text-align:right;color:#c9cfdb}
+.win{display:grid;gap:5px;margin-top:8px;font-size:13px}
+.win div{border-left:3px solid;padding:3px 10px;border-radius:3px;background:rgba(255,255,255,.03)}
+
+.tl{display:grid;gap:6px;margin-top:10px}
+.tl div{border-left:3px solid;padding:5px 11px;border-radius:3px;background:rgba(255,255,255,.03);font-size:13.5px;line-height:1.7}
+.tl small{color:#9aa3b6}
+.ct{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+.ct th,.ct td{border-bottom:1px solid rgba(184,137,74,.22);padding:6px 6px;text-align:left}
+.ct th{color:#F3DDA4;font-weight:600}
+.tw{overflow-x:auto}
+
+.tb{width:100%;border-collapse:collapse;font-size:14px}.tb th{font-weight:400;color:rgba(227,190,132,.8);text-align:left;padding:6px 8px;border-bottom:1px solid rgba(184,137,74,.3)}.tb td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.stage.wide canvas{max-width:none;cursor:pointer}#cvN{cursor:pointer}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ასტროლოგიის კურსი · მოდული 9 · სპეციალური მეთოდები</div>
+  <h1>გაკვეთილი 40 — ვედური ასტროლოგია</h1>
+  <div class="sub">აიანამშა ლაჰირი, რაში-ჩაკრა ჩრდილოინდური და სამხრეთინდური სტილით, 27 ნაქშატრა და პადები, ნავამშა D9 და ვიმშოტარი დაშა</div>
+
+  <div class="intro"><b>ჯიოტიში</b> („სინათლის მეცნიერება“) — ინდური ასტროლოგია. დასავლურისგან სამი რამით განსხვავდება: <b>სიდერული ზოდიაქო</b> (ნიშნები ვარსკვლავებზეა მიბმული და არა ბუნიობაზე), <b>მთვარის 27 სადგომი — ნაქშატრები</b> და <b>დაშები</b> — ცხოვრების პერიოდები, რომლებსაც მთვარის ნაქშატრა განსაზღვრავს. ამ გაკვეთილში — ყველაფერი ისე, როგორც MAGNUS-ის გვერდზე „ვედური ასტროლოგია“: აიანამშა ლაჰირი, სახლები მთელი ნიშნით, რაჰუ — ჭეშმარიტი კვანძი, ვიმშოტარი დაშა.</div>
+
+  <div class="sec"><h2>1 · შენი დაბადების მონაცემები</h2>
+
+    <div class="panel">
+      <div class="inp">
+        <div><label for="dd">თარიღი (დღე · თვე · წელი)</label><div class="two"><input id="dd" type="number" min="1" max="31" value="15"><input id="mm" type="number" min="1" max="12" value="5"><input id="yy" type="number" min="1800" max="2050" value="1990" style="flex:1.4"></div></div>
+        <div><label for="th">დრო (საათი · წუთი)</label><div class="two"><input id="th" type="number" min="0" max="23" value="12"><input id="tm" type="number" min="0" max="59" value="0"></div></div>
+        <div><label for="city">ადგილი</label><select id="city"></select></div>
+        <div><label for="lat">განედი (ჩრდ. +)</label><input id="lat" type="number" step="0.0001" value="41.7151"></div>
+        <div><label for="lon">გრძედი (აღმ. +)</label><input id="lon" type="number" step="0.0001" value="44.8271"></div>
+        <div><label for="off">UTC-დან სხვაობა (სთ)</label><input id="off" type="number" step="0.25" value="5"></div>
+        <div class="ck"><input id="auto" type="checkbox" checked><label for="auto">ისტორიული სარტყელი ავტომატურად</label></div>
+        <div class="ck"><input id="unk" type="checkbox"><label for="unk">დრო უცნობია</label></div>
+      </div>
+      <div class="sum" id="sum"></div>
+    </div>
+
+    <div class="warn" id="yW"></div>
+  </div>
+
+  <div class="sec"><h2>2 · აიანამშა: ტროპიკულიდან სიდერულზე</h2>
+    <p>ტროპიკული ზოდიაქო ბუნიობიდან ითვლება, სიდერული — ვარსკვლავებიდან. პრეცესიის გამო (გაკვეთილი 39) მათ შორის სხვაობა ყოველ 72 წელიწადში 1°-ით იზრდება. ამ სხვაობას ეწოდება <b>აიანამშა</b>. ინდოეთის ოფიციალური სტანდარტია <b>ლაჰირი (ჩიტრაპაკშა)</b>: სპიკა (ჩიტრა) ზუსტად 0° სასწორზეა. სიდერული გრძედი = ტროპიკული − აიანამშა. ამიტომ ადამიანთა უმეტესობის „ვედური მზე“ წინა ნიშანშია.</p>
+    <div class="duo"><div class="stage"><canvas id="cvA" aria-label="ტროპიკული და სიდერული ზოდიაქო"></canvas></div>
+     <div><div class="ptx" id="aX"></div></div></div>
+    <div class="tw" style="margin-top:10px"><table class="tb" id="aT"></table></div>
+  </div>
+
+  <div class="sec"><h2>3 · რაში-ჩაკრა — D1</h2>
+    <p>ინდური რუკა კვადრატია. <b>ჩრდილოინდური</b> სტილით სახლები ფიქსირებულია (I — ზედა რომბი, საათის ისრის საწინააღმდეგოდ), ციფრი — ნიშნის ნომერი (1 = მეშა/ვერძი). <b>სამხრეთინდური</b> სტილით ფიქსირებულია ნიშნები (მეენა/თევზები ზედა მარცხენა უჯრაში, საათის ისრით), ლაგნა (ASC) მოინიშნება. სახლი = მთელი ნიშანი: ლაგნას ნიშანი მთლიანად I სახლია. ორივე რუკა ერთსა და იმავეს აჩვენებს.</p>
+    <div class="seg" id="sT"><button type="button" data-s="n" class="on">ჩრდილოინდური</button><button type="button" data-s="s">სამხრეთინდური</button></div>
+    <div class="duo" style="margin-top:10px"><div class="stage"><canvas id="cvD" aria-label="რაში-ჩაკრა"></canvas></div>
+     <div><div class="ptx" id="dX"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>4 · 27 ნაქშატრა</h2>
+    <p>ზოდიაქო 27 თანაბარ ნაწილად — თითო 13°20′ — ანუ მთვარის ერთი დღის გზა. ყოველ ნაქშატრას აქვს მმართველი პლანეტა (9-ის რიგი სამჯერ მეორდება: კეტუ, ვენერა, მზე, მთვარე, მარსი, რაჰუ, იუპიტერი, სატურნი, მერკური), ღვთაება და სიმბოლო, და იყოფა 4 <b>პადად</b> (3°20′). ყველაზე მნიშვნელოვანია <b>მთვარის ნაქშატრა</b> — ჯანმა-ნაქშატრა: ის ადამიანის ემოციურ ბუნებას აღწერს და დაშების თანმიმდევრობას იწყებს. დააჭირე ნაქშატრას.</p>
+    <div class="duo"><div class="stage"><canvas id="cvN" aria-label="27 ნაქშატრა"></canvas></div>
+     <div><div class="ptx" id="nX"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>5 · ნავამშა — D9</h2>
+    <p>ყველაზე მნიშვნელოვანი დაყოფითი რუკა (ვარგა). ყოველი ნიშანი 9 ნაწილად იყოფა (3°20′ — ზუსტად ერთი პადა), და ყოველი ნაწილი ერთ ნიშანს ეკუთვნის. თვლა იწყება: ცეცხლის ნიშნებში — ვერძიდან, მიწისაში — თხის რქიდან, ჰაერისაში — სასწორიდან, წყლისაში — კირჩხიბიდან. ფორმულით: <b>D9 ნიშანი = (ნიშანი × 9 + ნაწილი) mod 12</b>. D9 — „ნაყოფი“ D1-ის „ხისა“: ქორწინება, სულის სიმწიფე, პლანეტის ნამდვილი ძალა. პლანეტა, რომელიც D1-სა და D9-ში ერთ ნიშანშია — <b>ვარგოტამა</b>, ძალიან ძლიერი.</p>
+    <div class="duo"><div class="stage"><canvas id="cv9" aria-label="ნავამშა"></canvas></div>
+     <div><div class="tw"><table class="tb" id="nT"></table></div></div></div>
+  </div>
+
+  <div class="sec"><h2>6 · ვიმშოტარი დაშა — 120 წელი</h2>
+    <p>ცხოვრება 9 პლანეტის პერიოდად (მაჰადაშა) იყოფა; სრული ციკლი 120 წელია: კეტუ 7, ვენერა 20, მზე 6, მთვარე 10, მარსი 7, რაჰუ 18, იუპიტერი 16, სატურნი 19, მერკური 17. პირველი დაშა — <b>მთვარის ნაქშატრის მმართველი</b>, ხოლო მისი დარჩენილი ნაწილი („ბალანსი“) იმის პროპორციულია, რამდენი დარჩა მთვარეს ნაქშატრის გასავლელად. ყოველი მაჰადაშა 9 ანტარდაშად იყოფა (იგივე რიგი, იგივე პროპორციები), ის კი — პრატიანტარდაშებად. დააჭირე პერიოდს.</p>
+    <div class="stage wide"><canvas id="cvV" aria-label="ვიმშოტარი დაშის ზოლი"></canvas></div>
+    <div class="duo" style="margin-top:10px"><div><div class="ptx" id="vX"></div></div><div><div class="tl" id="vL"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro39.html">← ფიქსირებული ვარსკვლავები</a><a href="course_astro.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 41 — მალე →</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+
+const $=id=>document.getElementById(id),D=Math.PI/180,VS='︎';
+const SG=[['♈','ვერძი'],['♉','კურო'],['♊','ტყუპები'],['♋','კირჩხიბი'],['♌','ლომი'],['♍','ქალწული'],['♎','სასწორი'],['♏','მორიელი'],['♐','მშვილდოსანი'],['♑','თხის რქა'],['♒','მერწყული'],['♓','თევზები']];
+const EC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
+const GOLD='#E3BE84',SYM='"Noto Sans Symbols 2","Segoe UI Symbol","Apple Symbols","DejaVu Sans",sans-serif',GEO='"Noto Sans Georgian","Noto Serif Georgian",sans-serif';
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const norm=x=>((x%360)+360)%360;
+function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;}
+function jd(y,m,d,h){if(m<=2){y-=1;m+=12;}const A=Math.floor(y/100),B=(y>1582||(y===1582&&(m>10||(m===10&&d>=15))))?2-A+Math.floor(A/4):0;return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+(h||0)/24+B-1524.5;}
+/* ── planets: JPL approximate Keplerian elements (1800–2050), Moon: Meeus ch. 47 (34 terms), houses: Placidus ── */
+const EL={me:[0.38709927,0.00000037,0.20563593,0.00001906,7.00497902,-0.00594749,252.25032350,149472.67411175,77.45779628,0.16047689,48.33076593,-0.12534081],
+ve:[0.72333566,0.00000390,0.00677672,-0.00004107,3.39467605,-0.00078890,181.97909950,58517.81538729,131.60246718,0.00268329,76.67984255,-0.27769418],
+em:[1.00000261,0.00000562,0.01671123,-0.00004392,-0.00001531,-0.01294668,100.46457166,35999.37244981,102.93768193,0.32327364,0,0],
+ma:[1.52371034,0.00001847,0.09339410,0.00007882,1.84969142,-0.00813131,-4.55343205,19140.30268499,-23.94362959,0.44441088,49.55953891,-0.29257343],
+ju:[5.20288700,-0.00011607,0.04838624,-0.00013253,1.30439695,-0.00183714,34.39644051,3034.74612775,14.72847983,0.21252668,100.47390909,0.20469106],
+sa:[9.53667594,-0.00125060,0.05386179,-0.00050991,2.48599187,0.00193609,49.95424423,1222.49362201,92.59887831,-0.41897216,113.66242448,-0.28867794],
+ur:[19.18916464,-0.00196176,0.04725744,-0.00004397,0.77263783,-0.00242939,313.23810451,428.48202785,170.95427630,0.40805281,74.01692503,0.04240589],
+ne:[30.06992276,0.00026291,0.00859048,0.00005105,1.77004347,0.00035372,-55.12002969,218.45945325,44.96476227,-0.32241464,131.78422574,-0.00508664],
+pl:[39.48211675,-0.00031596,0.24882730,0.00005170,17.14001206,0.00004818,238.92903833,145.20780515,224.06891629,-0.04062942,110.30393684,-0.01183482]};
+function helio(k,T){const q=EL[k],a=q[0]+q[1]*T,e=q[2]+q[3]*T,I=(q[4]+q[5]*T)*D,L=q[6]+q[7]*T,w=q[8]+q[9]*T,O=(q[10]+q[11]*T)*D;
+  let M=norm(L-w);if(M>180)M-=360;M*=D;const om=w*D-O;let E=M+e*Math.sin(M);for(let i=0;i<12;i++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));
+  const xp=a*(Math.cos(E)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E),co=Math.cos(om),so=Math.sin(om),cO=Math.cos(O),sO=Math.sin(O),cI=Math.cos(I),sI=Math.sin(I);
+  return [(co*cO-so*sO*cI)*xp+(-so*cO-co*sO*cI)*yp,(co*sO+so*cO*cI)*xp+(-so*sO+co*cO*cI)*yp];}
+const MT=[[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],[2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],[2,0,-1,2,-2602],[2,-1,-2,0,2390],[1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069]];
+function moonLon(T){const Lp=218.3164477+481267.88123421*T,Dm=(297.8501921+445267.1114034*T)*D,M=(357.5291092+35999.0502909*T)*D,Mp=(134.9633964+477198.8675055*T)*D,F=(93.2720950+483202.0175233*T)*D,E=1-0.002516*T;
+  let s=0;for(const t of MT){let c=t[4];if(Math.abs(t[1])===1)c*=E;else if(Math.abs(t[1])===2)c*=E*E;s+=c*Math.sin(t[0]*Dm+t[1]*M+t[2]*Mp+t[3]*F);}return norm(Lp+s/1e6);}
+const PREC_T=T=>1.396971*T+0.0003086*T*T;
+function geo(k,T){const p=helio(k,T),e=helio('em',T);return norm(Math.atan2(p[1]-e[1],p[0]-e[0])/D+PREC_T(T));}
+function sunL(T){const e=helio('em',T);return norm(Math.atan2(-e[1],-e[0])/D+PREC_T(T)-0.0057);}
+const PL=[['su','☉','მზე','#FFD36A'],['mo','☽','მთვარე','#dfe6f2'],['me','☿','მერკური','#b8c4d8'],['ve','♀','ვენერა','#8fc46a'],['ma','♂','მარსი','#ef6b5a'],['ju','♃','იუპიტერი','#e8a25a'],['sa','♄','სატურნი','#c9a27a'],['ur','♅','ურანი','#5ad0e8'],['ne','♆','ნეპტუნი','#7aa4f2'],['pl','♇','პლუტონი','#c050a0'],['nn','☊','ჩრდ. კვანძი','#aab2c4']];
+function lonOf(k,J){const T=(J-2451545)/36525;if(k==='su')return sunL(T);if(k==='mo')return moonLon(T);if(k==='nn')return norm(125.0445479-1934.1362891*T+0.0020754*T*T);return geo(k,T);}
+function planets(J){return PL.map(([k,g,n,c])=>{const l=lonOf(k,J),l2=lonOf(k,J+0.02);let sp=norm(l2-l);if(sp>180)sp-=360;return {k,g,n,c,lon:l,retro:k!=='nn'&&sp<0};});}
+function gmst(J){const T=(J-2451545)/36525;return norm(280.46061837+360.98564736629*(J-2451545)+0.000387933*T*T-T*T*T/38710000);}
+const obl=J=>23.4392911-0.0130042*(J-2451545)/36525;
+function houses(J,lat,lon){const ramc=norm(gmst(J)+lon),e=obl(J)*D,r=ramc*D,f=lat*D,cu=new Array(13);
+  const mc=norm(Math.atan2(Math.sin(r),Math.cos(r)*Math.cos(e))/D),asc=norm(Math.atan2(Math.cos(r),-(Math.sin(r)*Math.cos(e)+Math.tan(f)*Math.sin(e)))/D);
+  cu[1]=asc;cu[10]=mc;cu[7]=norm(asc+180);cu[4]=norm(mc+180);const ok=Math.abs(lat)<66;
+  const cusp=(fr,up)=>{let ra=norm(ramc+(up?fr*90:180-fr*90));
+    for(let i=0;i<30;i++){const lam=Math.atan2(Math.sin(ra*D),Math.cos(ra*D)*Math.cos(e)),dec=Math.asin(Math.sin(e)*Math.sin(lam));const x=Math.max(-1,Math.min(1,Math.tan(f)*Math.tan(dec))),ad=Math.asin(x)/D;
+      const nr=up?norm(ramc+fr*(90+ad)):norm(ramc+180-fr*(90-ad));const dn=Math.abs(norm(nr-ra+180)-180);ra=nr;if(dn<1e-7)break;}
+    return norm(Math.atan2(Math.sin(ra*D),Math.cos(ra*D)*Math.cos(e))/D);};
+  if(ok){cu[11]=cusp(1/3,true);cu[12]=cusp(2/3,true);cu[2]=cusp(2/3,false);cu[3]=cusp(1/3,false);}
+  else{const q1=norm(asc-mc)/3,q2=norm(cu[4]-asc)/3;cu[11]=norm(mc+q1);cu[12]=norm(mc+2*q1);cu[2]=norm(asc+q2);cu[3]=norm(asc+2*q2);}
+  cu[5]=norm(cu[11]+180);cu[6]=norm(cu[12]+180);cu[8]=norm(cu[2]+180);cu[9]=norm(cu[3]+180);
+  return {asc,mc,ramc,eps:e/D,cu,ok};}
+const houseOf=(l,cu)=>{for(let i=1;i<=12;i++){const a=cu[i],b=cu[i%12+1];if(norm(l-a)<norm(b-a))return i;}return 1;};
+/* ── time zones: historical UTC offsets from the tz database for the listed cities ── */
+const TZ={"Asia/Tbilisi":[[-89411040,179],[-24019380,180],[-6752340,240],[5915280,300],[6178740,240],[6440880,300],[6704340,240],[6966480,300],[7229940,240],[7493520,300],[7755720,240],[8017800,300],[8279880,240],[8541960,300],[8804040,240],[9066120,300],[9328200,240],[9590280,300],[9852360,240],[10114440,300],[10376520,240],[10638600,300],[10910760,240],[11434980,180],[11696940,240],[11958960,180],[12221100,240],[12483120,180],[12745260,240],[13269360,300],[13531380,240],[13803600,300],[14630100,240],[14851920,300],[15154260,240],[15376080,300],[15688500,240],[15900240,300],[16212660,240],[16424400,300],[16736820,240],[16958640,300],[17260980,240],[17482800,300],[17785140,240],[18006960,300],[18137940,240],[18319620,180],[18531300,240]],"Europe/Moscow":[[-89411040,150],[-28137751,151],[-27613652,211],[-27355892,151],[-27132752,271],[-26978612,211],[-26607152,271],[-26563680,240],[-26497680,180],[-25707120,240],[-25658220,300],[-25422060,240],[-25378800,180],[-24853140,120],[-20792280,180],[5915340,240],[6178800,180],[6440940,240],[6704400,180],[6966540,240],[7230000,180],[7493580,240],[7755780,180],[8017860,240],[8279940,180],[8542020,240],[8804100,180],[9066180,240],[9328260,180],[9590340,240],[9852420,180],[10114500,240],[10376580,180],[10638660,240],[10910820,180],[11435040,120],[11596320,180],[11697060,240],[11959140,180],[12221220,240],[12483300,180],[12745380,240],[13007460,180],[13269540,240],[13531620,180],[13803780,240],[14106180,180],[14327940,240],[14630340,180],[14852100,240],[15154500,180],[15376260,240],[15688740,180],[15900420,240],[16212900,180],[16424580,240],[16737060,180],[16958820,240],[17261220,180],[17482980,240],[17785380,180],[18007140,240],[18319620,180],[18531300,240],[18843780,180],[19055460,240],[19367940,180],[19579620,240],[19892100,180],[20113860,240],[20416260,180],[20638020,240],[20940420,180],[21162180,240],[21474660,180],[21686340,240],[23571240,180]],"Europe/Kiev":[[-89411040,122],[-24019323,120],[-20792280,180],[-14875380,120],[-14287620,60],[-14075940,120],[-13803780,60],[-13756380,180],[5915340,240],[6178800,180],[6440940,240],[6704400,180],[6966540,240],[7230000,180],[7493580,240],[7755780,180],[8017860,240],[8279940,180],[8542020,240],[8804100,180],[9066180,240],[9328260,180],[9590340,240],[9852420,180],[10114500,240],[10376580,180],[10638660,240],[10779720,180],[11435040,120],[11697120,180],[11959200,120],[12221280,180],[12483360,120],[12745440,180],[13007520,120],[13269600,180],[13531680,120],[13803840,180],[14106300,120],[14328060,180],[14630460,120],[14852220,180],[15154620,120],[15376380,180],[15688860,120],[15900540,180],[16213020,120],[16424700,180],[16737180,120],[16958940,180],[17261340,120],[17483100,180],[17785500,120],[18007260,180],[18319740,120],[18531420,180],[18843900,120],[19055580,180],[19368060,120],[19579740,180],[19892220,120],[20113980,180],[20416380,120],[20638140,180],[20940540,120],[21162300,180],[21474780,120],[21686460,180],[21998940,120],[22210620,180],[22523100,120],[22744860,180],[23047260,120],[23269020,180],[23571420,120],[23793180,180],[24095580,120],[24317340,180],[24629820,120],[24841500,180],[25153980,120],[25365660,180],[25678140,120],[25899900,180],[26202300,120],[26424060,180],[26726460,120],[26948220,180],[27260700,120],[27472380,180],[27784860,120],[27996540,180],[28309020,120],[28530780,180],[28833180,120],[29054940,180],[29357340,120],[29579100,180],[29881500,120],[30103260,180],[30415740,120],[30627420,180],[30939900,120],[31151580,180],[31464060,120],[31685820,180],[31988220,120],[32209980,180],[32512380,120],[32734140,180],[33046620,120],[33258300,180],[33570780,120],[33782460,180],[34094940,120],[34306620,180],[34619100,120],[34840860,180],[35143260,120],[35365020,180],[35667420,120]],"Europe/Istanbul":[[-89411040,116],[-35791395,117],[-31164597,120],[-28228440,180],[-28008180,120],[-26173560,180],[-25869780,120],[-25639320,180],[-25375860,120],[-25125240,180],[-24843060,120],[-24003480,180],[-23800500,120],[-23495160,180],[-23274900,120],[-15517560,180],[-15377940,120],[-15297240,180],[-14873940,120],[-14597400,180],[-12745620,120],[-12405720,180],[-12230100,120],[-11940600,180],[-11698740,120],[-11416440,180],[-11174580,120],[-10902360,180],[-10650420,120],[-10368120,180],[-10116180,120],[-9833880,180],[-9592020,120],[-3927000,180],[-3247380,120],[-2962200,180],[-2762100,120],[1798500,180],[2020260,120],[2232000,180],[2544420,120],[2744640,180],[3068580,120],[3270240,180],[3592740,120],[3814560,180],[4096740,120],[4338720,180],[7140900,240],[7231560,180],[7801860,120],[8046660,180],[8278500,120],[8542020,180],[8804100,120],[9066180,180],[9328260,120],[9590340,180],[9852420,120],[10114500,180],[10376580,120],[10638660,180],[10910820,120],[11172900,180],[11434980,120],[11697060,180],[11959140,120],[12221220,180],[12483300,120],[12735300,180],[13007460,120],[13269540,180],[13531620,120],[13803780,180],[14106180,120],[14327940,180],[14630340,120],[14852100,180],[15154500,120],[15376260,180],[15688740,120],[15900420,180],[16212900,120],[16424580,180],[16737060,120],[16958820,180],[17261220,120],[17482980,180],[17785380,120],[18007140,180],[18319620,120],[18531300,180],[18843780,120],[19055460,180],[19367940,120],[19579740,180],[19892220,120],[20113980,180],[20416380,120],[20638140,180],[20940540,120],[21162300,180],[21474780,120],[21687900,180],[21998940,120],[22210620,180],[22523100,120],[22744860,180],[23047260,120],[23270460,180],[23571420,120],[23793180,180],[24115740,120],[24317340,180]],"Asia/Yerevan":[[-89411040,178],[-24019378,180],[-6752340,240],[5915280,300],[6178740,240],[6440880,300],[6704340,240],[6966480,300],[7229940,240],[7493520,300],[7755720,240],[8017800,300],[8279880,240],[8541960,300],[8804040,240],[9066120,300],[9328200,240],[9590280,300],[9852360,240],[10114440,300],[10376520,240],[10638600,300],[10910760,240],[11434980,180],[11697060,240],[11959140,180],[12221220,240],[12483300,180],[12745380,240],[13007460,180],[13269540,240],[14327880,300],[14630280,240],[14852040,300],[15154440,240],[15376200,300],[15688680,240],[15900360,300],[16212840,240],[16424520,300],[16737000,240],[16958760,300],[17261160,240],[17482920,300],[17785320,240],[18007080,300],[18319560,240],[18531240,300],[18843720,240],[19055400,300],[19367880,240],[19579560,300],[19892040,240],[20113800,300],[20416200,240],[20637960,300],[20940360,240],[21162120,300],[21474600,240],[21686280,300],[21998760,240]],"Asia/Baku":[[-89411040,199],[-24019400,180],[-6752340,240],[5915280,300],[6178740,240],[6440880,300],[6704340,240],[6966480,300],[7229940,240],[7493520,300],[7755720,240],[8017800,300],[8279880,240],[8541960,300],[8804040,240],[9066120,300],[9328200,240],[9590280,300],[9852360,240],[10114440,300],[10376520,240],[10638600,300],[10910760,240],[11434980,180],[11697060,240],[13803900,300],[14106300,240],[14328000,300],[14630400,240],[14852160,300],[15154560,240],[15376320,300],[15688800,240],[15900480,300],[16212960,240],[16424640,300],[16737120,240],[16958880,300],[17261280,240],[17483040,300],[17785440,240],[18007200,300],[18319680,240],[18531360,300],[18843840,240],[19055520,300],[19368000,240],[19579680,300],[19892160,240],[20113920,300],[20416320,240],[20638080,300],[20940480,240],[21162240,300],[21474720,240],[21686400,300],[21998880,240],[22210560,300],[22523040,240],[22744800,300],[23047200,240],[23268960,300],[23571360,240],[23793120,300],[24095520,240]],"Europe/Berlin":[[-89411040,53],[-35791395,60],[-28228440,120],[-28008060,60],[-27724260,120],[-27502500,60],[-27200100,120],[-26978340,60],[-15648420,120],[-14287620,60],[-14075940,120],[-13803780,60],[-13541700,120],[-13279620,60],[-13017540,120],[-12942720,180],[-12765600,120],[-12686340,60],[-12474660,120],[-12221220,60],[-11960520,120],[-11910180,180],[-11839680,120],[-11698500,60],[-11416260,120],[-11174340,60],[-10902180,120],[-10650180,60],[5397180,120],[5649180,60],[5911260,120],[6173340,60],[6435420,120],[6697500,60],[6959580,120],[7221660,60],[7483740,120],[7755900,60],[8017980,120],[8280060,60],[8542140,120],[8804220,60],[9066300,120],[9328380,60],[9590460,120],[9852540,60],[10114620,120],[10376700,60],[10638780,120],[10910940,60],[11173020,120],[11435100,60],[11697180,120],[11959260,60],[12221340,120],[12483420,60],[12745500,120],[13007580,60],[13269660,120],[13531740,60],[13803900,120],[14106300,60],[14328060,120],[14630460,60],[14852220,120],[15154620,60],[15376380,120],[15688860,60],[15900540,120],[16213020,60],[16424700,120],[16737180,60],[16958940,120],[17261340,60],[17483100,120],[17785500,60],[18007260,120],[18319740,60],[18531420,120],[18843900,60],[19055580,120],[19368060,60],[19579740,120],[19892220,60],[20113980,120],[20416380,60],[20638140,120],[20940540,60],[21162300,120],[21474780,60],[21686460,120],[21998940,60],[22210620,120],[22523100,60],[22744860,120],[23047260,60],[23269020,120],[23571420,60],[23793180,120],[24095580,60],[24317340,120],[24629820,60],[24841500,120],[25153980,60],[25365660,120],[25678140,60],[25899900,120],[26202300,60],[26424060,120],[26726460,60],[26948220,120],[27260700,60],[27472380,120],[27784860,60],[27996540,120],[28309020,60],[28530780,120],[28833180,60],[29054940,120],[29357340,60],[29579100,120],[29881500,60],[30103260,120],[30415740,60],[30627420,120],[30939900,60],[31151580,120],[31464060,60],[31685820,120],[31988220,60],[32209980,120],[32512380,60],[32734140,120],[33046620,60],[33258300,120],[33570780,60],[33782460,120],[34094940,60],[34306620,120],[34619100,60],[34840860,120],[35143260,60],[35365020,120],[35667420,60]],"Europe/London":[[-89411040,-1],[-35791395,0],[-28199400,60],[-28007880,0],[-27735720,60],[-27502440,0],[-27231720,60],[-26958120,0],[-26697480,60],[-26433960,0],[-26173320,60],[-25869480,0],[-25639080,60],[-25375560,0],[-25125000,60],[-24842760,0],[-24560520,60],[-24348840,0],[-24046440,60],[-23814600,0],[-23512200,60],[-23270280,0],[-22988040,60],[-22746120,0],[-22473960,60],[-22221960,0],[-21929640,60],[-21687720,0],[-21405480,60],[-21163560,0],[-20891400,60],[-20639400,0],[-20357160,60],[-20115240,0],[-19833000,60],[-19591080,0],[-19318920,60],[-19056840,0],[-18774600,60],[-18532680,0],[-18260520,60],[-18008520,0],[-17726280,60],[-17484360,0],[-17202120,60],[-16960200,0],[-16688040,60],[-16436040,0],[-16153800,60],[-15841320,0],[-15700200,60],[-15075300,120],[-14934180,60],[-14591460,120],[-14410020,60],[-14067300,120],[-13875780,60],[-13543140,120],[-13301220,60],[-13017540,120],[-12867780,60],[-12746760,0],[-12474600,60],[-12222600,0],[-11990760,60],[-11950500,120],[-11779140,60],[-11658120,0],[-11466600,60],[-11133960,0],[-10912200,60],[-10609800,0],[-10367880,60],[-10095720,0],[-9843720,60],[-9571560,0],[-9309480,60],[-9037320,0],[-8785320,60],[-8543400,0],[-8271240,60],[-8019240,0],[-7737000,60],[-7495080,0],[-7202760,60],[-6960840,0],[-6688680,60],[-6436680,0],[-6154440,60],[-5912520,0],[-5630280,60],[-5388360,0],[-5116200,60],[-4864200,0],[-4612200,60],[-4299720,0],[-4088040,60],[-3775560,0],[-3553800,60],[-3251400,0],[-3039720,60],[-2727240,0],[-2515560,60],[-2203080,0],[-1991400,60],[-1678920,0],[-1467240,60],[-1144680,0],[-983400,60],[962040,0],[1163640,60],[1486200,0],[1687800,60],[2010360,0],[2211960,60],[2534520,0],[2736120,60],[3058680,0],[3270360,60],[3582840,0],[3794520,60],[4107000,0],[4318680,60],[4641240,0],[4842840,60],[5165400,0],[5367000,60],[5689560,0],[5911260,60],[6213660,0],[6435420,60],[6737820,0],[6959580,60],[7261980,0],[7483740,60],[7796220,0],[8017980,60],[8320380,0],[8542140,60],[8844540,0],[9066300,60],[9368700,0],[9590460,60],[9892860,0],[10114620,60],[10427100,0],[10638780,60],[10951260,0],[11173020,60],[11475420,0],[11697180,60],[11999580,0],[12221340,60],[12523740,0],[12745500,60],[13047900,0],[13269660,60],[13572060,0],[13803900,60],[14106300,0],[14328060,60],[14630460,0],[14852220,60],[15154620,0],[15376380,60],[15688860,0],[15900540,60],[16213020,0],[16424700,60],[16737180,0],[16958940,60],[17261340,0],[17483100,60],[17785500,0],[18007260,60],[18319740,0],[18531420,60],[18843900,0],[19055580,60],[19368060,0],[19579740,60],[19892220,0],[20113980,60],[20416380,0],[20638140,60],[20940540,0],[21162300,60],[21474780,0],[21686460,60],[21998940,0],[22210620,60],[22523100,0],[22744860,60],[23047260,0],[23269020,60],[23571420,0],[23793180,60],[24095580,0],[24317340,60],[24629820,0],[24841500,60],[25153980,0],[25365660,60],[25678140,0],[25899900,60],[26202300,0],[26424060,60],[26726460,0],[26948220,60],[27260700,0],[27472380,60],[27784860,0],[27996540,60],[28309020,0],[28530780,60],[28833180,0],[29054940,60],[29357340,0],[29579100,60],[29881500,0],[30103260,60],[30415740,0],[30627420,60],[30939900,0],[31151580,60],[31464060,0],[31685820,60],[31988220,0],[32209980,60],[32512380,0],[32734140,60],[33046620,0],[33258300,60],[33570780,0],[33782460,60],[34094940,0],[34306620,60],[34619100,0],[34840860,60],[35143260,0],[35365020,60],[35667420,0]],"America/New_York":[[-89411040,-296],[-35791395,-300],[-27221340,-240],[-26919000,-300],[-26697180,-240],[-26394840,-300],[-26173020,-240],[-25860600,-300],[-25608540,-240],[-25386840,-300],[-25074300,-240],[-24862680,-300],[-24550140,-240],[-24328440,-300],[-24025980,-240],[-23804280,-300],[-23501820,-240],[-23280120,-300],[-22977660,-240],[-22755960,-300],[-22453500,-240],[-22231800,-300],[-21919260,-240],[-21697560,-300],[-21395100,-240],[-21173400,-300],[-20870940,-240],[-20649240,-300],[-20346780,-240],[-20125080,-300],[-19822620,-240],[-19600920,-300],[-19288380,-240],[-19076760,-300],[-18764220,-240],[-18542520,-300],[-18240060,-240],[-18018360,-300],[-17715900,-240],[-17494200,-300],[-17191740,-240],[-16970040,-300],[-16667580,-240],[-16445880,-300],[-16133340,-240],[-15921720,-300],[-15609180,-240],[-15387480,-300],[-15085020,-240],[-14863320,-300],[-14670300,-240],[-12756600,-300],[-12454140,-240],[-12232440,-300],[-11929980,-240],[-11708280,-300],[-11405820,-240],[-11184120,-300],[-10881660,-240],[-10659960,-300],[-10347420,-240],[-10135800,-300],[-9823260,-240],[-9601560,-300],[-9299100,-240],[-9077400,-300],[-8774940,-240],[-8553240,-300],[-8250780,-240],[-8029080,-300],[-7726620,-240],[-7454520,-300],[-7192380,-240],[-6930360,-300],[-6668220,-240],[-6406200,-300],[-6144060,-240],[-5882040,-300],[-5619900,-240],[-5357880,-300],[-5095740,-240],[-4823640,-300],[-4561500,-240],[-4299480,-300],[-4037340,-240],[-3775320,-300],[-3513180,-240],[-3251160,-300],[-2989020,-240],[-2727000,-300],[-2464860,-240],[-2192760,-300],[-1940700,-240],[-1668600,-300],[-1406460,-240],[-1144440,-300],[-882300,-240],[-620280,-300],[-358140,-240],[-96120,-300],[166020,-240],[428040,-300],[690180,-240],[962280,-300],[1224420,-240],[1486440,-300],[1748580,-240],[2010600,-300],[2111460,-240],[2534760,-300],[2706180,-240],[3058920,-300],[3321060,-240],[3593160,-300],[3845220,-240],[4117320,-300],[4379460,-240],[4641480,-300],[4903620,-240],[5165640,-300],[5427780,-240],[5689800,-300],[5951940,-240],[6213960,-300],[6476100,-240],[6748200,-300],[7000260,-240],[7272360,-300],[7534500,-240],[7796520,-300],[8058660,-240],[8320680,-300],[8582820,-240],[8844840,-300],[9076740,-240],[9369000,-300],[9600900,-240],[9903240,-300],[10125060,-240],[10427400,-300],[10649220,-240],[10951560,-300],[11183460,-240],[11475720,-300],[11707620,-240],[11999880,-300],[12231780,-240],[12534120,-300],[12755940,-240],[13058280,-300],[13280100,-240],[13582440,-300],[13814340,-240],[14106600,-300],[14338500,-240],[14630760,-300],[14862660,-240],[15154920,-300],[15386820,-240],[15689160,-300],[15910980,-240],[16213320,-300],[16435140,-240],[16737480,-300],[16969380,-240],[17261640,-300],[17493540,-240],[17785800,-300],[18017700,-240],[18320040,-300],[18541860,-240],[18844200,-300],[19066020,-240],[19368360,-300],[19559940,-240],[19902600,-300],[20084100,-240],[20426760,-300],[20608260,-240],[20950920,-300],[21142500,-240],[21485160,-300],[21666660,-240],[22009320,-300],[22190820,-240],[22533480,-300],[22714980,-240],[23057640,-300],[23239140,-240],[23581800,-300],[23763300,-240],[24105960,-300],[24297540,-240],[24640200,-300],[24821700,-240],[25164360,-300],[25345860,-240],[25688520,-300],[25870020,-240],[26212680,-300],[26394180,-240],[26736840,-300],[26928420,-240],[27271080,-300],[27452580,-240],[27795240,-300],[27976740,-240],[28319400,-300],[28500900,-240],[28843560,-300],[29025060,-240],[29367720,-300],[29549220,-240],[29891880,-300],[30083460,-240],[30426120,-300],[30607620,-240],[30950280,-300],[31131780,-240],[31474440,-300],[31655940,-240],[31998600,-300],[32180100,-240],[32522760,-300],[32714340,-240],[33057000,-300],[33238500,-240],[33581160,-300],[33762660,-240],[34105320,-300],[34286820,-240],[34629480,-300],[34810980,-240],[35153640,-300],[35335140,-240],[35677800,-300]],"Europe/Athens":[[-89411040,95],[-28101694,120],[-19716600,180],[-19636020,120],[-15114360,180],[-15081300,120],[-14287620,60],[-14074620,120],[-13803960,60],[-13540380,120],[-9206040,180],[-9027540,120],[2774760,180],[3103080,120],[3300480,180],[3562560,120],[3814560,180],[4068000,120],[4338720,180],[4590780,120],[4863300,180],[5123460,120],[5389800,180],[5648940,120],[5911260,180],[6173340,120],[6435420,180],[6697500,120],[6959580,180],[7221660,120],[7483740,180],[7755900,120],[8017980,180],[8280060,120],[8542140,180],[8804220,120],[9066300,180],[9328380,120],[9590460,180],[9852540,120],[10114620,180],[10376700,120],[10638780,180],[10910940,120],[11173020,180],[11435100,120],[11697180,180],[11959260,120],[12221340,180],[12483420,120],[12745500,180],[13007580,120],[13269660,180],[13531740,120],[13803900,180],[14106300,120],[14328060,180],[14630460,120],[14852220,180],[15154620,120],[15376380,180],[15688860,120],[15900540,180],[16213020,120],[16424700,180],[16737180,120],[16958940,180],[17261340,120],[17483100,180],[17785500,120],[18007260,180],[18319740,120],[18531420,180],[18843900,120],[19055580,180],[19368060,120],[19579740,180],[19892220,120],[20113980,180],[20416380,120],[20638140,180],[20940540,120],[21162300,180],[21474780,120],[21686460,180],[21998940,120],[22210620,180],[22523100,120],[22744860,180],[23047260,120],[23269020,180],[23571420,120],[23793180,180],[24095580,120],[24317340,180],[24629820,120],[24841500,180],[25153980,120],[25365660,180],[25678140,120],[25899900,180],[26202300,120],[26424060,180],[26726460,120],[26948220,180],[27260700,120],[27472380,180],[27784860,120],[27996540,180],[28309020,120],[28530780,180],[28833180,120],[29054940,180],[29357340,120],[29579100,180],[29881500,120],[30103260,180],[30415740,120],[30627420,180],[30939900,120],[31151580,180],[31464060,120],[31685820,180],[31988220,120],[32209980,180],[32512380,120],[32734140,180],[33046620,120],[33258300,180],[33570780,120],[33782460,180],[34094940,120],[34306620,180],[34619100,120],[34840860,180],[35143260,120],[35365020,180],[35667420,120]]};
+const CITIES=[['თბილისი',41.7151,44.8271,'Asia/Tbilisi'],['ბათუმი',41.6168,41.6367,'Asia/Tbilisi'],['ქუთაისი',42.2679,42.6946,'Asia/Tbilisi'],['თელავი',41.9198,45.4731,'Asia/Tbilisi'],['ზუგდიდი',42.5088,41.8709,'Asia/Tbilisi'],['ერევანი',40.1792,44.4991,'Asia/Yerevan'],['ბაქო',40.4093,49.8671,'Asia/Baku'],['მოსკოვი',55.7558,37.6173,'Europe/Moscow'],['კიევი',50.4501,30.5234,'Europe/Kiev'],['სტამბოლი',41.0082,28.9784,'Europe/Istanbul'],['ათენი',37.9838,23.7275,'Europe/Athens'],['ბერლინი',52.52,13.405,'Europe/Berlin'],['ლონდონი',51.5074,-0.1278,'Europe/London'],['ნიუ-იორკი',40.7128,-74.006,'America/New_York']];
+function offAt(z,u){const t=TZ[z];let o=t[0][1];for(const r of t){if(r[0]<=u)o=r[1];else break;}return o;}
+function zoneOff(z,y,m,d,hh,mi){const loc=Date.UTC(y,m-1,d,hh,mi)/6e4,o1=offAt(z,loc-240);return offAt(z,loc-o1);}
+/* ── formatting ── */
+const dm=x=>{let d=Math.floor(x),m=Math.round((x-d)*60);if(m===60){d++;m=0;}return d+'°'+String(m).padStart(2,'0')+'′';};
+const sidx=x=>Math.floor(norm(x)/30),inS=x=>dm(norm(x)%30);
+const fl=x=>`${inS(x)} ${SG[sidx(x)][0]}${VS} ${SG[sidx(x)][1]}`;
+const p2=n=>String(n).padStart(2,'0');
+const ord=n=>n===1?'1-ლი':'მე-'+n;
+const locS=s=>(s.endsWith('ი')?s.slice(0,-1):s)+'ში';
+const hms=deg=>{let s=Math.round(norm(deg)/15*3600);const h=Math.floor(s/3600);s-=h*3600;return `${p2(h%24)}სთ ${p2(Math.floor(s/60))}წთ ${p2(s%60)}წმ`;};
+const offS=m=>(m<0?'−':'+')+Math.floor(Math.abs(m)/60)+':'+p2(Math.round(Math.abs(m)%60));
+const hm=min=>{min=((Math.round(min)%1440)+1440)%1440;return p2(Math.floor(min/60))+':'+p2(min%60);};
+/* ── canvas helpers ── */
+function fit(cv,ratio){const dpr=Math.min(2,window.devicePixelRatio||1),w=Math.max(260,cv.clientWidth||300),h=Math.round(w*ratio);cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h};}
+const pt=(cx,cy,r,l)=>[cx-r*Math.cos(l*D),cy+r*Math.sin(l*D)];
+function sector(c,cx,cy,r1,r2,a,b){c.beginPath();c.arc(cx,cy,r2,Math.PI-a*D,Math.PI-b*D,true);c.arc(cx,cy,r1,Math.PI-b*D,Math.PI-a*D,false);c.closePath();}
+function txt(c,t,x,y,size,col,font,al){c.font=size+'px '+(font||SYM);c.fillStyle=col;c.textAlign=al||'center';c.textBaseline='middle';c.fillText(t,x,y);}
+function line(c,a,b,col,lw){c.strokeStyle=col;c.lineWidth=lw||1;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,cl=(x,a,b)=>Math.max(a,Math.min(b,x));
+/* ── birth data shared between lessons (this browser only) ── */
+const BKEY='magnus_astro_birth';
+function saveBirth(o){try{localStorage.setItem(BKEY,JSON.stringify(o));}catch(e){}}
+function loadBirth(){try{return JSON.parse(localStorage.getItem(BKEY)||'null');}catch(e){return null;}}
+function fillBirth(){const b=loadBirth();if(!b)return;['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>{if(b[k]!=null&&$(k))$(k).value=b[k];});if(b.city!=null&&$('city'))$('city').value=b.city;if(b.auto!=null&&$('auto'))$('auto').checked=b.auto;if(b.unk!=null&&$('unk'))$('unk').checked=b.unk;}
+function keepBirth(){const o={};['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>{if($(k))o[k]=$(k).value;});o.city=$('city').value;o.auto=$('auto').checked;if($('unk'))o.unk=$('unk').checked;saveBirth(o);}
+
+function readIn(){const g=id=>+$(id).value;let y=cl(Math.round(g('yy'))||1990,1800,2050),m=cl(Math.round(g('mm'))||1,1,12);const dim=new Date(Date.UTC(y,m,0)).getUTCDate();
+  const d=cl(Math.round(g('dd'))||1,1,dim),unk=$('unk').checked,hh=unk?12:cl(Math.round(g('th'))||0,0,23),mi=unk?0:cl(Math.round(g('tm'))||0,0,59),ci=+$('city').value;
+  let lat=cl(g('lat'),-89.9,89.9),lon=cl(g('lon'),-180,180);if(ci>=0){lat=CITIES[ci][1];lon=CITIES[ci][2];$('lat').value=lat;$('lon').value=lon;}
+  $('lat').disabled=$('lon').disabled=ci>=0;$('th').disabled=$('tm').disabled=unk;
+  let off=Math.round(g('off')*60);if($('auto').checked&&ci>=0){off=zoneOff(CITIES[ci][3],y,m,d,hh,mi);$('off').value=+(off/60).toFixed(2);}
+  $('off').disabled=$('auto').checked&&ci>=0;$('auto').disabled=ci<0;return {y,m,d,hh,mi,lat,lon,off,ci,unk};}
+
+function chartNow(){keepBirth();const I=readIn(),u=Date.UTC(I.y,I.m-1,I.d,I.hh,I.mi)/6e4-I.off,ud=new Date(u*6e4);
+  const J=jd(ud.getUTCFullYear(),ud.getUTCMonth()+1,ud.getUTCDate(),ud.getUTCHours()+ud.getUTCMinutes()/60);return {I,J,pls:planets(J),hs:houses(J,I.lat,I.lon)};}
+function initPanel(cb){$('city').innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('')+'<option value="-1">სხვა ადგილი (ხელით)</option>';
+  ['dd','mm','yy','th','tm','city','lat','lon','off','auto','unk'].forEach(id=>$(id).addEventListener(id==='city'||id==='auto'||id==='unk'?'change':'input',cb));fillBirth();}
+function dot(c,x,y,r,g,col,hl){if(hl){c.fillStyle='rgba(255,211,106,.25)';c.beginPath();c.arc(x,y,r*1.9,0,7);c.fill();}c.fillStyle='#0e1424';c.beginPath();c.arc(x,y,r,0,7);c.fill();c.strokeStyle=hl?'#FFD36A':col;c.lineWidth=hl?2.3:1.6;c.stroke();txt(c,g+VS,x,y,r*1.2,col);}
+function ringQ(c,Q,R,ri){for(let k=0;k<12;k++){const a0=30*k;c.beginPath();for(let t=0;t<=12;t++){const q=Q(R,a0+30*t/12);t?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}for(let t=12;t>=0;t--){const q=Q(ri,a0+30*t/12);c.lineTo(q[0],q[1]);}c.closePath();
+  c.fillStyle=hexA(EC[k%4],.13);c.fill();c.strokeStyle='rgba(227,190,132,.35)';c.lineWidth=1;c.stroke();const q=Q((R+ri)/2,a0+15);txt(c,SG[k][0]+VS,q[0],q[1],Math.max(11,(R-ri)*.5),hexA(EC[k%4],.9));}}
+function band(c,Q,r1,r2,a,b,col){const sp=norm(b-a),n=Math.max(4,Math.ceil(sp/3));c.beginPath();for(let t=0;t<=n;t++){const q=Q(r2,a+sp*t/n);t?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}for(let t=n;t>=0;t--){const q=Q(r1,a+sp*t/n);c.lineTo(q[0],q[1]);}c.closePath();c.fillStyle=col;c.fill();}
+function arrow(c,a,b,col,off,dash){c.strokeStyle=col;c.lineWidth=2;c.setLineDash(dash||[7,6]);c.lineDashOffset=-off;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();c.setLineDash([]);
+  const an=Math.atan2(b[1]-a[1],b[0]-a[0]),L=9;c.fillStyle=col;c.beginPath();c.moveTo(b[0],b[1]);c.lineTo(b[0]-L*Math.cos(an-.4),b[1]-L*Math.sin(an-.4));c.lineTo(b[0]-L*Math.cos(an+.4),b[1]-L*Math.sin(an+.4));c.closePath();c.fill();}
+const n360=norm,NAK=40/3,YR=365.2425;
+const RASHI=['მეშა','ვრიშაბჰა','მითჰუნა','კარკა','სიმჰა','კანია','ტულა','ვრიშჩიკა','დჰანუ','მაკარა','კუმბჰა','მინა'];const DL=['ketu','venus','sun','moon','mars','rahu','jupiter','saturn','mercury'],DY=[7,20,6,10,7,18,16,19,17];
+function dashas(moonSid,bjd){
+  const ni=Math.floor(n360(moonSid)/NAK),li=ni%9,frac=(n360(moonSid)-ni*NAK)/NAK;
+  const start=bjd-frac*DY[li]*YR,out=[];let t=start;
+  for(let c=0;c<18;c++){const L=(li+c)%9,len=DY[L]*YR,ants=[];let ta=t;
+    for(let a=0;a<9;a++){const A=(L+a)%9,al=DY[L]*DY[A]/120*YR,prs=[];let tp=ta;
+      for(let p=0;p<9;p++){const P=(A+p)%9,pl=al*DY[P]/120;prs.push({l:DL[P],s:tp,e:tp+pl});tp+=pl;}
+      ants.push({l:DL[A],s:ta,e:ta+al,prs});ta+=al;}
+    out.push({l:DL[L],s:t,e:t+len,ants});t+=len;if(t>bjd+125*YR)break;}
+  return{list:out,balance:(1-frac)*DY[li],lord:DL[li],nak:ni};
+}
+const NI_HOUSES=[
+ {P:[[200,0],[100,100],[200,200],[300,100]],a:[200,100],num:[200,176]},           // 1
+ {P:[[0,0],[200,0],[100,100]],a:[100,28],num:[100,76]},                           // 2
+ {P:[[0,0],[100,100],[0,200]],a:[28,100],num:[76,100],wy:.7},                     // 3
+ {P:[[0,200],[100,100],[200,200],[100,300]],a:[96,200],num:[176,200]},            // 4
+ {P:[[0,200],[100,300],[0,400]],a:[28,300],num:[76,300],wy:.7},                   // 5
+ {P:[[0,400],[100,300],[200,400]],a:[100,372],num:[100,324]},                     // 6
+ {P:[[200,400],[100,300],[200,200],[300,300]],a:[200,302],num:[200,224]},         // 7
+ {P:[[200,400],[300,300],[400,400]],a:[300,372],num:[300,324]},                   // 8
+ {P:[[400,400],[300,300],[400,200]],a:[372,300],num:[324,300],wy:.7},             // 9
+ {P:[[400,200],[300,100],[200,200],[300,300]],a:[304,200],num:[224,200]},         // 10
+ {P:[[400,200],[300,100],[400,0]],a:[372,100],num:[324,100],wy:.7},               // 11
+ {P:[[200,0],[400,0],[300,100]],a:[300,28],num:[300,76]},                         // 12
+];
+const SI_CELLS={11:[0,0],0:[1,0],1:[2,0],2:[3,0],3:[3,1],4:[3,2],5:[3,3],6:[2,3],7:[1,3],8:[0,3],9:[0,2],10:[0,1]};function calcVargaSign(sidDeg, N) {
+  const si = Math.floor(sidDeg / 30) % 12;
+  const pos = sidDeg % 30;
+  const part = Math.floor(pos * N / 30);
+  const odd = si % 2 === 0;               // Aries=0 → odd sign
+  switch(N) {
+    case 1: return si;
+    case 2: // Hora — Leo/Cancer only
+      return odd ? (part === 0 ? 4 : 3) : (part === 0 ? 3 : 4);
+    case 3: // Drekkana — si, si+4, si+8
+      return (si + part * 4) % 12;
+    case 4: // Chaturthamsha — si, si+3, si+6, si+9
+      return (si + part * 3) % 12;
+    case 7: // Saptamsha — from sign itself (odd) / 7th from it (even)
+      return (si + (odd ? 0 : 6) + part) % 12;
+    case 9: // Navamsha
+      return (si * 9 + part) % 12;
+    case 10: // Dashamsha — from sign itself (odd) / 9th from it (even)
+      return (si + (odd ? 0 : 8) + part) % 12;
+    case 12: // Dvadashamsha — from sign itself
+      return (si + part) % 12;
+    case 16: // Shodashamsha — movable→Ar, fixed→Le, dual→Sg
+      return ([0,4,8][si % 3] + part) % 12;
+    case 20: // Vimshamsha — movable→Ar, fixed→Sg, dual→Le
+      return ([0,8,4][si % 3] + part) % 12;
+    case 24: // Chaturvimshamsha — odd→Le, even→Cn
+      return ((odd ? 4 : 3) + part) % 12;
+    case 27: // Bhamsha — fire→Ar, earth→Cn, air→Li, water→Cp
+      return ([0,3,6,9][si % 4] + part) % 12;
+    case 30: // Trimshamsha — unequal
+      if (odd) { // Ar5, Aq5, Sg8, Ge7, Li5
+        if (pos < 5) return 0; if (pos < 10) return 10;
+        if (pos < 18) return 8; if (pos < 25) return 2; return 6;
+      } else {   // Ta5, Vi7, Pi8, Cp5, Sc5
+        if (pos < 5) return 1; if (pos < 12) return 5;
+        if (pos < 20) return 11; if (pos < 25) return 9; return 7;
+      }
+    case 40: // Khavedamsha — odd→Ar, even→Li
+      return ((odd ? 0 : 6) + part) % 12;
+    case 45: // Akshavedamsha — movable→Ar, fixed→Le, dual→Sg
+      return ([0,4,8][si % 3] + part) % 12;
+    case 60: // Shashtiamsha — from the sign itself
+      return (si + part) % 12;
+    default: // non-Parashari vargas: cyclic from Aries
+      return Math.floor(sidDeg * N / 30) % 12;
+  }
+}
+
+const G={sun:['მზე','სურია','☉','#f9c646'],moon:['მთვარე','ჩანდრა','☽','#c8d8f0'],mars:['მარსი','მანგალა','♂','#e84040'],mercury:['მერკური','ბუდჰა','☿','#50d890'],jupiter:['იუპიტერი','გურუ','♃','#e89040'],venus:['ვენერა','შუკრა','♀','#e878a8'],saturn:['სატურნი','შანი','♄','#90a8c8'],rahu:['რაჰუ','რაჰუ','☊','#9060d0'],ketu:['კეტუ','კეტუ','☋','#c06060']};
+const KMAP={su:'sun',mo:'moon',ma:'mars',me:'mercury',ju:'jupiter',ve:'venus',sa:'saturn'},ORD=['sun','moon','mars','mercury','jupiter','venus','saturn','rahu','ketu'];
+const NK=[['აშვინი','აშვინები — ღვთიური მკურნალი ტყუპები','ცხენის თავი','სისწრაფე, განკურნება, დასაწყისი'],['ბჰარანი','იამა — სიკვდილის ღმერთი','იონი','ტვირთის ტარება, შობა და დასასრული, ვნება'],['კრიტიკა','აგნი — ცეცხლი','ალი, დანა','წმენდა, სიმკვეთრე, კრიტიკა'],['როჰინი','ბრაჰმა — შემოქმედი','ეტლი','სილამაზე, ნაყოფიერება, ზრდა'],['მრიგაშირა','სომა — მთვარის ნექტარი','ირმის თავი','ძიება, ცნობისმოყვარეობა, მოგზაურობა'],['არდრა','რუდრა — ქარიშხალი','ცრემლი','ქაოსი და განახლება, ემოციური ქარიშხალი'],['პუნარვასუ','ადიტი — უსაზღვროების დედა','მშვილდი და კაპარჭი','დაბრუნება, აღდგენა, სიკეთე'],['პუშია','ბრიჰასპატი — ღმერთების მოძღვარი','ყვავილი, ძუძუ','კვება, მზრუნველობა, ყველაზე კეთილი'],['აშლეშა','ნაგები — გველები','დახვეული გველი','მიზიდულობა, ჰიპნოზი, ფარული ძალა'],['მაღა','პიტრები — წინაპრები','ტახტი','მემკვიდრეობა, ღირსება, სამეფო'],['პ. ფალგუნი','ბჰაგა — ბედნიერება','საწოლის წინა ფეხები','სიამოვნება, დასვენება, სიყვარული'],['უ. ფალგუნი','არიამანი — მეგობრობა','საწოლის უკანა ფეხები','კავშირი, ქორწინება, მფარველობა'],['ჰასტა','სავიტარი — მზე','ხელი','ოსტატობა, ხელობა, იუმორი'],['ჩიტრა','ვიშვაკარმა — ზეციური ხუროთმოძღვარი','მარგალიტი','სილამაზე, დიზაინი, ქმნილება'],['სვატი','ვაიუ — ქარი','ქარში მოქანავე ყლორტი','დამოუკიდებლობა, ვაჭრობა, მოქნილობა'],['ვიშაკჰა','ინდრა-აგნი','თაღი','მიზანდასახულობა, ამბიცია, გამარჯვება'],['ანურადჰა','მიტრა — მეგობრობა','ლოტოსი','ერთგულება, თანამშრომლობა, ორგანიზება'],['ჯიეშთა','ინდრა — ღმერთების მეფე','ქოლგა, საყურე','უფროსობა, ძალაუფლება, პასუხისმგებლობა'],['მულა','ნირიტი — დაშლის ქალღმერთი','ფესვები','ფესვამდე ჩასვლა, კვლევა, ნგრევა და საწყისი'],['პ. აშადჰა','აპასი — წყლები','მარაო','შეუპოვრობა, გაწმენდა, რწმენა'],['უ. აშადჰა','ვიშვადევები — საყოველთაო ღმერთები','სპილოს ეშვი','საბოლოო გამარჯვება, ეთიკა'],['შრავანა','ვიშნუ — შემნახველი','ყური','მოსმენა, სწავლა, ცოდნის გადაცემა'],['დჰანიშთა','ვასუები — სიმდიდრის ღმერთები','დოლი','რიტმი, მუსიკა, სიმდიდრე'],['შატაბჰიშა','ვარუნა — კოსმოსური წყლები','ცარიელი წრე','განკურნება, საიდუმლო, მარტოობა'],['პ. ბჰადრაპადა','აჯა ეკაპადა — ცალფეხა თხა','მახვილი','ცეცხლოვანი ტრანსფორმაცია, ასკეზა'],['უ. ბჰადრაპადა','აჰირ ბუდჰნია — სიღრმის გველი','ტყუპები','სიღრმე, სიბრძნე, სიმშვიდე'],['რევატი','პუშანი — მწყემსი-მფარველი','თევზი','მფარველობა, მოგზაურობის დასრულება, თანაგრძნობა']];
+const NKR=['ketu','venus','sun','moon','mars','rahu','jupiter','saturn','mercury'];
+const PLT={sun:'ძალაუფლება, მამა, ჯანმრთელობა, სახელი',moon:'გონება, დედა, ემოციები, ხალხი',mars:'ენერგია, ქონება, ძმები, კონფლიქტი',mercury:'სწავლა, ვაჭრობა, მეტყველება',jupiter:'სიბრძნე, შვილები, გურუ, კეთილდღეობა',venus:'ქორწინება, სიამოვნება, ხელოვნება, კომფორტი',saturn:'შრომა, დისციპლინა, დაბრკოლებები, ხანგრძლივი შედეგი',rahu:'ამბიცია, უცხო, სურვილი, ილუზია',ketu:'განთავისუფლება, სულიერება, დანაკარგი'};
+const RCOL=s=>EC[s%4];
+/* true (osculating) node: the plane of the Moon's apparent path, r × dr/dt, with Meeus 47.B latitude — matches Swiss Ephemeris TRUE_NODE to ~0.1° */
+const MB=[[0,0,0,1,5128122],[0,0,1,1,280602],[0,0,1,-1,277693],[2,0,0,-1,173237],[2,0,-1,1,55413],[2,0,-1,-1,46271],[2,0,0,1,32573],[0,0,2,1,17198],[2,0,1,-1,9266],[0,0,2,-1,8822],[2,-1,0,-1,8216],[2,0,-2,-1,4324],[2,0,1,1,4200],[2,1,0,-1,-3359],[2,-1,-1,1,2463],[2,-1,0,1,2211],[2,-1,-1,-1,2065],[0,1,-1,-1,-1870],[4,0,-1,-1,1828],[0,1,0,1,-1794],[0,0,0,3,-1749],[0,1,-1,1,-1565],[1,0,0,1,-1491],[0,1,1,1,-1475],[0,1,1,-1,-1410],[0,1,0,-1,-1344],[1,0,0,-1,-1335],[0,0,3,1,1107],[4,0,0,-1,1021],[4,0,-1,1,833]];
+function moonLat(T){const R=Math.PI/180,Lp=218.3164477+481267.88123421*T,Dm=297.8501921+445267.1114034*T,M=357.5291092+35999.0502909*T,Mp=134.9633964+477198.8675055*T,F=93.272095+483202.0175233*T,E=1-0.002516*T,A1=119.75+131.849*T,A3=313.45+481266.484*T;
+ let b=0;for(const [d,m,mp,f,c] of MB)b+=c*Math.pow(E,Math.abs(m))*Math.sin((d*Dm+m*M+mp*Mp+f*F)*R);
+ b+=-2235*Math.sin(Lp*R)+382*Math.sin(A3*R)+175*Math.sin((A1-F)*R)+175*Math.sin((A1+F)*R)+127*Math.sin((Lp-Mp)*R)-115*Math.sin((Lp+Mp)*R);return b/1e6;}
+function oscNode(J,moonLon){const R=Math.PI/180,h=0.02,v=t=>{const T=(t-2451545)/36525,l=moonLon(T)*R,b=moonLat(T)*R;return [Math.cos(b)*Math.cos(l),Math.cos(b)*Math.sin(l),Math.sin(b)];},a=v(J-h),c=v(J+h),p=v(J),dv=[c[0]-a[0],c[1]-a[1],c[2]-a[2]],n=[p[1]*dv[2]-p[2]*dv[1],p[2]*dv[0]-p[0]*dv[2],p[0]*dv[1]-p[1]*dv[0]];
+ return ((Math.atan2(n[0],-n[1])/R)%360+360)%360;}
+
+/* Lahiri ayanamsa (mean; equals Swiss Ephemeris SIDM_LAHIRI) and the true node (Meeus 47.7) */
+const ayan=J=>{const T=(J-2451545)/36525;return 23.857094709196645+(5028.796195*T+1.1054348*T*T)/3600;};
+function tnode(J){const T=(J-2451545)/36525,s=x=>Math.sin(x*D),Dm=297.8501921+445267.1114034*T,M=357.5291092+35999.0502909*T,Mp=134.9633964+477198.8675055*T,F=93.272095+483202.0175233*T,Om=125.0445479-1934.1362891*T+0.0020754*T*T;
+  return norm(Om-1.4979*s(2*(Dm-F))-0.15*s(M)-0.1226*s(2*Dm)+0.1176*s(2*F)-0.0801*s(2*(F-Mp)));}
+const S={g:{},CH:null,V:null,st:'n',nsel:null,dsel:null};
+const sgn=l=>Math.floor(norm(l)/30),fsd=l=>`${ZS(sgn(l))} ${inS(l)}`;
+function ZS(s){return SG[s][0]+VS;}
+function model(){const CH=S.CH,J=CH.J,ay=ayan(J),P={};CH.pls.forEach(p=>{if(KMAP[p.k])P[KMAP[p.k]]={tr:p.lon,sd:norm(p.lon-ay)};});const tn=oscNode(J,moonLon);P.rahu={tr:tn,sd:norm(tn-ay)};P.ketu={tr:norm(tn+180),sd:norm(tn+180-ay)};
+  const asc=CH.I.unk?null:norm(CH.hs.asc-ay),lg=asc==null?sgn(P.moon.sd):sgn(asc);ORD.forEach(k=>{P[k].si=sgn(P[k].sd);P[k].h=(P[k].si-lg+12)%12+1;P[k].ni=Math.floor(P[k].sd/NAK);P[k].pada=Math.floor((P[k].sd%NAK)/(NAK/4))+1;P[k].d9=calcVargaSign(P[k].sd,9);});
+  return {ay,P,asc,lg,d9l:asc==null?null:calcVargaSign(asc,9),trAsc:CH.I.unk?null:CH.hs.asc,D:dashas(P.moon.sd,J)};}
+/* ── 2 · ayanamsa wheel ── */
+function drawA(){const G2=S.g.a;if(!G2||!S.V)return;const {c,w,h}=G2;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,Q=(r,l)=>{const t=l*Math.PI/180;return [cx-r*Math.cos(t),cy+r*Math.sin(t)];},ay=S.V.ay;
+  ringQ(c,Q,R,R*.86);
+  ringQ(c,(r,l)=>Q(r,l+ay),R*.74,R*.6);
+  const arc=(r,a0,sw,col)=>{c.strokeStyle=col;c.lineWidth=4;c.beginPath();for(let s=0;s<=sw;s+=.5){const q=Q(r,a0+s);s?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}c.stroke();};arc(R*.8,0,ay,'#FFD36A');
+  line(c,Q(R*.86,0),Q(R*.2,0),'rgba(255,211,106,.6)',1.2);line(c,Q(R*.6,ay),Q(R*.2,ay),'rgba(143,200,242,.6)',1.2);
+  ORD.slice(0,7).forEach(k=>{const p=S.V.P[k],q=Q(R*.48,p.tr);dot(c,q[0],q[1],Math.max(8,R*.045),G[k][2],G[k][3],k==='sun'||k==='moon');});
+  txt(c,dm(ay),cx,cy,Math.max(13,R*.07),'#FFD36A','Cinzel,serif');txt(c,'აიანამშა',cx,cy+R*.09,Math.max(9,R*.04),'#aab2c4',GEO);}
+function aText(){const V=S.V,J=S.CH.J,yr=2000+(J-2451545)/365.25;$('aX').innerHTML=`<b>ლაჰირის აიანამშა</b> შენი დაბადებისას: <b style="color:#FFD36A">${dm(V.ay)}</b> <small>(${V.ay.toFixed(4)}°)</small><br>`+
+  `ფორმულა: 23.8571° + (5028.80″·T + 1.105″·T²) / 3600, T = საუკუნეები J2000-დან (${((J-2451545)/36525).toFixed(5)}).<br>`+
+  `<small>გარე რგოლი — ტროპიკული, შიდა — სიდერული ზოდიაქო, აიანამშით მობრუნებული. 285 წელს ორი ზოდიაქო ემთხვეოდა; ~${Math.round(yr+((30-V.ay)*71.6))} წელს სხვაობა მთელ ნიშანს (30°) მიაღწევს.</small><br><br>`+
+  `ტროპიკული მზე ${fsd(V.P.sun.tr)} → სიდერული <b>${fsd(V.P.sun.sd)}</b>${sgn(V.P.sun.tr)!==sgn(V.P.sun.sd)?' — <b style="color:#FFD36A">ნიშანი შეიცვალა</b>':''}`;
+  $('aT').innerHTML='<tr><th>გრაჰა</th><th>ტროპიკული</th><th>სიდერული</th><th>რაში</th></tr>'+ORD.map(k=>{const p=V.P[k];return `<tr><td><span style="color:${G[k][3]}">${G[k][2]}${VS}</span> ${G[k][0]} <small>(${G[k][1]})</small></td><td>${fsd(p.tr)}</td><td style="color:${sgn(p.tr)!==p.si?'#FFD36A':'inherit'}">${fsd(p.sd)}</td><td>${RASHI[p.si]}</td></tr>`;}).join('')+(V.asc!=null?`<tr><td><b>ლაგნა</b> (ASC)</td><td>${fsd(V.trAsc)}</td><td style="color:${sgn(V.trAsc)!==sgn(V.asc)?'#FFD36A':'inherit'}">${fsd(V.asc)}</td><td>${RASHI[sgn(V.asc)]}</td></tr>`:'');}
+/* ── 3 / 5 · square charts ── */
+function chart(G2,bySign,lag,title,sub){if(!G2)return;const {c,w,h}=G2;c.clearRect(0,0,w,h);const sz=Math.min(w,h)-8,x0=(w-sz)/2,y0=(h-sz)/2,k=sz/400,P=(x,y)=>[x0+x*k,y0+y*k];
+  c.fillStyle='rgba(8,6,20,.8)';c.fillRect(x0,y0,sz,sz);c.strokeStyle='rgba(201,168,76,.6)';c.lineWidth=1.6;c.strokeRect(x0,y0,sz,sz);
+  const fs=Math.max(10,sz*.04),put=(names,cx,cy,maxw)=>{const n=names.length,cols=n>4?3:n>1?2:1,rows=Math.ceil(n/cols),gx=Math.min(maxw/cols,fs*2.6),gy=fs*1.45;names.forEach((nm,i)=>{const r=Math.floor(i/cols),cl=i%cols,x=cx+(cl-(cols-1)/2)*gx,y=cy+(r-(rows-1)/2)*gy;txt(c,G[nm][2]+VS,x,y,fs*1.15,G[nm][3]);});};
+  if(S.st==='n'){c.strokeStyle='rgba(201,168,76,.45)';c.lineWidth=1;c.beginPath();[[0,0,400,400],[400,0,0,400]].forEach(([a,b,cc,d])=>{c.moveTo(...P(a,b));c.lineTo(...P(cc,d));});c.moveTo(...P(200,0));c.lineTo(...P(0,200));c.lineTo(...P(200,400));c.lineTo(...P(400,200));c.closePath();c.stroke();
+    for(let i=0;i<12;i++){const H=NI_HOUSES[i],s=(lag+i)%12,q=P(...H.num);txt(c,String(s+1),q[0],q[1],fs*.9,RCOL(s),'Cinzel,serif');const a=P(...H.a);put(bySign[s]||[],a[0],a[1],(H.wy?50:80)*k);}
+    if(sub!==false){const q=P(200,34);txt(c,'Lg',q[0],q[1],fs*.8,'#e8c06e','Cinzel,serif');}}
+  else{const C=100;for(const sn in SI_CELLS){const s=+sn,[cx,cy]=SI_CELLS[sn],a=P(cx*C,cy*C);c.strokeStyle='rgba(201,168,76,.35)';c.lineWidth=1;c.strokeRect(a[0],a[1],C*k,C*k);if(s===lag&&sub!==false){c.strokeStyle='#e8c06e';c.lineWidth=1.4;c.strokeRect(a[0]+3,a[1]+3,C*k-6,C*k-6);const q=P(cx*C+C-17,cy*C+14);txt(c,'Lg',q[0],q[1],fs*.75,'#e8c06e','Cinzel,serif');}
+      const q=P(cx*C+15,cy*C+14);txt(c,SG[s][0]+VS,q[0],q[1],fs*.95,RCOL(s));const m=P(cx*C+C/2,cy*C+C/2+6);put(bySign[s]||[],m[0],m[1],85*k);}
+    const t=P(200,192);txt(c,title,t[0],t[1],fs*1.6,'rgba(240,208,128,.8)','Cinzel,serif');}}
+const bySignOf=key=>{const o={};ORD.forEach(k=>{const s=S.V.P[k][key];(o[s]=o[s]||[]).push(k);});return o;};
+function drawD(){chart(S.g.d,bySignOf('si'),S.V.lg,'D1',S.V.asc!=null);}
+function dText(){const V=S.V,L=V.lg;$('dX').innerHTML=(V.asc!=null?`<b>ლაგნა:</b> ${RASHI[L]} (${RASHI_KA[L]}) ${inS(V.asc)} · ნაქშატრა ${NK[Math.floor(V.asc/NAK)][0]}<br>`:`<b>დრო უცნობია</b> — რუკა აგებულია მთვარის ნიშნიდან (ჩანდრა-ლაგნა).<br>`)+
+  ORD.map(k=>{const p=V.P[k];return `<span style="color:${G[k][3]}">${G[k][2]}${VS}</span> ${G[k][1]} — ${p.h} სახლი · ${RASHI[p.si]}`;}).join('<br>')+`<br><small>ლაგნას მმართველი: ${G[LORD[L]][1]} (${G[LORD[L]][0]}).</small>`;}
+const RASHI_KA=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'],LORD=['mars','venus','mercury','moon','sun','mercury','venus','mars','jupiter','saturn','saturn','jupiter'];
+/* ── 4 · nakshatra wheel ── */
+function drawN(){const G2=S.g.n;if(!G2||!S.V)return;const {c,w,h}=G2;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.8,Q=(r,l)=>{const t=l*Math.PI/180;return [cx-r*Math.cos(t),cy+r*Math.sin(t)];},mn=S.V.P.moon.ni;
+  for(let i=0;i<27;i++){const a=i*NAK,col=G[NKR[i%9]][3],on=i===S.nsel;band(c,Q,ri,R,a,a+NAK,hexA(col,on?.6:i===mn?.4:.14));line(c,Q(ri*.5,a),Q(R,a),'rgba(227,190,132,.25)',1);const q=Q((ri+R)/2,a+NAK/2);txt(c,String(i+1),q[0],q[1],Math.max(8.5,R*.04),on||i===mn?'#fff':'rgba(220,214,200,.75)',GEO);}
+  for(let s=0;s<12;s++){const q=Q(ri*.9,s*30+15);txt(c,SG[s][0]+VS,q[0],q[1],Math.max(10,R*.05),RCOL(s));line(c,Q(ri*.82,s*30),Q(ri,s*30),'rgba(227,190,132,.5)',1.2);}
+  c.strokeStyle='rgba(227,190,132,.3)';c.beginPath();c.arc(cx,cy,ri*.82,0,7);c.stroke();
+  const pts=ORD.map(k=>({k,l:S.V.P[k].sd})).sort((a,b)=>a.l-b.l);pts.forEach(p=>p.d=p.l);for(let i=1;i<pts.length;i++)if(p_(pts[i].d-pts[i-1].d)<9)pts[i].d=pts[i-1].d+9;
+  pts.forEach(p=>{line(c,Q(ri*.82,p.l),Q(ri*.74,p.l),G[p.k][3],1.5);const q=Q(ri*.62,p.d);dot(c,q[0],q[1],Math.max(8,R*.045),G[p.k][2],G[p.k][3],p.k==='moon');});
+  if(S.V.asc!=null){line(c,Q(ri*.82,S.V.asc),Q(ri*.3,S.V.asc),'#e8c06e',1.6);const q=Q(ri*.25,S.V.asc);txt(c,'Lg',q[0],q[1],11,'#e8c06e','Cinzel,serif');}}
+const p_=x=>norm(x);
+function nText(){const i=S.nsel,N=NK[i],r=NKR[i%9],a=i*NAK,here=ORD.filter(k=>S.V.P[k].ni===i);
+  $('nX').innerHTML=`<span style="font:600 19px Cinzel,serif;color:${G[r][3]}">${i+1}. ${N[0]}</span>${i===S.V.P.moon.ni?' <b style="color:#FFD36A">— შენი ჯანმა-ნაქშატრა</b>':''}<br>`+
+   `<small>${fsd(a)} – ${fsd(a+NAK)} (სიდერული)</small><br>მმართველი: <b style="color:${G[r][3]}">${G[r][2]}${VS} ${G[r][1]}</b> · ღვთაება: <b>${N[1]}</b> · სიმბოლო: <b>${N[2]}</b><br><b>თემა:</b> ${N[3]}.<br>`+
+   `პადები: ${[0,1,2,3].map(p=>{const s=(i*4+p)%12;return `${p+1} — ${SG[s][0]}${VS}`;}).join(' · ')}<br>`+
+   (here.length?`<b>აქ დგას:</b> ${here.map(k=>`<span style="color:${G[k][3]}">${G[k][2]}${VS}</span> ${G[k][1]} (${inS(S.V.P[k].sd%NAK===0?0:S.V.P[k].sd)}, პადა ${S.V.P[k].pada})`).join(', ')}`:'<small>შენი გრაჰები აქ არ დგას.</small>');}
+/* ── 5 · navamsha ── */
+function draw9(){chart(S.g.n9,bySignOf('d9'),S.V.d9l==null?S.V.P.moon.d9:S.V.d9l,'D9',S.V.d9l!=null);}
+function nTable(){$('nT').innerHTML='<tr><th>გრაჰა</th><th>D1</th><th>ნაწილი</th><th>D9</th></tr>'+ORD.map(k=>{const p=S.V.P[k],part=Math.floor((p.sd%30)*9/30)+1,vg=p.si===p.d9;return `<tr${vg?' style="background:rgba(255,211,106,.1)"':''}><td><span style="color:${G[k][3]}">${G[k][2]}${VS}</span> ${G[k][1]}</td><td>${SG[p.si][0]}${VS} ${inS(p.sd)}</td><td>${part}/9</td><td><b>${SG[p.d9][0]}${VS} ${RASHI[p.d9]}</b>${vg?' <b style="color:#FFD36A">ვარგოტამა</b>':''}</td></tr>`;}).join('')+(S.V.d9l!=null?`<tr><td><b>ლაგნა</b></td><td>${SG[sgn(S.V.asc)][0]}${VS} ${inS(S.V.asc)}</td><td>${Math.floor((S.V.asc%30)*9/30)+1}/9</td><td><b>${SG[S.V.d9l][0]}${VS} ${RASHI[S.V.d9l]}</b></td></tr>`:'');}
+/* ── 6 · dasha ── */
+const nowJ=()=>Date.now()/864e5+2440587.5,fdD=J=>{const t=new Date((J-2440587.5)*864e5);return `${p2(t.getUTCDate())}.${p2(t.getUTCMonth()+1)}.${t.getUTCFullYear()}`;};
+function drawV(){const G2=S.g.v;if(!G2||!S.V)return;const {c,w,h}=G2;c.clearRect(0,0,w,h);const L=S.V.D.list,J0=S.CH.J,X=J=>8+(J-J0)/(120*YR)*(w-16),top=24,bh=Math.min(44,h*.36),ab=top+bh+8,ah=Math.min(20,h*.16);
+  L.forEach(M=>{const x0=Math.max(8,X(M.s)),x1=Math.min(w-8,X(M.e));if(x1<=8||x0>=w-8)return;const sel=S.dsel===M;c.fillStyle=hexA(G[M.l][3],sel?.75:.4);c.fillRect(x0,top,x1-x0-1,bh);if(sel){c.strokeStyle='#fff';c.lineWidth=2;c.strokeRect(x0+1,top+1,x1-x0-3,bh-2);}if(x1-x0>18)txt(c,G[M.l][2]+VS,(x0+x1)/2,top+bh/2,Math.min(18,bh*.45),'#fff');
+    M.ants.forEach(A=>{const a0=Math.max(8,X(A.s)),a1=Math.min(w-8,X(A.e));if(a1>a0){c.fillStyle=hexA(G[A.l][3],.6);c.fillRect(a0,ab,a1-a0-.5,ah);}});});
+  for(let a=0;a<=120;a+=10){const x=X(J0+a*YR);line(c,[x,top-5],[x,top],'rgba(227,190,132,.5)',1);txt(c,a+'',Math.min(w-10,Math.max(8,x)),top-13,10,'#aab2c4',GEO);}
+  const n=X(nowJ());if(n>8&&n<w-8){line(c,[n,top-3],[n,ab+ah+4],'#fff',2);txt(c,'ახლა',n,ab+ah+14,10.5,'#fff',GEO);}}
+function vText(){const D=S.V.D,M=S.dsel,nj=nowJ(),cur=D.list.find(x=>nj>=x.s&&nj<x.e),ca=cur&&cur.ants.find(x=>nj>=x.s&&nj<x.e),cp=ca&&ca.prs.find(x=>nj>=x.s&&nj<x.e),mo=S.V.P.moon,fr=(mo.sd-mo.ni*NAK)/NAK;
+  $('vX').innerHTML=`<b>ბალანსი დაბადებისას:</b> მთვარე ${NK[mo.ni][0]}-ში (მმართველი ${G[D.lord][1]}), გავლილია ${(fr*100).toFixed(1)}% → დარჩა ${(1-fr).toFixed(3)} × ${DY[DL.indexOf(D.lord)]} = <b>${D.balance.toFixed(2)} წელი</b> ${G[D.lord][1]}-დაშისა.<br>`+
+   (cur?`<b>ახლა:</b> <span style="color:${G[cur.l][3]}">${G[cur.l][2]}${VS}</span> ${G[cur.l][1]} / <span style="color:${G[ca.l][3]}">${G[ca.l][2]}${VS}</span> ${G[ca.l][1]} / <span style="color:${G[cp.l][3]}">${G[cp.l][2]}${VS}</span> ${G[cp.l][1]}<br><small>ანტარი ${fdD(ca.s)} – ${fdD(ca.e)} · პრატიანტარი ${fdD(cp.s)} – ${fdD(cp.e)}</small><br><br>`:'')+
+   `<span style="font:600 18px Cinzel,serif;color:${G[M.l][3]}">${G[M.l][2]}${VS} ${G[M.l][1]}-მაჰადაშა</span><br><small>${fdD(M.s)} – ${fdD(M.e)} · ${((M.e-M.s)/YR).toFixed(1)} წელი${M.s<S.CH.J?' (ბალანსი)':''}</small><br><b>თემა:</b> ${PLT[M.l]}.<br><small>ნატალურად: ${RASHI[S.V.P[M.l].si]}, ${S.V.P[M.l].h} სახლი, ${NK[S.V.P[M.l].ni][0]} — დაშის ხარისხს მისი D1 და D9 მდგომარეობა წყვეტს.</small>`;
+  $('vL').innerHTML=M.ants.map(A=>{const on=nj>=A.s&&nj<A.e;return `<div style="border-color:${G[A.l][3]}${on?';background:rgba(255,255,255,.06)':''}"><span style="color:${G[M.l][3]}">${G[M.l][2]}${VS}</span>/<span style="color:${G[A.l][3]}">${G[A.l][2]}${VS}</span> <b>${G[A.l][1]}</b> <small>${fdD(A.s)} – ${fdD(A.e)}${on?' · <b style="color:#FFD36A">ახლა</b>':''}</small></div>`;}).join('');}
+function upd(){S.CH=chartNow();const I=S.CH.I;$('sum').innerHTML=`${p2(I.d)}.${p2(I.m)}.${I.y} ${I.unk?'(დრო უცნობია)':p2(I.hh)+':'+p2(I.mi)} · ${I.ci>=0?CITIES[I.ci][0]:'სხვა ადგილი'} · UTC${offS(I.off)}`;
+  $('yW').innerHTML=I.unk?'დაბადების დრო უცნობია: ლაგნა და სახლები არ ითვლება (რუკა მთვარის ნიშნიდანაა), მთვარე ±7° — მისი ნაქშატრა და დაშების თარიღები საეჭვოა.':'';
+  S.V=model();S.nsel=S.V.P.moon.ni;const nj=nowJ();S.dsel=S.V.D.list.find(x=>nj>=x.s&&nj<x.e)||S.V.D.list[0];drawA();aText();drawD();dText();drawN();nText();draw9();nTable();drawV();vText();}
+window.MG_V40=()=>({ay:S.V.ay,P:Object.fromEntries(ORD.map(k=>[k,[+S.V.P[k].sd.toFixed(4),S.V.P[k].d9]])),asc:S.V.asc,d9l:S.V.d9l,bal:S.V.D.balance,lord:S.V.D.lord,M:S.V.D.list.slice(0,4).map(m=>[m.l,fdD(m.s)])});
+$('sT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.st=b.dataset.s;$('sT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawD();draw9();});
+$('cvN').addEventListener('click',e=>{const G2=S.g.n;const r=$('cvN').getBoundingClientRect(),x=(e.clientX-r.left)*G2.w/r.width-G2.w/2,y=(e.clientY-r.top)*G2.h/r.height-G2.h/2;let l=norm(Math.atan2(y,-x)/D);S.nsel=Math.floor(l/NAK)%27;drawN();nText();});
+$('cvV').addEventListener('click',e=>{const G2=S.g.v,r=$('cvV').getBoundingClientRect(),x=(e.clientX-r.left)*G2.w/r.width,J=S.CH.J+(x-8)/(G2.w-16)*120*YR,M=S.V.D.list.find(m=>J>=m.s&&J<m.e);if(M){S.dsel=M;drawV();vText();}});
+function sizes(){const m=innerWidth<700;S.g.a=fit($('cvA'),1);S.g.d=fit($('cvD'),1);S.g.n=fit($('cvN'),1);S.g.n9=fit($('cv9'),1);S.g.v=fit($('cvV'),m?.42:.14);if(S.V){drawA();drawD();drawN();draw9();drawV();}}
+let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
+const Q=[['რა არის აიანამშა?',['ვედური სახლების სისტემა','სხვაობა ტროპიკულ და სიდერულ ზოდიაქოს შორის','მთვარის სადგომი','პლანეტის პერიოდი'],1,'ლაჰირის აიანამშა ახლა ~24°-ია და ყოველ 72 წელში 1°-ით იზრდება.'],
+ ['რამდენი ნაქშატრაა და რა ზომისაა თითოეული?',['12 × 30°','27 × 13°20′','28 × 12°51′','9 × 40°'],1,'მთვარის ერთი დღის გზა; 4 პადა × 3°20′.'],
+ ['რომელი ნაქშატრა განსაზღვრავს დაშების თანმიმდევრობას?',['ლაგნასი','მზისა','მთვარისა','რაჰუსი'],2,'ჯანმა-ნაქშატრა — მთვარის ნაქშატრა.'],
+ ['რამდენი წელია ვიმშოტარი დაშის სრული ციკლი?',['75','100','108','120'],3,'7+20+6+10+7+18+16+19+17 = 120.'],
+ ['როგორ განისაზღვრება ვედური სახლები ამ სისტემაში?',['პლაციდუსით','მთელი ნიშნით — ლაგნას ნიშანი = I სახლი','კოხით','თანაბრად ASC-დან'],1,'Whole sign — ჯიოტიშის კლასიკური წესი.'],
+ ['რა არის ვარგოტამა?',['რეტროგრადული პლანეტა','პლანეტა, რომელიც D1-სა და D9-ში ერთ ნიშანშია','ლაგნას მმართველი','დაშის მმართველი'],1,'ასეთი პლანეტა ძალიან ძლიერად ითვლება.'],
+ ['ჩრდილოინდურ რუკაში რა არის ფიქსირებული?',['ნიშნები','სახლები — I სახლი ყოველთვის ზედა რომბშია','პლანეტები','არაფერი'],1,'სამხრეთინდურში კი ფიქსირებულია ნიშნები.']];
+
+const QA=[];
+function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+  $('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+    box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+    const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+    if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});}
+
+sizes();initPanel(upd);upd();quiz();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
