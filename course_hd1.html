@@ -416,6 +416,10 @@ function drawB(){const G=S.g.b;if(!G)return;const {c,w,h}=G;c.clearRect(0,0,w,h)
 /* the site's own painted bodygraph (backend static/human_prepared.svg, as hd.html loads it); canvas drawing above is only the offline fallback */
 const API_BASE='https://astrology-production-b165.up.railway.app';
 const SVGNS='http://www.w3.org/2000/svg';
+/* integration channels (10·20·34·57): the painted graph has 256 detail drawings — n as backend hd_calc.integration_condition */
+function integ(sv,pg,dg){const st=g=>pg.includes(g)&&dg.includes(g)?3:pg.includes(g)?1:dg.includes(g)?2:0,n=st(10)*64+st(57)*16+st(34)*4+st(20)+1;
+  const rm=[];sv.classList.forEach(c=>{if(c.startsWith('detail-on-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));sv.classList.add('detail-on-'+n);
+  sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display',e.getAttribute('data-detail')===String(n)?'block':'none','important'));return n;}
 async function loadBG(){try{const t=await fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();});const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
   const w=$('bgW');w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
   const ss=sv.querySelector('#hd-activation');if(ss){const o=document.getElementById('hd-act-l1');if(o)o.remove();const d=document.createElement('style');d.id='hd-act-l1';d.textContent=ss.textContent;document.head.appendChild(d);ss.remove();}
@@ -424,7 +428,7 @@ async function loadBG(){try{const t=await fetch(API_BASE+'/static/human_prepared
 function applyBG(){const sv=S.sv;if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));
   const on=g=>S.pg.includes(g)||S.dg.includes(g);
   for(let g=1;g<=64;g++){const p=S.pg.includes(g),d=S.dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}
-  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});
+  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});integ(sv,S.pg,S.dg);
   const old=sv.querySelector('#l1ovl');if(old)old.remove();const m=S.src;if(m==='all')return;
   const el=(t,a,txt0)=>{const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt0!=null)e.textContent=txt0;return e;},g=el('g',{id:'l1ovl'}),T=(x,y,t,col,sz,anc)=>g.appendChild(el('text',{x,y,fill:col,'font-size':sz||17,'text-anchor':anc||'middle','dominant-baseline':'middle','font-family':'Noto Sans Georgian,sans-serif',stroke:'#0a0e1a','stroke-width':4,'paint-order':'stroke'},t));
   g.appendChild(el('rect',{x:420,y:40,width:580,height:780,fill:'rgba(10,14,26,.62)'}));

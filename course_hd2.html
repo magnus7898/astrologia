@@ -212,7 +212,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <div class="quiz" id="qz"></div><div id="qs"></div>
   </div>
 
-  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_hd1.html">← რა არის ადამიანის დიზაინი</a><a href="course_hd.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 3 — მალე →</a></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_hd1.html">← რა არის ადამიანის დიზაინი</a><a href="course_hd.html">გაკვეთილების სია</a><a href="course_hd3.html">მანდალა და 64 კარიბჭე →</a></div>
 </div>
 <script>
 (function(){
@@ -405,6 +405,10 @@ function drawB(){const G=S.g.b;if(!G)return;const {c,w,h}=G;c.clearRect(0,0,w,h)
 /* the site's own painted bodygraph (backend static/human_prepared.svg, as hd.html loads it); canvas drawing above is only the offline fallback */
 const API_BASE='https://astrology-production-b165.up.railway.app';
 const SVGNS='http://www.w3.org/2000/svg';
+/* integration channels (10·20·34·57): the painted graph has 256 detail drawings — n as backend hd_calc.integration_condition */
+function integ(sv,pg,dg){const st=g=>pg.includes(g)&&dg.includes(g)?3:pg.includes(g)?1:dg.includes(g)?2:0,n=st(10)*64+st(57)*16+st(34)*4+st(20)+1;
+  const rm=[];sv.classList.forEach(c=>{if(c.startsWith('detail-on-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));sv.classList.add('detail-on-'+n);
+  sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display',e.getAttribute('data-detail')===String(n)?'block':'none','important'));return n;}
 async function loadBG(){try{const t=await fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();});const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
   const w=$('bgW');w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
   const ss=sv.querySelector('#hd-activation');if(ss){const o=document.getElementById('hd-act-l1');if(o)o.remove();const d=document.createElement('style');d.id='hd-act-l1';d.textContent=ss.textContent;document.head.appendChild(d);ss.remove();}
@@ -413,7 +417,7 @@ async function loadBG(){try{const t=await fetch(API_BASE+'/static/human_prepared
 function applyBG(){const sv=S.sv;if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));
   const on=g=>S.pg.includes(g)||S.dg.includes(g);
   for(let g=1;g<=64;g++){const p=S.pg.includes(g),d=S.dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}
-  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});
+  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});integ(sv,S.pg,S.dg);
   const old=sv.querySelector('#l1ovl');if(old)old.remove();const m=S.src;if(m==='all')return;
   const el=(t,a,txt0)=>{const e=document.createElementNS(SVGNS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt0!=null)e.textContent=txt0;return e;},g=el('g',{id:'l1ovl'}),T=(x,y,t,col,sz,anc)=>g.appendChild(el('text',{x,y,fill:col,'font-size':sz||17,'text-anchor':anc||'middle','dominant-baseline':'middle','font-family':'Noto Sans Georgian,sans-serif',stroke:'#0a0e1a','stroke-width':4,'paint-order':'stroke'},t));
   g.appendChild(el('rect',{x:420,y:40,width:580,height:780,fill:'rgba(10,14,26,.62)'}));
@@ -460,7 +464,7 @@ function drawY(){const G=S.g.y;if(!G||!S.CH)return;const {c,w,h}=G;c.clearRect(0
 function bTable(){const A=S.A,B=S.B;$('bT').innerHTML='<tr><th>სხეული</th><th>როლი</th><th>პიროვნება</th><th style="color:#e05050">დიზაინი</th></tr>'+A.map((a,i)=>`<tr class="br${S.only===i?' on':''}" data-i="${i}"><td>${a.gl}${VS} ${BN[i]}</td><td><small>${BR[i]}</small></td><td><b>${a.g}.${a.line}</b> <small>${HEX[a.g][1]}</small></td><td style="color:#f09090"><b>${B[i].g}.${B[i].line}</b> <small>${HEX[B[i].g][1]}</small></td></tr>`).join('')+'<tr class="br" data-i="-1"><td colspan="4" style="text-align:center;color:#F3DDA4">↺ ყველა აქტივაცია</td></tr>';}
 /* ── 5 · time shift (second copy of the painted bodygraph) ── */
 async function loadBG2(){try{const t=await fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();});const sv=document.importNode(new DOMParser().parseFromString(t,'image/svg+xml').documentElement,true);const w=$('bgW2');w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');const ss=sv.querySelector('#hd-activation');if(ss)ss.remove();sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));S.sv2=sv;shift();}catch(e){$('bgW2').innerHTML='<div style="padding:30px;text-align:center;color:#666">ბოდიგრაფი ვერ ჩაიტვირთა</div>';}}
-function paint(sv,pg,dg){if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));for(let g=1;g<=64;g++){const p=pg.includes(g),d=dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}defC(pg,dg).forEach(n=>sv.classList.add('center-active-'+n.replace(/ /g,'')));}
+function paint(sv,pg,dg){if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));for(let g=1;g<=64;g++){const p=pg.includes(g),d=dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}defC(pg,dg).forEach(n=>sv.classList.add('center-active-'+n.replace(/ /g,'')));integ(sv,pg,dg);}
 function shift(){const m=S.shift,J=S.CH.J+m/1440,A=acts(J),B=acts(designJ(J)),pg=A.map(a=>a.g),dg=B.map(a=>a.g),ch=[];
   A.forEach((a,i)=>{if(a.g!==S.A[i].g||a.line!==S.A[i].line)ch.push(`${a.gl}${VS} <span style="color:#aab2c4">${S.A[i].g}.${S.A[i].line}</span> → <b>${a.g}.${a.line}</b>`);});
   B.forEach((a,i)=>{if(a.g!==S.B[i].g||a.line!==S.B[i].line)ch.push(`<span style="color:#e05050">${a.gl}${VS}</span> <span style="color:#aab2c4">${S.B[i].g}.${S.B[i].line}</span> → <b style="color:#f09090">${a.g}.${a.line}</b>`);});
