@@ -994,6 +994,16 @@
       <div class="card-sub">Numerology Course</div>
     </a>
 
+    <a class="card c-astro" href="course_art.html">
+      <div class="card-glow"></div>
+      <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
+      <div class="sym">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="22" height="24" rx="1"/><rect x="8.5" y="7.5" width="15" height="17"/><path d="M8.5 21l4.5-5 3.5 3.5 2.5-2.5 4.5 4.5"/><circle cx="19.5" cy="11.5" r="1.6"/></svg>
+      </div>
+      <div class="card-title">ხელოვნების სიმბოლიკა</div>
+      <div class="card-sub">Esoteric Symbolism in Art</div>
+    </a>
+
     <a class="card c-name" href="sciencegames.html">
       <div class="card-glow"></div>
       <div class="cn tl"></div><div class="cn tr"></div><div class="cn bl"></div><div class="cn br"></div>
@@ -1051,9 +1061,9 @@
     {key:'hd',title:'ადამიანის დიზაინი',sub:'Human Design · Gene Keys · I Ching',css:'c-freq',art:'hd.html',
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 2L19 6.3H13Z"/><path d="M13 7.6H19L16 11.8Z"/><rect x="13.6" y="13" width="4.8" height="3.8" rx=".4"/><path d="M16 18.2L18.9 21.1L16 24L13.1 21.1Z"/><path d="M20.3 19.3L23.2 20.9L20.3 22.4Z"/><path d="M4.5 22.5L9.2 25.3L4.5 28.1Z"/><path d="M27.5 22.5L22.8 25.3L27.5 28.1Z"/><rect x="13.6" y="25.2" width="4.8" height="3.3" rx=".4"/><rect x="13.6" y="29.3" width="4.8" height="2.2" rx=".4"/><path d="M16 6.3V7.6M16 11.8V13M16 16.8V18.2M16 24V25.2M13.6 16.2L7.5 23.6M18.4 16.2L24.5 23.6M13.6 27L9.2 25.6M18.4 27L22.8 25.6M18.9 21.1L20.3 21" opacity=".55"/></svg>',
      members:['hd.html','genekeys.html','iching.html'],label:{}},
-    {key:'courses',title:'კურსები',sub:'ასტროლოგია · ადამიანის დიზაინი · ნუმეროლოგია',css:'c-pyth',art:'course_astro.html',
+    {key:'courses',title:'კურსები',sub:'ასტროლოგია · ადამიანის დიზაინი · ნუმეროლოგია · ხელოვნება',css:'c-pyth',art:'course_astro.html',
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7c4-1.5 8-1.5 12 1v18c-4-2.5-8-2.5-12-1z"/><path d="M28 7c-4-1.5-8-1.5-12 1v18c4-2.5 8-2.5 12-1z"/><path d="M7 11c2-.5 4-.4 6 .4M7 15c2-.5 4-.4 6 .4M19 11.4c2-.8 4-.9 6-.4M19 15.4c2-.8 4-.9 6-.4"/></svg>',
-     members:['course_astro.html','course_hd.html','course_num.html'],label:{},always:true},
+     members:['course_astro.html','course_hd.html','course_num.html','course_art.html'],label:{},always:true},
     {key:'stats',title:'სტატისტიკა',sub:'Zodiac · Numerology · Pythagoras · Matrix · Human Design',css:'c-freq',art:'astro.html',href:'stats.html',count:7,
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 27h22"/><rect x="7" y="17" width="3.5" height="10"/><rect x="14.2" y="10" width="3.5" height="17"/><rect x="21.5" y="14" width="3.5" height="13"/><path d="M6 13l7-6 6 4 7-6"/><circle cx="26" cy="5" r="1"/></svg>',
      members:['astro.html','pythagoras.html','matrix.html','hd.html'],label:{},always:true},
@@ -1168,7 +1178,7 @@
       /* tiles that are not in the panel's database yet (new pages) stay
          visible instead of vanishing when the API list arrives */
       const inApi=new Set(cards.map(c=>c.href));
-      ['games.html','course_astro.html','course_hd.html','course_num.html','compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','vedictrop.html','chem.html','phys.html','math.html','biology.html','sciencegames.html','hdastro.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
+      ['games.html','course_astro.html','course_hd.html','course_num.html','course_art.html','compat.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html','tarotborth.html','kabbalah.html','genekeys.html','iching.html','types.html','breath.html','daily.html','sleep.html','water.html','move.html','eyes.html','meditation.html','memory.html','logic.html','cold.html','fasting.html','rhythm.html','hardest.html','intuition.html','vedictrop.html','chem.html','phys.html','math.html','biology.html','sciencegames.html','hdastro.html'].forEach(h=>{if(!inApi.has(h)&&original[h])frag.appendChild(original[h].cloneNode(true));});
       /* a kept new tile sits next to its sibling, not at the very end */
       const AFTER={'vedictrop.html':'vedic.html','hdastro.html':'true_sidereal.html'};
       for(const [h,sib] of Object.entries(AFTER)){const t=[...frag.children].find(x=>x.getAttribute('href')===h),b=[...frag.children].find(x=>x.getAttribute('href')===sib);
