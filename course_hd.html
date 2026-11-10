@@ -7,21 +7,86 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300;display:flex;flex-direction:column;align-items:center}
-.page{width:100%;max-width:760px;padding:56px 18px 80px;text-align:center;flex:1}
+.page{width:100%;max-width:1400px;padding:56px 18px 80px;text-align:center;flex:1}
 h1{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(24px,4vw,36px);letter-spacing:.12em;color:#E3BE84}
 .sub{margin-top:8px;color:#7A8499;font-size:13px;letter-spacing:.06em}
-.box{margin:34px auto 0;border:1px solid rgba(184,137,74,.3);background:rgba(17,26,46,.55);padding:30px 22px;max-width:520px}
-.box p{color:#BCC0CA;line-height:1.8;font-size:14px}
-.soon{display:inline-block;margin-bottom:14px;font-family:'Marcellus SC',serif;letter-spacing:.3em;font-size:11px;color:#B8894A;border:1px solid rgba(184,137,74,.4);padding:5px 14px}
+.lead{max-width:760px;margin:18px auto 0;color:#BCC0CA;font-size:14px;line-height:1.8}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start;margin-top:30px;text-align:left}
+@media(max-width:1100px){.cols{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+.box{border:1px solid rgba(184,137,74,.3);background:rgba(17,26,46,.55);padding:22px 20px}
+.soon{display:inline-block;margin-bottom:8px;font-family:'Marcellus SC','Noto Serif Georgian',serif;letter-spacing:.12em;font-size:12px;color:#B8894A;border:1px solid rgba(184,137,74,.4);padding:5px 12px}
+.les{display:flex;gap:14px;align-items:center;padding:11px 4px;border-bottom:1px solid rgba(255,255,255,.07);color:#EDE6D8;text-decoration:none}
+.les:last-child{border-bottom:0}
+.les .no{flex:0 0 34px;height:34px;border-radius:50%;border:1px solid #C9A24C;display:flex;align-items:center;justify-content:center;font-family:'Marcellus SC',serif;color:#F3DDA4}
+.les b{display:block;font-weight:600;color:#F3DDA4;font-size:14.5px}.les small{display:block;color:#9aa3b6;font-size:12px;margin-top:3px}
+a.les:hover b{color:#FFF0C8}a.les:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}.les.off{opacity:.45}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>ადამიანის დიზაინის კურსი</h1>
-  <div class="sub">Human Design Course</div>
-  <div class="box">
-    <div class="soon">მალე</div>
-    <p>კურსი მზადდება.</p>
+  <div class="sub">Human Design Course · 40 გაკვეთილი · 9 მოდული</div>
+  <div class="lead">კურსი ბოდიგრაფის აგებიდან სრულ კითხვამდე მიდის: ცენტრები, ტიპი და ავტორიტეტი, პროფილი, არხები და კარიბჭეები, ინკარნაციის ჯვარი, ცვლადები, ტრანზიტები და ურთიერთობები. ყოველი გაკვეთილი ინტერაქტიულია და შენს საკუთარ ბოდიგრაფს იყენებს — იმავე გამოთვლით, რაც MAGNUS-ის ადამიანის დიზაინის გვერდზე.</div>
+  <div class="cols">
+  <div class="box"><div class="soon">მოდული 1 · საფუძვლები</div>
+    <div class="les off"><span class="no">1</span><span><b>რა არის ადამიანის დიზაინი</b><small>ოთხი წყარო: ი-ძინი, კაბალის ხე, ჩაკრები, ასტროლოგია; რეივ-მანდალა და 1987 წლის „გამოცხადება“ · მალე</small></span></div>
+    <div class="les off"><span class="no">2</span><span><b>ბოდიგრაფის აგება</b><small>პიროვნება (შავი) და დიზაინი (წითელი): დაბადება და მზის 88° — დაახლოებით 3 თვით ადრე · მალე</small></span></div>
+    <div class="les off"><span class="no">3</span><span><b>მანდალა და 64 კარიბჭე</b><small>ი-ძინის 64 ჰექსაგრამა ზოდიაქოს წრეზე: 5°37′30″ თითო კარიბჭეს, 6 ხაზი · მალე</small></span></div>
+    <div class="les off"><span class="no">4</span><span><b>13 აქტივაცია</b><small>მზე, დედამიწა, კვანძები, მთვარე, პლანეტები — რას ნიშნავს თითოეული ბოდიგრაფში · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 2 · ცენტრები</div>
+    <div class="les off"><span class="no">5</span><span><b>ცხრა ცენტრი</b><small>თავი, აჯნა, ყელი, G, გული, სოლარული პლექსუსი, საკრალი, ელენთა, ძირი — ფუნქცია და ბიოლოგიური კავშირი · მალე</small></span></div>
+    <div class="les off"><span class="no">6</span><span><b>განსაზღვრული და ღია ცენტრები</b><small>მუდმივი ენერგია და კონდიციონირება; ღია ცენტრის სიბრძნე და არა-მე კითხვები · მალე</small></span></div>
+    <div class="les off"><span class="no">7</span><span><b>წნევის, ცნობიერების და მოტორული ცენტრები</b><small>ოთხი მოტორი, სამი ცნობიერება, ორი წნევა; ყელი — გამოვლინება · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 3 · ტიპი, სტრატეგია, ავტორიტეტი</div>
+    <div class="les off"><span class="no">8</span><span><b>ხუთი ტიპი</b><small>როგორ განისაზღვრება ტიპი ცენტრებისა და არხებისგან; აურის ხასიათი · მალე</small></span></div>
+    <div class="les off"><span class="no">9</span><span><b>მანიფესტორი</b><small>ინიცირება, ინფორმირება, მშვიდობა და ბრაზი · მალე</small></span></div>
+    <div class="les off"><span class="no">10</span><span><b>გენერატორი და მანიფესტინგ-გენერატორი</b><small>საკრალური პასუხი, კმაყოფილება და იმედგაცრუება; სისწრაფე და ნაბიჯების გამოტოვება · მალე</small></span></div>
+    <div class="les off"><span class="no">11</span><span><b>პროექტორი</b><small>მოწვევის მოლოდინი, წარმატება და სიმწარე; სხვების ენერგიის მართვა · მალე</small></span></div>
+    <div class="les off"><span class="no">12</span><span><b>რეფლექტორი</b><small>მთვარის ციკლი 28 დღე, გაოცება და იმედგაცრუება; გარემოს სარკე · მალე</small></span></div>
+    <div class="les off"><span class="no">13</span><span><b>შინაგანი ავტორიტეტი</b><small>ემოციური, საკრალური, ელენთის, ეგოს, G-ის, გარემოს, მთვარის — როგორ მივიღოთ გადაწყვეტილება · მალე</small></span></div>
+    <div class="les off"><span class="no">14</span><span><b>სიგნატურა და არა-მე</b><small>როგორ ვიცნოთ, ვცხოვრობთ თუ არა საკუთარი დიზაინით · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 4 · პროფილი და განსაზღვრება</div>
+    <div class="les off"><span class="no">15</span><span><b>ექვსი ხაზი</b><small>გამომძიებელი, ჰერმიტი, მოწამე, ოპორტუნისტი, ერეტიკოსი, როლური მოდელი; ქვედა და ზედა ტრიგრამა · მალე</small></span></div>
+    <div class="les off"><span class="no">16</span><span><b>12 პროფილი</b><small>პიროვნული და დიზაინის ხაზი: 1/3-დან 6/2-მდე; პიროვნული, ტრანსპერსონალური და ფიქსირებული ბედი · მალე</small></span></div>
+    <div class="les off"><span class="no">17</span><span><b>განსაზღვრება</b><small>ერთიანი, გაყოფილი, სამმაგი, ოთხმაგი, არცერთი; ხიდის კარიბჭეები და ხალხი, რომლებიც „გვაერთებენ“ · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 5 · არხები და კარიბჭეები</div>
+    <div class="les off"><span class="no">18</span><span><b>36 არხი</b><small>არხი = ორი კარიბჭე და ორი ცენტრის მუდმივი კავშირი; არხის სახელი და ნიჭი · მალე</small></span></div>
+    <div class="les off"><span class="no">19</span><span><b>წრეები</b><small>ინდივიდუალური, ტომის, კოლექტიური (ლოგიკური და აბსტრაქტული) — საზოგადოებრივი როლი · მალე</small></span></div>
+    <div class="les off"><span class="no">20</span><span><b>64 კარიბჭე</b><small>თითოეული კარიბჭის თემა, ჩრდილი და ნიჭი; ჩამოკიდებული კარიბჭეები · მალე</small></span></div>
+    <div class="les off"><span class="no">21</span><span><b>ხაზები, ეგზალტაცია და დაცემა</b><small>384 ხაზი; პლანეტა კარიბჭის ხაზში — ძლიერება და სისუსტე · მალე</small></span></div>
+    <div class="les off"><span class="no">22</span><span><b>ელექტრომაგნიტური და სხვა კავშირები</b><small>როცა ორი ადამიანის კარიბჭეები ერთ არხს ქმნის: მიზიდულობა, კომპრომისი, დომინანტობა, მეგობრობა · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 6 · ინკარნაციის ჯვარი</div>
+    <div class="les off"><span class="no">23</span><span><b>ინკარნაციის ჯვარი</b><small>ოთხი კარიბჭე — მზე და დედამიწა ორივე მხარეს; ცხოვრების მიზანი · მალე</small></span></div>
+    <div class="les off"><span class="no">24</span><span><b>სამი გეომეტრია</b><small>მარჯვენა კუთხე, ჯუქსტაპოზიცია, მარცხენა კუთხე — პირადი, ფიქსირებული და ტრანსპერსონალური ბედი · მალე</small></span></div>
+    <div class="les off"><span class="no">25</span><span><b>ოთხი კვარტალი</b><small>ინიციაცია, ცივილიზაცია, დუალობა, მუტაცია — ჯვრის „ოჯახი“ · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 7 · ცვლადები</div>
+    <div class="les off"><span class="no">26</span><span><b>ფერი, ტონი, ბაზისი</b><small>ხაზის ქვედა ფენები: რა ზის კარიბჭის ხაზში უფრო ღრმად · მალე</small></span></div>
+    <div class="les off"><span class="no">27</span><span><b>დიეტა (PHS) და გარემო</b><small>დიზაინის მზის ფერი და ტონი: როგორ ვიკვებოთ, სად ვიცხოვროთ · მალე</small></span></div>
+    <div class="les off"><span class="no">28</span><span><b>მოტივაცია და პერსპექტივა</b><small>პიროვნების მზისა და კვანძის ფერები: რატომ ვაკეთებთ და როგორ ვხედავთ · მალე</small></span></div>
+    <div class="les off"><span class="no">29</span><span><b>ოთხი ისარი</b><small>მარცხნივ და მარჯვნივ: სტრატეგიული და რეცეპტიული; ცვლადების წაკითხვა ბოდიგრაფზე · მალე</small></span></div>
+    <div class="les off"><span class="no">30</span><span><b>ცნობიერი გრძნობა (Sense)</b><small>დიზაინის მზის ტონი: გემო, სუნი, შეხება, მხედველობა, სმენა, შინაგანი ხედვა · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 8 · დრო და ურთიერთობები</div>
+    <div class="les off"><span class="no">31</span><span><b>ტრანზიტები</b><small>ცის მიმდინარე აქტივაციები შენს ბოდიგრაფზე: დროებით გახსნილი არხები · მალე</small></span></div>
+    <div class="les off"><span class="no">32</span><span><b>ცხოვრების ციკლები</b><small>სატურნის დაბრუნება, ურანის ოპოზიცია, ქირონის დაბრუნება — დიზაინის ცხოვრების ეტაპები · მალე</small></span></div>
+    <div class="les off"><span class="no">33</span><span><b>კავშირის რუკა</b><small>ორი ბოდიგრაფი ერთად: ელექტრომაგნიტები, კომპრომისები, დომინანტობა, მეგობრობა · მალე</small></span></div>
+    <div class="les off"><span class="no">34</span><span><b>პენტა და ჯგუფები</b><small>3–5 კაციანი ჯგუფის გეომეტრია: ოჯახი და გუნდი · მალე</small></span></div>
+    <div class="les off"><span class="no">35</span><span><b>ჩემი ადამიანები</b><small>ვისთან გვიადვილდება და ვისთან გვიჭირს — საიტის ინსტრუმენტით · მალე</small></span></div>
+  </div>
+  <div class="box"><div class="soon">მოდული 9 · პრაქტიკა და სინთეზი</div>
+    <div class="les off"><span class="no">36</span><span><b>პროფესიები და ცხოვრება</b><small>ტიპი, პროფილი, არხები და ცვლადები — რომელი საქმე და ცხოვრების წესი გვიხდება · მალე</small></span></div>
+    <div class="les off"><span class="no">37</span><span><b>ძიება და სტატისტიკა</b><small>წარსულისა და მომავლის მომენტების ძიება; რამდენად ხშირია ესა თუ ის ნიშანი · მალე</small></span></div>
+    <div class="les off"><span class="no">38</span><span><b>ადამიანის დიზაინი + ასტროლოგია</b><small>ნატალური რუკა და ბოდიგრაფი ერთად: პლანეტა ნიშანში და კარიბჭეში · მალე</small></span></div>
+    <div class="les off"><span class="no">39</span><span><b>სრული კითხვა</b><small>ცნობილი ადამიანის ბოდიგრაფის სრული ანალიზი ეტაპობრივად · მალე</small></span></div>
+    <div class="les off"><span class="no">40</span><span><b>დეკონდიციონირება</b><small>შვიდწლიანი ექსპერიმენტი: როგორ ვიცხოვროთ დიზაინით ყოველდღიურად · მალე</small></span></div>
+  </div>
   </div>
 </div>
 <script src="site.js"></script>
