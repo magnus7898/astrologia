@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ასტროლოგია — გაკვეთილი 33</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+
+.inp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px;align-items:end}
+.inp label{display:block;font-size:11px;letter-spacing:.1em;color:#B8894A;margin-bottom:4px}
+.inp input,.inp select{width:100%;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:14.5px;font-family:inherit}
+.inp .two{display:flex;gap:6px}.inp .two input{text-align:center;flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px}
+@media(min-width:560px){.inp>div:first-child{grid-column:span 2}}
+.inp .ck{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#cfd5e2;padding-bottom:9px}
+.inp .ck input{width:auto;accent-color:#C9A24C}.inp .ck label{margin:0;letter-spacing:0;font-size:12.5px;color:#cfd5e2}
+.sum{margin-top:12px;font-size:13px;color:#cfd5e2;line-height:1.8;text-align:center}.sum b{color:#FFE7A0;font-weight:600}
+
+.seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.seg button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.seg button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ztx,.ptx{border:1px solid rgba(184,137,74,.38);border-radius:12px;padding:12px 15px;margin-top:10px;font-size:14px;line-height:1.85;color:#e9ecf2}
+.ztx b,.ptx b{color:#F3DDA4;font-weight:600}.ztx small,.ptx small{color:#9aa3b6;font-size:12.5px}
+.fi{animation:fi .5s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.duo>div{min-width:0}
+.warn{margin-top:10px;font-size:13px;color:#ffcf9a;line-height:1.7;text-align:center}
+.hc{border:1px solid rgba(184,137,74,.38);border-radius:12px;padding:11px 14px;margin-top:10px;font-size:13.5px;line-height:1.8}
+.hc h3{margin:0 0 4px;font-size:15px;color:#FFD36A;font-weight:600}.hc b{color:#F3DDA4}.hc small{color:#9aa3b6}
+.fb{display:grid;gap:6px;margin-top:10px}
+.fb div{display:grid;grid-template-columns:minmax(120px,1fr) 2fr 44px;gap:8px;align-items:center;font-size:13px}
+.fb span.b{background:rgba(255,255,255,.07);border-radius:4px;display:block}.fb i{display:block;height:8px;border-radius:4px}
+.fb small{text-align:right;color:#c9cfdb}
+.win{display:grid;gap:5px;margin-top:8px;font-size:13px}
+.win div{border-left:3px solid;padding:3px 10px;border-radius:3px;background:rgba(255,255,255,.03)}
+
+.tl{display:grid;gap:6px;margin-top:10px}
+.tl div{border-left:3px solid;padding:5px 11px;border-radius:3px;background:rgba(255,255,255,.03);font-size:13.5px;line-height:1.7}
+.tl small{color:#9aa3b6}
+.ct{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+.ct th,.ct td{border-bottom:1px solid rgba(184,137,74,.22);padding:6px 6px;text-align:left}
+.ct th{color:#F3DDA4;font-weight:600}
+.tw{overflow-x:auto}
+
+.seg.sm{display:inline-flex;vertical-align:middle;margin-left:8px}.seg.sm button{padding:3px 10px;font-size:12px}
+.pick{display:flex;gap:12px;flex-wrap:wrap;align-items:center}.pick label{display:flex;gap:8px;align-items:center;color:#F3DDA4}.pick select{width:auto;min-width:150px;max-width:100%;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:14.5px;font-family:inherit}.pick input[type=range]{accent-color:#c9a84c}
+.tb{width:100%;border-collapse:collapse;font-size:14px}.tb th{font-weight:400;color:rgba(227,190,132,.8);text-align:left;padding:6px 8px;border-bottom:1px solid rgba(184,137,74,.3)}.tb td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.06)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ასტროლოგიის კურსი · მოდული 8 · ურთიერთობები</div>
+  <h1>გაკვეთილი 33 — თავსებადობის შეფასება</h1>
+  <div class="sub">როგორ იქცევა სინასტრია პროცენტად: წონები, ორბისი, ხუთი სფერო — MAGNUS-ის „თავსებადობის“ ალგორითმი ნაწილ-ნაწილ</div>
+
+  <div class="intro"><b>თავსებადობის ქულა</b> — სინასტრიის შეკუმშვა ერთ რიცხვად. ეს მოხერხებულია, მაგრამ სახიფათოც: რიცხვი მხოლოდ იმას ასახავს, რა წესებით დაითვალა. ამ გაკვეთილში „შავ ყუთს“ ვხსნით — ზუსტად იმ ალგორითმს, რომლითაც MAGNUS-ის ასტროლოგიის გვერდის ჩანართი <b>„თავსებადობა“</b> ითვლის: რომელი ასპექტი რამდენ ქულას იძლევა, რატომ და რომელ სფეროში. ბოლოს შენი წყვილის ქულას ნაწილებად დავშლით.</div>
+
+  <div class="sec"><h2>1 · ორი რუკა</h2>
+    <p><b>A</b> — შენ, <b>B</b> — მეორე ადამიანი (ორივე ინახება ამ ბრაუზერში, იგივე მონაცემები, რაც სინასტრიის გაკვეთილში).</p>
+    <h3 style="color:#FFD36A;font-size:15px;margin:10px 0 4px">A <span class="seg sm" id="gA"><button type="button" data-g="m" class="on">კაცი</button><button type="button" data-g="f">ქალი</button></span></h3>
+
+    <div class="panel">
+      <div class="inp">
+        <div><label for="dd">თარიღი (დღე · თვე · წელი)</label><div class="two"><input id="dd" type="number" min="1" max="31" value="15"><input id="mm" type="number" min="1" max="12" value="5"><input id="yy" type="number" min="1800" max="2050" value="1990" style="flex:1.4"></div></div>
+        <div><label for="th">დრო (საათი · წუთი)</label><div class="two"><input id="th" type="number" min="0" max="23" value="12"><input id="tm" type="number" min="0" max="59" value="0"></div></div>
+        <div><label for="city">ადგილი</label><select id="city"></select></div>
+        <div><label for="lat">განედი (ჩრდ. +)</label><input id="lat" type="number" step="0.0001" value="41.7151"></div>
+        <div><label for="lon">გრძედი (აღმ. +)</label><input id="lon" type="number" step="0.0001" value="44.8271"></div>
+        <div><label for="off">UTC-დან სხვაობა (სთ)</label><input id="off" type="number" step="0.25" value="5"></div>
+        <div class="ck"><input id="auto" type="checkbox" checked><label for="auto">ისტორიული სარტყელი ავტომატურად</label></div>
+        <div class="ck"><input id="unk" type="checkbox"><label for="unk">დრო უცნობია</label></div>
+      </div>
+      <div class="sum" id="sum"></div>
+    </div>
+
+    <h3 style="color:#8fc8f2;font-size:15px;margin:14px 0 4px">B <span class="seg sm" id="gB"><button type="button" data-g="m">კაცი</button><button type="button" data-g="f" class="on">ქალი</button></span></h3>
+
+    <div class="panel">
+      <div class="inp">
+        <div><label for="bdd">თარიღი (დღე · თვე · წელი)</label><div class="two"><input id="bdd" type="number" min="1" max="31" value="21"><input id="bmm" type="number" min="1" max="12" value="9"><input id="byy" type="number" min="1800" max="2050" value="1988" style="flex:1.4"></div></div>
+        <div><label for="bth">დრო (საათი · წუთი)</label><div class="two"><input id="bth" type="number" min="0" max="23" value="8"><input id="btm" type="number" min="0" max="59" value="30"></div></div>
+        <div><label for="bcity">ადგილი</label><select id="bcity"></select></div>
+        <div><label for="blat">განედი (ჩრდ. +)</label><input id="blat" type="number" step="0.0001" value="41.7151"></div>
+        <div><label for="blon">გრძედი (აღმ. +)</label><input id="blon" type="number" step="0.0001" value="44.8271"></div>
+        <div><label for="boff">UTC-დან სხვაობა (სთ)</label><input id="boff" type="number" step="0.25" value="5"></div>
+        <div class="ck"><input id="bauto" type="checkbox" checked><label for="bauto">ისტორიული სარტყელი ავტომატურად</label></div>
+        <div class="ck"><input id="bunk" type="checkbox"><label for="bunk">დრო უცნობია</label></div>
+      </div>
+      <div class="sum" id="bsum"></div>
+    </div>
+
+    <div class="warn" id="yW"></div>
+  </div>
+
+  <div class="sec"><h2>2 · როგორ იბადება ქულა ერთი ასპექტიდან</h2>
+    <p>ყოველი ურთიერთასპექტი სამი რამით ფასდება: <b>ვინ</b> (სხეულების წონა: მზე და მთვარე 3, ვენერა 2.6, მარსი 2.2, სატურნი 1.8 …), <b>რამდენად ზუსტად</b> (ზუსტი ასპექტი — სრული ძალა, ორბისის კიდეზე — 40%) და <b>რა ბუნების</b> (△ ⚹ = +1, □ ☍ = −0.75, შეერთება = +1, მაგრამ სატურნთან, ურანთან, ნეპტუნთან ან პლუტონთან — მხოლოდ +0.35). შემდეგ წყვილის „პროფილი“ ანაწილებს ქულას ხუთ სფეროში. სცადე:</p>
+    <div class="pick"><label>A-ს <select id="eA"></select></label><label>B-ს <select id="eB"></select></label></div>
+    <div class="seg" id="eT" style="margin-top:8px"><button type="button" data-a="0">☌ შეერთება</button><button type="button" data-a="60">⚹ სექსტილი</button><button type="button" data-a="90">□ კვადრატი</button><button type="button" data-a="120" class="on">△ ტრინი</button><button type="button" data-a="180">☍ ოპოზიცია</button></div>
+    <div class="pick" style="margin-top:8px"><label style="flex:1;min-width:220px;flex-wrap:wrap">ორბისი: <b id="eOv"></b><input id="eO" type="range" min="0" max="100" value="20" style="width:100%"></label></div>
+    <div class="duo" style="margin-top:10px"><div class="stage"><canvas id="cvE" aria-label="ერთი ასპექტის წვლილი ხუთ სფეროში"></canvas></div>
+     <div><div class="ptx" id="eX"></div></div></div>
+    <p style="margin-top:10px"><small>ყველა წვლილი იკრიბება, ემატება ნათელების სტიქიების ბონუსი (ნაწილი 4) და შედეგი 52%-ის გარშემო თავსდება: <b>ქულა = 52 + ჯამი × 2.2</b>, საზღვრები 15–98%. ანუ „ნულოვანი“ წყვილი, რომელსაც არცერთი მნიშვნელოვანი კავშირი არ აქვს, 52%-ს იღებს — არა 0-ს.</small></p>
+  </div>
+
+  <div class="sec"><h2>3 · თქვენი ქულა</h2>
+    <p>ოქროსფერი ფიგურა — ორი სრული რუკის ქულა ხუთ სფეროში. ცისფერი წყვეტილი — მხოლოდ მზის ნიშნებით (ჩანართი „ნიშნების შეთავსება“). რაც უფრო განსხვავდება ეს ორი ფიგურა, მით ნაკლებს ამბობს თქვენზე ჟურნალის ჰოროსკოპი.</p>
+    <div class="duo"><div class="stage"><canvas id="cvR" aria-label="თავსებადობის რადარი"></canvas></div>
+     <div><div class="ptx" id="rX"></div></div></div>
+    <div class="tw" style="margin-top:10px"><table class="tb" id="rT"></table></div>
+  </div>
+
+  <div class="sec"><h2>4 · რამ ასწია და რამ დასწია</h2>
+    <p>აირჩიე სფერო — ნახავ, რომელმა კავშირებმა მოიტანა ქულა და რომელმა წაიღო. რიცხვი — პროცენტული პუნქტები (52%-იდან).</p>
+    <div class="seg" id="cT"><button type="button" data-c="0" class="on">სიყვარული</button><button type="button" data-c="1">ვნება</button><button type="button" data-c="2">მეგობრობა</button><button type="button" data-c="3">ქორწინება</button><button type="button" data-c="4">კომუნიკაცია</button></div>
+    <div class="duo" style="margin-top:10px"><div><h3 style="color:#8fc46a;font-size:14px;margin:0 0 4px">ასწია ↑</h3><div class="tl" id="cP"></div></div>
+     <div><h3 style="color:#ef6b5a;font-size:14px;margin:0 0 4px">დასწია ↓</h3><div class="tl" id="cN"></div></div></div>
+    <h3 style="color:#F3DDA4;font-size:14px;margin:14px 0 4px">ნათელების სტიქიები</h3>
+    <p><small>ასპექტების გარდა, ხუთი წყვილი ნიშნის სტიქიით მოწმდება: ☉A–☽B, ☽A–☉B, ♀A–♂B, ♂A–♀B და ☽–☽. ერთი სტიქია, ცეცხლი+ჰაერი ან მიწა+წყალი = +2; ცეცხლი+წყალი ან მიწა+ჰაერი = −1; დანარჩენი 0. ეს ამატებს სიყვარულს (×0.8), ქორწინებას (×0.6) და ვნებას (×0.4).</small></p>
+    <div class="tl" id="cE"></div>
+  </div>
+
+  <div class="sec"><h2>5 · რას არ ამბობს ქულა</h2>
+    <div class="tl">
+     <div style="border-color:#FFD36A"><b>ქულა წესების შვილია.</b> სხვა ავტორი სხვა წონებს აირჩევს და იმავე წყვილს სხვა რიცხვს მისცემს. შეადარე მხოლოდ ერთი სისტემის შიგნით.</div>
+     <div style="border-color:#ef6b5a"><b>დაძაბული ≠ ცუდი.</b> კვადრატები ქულას აკლებს, მაგრამ ხშირად სწორედ ისინი ქმნის მიზიდულობას და ზრდას. ამიტომ ვენერა–მარსის, ვენერა–პლუტონისა და მარსი–პლუტონის დაძაბული ასპექტი „ვნებას“ მაინც <b>ამატებს</b>.</div>
+     <div style="border-color:#8fc8f2"><b>ქულა ვერ ხედავს ადამიანს.</b> ნატალური რუკა (შეუძლია თუ არა თითოეულს ახლო ურთიერთობა), კომპოზიტი, ასაკი, გამოცდილება და არჩევანი — რიცხვში არ არის.</div>
+     <div style="border-color:#8fc46a"><b>სწორი გამოყენება:</b> ქულა — რუკა, საიდან დაიწყო კითხვა. ნახე, რომელი სფერო ძლიერია, რომელი სუსტი, და შემდეგ წაიკითხე თავად ასპექტები (გაკვეთილი 31) და კომპოზიტი (გაკვეთილი 32).</div>
+    </div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro32.html">← კომპოზიტი და დევისონი</a><a href="course_astro.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 34 — მალე →</a></div>
+</div>
+<script src="compat_core.js"></script>
+<script>
+(function(){
+'use strict';
+
+const $=id=>document.getElementById(id),D=Math.PI/180,VS='︎';
+const SG=[['♈','ვერძი'],['♉','კურო'],['♊','ტყუპები'],['♋','კირჩხიბი'],['♌','ლომი'],['♍','ქალწული'],['♎','სასწორი'],['♏','მორიელი'],['♐','მშვილდოსანი'],['♑','თხის რქა'],['♒','მერწყული'],['♓','თევზები']];
+const EC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
+const GOLD='#E3BE84',SYM='"Noto Sans Symbols 2","Segoe UI Symbol","Apple Symbols","DejaVu Sans",sans-serif',GEO='"Noto Sans Georgian","Noto Serif Georgian",sans-serif';
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const norm=x=>((x%360)+360)%360;
+function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;}
+function jd(y,m,d,h){if(m<=2){y-=1;m+=12;}const A=Math.floor(y/100),B=(y>1582||(y===1582&&(m>10||(m===10&&d>=15))))?2-A+Math.floor(A/4):0;return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+(h||0)/24+B-1524.5;}
+/* ── planets: JPL approximate Keplerian elements (1800–2050), Moon: Meeus ch. 47 (34 terms), houses: Placidus ── */
+const EL={me:[0.38709927,0.00000037,0.20563593,0.00001906,7.00497902,-0.00594749,252.25032350,149472.67411175,77.45779628,0.16047689,48.33076593,-0.12534081],
+ve:[0.72333566,0.00000390,0.00677672,-0.00004107,3.39467605,-0.00078890,181.97909950,58517.81538729,131.60246718,0.00268329,76.67984255,-0.27769418],
+em:[1.00000261,0.00000562,0.01671123,-0.00004392,-0.00001531,-0.01294668,100.46457166,35999.37244981,102.93768193,0.32327364,0,0],
+ma:[1.52371034,0.00001847,0.09339410,0.00007882,1.84969142,-0.00813131,-4.55343205,19140.30268499,-23.94362959,0.44441088,49.55953891,-0.29257343],
+ju:[5.20288700,-0.00011607,0.04838624,-0.00013253,1.30439695,-0.00183714,34.39644051,3034.74612775,14.72847983,0.21252668,100.47390909,0.20469106],
+sa:[9.53667594,-0.00125060,0.05386179,-0.00050991,2.48599187,0.00193609,49.95424423,1222.49362201,92.59887831,-0.41897216,113.66242448,-0.28867794],
+ur:[19.18916464,-0.00196176,0.04725744,-0.00004397,0.77263783,-0.00242939,313.23810451,428.48202785,170.95427630,0.40805281,74.01692503,0.04240589],
+ne:[30.06992276,0.00026291,0.00859048,0.00005105,1.77004347,0.00035372,-55.12002969,218.45945325,44.96476227,-0.32241464,131.78422574,-0.00508664],
+pl:[39.48211675,-0.00031596,0.24882730,0.00005170,17.14001206,0.00004818,238.92903833,145.20780515,224.06891629,-0.04062942,110.30393684,-0.01183482]};
+function helio(k,T){const q=EL[k],a=q[0]+q[1]*T,e=q[2]+q[3]*T,I=(q[4]+q[5]*T)*D,L=q[6]+q[7]*T,w=q[8]+q[9]*T,O=(q[10]+q[11]*T)*D;
+  let M=norm(L-w);if(M>180)M-=360;M*=D;const om=w*D-O;let E=M+e*Math.sin(M);for(let i=0;i<12;i++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));
+  const xp=a*(Math.cos(E)-e),yp=a*Math.sqrt(1-e*e)*Math.sin(E),co=Math.cos(om),so=Math.sin(om),cO=Math.cos(O),sO=Math.sin(O),cI=Math.cos(I),sI=Math.sin(I);
+  return [(co*cO-so*sO*cI)*xp+(-so*cO-co*sO*cI)*yp,(co*sO+so*cO*cI)*xp+(-so*sO+co*cO*cI)*yp];}
+const MT=[[0,0,1,0,6288774],[2,0,-1,0,1274027],[2,0,0,0,658314],[0,0,2,0,213618],[0,1,0,0,-185116],[0,0,0,2,-114332],[2,0,-2,0,58793],[2,-1,-1,0,57066],[2,0,1,0,53322],[2,-1,0,0,45758],[0,1,-1,0,-40923],[1,0,0,0,-34720],[0,1,1,0,-30383],[2,0,0,-2,15327],[0,0,1,2,-12528],[0,0,1,-2,10980],[4,0,-1,0,10675],[0,0,3,0,10034],[4,0,-2,0,8548],[2,1,-1,0,-7888],[2,1,0,0,-6766],[1,0,-1,0,-5163],[1,1,0,0,4987],[2,-1,1,0,4036],[2,0,2,0,3994],[4,0,0,0,3861],[2,0,-3,0,3665],[0,1,-2,0,-2689],[2,0,-1,2,-2602],[2,-1,-2,0,2390],[1,0,1,0,-2348],[2,-2,0,0,2236],[0,1,2,0,-2120],[0,2,0,0,-2069]];
+function moonLon(T){const Lp=218.3164477+481267.88123421*T,Dm=(297.8501921+445267.1114034*T)*D,M=(357.5291092+35999.0502909*T)*D,Mp=(134.9633964+477198.8675055*T)*D,F=(93.2720950+483202.0175233*T)*D,E=1-0.002516*T;
+  let s=0;for(const t of MT){let c=t[4];if(Math.abs(t[1])===1)c*=E;else if(Math.abs(t[1])===2)c*=E*E;s+=c*Math.sin(t[0]*Dm+t[1]*M+t[2]*Mp+t[3]*F);}return norm(Lp+s/1e6);}
+const PREC_T=T=>1.396971*T+0.0003086*T*T;
+function geo(k,T){const p=helio(k,T),e=helio('em',T);return norm(Math.atan2(p[1]-e[1],p[0]-e[0])/D+PREC_T(T));}
+function sunL(T){const e=helio('em',T);return norm(Math.atan2(-e[1],-e[0])/D+PREC_T(T)-0.0057);}
+const PL=[['su','☉','მზე','#FFD36A'],['mo','☽','მთვარე','#dfe6f2'],['me','☿','მერკური','#b8c4d8'],['ve','♀','ვენერა','#8fc46a'],['ma','♂','მარსი','#ef6b5a'],['ju','♃','იუპიტერი','#e8a25a'],['sa','♄','სატურნი','#c9a27a'],['ur','♅','ურანი','#5ad0e8'],['ne','♆','ნეპტუნი','#7aa4f2'],['pl','♇','პლუტონი','#c050a0'],['nn','☊','ჩრდ. კვანძი','#aab2c4']];
+function lonOf(k,J){const T=(J-2451545)/36525;if(k==='su')return sunL(T);if(k==='mo')return moonLon(T);if(k==='nn')return norm(125.0445479-1934.1362891*T+0.0020754*T*T);return geo(k,T);}
+function planets(J){return PL.map(([k,g,n,c])=>{const l=lonOf(k,J),l2=lonOf(k,J+0.02);let sp=norm(l2-l);if(sp>180)sp-=360;return {k,g,n,c,lon:l,retro:k!=='nn'&&sp<0};});}
+function gmst(J){const T=(J-2451545)/36525;return norm(280.46061837+360.98564736629*(J-2451545)+0.000387933*T*T-T*T*T/38710000);}
+const obl=J=>23.4392911-0.0130042*(J-2451545)/36525;
+function houses(J,lat,lon){const ramc=norm(gmst(J)+lon),e=obl(J)*D,r=ramc*D,f=lat*D,cu=new Array(13);
+  const mc=norm(Math.atan2(Math.sin(r),Math.cos(r)*Math.cos(e))/D),asc=norm(Math.atan2(Math.cos(r),-(Math.sin(r)*Math.cos(e)+Math.tan(f)*Math.sin(e)))/D);
+  cu[1]=asc;cu[10]=mc;cu[7]=norm(asc+180);cu[4]=norm(mc+180);const ok=Math.abs(lat)<66;
+  const cusp=(fr,up)=>{let ra=norm(ramc+(up?fr*90:180-fr*90));
+    for(let i=0;i<30;i++){const lam=Math.atan2(Math.sin(ra*D),Math.cos(ra*D)*Math.cos(e)),dec=Math.asin(Math.sin(e)*Math.sin(lam));const x=Math.max(-1,Math.min(1,Math.tan(f)*Math.tan(dec))),ad=Math.asin(x)/D;
+      const nr=up?norm(ramc+fr*(90+ad)):norm(ramc+180-fr*(90-ad));const dn=Math.abs(norm(nr-ra+180)-180);ra=nr;if(dn<1e-7)break;}
+    return norm(Math.atan2(Math.sin(ra*D),Math.cos(ra*D)*Math.cos(e))/D);};
+  if(ok){cu[11]=cusp(1/3,true);cu[12]=cusp(2/3,true);cu[2]=cusp(2/3,false);cu[3]=cusp(1/3,false);}
+  else{const q1=norm(asc-mc)/3,q2=norm(cu[4]-asc)/3;cu[11]=norm(mc+q1);cu[12]=norm(mc+2*q1);cu[2]=norm(asc+q2);cu[3]=norm(asc+2*q2);}
+  cu[5]=norm(cu[11]+180);cu[6]=norm(cu[12]+180);cu[8]=norm(cu[2]+180);cu[9]=norm(cu[3]+180);
+  return {asc,mc,ramc,eps:e/D,cu,ok};}
+const houseOf=(l,cu)=>{for(let i=1;i<=12;i++){const a=cu[i],b=cu[i%12+1];if(norm(l-a)<norm(b-a))return i;}return 1;};
+/* ── time zones: historical UTC offsets from the tz database for the listed cities ── */
+const TZ={"Asia/Tbilisi":[[-89411040,179],[-24019380,180],[-6752340,240],[5915280,300],[6178740,240],[6440880,300],[6704340,240],[6966480,300],[7229940,240],[7493520,300],[7755720,240],[8017800,300],[8279880,240],[8541960,300],[8804040,240],[9066120,300],[9328200,240],[9590280,300],[9852360,240],[10114440,300],[10376520,240],[10638600,300],[10910760,240],[11434980,180],[11696940,240],[11958960,180],[12221100,240],[12483120,180],[12745260,240],[13269360,300],[13531380,240],[13803600,300],[14630100,240],[14851920,300],[15154260,240],[15376080,300],[15688500,240],[15900240,300],[16212660,240],[16424400,300],[16736820,240],[16958640,300],[17260980,240],[17482800,300],[17785140,240],[18006960,300],[18137940,240],[18319620,180],[18531300,240]],"Europe/Moscow":[[-89411040,150],[-28137751,151],[-27613652,211],[-27355892,151],[-27132752,271],[-26978612,211],[-26607152,271],[-26563680,240],[-26497680,180],[-25707120,240],[-25658220,300],[-25422060,240],[-25378800,180],[-24853140,120],[-20792280,180],[5915340,240],[6178800,180],[6440940,240],[6704400,180],[6966540,240],[7230000,180],[7493580,240],[7755780,180],[8017860,240],[8279940,180],[8542020,240],[8804100,180],[9066180,240],[9328260,180],[9590340,240],[9852420,180],[10114500,240],[10376580,180],[10638660,240],[10910820,180],[11435040,120],[11596320,180],[11697060,240],[11959140,180],[12221220,240],[12483300,180],[12745380,240],[13007460,180],[13269540,240],[13531620,180],[13803780,240],[14106180,180],[14327940,240],[14630340,180],[14852100,240],[15154500,180],[15376260,240],[15688740,180],[15900420,240],[16212900,180],[16424580,240],[16737060,180],[16958820,240],[17261220,180],[17482980,240],[17785380,180],[18007140,240],[18319620,180],[18531300,240],[18843780,180],[19055460,240],[19367940,180],[19579620,240],[19892100,180],[20113860,240],[20416260,180],[20638020,240],[20940420,180],[21162180,240],[21474660,180],[21686340,240],[23571240,180]],"Europe/Kiev":[[-89411040,122],[-24019323,120],[-20792280,180],[-14875380,120],[-14287620,60],[-14075940,120],[-13803780,60],[-13756380,180],[5915340,240],[6178800,180],[6440940,240],[6704400,180],[6966540,240],[7230000,180],[7493580,240],[7755780,180],[8017860,240],[8279940,180],[8542020,240],[8804100,180],[9066180,240],[9328260,180],[9590340,240],[9852420,180],[10114500,240],[10376580,180],[10638660,240],[10779720,180],[11435040,120],[11697120,180],[11959200,120],[12221280,180],[12483360,120],[12745440,180],[13007520,120],[13269600,180],[13531680,120],[13803840,180],[14106300,120],[14328060,180],[14630460,120],[14852220,180],[15154620,120],[15376380,180],[15688860,120],[15900540,180],[16213020,120],[16424700,180],[16737180,120],[16958940,180],[17261340,120],[17483100,180],[17785500,120],[18007260,180],[18319740,120],[18531420,180],[18843900,120],[19055580,180],[19368060,120],[19579740,180],[19892220,120],[20113980,180],[20416380,120],[20638140,180],[20940540,120],[21162300,180],[21474780,120],[21686460,180],[21998940,120],[22210620,180],[22523100,120],[22744860,180],[23047260,120],[23269020,180],[23571420,120],[23793180,180],[24095580,120],[24317340,180],[24629820,120],[24841500,180],[25153980,120],[25365660,180],[25678140,120],[25899900,180],[26202300,120],[26424060,180],[26726460,120],[26948220,180],[27260700,120],[27472380,180],[27784860,120],[27996540,180],[28309020,120],[28530780,180],[28833180,120],[29054940,180],[29357340,120],[29579100,180],[29881500,120],[30103260,180],[30415740,120],[30627420,180],[30939900,120],[31151580,180],[31464060,120],[31685820,180],[31988220,120],[32209980,180],[32512380,120],[32734140,180],[33046620,120],[33258300,180],[33570780,120],[33782460,180],[34094940,120],[34306620,180],[34619100,120],[34840860,180],[35143260,120],[35365020,180],[35667420,120]],"Europe/Istanbul":[[-89411040,116],[-35791395,117],[-31164597,120],[-28228440,180],[-28008180,120],[-26173560,180],[-25869780,120],[-25639320,180],[-25375860,120],[-25125240,180],[-24843060,120],[-24003480,180],[-23800500,120],[-23495160,180],[-23274900,120],[-15517560,180],[-15377940,120],[-15297240,180],[-14873940,120],[-14597400,180],[-12745620,120],[-12405720,180],[-12230100,120],[-11940600,180],[-11698740,120],[-11416440,180],[-11174580,120],[-10902360,180],[-10650420,120],[-10368120,180],[-10116180,120],[-9833880,180],[-9592020,120],[-3927000,180],[-3247380,120],[-2962200,180],[-2762100,120],[1798500,180],[2020260,120],[2232000,180],[2544420,120],[2744640,180],[3068580,120],[3270240,180],[3592740,120],[3814560,180],[4096740,120],[4338720,180],[7140900,240],[7231560,180],[7801860,120],[8046660,180],[8278500,120],[8542020,180],[8804100,120],[9066180,180],[9328260,120],[9590340,180],[9852420,120],[10114500,180],[10376580,120],[10638660,180],[10910820,120],[11172900,180],[11434980,120],[11697060,180],[11959140,120],[12221220,180],[12483300,120],[12735300,180],[13007460,120],[13269540,180],[13531620,120],[13803780,180],[14106180,120],[14327940,180],[14630340,120],[14852100,180],[15154500,120],[15376260,180],[15688740,120],[15900420,180],[16212900,120],[16424580,180],[16737060,120],[16958820,180],[17261220,120],[17482980,180],[17785380,120],[18007140,180],[18319620,120],[18531300,180],[18843780,120],[19055460,180],[19367940,120],[19579740,180],[19892220,120],[20113980,180],[20416380,120],[20638140,180],[20940540,120],[21162300,180],[21474780,120],[21687900,180],[21998940,120],[22210620,180],[22523100,120],[22744860,180],[23047260,120],[23270460,180],[23571420,120],[23793180,180],[24115740,120],[24317340,180]],"Asia/Yerevan":[[-89411040,178],[-24019378,180],[-6752340,240],[5915280,300],[6178740,240],[6440880,300],[6704340,240],[6966480,300],[7229940,240],[7493520,300],[7755720,240],[8017800,300],[8279880,240],[8541960,300],[8804040,240],[9066120,300],[9328200,240],[9590280,300],[9852360,240],[10114440,300],[10376520,240],[10638600,300],[10910760,240],[11434980,180],[11697060,240],[11959140,180],[12221220,240],[12483300,180],[12745380,240],[13007460,180],[13269540,240],[14327880,300],[14630280,240],[14852040,300],[15154440,240],[15376200,300],[15688680,240],[15900360,300],[16212840,240],[16424520,300],[16737000,240],[16958760,300],[17261160,240],[17482920,300],[17785320,240],[18007080,300],[18319560,240],[18531240,300],[18843720,240],[19055400,300],[19367880,240],[19579560,300],[19892040,240],[20113800,300],[20416200,240],[20637960,300],[20940360,240],[21162120,300],[21474600,240],[21686280,300],[21998760,240]],"Asia/Baku":[[-89411040,199],[-24019400,180],[-6752340,240],[5915280,300],[6178740,240],[6440880,300],[6704340,240],[6966480,300],[7229940,240],[7493520,300],[7755720,240],[8017800,300],[8279880,240],[8541960,300],[8804040,240],[9066120,300],[9328200,240],[9590280,300],[9852360,240],[10114440,300],[10376520,240],[10638600,300],[10910760,240],[11434980,180],[11697060,240],[13803900,300],[14106300,240],[14328000,300],[14630400,240],[14852160,300],[15154560,240],[15376320,300],[15688800,240],[15900480,300],[16212960,240],[16424640,300],[16737120,240],[16958880,300],[17261280,240],[17483040,300],[17785440,240],[18007200,300],[18319680,240],[18531360,300],[18843840,240],[19055520,300],[19368000,240],[19579680,300],[19892160,240],[20113920,300],[20416320,240],[20638080,300],[20940480,240],[21162240,300],[21474720,240],[21686400,300],[21998880,240],[22210560,300],[22523040,240],[22744800,300],[23047200,240],[23268960,300],[23571360,240],[23793120,300],[24095520,240]],"Europe/Berlin":[[-89411040,53],[-35791395,60],[-28228440,120],[-28008060,60],[-27724260,120],[-27502500,60],[-27200100,120],[-26978340,60],[-15648420,120],[-14287620,60],[-14075940,120],[-13803780,60],[-13541700,120],[-13279620,60],[-13017540,120],[-12942720,180],[-12765600,120],[-12686340,60],[-12474660,120],[-12221220,60],[-11960520,120],[-11910180,180],[-11839680,120],[-11698500,60],[-11416260,120],[-11174340,60],[-10902180,120],[-10650180,60],[5397180,120],[5649180,60],[5911260,120],[6173340,60],[6435420,120],[6697500,60],[6959580,120],[7221660,60],[7483740,120],[7755900,60],[8017980,120],[8280060,60],[8542140,120],[8804220,60],[9066300,120],[9328380,60],[9590460,120],[9852540,60],[10114620,120],[10376700,60],[10638780,120],[10910940,60],[11173020,120],[11435100,60],[11697180,120],[11959260,60],[12221340,120],[12483420,60],[12745500,120],[13007580,60],[13269660,120],[13531740,60],[13803900,120],[14106300,60],[14328060,120],[14630460,60],[14852220,120],[15154620,60],[15376380,120],[15688860,60],[15900540,120],[16213020,60],[16424700,120],[16737180,60],[16958940,120],[17261340,60],[17483100,120],[17785500,60],[18007260,120],[18319740,60],[18531420,120],[18843900,60],[19055580,120],[19368060,60],[19579740,120],[19892220,60],[20113980,120],[20416380,60],[20638140,120],[20940540,60],[21162300,120],[21474780,60],[21686460,120],[21998940,60],[22210620,120],[22523100,60],[22744860,120],[23047260,60],[23269020,120],[23571420,60],[23793180,120],[24095580,60],[24317340,120],[24629820,60],[24841500,120],[25153980,60],[25365660,120],[25678140,60],[25899900,120],[26202300,60],[26424060,120],[26726460,60],[26948220,120],[27260700,60],[27472380,120],[27784860,60],[27996540,120],[28309020,60],[28530780,120],[28833180,60],[29054940,120],[29357340,60],[29579100,120],[29881500,60],[30103260,120],[30415740,60],[30627420,120],[30939900,60],[31151580,120],[31464060,60],[31685820,120],[31988220,60],[32209980,120],[32512380,60],[32734140,120],[33046620,60],[33258300,120],[33570780,60],[33782460,120],[34094940,60],[34306620,120],[34619100,60],[34840860,120],[35143260,60],[35365020,120],[35667420,60]],"Europe/London":[[-89411040,-1],[-35791395,0],[-28199400,60],[-28007880,0],[-27735720,60],[-27502440,0],[-27231720,60],[-26958120,0],[-26697480,60],[-26433960,0],[-26173320,60],[-25869480,0],[-25639080,60],[-25375560,0],[-25125000,60],[-24842760,0],[-24560520,60],[-24348840,0],[-24046440,60],[-23814600,0],[-23512200,60],[-23270280,0],[-22988040,60],[-22746120,0],[-22473960,60],[-22221960,0],[-21929640,60],[-21687720,0],[-21405480,60],[-21163560,0],[-20891400,60],[-20639400,0],[-20357160,60],[-20115240,0],[-19833000,60],[-19591080,0],[-19318920,60],[-19056840,0],[-18774600,60],[-18532680,0],[-18260520,60],[-18008520,0],[-17726280,60],[-17484360,0],[-17202120,60],[-16960200,0],[-16688040,60],[-16436040,0],[-16153800,60],[-15841320,0],[-15700200,60],[-15075300,120],[-14934180,60],[-14591460,120],[-14410020,60],[-14067300,120],[-13875780,60],[-13543140,120],[-13301220,60],[-13017540,120],[-12867780,60],[-12746760,0],[-12474600,60],[-12222600,0],[-11990760,60],[-11950500,120],[-11779140,60],[-11658120,0],[-11466600,60],[-11133960,0],[-10912200,60],[-10609800,0],[-10367880,60],[-10095720,0],[-9843720,60],[-9571560,0],[-9309480,60],[-9037320,0],[-8785320,60],[-8543400,0],[-8271240,60],[-8019240,0],[-7737000,60],[-7495080,0],[-7202760,60],[-6960840,0],[-6688680,60],[-6436680,0],[-6154440,60],[-5912520,0],[-5630280,60],[-5388360,0],[-5116200,60],[-4864200,0],[-4612200,60],[-4299720,0],[-4088040,60],[-3775560,0],[-3553800,60],[-3251400,0],[-3039720,60],[-2727240,0],[-2515560,60],[-2203080,0],[-1991400,60],[-1678920,0],[-1467240,60],[-1144680,0],[-983400,60],[962040,0],[1163640,60],[1486200,0],[1687800,60],[2010360,0],[2211960,60],[2534520,0],[2736120,60],[3058680,0],[3270360,60],[3582840,0],[3794520,60],[4107000,0],[4318680,60],[4641240,0],[4842840,60],[5165400,0],[5367000,60],[5689560,0],[5911260,60],[6213660,0],[6435420,60],[6737820,0],[6959580,60],[7261980,0],[7483740,60],[7796220,0],[8017980,60],[8320380,0],[8542140,60],[8844540,0],[9066300,60],[9368700,0],[9590460,60],[9892860,0],[10114620,60],[10427100,0],[10638780,60],[10951260,0],[11173020,60],[11475420,0],[11697180,60],[11999580,0],[12221340,60],[12523740,0],[12745500,60],[13047900,0],[13269660,60],[13572060,0],[13803900,60],[14106300,0],[14328060,60],[14630460,0],[14852220,60],[15154620,0],[15376380,60],[15688860,0],[15900540,60],[16213020,0],[16424700,60],[16737180,0],[16958940,60],[17261340,0],[17483100,60],[17785500,0],[18007260,60],[18319740,0],[18531420,60],[18843900,0],[19055580,60],[19368060,0],[19579740,60],[19892220,0],[20113980,60],[20416380,0],[20638140,60],[20940540,0],[21162300,60],[21474780,0],[21686460,60],[21998940,0],[22210620,60],[22523100,0],[22744860,60],[23047260,0],[23269020,60],[23571420,0],[23793180,60],[24095580,0],[24317340,60],[24629820,0],[24841500,60],[25153980,0],[25365660,60],[25678140,0],[25899900,60],[26202300,0],[26424060,60],[26726460,0],[26948220,60],[27260700,0],[27472380,60],[27784860,0],[27996540,60],[28309020,0],[28530780,60],[28833180,0],[29054940,60],[29357340,0],[29579100,60],[29881500,0],[30103260,60],[30415740,0],[30627420,60],[30939900,0],[31151580,60],[31464060,0],[31685820,60],[31988220,0],[32209980,60],[32512380,0],[32734140,60],[33046620,0],[33258300,60],[33570780,0],[33782460,60],[34094940,0],[34306620,60],[34619100,0],[34840860,60],[35143260,0],[35365020,60],[35667420,0]],"America/New_York":[[-89411040,-296],[-35791395,-300],[-27221340,-240],[-26919000,-300],[-26697180,-240],[-26394840,-300],[-26173020,-240],[-25860600,-300],[-25608540,-240],[-25386840,-300],[-25074300,-240],[-24862680,-300],[-24550140,-240],[-24328440,-300],[-24025980,-240],[-23804280,-300],[-23501820,-240],[-23280120,-300],[-22977660,-240],[-22755960,-300],[-22453500,-240],[-22231800,-300],[-21919260,-240],[-21697560,-300],[-21395100,-240],[-21173400,-300],[-20870940,-240],[-20649240,-300],[-20346780,-240],[-20125080,-300],[-19822620,-240],[-19600920,-300],[-19288380,-240],[-19076760,-300],[-18764220,-240],[-18542520,-300],[-18240060,-240],[-18018360,-300],[-17715900,-240],[-17494200,-300],[-17191740,-240],[-16970040,-300],[-16667580,-240],[-16445880,-300],[-16133340,-240],[-15921720,-300],[-15609180,-240],[-15387480,-300],[-15085020,-240],[-14863320,-300],[-14670300,-240],[-12756600,-300],[-12454140,-240],[-12232440,-300],[-11929980,-240],[-11708280,-300],[-11405820,-240],[-11184120,-300],[-10881660,-240],[-10659960,-300],[-10347420,-240],[-10135800,-300],[-9823260,-240],[-9601560,-300],[-9299100,-240],[-9077400,-300],[-8774940,-240],[-8553240,-300],[-8250780,-240],[-8029080,-300],[-7726620,-240],[-7454520,-300],[-7192380,-240],[-6930360,-300],[-6668220,-240],[-6406200,-300],[-6144060,-240],[-5882040,-300],[-5619900,-240],[-5357880,-300],[-5095740,-240],[-4823640,-300],[-4561500,-240],[-4299480,-300],[-4037340,-240],[-3775320,-300],[-3513180,-240],[-3251160,-300],[-2989020,-240],[-2727000,-300],[-2464860,-240],[-2192760,-300],[-1940700,-240],[-1668600,-300],[-1406460,-240],[-1144440,-300],[-882300,-240],[-620280,-300],[-358140,-240],[-96120,-300],[166020,-240],[428040,-300],[690180,-240],[962280,-300],[1224420,-240],[1486440,-300],[1748580,-240],[2010600,-300],[2111460,-240],[2534760,-300],[2706180,-240],[3058920,-300],[3321060,-240],[3593160,-300],[3845220,-240],[4117320,-300],[4379460,-240],[4641480,-300],[4903620,-240],[5165640,-300],[5427780,-240],[5689800,-300],[5951940,-240],[6213960,-300],[6476100,-240],[6748200,-300],[7000260,-240],[7272360,-300],[7534500,-240],[7796520,-300],[8058660,-240],[8320680,-300],[8582820,-240],[8844840,-300],[9076740,-240],[9369000,-300],[9600900,-240],[9903240,-300],[10125060,-240],[10427400,-300],[10649220,-240],[10951560,-300],[11183460,-240],[11475720,-300],[11707620,-240],[11999880,-300],[12231780,-240],[12534120,-300],[12755940,-240],[13058280,-300],[13280100,-240],[13582440,-300],[13814340,-240],[14106600,-300],[14338500,-240],[14630760,-300],[14862660,-240],[15154920,-300],[15386820,-240],[15689160,-300],[15910980,-240],[16213320,-300],[16435140,-240],[16737480,-300],[16969380,-240],[17261640,-300],[17493540,-240],[17785800,-300],[18017700,-240],[18320040,-300],[18541860,-240],[18844200,-300],[19066020,-240],[19368360,-300],[19559940,-240],[19902600,-300],[20084100,-240],[20426760,-300],[20608260,-240],[20950920,-300],[21142500,-240],[21485160,-300],[21666660,-240],[22009320,-300],[22190820,-240],[22533480,-300],[22714980,-240],[23057640,-300],[23239140,-240],[23581800,-300],[23763300,-240],[24105960,-300],[24297540,-240],[24640200,-300],[24821700,-240],[25164360,-300],[25345860,-240],[25688520,-300],[25870020,-240],[26212680,-300],[26394180,-240],[26736840,-300],[26928420,-240],[27271080,-300],[27452580,-240],[27795240,-300],[27976740,-240],[28319400,-300],[28500900,-240],[28843560,-300],[29025060,-240],[29367720,-300],[29549220,-240],[29891880,-300],[30083460,-240],[30426120,-300],[30607620,-240],[30950280,-300],[31131780,-240],[31474440,-300],[31655940,-240],[31998600,-300],[32180100,-240],[32522760,-300],[32714340,-240],[33057000,-300],[33238500,-240],[33581160,-300],[33762660,-240],[34105320,-300],[34286820,-240],[34629480,-300],[34810980,-240],[35153640,-300],[35335140,-240],[35677800,-300]],"Europe/Athens":[[-89411040,95],[-28101694,120],[-19716600,180],[-19636020,120],[-15114360,180],[-15081300,120],[-14287620,60],[-14074620,120],[-13803960,60],[-13540380,120],[-9206040,180],[-9027540,120],[2774760,180],[3103080,120],[3300480,180],[3562560,120],[3814560,180],[4068000,120],[4338720,180],[4590780,120],[4863300,180],[5123460,120],[5389800,180],[5648940,120],[5911260,180],[6173340,120],[6435420,180],[6697500,120],[6959580,180],[7221660,120],[7483740,180],[7755900,120],[8017980,180],[8280060,120],[8542140,180],[8804220,120],[9066300,180],[9328380,120],[9590460,180],[9852540,120],[10114620,180],[10376700,120],[10638780,180],[10910940,120],[11173020,180],[11435100,120],[11697180,180],[11959260,120],[12221340,180],[12483420,120],[12745500,180],[13007580,120],[13269660,180],[13531740,120],[13803900,180],[14106300,120],[14328060,180],[14630460,120],[14852220,180],[15154620,120],[15376380,180],[15688860,120],[15900540,180],[16213020,120],[16424700,180],[16737180,120],[16958940,180],[17261340,120],[17483100,180],[17785500,120],[18007260,180],[18319740,120],[18531420,180],[18843900,120],[19055580,180],[19368060,120],[19579740,180],[19892220,120],[20113980,180],[20416380,120],[20638140,180],[20940540,120],[21162300,180],[21474780,120],[21686460,180],[21998940,120],[22210620,180],[22523100,120],[22744860,180],[23047260,120],[23269020,180],[23571420,120],[23793180,180],[24095580,120],[24317340,180],[24629820,120],[24841500,180],[25153980,120],[25365660,180],[25678140,120],[25899900,180],[26202300,120],[26424060,180],[26726460,120],[26948220,180],[27260700,120],[27472380,180],[27784860,120],[27996540,180],[28309020,120],[28530780,180],[28833180,120],[29054940,180],[29357340,120],[29579100,180],[29881500,120],[30103260,180],[30415740,120],[30627420,180],[30939900,120],[31151580,180],[31464060,120],[31685820,180],[31988220,120],[32209980,180],[32512380,120],[32734140,180],[33046620,120],[33258300,180],[33570780,120],[33782460,180],[34094940,120],[34306620,180],[34619100,120],[34840860,180],[35143260,120],[35365020,180],[35667420,120]]};
+const CITIES=[['თბილისი',41.7151,44.8271,'Asia/Tbilisi'],['ბათუმი',41.6168,41.6367,'Asia/Tbilisi'],['ქუთაისი',42.2679,42.6946,'Asia/Tbilisi'],['თელავი',41.9198,45.4731,'Asia/Tbilisi'],['ზუგდიდი',42.5088,41.8709,'Asia/Tbilisi'],['ერევანი',40.1792,44.4991,'Asia/Yerevan'],['ბაქო',40.4093,49.8671,'Asia/Baku'],['მოსკოვი',55.7558,37.6173,'Europe/Moscow'],['კიევი',50.4501,30.5234,'Europe/Kiev'],['სტამბოლი',41.0082,28.9784,'Europe/Istanbul'],['ათენი',37.9838,23.7275,'Europe/Athens'],['ბერლინი',52.52,13.405,'Europe/Berlin'],['ლონდონი',51.5074,-0.1278,'Europe/London'],['ნიუ-იორკი',40.7128,-74.006,'America/New_York']];
+function offAt(z,u){const t=TZ[z];let o=t[0][1];for(const r of t){if(r[0]<=u)o=r[1];else break;}return o;}
+function zoneOff(z,y,m,d,hh,mi){const loc=Date.UTC(y,m-1,d,hh,mi)/6e4,o1=offAt(z,loc-240);return offAt(z,loc-o1);}
+/* ── formatting ── */
+const dm=x=>{let d=Math.floor(x),m=Math.round((x-d)*60);if(m===60){d++;m=0;}return d+'°'+String(m).padStart(2,'0')+'′';};
+const sidx=x=>Math.floor(norm(x)/30),inS=x=>dm(norm(x)%30);
+const fl=x=>`${inS(x)} ${SG[sidx(x)][0]}${VS} ${SG[sidx(x)][1]}`;
+const p2=n=>String(n).padStart(2,'0');
+const ord=n=>n===1?'1-ლი':'მე-'+n;
+const locS=s=>(s.endsWith('ი')?s.slice(0,-1):s)+'ში';
+const hms=deg=>{let s=Math.round(norm(deg)/15*3600);const h=Math.floor(s/3600);s-=h*3600;return `${p2(h%24)}სთ ${p2(Math.floor(s/60))}წთ ${p2(s%60)}წმ`;};
+const offS=m=>(m<0?'−':'+')+Math.floor(Math.abs(m)/60)+':'+p2(Math.round(Math.abs(m)%60));
+const hm=min=>{min=((Math.round(min)%1440)+1440)%1440;return p2(Math.floor(min/60))+':'+p2(min%60);};
+/* ── canvas helpers ── */
+function fit(cv,ratio){const dpr=Math.min(2,window.devicePixelRatio||1),w=Math.max(260,cv.clientWidth||300),h=Math.round(w*ratio);cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h};}
+const pt=(cx,cy,r,l)=>[cx-r*Math.cos(l*D),cy+r*Math.sin(l*D)];
+function sector(c,cx,cy,r1,r2,a,b){c.beginPath();c.arc(cx,cy,r2,Math.PI-a*D,Math.PI-b*D,true);c.arc(cx,cy,r1,Math.PI-b*D,Math.PI-a*D,false);c.closePath();}
+function txt(c,t,x,y,size,col,font,al){c.font=size+'px '+(font||SYM);c.fillStyle=col;c.textAlign=al||'center';c.textBaseline='middle';c.fillText(t,x,y);}
+function line(c,a,b,col,lw){c.strokeStyle=col;c.lineWidth=lw||1;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,cl=(x,a,b)=>Math.max(a,Math.min(b,x));
+/* ── birth data shared between lessons (this browser only) ── */
+const BKEY='magnus_astro_birth';
+function saveBirth(o){try{localStorage.setItem(BKEY,JSON.stringify(o));}catch(e){}}
+function loadBirth(){try{return JSON.parse(localStorage.getItem(BKEY)||'null');}catch(e){return null;}}
+function fillBirth(){const b=loadBirth();if(!b)return;['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>{if(b[k]!=null&&$(k))$(k).value=b[k];});if(b.city!=null&&$('city'))$('city').value=b.city;if(b.auto!=null&&$('auto'))$('auto').checked=b.auto;if(b.unk!=null&&$('unk'))$('unk').checked=b.unk;}
+function keepBirth(){const o={};['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>{if($(k))o[k]=$(k).value;});o.city=$('city').value;o.auto=$('auto').checked;if($('unk'))o.unk=$('unk').checked;saveBirth(o);}
+
+function readIn(){const g=id=>+$(id).value;let y=cl(Math.round(g('yy'))||1990,1800,2050),m=cl(Math.round(g('mm'))||1,1,12);const dim=new Date(Date.UTC(y,m,0)).getUTCDate();
+  const d=cl(Math.round(g('dd'))||1,1,dim),unk=$('unk').checked,hh=unk?12:cl(Math.round(g('th'))||0,0,23),mi=unk?0:cl(Math.round(g('tm'))||0,0,59),ci=+$('city').value;
+  let lat=cl(g('lat'),-89.9,89.9),lon=cl(g('lon'),-180,180);if(ci>=0){lat=CITIES[ci][1];lon=CITIES[ci][2];$('lat').value=lat;$('lon').value=lon;}
+  $('lat').disabled=$('lon').disabled=ci>=0;$('th').disabled=$('tm').disabled=unk;
+  let off=Math.round(g('off')*60);if($('auto').checked&&ci>=0){off=zoneOff(CITIES[ci][3],y,m,d,hh,mi);$('off').value=+(off/60).toFixed(2);}
+  $('off').disabled=$('auto').checked&&ci>=0;$('auto').disabled=ci<0;return {y,m,d,hh,mi,lat,lon,off,ci,unk};}
+
+function chartNow(){keepBirth();const I=readIn(),u=Date.UTC(I.y,I.m-1,I.d,I.hh,I.mi)/6e4-I.off,ud=new Date(u*6e4);
+  const J=jd(ud.getUTCFullYear(),ud.getUTCMonth()+1,ud.getUTCDate(),ud.getUTCHours()+ud.getUTCMinutes()/60);return {I,J,pls:planets(J),hs:houses(J,I.lat,I.lon)};}
+function initPanel(cb){$('city').innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('')+'<option value="-1">სხვა ადგილი (ხელით)</option>';
+  ['dd','mm','yy','th','tm','city','lat','lon','off','auto','unk'].forEach(id=>$(id).addEventListener(id==='city'||id==='auto'||id==='unk'?'change':'input',cb));fillBirth();}
+function readInB(){const g=id=>+$(id).value;let y=cl(Math.round(g('byy'))||1990,1800,2050),m=cl(Math.round(g('bmm'))||1,1,12);const dim=new Date(Date.UTC(y,m,0)).getUTCDate();
+  const d=cl(Math.round(g('bdd'))||1,1,dim),unk=$('bunk').checked,hh=unk?12:cl(Math.round(g('bth'))||0,0,23),mi=unk?0:cl(Math.round(g('btm'))||0,0,59),ci=+$('bcity').value;
+  let lat=cl(g('blat'),-89.9,89.9),lon=cl(g('blon'),-180,180);if(ci>=0){lat=CITIES[ci][1];lon=CITIES[ci][2];$('blat').value=lat;$('blon').value=lon;}
+  $('blat').disabled=$('blon').disabled=ci>=0;$('bth').disabled=$('btm').disabled=unk;
+  let off=Math.round(g('boff')*60);if($('bauto').checked&&ci>=0){off=zoneOff(CITIES[ci][3],y,m,d,hh,mi);$('boff').value=+(off/60).toFixed(2);}
+  $('boff').disabled=$('bauto').checked&&ci>=0;$('bauto').disabled=ci<0;return {y,m,d,hh,mi,lat,lon,off,ci,unk};}const SX=(function(){
+const n360=x=>((x%360)+360)%360,angd=(a,b)=>{const d=Math.abs(n360(a-b));return d>180?360-d:d;};
+const SG=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const SGG=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'].map(x=>x+'︎');
+const ELN=['ცეცხლი','მიწა','ჰაერი','წყალი'],el=s=>s%4;
+const ROM=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+/* bodies: key → [Georgian name in chart, glyph, short name, meaning in a relationship, orb, weight] */
+const BD={
+ Su:['მზე','☉','მზე','ვინაობა, ნება და სიცოცხლის ძალა',8,3],
+ Mo:['მთვარე','☽','მთვარე','ემოციები, ზრუნვა და სახლის განცდა',8,3],
+ Me:['მერკური','☿','მერკური','აზროვნება, საუბარი და ურთიერთგაგება',6,1.6],
+ Ve:['ვენერა','♀','ვენერა','სიყვარული, სინაზე და გემოვნება',6,2.6],
+ Ma:['მარსი','♂','მარსი','ვნება, სურვილი და მოქმედება',6,2.2],
+ Ju:['იუპიტერი','♃','იუპიტერი','სიუხვე, მხარდაჭერა და ზრდა',5,1.4],
+ Sa:['სატურნი','♄','სატურნი','პასუხისმგებლობა, ერთგულება და საზღვრები',5,1.8],
+ Ur:['ურანი','♅','ურანი','თავისუფლება, სიახლე და მოულოდნელობა',4,1],
+ Ne:['ნეპტუნი','♆','ნეპტუნი','ოცნება, იდეალიზაცია და სულიერი კავშირი',4,1],
+ Pl:['პლუტონი','♇','პლუტონი','ძალაუფლება, სიღრმე და ტრანსფორმაცია',4,1.3],
+ No:['ჩრდ. კვანძი','☊','ჩრდ. კვანძი','ბედისწერის გზა და ერთად გასავლელი გაკვეთილი',3,1.2],
+ AC:['AC','AC','ასცენდენტი','გარეგნობა, პირველი შთაბეჭდილება და პიროვნების ფასადი',5,1.6],
+ MC:['MC','MC','MC','მიზნები, კარიერა და საზოგადოებრივი სახე',5,0.8]};
+const KEYS=Object.keys(BD);
+/* aspects: angle, symbol, name, nature (+1 harmonious, -1 tense, 0 conjunction) */
+const AS=[[0,'☌','შეერთება',0],[60,'⚹','სექსტილი',1],[90,'□','კვადრატი',-1],[120,'△','ტრინი',1],[180,'☍','ოპოზიცია',-1]];
+const ASPTXT={0:'შერწყმა — ძლიერი, პირდაპირი კავშირი, რომელსაც ორივე მაშინვე გრძნობს',
+  60:'მეგობრული შესაძლებლობა — მცირე ძალისხმევით ბევრი სასიკეთო მოდის',
+  90:'დაძაბულობა, რომელიც ზრდას ითხოვს — ხახუნი, მაგრამ ასევე მოძრაობა',
+  120:'ჰარმონია და ბუნებრივი ნაკადი — ეს სფერო ადვილად და თავისთავად მუშაობს',
+  180:'მიზიდულობა და დაპირისპირება — ერთმანეთის სარკე, რომელიც ბალანსს ითხოვს'};
+/* categories: love, passion, friendship, marriage, communication */
+const CAT=['სიყვარული','ვნება','მეგობრობა','ქორწინება · სტაბილურობა','კომუნიკაცია'],CATC=['#f08cb8','#f07a4a','#e0d070','#c9a84c','#7fb2f0'];
+/* which categories a pair feeds (weights) */
+const PW={
+ 'Su-Mo':[3,1,2,3,1],'Ve-Ma':[2,4,0,1,0],'Mo-Ve':[3,1,2,2,0],'Su-Ve':[3,1,2,1,0],'Mo-Mo':[2,0,2,2,1],'Su-Su':[1,0,2,1,1],
+ 'Ve-Ve':[2,1,2,1,0],'Me-Me':[0,0,2,1,3],'Ma-Ma':[0,2,1,0,0],'Su-Ma':[1,2,1,0,0],'Mo-Ma':[1,2,0,0,0],'Me-Ve':[1,0,1,0,2],
+ 'Me-Mo':[1,0,1,0,2],'Su-Me':[0,0,2,0,2],'Ve-Sa':[1,0,0,3,0],'Mo-Sa':[1,0,0,3,0],'Su-Sa':[0,0,0,3,0],'Ma-Sa':[0,1,0,1,0],
+ 'Ve-Pl':[1,3,0,1,0],'Ma-Pl':[0,3,0,0,0],'Su-Pl':[0,2,0,1,0],'Mo-Pl':[1,2,0,1,0],'Ve-Ne':[2,1,1,0,0],'Mo-Ne':[2,0,1,0,0],
+ 'Su-Ne':[1,0,1,0,0],'Ve-Ur':[1,2,1,-1,0],'Mo-Ur':[0,1,1,-1,0],'Su-Ur':[0,1,1,0,0],'Ju-Su':[1,0,2,2,0],'Ju-Mo':[1,0,2,2,0],
+ 'Ju-Ve':[2,0,2,1,0],'No-Su':[1,0,1,2,0],'No-Mo':[1,0,1,2,0],'No-Ve':[2,0,1,2,0],'AC-Su':[2,1,1,1,0],'AC-Mo':[2,0,1,1,0],
+ 'AC-Ve':[2,2,1,0,0],'AC-Ma':[0,3,0,0,0],'AC-Me':[0,0,1,0,2],'AC-AC':[1,0,1,1,0],'Me-Sa':[0,0,0,1,1],'Me-Ju':[0,0,1,0,2]};
+/* a pair's sign of effect for tense aspects / difficult conjunctions */
+const HARD=new Set(['Sa','Ur','Ne','Pl']);
+/* hand-written notes for the classic contacts: [harmonious/conj, tense] */
+const NOTE={
+ 'Su-Mo':['მზე და მთვარე — ცოლქმრული ასპექტების მეფე. ერთის ნება და მეორის გრძნობა ერთმანეთს ავსებს: ერთი ანათებს, მეორე ასახავს და ათბობს. ეს ერთ-ერთი ყველაზე ძლიერი ნიშანია ხანგრძლივი კავშირისთვის.',
+   'მზე და მთვარე დაძაბულ ასპექტში: მიზიდულობა ძლიერია, მაგრამ ერთის სურვილები და მეორის ემოციური მოთხოვნილებები ხშირად სხვადასხვა მხარეს მიდის. ერთმანეთის რიტმის პატივისცემა აუცილებელია.'],
+ 'Ve-Ma':['ვენერა და მარსი — კლასიკური რომანტიკული და სექსუალური მიზიდულობა. სინაზე და ვნება ერთმანეთს ეძებს; ფიზიკური ქიმია ძლიერია და დიდხანს ინარჩუნებს ცეცხლს.',
+   'ვენერა და მარსი დაძაბულ ასპექტში: ვნება ძალიან ძლიერია, მაგრამ ხშირად ჩხუბით და შერიგებით ცოცხლობს. სიყვარულის ენები განსხვავდება — ერთს სინაზე უნდა, მეორეს — აქტიური სურვილი.'],
+ 'Mo-Ve':['მთვარე და ვენერა — სითბო, სინაზე და ემოციური კომფორტი. ერთად ყოფნა სასიამოვნო და მშვიდია; ორივე გრძნობს, რომ მეორე მას „უვლის“.',
+   'მთვარე და ვენერა დაძაბულ ასპექტში: სიყვარული არის, მაგრამ ერთის ემოციური მოთხოვნილებები და მეორის გემოვნება ყოველთვის არ ემთხვევა; წვრილმანებზე წყენა ადვილად ჩნდება.'],
+ 'Su-Ve':['მზე და ვენერა — აღფრთოვანება და სიყვარული. ვენერას პატრონი მზის პატრონს აფასებს და ალამაზებს, მზე კი ვენერას ათბობს. ძალიან სასიამოვნო, ნაზი კავშირი.',
+   'მზე და ვენერა დაძაბულ ასპექტში: მიზიდულობა არის, მაგრამ ფასეულობები და გემოვნება განსხვავდება; ზოგჯერ ერთი თავს ნაკლებად დაფასებულად გრძნობს.'],
+ 'Mo-Mo':['მთვარე და მთვარე — ემოციური ენა ერთნაირია. ერთმანეთს სიტყვების გარეშე გრძნობენ; ყოველდღიური ცხოვრება, სახლი და ჩვევები ბუნებრივად ეწყობა.',
+   'მთვარეები დაძაბულ ასპექტში: განწყობები და ემოციური რეაქციები განსხვავდება — როცა ერთს სიმშვიდე სჭირდება, მეორეს — სხვა რამ. საჭიროა ერთმანეთის ემოციური ენის სწავლა.'],
+ 'Su-Su':['ორი მზე ჰარმონიაში — მსგავსი ცხოვრებისეული მიზნები და ხასიათი, ერთმანეთის თვითგამოხატვას მხარს უჭერენ.',
+   'ორი მზე დაძაბულ ასპექტში — ორი ძლიერი ნება; კონკურენცია და ეგოს შეჯახება, თუ საერთო მიზანი არ არის.'],
+ 'Ve-Ve':['ორი ვენერა ჰარმონიაში — ერთნაირი გემოვნება, ერთნაირად ესმით სიყვარული, სილამაზე და სიამოვნება.',
+   'ორი ვენერა დაძაბულ ასპექტში — სიყვარულის გამოხატვა და გემოვნება განსხვავდება; ფულსა და სიამოვნებაზე სხვადასხვა შეხედულება.'],
+ 'Me-Me':['ორი მერკური ჰარმონიაში — ერთმანეთს ნახევარი სიტყვიდან უგებენ; საუბარი ადვილი და საინტერესოა.',
+   'ორი მერკური დაძაბულ ასპექტში — სხვადასხვაგვარად ფიქრობენ და საუბრობენ; კამათი ხშირია, გაუგებრობა — ადვილი.'],
+ 'Ma-Ma':['ორი მარსი ჰარმონიაში — ერთ ტემპში მოქმედებენ, ერთად საქმე და სპორტი კარგად გამოსდით.',
+   'ორი მარსი დაძაბულ ასპექტში — ორი ცეცხლი: კონკურენცია, მოუთმენლობა და ჩხუბი; ენერგიას საერთო მიზანი სჭირდება.'],
+ 'Su-Ma':['მზე და მარსი — ენერგია და ერთმანეთის გააქტიურება; ერთად ბევრს აკეთებენ, მიზიდულობა ცოცხალია.',
+   'მზე და მარსი დაძაბულ ასპექტში — ერთი მეორეს აღიზიანებს და აჩქარებს; ვნება და კონფლიქტი ერთად მოდის.'],
+ 'Mo-Ma':['მთვარე და მარსი — ვნება და დაცვის განცდა; მარსი ააქტიურებს, მთვარე ემოციურად პასუხობს.',
+   'მთვარე და მარსი დაძაბულ ასპექტში — მარსის სიმკაცრე მთვარეს ადვილად აწყენინებს; ემოციები სწრაფად იფეთქებს.'],
+ 'Ve-Sa':['ვენერა და სატურნი — ერთგულება და სერიოზული განზრახვა. კავშირი ნელა იწყება, მაგრამ მყარია და დროს უძლებს.',
+   'ვენერა და სატურნი დაძაბულ ასპექტში — სიყვარულში სიცივე, კრიტიკა ან შეზღუდვის განცდა; ვალდებულება არის, სითბო — ნაკლები.'],
+ 'Mo-Sa':['მთვარე და სატურნი — სტაბილურობა და ზრუნვა; სატურნი იცავს, მთვარე თავს უსაფრთხოდ გრძნობს.',
+   'მთვარე და სატურნი დაძაბულ ასპექტში — მთვარის პატრონი თავს უარყოფილად ან შებოჭილად გრძნობს; სატურნი ემოციებს „აცივებს“.'],
+ 'Su-Sa':['მზე და სატურნი — პასუხისმგებლობა და ხანგრძლივობა; სატურნი მზეს სტრუქტურას აძლევს, მზე სატურნს — სითბოს.',
+   'მზე და სატურნი დაძაბულ ასპექტში — სატურნი მზეს ზღუდავს და აკრიტიკებს; კავშირი გრძელია, მაგრამ მძიმე.'],
+ 'Ve-Pl':['ვენერა და პლუტონი — ღრმა, მაგნეტური, ბედისწერისეული მიზიდულობა; სიყვარული, რომელიც ცვლის.',
+   'ვენერა და პლუტონი დაძაბულ ასპექტში — ვნებიანი მიჯაჭვულობა, ეჭვიანობა და ძალაუფლების თამაშები.'],
+ 'Ma-Pl':['მარსი და პლუტონი — ძლიერი სექსუალური და ენერგეტიკული კავშირი; ერთად დიდ ძალას ქმნიან.',
+   'მარსი და პლუტონი დაძაბულ ასპექტში — ძალაუფლების ბრძოლა; ვნება და კონფლიქტი ძალიან ინტენსიურია.'],
+ 'Su-Pl':['მზე და პლუტონი — ტრანსფორმაცია; კავშირი ორივეს ღრმად ცვლის.','მზე და პლუტონი დაძაბულ ასპექტში — კონტროლის სურვილი; ერთი მეორეზე ზეწოლას ახდენს.'],
+ 'Mo-Pl':['მთვარე და პლუტონი — ემოციური სიღრმე და ინტიმურობა.','მთვარე და პლუტონი დაძაბულ ასპექტში — ემოციური ინტენსივობა, ეჭვიანობა და დამოკიდებულება.'],
+ 'Ve-Ne':['ვენერა და ნეპტუნი — რომანტიკა, პოეზია და სულიერი სიყვარული; „სულიერი მეწყვილის“ განცდა.',
+   'ვენერა და ნეპტუნი დაძაბულ ასპექტში — იდეალიზაცია და ილუზიები; ვარდისფერი სათვალე, რომელიც ერთ დღეს იხსნება.'],
+ 'Mo-Ne':['მთვარე და ნეპტუნი — ემოციური თანაგრძნობა და ინტუიციური კავშირი.','მთვარე და ნეპტუნი დაძაბულ ასპექტში — გაუგებრობა, ბუნდოვანი მოლოდინები და ემოციური დაბნეულობა.'],
+ 'Ve-Ur':['ვენერა და ურანი — ელექტრული მიზიდულობა და სიახლე; ურთიერთობა არასოდეს მოსაწყენია.',
+   'ვენერა და ურანი დაძაბულ ასპექტში — მოულოდნელი ცეცხლი და მოულოდნელი გაცივება; თავისუფლება სიახლოვეზე მნიშვნელოვანი ხდება.'],
+ 'Ju-Su':['იუპიტერი და მზე — მხარდაჭერა, ოპტიმიზმი და ერთმანეთის ზრდა.','იუპიტერი და მზე დაძაბულ ასპექტში — გადაჭარბებული მოლოდინები; კარგია, მაგრამ ზომიერება სჭირდება.'],
+ 'Ju-Mo':['იუპიტერი და მთვარე — სიუხვე და ემოციური გულუხვობა; ერთმანეთთან კარგად და დაცულად გრძნობენ თავს.','იუპიტერი და მთვარე დაძაბულ ასპექტში — ემოციური გადაჭარბება; ბევრი დაპირება, ცოტა საზღვარი.'],
+ 'Ju-Ve':['იუპიტერი და ვენერა — „ბედნიერი“ ასპექტი: სიხარული, საჩუქრები და გულუხვი სიყვარული.','იუპიტერი და ვენერა დაძაბულ ასპექტში — სიამოვნებასა და ფულში გადაჭარბება.'],
+ 'No-Su':['კვანძი და მზე — ბედისწერის შეხვედრის განცდა; ერთმანეთს ცხოვრების გზაზე ეხმარებიან.','კვანძი და მზე დაძაბულ ასპექტში — კარმული გაკვეთილი; კავშირი ორივეს ზრდას აიძულებს.'],
+ 'No-Mo':['კვანძი და მთვარე — „ნაცნობის“ განცდა თითქოს წარსულიდან; ძლიერი ემოციური მიჯაჭვულობა.','კვანძი და მთვარე დაძაბულ ასპექტში — ძველი ემოციური ნიმუშები მეორდება; მათი გაცნობიერებაა საჭირო.'],
+ 'No-Ve':['კვანძი და ვენერა — კარმული სიყვარული; ურთიერთობა ბედისწერისეულად იგრძნობა.','კვანძი და ვენერა დაძაბულ ასპექტში — სიყვარული, რომელიც გაკვეთილად იქცევა.'],
+ 'AC-Su':['მზე ასცენდენტზე — პირველივე შეხვედრიდან ძლიერი მიზიდულობა და „ცნობა“.','მზე ასცენდენტთან დაძაბულად — ერთის ხასიათი მეორის თვითგამოხატვას ეჯახება.'],
+ 'AC-Mo':['მთვარე ასცენდენტზე — ემოციური სიახლოვე და ბუნებრივი კომფორტი.','მთვარე ასცენდენტთან დაძაბულად — ემოციური რეაქციები ერთმანეთის ქცევაზე.'],
+ 'AC-Ve':['ვენერა ასცენდენტზე — ერთს მეორის გარეგნობა და მანერა ძალიან მოსწონს; ფიზიკური მიმზიდველობა.','ვენერა ასცენდენტთან დაძაბულად — მიზიდულობა არის, მაგრამ გემოვნებისა და სტილის განსხვავება ხშირია.'],
+ 'AC-Ma':['მარსი ასცენდენტზე — ძლიერი ფიზიკური მიზიდულობა და ენერგია.','მარსი ასცენდენტთან დაძაბულად — გაღიზიანება და კონკურენცია პირველივე კონტაქტიდან.']};
+/* house meanings in a relationship */
+const HM=['','პიროვნება, გარეგნობა და თვითშეგრძნება','ფული, ფასეულობები და მატერიალური უსაფრთხოება','საუბარი, აზროვნება და ყოველდღიური კონტაქტი','სახლი, ოჯახი და ემოციური ფესვები',
+ 'რომანტიკა, სიამოვნება, შემოქმედება და ბავშვები','ყოველდღიური ცხოვრება, საქმე და ჯანმრთელობა','პარტნიორობა და ქორწინება','ინტიმურობა, სიღრმე და საერთო რესურსები',
+ 'მსოფლმხედველობა, მოგზაურობა და სწავლა','კარიერა, სტატუსი და საზოგადოებრივი სახე','მეგობრობა, იმედები და საერთო მიზნები','ფარული სამყარო, საიდუმლოებები და სულიერი კავშირი'];
+const OVL=['Su','Mo','Me','Ve','Ma','Ju','Sa'];
+const EPAIR={'00':'ორივე ცეცხლი — ენთუზიაზმი, ვნება და ერთი ტემპი; ორი ლიდერი.','11':'ორივე მიწა — საიმედოობა, პრაქტიკულობა და სტაბილურობა.','22':'ორივე ჰაერი — გონებრივი კავშირი, საუბარი და თავისუფლება.','33':'ორივე წყალი — ემოციური სიღრმე და ინტუიციური გაგება.',
+ '01':'ცეცხლი + მიწა — ერთი იწყებს, მეორე ასრულებს; ტემპი განსხვავდება.','02':'ცეცხლი + ჰაერი — ჰაერი ცეცხლს აღვივებს: იდეები და მოქმედება ერთად.','03':'ცეცხლი + წყალი — ორთქლი: ვნება და ემოცია, მაგრამ ერთი მეორეს ადვილად აქრობს.',
+ '12':'მიწა + ჰაერი — პრაქტიკა და იდეები; ერთმანეთის ენის სწავლა სჭირდებათ.','13':'მიწა + წყალი — ნაყოფიერი ნიადაგი: ზრუნვა და სტაბილურობა.','23':'ჰაერი + წყალი — გონება და გრძნობა; ერთი ხსნის, მეორე გრძნობს.'};
+const ESC={'00':2,'11':2,'22':2,'33':2,'02':2,'13':2,'01':0,'23':0,'03':-1,'12':-1};
+
+function pos(d,k){
+  if(k==='AC')return d.asc!=null&&!d._timeUnknown?n360(+d.asc):null;
+  if(k==='MC')return d.mc!=null&&!d._timeUnknown?n360(+d.mc):null;
+  const p=d.planets&&d.planets[BD[k][0]];return p&&isFinite(+p.degree)?n360(+p.degree):null;
+}
+function houseOf(l,c){for(let i=0;i<12;i++){const a=+c[i],b=+c[(i+1)%12],w=n360(b-a);if(n360(l-a)<w)return i+1;}return 1;}
+const pairKey=(a,b)=>{const o=KEYS.indexOf(a)<=KEYS.indexOf(b)?[a,b]:[b,a];const k=o.join('-');return PW[k]||NOTE[k]?k:([o[1],o[0]].join('-'));};
+
+function cross(d1,d2){
+  const out=[];
+  for(const a of KEYS)for(const b of KEYS){
+    if((a==='MC'&&b==='MC')||(a==='No'&&b==='No'))continue;
+    const x=pos(d1,a),y=pos(d2,b);if(x==null||y==null)continue;
+    const orb=Math.min(BD[a][4],BD[b][4]),sep=angd(x,y);
+    for(const [ang,sym,nm,nat] of AS){const o=Math.abs(sep-ang);if(o<=orb){
+      const tight=1-o/orb*0.6,w=BD[a][5]*BD[b][5]*tight;
+      out.push({a,b,ang,sym,nm,nat,orb:o,w,key:pairKey(a,b)});break;}}
+  }
+  return out.sort((p,q)=>q.w-p.w);
+}
+function score(asps,d1,d2){
+  const s=[0,0,0,0,0];
+  for(const x of asps){const P=PW[x.key];if(!P)continue;
+    const hard=HARD.has(x.a)||HARD.has(x.b);
+    let sign=x.nat>0?1:x.nat<0?-0.75:(hard?0.35:1);       /* hard conjunctions are mixed */
+    if(x.key==='Ve-Ma'||x.key==='Ma-Pl'||x.key==='Ve-Pl'){P.forEach((v,i)=>{if(i===1)s[i]+=v*Math.abs(sign)*x.w*0.12;else s[i]+=v*sign*x.w*0.12;});continue;}
+    P.forEach((v,i)=>s[i]+=v*sign*x.w*0.12);
+  }
+  /* elements of the lights */
+  const e=k=>{const p=pos(k[0],k[1]);return p==null?null:el(Math.floor(p/30));};
+  for(const [p,q] of [[[d1,'Su'],[d2,'Mo']],[[d1,'Mo'],[d2,'Su']],[[d1,'Ve'],[d2,'Ma']],[[d1,'Ma'],[d2,'Ve']],[[d1,'Mo'],[d2,'Mo']]]){
+    const a=e(p),b=e(q);if(a==null||b==null)continue;const v=ESC[[a,b].sort().join('')]||0;s[0]+=v*0.8;s[3]+=v*0.6;s[1]+=v*0.4;}
+  return s.map(v=>Math.max(15,Math.min(98,Math.round(52+v*2.2))));
+}
+const verdict=t=>t>=82?'✦ ძალიან ძლიერი კავშირი':t>=70?'კარგი თავსებადობა':t>=58?'საშუალო — ბევრი შრომით მიღწეული ჰარმონია':t>=46?'რთული, მაგრამ ზრდის მომტანი':'დიდი განსხვავებები';
+return {BD,KEYS,AS,ASPTXT,PW,HARD,NOTE,EPAIR,ESC,pos,cross,score,verdict,pairKey,el};})();
+
+const KG={su:'მზე',mo:'მთვარე',me:'მერკური',ve:'ვენერა',ma:'მარსი',ju:'იუპიტერი',sa:'სატურნი',ur:'ურანი',ne:'ნეპტუნი',pl:'პლუტონი',nn:'ჩრდ. კვანძი'};
+const CATS=['სიყვარული','ვნება','მეგობრობა','ქორწინება','კომუნიკაცია'],CC=['#f08cb8','#f07a4a','#e0d070','#c9a84c','#7fb2f0'];
+const BD=SX.BD,gl=k=>BD[k][1].length>1?`<b>${BD[k][1]}</b>`:`<b>${BD[k][1]}${VS}</b>`;
+const sg=n=>(n>0?'+':n<0?'−':'')+Math.abs(n).toFixed(1);
+/* chart → the shape the site's scorer expects (backend JSON: planets by Georgian name, asc, mc) */
+function chartB(){const I=readInB(),u=Date.UTC(I.y,I.m-1,I.d,I.hh,I.mi)/6e4-I.off,ud=new Date(u*6e4),J=jd(ud.getUTCFullYear(),ud.getUTCMonth()+1,ud.getUTCDate(),ud.getUTCHours()+ud.getUTCMinutes()/60);return {I,J,pls:planets(J),hs:houses(J,I.lat,I.lon)};}
+const toD=CH=>{const d={planets:{},asc:CH.hs.asc,mc:CH.hs.mc,_timeUnknown:!!CH.I.unk};CH.pls.forEach(p=>{if(KG[p.k])d.planets[KG[p.k]]={degree:p.lon};});return d;};
+/* the same loop as score(), but keeping every term */
+function detail(asps,d1,d2){const rows=[];
+  for(const x of asps){const P=SX.PW[x.key];if(!P)continue;const hard=SX.HARD.has(x.a)||SX.HARD.has(x.b),sign=x.nat>0?1:x.nat<0?-0.75:(hard?0.35:1),hot=x.key==='Ve-Ma'||x.key==='Ma-Pl'||x.key==='Ve-Pl';
+    rows.push({x,vec:P.map((v,i)=>(hot&&i===1?v*Math.abs(sign):v*sign)*x.w*0.12*2.2)});}
+  const e=(d,k)=>{const p=SX.pos(d,k);return p==null?null:Math.floor(p/30);},els=[];
+  for(const [p,q] of [['Su','Mo'],['Mo','Su'],['Ve','Ma'],['Ma','Ve'],['Mo','Mo']]){const a=e(d1,p),b=e(d2,q);if(a==null||b==null)continue;const v=SX.ESC[[a%4,b%4].sort().join('')]||0;els.push({p,q,a,b,v,vec:[v*.8,v*.4,0,v*.6,0].map(z=>z*2.2)});}
+  return {rows,els};}
+const S={g:{},dA:null,dB:null,asps:[],sc:[52,52,52,52,52],tot:52,zc:null,det:{rows:[],els:[]},cat:0,ga:'m',gb:'f',ea:120};
+/* ── 2 · one aspect ── */
+function one(){const a=$('eA').value,b=$('eB').value,ang=S.ea,AS=SX.AS.find(z=>z[0]===ang),nat=AS[3],orb=Math.min(BD[a][4],BD[b][4]),o=orb*$('eO').value/100,tight=1-o/orb*0.6,w=BD[a][5]*BD[b][5]*tight,key=SX.pairKey(a,b),P=SX.PW[key],hard=SX.HARD.has(a)||SX.HARD.has(b),sign=nat>0?1:nat<0?-0.75:(hard?0.35:1),hot=key==='Ve-Ma'||key==='Ma-Pl'||key==='Ve-Pl';
+  const vec=P?P.map((v,i)=>(hot&&i===1?v*Math.abs(sign):v*sign)*w*0.12*2.2):null;return {a,b,ang,AS,nat,orb,o,tight,w,key,P,sign,hot,vec};}
+function drawE(){const G=S.g.e;if(!G)return;const {c,w,h}=G,E=one();c.clearRect(0,0,w,h);$('eOv').textContent=E.o.toFixed(1)+'° / '+E.orb+'°';
+  const L=Math.min(118,w*.3),x0=L+(w-L-14)/2,half=(w-L-14)/2,rh=(h-34)/5,mx=Math.max(8,...(E.vec||[0]).map(Math.abs));
+  line(c,[x0,8],[x0,h-22],'rgba(227,190,132,.5)',1);txt(c,'0',x0,h-10,10,'#aab2c4',GEO);txt(c,'−',L+8,h-10,12,'#ef6b5a',GEO);txt(c,'+',w-18,h-10,12,'#8fc46a',GEO);
+  CATS.forEach((n,i)=>{const y=10+rh*i+rh/2;txt(c,n,L-8,y,Math.max(10.5,Math.min(13,w*.03)),CC[i],GEO,'right');const v=E.vec?E.vec[i]:0,len=v/mx*half;
+    c.fillStyle='rgba(255,255,255,.05)';c.fillRect(L,y-rh*.3,w-L-14,rh*.6);
+    if(v){c.fillStyle=hexA(CC[i],.85);c.fillRect(v>0?x0:x0+len,y-rh*.3,Math.abs(len),rh*.6);txt(c,sg(v),v>0?Math.min(w-30,x0+len+20):Math.max(L+22,x0+len-20),y,11,'#EDE6D8',GEO);}});
+  const nt=SX.NOTE[E.key],tot=E.vec?E.vec.reduce((s,v)=>s+v,0):0;
+  $('eX').innerHTML=`<b>A-ს ${gl(E.a)} ${BD[E.a][2]} ${E.AS[1]} B-ს ${gl(E.b)} ${BD[E.b][2]}</b><br>`+
+   `წონა: ${BD[E.a][5]} × ${BD[E.b][5]} = <b>${(BD[E.a][5]*BD[E.b][5]).toFixed(2)}</b><br>`+
+   `სიზუსტე: ორბისი ${E.o.toFixed(1)}° დასაშვები ${E.orb}°-დან → ×<b>${E.tight.toFixed(2)}</b><br>`+
+   `ბუნება: ${E.nat>0?'ჰარმონიული → ×<b>+1</b>':E.nat<0?'დაძაბული → ×<b>−0.75</b>':SX.HARD.has(E.a)||SX.HARD.has(E.b)?'შეერთება მძიმე პლანეტასთან → ×<b>+0.35</b>':'შეერთება → ×<b>+1</b>'}<br>`+
+   (E.P?`პროფილი [${E.P.join(' · ')}] → სულ <b style="color:${tot>=0?'#8fc46a':'#ef6b5a'}">${sg(tot)}</b> პუნქტი ხუთ სფეროში${E.hot&&E.nat<0?'<br><small style="color:#f07a4a">გამონაკლისი: ამ წყვილის დაძაბული ასპექტი ვნებას მაინც ამატებს.</small>':''}`:
+    `<span style="color:#aab2c4">ამ წყვილს პროფილი არ აქვს — ქულაში არ მონაწილეობს, მხოლოდ ტექსტში ჩანს.</span>`)+
+   `<br><small>${nt?nt[E.nat<0?1:0]:`${BD[E.a][3]} × ${BD[E.b][3]} — ${SX.ASPTXT[E.ang]}.`}</small>`;}
+/* ── 3 · radar ── */
+function drawR(){const G=S.g.r;if(!G)return;const {c,w,h}=G;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2+4,R=Math.min(w*.33,h*.38),P=(i,v)=>{const t=-Math.PI/2+i*2*Math.PI/5;return [cx+R*v/100*Math.cos(t),cy+R*v/100*Math.sin(t)];};
+  [25,50,75,100].forEach(v=>{c.beginPath();for(let i=0;i<5;i++){const q=P(i,v);i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}c.closePath();c.strokeStyle=v===50?'rgba(227,190,132,.4)':'rgba(227,190,132,.16)';c.lineWidth=1;c.stroke();});
+  for(let i=0;i<5;i++)line(c,[cx,cy],P(i,100),'rgba(227,190,132,.16)',1);
+  const poly=(sc,fill,stroke,dash)=>{c.beginPath();sc.forEach((v,i)=>{const q=P(i,v);i?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);});c.closePath();if(fill){c.fillStyle=fill;c.fill();}c.setLineDash(dash||[]);c.strokeStyle=stroke;c.lineWidth=2;c.stroke();c.setLineDash([]);};
+  if(S.zc)poly(S.zc.sc,null,'#8fc8f2',[5,4]);poly(S.sc,'rgba(255,211,106,.2)','#FFD36A');
+  S.sc.forEach((v,i)=>{const q=P(i,v);c.beginPath();c.arc(q[0],q[1],3.5,0,7);c.fillStyle=CC[i];c.fill();});
+  const fs=Math.max(10.5,Math.min(13,w*.032));CATS.forEach((n,i)=>{const q=P(i,116),al=Math.abs(q[0]-cx)<8?'center':q[0]<cx?'right':'left',x=al==='right'?Math.max(q[0]+10,4):al==='left'?Math.min(q[0]-10,w-4):q[0];
+    c.save();c.font=`${fs}px ${GEO}`;const tw=c.measureText(n).width;c.restore();let xx=x;if(al==='left'&&xx+tw>w-3)xx=w-3-tw;if(al==='right'&&xx-tw<3)xx=3+tw;
+    txt(c,n,xx,q[1]-7,fs,CC[i],GEO,al);txt(c,S.sc[i]+'%',xx,q[1]+8,fs,'#EDE6D8',GEO,al);});
+  txt(c,S.tot+'%',cx,cy,Math.max(20,R*.3),'#F3DDA4','Cinzel,serif');}
+function result(){const harm=S.asps.filter(x=>x.nat>0).length,ten=S.asps.filter(x=>x.nat<0).length,cj=S.asps.filter(x=>x.nat===0).length,z=S.zc,C=window._compat;
+  const best=S.sc.indexOf(Math.max(...S.sc)),worst=S.sc.indexOf(Math.min(...S.sc));
+  $('rX').innerHTML=`<span style="font:600 34px Cinzel,serif;color:#F3DDA4">${S.tot}%</span> <b>${SX.verdict(S.tot)}</b><br>`+
+   `<small>ურთიერთასპექტები: ${S.asps.length} · ჰარმონიული ${harm} · დაძაბული ${ten} · შეერთება ${cj}</small><br>`+
+   `ყველაზე ძლიერი სფერო: <b style="color:${CC[best]}">${CATS[best]} ${S.sc[best]}%</b><br>ყველაზე სუსტი: <b style="color:${CC[worst]}">${CATS[worst]} ${S.sc[worst]}%</b><br>`+
+   `<small>საერთო ქულა — შეწონილი საშუალო: სიყვარული და ქორწინება ×1.3, დანარჩენი ×1.</small>`+
+   (z?`<br><br><span style="color:#8fc8f2"><b>მხოლოდ ნიშნებით:</b> ${C.S[z.a].g}${VS} ${C.S[z.a].n} + ${C.S[z.b].g}${VS} ${C.S[z.b].n} = <b>${z.tot}%</b> — ${C.verdict(z.tot)}</span><br><small>${z.A[0]}. სხვაობა სრულ რუკასთან: <b>${sg(S.tot-z.tot)}</b> პუნქტი.</small>`:'');
+  $('rT').innerHTML=`<tr><th>სფერო</th><th>რუკებით</th>${z?'<th>ნიშნებით</th><th>სხვაობა</th>':''}</tr>`+CATS.map((n,i)=>`<tr><td style="color:${CC[i]}">${n}</td><td><b>${S.sc[i]}%</b></td>${z?`<td>${z.sc[i]}%</td><td style="color:${S.sc[i]-z.sc[i]>=0?'#8fc46a':'#ef6b5a'}">${sg(S.sc[i]-z.sc[i])}</td>`:''}</tr>`).join('')+
+   `<tr><td><b>სულ</b></td><td><b>${S.tot}%</b></td>${z?`<td>${z.tot}%</td><td>${sg(S.tot-z.tot)}</td>`:''}</tr>`;}
+/* ── 4 · contributions ── */
+function contrib(){const i=S.cat,R=S.det.rows.filter(r=>Math.abs(r.vec[i])>=0.05).sort((a,b)=>b.vec[i]-a.vec[i]),pos=R.filter(r=>r.vec[i]>0),neg=R.filter(r=>r.vec[i]<0).reverse();
+  const row=r=>{const x=r.x,nt=SX.NOTE[x.key];return `<div style="border-color:${r.vec[i]>0?'#8fc46a':'#ef6b5a'}"><b style="color:${r.vec[i]>0?'#8fc46a':'#ef6b5a'}">${sg(r.vec[i])}</b> · ${gl(x.a)}<sup style="color:#FFD36A">A</sup> ${x.sym} ${gl(x.b)}<sup style="color:#8fc8f2">B</sup> <small>${x.nm} · ${x.orb.toFixed(1)}°</small><br><small>${nt?nt[x.nat<0?1:0]:`${BD[x.a][3]} × ${BD[x.b][3]} — ${SX.ASPTXT[x.ang]}.`}</small></div>`;};
+  const more=(L)=>L.slice(0,6).map(row).join('')+(L.length>6?`<details><summary style="cursor:pointer;color:#F3DDA4;margin-top:6px">კიდევ ${L.length-6}</summary><div class="tl">${L.slice(6).map(row).join('')}</div></details>`:'');
+  $('cP').innerHTML=more(pos)||'<div style="border-color:#555"><small>ამ სფეროში ქულის მომტანი ასპექტი არ არის.</small></div>';
+  $('cN').innerHTML=more(neg)||'<div style="border-color:#555"><small>ამ სფეროში ქულის წამღები ასპექტი არ არის.</small></div>';
+  const sum=S.det.rows.reduce((s,r)=>s+r.vec[i],0),es=S.det.els.reduce((s,r)=>s+r.vec[i],0),W=['A','B'];
+  $('cE').innerHTML=S.det.els.map(r=>{const ek=[r.a%4,r.b%4].sort().join('');return `<div style="border-color:${r.v>0?'#8fc46a':r.v<0?'#ef6b5a':'#666'}"><b style="color:${r.v>0?'#8fc46a':r.v<0?'#ef6b5a':'#aab2c4'}">${sg(r.vec[i])}</b> · ${gl(r.p)}<sup style="color:#FFD36A">A</sup> ${SG[r.a][0]}${VS} ${SG[r.a][1]} — ${gl(r.q)}<sup style="color:#8fc8f2">B</sup> ${SG[r.b][0]}${VS} ${SG[r.b][1]}<br><small>${SX.EPAIR[ek]}</small></div>`;}).join('')+
+   `<div style="border-color:#FFD36A"><b>${CATS[i]}:</b> 52 ${sum>=0?'+':'−'} ${Math.abs(sum).toFixed(1)} <small>(ასპექტები)</small> ${es>=0?'+':'−'} ${Math.abs(es).toFixed(1)} <small>(სტიქიები)</small> = ${(52+sum+es).toFixed(1)} → <b style="color:${CC[i]}">${S.sc[i]}%</b>${52+sum+es>98||52+sum+es<15?' <small>(საზღვარი 15–98%)</small>':''}</div>`;}
+function keepB(){const o={};['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>o[k]=$('b'+k).value);o.city=$('bcity').value;o.auto=$('bauto').checked;o.unk=$('bunk').checked;try{localStorage.setItem('magnus_partner',JSON.stringify(o));}catch(e){}}
+function fillB(){let b=null;try{b=JSON.parse(localStorage.getItem('magnus_partner')||'null');}catch(e){}if(!b)return;['dd','mm','yy','th','tm','lat','lon','off'].forEach(k=>{if(b[k]!=null)$('b'+k).value=b[k];});if(b.city!=null)$('bcity').value=b.city;if(b.auto!=null)$('bauto').checked=b.auto;if(b.unk!=null)$('bunk').checked=b.unk;}
+function upd(){const CA=chartNow(),CB=chartB();keepB();const I=CA.I,IB=CB.I,nm=x=>x.ci>=0?CITIES[x.ci][0]:'სხვა ადგილი';
+  $('sum').innerHTML=`${p2(I.d)}.${p2(I.m)}.${I.y} ${I.unk?'(დრო უცნობია)':p2(I.hh)+':'+p2(I.mi)} · ${nm(I)} · UTC${offS(I.off)}`;
+  $('bsum').innerHTML=`${p2(IB.d)}.${p2(IB.m)}.${IB.y} ${IB.unk?'(დრო უცნობია)':p2(IB.hh)+':'+p2(IB.mi)} · ${nm(IB)} · UTC${offS(IB.off)}`;
+  $('yW').innerHTML=(I.unk||IB.unk)?'ერთ-ერთის დაბადების დრო უცნობია: მისი ASC და MC ქულაში არ მონაწილეობს, მთვარე ±7°-ით შეიძლება ცდებოდეს.':'';
+  S.dA=toD(CA);S.dB=toD(CB);S.asps=SX.cross(S.dA,S.dB);S.sc=SX.score(S.asps,S.dA,S.dB);S.tot=Math.round((S.sc[0]*1.3+S.sc[1]+S.sc[2]+S.sc[3]*1.3+S.sc[4])/5.6);S.det=detail(S.asps,S.dA,S.dB);
+  const C=window._compat;if(C){const a=Math.floor(SX.pos(S.dA,'Su')/30),b=Math.floor(SX.pos(S.dB,'Su')/30);S.zc={a,b,...C.compute(a,S.ga,b,S.gb)};}else S.zc=null;
+  drawR();result();contrib();}
+window.MG_S33=()=>({sc:S.sc,tot:S.tot,n:S.asps.length,zc:S.zc&&S.zc.sc,ztot:S.zc&&S.zc.tot,chk:CATS.map((n,i)=>Math.max(15,Math.min(98,Math.round(52+S.det.rows.reduce((s,r)=>s+r.vec[i],0)+S.det.els.reduce((s,r)=>s+r.vec[i],0)))))});
+const opt=SX.KEYS.map(k=>`<option value="${k}">${BD[k][1]} ${BD[k][2]}</option>`).join('');$('eA').innerHTML=opt;$('eB').innerHTML=opt;$('eA').value='Su';$('eB').value='Mo';
+['eA','eB'].forEach(id=>$(id).addEventListener('change',drawE));$('eO').addEventListener('input',drawE);
+$('eT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.ea=+b.dataset.a;$('eT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawE();});
+$('cT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.cat=+b.dataset.c;$('cT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));contrib();});
+[['gA','ga'],['gB','gb']].forEach(([id,k])=>{try{const v=localStorage.getItem('magnus_g33'+k);if(v==='m'||v==='f'){S[k]=v;$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.g===v));}}catch(e){}
+  $(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S[k]=b.dataset.g;try{localStorage.setItem('magnus_g33'+k,S[k]);}catch(e){}$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));upd();});});
+function sizes(){const m=innerWidth<700;S.g.e=fit($('cvE'),m?.72:.6);S.g.r=fit($('cvR'),m?.95:.85);drawE();drawR();}
+let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
+const Q=[['რას ნიშნავს 52% ამ სისტემაში?',['ძალიან ცუდ წყვილს','საწყის წერტილს — წყვილს, რომელსაც არც პლუსი აქვს და არც მინუსი','იდეალურ წყვილს','ნახევარ ასპექტს'],1,'ქულა = 52 + ჯამი × 2.2; ნულოვანი ჯამი 52%-ს იძლევა.'],
+ ['რომელი ასპექტი იწონის ყველაზე მეტს?',['ურანი–ნეპტუნი','მზე–მთვარე (3 × 3)','მერკური–MC','იუპიტერი–სატურნი'],1,'ნათელებს ყველაზე დიდი წონა აქვთ და მათი პროფილი ყველა სფეროს კვებავს.'],
+ ['როგორ მოქმედებს ორბისი ქულაზე?',['არ მოქმედებს','ზუსტი ასპექტი სრულ ძალას იღებს, ორბისის კიდეზე — დაახლოებით 40%-ს','ფართო ორბისი უფრო ძლიერია','მხოლოდ შეერთებაზე მოქმედებს'],1,'სიზუსტე = 1 − (ორბისი / დასაშვები) × 0.6.'],
+ ['ვენერა–მარსის კვადრატი „ვნების“ ქულას —',['ამცირებს','ზრდის — ეს გამონაკლისია: ხახუნი მიზიდულობას აძლიერებს','არ ცვლის','ანულებს'],1,'ვენერა–მარსი, ვენერა–პლუტონი და მარსი–პლუტონი ვნებას ნებისმიერი ასპექტით ამატებს.'],
+ ['რატომ იღებს სატურნის შეერთება ვენერასთან მხოლოდ +0.35-ს?',['სატურნი სუსტია','შეერთება მძიმე პლანეტასთან ორმაგია — ერთგულებაც და შეზღუდვაც','შეცდომაა','რადგან ვენერა ქალურია'],1,'სატურნი, ურანი, ნეპტუნი, პლუტონი — „რთული“ შეერთებები, ნაწილობრივი პლუსით.'],
+ ['რატომ შეიძლება განსხვავდებოდეს „ნიშნებით“ და „რუკებით“ ქულა?',['ერთ-ერთი არასწორია','ნიშნებით მხოლოდ ორი მზე ჩანს, რუკებით — ყველა პლანეტა, ასპექტი და ორბისი','არ შეიძლება განსხვავდებოდეს','რუკა ნიშნებს არ იყენებს'],1,'მზის ნიშანი რუკის ერთი წერტილია; სრული სინასტრია ასობით კომბინაციას ამოწმებს.'],
+ ['როგორ გამოვიყენოთ ქულა სწორად?',['როგორც საბოლოო განაჩენი','როგორც რუკა — სად დავიწყოთ კითხვა: ძლიერი და სუსტი სფეროები','პარტნიორის ასარჩევად','საერთოდ არ გამოვიყენოთ'],1,'ქულა წესების შვილია — ის მიმართულებას აჩვენებს, არა ბედს.']];
+
+const QA=[];
+function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+  $('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+    box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+    const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+    if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});}
+
+$('bcity').innerHTML=CITIES.map((c,i)=>`<option value="${i}">${c[0]}</option>`).join('')+'<option value="-1">სხვა ადგილი (ხელით)</option>';fillB();
+['dd','mm','yy','th','tm','city','lat','lon','off','auto','unk'].forEach(id=>$('b'+id).addEventListener(id==='city'||id==='auto'||id==='unk'?'change':'input',upd));
+sizes();initPanel(upd);upd();quiz();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
