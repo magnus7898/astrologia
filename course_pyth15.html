@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · პითაგორას კვადრატი — გაკვეთილი 15</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+.cv-wrap{overflow-x:auto;margin-top:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 6px 4px}
+.cv-wrap svg{width:100%;min-width:560px;height:auto;display:block}
+.leg{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.leg button{background:none;border:1.5px solid var(--c);color:#EDE6D8;border-radius:999px;padding:5px 14px;font-size:13px;cursor:pointer;font-family:inherit;opacity:.45}
+.leg button.on{opacity:1;background:color-mix(in srgb,var(--c) 18%,transparent)}
+.per{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.per button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 11px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.per button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}.per button.now{box-shadow:inset 0 -3px 0 #ef8a8a}
+.vtab{width:100%;border-collapse:collapse;margin-top:10px;font-size:13.5px}
+.vtab th,.vtab td{border-bottom:1px solid rgba(184,137,74,.2);padding:6px 8px;text-align:left;vertical-align:top;line-height:1.6}
+.vtab th{color:#B8894A;font-weight:600;font-size:12px;letter-spacing:.06em}
+.vtab tr.my td{background:rgba(255,211,106,.07)}
+.tw{overflow-x:auto}
+.qq{margin-top:12px}.qq p{font-size:14px;color:#F3DDA4}
+.op{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.op button{background:none;border:1px solid rgba(184,137,74,.45);color:#EDE6D8;border-radius:10px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit}
+.op button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15)}.op button.no{border-color:#ef6b5a;background:rgba(239,107,90,.15)}
+.ex{font-size:13px;color:#aab2c4;margin-top:6px}
+#qs{margin-top:12px;font-size:15px;color:#FFE7A0;text-align:center}
+.btn{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · პითაგორას კვადრატი</div>
+  <h1>გაკვეთილი 15 — პროგნოზული მრუდები</h1>
+  <div class="sub">სიცოცხლე · ნება · ბედი — დაბადების თარიღის ნამრავლი, დაშლილი 12-წლიან წერტილებად</div>
+  <div class="panel">
+    <div class="date">
+      <div><label>დღე</label><input id="dd" type="number" min="1" max="31" value="15"></div>
+      <div><label>თვე</label><input id="mm" type="number" min="1" max="12" value="5"></div>
+      <div><label>წელი</label><input id="yy" class="y" type="number" min="1000" max="2100" value="1990"></div>
+    </div>
+  </div>
+  <div class="intro">კვადრატი გვიჩვენებს, <b>რა</b> გვაქვს; <b>პროგნოზული მრუდები</b> — <b>როდის</b> იღვიძებს და როდის იძინებს ეს ენერგია. თარიღის რიცხვებს ვამრავლებთ, ნამრავლის ციფრებს კი რიგრიგობით ვაწყობთ ცხოვრების ღერძზე — <b>თითო ციფრი თითო 12-წლიან წერტილზე</b> (0, 12, 24, 36 … წელი). ციფრი 0–9 — ენერგიის დონეა ამ ასაკში, ორ წერტილს შორის ხაზი კი 12-წლიანი პერიოდის მიმართულებაა: აღმავლობა, დაღმავლობა ან სიმშვიდე. სამი მრუდი სამ სიბრტყეს აჩვენებს: <b>სიცოცხლე</b>, <b>ნება</b> და <b>ბედი</b>.</div>
+
+  <div class="sec"><h2>1 · სამი ნამრავლი</h2>
+    <ul>
+      <li><b style="color:#c8a96e">სიცოცხლე</b> = (დღე და თვე ერთ რიცხვად, DDMM) × წელი — ცხოვრების ძირითადი ენერგია: ჯანმრთელობა, ძალა, ზოგადი ფონი.</li>
+      <li><b style="color:#9b7fe8">ნება</b> = იგივე, მაგრამ ყველა <b>0 → 1</b> (3003 → 3113, 1990 → 1991) — რისი აწევა შეგიძლია საკუთარი ძალისხმევით. თარიღის ნულები ნებაში არ მონაწილეობს — ამიტომ სადაც სიცოცხლე ნულზე ეცემა, ნება ხშირად ზემოთ რჩება (თუმცა ნამრავლში ნული მაინც შეიძლება გაჩნდეს).</li>
+      <li><b style="color:#3aada4">ბედი</b> = დღე × თვე × წელი (ცალ-ცალკე) — გარე გარემოებები, მოვლენები, რომლებიც „თავისით“ მოდის.</li>
+    </ul>
+    <p>თუ ნამრავლს 7-ზე ნაკლები ციფრი აქვს, ციფრები თავიდან მეორდება, სანამ 7 წერტილი (0–72 წელი) არ შეივსება. თუ თარიღში ნული არ არის, სიცოცხლისა და ნების მრუდი ემთხვევა.</p>
+    <div id="calc"></div>
+  </div>
+
+  <div class="sec"><h2>2 · შენი მრუდები</h2>
+    <div class="leg" id="leg"></div>
+    <div class="cv-wrap"><svg id="cv" viewBox="0 0 720 300" role="img" aria-label="პროგნოზული მრუდები"></svg></div>
+    <p style="font-size:12.5px;color:#9aa3b6;text-align:center">წითელი წყვეტილი ხაზი — დღევანდელი ასაკი. დააჭირე პერიოდს ქვემოთ.</p>
+    <div class="per" id="per"></div>
+    <div class="tw"><table class="vtab" id="pT"></table></div>
+    <div class="calc" id="now"></div>
+  </div>
+
+  <div class="sec"><h2>3 · როგორ ვკითხულობთ</h2>
+    <div class="tw"><table class="vtab">
+      <tr><th>დონე</th><th>მნიშვნელობა</th></tr>
+      <tr><td><b>0</b></td><td><b>ნულოვანი წერტილი</b> — ენერგიის „გადატვირთვა“: კრიზისი, დასრულება, დიდი ცვლილება. ძველი იშლება, რომ ახალი დაიწყოს. ამ ასაკში — სიფრთხილე, დასვენება, ჯანმრთელობაზე ზრუნვა.</td></tr>
+      <tr><td><b>1 – 3</b></td><td><b>დაბალი</b> — ენერგია შიგნითაა მიმართული: სწავლა, დაგროვება, მომზადება. დიდი გარე მიღწევისთვის საჭიროა მეტი ძალისხმევა.</td></tr>
+      <tr><td><b>4 – 6</b></td><td><b>საშუალო</b> — სტაბილური, „სამუშაო“ დონე: რასაც დათეს, იმას იმკი.</td></tr>
+      <tr><td><b>7 – 9</b></td><td><b>მაღალი</b> — პიკი: ძალა, შესაძლებლობები, ხილული წარმატება. მნიშვნელოვანია, არ გაფანტო.</td></tr>
+    </table></div>
+    <div class="tw"><table class="vtab">
+      <tr><th>პერიოდის ხაზი</th><th>მნიშვნელობა</th></tr>
+      <tr><td>↗ აღმავალი</td><td>ზრდა, ახალი შესაძლებლობები, ძალა მატულობს. რაც უფრო ციცაბოა (სხვაობა ≥ 4), მით უფრო სწრაფი და მოულოდნელია ცვლილება.</td></tr>
+      <tr><td>↘ დაღმავალი</td><td>შენელება, გაკვეთილები, დასრულება. დრო, როცა ძალა უნდა დაზოგო და შედეგები შეაჯამო.</td></tr>
+      <tr><td>→ ჰორიზონტალური</td><td>სტაბილურობა: პერიოდი იმავე დონეზე გრძელდება.</td></tr>
+    </table></div>
+    <p><b>მრუდების შედარება:</b> როცა <b>ნება</b> სიცოცხლეზე მაღლაა — ძალისხმევით მეტს მიაღწევ, ვიდრე „ფონი“ გაძლევს. როცა <b>ბედი</b> მაღლაა — გარემოებები გეხმარება; როცა დაბლაა, ხოლო სიცოცხლე მაღლა — ძალა გაქვს, მაგრამ სამყარო ჯერ არ გიხსნის კარს.</p>
+  </div>
+
+  <div class="sec"><h2>4 · მრუდები ყველა თარიღში</h2>
+    <p>რა სახე აქვს მრუდებს „საშუალოდ“? გამოვთვალეთ 1900–2025 წლების ყველა დაბადების თარიღისთვის (~45 000 თარიღი).</p>
+    <button type="button" class="btn" id="stB">გამოთვალე</button>
+    <div class="cv-wrap" id="stW" style="display:none"><svg id="st" viewBox="0 0 720 280" role="img" aria-label="სტატისტიკა"></svg></div>
+    <div class="calc" id="stX" style="display:none"></div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2><div id="qz"></div><div id="qs"></div></div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_pyth14.html">← ვედური კვადრატი</a><a href="course_num.html">გაკვეთილების სია</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+function date(){const d=+$('dd').value,m=+$('mm').value,y=+$('yy').value;
+  const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12&&d>=1&&d<=dim[m-1]&&y>=1000&&y<=2100))return null;
+  return [String(d).padStart(2,'0'),String(m).padStart(2,'0'),String(y)];}
+/* same as backend numcalc.pyth_curves */
+const pad7=ds=>{const o=ds.slice();let i=0;while(o.length<7){o.push(ds[i%ds.length]);i++;}return o;};
+const dig=n=>pad7(String(n).split('').map(Number));
+function curves(dd,mm,yyyy){const z=s=>s.replace(/0/g,'1'),life=+(dd+mm)*+yyyy,will=+z(dd+mm)*+z(yyyy),fate=+dd*+mm*+yyyy;
+  return {life:{n:life,f:`${dd+mm} × ${yyyy}`,d:dig(life)},will:{n:will,f:`${z(dd+mm)} × ${z(yyyy)}`,d:dig(will)},fate:{n:fate,f:`${+dd} × ${+mm} × ${yyyy}`,d:dig(fate)},year0:+yyyy};}
+const CD=[{id:'life',name:'სიცოცხლე',c:'#c8a96e'},{id:'will',name:'ნება',c:'#9b7fe8'},{id:'fate',name:'ბედი',c:'#3aada4'}];
+const S={on:{life:true,will:true,fate:true},per:null,cd:null,D:null};
+const lvl=v=>v===0?'ნულოვანი წერტილი':v<=3?'დაბალი':v<=6?'საშუალო':'მაღალი';
+function trend(a,b){const d=b-a;if(b===0)return ['↘ ნულამდე','#ef6b5a','ენერგია ნულოვან წერტილამდე ეცემა — პერიოდის ბოლოს კრიზისი ან დიდი დასრულება. დაზოგე ძალა, ნუ დაიწყებ ძალიან ბევრს.'];
+  if(a===0&&d>0)return ['↗ ნულიდან','#8fd19a','აღორძინება: ნულოვანი წერტილის შემდეგ ახალი ციკლი იწყება — ის, რაც ახლა დაიწყება, დიდხანს გაგყვება.'];
+  if(d>=4)return ['⇗ ციცაბო აღმავლობა','#8fd19a','სწრაფი, ხშირად მოულოდნელი ზრდა: ახალი შესაძლებლობები ერთბაშად იხსნება.'];
+  if(d>0)return ['↗ აღმავლობა','#a6e08a','თანდათანობითი ზრდა: ძალა და შესაძლებლობები მატულობს.'];
+  if(d<=-4)return ['⇘ ციცაბო დაღმავლობა','#ef6b5a','მკვეთრი შენელება: ძველი სწრაფად სრულდება. მნიშვნელოვანია მოთმინება და ჯანმრთელობა.'];
+  if(d<0)return ['↘ დაღმავლობა','#f0a070','თანდათანობითი შენელება: შეაჯამე, გაამარტივე, ნუ გადატვირთავ თავს.'];
+  return ['→ სტაბილური','#FFD36A','პერიოდი იმავე დონეზე მიდის — მყარი, პროგნოზირებადი დრო.'];}
+const ageNow=()=>{const D=S.D,now=new Date();return now.getFullYear()+now.getMonth()/12+now.getDate()/365-(+D[2])-(+D[1]-1)/12-(+D[0]-1)/365;};
+function draw(){const svg=$('cv'),cd=S.cd,W=720,H=300,L=34,R=14,T=18,B=40,iw=W-L-R,ih=H-T-B,n=7,x=i=>L+iw*i/(n-1),y=v=>T+ih*(1-v/9);let s='';
+  for(let v=0;v<=9;v++)s+=`<line x1="${L}" y1="${y(v)}" x2="${W-R}" y2="${y(v)}" stroke="rgba(255,255,255,${v%3?0.03:0.08})"/><text x="${L-8}" y="${y(v)+3}" text-anchor="end" font-size="9" fill="rgba(232,226,213,.4)" font-family="Cinzel,serif">${v}</text>`;
+  if(S.per!=null)s+=`<rect x="${x(S.per)}" y="${T}" width="${x(S.per+1)-x(S.per)}" height="${ih}" fill="rgba(255,211,106,.07)"/>`;
+  for(let i=0;i<n;i++){s+=`<line x1="${x(i)}" y1="${T}" x2="${x(i)}" y2="${T+ih}" stroke="rgba(255,255,255,.05)"/><text x="${x(i)}" y="${H-B+16}" text-anchor="middle" font-size="9.5" fill="rgba(232,226,213,.5)" font-family="Cinzel,serif">${cd.year0+i*12}</text><text x="${x(i)}" y="${H-B+28}" text-anchor="middle" font-size="8.5" fill="rgba(232,226,213,.3)">${i*12} წ.</text>`;}
+  const a=ageNow();if(a>0&&a<72){const ax=L+iw*a/72;s+=`<line x1="${ax}" y1="${T}" x2="${ax}" y2="${T+ih}" stroke="rgba(232,127,127,.65)" stroke-width="1.3" stroke-dasharray="4 4"/><text x="${ax}" y="${T-5}" text-anchor="middle" font-size="9" fill="rgba(232,127,127,.9)">დღეს</text>`;}
+  CD.forEach(c=>{if(!S.on[c.id])return;const d=cd[c.id].d;s+=`<polyline points="${d.map((v,i)=>x(i)+','+y(v)).join(' ')}" fill="none" stroke="${c.c}" stroke-width="2.2" stroke-linejoin="round" opacity=".92"/>`;
+    d.forEach((v,i)=>{s+=`<circle cx="${x(i)}" cy="${y(v)}" r="${v===0?5:3.6}" fill="${v===0?'#ef6b5a':'#0C1222'}" stroke="${c.c}" stroke-width="1.7"/><text x="${x(i)}" y="${y(v)-9}" text-anchor="middle" font-size="10" fill="${c.c}" font-family="Cinzel,serif">${v}</text>`;});});
+  for(let i=0;i<n-1;i++)s+=`<rect x="${x(i)}" y="${T}" width="${x(i+1)-x(i)}" height="${ih}" fill="transparent" data-p="${i}" style="cursor:pointer"/>`;
+  svg.innerHTML=s;}
+function perBtns(){const a=ageNow(),cur=Math.floor(a/12);$('per').innerHTML=[0,1,2,3,4,5].map(i=>`<button type="button" data-p="${i}" class="${i===S.per?'on':''} ${i===cur?'now':''}">${i*12}–${i*12+12} წ. <small>(${S.cd.year0+i*12}–${S.cd.year0+i*12+12})</small></button>`).join('');}
+function perTab(){const i=S.per;$('pT').innerHTML=`<tr><th>მრუდი</th><th>${i*12} წ. → ${i*12+12} წ.</th><th>მიმართულება</th><th>რას ნიშნავს</th></tr>`+CD.map(c=>{const d=S.cd[c.id].d,a=d[i],b=d[i+1],t=trend(a,b);
+  return `<tr><td style="color:${c.c};font-weight:600">${c.name}</td><td style="font:600 15px Cinzel,serif">${a} → ${b}<br><small style="font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6">${lvl(a)} → ${lvl(b)}</small></td><td style="color:${t[1]}">${t[0]}</td><td>${t[2]}</td></tr>`;}).join('');}
+function nowTxt(){const a=ageNow();if(a<0||a>=72){$('now').innerHTML=a<0?'ეს თარიღი ჯერ არ დამდგარა.':'72 წლის შემდეგ ციკლი თავიდან იწყება — მრუდი პირველი წერტილიდან მეორდება.';return;}
+  const i=Math.floor(a/12),f=a/12-i,val=c=>{const d=S.cd[c.id].d;return d[i]+(d[i+1]-d[i])*f;};
+  const v=Object.fromEntries(CD.map(c=>[c.id,val(c)]));
+  const cmp=v.will-v.life>1?'<b>ნება</b> სიცოცხლეზე მაღლაა — ახლა ძალისხმევით მეტს მიაღწევ, ვიდრე ფონი გაძლევს.':v.fate-v.life>1?'<b>ბედი</b> მაღლაა — გარემოებები გეხმარება, გამოიყენე.':v.life-v.fate>1?'ძალა გაქვს, მაგრამ <b>ბედი</b> დაბლაა — სამყარო კარს ჯერ ნელა ხსნის; მოთმინება.':'მრუდები ახლოსაა — ცხოვრების სიბრტყეები ახლა ერთ რიტმში მოძრაობს.';
+  $('now').innerHTML=`<b>ახლა შენ ხარ ~${a.toFixed(1)} წლის</b> — პერიოდი ${i*12}–${i*12+12} წ. (${(f*100).toFixed(0)}% გავლილი).<br>${CD.map(c=>`<span style="color:${c.c}">${c.name}</span> ≈ <span class="r">${v[c.id].toFixed(1)}</span> (${trend(S.cd[c.id].d[i],S.cd[c.id].d[i+1])[0]})`).join(' · ')}<br>${cmp}`;}
+function render(){const D=date();if(!D)return;S.D=D;S.cd=curves(...D);const a=ageNow();if(S.per==null||!S.pset)S.per=Math.max(0,Math.min(5,Math.floor(a/12)));
+  $('calc').innerHTML=`<div class="calc">${CD.map(c=>`<span style="color:${c.c}">${c.name}</span>: ${S.cd[c.id].f} = <span class="r">${S.cd[c.id].n}</span> → წერტილები <b>${S.cd[c.id].d.join(' · ')}</b>${String(S.cd[c.id].n).length<7?' <small>(შევსებულია თავიდან)</small>':''}`).join('<br>')}</div>`;
+  $('leg').innerHTML=CD.map(c=>`<button type="button" data-c="${c.id}" class="${S.on[c.id]?'on':''}" style="--c:${c.c}">${c.name}</button>`).join('');
+  draw();perBtns();perTab();nowTxt();}
+$('leg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.on[b.dataset.c]=!S.on[b.dataset.c];b.classList.toggle('on',S.on[b.dataset.c]);draw();});
+$('per').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.pset=1;S.per=+b.dataset.p;draw();perBtns();perTab();});
+$('cv').addEventListener('click',e=>{const r=e.target.closest('[data-p]');if(!r)return;S.pset=1;S.per=+r.dataset.p;draw();perBtns();perTab();});
+['dd','mm','yy'].forEach(id=>$(id).addEventListener('input',render));
+/* statistics over every date 1900–2025 */
+$('stB').addEventListener('click',()=>{$('stB').textContent='ითვლება…';setTimeout(()=>{const sum={life:Array(7).fill(0),will:Array(7).fill(0),fate:Array(7).fill(0)},first=Array(10).fill(0),zeros=Array(7).fill(0);let N=0,eq=0;
+  for(let y=1900;y<=2025;y++)for(let m=1;m<=12;m++){const dim=[31,(y%4===0&&(y%100!==0||y%400===0))?29:28,31,30,31,30,31,31,30,31,30,31][m-1];for(let d=1;d<=dim;d++){const c=curves(String(d).padStart(2,'0'),String(m).padStart(2,'0'),String(y));N++;
+    CD.forEach(k=>c[k.id].d.forEach((v,i)=>sum[k.id][i]+=v));first[c.life.d[0]]++;c.life.d.forEach((v,i)=>{if(v===0)zeros[i]++;});if(c.life.n===c.will.n)eq++;}}
+  const W=720,H=280,L=34,R=60,T=18,B=40,iw=W-L-R,ih=H-T-B,x=i=>L+iw*i/6,y=v=>T+ih*(1-v/9);let s='';
+  for(let v=0;v<=9;v+=3)s+=`<line x1="${L}" y1="${y(v)}" x2="${W-R}" y2="${y(v)}" stroke="rgba(255,255,255,.07)"/><text x="${L-8}" y="${y(v)+3}" text-anchor="end" font-size="9" fill="rgba(232,226,213,.4)">${v}</text>`;
+  for(let i=0;i<7;i++)s+=`<text x="${x(i)}" y="${H-B+16}" text-anchor="middle" font-size="9.5" fill="rgba(232,226,213,.5)">${i*12} წ.</text>`;
+  CD.forEach(c=>{const av=sum[c.id].map(v=>v/N);s+=`<polyline points="${av.map((v,i)=>x(i)+','+y(v)).join(' ')}" fill="none" stroke="${c.c}" stroke-width="2.2"/>`;av.forEach((v,i)=>s+=`<circle cx="${x(i)}" cy="${y(v)}" r="3" fill="${c.c}"/>`);s+=`<text x="${x(6)+8}" y="${y(av[6])+3}" font-size="10" fill="${c.c}">${c.name}</text>`;});
+  if(S.cd)CD.filter(c=>c.id==='life').forEach(c=>{s+=`<polyline points="${S.cd.life.d.map((v,i)=>x(i)+','+y(v)).join(' ')}" fill="none" stroke="${c.c}" stroke-width="1.2" stroke-dasharray="4 4" opacity=".6"/>`;});
+  $('st').innerHTML=s;$('stW').style.display='';$('stX').style.display='';$('stB').textContent='ხელახლა გამოთვლა';
+  $('stX').innerHTML=`<b>${N.toLocaleString('en-US')}</b> თარიღი. შუა წერტილები საშუალოდ ~4.2–4.5-ია, <b>პირველი წერტილი კი შესამჩნევად დაბალია</b> (~3.3): სიცოცხლის მრუდის პირველი ციფრი 1, 2 ან 3-ია <span class="r">${((first[1]+first[2]+first[3])/N*100).toFixed(0)}%</span>-ში, 9 კი მხოლოდ ${(first[9]/N*100).toFixed(1)}%-ში.<br>`+
+   `<small>დიდი ნამრავლის პირველი ციფრი ხშირად პატარაა (ბენფორდის კანონის მსგავსი ეფექტი). ამიტომ თითქმის ყველა მრუდი დაბლიდან იწყება — ბავშვობა „დაგროვების“ პერიოდია — და დაბალი საწყისი წერტილი თავისთავად ცუდ ნიშანს არ ნიშნავს. სიცოცხლის მრუდში ნული: ${zeros.map((z,i)=>`${i*12} წ. — ${(z/N*100).toFixed(0)}%`).join(', ')}; ყველაზე ხშირად — ბოლო (72 წ.) წერტილში, რადგან ნამრავლი ნულით მთავრდება, როცა წელი ან DDMM 10-ის ჯერადია. <b>ბედის</b> მრუდი ბოლოს ეცემა: მისი ნამრავლი ხშირად 5–6-ნიშნაა და ბოლო წერტილები თავიდან მეორდება — ისევ პატარა პირველი ციფრებით. სიცოცხლე და ნება ემთხვევა ${(eq/N*100).toFixed(0)}%-ში (თარიღი ნულის გარეშე).</small><br><small>წყვეტილი ხაზი — შენი სიცოცხლის მრუდი.</small>`;},30);});
+const Q=[['როგორ ითვლება სიცოცხლის მრუდი 15.05.1990-ისთვის?',['15 × 5 × 1990','1505 × 1990','1515 × 1991','15 + 05 + 1990'],1,''],
+ ['ნების მრუდში —',['ყველა 1 → 0','ყველა 0 → 1','წელი 2-ზე მრავლდება','დღე და თვე იკრიბება'],1,'3003 → 3113, 1990 → 1991.'],
+ ['რამდენ წელს ფარავს ერთი წერტილიდან მეორემდე?',['7','9','12','10'],2,''],
+ ['ნამრავლს 6 ციფრი აქვს. რა ხდება?',['მე-7 წერტილი 0-ია','ციფრები თავიდან მეორდება, სანამ 7 არ შეივსება','მრუდი 6 წერტილზე მთავრდება','ბოლო ციფრი ორმაგდება'],1,''],
+ ['ბედის მრუდი —',['DDMM × YYYY','დღე × თვე × წელი','წლის ციფრების ჯამი','DD × YYYY'],1,''],
+ ['რატომ იწყება მრუდების უმეტესობა დაბლიდან?',['ბავშვობა ყოველთვის ცუდია','დიდი ნამრავლის პირველი ციფრი ხშირად პატარაა (1–3)','ციფრები სორტირებულია','პირველი ციფრი ყოველთვის 1-ია'],1,''],
+ ['წერტილი 0 მრუდზე ნიშნავს —',['სიკვდილს','„გადატვირთვას“: კრიზისს, დასრულებას და ახლის დასაწყისს','ყველაზე მაღალ წერტილს','შეცდომას გამოთვლაში'],1,'']];
+const QA=[];$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+render();
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
