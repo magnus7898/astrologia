@@ -451,14 +451,14 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 
   <div class="sec"><h2>2 · შენი არხები</h2>
     <p>ხაზის ფერი: <span style="color:#EDE6D8">ღია</span> — პიროვნება (ცნობიერი), <span style="color:#e05050">წითელი</span> — დიზაინი (არაცნობიერი), <span style="color:#c9a84c">ოქროსფერი</span> — ორივე.</p>
-    <div class="duo" style="margin-top:10px"><div class="stage"><div id="bgW" class="bgw" aria-label="ბოდიგრაფი" style="max-width:340px"></div><canvas id="cvB" aria-label="ბოდიგრაფი" style="display:none"></canvas></div>
+    <div class="duo" style="margin-top:10px"><div class="stage"><div id="bgW" class="bgw" aria-label="ბოდიგრაფი" style="max-width:380px;display:none"></div><canvas id="cvB" aria-label="ბოდიგრაფი"></canvas></div>
      <div><div class="ptx" id="mX" style="margin-top:0"></div></div></div>
     <div class="tl" id="mL"></div>
   </div>
 
   <div class="sec"><h2>3 · 36 არხის ატლასი</h2>
     <p>დააჭირე არხს რუკაზე ან ღილაკს. ხაზის ფერი — <b>წრე</b> (circuit), რომელსაც არხი ეკუთვნის; ★ — შენი არხები.</p>
-    <div class="duo" style="margin-top:10px"><div class="stage"><canvas id="cvA" aria-label="36 არხის რუკა" style="cursor:pointer"></canvas></div>
+    <div class="duo" style="margin-top:10px"><div class="stage"><div id="bgA" class="bgw" aria-label="36 არხის რუკა" style="max-width:380px;display:none;cursor:pointer"></div><canvas id="cvA" aria-label="36 არხის რუკა" style="cursor:pointer"></canvas></div>
      <div><div class="ptx" id="aX" style="margin-top:0"></div><div class="seg" id="cL" style="justify-content:flex-start"></div></div></div>
     <div class="seg" id="aB" style="margin-top:12px"></div>
   </div>
@@ -483,7 +483,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <div class="quiz" id="qz"></div><div id="qs"></div>
   </div>
 
-  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_hd17.html">← განსაზღვრება</a><a href="course_hd.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 19 — მალე →</a></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_hd17.html">← განსაზღვრება</a><a href="course_hd.html">გაკვეთილების სია</a><a href="course_hd19.html">წრეები →</a></div>
 </div>
 <script src="hd_gate_interp.js"></script>
 <script>
@@ -715,27 +715,39 @@ function authOf(chs){const d=defC(chs);if(d.has('Solar Plexus'))return 'emo';if(
 let AUT='env';
 /* channel keynotes + circuit (same texts as hd_base_interp.js) */
 const CHD={'1-8':['შთაგონება','ინდივიდუალური','შემოქმედებითი მაგალითი: ადამიანი საკუთარი, უნიკალური გამოხატვით სხვებს შთააგონებს.'],'2-14':['მცველი','ინდივიდუალური','მიმართულება და რესურსები: ადამიანი გასაღებს ფლობს — იცის, საით მიმართოს ენერგია და ფული.'],'3-60':['მუტაცია','ინდივიდუალური','ცვლილების პულსი: ახალი იბადება შეზღუდვისა და ქაოსის შემდეგ, თავის დროზე.'],'4-63':['ლოგიკა','კოლექტიური (ლოგიკური)','ეჭვი და ფორმულა: გონება ნიმუშებს ეძებს და მომავლის ლოგიკურ პასუხებს აყალიბებს.'],'5-15':['რიტმი','კოლექტიური (ლოგიკური)','ბუნების რიტმთან ყოფნა: ფიქსირებული ჩვევები, რომლებიც სიცოცხლის ნაკადს აწესრიგებს.'],'6-59':['სიახლოვე','ტომობრივი (დაცვის)','ინტიმურობა და ნაყოფიერება: ემოციური კავშირი, რომელიც კედლებს ანგრევს.'],'7-31':['ალფა','კოლექტიური (ლოგიკური)','ლიდერობა: არჩეული ლიდერი, რომელიც კოლექტივს მომავლისკენ მიუძღვება.'],'9-52':['კონცენტრაცია','კოლექტიური (ლოგიკური)','ფოკუსი და სიმშვიდე: დეტალებზე ხანგრძლივად ყურადღების დამაგრების ძალა.'],'10-20':['გამოღვიძება','ინდივიდუალური (ინტეგრაციის)','„ახლა“ ცხოვრება საკუთარი პრინციპებით: გაცნობიერებული თვითქცევა.'],'10-34':['კვლევა','ინდივიდუალური (ინტეგრაციის)','საკუთარი რწმენის მიყოლა: ძალა, რომელიც პირად ქცევას ემსახურება.'],'10-57':['სრულყოფილი ფორმა','ინდივიდუალური (ინტეგრაციის)','გადარჩენის ინტუიცია: სხეულის მიერ ნაკარნახევი ჯანსაღი ქცევა.'],'11-56':['ცნობისმოყვარეობა','კოლექტიური (აბსტრაქტული)','მაძიებელი: იდეების შეგროვება და მოთხრობით სხვების სტიმულირება.'],'12-22':['ღიაობა','ინდივიდუალური','სოციალური ემოციური გამოხატვა: სწორ განწყობაში ხმა გულებს ეხება.'],'13-33':['შვილობა','კოლექტიური (აბსტრაქტული)','მოწმე: ისტორიების მოსმენა, დამახსოვრება და სიბრძნედ გადაცემა.'],'16-48':['ტალღის სიგრძე','კოლექტიური (ლოგიკური)','ოსტატობა: სიღრმე და ტალანტი, რომელიც გამეორებით იხვეწება.'],'17-62':['მიღება','კოლექტიური (ლოგიკური)','ორგანიზატორი: მოსაზრებები, რომლებიც დეტალებით არის გამყარებული.'],'18-58':['განსჯა','კოლექტიური (ლოგიკური)','სრულყოფის წყურვილი: ცხოვრების სიყვარულით მოტივირებული გაუმჯობესება.'],'19-49':['სინთეზი','ტომობრივი (ეგო)','მგრძნობელობა და პრინციპები: საჭიროებების დანახვა და საზოგადოების წესების განახლება.'],'20-34':['ქარიზმა','ინდივიდუალური (ინტეგრაციის)','მუდმივად დაკავებული: ძალა, რომელიც „ახლა“ მანიფესტირდება.'],'20-57':['ტვინის ტალღა','ინდივიდუალური (ინტეგრაციის)','გამჭრიახობა: ინტუიცია, რომელიც მყისიერად ითქმის.'],'21-45':['ფული','ტომობრივი (ეგო)','მატერიალისტი: რესურსების მართვა და ტომის კეთილდღეობაზე ზრუნვა.'],'23-43':['სტრუქტურირება','ინდივიდუალური','გენიოსიდან გიჟამდე: უნიკალური ჩაწვდომა, რომელიც სწორ დროს უნდა ითქვას.'],'24-61':['გაცნობიერება','ინდივიდუალური','მოაზროვნე: საიდუმლოებზე ფიქრი, რომელიც უეცარი გაგებით სრულდება.'],'25-51':['ინიციაცია','ინდივიდუალური (ცენტრირების)','პირველობის სული: შოკის გზით სულიერი ზრდა და სიმამაცე.'],'26-44':['გადაცემა','ტომობრივი (ეგო)','მეწარმე: წარსულის ნიმუშების ცოდნა და მათი დამაჯერებლად „გაყიდვა“.'],'27-50':['შენარჩუნება','ტომობრივი (დაცვის)','მცველი: ზრუნვა, ღირებულებები და მომავალი თაობების დაცვა.'],'28-38':['ბრძოლა','ინდივიდუალური','ჯიუტობა: ბრძოლა იმისთვის, რაც ცხოვრებას აზრს აძლევს.'],'29-46':['აღმოჩენა','კოლექტიური (აბსტრაქტული)','წარმატება იქ, სადაც სხვები მარცხდებიან: სრული ჩართულობა გამოცდილებაში.'],'30-41':['აღიარება','კოლექტიური (აბსტრაქტული)','მეოცნებე: ახალი გამოცდილების სურვილი და გრძნობების ფანტაზია.'],'32-54':['ტრანსფორმაცია','ტომობრივი (ეგო)','ამბიცია: მატერიალური აღმასვლა, რომელიც უწყვეტობის ინსტინქტს ეყრდნობა.'],'34-57':['ძალა','ინდივიდუალური (ინტეგრაციის)','არქეტიპი: ინსტინქტური ძალა და გადარჩენის ინტუიცია.'],'35-36':['გარდამავლობა','კოლექტიური (აბსტრაქტული)','„ყველაფერი ვცადე“: ემოციური გამოცდილების წყურვილი და ცვლილება.'],'37-40':['საზოგადოება','ტომობრივი (ეგო)','გარიგება: ოჯახის, მეგობრობისა და ორმხრივი ერთგულების ნაწილი.'],'39-55':['ემოციურობა','ინდივიდუალური','განწყობები: მელანქოლია, რომელიც შემოქმედების წყარო ხდება.'],'42-53':['მომწიფება','კოლექტიური (აბსტრაქტული)','ციკლები: დაწყების და დასრულების ძალა, გამოცდილებად გარდაქმნა.'],'47-64':['აბსტრაქცია','კოლექტიური (აბსტრაქტული)','გონებრივი აქტივობა და სიცხადე: წარსული გამოცდილების მნიშვნელობის გაგება.']};
-/* ── bodygraphs ── */
+/* ── Alex's painted bodygraph (human_prepared.svg): mount several copies and paint them ── */
 const API_BASE='https://astrology-production-b165.up.railway.app';
-const SVGNS='http://www.w3.org/2000/svg';
 function integ(sv,pg,dg){const st=g=>pg.includes(g)&&dg.includes(g)?3:pg.includes(g)?1:dg.includes(g)?2:0,n=st(10)*64+st(57)*16+st(34)*4+st(20)+1;
   const rm=[];sv.classList.forEach(c=>{if(c.startsWith('detail-on-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));sv.classList.add('detail-on-'+n);
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display',e.getAttribute('data-detail')===String(n)?'block':'none','important'));return n;}
-function mount(t,wrap){const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
+let SVGP=null;
+const svgText=()=>SVGP||(SVGP=fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();}));
+function mountSV(t,wrap){const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
   const w=$(wrap);w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
-  const ss=sv.querySelector('#hd-activation');if(ss){if(!document.getElementById('hd-act-l18')){const d=document.createElement('style');d.id='hd-act-l13';d.textContent=ss.textContent;document.head.appendChild(d);}ss.remove();}
+  const ss=sv.querySelector('#hd-activation');if(ss){if(!document.getElementById('hd-act-bg2')){const d=document.createElement('style');d.id='hd-act-bg2';d.textContent=ss.textContent;document.head.appendChild(d);}ss.remove();}
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));return sv;}
-async function loadBG(){try{const t=await fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();});
-  S.sv=mount(t,'bgW');$('cvB').style.display='none';$('bgW').style.display='';applyBG();mark();}
- catch(e){S.sv=null;$('bgW').style.display='none';$('cvB').style.display='';sizes();}}
-function applyBG(){const sv=S.sv;if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));
-  const on=g=>S.pg.includes(g)||S.dg.includes(g);for(let g=1;g<=64;g++){const p=S.pg.includes(g),d=S.dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}
-  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});integ(sv,S.pg,S.dg);}
+/* activation classes: personality / design / both, defined centres, integration complex */
+function setAct(sv,pg,dg){if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));
+  const on=g=>pg.includes(g)||dg.includes(g);for(let g=1;g<=64;g++){const p=pg.includes(g),d=dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}
+  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});integ(sv,pg,dg);}
+/* inline !important paint, tracked so it can be undone */
+const IGT=[10,20,34,57];
+function pr(e,k,v){e.style.setProperty(k,v,'important');e.setAttribute('data-pt','1');}
+function unpaint(sv){if(!sv)return;sv.querySelectorAll('[data-pt]').forEach(e=>{['fill','opacity','stroke','stroke-width','filter'].forEach(k=>e.style.removeProperty(k));e.removeAttribute('data-pt');});}
+const visDetail=sv=>[...sv.querySelectorAll('.detail-part')].find(x=>x.style.display==='block');
+/* paths of a gate's half-channel; the integration gates (10 20 34 57) share one drawn complex */
+function gEls(sv,g,all){if(IGT.includes(g)){const d=visDetail(sv);if(!d)return [];return [...d.querySelectorAll('path')].filter(p=>{const f=(p.getAttribute('style')||'').toUpperCase();return !f.includes('C3996C')&&(all||!f.includes('FFFFFF'));});}
+  return [...sv.querySelectorAll(`.gate-line[data-gate="${g}"]`)];}
+function paintG(sv,g,fill,op,all){if(!sv)return;gEls(sv,g,all).forEach(e=>{if(fill)pr(e,'fill',fill);if(op!=null)pr(e,'opacity',String(op));});}
+function paintC(sv,n,fill,stroke,sw,op){if(!sv)return;const e=sv.querySelector(`.chakra[data-center="${n}"]`);if(!e)return;if(fill)pr(e,'fill',fill);if(stroke){pr(e,'stroke',stroke);pr(e,'stroke-width',String(sw||7));}if(op!=null)pr(e,'opacity',String(op));}
+function ringG(sv,g,fill,tc){if(!sv)return;sv.querySelectorAll(`.gate-circle[data-gate="${g}"]`).forEach(e=>pr(e,'fill',fill));sv.querySelectorAll(`.gate-text[data-gate="${g}"]`).forEach(e=>pr(e,'fill',tc||'#0b1020'));}
+/* which gate (if any) was clicked inside a mounted svg */
+function gateAt(e){const t=e.target.closest('[data-gate]');if(t)return +t.getAttribute('data-gate');const d=e.target.closest('.detail-part');return d?'int':null;}
+
 const gOf=lon=>{const off=norm(lon-GATE_START),gi=Math.floor(off/GW);return {g:GATE_ORDER[gi],line:Math.floor((off-gi*GW)/(GW/6))+1};};
 function designJ(J){const tg=norm(lonOf('su',J)-88);let j=J-89;for(let i=0;i<30;i++){const d=norm(tg-lonOf('su',j)+180)-180;j+=d/0.9856;if(Math.abs(d)<1e-7)break;}return j;}
 function acts(J){const P={};planets(J).forEach(p=>P[p.k]=p.lon);P.nn=oscNode(J,moonLon);const out=[];[['☉',P.su],['⊕',norm(P.su+180)],['☊',P.nn],['☋',norm(P.nn+180)],['☽',P.mo],['☿',P.me],['♀',P.ve],['♂',P.ma],['♃',P.ju],['♄',P.sa],['♅',P.ur],['♆',P.ne],['♇',P.pl]].forEach(([g,l])=>out.push({gl:g,l,...gOf(l)}));return out;}
 const HI=window.HD_GATE_INTERP||{},GN=g=>(HI.GN&&HI.GN[g])||HEX[g][1];
-
 
 /* ── channels: circuit, type, consciousness ── */
 const CIR={ind:['ინდივიდუალური','#5aa8e8'],int:['ინტეგრაცია','#b08ad8'],tri:['ტომის','#ef6b5a'],log:['კოლექტ. ლოგიკური','#8fd19a'],abs:['კოლექტ. აბსტრაქტული','#FFD36A']};
@@ -756,6 +768,15 @@ const gC=g=>S.pg.includes(g)&&S.dg.includes(g)?'#c9a84c':S.pg.includes(g)?'#EDE6
 const mine=ch=>CHS.some(c=>kOf(c)===kOf(ch));
 const chByK=k=>CHANNELS.find(c=>kOf(c)===k);
 function mark(){}
+/* atlas on the painted bodygraph: every channel in its circuit colour */
+function paintAtlas(){const sv=S.svA;if(!sv)return drawA();unpaint(sv);const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));integ(sv,IGT,[]);
+  const sel=chByK(S.sel),gs=myG();
+  CHANNELS.forEach(ch=>{const [a,b]=ch;if(IGT.includes(a)&&IGT.includes(b))return;const col=CIR[cirOf(ch)][1],isS=sel&&kOf(sel)===kOf(ch),op=isS?1:mine(ch)?.95:.55;[a,b].forEach(g=>{if(!IGT.includes(g))paintG(sv,g,isS?'#FFD36A':col,op);});});
+  const iS=sel&&IGT.includes(sel[0])&&IGT.includes(sel[1]);paintG(sv,10,iS?'#FFD36A':CIR.int[1],iS?1:CHS.some(c=>IGT.includes(c[0])&&IGT.includes(c[1]))?.95:.55,true);
+  gs.forEach(g=>ringG(sv,g,gC(g)));if(sel){[sel[0],sel[1]].forEach(g=>ringG(sv,g,'#FFD36A'));[G2C[sel[0]],G2C[sel[1]]].forEach(n=>paintC(sv,n,null,'#FFD36A',7));}}
+async function loadSVs(){try{const t=await svgText();S.sv=mountSV(t,'bgW');S.svA=mountSV(t,'bgA');['bgW','bgA'].forEach(i=>$(i).style.display='');['cvB','cvA'].forEach(i=>$(i).style.display='none');
+  S.svA.addEventListener('click',e=>{const g=gateAt(e);if(g==null)return;const cand=g==='int'?CHANNELS.filter(([a,b])=>IGT.includes(a)&&IGT.includes(b)):CHANNELS.filter(([a,b])=>a===g||b===g);if(!cand.length)return;const i=cand.findIndex(c=>kOf(c)===S.sel);S.uset=1;pick(kOf(cand[(i+1)%cand.length]));});
+  if(S.CH){setAct(S.sv,S.pg,S.dg);paintAtlas();}}catch(e){S.sv=S.svA=null;}}
 
 /* ── section 2: your channels ── */
 function mTxt(){const gs=myG(),inCh=new Set(CHS.flat().filter(x=>typeof x==='number')),hang=gs.filter(g=>!inCh.has(g)&&CHANNELS.some(([a,b])=>a===g||b===g));
@@ -779,7 +800,7 @@ function aBtns(){$('aB').innerHTML=CHANNELS.map(ch=>{const k=kOf(ch),me=mine(ch)
 function aTxt(){const ch=chByK(S.sel);if(!ch)return;const [a,b,nm]=ch,d=CHD[S.sel],t=chType(ch),cr=cirOf(ch),gs=myG(),ha=gs.includes(a),hb=gs.includes(b);
   const st=mine(ch)?`<span style="color:#8fd19a">შენი არხია</span> — <span style="color:${CZ[czOf(ch)][1]}">${CZ[czOf(ch)][0]}</span>.`:ha||hb?`გაქვს მხოლოდ <b>${ha?a:b}</b> — ჩამოკიდებული კარიბჭე: გიზიდავს ის, ვისაც <b>${ha?b:a}</b> აქვს.`:'არც ერთი კარიბჭე არ გაქვს — ეს თემა სხვებთან ერთად შემოდის და გადის.';
   $('aX').innerHTML=`<span style="font:600 20px 'Noto Serif Georgian',serif;color:${CIR[cr][1]}">${a}–${b} · ${nm}</span><br>${d[2]}<br><br><b>${a}</b> „${GN(a)}“ (${SN(G2C[a])}) ↔ <b>${b}</b> „${GN(b)}“ (${SN(G2C[b])})<br><b>წრე:</b> ${d[1]} · <b>ტიპი:</b> <span style="color:${YT[t][1]}">${YT[t][0]}</span><br>${st}`+(S.mc?`<br><small>2000 რუკიდან ეს არხი აქვს <b>${S.mc.f[S.sel].toFixed(1)}%</b>-ს.</small>`:'');}
-function pick(k){S.sel=k;aBtns();aTxt();drawA();}
+function pick(k){S.sel=k;aBtns();aTxt();paintAtlas();}
 
 /* ── section 4: types ── */
 function yBtns(){$('yB').innerHTML=YO.map(t=>{const n=CHS.filter(c=>chType(c)===t).length;return `<button type="button" data-y="${t}" class="${t===S.ty?'on':''}" style="${n?'border-color:#FFD36A':''}">${YT[t][0]} ${n?'★'+n:''}</button>`;}).join('');}
@@ -806,13 +827,13 @@ function upd(){S.CH=chartNow();const I=S.CH.I;$('sum').innerHTML=`${p2(I.d)}.${p
   $('yW').innerHTML=I.unk?'დაბადების დრო უცნობია: მთვარის კარიბჭე შეიძლება განსხვავდებოდეს — და მასთან ერთად ერთი არხიც.':'';
   S.pg=acts(S.CH.J).map(a=>a.g);S.dg=acts(designJ(S.CH.J)).map(a=>a.g);CHS=chOf(S.pg,S.dg);DEF=defC(CHS);TYP=typeFrom(CHS);
   if(!S.sel||!S.uset)S.sel=CHS.length?kOf(CHS[0]):'20-34';const t0=CHS.length?chType(CHS[0]):'gen';if(!S.yset)S.ty=t0;
-  if(S.sv)applyBG();else drawB();mTxt();aBtns();aTxt();drawA();yBtns();yTxt();zTxt();drawS();}
+  if(S.sv)setAct(S.sv,S.pg,S.dg);else drawB();mTxt();aBtns();aTxt();paintAtlas();yBtns();yTxt();zTxt();drawS();}
 window.MG_H18=()=>({J:S.CH.J,type:TYP,ch:CHS.map(c=>kOf(c)),cz:CHS.map(czOf),ct:CHS.map(chType),mc:S.mc&&{avg:S.mc.avg,zero:S.mc.zero}});
 $('aB').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.uset=1;pick(b.dataset.k);});
 $('cvA').addEventListener('click',e=>{const r=$('cvA').getBoundingClientRect(),p=[e.clientX-r.left,e.clientY-r.top];let best=null,bd=16;HIT.forEach(([a,b,k])=>{const d=segD(p,a,b);if(d<bd){bd=d;best=k;}});if(best){S.uset=1;pick(best);}});
 $('yB').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.yset=1;S.ty=b.dataset.y;yBtns();yTxt();});
 $('mcB').addEventListener('click',()=>{$('mcB').textContent='ითვლება…';setTimeout(mc,30);});
-function sizes(){const m=innerWidth<700;S.g.a=fit($('cvA'),1.3);S.g.b=fit($('cvB'),1.3);const cs=$('cvS');S.g.s=fit(cs,(m?560:640)/Math.max(260,cs.clientWidth||300));if(S.CH){drawA();if(!S.sv)drawB();drawS();}}
+function sizes(){const m=innerWidth<700;S.g.a=fit($('cvA'),1.3);S.g.b=fit($('cvB'),1.3);const cs=$('cvS');S.g.s=fit(cs,(m?560:640)/Math.max(260,cs.clientWidth||300));if(S.CH){if(!S.svA)drawA();if(!S.sv)drawB();drawS();}}
 let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
 
 const Q=[['რამდენი არხია ბოდიგრაფზე?',['32','36','64','9'],1,'64 კარიბჭე 36 არხითაა დაწყვილებული (ზოგი კარიბჭე რამდენიმე არხშია).'],
@@ -829,7 +850,7 @@ function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p
     const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
     if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});}
 
-sizes();initPanel(upd);upd();quiz();loadBG();
+sizes();initPanel(upd);upd();quiz();loadSVs();
 })();
 </script>
 

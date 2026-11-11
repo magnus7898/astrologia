@@ -450,10 +450,9 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
   </div>
 
   <div class="sec"><h2>2 · შენი განსაზღვრება</h2>
-    <p>ფერი — ჯგუფი (ცენტრები, რომლებიც არხებით ერთმანეთს უკავშირდება). წყვეტილი ოქროსფერი ხაზი — <b>ხიდი</b>: არხი, რომლის ერთი კარიბჭე გაქვს, მეორე (ყვითელ წრეში) — არა.</p>
-    <div class="duo" style="margin-top:10px"><div class="stage"><canvas id="cvG" aria-label="განსაზღვრების გრაფი"></canvas></div>
-     <div><div class="stage"><div id="bgW" class="bgw" aria-label="ბოდიგრაფი" style="max-width:340px"></div><canvas id="cvB" aria-label="ბოდიგრაფი" style="display:none"></canvas></div></div></div>
-    <div class="ptx" id="dX"></div>
+    <p>ცენტრის ფერი — ჯგუფი (ცენტრები, რომლებიც არხებით ერთმანეთს უკავშირდება). <span style="color:#FFD36A">ყვითელი</span> ნახევარ-არხი და ყვითელი წრე — <b>ხიდის კარიბჭე</b>: არხის ერთი ნახევარი გაქვს, ეს — არა.</p>
+    <div class="duo" style="margin-top:10px"><div class="stage"><div id="bgW" class="bgw" aria-label="შენი ბოდიგრაფი — ჯგუფები" style="max-width:380px;display:none"></div><canvas id="cvG" aria-label="განსაზღვრების გრაფი"></canvas></div>
+     <div><div class="ptx" id="dX" style="margin-top:0"></div></div></div>
   </div>
 
   <div class="sec"><h2>3 · ხუთი განსაზღვრება</h2>
@@ -473,7 +472,8 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
       <div><label for="oH">დრო (საათი · წუთი)</label><div class="two"><input id="oH" type="number" min="0" max="23" value="12"><input id="oMi" type="number" min="0" max="59" value="0"></div></div>
       <div><label for="oO">UTC-დან სხვაობა (სთ)</label><input id="oO" type="number" step="0.25" value="4"></div>
     </div>
-    <div class="duo" style="margin-top:10px"><div class="stage"><canvas id="cvT" aria-label="ერთობლივი განსაზღვრება"></canvas></div><div><div class="ptx" id="tX" style="margin-top:0"></div></div></div>
+    <div class="duo" style="margin-top:10px"><div class="stage"><div id="bgT" class="bgw" aria-label="ერთობლივი ბოდიგრაფი" style="max-width:380px;display:none"></div><canvas id="cvT" aria-label="ერთობლივი განსაზღვრება"></canvas></div><div><div class="ptx" id="tX" style="margin-top:0"></div></div></div>
+    <p style="margin-top:6px"><small><span style="color:#7fd3ff">ცისფერი</span> — მისი / ტრანზიტის კარიბჭეები, რომლებიც შენ არ გაქვს.</small></p>
     <p style="margin-top:14px">მომდევნო 28 დღე (ყოველ 6 საათში): რამდენ ჯგუფად რჩები ტრანზიტთან ერთად. <span style="color:#8fd19a">მწვანე</span> — ტრანზიტი შენს რუკას ერთ მთლიანად კრავს; <span style="color:#FFD36A">ყვითელი</span> — გაყოფილი რჩება; <span style="color:#ef6b5a">წითელი</span> — სამი ჯგუფი.</p>
     <div class="stage" style="margin-top:6px"><canvas id="cvD" class="wide" aria-label="28-დღიანი ზოლი"></canvas></div>
     <div class="ro" id="dTx"></div>
@@ -489,7 +489,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <div class="quiz" id="qz"></div><div id="qs"></div>
   </div>
 
-  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_hd16.html">← 12 პროფილი</a><a href="course_hd.html">გაკვეთილების სია</a><a href="course_hd18.html">36 არხი →</a></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_hd16.html">← 12 პროფილი</a><a href="course_hd.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 18 — მალე →</a></div>
 </div>
 <script src="hd_gate_interp.js"></script>
 <script>
@@ -719,27 +719,39 @@ const AU={emo:['ემოციური (მზის წნული)','#FF880
 const AO=['emo','sac','spl','ego','self','env','lun'];
 function authOf(chs){const d=defC(chs);if(d.has('Solar Plexus'))return 'emo';if(d.has('Sacral'))return 'sac';if(d.has('Spleen'))return 'spl';if(d.has('Heart'))return 'ego';if(d.has('G'))return 'self';return d.size?'env':'lun';}
 let AUT='env';
-/* ── bodygraphs ── */
+/* ── Alex's painted bodygraph (human_prepared.svg): mount several copies and paint them ── */
 const API_BASE='https://astrology-production-b165.up.railway.app';
-const SVGNS='http://www.w3.org/2000/svg';
 function integ(sv,pg,dg){const st=g=>pg.includes(g)&&dg.includes(g)?3:pg.includes(g)?1:dg.includes(g)?2:0,n=st(10)*64+st(57)*16+st(34)*4+st(20)+1;
   const rm=[];sv.classList.forEach(c=>{if(c.startsWith('detail-on-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));sv.classList.add('detail-on-'+n);
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display',e.getAttribute('data-detail')===String(n)?'block':'none','important'));return n;}
-function mount(t,wrap){const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
+let SVGP=null;
+const svgText=()=>SVGP||(SVGP=fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();}));
+function mountSV(t,wrap){const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
   const w=$(wrap);w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
-  const ss=sv.querySelector('#hd-activation');if(ss){if(!document.getElementById('hd-act-l17')){const d=document.createElement('style');d.id='hd-act-l13';d.textContent=ss.textContent;document.head.appendChild(d);}ss.remove();}
+  const ss=sv.querySelector('#hd-activation');if(ss){if(!document.getElementById('hd-act-bg2')){const d=document.createElement('style');d.id='hd-act-bg2';d.textContent=ss.textContent;document.head.appendChild(d);}ss.remove();}
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));return sv;}
-async function loadBG(){try{const t=await fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();});
-  S.sv=mount(t,'bgW');$('cvB').style.display='none';$('bgW').style.display='';applyBG();mark();}
- catch(e){S.sv=null;$('bgW').style.display='none';$('cvB').style.display='';sizes();}}
-function applyBG(){const sv=S.sv;if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));
-  const on=g=>S.pg.includes(g)||S.dg.includes(g);for(let g=1;g<=64;g++){const p=S.pg.includes(g),d=S.dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}
-  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});integ(sv,S.pg,S.dg);}
+/* activation classes: personality / design / both, defined centres, integration complex */
+function setAct(sv,pg,dg){if(!sv)return;const rm=[];sv.classList.forEach(c=>{if(c.startsWith('active-')||c.startsWith('center-active-'))rm.push(c);});rm.forEach(c=>sv.classList.remove(c));
+  const on=g=>pg.includes(g)||dg.includes(g);for(let g=1;g<=64;g++){const p=pg.includes(g),d=dg.includes(g);if(p||d)sv.classList.add((p&&d?'active-b-':p?'active-p-':'active-d-')+g);}
+  Object.keys(CENTER_GATES).forEach(n=>{if(CHANNELS.some(([a,b])=>(G2C[a]===n||G2C[b]===n)&&on(a)&&on(b)))sv.classList.add('center-active-'+n.replace(/ /g,''));});integ(sv,pg,dg);}
+/* inline !important paint, tracked so it can be undone */
+const IGT=[10,20,34,57];
+function pr(e,k,v){e.style.setProperty(k,v,'important');e.setAttribute('data-pt','1');}
+function unpaint(sv){if(!sv)return;sv.querySelectorAll('[data-pt]').forEach(e=>{['fill','opacity','stroke','stroke-width','filter'].forEach(k=>e.style.removeProperty(k));e.removeAttribute('data-pt');});}
+const visDetail=sv=>[...sv.querySelectorAll('.detail-part')].find(x=>x.style.display==='block');
+/* paths of a gate's half-channel; the integration gates (10 20 34 57) share one drawn complex */
+function gEls(sv,g,all){if(IGT.includes(g)){const d=visDetail(sv);if(!d)return [];return [...d.querySelectorAll('path')].filter(p=>{const f=(p.getAttribute('style')||'').toUpperCase();return !f.includes('C3996C')&&(all||!f.includes('FFFFFF'));});}
+  return [...sv.querySelectorAll(`.gate-line[data-gate="${g}"]`)];}
+function paintG(sv,g,fill,op,all){if(!sv)return;gEls(sv,g,all).forEach(e=>{if(fill)pr(e,'fill',fill);if(op!=null)pr(e,'opacity',String(op));});}
+function paintC(sv,n,fill,stroke,sw,op){if(!sv)return;const e=sv.querySelector(`.chakra[data-center="${n}"]`);if(!e)return;if(fill)pr(e,'fill',fill);if(stroke){pr(e,'stroke',stroke);pr(e,'stroke-width',String(sw||7));}if(op!=null)pr(e,'opacity',String(op));}
+function ringG(sv,g,fill,tc){if(!sv)return;sv.querySelectorAll(`.gate-circle[data-gate="${g}"]`).forEach(e=>pr(e,'fill',fill));sv.querySelectorAll(`.gate-text[data-gate="${g}"]`).forEach(e=>pr(e,'fill',tc||'#0b1020'));}
+/* which gate (if any) was clicked inside a mounted svg */
+function gateAt(e){const t=e.target.closest('[data-gate]');if(t)return +t.getAttribute('data-gate');const d=e.target.closest('.detail-part');return d?'int':null;}
+
 const gOf=lon=>{const off=norm(lon-GATE_START),gi=Math.floor(off/GW);return {g:GATE_ORDER[gi],line:Math.floor((off-gi*GW)/(GW/6))+1};};
 function designJ(J){const tg=norm(lonOf('su',J)-88);let j=J-89;for(let i=0;i<30;i++){const d=norm(tg-lonOf('su',j)+180)-180;j+=d/0.9856;if(Math.abs(d)<1e-7)break;}return j;}
 function acts(J){const P={};planets(J).forEach(p=>P[p.k]=p.lon);P.nn=oscNode(J,moonLon);const out=[];[['☉',P.su],['⊕',norm(P.su+180)],['☊',P.nn],['☋',norm(P.nn+180)],['☽',P.mo],['☿',P.me],['♀',P.ve],['♂',P.ma],['♃',P.ju],['♄',P.sa],['♅',P.ur],['♆',P.ne],['♇',P.pl]].forEach(([g,l])=>out.push({gl:g,l,...gOf(l)}));return out;}
 const HI=window.HD_GATE_INTERP||{},GN=g=>(HI.GN&&HI.GN[g])||HEX[g][1];
-
 
 /* ── definition: connected groups of defined centres ── */
 const GC=['#5aa8e8','#FFD36A','#ef6b5a','#b08ad8','#8fd19a'];
@@ -787,7 +799,15 @@ function drawG(G,gs,own){if(!G)return;const {c,w,h}=G;c.clearRect(0,0,w,h);const
   const LB={Head:[790,150,'left'],Ajna:[790,215,'left'],Throat:[790,316,'left'],G:[620,428,'right'],Heart:[860,470,'left'],'Solar Plexus':[906,672,'center'],Spleen:[564,672,'center'],Sacral:[784,640,'left'],Root:[735,766,'center']};
   Object.keys(LB).forEach(n=>{const [x,y,al]=LB[n],q=P(x,y);txt(c,SN(n),q[0],q[1],Math.max(9,9.5*s),gi[n]!=null?'#F3DDA4':'#7d869a',GEO,al);});
   c.lineWidth=1;return grp;}
-function mark(){const sv=S.sv;if(!sv)return;const gi=giOf(GRP);sv.querySelectorAll('.chakra').forEach(e=>{const g=gi[e.getAttribute('data-center')];e.style.setProperty('stroke',g!=null?GC[g%GC.length]:'','important');e.style.setProperty('stroke-width',g!=null?'9':'','important');});}
+function mark(){}
+/* paint the painted bodygraph: centres by group, bridge half-channels in gold, extra gates in cyan */
+function paintDef(sv,pg,dg,extra){if(!sv)return [];unpaint(sv);const all=new Set([...pg,...dg,...extra]),own=new Set([...pg,...dg]);setAct(sv,[...new Set([...pg,...extra])],dg);
+  const grp=groups(chsOf(all)),gi=giOf(grp);Object.keys(CENTER_GATES).forEach(n=>{if(gi[n]!=null)paintC(sv,n,GC[gi[n]%GC.length],'#0b1020',2);});
+  extra.forEach(g=>{if(!own.has(g)){if(!IGT.includes(g))paintG(sv,g,'#7fd3ff',1);ringG(sv,g,'#7fd3ff');}});
+  bridges(all,grp).forEach(b=>{if(!IGT.includes(b.g))paintG(sv,b.g,'#FFD36A',1);ringG(sv,b.g,'#FFD36A');});return grp;}
+function showOwn(){if(S.sv)paintDef(S.sv,S.pg,S.dg,[]);else drawG(S.g.gg,gsOf(myG()),null);}
+async function loadSVs(){try{const t=await svgText();S.sv=mountSV(t,'bgW');S.svT=mountSV(t,'bgT');['bgW','bgT'].forEach(i=>$(i).style.display='');['cvG','cvT'].forEach(i=>$(i).style.display='none');if(S.CH){showOwn();tUpd();}}
+ catch(e){S.sv=S.svT=null;}}
 
 /* ── section 2 text ── */
 function dTxt(){const n=GRP.length,d=DF[Math.min(n,4)];let t=`<span style="font:600 20px 'Noto Serif Georgian',serif;color:${d[1]}">${DLAB(n)}</span> · <span style="color:${TY[TYP][1]}">${TY[TYP][0]}</span><br>`;
@@ -819,7 +839,7 @@ function bList(){const gs=gsOf(myG());if(GRP.length<2){$('bL').innerHTML=`<div s
 S.om='tr';
 function otherGates(){if(S.om==='tr'){const J=JNOW();return {J,gates:acts(J).map(a=>a.g),lab:'დღევანდელი ტრანზიტი'};}
   const v=id=>+$(id).value,y=v('oY'),m=v('oM'),d=v('oD'),hh=v('oH'),mi=v('oMi'),off=v('oO');const J=jd(y,m,d,hh+mi/60-off);return {J,gates:[...acts(J).map(a=>a.g),...acts(designJ(J)).map(a=>a.g)],lab:`სხვა ადამიანი (${p2(d)}.${p2(m)}.${y})`};}
-function tUpd(){const own=gsOf(myG()),o=otherGates(),all=new Set([...own,...o.gates]),grp=drawG(S.g.t,all,own),newCh=chsOf(all).filter(([a,b])=>!own.has(a)||!own.has(b));
+function tUpd(){const own=gsOf(myG()),o=otherGates(),all=new Set([...own,...o.gates]),grp=S.svT?paintDef(S.svT,S.pg,S.dg,o.gates):drawG(S.g.t,all,own),newCh=chsOf(all).filter(([a,b])=>!own.has(a)||!own.has(b));
   S.tr={n:grp.length};const n0=GRP.length,n1=grp.length;
   let t=`<b>${o.lab}</b><br>შენ: <b>${DLAB(n0)}</b> → ერთად: <b style="color:${DF[Math.min(n1,4)][1]}">${DLAB(n1)}</b><br>`;
   t+=newCh.length?`ახალი არხები (თეთრი წყვეტილი): ${newCh.map(([a,b,nm])=>`${a}–${b} „${nm}“`).join(', ')}<br>`:'ახალი არხი არ იქმნება.<br>';
@@ -848,14 +868,14 @@ function upd(){S.CH=chartNow();const I=S.CH.I;$('sum').innerHTML=`${p2(I.d)}.${p
   $('yW').innerHTML=I.unk?'დაბადების დრო უცნობია: მთვარის კარიბჭე შეიძლება განსხვავდებოდეს — ზოგჯერ სწორედ მთვარე ქმნის ან ხურავს ხიდს.':'';
   S.pg=acts(S.CH.J).map(a=>a.g);S.dg=acts(designJ(S.CH.J)).map(a=>a.g);CHS=chOf(S.pg,S.dg);DEF=defC(CHS);TYP=typeFrom(CHS);AUT=authOf(CHS);
   const gs=gsOf(myG());GRP=groups(CHS);BR=bridges(gs,GRP);LK=links(gs,GRP);S.dk=Math.min(GRP.length,4);
-  drawG(S.g.gg,gs,null);if(S.sv){applyBG();mark();}else drawB();dTxt();kBtns();kTxt();bList();tUpd();strip();drawS();}
+  showOwn();dTxt();kBtns();kTxt();bList();tUpd();strip();drawS();}
 window.MG_H17=()=>({J:S.CH.J,off:S.CH.I.off,n:GRP.length,label:DLAB(GRP.length),groups:GRP,bridges:BR.map(b=>b.g),links:LK.map(l=>l.cost),tr:S.tr,mc:S.mc});
 $('kB').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.dk=+b.dataset.k;kBtns();kTxt();});
 $('oB').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.om=b.dataset.o;$('oB').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));$('oI').style.display=S.om==='op'?'':'none';tUpd();});
 ['oD','oM','oY','oH','oMi','oO'].forEach(id=>$(id).addEventListener('input',tUpd));
 $('mcB').addEventListener('click',()=>{$('mcB').textContent='ითვლება…';setTimeout(mc,30);});
-function sizes(){const m=innerWidth<700;S.g.gg=fit($('cvG'),1.3);S.g.t=fit($('cvT'),1.3);S.g.d=fit($('cvD'),m?.42:.16);S.g.s=fit($('cvS'),m?.6:.26);S.g.b=fit($('cvB'),1.3);
-  if(S.CH){drawG(S.g.gg,gsOf(myG()),null);if(!S.sv)drawB();tUpd();drawD();drawS();}}
+function sizes(){const m=innerWidth<700;S.g.gg=fit($('cvG'),1.3);S.g.t=fit($('cvT'),1.3);S.g.d=fit($('cvD'),m?.42:.16);S.g.s=fit($('cvS'),m?.6:.26);
+  if(S.CH){showOwn();tUpd();drawD();drawS();}}
 let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
 
 const Q=[['რას გვიჩვენებს განსაზღვრება?',['რამდენი კარიბჭე გვაქვს','როგორ არის განსაზღვრული ცენტრები ერთმანეთთან დაკავშირებული','რომელი ხაზია პროფილში','ტიპის სტრატეგიას'],1,'განსაზღვრება = არხებით შეკრული ჯგუფების რაოდენობა.'],
@@ -872,7 +892,7 @@ function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p
     const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
     if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});}
 
-sizes();initPanel(upd);upd();quiz();loadBG();
+sizes();initPanel(upd);upd();quiz();loadSVs();
 })();
 </script>
 
