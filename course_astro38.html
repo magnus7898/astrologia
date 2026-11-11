@@ -197,6 +197,11 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <div class="duo"><div class="stage"><canvas id="cvV" aria-label="ვერტექსი რუკაზე"></canvas></div>
      <div><div class="ptx" id="vX"></div></div></div>
     <div class="pick" style="margin-top:8px"><label style="flex:1;min-width:220px;flex-wrap:wrap">განედი: <b id="lV"></b><input id="lS" type="range" min="-66" max="66" step="0.5" value="42" style="width:100%"></label></div>
+    <h3 style="font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;color:#E3BE84;font-size:17px;margin-top:18px">ვერტექსი სამ განზომილებაში</h3>
+    <p>ციური სფერო შენი დაბადების ადგილიდან: <span style="color:#6fbf73">მწვანე</span> — ჰორიზონტი (N, E, S, W), <span style="color:#8fc8f2">ცისფერი</span> — <b>პირველი ვერტიკალი</b> (E → ზენიტი → W), ნაცრისფერი — მერიდიანი, <span style="color:#FFD36A">ოქროსფერი</span> — <b>ეკლიპტიკა</b> ზოდიაქოს ნიშნებით, ღია — ციური ეკვატორი, <span style="color:#8fc46a">მწვანე წვრილი</span> — 6-საათიანი წრე (E → პოლუსი P → W). <b>Vx</b> ზის იქ, სადაც ეკლიპტიკა პირველ ვერტიკალს დასავლეთით კვეთს; <b>Ep</b> — სადაც ეკლიპტიკა 6-საათიან წრეს აღმოსავლეთით კვეთს; <b>AC</b> — ჰორიზონტზე, <b>MC</b> — მერიდიანზე. გაატარე თითი / მაუსი სფეროს დასატრიალებლად; „დღე-ღამე“ ატრიალებს ცას და ხედავ, როგორ სრიალებს ვერტექსი პირველ ვერტიკალზე. წყვეტილი ხაზები — სფეროს უკანა მხარე.</p>
+    <div class="stage" style="margin-top:8px"><canvas id="cv3" aria-label="ციური სფერო სამ განზომილებაში: ჰორიზონტი, პირველი ვერტიკალი, ეკლიპტიკა და ვერტექსი" style="cursor:grab;touch-action:none"></canvas></div>
+    <div class="ctl"><button type="button" id="v3P">▶ დღე-ღამე</button><button type="button" id="v3R">↺ დაბადების მომენტი</button><button type="button" id="v3A">⟳ ავტო-ბრუნვა</button><button type="button" id="v3E" class="on">ეკვატორი</button><button type="button" id="v3S" class="on">6-საათიანი წრე</button></div>
+    <div class="ptx" id="v3X"></div>
   </div>
 
   <div class="sec"><h2>4 · არაბული წერტილები — როგორ</h2>
@@ -373,7 +378,7 @@ function drawV(){const G=S.g.v;if(!G||!S.CH)return;const {c,w,h}=G;c.clearRect(0
   $('lV').textContent=`${Math.abs(lat).toFixed(1)}°${lat>=0?'ჩრდ':'სამხ'}${Math.abs(lat-S.CH.I.lat)<.3?' (დაბადების ადგილი)':''}`;
   $('vX').innerHTML=`<b>გამოთვლა:</b><br>RAMC = GMST + გრძედი = <b>${dm(V.ramc)}</b><br>RAMC + 180° = <b>${dm(norm(V.ramc+180))}</b><br>კოგანედი = 90° − ${lat.toFixed(1)}° = <b>${(90-lat).toFixed(1)}°</b><br>ASC(ამ RAMC-ით, კოგანედით) → დასავლეთის მხარე →<br>`+
    `${gl('vx')} ვერტექსი: <b style="color:#8fc8f2">${sp(V.v)}</b> — ${ord(hv)} სახლი<br>${gl('av')} ანტივერტექსი: ${sp(norm(V.v+180))}<br>${gl('ep')} აღმოსავლეთის წერტილი: <b style="color:#8fc46a">${sp(ep)}</b><br>ASC: ${sp(hs.asc)}`+
-   `<br><small>${Math.abs(lat)<1?'ეკვატორზე პირველი ვერტიკალი მერიდიანს ემთხვევა — ვერტექსი ≈ IC-ის საპირისპირო მხარე (MC-სთან).':Math.abs(lat)>60?'მაღალ განედებზე ვერტექსი მერიდიანს უახლოვდება.':'ჩრდილოეთ განედებზე ვერტექსი ჩვეულებრივ V–VIII სახლშია, დასავლეთის კვადრანტში.'}</small>`;}
+   `<br><small>${Math.abs(lat)<1?'ეკვატორზე პირველი ვერტიკალი ციურ ეკვატორს ემთხვევა — ვერტექსი 0° ვერძი ან 0° სასწორია (დასავლეთის მხარეს), აღმოსავლეთის წერტილი კი ASC-ს ემთხვევა (6-საათიანი წრე ჰორიზონტია).':Math.abs(lat)>60?'მაღალ განედებზე ვერტექსი მერიდიანს უახლოვდება.':'ჩრდილოეთ განედებზე ვერტექსი ჩვეულებრივ V–VIII სახლშია, დასავლეთის კვადრანტში.'}</small>`;}
 /* ── 4–5 · lots ── */
 function cusp(i){return S.CH.hs.cu[i];}
 const LOTS=[
@@ -424,15 +429,69 @@ function calc(){if(S.P.asc==null){$('cX').innerHTML='საჭიროა დ�
   $('cX').innerHTML=`${lbl(a)} ${sp(A)} + ${lbl(b)} ${sp(B)} − ${lbl(c)} ${sp(C)}${rev?' <small>(ღამე: B ⇄ C)</small>':''}<br>= ${dm(A)} + ${dm(B)} − ${dm(C)} = ${(A+B-C).toFixed(2)}° → mod 360 = <b style="color:#FFD36A;font-size:16px">${sp(l)}</b> · ${ord(houseOf(l,S.CH.hs.cu))} სახლი${hits(l)?'<br>კავშირი: '+hits(l):''}`;}
 function upd(){S.CH=chartNow();const I=S.CH.I;$('sum').innerHTML=`${p2(I.d)}.${p2(I.m)}.${I.y} ${I.unk?'(დრო უცნობია)':p2(I.hh)+':'+p2(I.mi)} · ${I.ci>=0?CITIES[I.ci][0]:'სხვა ადგილი'} · UTC${offS(I.off)}`;
   $('yW').innerHTML=I.unk?'დაბადების დრო უცნობია: ვერტექსი, აღმოსავლეთის წერტილი და ყველა ლოტი ASC-ზეა დამოკიდებული და არ ითვლება. კვანძი, ლილიტი და სელენა დღეში ცოტას მოძრაობს — ისინი სწორია.':'';
-  pts();S.lat=I.lat;$('lS').value=I.lat;drawO();vTable();drawV();drawL();allTable();calc();}
+  pts();S.lat=I.lat;$('lS').value=I.lat;drawO();vTable();drawV();drawL();allTable();calc();V3.dt=0;v3draw();if(typeof v3start==='function')v3start();}
 window.MG_V38=()=>({nn:S.P.nn,li:S.P.li,se:S.P.se,vx:S.P.vx,ep:S.P.ep,fo:S.P.fo,day:S.day,lots:S.P.asc==null?null:LOTS.map(L=>+lotOf(L).lon.toFixed(3))});
 $('tS').addEventListener('input',()=>{S.t=+$('tS').value;drawO();});
 $('tP').addEventListener('click',()=>{if(S.play){cancelAnimationFrame(S.play);S.play=0;$('tP').textContent='▶ თამაში';return;}$('tP').textContent='⏸ პაუზა';const st=()=>{S.t=S.t>=240?-120:S.t+0.5;$('tS').value=S.t;drawO();S.play=requestAnimationFrame(st);};S.play=requestAnimationFrame(st);});
-$('lS').addEventListener('input',()=>{S.lat=+$('lS').value;drawV();});
+$('lS').addEventListener('input',()=>{S.lat=+$('lS').value;drawV();v3draw();});
 $('lP').innerHTML=LOTS.map((L,i)=>`<option value="${i}">${L[1].replace('︎','')} ${L[0]}</option>`).join('');$('lP').addEventListener('change',()=>{S.lot=+$('lP').value;drawL();});
 $('aT').addEventListener('click',e=>{const r=e.target.closest('.lr');if(!r)return;S.lot=+r.dataset.i;$('lP').value=S.lot;drawL();$('cvL').scrollIntoView({behavior:RM?'auto':'smooth',block:'center'});});
 const opt=CK.map(k=>`<option value="${k}">${lbl(k)}</option>`).join('');['cA','cB','cC'].forEach(id=>{$(id).innerHTML=opt;$(id).addEventListener('change',calc);});$('cA').value='asc';$('cB').value='mo';$('cC').value='su';$('cR').addEventListener('change',calc);
-function sizes(){S.g.o=fit($('cvO'),1);S.g.v=fit($('cvV'),1);S.g.l=fit($('cvL'),1);if(S.CH){drawO();drawV();drawL();}}
+/* ── 3 · vertex in 3D: celestial sphere seen from outside ── */
+/* horizon frame: x = east, y = north, z = zenith; ecliptic λ → (α, δ) → hour angle H = LST − α */
+const V3={yaw:-35,pitch:22,dt:0,run:0,drag:null,auto:!RM,eq:true,six:true,last:0};
+function eclEq(l,e){const L=l*D;return [Math.atan2(Math.cos(e)*Math.sin(L),Math.cos(L))/D,Math.asin(Math.sin(e)*Math.sin(L))/D];}
+function hor(a,d,lst,f){const H=(lst-a)*D,dd=d*D;return [-Math.cos(dd)*Math.sin(H),Math.sin(dd)*Math.cos(f)-Math.cos(dd)*Math.cos(H)*Math.sin(f),Math.sin(dd)*Math.sin(f)+Math.cos(dd)*Math.cos(H)*Math.cos(f)];}
+function v3pts(){const J=S.CH.J,e=obl(J)*D,lat=S.lat,f=lat*D,ramc=norm(gmst(J)+S.CH.I.lon+V3.dt*360.9856),
+  mc=norm(Math.atan2(Math.sin(ramc*D),Math.cos(ramc*D)*Math.cos(e))/D),asc=ascF(ramc,lat,J);let vx=ascF(ramc+180,90-lat,J);if(norm(vx-mc)<180)vx=norm(vx+180);
+  const ep=ascF(ramc,0,J),P=l=>{const [a,d]=eclEq(l,e);return hor(a,d,ramc,f);};
+  return {J,e,f,lat,ramc,mc,asc,vx,ep,P};}
+function v3draw(){const G=S.g.v3;if(!G||!S.CH)return;const {c,w,h}=G;c.clearRect(0,0,w,h);
+  if(S.CH.I.unk){txt(c,'საჭიროა დაბადების დრო',w/2,h/2,13,'#ef6b5a',GEO);$('v3X').innerHTML='';return;}
+  const T=v3pts(),R=Math.min(w,h)*.38,cx=w/2,cy=h*.52,ya=V3.yaw*D,pi=V3.pitch*D;
+  /* camera: rotate about z (yaw), then tilt about x (pitch); screen x = X', screen y = −Z', depth = Y' (positive = away) */
+  const pr=v=>{const x1=v[0]*Math.cos(ya)-v[1]*Math.sin(ya),y1=v[0]*Math.sin(ya)+v[1]*Math.cos(ya),z1=v[2];const y2=y1*Math.cos(pi)+z1*Math.sin(pi),z2=-y1*Math.sin(pi)+z1*Math.cos(pi);const k=1/(1+y2*.18);return [cx+x1*R*k,cy-z2*R*k,y2];};
+  const circ=(fn,col,lw,n,fill)=>{const pts=[];for(let i=0;i<=n;i++)pts.push(pr(fn(i/n*2*Math.PI)));
+    if(fill){c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=fill;c.fill();}
+    for(let i=0;i<n;i++){const a=pts[i],b=pts[i+1],back=(a[2]+b[2])/2>0;c.strokeStyle=hexA(col,back?.22:.95);c.lineWidth=back?lw*.6:lw;c.setLineDash(back?[3,4]:[]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}c.setLineDash([]);};
+  /* faint sphere outline + graticule */
+  c.strokeStyle='rgba(184,137,74,.18)';c.lineWidth=1;c.beginPath();c.arc(cx,cy,R*1.0,0,7);c.stroke();
+  /* horizon (filled), meridian, prime vertical */
+  circ(t=>[Math.cos(t),Math.sin(t),0],'#6fbf73',1.6,96,'rgba(111,191,115,.07)');
+  circ(t=>[0,Math.cos(t),Math.sin(t)],'#9aa3b6',1,96);
+  circ(t=>[Math.cos(t),0,Math.sin(t)],'#8fc8f2',2.2,96);
+  const pole=[0,Math.cos(T.f),Math.sin(T.f)];
+  if(V3.eq)circ(t=>hor(t/D,0,T.ramc,T.f),'#c9d3e6',1.1,96);
+  if(V3.six){const n=[0,-Math.sin(T.f),Math.cos(T.f)],u=[1,0,0],v=[n[1]*u[2]-n[2]*u[1],n[2]*u[0]-n[0]*u[2],n[0]*u[1]-n[1]*u[0]];circ(t=>[u[0]*Math.cos(t)+v[0]*Math.sin(t),u[1]*Math.cos(t)+v[1]*Math.sin(t),u[2]*Math.cos(t)+v[2]*Math.sin(t)],'#8fc46a',1,96);}
+  /* ecliptic with sign ticks */
+  circ(t=>T.P(t/D),'#FFD36A',2.6,144);
+  for(let s=0;s<12;s++){const p=pr(T.P(s*30+15)),q=pr(T.P(s*30));c.fillStyle=hexA('#FFD36A',q[2]>0?.25:.9);c.beginPath();c.arc(q[0],q[1],2.2,0,7);c.fill();txt(c,SG[s][0]+VS,p[0],p[1]-9,Math.max(10,R*.075),hexA(EC[s%4],p[2]>0?.3:.95));}
+  /* axes */
+  const z=pr([0,0,1]),nd=pr([0,0,-1]),po=pr(pole),ps=pr(pole.map(x=>-x));
+  line(c,[nd[0],nd[1]],[z[0],z[1]],'rgba(154,163,182,.25)',1);line(c,[ps[0],ps[1]],[po[0],po[1]],'rgba(201,211,230,.35)',1);
+  const lab=(v,t,col,sz)=>{const p=pr(v);txt(c,t,p[0],p[1],sz||Math.max(10,R*.07),hexA(col,p[2]>0?.4:1),GEO);};
+  lab([0,0,1.1],'ზენიტი','#cfd5e2');lab([0,1.12,0],'N','#6fbf73');lab([0,-1.12,0],'S','#6fbf73');lab([1.12,0,0],'E','#6fbf73');lab([-1.12,0,0],'W','#6fbf73');lab(pole.map(x=>x*1.12),'P','#c9d3e6');
+  /* chart points */
+  const pt=(l,g,col,hl)=>{const p=pr(T.P(l)),back=p[2]>0;if(hl&&!back){c.fillStyle='rgba(143,200,242,.25)';c.beginPath();c.arc(p[0],p[1],R*.11,0,7);c.fill();}
+    c.fillStyle='#0e1424';c.beginPath();c.arc(p[0],p[1],R*.058,0,7);c.fill();c.strokeStyle=hexA(col,back?.45:1);c.lineWidth=hl?2.4:1.6;c.stroke();txt(c,g,p[0],p[1],Math.max(8,R*.05),hexA(col,back?.5:1),GEO);};
+  pt(norm(T.asc+180),'DC','#F3DDA4');pt(norm(T.mc+180),'IC','#F3DDA4');pt(T.asc,'AC','#F3DDA4');pt(T.mc,'MC','#F3DDA4');pt(T.ep,'Ep','#8fc46a');pt(norm(T.vx+180),'Av','#8fc8f2');pt(T.vx,'Vx','#8fc8f2',true);
+  /* readout */
+  const hh=V3.dt*24,vp=T.P(T.vx);
+  $('v3X').innerHTML=`<b>${V3.dt?`${hh>=0?'+':'−'}${Math.floor(Math.abs(hh))} სთ ${p2(Math.round(Math.abs(hh)%1*60))} წთ დაბადების შემდეგ`:'დაბადების მომენტი'}</b> · განედი ${Math.abs(T.lat).toFixed(1)}°${T.lat>=0?'ჩრდ':'სამხ'}<br>`+
+   `<span style="color:#F3DDA4">AC ${sp(T.asc)}</span> · <span style="color:#F3DDA4">MC ${sp(T.mc)}</span> · <span style="color:#8fc8f2">Vx ${sp(T.vx)}</span> · <span style="color:#8fc46a">Ep ${sp(T.ep)}</span><br>`+
+   `<small>ვერტექსი პირველ ვერტიკალზე: ჩრდილოეთ-სამხრეთის კომპონენტი = ${(Math.abs(vp[1])<5e-5?0:vp[1]).toFixed(4)} (≈ 0), დასავლეთისკენ ${vp[0]<0?'✓':'✗'}, სიმაღლე ${(Math.asin(Math.max(-1,Math.min(1,vp[2])))/D).toFixed(1)}° ${vp[2]>=0?'ჰორიზონტს ზემოთ':'ჰორიზონტს ქვემოთ'}.</small>`;}
+function v3tick(ts){if(!V3.run&&!V3.auto)return;const dt=V3.last?Math.min(50,ts-V3.last):16;V3.last=ts;if(V3.auto&&!V3.drag)V3.yaw=(V3.yaw+dt*.012)%360;if(V3.run)V3.dt+=dt/1000/24*1.2;v3draw();S.v3raf=requestAnimationFrame(v3tick);}
+function v3start(){cancelAnimationFrame(S.v3raf);V3.last=0;if(V3.run||V3.auto)S.v3raf=requestAnimationFrame(v3tick);}
+$('v3P').addEventListener('click',()=>{V3.run=!V3.run;$('v3P').textContent=V3.run?'⏸ პაუზა':'▶ დღე-ღამე';$('v3P').classList.toggle('on',V3.run);v3start();});
+$('v3R').addEventListener('click',()=>{V3.dt=0;v3draw();});
+$('v3A').addEventListener('click',()=>{V3.auto=!V3.auto;$('v3A').classList.toggle('on',V3.auto);v3start();});
+$('v3E').addEventListener('click',()=>{V3.eq=!V3.eq;$('v3E').classList.toggle('on',V3.eq);v3draw();});
+$('v3S').addEventListener('click',()=>{V3.six=!V3.six;$('v3S').classList.toggle('on',V3.six);v3draw();});
+(()=>{const cv=$('cv3');cv.addEventListener('pointerdown',e=>{V3.drag=[e.clientX,e.clientY,V3.yaw,V3.pitch];cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener('pointermove',e=>{if(!V3.drag)return;V3.yaw=V3.drag[2]+(e.clientX-V3.drag[0])*.5;V3.pitch=Math.max(-80,Math.min(85,V3.drag[3]+(e.clientY-V3.drag[1])*.4));if(!V3.run&&!V3.auto)v3draw();});
+  ['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{V3.drag=null;}));})();
+window.MG_V3D=()=>{const T=v3pts();return {vx:T.vx,ep:T.ep,asc:T.asc,mc:T.mc,pv:T.P(T.vx),epv:T.P(T.ep),ascv:T.P(T.asc)};};
+function sizes(){S.g.o=fit($('cvO'),1);S.g.v=fit($('cvV'),1);S.g.l=fit($('cvL'),1);S.g.v3=fit($('cv3'),.92);if(S.CH){drawO();drawV();drawL();v3draw();}}
 let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
 const Q=[['რა არის მთვარის კვანძი?',['მთვარის ორბიტის შორეული წერტილი','მთვარის ორბიტისა და ეკლიპტიკის გადაკვეთის წერტილი','მზისა და მთვარის შუა წერტილი','მთვარის ამოსვლის ადგილი'],1,'☊ — სადაც მთვარე ეკლიპტიკას სამხრეთიდან ჩრდილოეთისკენ კვეთს.'],
  ['რა არის შავი მთვარე ლილიტი (საშუალო)?',['მთვარის ორბიტის აპოგეა — დედამიწიდან ყველაზე შორეული წერტილი','მთვარის ჩრდილი','ასტეროიდი','სამხრეთის კვანძი'],0,'ორბიტის ელიფსის შორეული ფოკუსის მხარე; ბრუნავს 8.85 წელიწადში.'],
