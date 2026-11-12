@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 5</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+.dia svg{width:100%;height:auto;display:block}#cD svg{max-width:760px;margin:0 auto}#bD svg{max-width:420px;margin:0 auto}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{background:#0e1424;border:1px solid rgba(184,137,74,.45);color:#d8dbe2;border-radius:999px;padding:6px 14px;font:13px 'Noto Serif Georgian',serif;cursor:pointer}.seg button.on{background:#C9A24C;color:#0b1020;border-color:#C9A24C}
+input[type=range]{width:100%;accent-color:#C9A24C;margin-top:8px}
+.sec p a{color:#E3BE84}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 2 · მიქელანჯელო</div>
+  <h1>გაკვეთილი 5 — ადამის შექმნა</h1>
+  <div class="sub">მიქელანჯელო, დაახ. 1511–1512: ორი თითის სივრცე, ღმერთის მოსასხამი-ტვინი, სოფიას ფიგურა</div>
+
+  <div class="intro">სიქსტის ჭერის მეოთხე ისტორია (გაკვეთილი 4) — ალბათ ყველაზე მეტად ციტირებული სურათი დასავლურ ხელოვნებაში. ბიბლიაში ღმერთი ადამს მიწისგან ძერწავს და ნესტოებში „სიცოცხლის სუნთქვას“ შთაბერავს. მიქელანჯელომ არც თიხა დახატა, არც სუნთქვა: ადამი უკვე სრულყოფილია სხეულით, ღმერთი კი მისკენ მიფრინავს და <b>თითს უწვდის</b> — და ეს თითები ერთმანეთს <b>არ ეხება</b>. ყველაფერი, რაც ამ ნახატს ეზოთერულს ხდის, სწორედ ამ ცარიელ სივრცეში ხდება.</div>
+
+  <div class="sec"><h2>1 · კომპოზიციის სქემა</h2>
+    <p style="margin-bottom:10px">ქვემოთ — ჩემი <b>სქემა</b> (არა ფრესკა): ფორმები და ზონები, რომ კომპოზიცია „წაიკითხო“. დააჭირე ზონას. ფრესკის ფოტო: <a href="https://commons.wikimedia.org/wiki/File:Michelangelo_-_Creation_of_Adam_(cropped).jpg" target="_blank" rel="noopener">Wikimedia Commons ↗</a></p>
+    <div class="dia" id="cD"></div>
+    <div class="kcard" id="cC" style="margin-top:12px"></div>
+  </div>
+
+  <div class="sec"><h2>2 · ორი თითის სივრცე</h2>
+    <div class="kbody"><div><div class="dia" id="gD"></div><input type="range" id="gR" min="0" max="100" value="0" aria-label="თითებს შორის მანძილი"><div style="font-size:12px;color:#9aa3b6;text-align:center">გადაწიე — მიაახლოვე თითები</div></div>
+      <div><div class="kcard" id="gC" style="--k:#FFD36A"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>3 · ღმერთის მოსასხამი — თავის ტვინი?</h2>
+    <p style="margin-bottom:10px">1990 წელს ექიმმა ფრენკ ლინ მეშბერგერმა (JAMA) შენიშნა: ღმერთის, ანგელოზებისა და მოსასხამის ერთობლივი კონტური თავის ტვინის <b>საგიტალურ ჭრილს</b> ჰგავს. მიქელანჯელო ახალგაზრდობაში ფლორენციის სანტო-სპირიტოს მონასტერში გვამებს კვეთდა და ანატომია ზედმიწევნით იცოდა. ჩართე შედარება:</p>
+    <div class="seg"><button type="button" data-v="m" class="on">მოსასხამი</button><button type="button" data-v="b">ტვინი</button><button type="button" data-v="o">ერთად</button></div>
+    <div class="kbody" style="margin-top:10px"><div class="dia" id="bD"></div><div><div class="kcard" id="bC" style="--k:#ff8a8a"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>4 · ოთხი კითხვა — ოთხი ტრადიცია</h2>
+    <div class="ktabs" id="rT"></div>
+    <div class="kcard" id="rC"></div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art4.html">← სიქსტის კაპელის ჭერი</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 6 — მალე →</a></div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+/* ── composition zones ── */
+const ZN=[['adam','ადამი','#e8c9a0','ადამი მარცხნივ, <b>მიწაზე</b> წევს — ნახევრად წამოწეული, მოდუნებული, თითქოს ახლა იღვიძებს. ებრაულად adam „მიწიდან“ (adamah) მოდის. მისი სხეული სრულყოფილია — ანტიკური ათლეტის — მაგრამ მზერაში ჯერ არ არის ნება: ხელი მძიმედ ეკიდება, თითი მოშვებულია. ის <b>პასიურია</b> — ის ელოდება.'],
+ ['earth','მიწა','#8a7a52','შიშველი, მოყავისფრო-მწვანე ფერდობი — ერთადერთი „მიწა“ სცენაში. ადამი ჯერ კიდევ ამ მიწის ნაწილია: მისი სხეულის კონტური ფერდობის ხაზს მისდევს. მარცხენა ნახევარი სტატიკურია, მძიმე — <b>მატერია</b>.'],
+ ['god','ღმერთი','#EDE6D8','ღმერთი მარჯვნიდან, <b>ჰაერში</b> მოფრინავს — ძლიერი, ჭაღარა, მოძრავი, ქარი თმაში. ეს უკვე არა შორეული ტახტზე მჯდომი ღმერთია, არამედ მოქმედი ენერგია. მისი სხეული ადამის სხეულის <b>სარკეა</b>: იგივე დახრილობა, იგივე გაწვდილი ხელი — „თავის ხატად და მსგავსად“.'],
+ ['mantle','მოსასხამი','#d98a8a','ვარდისფერ-წითელი, ბუშტივით გაბერილი მოსასხამი, რომელიც ღმერთს და მის თანმხლებებს გარს ერტყმის — ზეციური „ნიჟარა“ ან „ღრუბელი“. მისი კონტური ბევრმა <b>თავის ტვინს</b> მიამსგავსა (ნაწილი 3), ზოგმა — <b>საშვილოსნოს</b>, საიდანაც ადამიანი იბადება (ამ წაკითხვით მწვანე ქსოვილი ჭიპლარია).'],
+ ['angels','ანგელოზები','#c9a0ff','ღმერთს ათამდე უფრთო ფიგურა (ანგელოზი, ყრმა) მოჰყვება და ეჭიდება. ისინი არიან ღვთაებრივი ძალები — ზოგი მკვლევარი მათში ღმერთის <b>იდეებს</b> ან ნეოპლატონურ „გონებებს“ ხედავს, რომლებიც სამყაროს შექმნისას მონაწილეობენ.'],
+ ['woman','ქალი — სოფია?','#7fb8ff','ღმერთის მარცხენა მკლავის ქვეშ ახალგაზრდა ქალი იყურება — ცნობისმოყვარედ, ადამისკენ. ვინ არის? <b>ევა</b>, რომელიც ჯერ არ შექმნილა და ღმერთის აზრში არსებობს; <b>მარიამი</b> — „ახალი ევა“ (გაკვეთილი 2); ან <b>სოფია</b>, ღვთაებრივი სიბრძნე: „როცა ცას ამზადებდა, მე იქ ვიყავი… ვიყავი მასთან, როგორც ოსტატი“ (იგავნი 8:27–30). სიბრძნე შესაქმისას ღმერთის გვერდითაა.'],
+ ['child','ყრმა','#FFD36A','ღმერთის მარცხენა ხელი ერთ-ერთი ყრმის მხარზე დევს. ზოგი განმარტებით ეს არის <b>ქრისტე</b> — „მეორე ადამი“, რომელიც უკვე წინასწარ არის განზრახული პირველი ადამის შექმნისას: დაცემა და ხსნა ერთ მომენტშია ჩაფიქრებული.'],
+ ['gap','სივრცე თითებს შორის','#FFD36A','ორი ხელი — ერთი აქტიური, მეორე მოშვებული — და მათ შორის რამდენიმე სანტიმეტრი ცარიელი ცა. ეს სივრცე სცენის ნამდვილი ცენტრია. ნაწილი 2 მთლიანად მას ეძღვნება.']];
+let ZI=7;
+function comp(){const on=k=>ZN[ZI][0]===k;const st=(k,c)=>`fill="${on(k)?c:'rgba(255,255,255,.03)'}" fill-opacity="${on(k)?.55:1}" stroke="${c}" stroke-width="${on(k)?2.5:1.3}"`;
+  let s='<svg viewBox="0 0 600 300" role="img" aria-label="ადამის შექმნის კომპოზიციის სქემა"><rect width="600" height="300" rx="10" fill="#1b2438"/>';
+  s+=`<g data-k="earth" style="cursor:pointer"><path d="M0 300 L0 190 Q120 160 230 205 Q270 225 300 300Z" ${st('earth','#8a7a52')}/><text x="40" y="282" fill="#cfd5e2" font-size="11">მიწა</text></g>`;
+  s+=`<g data-k="adam" style="cursor:pointer"><path d="M40 205 Q90 170 150 178 Q200 182 238 160 L246 168 Q205 196 160 198 Q110 205 60 222Z" ${st('adam','#e8c9a0')}/><circle cx="58" cy="182" r="14" ${st('adam','#e8c9a0')}/><path d="M150 178 Q200 150 262 140" fill="none" stroke="#e8c9a0" stroke-width="${on('adam')?7:5}" stroke-linecap="round"/><text x="96" y="236" fill="#e8c9a0" font-size="12">ადამი</text></g>`;
+  s+=`<g data-k="mantle" style="cursor:pointer"><path d="M330 120 Q340 40 450 32 Q560 26 586 100 Q600 170 540 200 Q470 232 400 212 Q340 196 330 150Z" ${st('mantle','#d98a8a')}/><text x="545" y="222" fill="#d98a8a" font-size="11">მოსასხამი</text></g>`;
+  s+=`<g data-k="angels" style="cursor:pointer">${[[470,70],[510,90],[540,130],[500,170],[440,185],[540,170]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="11" ${st('angels','#c9a0ff')}/>`).join('')}</g>`;
+  s+=`<g data-k="woman" style="cursor:pointer"><circle cx="452" cy="118" r="13" ${st('woman','#7fb8ff')}/><text x="452" y="146" fill="#7fb8ff" font-size="10" text-anchor="middle">ქალი</text></g>`;
+  s+=`<g data-k="child" style="cursor:pointer"><circle cx="488" cy="200" r="10" ${st('child','#FFD36A')}/></g>`;
+  s+=`<g data-k="god" style="cursor:pointer"><path d="M360 125 Q420 100 480 108 L486 118 Q430 122 372 140Z" ${st('god','#EDE6D8')}/><circle cx="392" cy="104" r="16" ${st('god','#EDE6D8')}/><path d="M362 128 Q330 136 300 140" fill="none" stroke="#EDE6D8" stroke-width="${on('god')?7:5}" stroke-linecap="round"/><text x="396" y="82" fill="#EDE6D8" font-size="12" text-anchor="middle">ღმერთი</text></g>`;
+  s+=`<g data-k="gap" style="cursor:pointer"><circle cx="281" cy="140" r="22" fill="${on('gap')?'rgba(255,211,106,.25)':'transparent'}" stroke="#FFD36A" stroke-dasharray="4 3" stroke-width="${on('gap')?2.5:1.3}"/><text x="281" y="182" fill="#FFD36A" font-size="11" text-anchor="middle">სივრცე</text></g>`;
+  s+='<line x1="300" y1="10" x2="300" y2="290" stroke="rgba(255,255,255,.12)" stroke-dasharray="2 5"/><text x="150" y="24" fill="#9aa3b6" font-size="11" text-anchor="middle">მიწა · მატერია · სიმშვიდე</text><text x="450" y="24" fill="#9aa3b6" font-size="11" text-anchor="middle">ცა · სული · მოძრაობა</text></svg>';
+  $('cD').innerHTML=s;const z=ZN[ZI];$('cC').style.setProperty('--k',z[2]);$('cC').innerHTML=`<h3>${z[1]}</h3>${z[3]}`;}
+$('cD').addEventListener('click',e=>{const g=e.target.closest('g[data-k]');if(!g)return;ZI=ZN.findIndex(z=>z[0]===g.dataset.k);comp();});comp();
+
+/* ── gap slider ── */
+const GT=['<b>რატომ არ ეხება?</b> ბიბლიურ ტექსტში შეხება საერთოდ არ არის — ღმერთი „სუნთქავს“. მიქელანჯელომ სუნთქვა ხელით შეცვალა, მაგრამ შეხება გადადო: ნახატი ასახავს <b>წამს შეხებამდე</b>. სიცოცხლე ჯერ არ გადასულა — ან ახლა გადადის, უხილავად, ჰაერში, როგორც ნაპერწკალი.',
+ 'ღმერთის თითი <b>დაჭიმულია</b> — აქტიური, მიზანდასახული. ადამის თითი <b>მოშვებულია</b>, ოდნავ მოხრილი — ის ჯერ არ „იღებს“, ჯერ არ შეუძლია. ორი ხელი — ორი მდგომარეობა: მიმცემი და ჯერ კიდევ არა-მიმღები.',
+ 'ნეოპლატონური კითხვით ეს სივრცე — <b>თავისუფლებაა</b>: ღმერთი ადამიანს სიცოცხლეს სთავაზობს, მაგრამ არ აიძულებს. პიკო დელა მირანდოლა „ადამიანის ღირსების შესახებ“ (1486) წერს, რომ ღმერთმა ადამიანი ყველაფრის „შუაში“ დასვა, რათა თავად აირჩიოს: დაეცეს ცხოველებამდე თუ აღმაღლდეს ანგელოზებამდე.',
+ 'საინტერესო ფაქტი: XVI საუკუნეში ბათქაშზე გაჩენილი ბზარის გამო ადამის თითების წვერები გადახატა დომენიკო კარნევალიმ — ესე იგი, ის, რასაც დღეს „ადამის თითად“ ვხედავთ, ნაწილობრივ სხვა ხელისაა. და მაინც, <b>სივრცე</b> მიქელანჯელოსია.'];
+function gap(){const v=+$('gR').value,d=60-v*0.55;let s='<svg viewBox="0 0 360 140" role="img" aria-label="ორი თითი"><rect width="360" height="140" rx="10" fill="#1b2438"/>';
+  s+=`<path d="M0 98 Q60 88 120 92 Q140 94 ${150-d/2} 90" fill="none" stroke="#e8c9a0" stroke-width="10" stroke-linecap="round"/><path d="M${150-d/2} 90 q8 4 14 10" fill="none" stroke="#e8c9a0" stroke-width="6" stroke-linecap="round"/>`;
+  s+=`<path d="M360 58 Q300 62 250 64 Q225 66 ${210+d/2} 70" fill="none" stroke="#EDE6D8" stroke-width="10" stroke-linecap="round"/><path d="M${210+d/2} 70 L${196+d/2} 74" fill="none" stroke="#EDE6D8" stroke-width="6" stroke-linecap="round"/>`;
+  const gx=(150-d/2+14+196+d/2)/2;s+=`<circle cx="${gx}" cy="86" r="${4+v/12}" fill="#FFD36A" opacity="${0.15+v/130}"><animate attributeName="r" values="${3+v/14};${7+v/9};${3+v/14}" dur="1.6s" repeatCount="indefinite"/></circle>`;
+  s+=`<text x="180" y="128" fill="#9aa3b6" font-size="11" text-anchor="middle">${v>=100?'… და მაინც არ ეხება':'მანძილი: '+Math.round(d)+' — ნაპერწკალი იზრდება'}</text></svg>`;
+  $('gD').innerHTML=s;$('gC').innerHTML=`<h3>სივრცე, რომელიც ლაპარაკობს</h3>${GT[Math.min(3,Math.floor(v/26))]}<div class="ex">${[0,1,2,3].map(i=>`<span style="color:${i===Math.min(3,Math.floor(v/26))?'#F3DDA4':'#4b5468'}">●</span>`).join(' ')} — გადაწიე სლაიდერი, რომ ოთხივე ახსნა წაიკითხო.</div>`;}
+$('gR').addEventListener('input',gap);gap();
+
+/* ── brain comparison ── */
+const BP=[['კონტური','მოსასხამის და ფიგურების ერთობლივი კონტური — თავის ტვინის გვერდითი (საგიტალური) ჭრილის ფორმა: შუბლის წილი წინ, კეფის წილი უკან, ქვემოთ — ნათხემი და ღერო.'],
+ ['ღმერთის მკლავი','ღმერთის გაწვდილი მარჯვენა მკლავი იქიდან გამოდის, სადაც <b>შუბლის წილის</b> წინა ნაწილი იქნებოდა — ტვინის ის ნაწილი, რომელიც ნებას, აზრს და გადაწყვეტილებას უკავშირდება.'],
+ ['მწვანე ქსოვილი','მოსასხამიდან ჩამოკიდებული მწვანე შარფი — <b>ხერხემლის არტერიის</b> მიმართულებით.'],
+ ['ანგელოზის ფეხი','ქვედა ანგელოზის ფეხი და ტერფი — <b>ჰიპოფიზის</b> ღეროსა და ჯირკვლის ადგილას.'],
+ ['ღარები','მოსასხამის ნაკეცები ტვინის <b>ღარებს</b> (სულკუსებს) იმეორებს.']];
+let BV='m',BI=0;
+function brain(){let s='<svg viewBox="0 0 340 240" role="img" aria-label="მოსასხამი და თავის ტვინი"><rect width="340" height="240" rx="10" fill="#1b2438"/>';
+  const M='M60 120 Q66 40 170 32 Q276 26 300 96 Q314 160 258 188 Q200 214 130 200 Q66 186 60 140Z';
+  const B='M58 122 Q58 44 160 34 Q270 26 300 100 Q310 150 276 170 Q262 182 240 180 Q232 200 210 206 Q196 228 186 236 L176 236 Q182 214 176 200 Q140 206 108 196 Q62 180 58 140Z';
+  if(BV!=='b')s+=`<path d="${M}" fill="rgba(217,138,138,.3)" stroke="#d98a8a" stroke-width="2"/><path d="M100 150 Q150 140 210 150 M120 80 Q170 60 230 80 M150 110 Q200 100 260 120" fill="none" stroke="#d98a8a" stroke-width="1" opacity=".6"/><path d="M120 196 Q120 216 104 230" fill="none" stroke="#6fbf73" stroke-width="5"/><path d="M70 120 L10 128" stroke="#EDE6D8" stroke-width="6" stroke-linecap="round"/>`;
+  if(BV!=='m')s+=`<path d="${B}" fill="${BV==='o'?'none':'rgba(255,138,138,.22)'}" stroke="#ff8a8a" stroke-width="2" ${BV==='o'?'stroke-dasharray="5 4"':''}/><path d="M90 100 Q110 80 140 92 Q160 70 190 84 Q220 66 250 88 Q270 100 268 130 M110 140 Q150 120 200 136 Q230 128 252 150" fill="none" stroke="#ff8a8a" stroke-width="1.2" opacity=".75"/><path d="M226 182 Q250 176 266 168 Q262 186 240 190Z" fill="rgba(255,138,138,.3)" stroke="#ff8a8a"/><circle cx="150" cy="196" r="5" fill="#ff8a8a"/>`;
+  s+=`<text x="170" y="18" fill="#9aa3b6" font-size="10.5" text-anchor="middle">${BV==='m'?'მოსასხამის სქემა':BV==='b'?'ტვინის საგიტალური სქემა':'ერთმანეთზე დადებული'}</text></svg>`;$('bD').innerHTML=s;
+  $('bC').innerHTML=`<h3>რა ემთხვევა</h3>${BP.map((b,i)=>`<p style="margin:6px 0"><b style="color:#ff8a8a">${b[0]}:</b> ${b[1]}</p>`).join('')}<div class="ex"><b>რას ნიშნავს?</b> თუ მეშბერგერი მართალია, ღმერთი ადამს აძლევს არა უბრალოდ სიცოცხლეს, არამედ <b>გონებას</b> — ინტელექტს, ნეოპლატონური ფილოსოფიის უმაღლეს ნიჭს. სხვები ფიქრობენ, რომ ეს თანამედროვე თვალის პარეიდოლიაა — გვინდა ვიცნოთ ნაცნობი ფორმები. მიქელანჯელოს მოსამზადებელ ნახატებში ტვინზე მინიშნება არ შემორჩა. გაკვეთილი: სიმბოლური წაკითხვა <b>ჰიპოთეზაა</b>, არა ფაქტი.</div>`;}
+document.querySelector('.seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;BV=b.dataset.v;document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b));brain();});brain();
+
+/* ── four readings ── */
+const RD=[['ქრისტიანული','#E0B450','ადამი — „<b>პირველი ადამი</b>“, რომლის დაცემაც (ჭერის მე-6 სცენა) ქრისტეს — „მეორე ადამის“ — მოსვლას მოითხოვს. ღმერთის ხელქვეშ მყოფი ყრმა შესაძლოა ქრისტეა, ქალი — მარიამი, „ახალი ევა“. შექმნისას ხსნაც უკვე ჩაფიქრებულია. ადამის მოშვებული თითი — ადამიანი, რომელიც მადლის გარეშე უძლურია.'],
+ ['ნეოპლატონური','#7fb8ff','მედიჩების აკადემიაში ახალგაზრდა მიქელანჯელომ ფიჩინოსა და პიკოს იდეები გაიგო: სული ღვთაებრივი სინათლიდან <b>ეშვება</b> სხეულში და სილამაზის მეშვეობით შეუძლია უკან <b>აღმაღლდეს</b>. ადამის სრულყოფილი სხეული — ღვთაებრივი იდეის ანარეკლია; თითებს შორის სივრცე — ის, სადაც ადამიანი თავისუფლად ირჩევს თავის ადგილს კოსმოსში.'],
+ ['კაბალისტური','#c9a0ff','კაბალაში პირველადამიანი — <b>ადამ კადმონი</b> — კოსმიური ადამიანია, ღვთაებრივი ფორმის ხატი, რომლის სხეულზეც სიცოცხლის ხეა განლაგებული (გაკვეთილი 3). ებრაული <b>ნეფეში</b>, <b>რუახი</b> და <b>ნეშამა</b> სულის სამი დონეა; ღმერთის „სუნთქვა“ (ნეშამა) — უმაღლესი. ხოლო ქალი ღმერთის მკლავის ქვეშ ზოგს <b>შეხინად</b> — ღმერთის მდედრობით მყოფობად — ესახება.'],
+ ['სოფიანური / გნოსტიკური','#8fd19a','სიბრძნის წიგნებში სოფია (სიბრძნე) ღმერთთან ერთად იყო შექმნის წინ: „როცა ცას ამზადებდა, მე იქ ვიყავი“. თუ ქალი ღმერთის მკლავქვეშ <b>სოფიაა</b>, მაშინ შექმნა ორი პრინციპის — ძალისა და სიბრძნის — საერთო აქტია. ეს წაკითხვა თანამედროვე ინტერპრეტაციაა, მაგრამ ეყრდნობა ბიბლიურ ტექსტს და რენესანსის სიყვარულს სიბრძნის (Sapientia) ალეგორიისადმი.']];
+let RI=0;
+function rUI(){$('rT').innerHTML=RD.map((r,i)=>`<button type="button" data-i="${i}" class="${i===RI?'on':''}" style="--k:${r[1]}">${r[0]}</button>`).join('');$('rC').style.setProperty('--k',RD[RI][1]);$('rC').innerHTML=`<h3>${RD[RI][0]} კითხვა</h3>${RD[RI][2]}`;}
+$('rT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;RI=+b.dataset.i;rUI();});rUI();
+window.MG_ART5=()=>({zn:ZN.length,rd:RD.length,bv:BV});
+
+const Q=[['ეხება თუ არა ღმერთის და ადამის თითები?',['კი','არა — მათ შორის სივრცეა','მხოლოდ ასლებზე','ფრესკა დაზიანებულია'],1,'ნახატი ასახავს წამს შეხებამდე.'],
+ ['ვინ თქვა პირველმა, რომ მოსასხამი თავის ტვინს ჰგავს?',['ვაზარიმ','ფრენკ მეშბერგერმა 1990 წელს','პიკომ','ფროიდმა'],1,'JAMA, 1990.'],
+ ['ებრაულ სიტყვას adam უკავშირდება —',['adamah — მიწა','ადამანტი','ადონაი','ედემი'],0,''],
+ ['ქალის ფიგურა ღმერთის მკლავის ქვეშ შეიძლება იყოს —',['მხოლოდ ანგელოზი','ევა, მარიამი ან სოფია — სხვადასხვა წაკითხვით','მიქელანჯელოს დედა','პაპი'],1,''],
+ ['ადამის თითები ნაწილობრივ —',['ორიგინალია უცვლელად','XVI საუკუნეში გადახატა კარნევალიმ ბზარის გამო','XX საუკუნეში დაემატა','არასოდეს დახატულა'],1,''],
+ ['პიკო დელა მირანდოლას იდეა: ადამიანი —',['ცხოველია','ყველაფრის შუაშია და თავად ირჩევს, დაეცეს თუ აღმაღლდეს','ანგელოზია','უსულოა'],1,'„ადამიანის ღირსების შესახებ“, 1486.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
