@@ -1,79 +1,90 @@
-/* art.js — painting reader for the course „ხელოვნების ეზოთერული სიმბოლიკა".
-   ART.reader(host, works, opts) renders tabs of works; each work is shown with numbered pins
-   (x,y in % of the image) that open a symbol card. Images are public-domain files hot-linked
-   from Wikimedia Commons (Special:FilePath), credited under each picture.
-   Edit mode: add ?edit to the URL → pins can be dragged, a click on the picture adds a pin,
-   and the JSON of the current work's pins is shown for copying back into the lesson. */
+/* art.js — animated symbol tour of a painting for the course „ხელოვნების ეზოთერული სიმბოლიკა",
+   built like the tarot symbol tour (course_tarot6): the painting zooms and pans to each detail,
+   a pulsing ring marks it, and the text explains it step by step — overview → symbols → synthesis.
+   ART.reader(host, works) · work = {short,title,author,year,place,file,ar,about,end,spots:[{x,y,z?,k,t,d}]}
+   x,y in % of the picture, z = zoom (default 2.6), k = key (colour, gesture, number, left/right, light, symbol).
+   Images: public-domain files hot-linked from Wikimedia Commons (Special:FilePath), credited under the picture.
+   Edit mode (?edit in the URL): pins are shown on the full picture and can be dragged; a click adds one;
+   the JSON of the current work's pins appears below for copying back into the lesson. */
 (function(){
 const FP='https://commons.wikimedia.org/wiki/Special:FilePath/',CP='https://commons.wikimedia.org/wiki/File:';
 const KEYS={color:['ფერი','#E0B450'],gesture:['ჟესტი','#ff8a8a'],number:['რიცხვი','#8fd19a'],lr:['მარცხენა / მარჯვენა','#7fb8ff'],light:['სინათლე','#fff2b3'],sym:['სიმბოლო','#c9a0ff']};
 const EDIT=/[?&]edit\b/.test(location.search);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let css=false;
 function style(){if(css)return;css=true;const s=document.createElement('style');s.textContent=`
-.ar-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
-.ar-tabs button{background:#0e1424;border:1px solid rgba(184,137,74,.45);color:#d8dbe2;border-radius:999px;padding:7px 14px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
-.ar-tabs button.on{background:#C9A24C;color:#0b1020;border-color:#C9A24C}
-.ar-keys{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
-.ar-keys button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:4px 11px;font:12.5px 'Noto Serif Georgian',serif;cursor:pointer;opacity:.55}
-.ar-keys button.on{opacity:1;background:color-mix(in srgb,var(--k) 22%,transparent)}
-.ar-wrap{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start}
-@media(max-width:820px){.ar-wrap{grid-template-columns:1fr}}
-.ar-fig{position:relative;margin:0;border:1px solid rgba(184,137,74,.35);border-radius:10px;overflow:hidden;background:#141b2c}
-.ar-stage{position:relative;transform-origin:0 0;transition:transform .45s ease}
-.ar-stage img{display:block;width:100%;height:auto;min-height:120px}
-.ar-pin{position:absolute;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:2px solid #0b1020;background:var(--k);color:#0b1020;font:700 13px Cinzel,serif;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 2px rgba(255,255,255,.55),0 2px 8px rgba(0,0,0,.6);transition:transform .2s,opacity .2s;padding:0}
-.ar-pin:hover,.ar-pin.on{transform:scale(1.25)}.ar-pin.on{box-shadow:0 0 0 3px #fff,0 0 18px var(--k)}
-.ar-pin.dim{opacity:.18;pointer-events:none}
-.ar-zoomed .ar-pin{width:20px;height:20px;margin:-10px 0 0 -10px;font-size:10px}
-.ar-cap{font-size:12px;color:#9aa3b6;padding:8px 10px;line-height:1.5;border-top:1px solid rgba(184,137,74,.25)}
-.ar-cap a{color:#C9A24C}
-.ar-ctl{position:absolute;right:8px;top:8px;display:flex;gap:6px;z-index:2}
-.ar-ctl button{background:rgba(11,16,32,.8);border:1px solid rgba(201,162,76,.6);color:#F3DDA4;border-radius:8px;padding:4px 9px;font:12.5px 'Noto Serif Georgian',serif;cursor:pointer}
-.ar-miss{position:absolute;inset:0;display:none;white-space:normal;align-items:center;justify-content:center;text-align:center;padding:20px;color:#9aa3b6;font-size:13px}
-.ar-card{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.8}
-.ar-card .k{font:600 11px Cinzel,serif;letter-spacing:.14em;text-transform:uppercase;color:var(--k)}
-.ar-card h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin:4px 0 6px}
-.ar-card .lk{margin-top:8px;font-size:12.5px;color:#9aa3b6}
-.ar-nav{display:flex;justify-content:space-between;gap:8px;margin-top:10px}
-.ar-nav button{background:#0e1424;border:1px solid rgba(184,137,74,.45);color:#E3BE84;border-radius:8px;padding:6px 12px;cursor:pointer;font:13px 'Noto Serif Georgian',serif}
-.ar-about{font-size:13px;color:#BCC0CA;line-height:1.75;margin-top:10px}
-.ar-edit{width:100%;height:160px;margin-top:8px;background:#0e1424;color:#9fe;border:1px dashed #7fe3ff;font:11px monospace;padding:6px}
+.ar-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:thin}
+.ar-tabs button{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;width:118px;border:1px solid rgba(184,137,74,.35);border-radius:10px;padding:4px;background:none;cursor:pointer;color:#d6cbb2;font:12px/1.3 'Noto Serif Georgian',serif;text-align:center}
+.ar-tabs button img{width:100%;height:64px;object-fit:cover;border-radius:6px;display:block;background:#141b2c}
+.ar-tabs button.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.35);color:#FFF0C8}
+.ar-tour{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:820px){.ar-tour{grid-template-columns:1fr}}
+.ar-vw{position:sticky;top:12px}@media(max-width:820px){.ar-vw{position:static}}
+.ar-vp{position:relative;width:100%;overflow:hidden;border-radius:14px;border:1px solid rgba(184,137,74,.45);background:#0e1424}
+.ar-vp img{position:absolute;left:0;top:0;width:100%;height:100%;transform-origin:0 0;transition:transform 1.5s cubic-bezier(.65,.05,.25,1);will-change:transform}
+.ar-ring{position:absolute;width:18%;aspect-ratio:1;border:2px solid #FFD36A;border-radius:50%;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;box-shadow:0 0 18px rgba(255,211,106,.55);transition:opacity .4s}
+.ar-ring.on{opacity:1;animation:arp 1.8s ease-in-out infinite}
+@keyframes arp{0%,100%{transform:translate(-50%,-50%) scale(.85)}50%{transform:translate(-50%,-50%) scale(1.05)}}
+.ar-miss{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:#9aa3b6;font-size:13px}
+.ar-cap{font-size:12px;color:#9aa3b6;margin-top:6px;line-height:1.5;text-align:center}.ar-cap a{color:#C9A24C}
+.ar-ctl{display:flex;justify-content:center;gap:10px;margin-top:10px}
+.ar-ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:7px 16px;font-size:14px;cursor:pointer;font-family:inherit;min-width:56px}
+.ar-bar{height:3px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:8px;overflow:hidden}.ar-bar i{display:block;height:100%;width:0;background:#C9A24C;transition:width .4s}
+.ar-txt h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:24px;color:#E3BE84}
+.ar-txt .st{font-size:13px;color:#B8894A;margin-top:4px;letter-spacing:.05em}
+.ar-txt .tx{margin-top:10px;font-size:15px;line-height:1.9;color:#eef0f4;min-height:120px;animation:arfi .6s ease}
+.ar-txt .tx b{color:#F3DDA4}
+@keyframes arfi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ar-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.ar-chips button{background:none;border:1px solid rgba(184,137,74,.4);border-left:3px solid var(--k,rgba(184,137,74,.4));color:#d6cbb2;border-radius:999px;padding:4px 11px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.ar-chips button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}.ar-chips button.done{color:#F3DDA4}
+.ar-keys{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:12px;color:#9aa3b6}.ar-keys i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.ar-pin{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:2px solid #0b1020;background:var(--k);color:#0b1020;font:700 12px Cinzel,serif;display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 0 0 2px #fff;z-index:3;touch-action:none}
+.ar-edit{width:100%;height:170px;margin-top:8px;background:#0e1424;color:#9fe;border:1px dashed #7fe3ff;font:11px monospace;padding:6px}
 `;document.head.appendChild(s);}
 
-function reader(host,works,opts){style();opts=opts||{};let wi=0,si=0,on=new Set(Object.keys(KEYS)),zoom=false;
-  host.innerHTML=`<div class="ar-tabs"></div><div class="ar-keys"></div><div class="ar-wrap"><div><figure class="ar-fig"><div class="ar-ctl"><button type="button" data-z>🔍 დეტალი</button></div><div class="ar-stage"><img alt=""><div class="ar-miss"></div></div><figcaption class="ar-cap"></figcaption></figure>${EDIT?'<textarea class="ar-edit" readonly></textarea>':''}</div><div><div class="ar-card"></div><div class="ar-nav"><button type="button" data-p>← წინა</button><button type="button" data-n>შემდეგი →</button></div><div class="ar-about"></div></div></div>`;
-  const q=s=>host.querySelector(s),stage=q('.ar-stage'),img=q('img'),miss=q('.ar-miss');
-  function W(){return works[wi];}
-  function vis(){return W().spots.map((s,i)=>i).filter(i=>on.has(W().spots[i].k));}
-  function tabs(){q('.ar-tabs').innerHTML=works.map((w,i)=>`<button type="button" aria-pressed="${i===wi}" class="${i===wi?'on':''}" data-w="${i}">${esc(w.short||w.title)}</button>`).join('');}
-  function keys(){const used=new Set(W().spots.map(s=>s.k));q('.ar-keys').innerHTML=Object.keys(KEYS).filter(k=>used.has(k)).map(k=>`<button type="button" data-k="${k}" class="${on.has(k)?'on':''}" style="--k:${KEYS[k][1]}">${KEYS[k][0]}</button>`).join('');}
-  function pins(){stage.querySelectorAll('.ar-pin').forEach(p=>p.remove());W().spots.forEach((s,i)=>{const b=document.createElement('button');b.type='button';b.className='ar-pin'+(i===si?' on':'')+(on.has(s.k)?'':' dim');b.style.left=s.x+'%';b.style.top=s.y+'%';b.style.setProperty('--k',KEYS[s.k][1]);b.textContent=i+1;b.dataset.i=i;b.setAttribute('aria-label',`${i+1}. ${s.t}`);stage.appendChild(b);});}
-  function card(){const s=W().spots[si],K=KEYS[s.k];const c=q('.ar-card');c.style.setProperty('--k',K[1]);
-    c.innerHTML=`<div class="k">${si+1} / ${W().spots.length} · ${K[0]}</div><h3>${s.t}</h3><div>${s.d}</div>${s.l?`<div class="lk">${s.l}</div>`:''}`;
-    stage.querySelectorAll('.ar-pin').forEach(p=>p.classList.toggle('on',+p.dataset.i===si));applyZoom();if(opts.onSpot)opts.onSpot(W(),s);}
-  function applyZoom(){const s=W().spots[si];if(!zoom){stage.style.transform='';q('.ar-fig').classList.remove('ar-zoomed');return;}
-    const z=2.4,f=q('.ar-fig').getBoundingClientRect(),w=f.width,h=stage.offsetHeight,tx=Math.min(0,Math.max(w-w*z,w/2-s.x/100*w*z)),ty=Math.min(0,Math.max(h-h*z,h/2-s.y/100*h*z));
-    stage.style.transform=`translate(${tx}px,${ty}px) scale(${z})`;q('.ar-fig').classList.add('ar-zoomed');}
-  function edit(){if(!EDIT)return;q('.ar-edit').value=JSON.stringify(W().spots.map(s=>({x:+s.x.toFixed(1),y:+s.y.toFixed(1),t:s.t.replace(/<[^>]+>/g,'')})),null,0).replace(/},{/g,'},\n{');}
-  function load(){const w=W();miss.style.display='none';img.alt=`${w.title} — ${w.author}`;
-    img.style.aspectRatio=w.ar||'';img.src=FP+encodeURIComponent(w.file).replace(/%2C/g,',')+'?width='+(w.px||1600);
-    q('.ar-cap').innerHTML=`<b style="color:#E3BE84">${w.title}</b> — ${w.author}, ${w.year}. ${w.place||''} · <a href="${CP+encodeURIComponent(w.file)}" target="_blank" rel="noopener">Wikimedia Commons</a> (საჯარო საკუთრება)`;
-    q('.ar-about').innerHTML=w.about||'';si=Math.max(0,vis()[0]??0);tabs();keys();pins();card();edit();}
-  img.addEventListener('load',()=>{img.style.aspectRatio='';});
-  img.addEventListener('error',()=>{miss.style.display='flex';miss.innerHTML='სურათი ვერ ჩაიტვირთა (Wikimedia). ნიშნები მაინც მუშაობს — დააჭირე ნომრებს.';});
-  host.addEventListener('click',e=>{const t=e.target.closest('button');
-    if(t&&t.dataset.w!=null){wi=+t.dataset.w;zoom=false;q('[data-z]').textContent='🔍 დეტალი';load();return;}
-    if(t&&t.dataset.k){const k=t.dataset.k;if(on.has(k)&&on.size>1)on.delete(k);else on.add(k);keys();pins();if(!on.has(W().spots[si].k)){si=vis()[0]??0;}card();return;}
-    if(t&&t.classList.contains('ar-pin')){if(EDIT&&t.dataset.moved){delete t.dataset.moved;return;}si=+t.dataset.i;card();return;}
-    if(t&&t.hasAttribute('data-z')){zoom=!zoom;t.textContent=zoom?'↩ მთლიანი':'🔍 დეტალი';applyZoom();return;}
-    if(t&&(t.hasAttribute('data-n')||t.hasAttribute('data-p'))){const v=vis(),k=v.indexOf(si),d=t.hasAttribute('data-n')?1:-1;si=v[(k+d+v.length)%v.length];card();return;}
-    if(EDIT&&e.target===img){const r=img.getBoundingClientRect();W().spots.push({x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100,k:'sym',t:'ახალი',d:''});si=W().spots.length-1;pins();card();edit();}});
-  if(EDIT){let drag=null;stage.addEventListener('pointerdown',e=>{const p=e.target.closest('.ar-pin');if(!p)return;drag=p;p.setPointerCapture(e.pointerId);});
-    stage.addEventListener('pointermove',e=>{if(!drag)return;const r=img.getBoundingClientRect(),s=W().spots[+drag.dataset.i];s.x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100));s.y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));drag.style.left=s.x+'%';drag.style.top=s.y+'%';drag.dataset.moved=1;edit();});
-    stage.addEventListener('pointerup',()=>{drag=null;});}
-  window.addEventListener('resize',()=>{if(zoom)applyZoom();});
-  load();
-  return {go(w,s){wi=w;zoom=false;q('[data-z]').textContent='🔍 დეტალი';load();if(s){si=s;card();}},state:()=>({wi,si,n:W().spots.length,zoom,ok:img.complete&&img.naturalWidth>0})};}
+function reader(host,works){style();let wi=0,st=0,timer=null,play=false;
+  host.innerHTML=`<div class="ar-tabs"></div><div class="ar-tour"><div class="ar-vw"><div class="ar-vp"><img alt=""><div class="ar-ring"></div><div class="ar-miss"></div></div>
+   <div class="ar-ctl"><button type="button" data-a="pv" aria-label="წინა">◀</button><button type="button" data-a="pl" aria-label="დაკვრა">▶</button><button type="button" data-a="nx" aria-label="შემდეგი">▶▶</button></div>
+   <div class="ar-bar"><i></i></div><div class="ar-cap"></div>${EDIT?'<textarea class="ar-edit" readonly></textarea>':''}</div>
+   <div class="ar-txt"><h3></h3><div class="st"></div><div class="tx"></div><div class="ar-chips"></div><div class="ar-keys"></div></div></div>`;
+  const q=s=>host.querySelector(s),vp=q('.ar-vp'),img=q('.ar-vp img'),ring=q('.ar-ring'),miss=q('.ar-miss');
+  const W=()=>works[wi];
+  const steps=()=>{const w=W();return [{x:50,y:50,z:1,t:'ნახატი მთლიანად',d:w.about,o:1}].concat(w.spots.map(s=>Object.assign({z:2.6},s)),[{x:50,y:50,z:1,t:'ყველაფერი ერთად',d:w.end||'',o:2}]);};
+  const src=(w,px)=>FP+encodeURIComponent(w.file).replace(/%2C/g,',')+'?width='+px;
+  function tabs(){q('.ar-tabs').innerHTML=works.map((w,i)=>`<button type="button" data-w="${i}" class="${i===wi?'on':''}"><img loading="lazy" src="${src(w,240)}" alt="">${w.short||w.title}</button>`).join('');}
+  function view(){const s=steps()[st],z=EDIT?1:s.z,Wd=vp.clientWidth,H=vp.clientHeight,x=s.x/100,y=s.y/100;
+    let tx=Wd/2-x*Wd*z,ty=H/2-y*H*z;tx=Math.min(0,Math.max(Wd-Wd*z,tx));ty=Math.min(0,Math.max(H-H*z,ty));
+    img.style.transform=`translate(${tx}px,${ty}px) scale(${z})`;
+    if(z>1.01){ring.style.left=(x*Wd*z+tx)+'px';ring.style.top=(y*H*z+ty)+'px';ring.classList.remove('on');const k=st;setTimeout(()=>{if(st===k&&steps()[st].z>1.01)ring.classList.add('on');},1300);}else ring.classList.remove('on');}
+  function text(){const S=steps(),s=S[st],L=S.length,w=W(),K=KEYS[s.k];
+    q('.ar-txt h3').textContent=w.title;
+    q('.st').innerHTML=s.o===1?`${w.author}, ${w.year} · ${L-2} სიმბოლო`:s.o===2?'შეჯამება':`${st} / ${L-2} · <span style="color:${K[1]}">${K[0]}</span> · ${s.t}`;
+    const tx=q('.tx');tx.innerHTML=(s.o?'':`<b>${s.t}.</b> `)+s.d;tx.style.animation='none';void tx.offsetWidth;tx.style.animation='';
+    q('.ar-chips').innerHTML=S.map((p,i)=>`<button type="button" data-s="${i}" class="${i===st?'on':i<st?'done':''}" ${p.k?`style="--k:${KEYS[p.k][1]}"`:''}>${i===0?'ნახატი':i===L-1?'შეჯამება':p.t}</button>`).join('');
+    const used=[...new Set(w.spots.map(p=>p.k))];q('.ar-keys').innerHTML=used.map(k=>`<span><i style="background:${KEYS[k][1]}"></i>${KEYS[k][0]}</span>`).join('');
+    q('.ar-bar i').style.width=(st/(L-1)*100)+'%';}
+  function pins(){vp.querySelectorAll('.ar-pin').forEach(p=>p.remove());if(!EDIT)return;W().spots.forEach((s,i)=>{const b=document.createElement('div');b.className='ar-pin';b.style.left=s.x+'%';b.style.top=s.y+'%';b.style.setProperty('--k',KEYS[s.k][1]);b.textContent=i+1;b.dataset.i=i;b.title=s.t;vp.appendChild(b);});
+    q('.ar-edit').value=W().spots.map((s,i)=>`${i+1}. {x:${s.x.toFixed(1)},y:${s.y.toFixed(1)}} ${s.t}`).join('\n');}
+  function go(i){const L=steps().length;st=Math.max(0,Math.min(L-1,i));view();text();}
+  function load(i){stop();wi=i;st=0;const w=W();miss.style.display='none';vp.style.aspectRatio=w.ar||'4/3';img.style.transition='none';img.alt=`${w.title} — ${w.author}`;img.src=src(w,2000);
+    q('.ar-cap').innerHTML=`${w.author}, „${w.title}“, ${w.year}. ${w.place||''} · <a href="${CP+encodeURIComponent(w.file)}" target="_blank" rel="noopener">Wikimedia Commons</a> (საჯარო საკუთრება)`;
+    view();void img.offsetWidth;img.style.transition='';tabs();text();pins();}
+  function tick(){if(!play)return;const L=steps().length;if(st<L-1){go(st+1);timer=setTimeout(tick,Math.max(6500,steps()[st].d.replace(/<[^>]+>/g,'').length*55));}else stop();}
+  function start(){play=true;q('[data-a="pl"]').textContent='❚❚';if(st>=steps().length-1)go(0);timer=setTimeout(tick,st===0?Math.max(6000,steps()[0].d.length*45):800);}
+  function stop(){play=false;clearTimeout(timer);const b=q('[data-a="pl"]');if(b)b.textContent='▶';}
+  img.addEventListener('load',()=>{if(img.naturalWidth)vp.style.aspectRatio=img.naturalWidth+'/'+img.naturalHeight;view();});
+  img.addEventListener('error',()=>{miss.style.display='flex';miss.textContent='სურათი ვერ ჩაიტვირთა (Wikimedia) — ტექსტი და ნაბიჯები მაინც მუშაობს.';});
+  host.addEventListener('click',e=>{const b=e.target.closest('button');
+    if(b&&b.dataset.w!=null){load(+b.dataset.w);return;}
+    if(b&&b.dataset.s!=null){stop();go(+b.dataset.s);return;}
+    if(b&&b.dataset.a){const a=b.dataset.a;if(a==='pl')play?stop():start();else{stop();go(st+(a==='nx'?1:-1));}return;}
+    if(EDIT&&e.target===img){const r=vp.getBoundingClientRect();W().spots.push({x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100,k:'sym',t:'ახალი',d:''});pins();text();}});
+  if(EDIT){let drag=null;vp.addEventListener('pointerdown',e=>{const p=e.target.closest('.ar-pin');if(!p)return;drag=p;p.setPointerCapture(e.pointerId);});
+    vp.addEventListener('pointermove',e=>{if(!drag)return;const r=vp.getBoundingClientRect(),s=W().spots[+drag.dataset.i];s.x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100));s.y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));drag.style.left=s.x+'%';drag.style.top=s.y+'%';q('.ar-edit').value=W().spots.map((s,i)=>`${i+1}. {x:${s.x.toFixed(1)},y:${s.y.toFixed(1)}} ${s.t}`).join('\n');});
+    vp.addEventListener('pointerup',()=>{drag=null;});}
+  document.addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;const r=host.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;if(e.key==='ArrowRight'){stop();go(st+1);}else if(e.key==='ArrowLeft'){stop();go(st-1);}});
+  window.addEventListener('resize',view);
+  load(0);
+  return {go(w,s){if(w!==wi)load(w);go(s||0);},state:()=>({wi,st,n:steps().length,play,ok:img.complete&&img.naturalWidth>0})};}
 window.ART={reader,KEYS};
 })();
