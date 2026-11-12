@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 2</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+.gm{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:14px;background:rgba(14,20,36,.5)}
+.gq{font-size:16px;line-height:1.6;margin-bottom:10px}.gq b{color:#F3DDA4}.gi{font-size:34px;vertical-align:middle;margin-right:6px}
+.gm .op{display:flex;flex-wrap:wrap;gap:6px}.gm .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:7px 14px;font:14px 'Noto Serif Georgian',serif;cursor:pointer}
+.gm .op button.ok{background:#2f6b45;border-color:#8fd19a}.gm .op button.no{background:#6b2f2f;border-color:#e05050}
+.gm .ex{margin-top:10px;font-size:13.5px;line-height:1.7;color:#d8dbe2}.gs{margin-top:8px;font:600 13px Cinzel,serif;color:#B8894A;text-align:right}
+.nx{margin-top:8px;background:#C9A24C;color:#0b1020;border:0;border-radius:8px;padding:6px 14px;font:600 13px 'Noto Serif Georgian',serif;cursor:pointer}
+.ty{display:grid;gap:6px}.ty button{display:grid;grid-template-columns:1fr 26px 1fr;gap:8px;align-items:center;text-align:left;background:#0e1424;border:1px solid rgba(184,137,74,.3);border-radius:10px;padding:9px 12px;color:#EDE6D8;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ty button .o{color:#E0B450}.ty button .n{color:#7fb8ff}.ty button .ar{color:#9aa3b6;text-align:center}
+.ty button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.35)}
+@media(max-width:560px){.ty button{grid-template-columns:1fr;gap:2px}.ty button .ar{text-align:left}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 1 · როგორ ვკითხულობთ სიმბოლოს</div>
+  <h1>გაკვეთილი 2 — ქრისტიანული იკონოგრაფია</h1>
+  <div class="sub">მოციქულების, წმინდანებისა და ანგელოზების ატრიბუტები; ტიპოლოგია: ძველი და ახალი აღთქმა</div>
+
+  <div class="intro">შუა საუკუნეების ადამიანების უმეტესობამ წერა-კითხვა არ იცოდა — მათთვის ტაძრის კედელი და საკურთხეველი <b>წიგნი</b> იყო. რომ ფიგურა სახელის გარეშე ამოეცნოთ, ყოველ წმინდანს თავისი <b>ატრიბუტი</b> ჰქონდა: საგანი, რომელიც მის ცხოვრებას ან მოწამეობას იხსენებს. გასაღები — პეტრე, ბორბალი — ეკატერინე, ისრები — სებასტიანე. მეორე ენა — <b>ტიპოლოგია</b>: ძველი აღთქმის ამბები ახალი აღთქმის „წინასახეებად“ იკითხებოდა, როგორც ორი რითმიანი სტრიქონი. ამ ორი ენის ცოდნით თითქმის ნებისმიერი ქრისტიანული ნახატი იხსნება.</div>
+
+  <div class="sec"><h2>1 · ატრიბუტების ატლასი</h2>
+    <div class="ktabs" id="aT"></div>
+    <div class="kbody"><div><p id="aI" style="margin-bottom:10px"></p><div class="kgrid" id="aG"></div></div><div><div class="kcard" id="aC"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>2 · ოთხი ცხოველი — ტეტრამორფი</h2>
+    <div class="kbody"><div class="kdia" id="tD"></div><div><div class="kcard" id="tC" style="--k:#E0B450"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>3 · ვინ არის? — ამოიცანი ატრიბუტით</h2>
+    <p style="margin-bottom:8px">ნახატზე ფიგურა სახელის გარეშე დგას. მის ხელშია ან გვერდით:</p>
+    <div class="gm"><div class="gq" id="gQ"></div><div class="op" id="gO"></div><div class="ex" id="gX"></div><div class="gs" id="gS"></div></div>
+  </div>
+
+  <div class="sec"><h2>4 · ტიპოლოგია: ორი აღთქმა, როგორც რითმა</h2>
+    <p style="margin-bottom:10px">„ახალი აღთქმა ძველში დაფარულია, ძველი — ახალში გაცხადებული“ (ნეტარი ავგუსტინე). შუა საუკუნეების „ღარიბთა ბიბლია“ (Biblia pauperum) ყოველ სახარებისეულ სცენას ორ ძველაღთქმისეულ წინასახეს უთავსებდა. დააჭირე წყვილს:</p>
+    <div class="ty" id="yL"></div>
+    <div class="kcard" id="yC" style="--k:#7fb8ff;margin-top:12px"></div>
+  </div>
+
+  <div class="sec"><h2>5 · მარიამის სიმბოლოები</h2>
+    <div class="kgrid" id="mG"></div>
+    <div class="kcard" id="mC" style="--k:#7fb8ff;margin-top:12px"></div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art1.html">← ხელოვნების ენა</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 3 — მალე →</a></div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/<[^>]+>/g,'');
+/* ── atlas: [icon, name, attribute short, text, where/example] ── */
+const A={
+ap:{n:'მოციქულები',c:'#E0B450',i:'თორმეტი მოციქული ხშირად ერთად ჩანს — „საიდუმლო სერობაში“, „ამაღლებაში“, საკურთხევლის ქვედა რიგში (პრედელა). მათ ატრიბუტად ხშირად <b>მოწამეობის იარაღი</b> უჭირავთ: ის, რითაც გადმოცემით მოკლეს.',
+ it:[['🔑','პეტრე','გასაღებები, მამალი','„შენ ხარ პეტრე (კლდე)… და მოგცემ შენ კლიტეთა სასუფეველისათა“: ოქროს და ვერცხლის გასაღები — ზეცისა და მიწის ხელისუფლება. <b>მამალი</b> — სამგზის უარყოფა ქრისტესი, ვიდრე მამალი იყივლებდა. ხშირად — მოკლე თეთრი, ხუჭუჭა წვერი. ჯვარს თავდაყირა აცვეს: ამიტომ ზოგჯერ შებრუნებული ჯვარიც.','ტაროში „მღვდელმთავრის“ (V) ფეხებთან ორი გადაჯვარედინებული გასაღებია — პეტრეს ტახტის ნიშანი.'],
+  ['⚔️','პავლე','მახვილი, წიგნი','წარმართთა მოციქული, ეპისტოლეების ავტორი — ამიტომ <b>წიგნი</b> ან გრაგნილი. <b>მახვილი</b> — რომში თავი მოჰკვეთეს (როგორც რომის მოქალაქეს, ჯვარზე ვერ აცვამდნენ). ხატზე — მელოტი შუბლი და გრძელი, მუქი წვერი. ხშირად პეტრეს გვერდით: ორი „ეკლესიის სვეტი“.',''],
+  ['✖️','ანდრია','X-ისებრი ჯვარი','პეტრეს ძმა, „პირველწოდებული“ — ქრისტემ ყველაზე ადრე მოუწოდა. გადმოცემით, პატრაში ირიბ, <b>X-ისებრ ჯვარზე</b> აცვეს. ქართული ეკლესიის ტრადიციით ანდრიამ საქართველოში იქადაგა — ამიტომ ის ქართული ეკლესიის დამაარსებელ მოციქულად ითვლება.','შოტლანდიის დროშის თეთრი X — ანდრიას ჯვარია.'],
+  ['🐚','იაკობ ზებედეს ძე (უფროსი)','ნიჟარა, მომლოცველის კვერთხი','იოანე მახარებლის ძმა. გადმოცემით, მისი ნეშტი ესპანეთში, სანტიაგო-დე-კომპოსტელაშია — შუა საუკუნეების უდიდესი მომლოცველობის ადგილი. ამიტომ <b>ნიჟარა</b>, კვერთხი, ფართოფარფლებიანი ქუდი და სამგზავრო ჩანთა — თავად მომლოცველის სახეა.','პირველ გაკვეთილში ნიჟარა ვენერას დაბადების ნიშანი იყო — ერთი სიმბოლო, ორი სამყარო.'],
+  ['🦅','იოანე','არწივი, სასმისი გველით','ყველაზე ახალგაზრდა მოციქული, ხატზე — უწვერო (მოხუცებულობაში — პატმოსზე, „გამოცხადების“ წერისას — თეთრწვერა). <b>არწივი</b> — მისი სახარება ყველაზე „მაღლა“ დაფრინავს: „თავიდან იყო სიტყვა“. <b>სასმისი გველით</b> — ლეგენდით, მოწამლული ღვინო დალია და ცოცხალი დარჩა.',''],
+  ['🔪','ბართლომე','დანა, საკუთარი ტყავი','გადმოცემით, სომხეთში ცოცხლად გაატყავეს. ამიტომ ხელში <b>დანა</b> უჭირავს, ზოგჯერ — მკლავზე გადაკიდებული საკუთარი ტყავი. მიქელანჯელომ „განკითხვის დღეში“ ბართლომეს ხელში ტყავზე თავისი ავტოპორტრეტი დახატა.',''],
+  ['📐','თომა','გონიო (კუთხედი), შუბი','„ურწმუნო“ თომა, რომელმაც აღდგომილი ქრისტეს ჭრილობაში თითი ჩადო. გადმოცემით, ინდოეთში იქადაგა და მეფისთვის სასახლე ააშენა — ამიტომ <b>ხუროთმოძღვრის კუთხედი</b>; შუბით მოკლეს. არქიტექტორების მფარველი.',''],
+  ['💰','მათე','ფულის ქისა, ანგელოზი','მებაჟე, რომელსაც ქრისტემ მოუწოდა (პირველი გაკვეთილის კარავაჯოს ნახატი!). <b>ქისა</b> ან ფულის ყუთი — ძველი ხელობა; მახარებლის სიმბოლოდ — <b>ფრთოსანი კაცი / ანგელოზი</b>, რადგან მისი სახარება ქრისტეს ადამიანური გენეალოგიით იწყება.',''],
+  ['🍞','ფილიპე','ჯვარი კვერთხზე, პურები','პურების გამრავლების სასწაულთან დაკავშირებული („რამდენი პური გაქვთ?“). გადმოცემით, ჯვარზე აცვეს — ამიტომ გრძელი, კვერთხისებრი <b>ჯვარი</b>.',''],
+  ['🏏','იაკობ ალფესი (უმცროსი)','მკაწვრელის ჯოხი','იერუსალიმის პირველი ეპისკოპოსი. გადმოცემით, ტაძრის სახურავიდან გადმოაგდეს და <b>მკაწვრელის (მატყლის მთელის) ჯოხით</b> მოკლეს — ეს ჯოხი მისი ატრიბუტია.',''],
+  ['🪓','თადეოზი (იუდა)','კეტი, ჰალებარდა','„იუდა, არა ისკარიოტელი“ — დაკარგული საქმეების მფარველი. ატრიბუტი — <b>კეტი</b> ან ჰალებარდა (მოწამეობა), ზოგჯერ მკერდზე ქრისტეს გამოსახულების მედალიონი.',''],
+  ['🪚','სვიმონ კანანელი','ხერხი','გადმოცემით, ხერხით გაკვეთეს — ამიტომ <b>ხერხი</b>. ქართული ტრადიციით, სვიმონ კანანელი აფხაზეთში, ანაკოფიაში (ახალ ათონში) იქადაგა და იქვეა დაკრძალული.',''],
+  ['🎲','მატათია','ცული, კენჭისყრა','იუდას ნაცვლად კენჭისყრით აირჩიეს — თორმეტის რიცხვი აღდგა. მოწამეობის <b>ცული</b>. ქართული ტრადიციით მისი საფლავი გონიოს ციხეშია.','']]},
+st:{n:'წმინდანები',c:'#ff8a8a',i:'წმინდანის ატრიბუტი ხშირად მისი <b>ცხოვრების ერთი ეპიზოდია</b>: სასწაული, მოწამეობა ან ხელობა. ერთი ფიგურა შეიძლება რამდენიმე ატრიბუტით ჩანდეს — ამოსაცნობად ორი ნიშანი საკმარისია.',
+ it:[['🐉','გიორგი','დრაკონი, შუბი, თეთრი ცხენი','მეომარი წმინდანი, რომელიც <b>დრაკონს</b> შუბით კლავს და ქალწულს (ან ქალაქს) იხსნის. დრაკონი — ბოროტება, წარმართობა, ქაოსი. თეთრი ცხენი — სიწმინდე და გამარჯვება. საქართველოს მფარველი: თეთრი დროშის წითელი ჯვარი გიორგის ჯვარია.','ასტროლოგიურად — მარსის ძალა, რომელიც სიკეთის სამსახურშია; ტაროში — „ეტლი“ (VII) და „ძალა“ (VIII): ბოროტის მოთვინიერება.'],
+  ['🍇','ნინო','ვაზის ჯვარი','საქართველოს განმანათლებელი. ვაზის რქებისგან შეკრული ჯვარი, <b>საკუთარი თმით</b> შეკრული — ამიტომ ჯვრის მკლავები ოდნავ დაშვებულია. ვაზი — ქრისტე („მე ვარ ვაზი ჭეშმარიტი“) და ქართული მიწა ერთდროულად.',''],
+  ['🎡','ეკატერინე ალექსანდრიელი','ბორბალი, გვირგვინი, მახვილი','სწავლული პრინცესა, რომელმაც ფილოსოფოსები დაარწმუნა. დასასჯელად <b>წვეტიან ბორბალზე</b> უნდა გაეწამებინათ, მაგრამ ბორბალი ციდან ჩამოსულმა ცეცხლმა დაამსხვრია; მერე თავი მოჰკვეთეს. გვირგვინი — სამეფო წარმოშობა, წიგნი — სიბრძნე.','ტაროს „ბედის ბორბალი“ (X) და ეკატერინეს ბორბალი — ორი ბორბალი: ბედი და რწმენა.'],
+  ['🏰','ბარბარე','კოშკი სამი ფანჯრით','მამამ კოშკში გამოკეტა; მან კოშკში <b>მესამე ფანჯარა</b> გააჭრევინა — სამების ნიშნად. ელვისა და ცეცხლის მფარველი (მამა, რომელმაც სიკვდილით დასაჯა, ელვამ მოკლა) — ამიტომ არტილერისტების და მეშახტეების მფარველიცაა.','ტაროს „კოშკი“ (XVI) — ელვა და კოშკი: სხვა ამბავი, მსგავსი სიმბოლოები.'],
+  ['🏹','სებასტიანე','ისრები','რომაელი ოფიცერი, რომელიც ქრისტიანობისთვის ხეზე მიაბეს და <b>ისრებით</b> განგმირეს; გადარჩა და მოგვიანებით მოკლეს. შავი ჭირის დროს მფარველად მიმართავდნენ — ისარი სენის სიმბოლოც იყო („ღვთის ისრები“). რენესანსის მხატვრებისთვის — შიშველი სხეულის დახატვის „ნებადართული“ მიზეზი.',''],
+  ['👁️','ლუკია','თვალები ლანგარზე, ლამპარი','სახელი lux-დან, „სინათლიდან“ მოდის. გადმოცემით, თვალები დასთხარეს — ამიტომ <b>ლანგარზე ორი თვალი</b> უჭირავს; თვალის დაავადებების მფარველი. ლამპარი — სინათლე სიბნელეში; მისი დღესასწაული ზამთრის მზებუდობასთან ახლოსაა.',''],
+  ['🦁','იერონიმე','ლომი, კარდინალის ქუდი, თავის ქალა','ბიბლიის ლათინურად მთარგმნელი. ლეგენდით, ლომს თათიდან ეკალი ამოაძრო და ლომი მისი ერთგული გახდა. <b>წითელი კარდინალის ქუდი</b> (ანაქრონიზმი — მის დროს კარდინალები არ იყვნენ), <b>თავის ქალა</b> — memento mori, ქვა — მონანიება, წიგნი — მეცნიერება.','დიურერის „იერონიმე სენაკში“ — „მელანქოლია I“-ის ტყუპი გრავიურა (გაკვეთილი 16).'],
+  ['🕊️','ფრანცისკე ასიზელი','სტიგმატები, ფრინველები, ყავისფერი ანაფორა','<b>სტიგმატები</b> — ქრისტეს ხუთი ჭრილობა ხელებზე, ფეხებსა და გვერდზე. ფრინველებს ქადაგებდა, მგელი მოათვინიერა. ყავისფერი, თოკით შემოსარტყლული სამოსი — სიღარიბის აღთქმა (სამი კვანძი: სიღარიბე, უბიწოება, მორჩილება).',''],
+  ['🏺','მარიამ მაგდალინელი','ნელსაცხებლის ჭურჭელი, გრძელი თმა','ქალი, რომელმაც ქრისტეს ფეხები ნელსაცხებლით სცხო და თმით შეწმინდა; აღდგომის პირველი მოწმე („Noli me tangere“). <b>ალებასტრის ჭურჭელი</b>, გაშლილი გრძელი თმა, წითელი სამოსი. მართლმადიდებლობაში — „მენელსაცხებლე“ და „მოციქულთასწორი“.',''],
+  ['🐑','იოანე ნათლისმცემელი','კრავი, აქლემის ტყავი, ჯვარი-კვერთხი','უდაბნოს წინასწარმეტყველი: <b>აქლემის ბეწვის</b> სამოსი, გამხდარი სხეული. ქრისტეზე მიუთითებს და ამბობს: „აჰა, კრავი ღვთისა“ — ამიტომ <b>კრავი</b>, ხშირად გრაგნილით „Ecce Agnus Dei“. მართლმადიდებლურ ხატზე — ფრთოსანი, როგორც „ანგელოზი“ (მაცნე).',''],
+  ['👶','ქრისტეფორე','ბავშვი მხარზე, კვერთხი','სახელი „ქრისტეს მატარებელს“ ნიშნავს. ლეგენდით, გოლიათი ხალხს მდინარეზე გადაჰყავდა; ერთ დღეს პატარა ბავშვი ისე დამძიმდა, თითქოს მთელი სამყარო ეკიდა — ეს ქრისტე იყო, „სამყაროს ტვირთით“. მოგზაურების მფარველი.',''],
+  ['🟡','ნიკოლოზი','სამი ოქროს ბურთი','მირონის ეპისკოპოსმა სამ ღარიბ ქალიშვილს მზითევისთვის ფანჯრიდან <b>სამი ქისა ოქრო</b> შეუგდო — ამიტომ სამი ოქროს ბურთი. ბავშვების და მეზღვაურების მფარველი; მისგან მოდის სანტა კლაუსის სახე.','']]},
+an:{n:'ანგელოზები',c:'#fff2b3',i:'ანგელოზი — „მაცნე“ (ბერძნ. angelos). ფსევდო-დიონისე არეოპაგელმა ისინი <b>ცხრა დასად</b> დაალაგა, სამ-სამ იერარქიად; მთავარანგელოზებს ცალკე ატრიბუტები აქვთ.',
+ it:[['⚖️','მიქაელი','მახვილი, სასწორი, დრაკონი','ზეციური ლაშქრის მთავარსარდალი: „ვინ არის, როგორც ღმერთი?“ (Mi-ka-el). ჯავშანში, <b>მახვილით</b> ან შუბით, ფეხქვეშ <b>დრაკონი / სატანა</b>. <b>სასწორი</b> — განკითხვის დღეს სულებს წონის. ქართულ ეკლესიებში — „მიქაელ და გაბრიელ მთავარანგელოზთა“ სახელობის ტაძრები უამრავია.','ტაროს „სამართალს“ (XI) იგივე ორი ნიშანი აქვს — სასწორი და მახვილი.'],
+  ['⚜️','გაბრიელი','შროშანი, კვერთხი, გრაგნილი','ხარების ანგელოზი. <b>შროშანი</b> — მარიამის უბიწოება (ზოგჯერ კვერთხი ან ზეთისხილის რტო — მშვიდობა); გრაგნილზე — „Ave Maria gratia plena“. ხშირად მუხლმოყრილი ან წინ გადახრილი, მარიამის მარცხნივ (ჩვენთვის).','ტაროს „განკითხვის“ (XX) საყვირიან ანგელოზს ტრადიციულად გაბრიელად მიიჩნევენ.'],
+  ['🐟','რაფაელი','თევზი, მოგზაურის კვერთხი, ტობია','„ღმერთი კურნავს“. ტობიას წიგნში ის ახალგაზრდა ტობიას მოგზაურობაში ახლავს და ასწავლის, როგორ განკურნოს მამის სიბრმავე <b>თევზის</b> ღვიძლით. მოგზაურების და მკურნალების მფარველი.','ტაროს „შეყვარებულებში“ (VI) ანგელოზი რაფაელად ითვლება.'],
+  ['🔥','სერაფიმები','ექვსი ფრთა, წითელი','ღმერთთან ყველაზე ახლოს — სიყვარულის ცეცხლი (ებრ. saraf — „დაწვა“). <b>ექვსი ფრთა</b>: ორით სახეს იფარავენ, ორით ფეხებს, ორით დაფრინავენ (ესაია). წითელი ან ოქროსფერი.',''],
+  ['👁️','ქერუბიმები','ოთხი ფრთა, თვალები, ლურჯი','ღვთის ცოდნა და სიბრძნე; სამოთხის კარის მცველები ცეცხლოვანი მახვილით. ფრთები <b>თვალებით</b> არის სავსე; ფერი — ლურჯი. ხშირად — მხოლოდ თავი და ფრთები.',''],
+  ['☸️','საყდრები','ცეცხლოვანი ბორბლები','ეზეკიელის ხილვის <b>ბორბლები თვალებით</b> — ღვთის ტახტის მატარებლები, მართლმსაჯულება. პირველი იერარქიის მესამე დასი.','']]}};
+let AK='ap',AI=0;
+function aUI(){$('aT').innerHTML=Object.keys(A).map(k=>`<button type="button" data-k="${k}" class="${k===AK?'on':''}" style="--k:${A[k].c}">${A[k].n}</button>`).join('');
+  const a=A[AK];$('aI').innerHTML=a.i;
+  $('aG').innerHTML=a.it.map((it,i)=>`<button type="button" data-i="${i}" class="${i===AI?'on':''}"><span class="ic" aria-hidden="true">${it[0]}</span>${it[1]}</button>`).join('');
+  const it=a.it[AI];$('aC').style.setProperty('--k',a.c);
+  $('aC').innerHTML=`<h3><span aria-hidden="true">${it[0]}</span> ${it[1]} — <span style="font-weight:400;color:#d8dbe2">${it[2]}</span></h3>${it[3]}${it[4]?`<div class="ex">${it[4]}</div>`:''}`;}
+$('aT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;AK=b.dataset.k;AI=0;aUI();});
+$('aG').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;AI=+b.dataset.i;aUI();});
+aUI();
+
+/* ── tetramorph ── */
+const TM=[['ადამიანი / ანგელოზი','მათე','მერწყული ♒','მათეს სახარება ქრისტეს გენეალოგიით — ადამიანური წარმომავლობით იწყება. ქრისტეს <b>განკაცება</b>.',  '#EDE6D8',90,40],
+ ['ლომი','მარკოზი','ლომი ♌','მარკოზის სახარება უდაბნოში მღაღადებლის ხმით იწყება („ხმა მღაღადებლისა უდაბნოსა შინა“) — ლომის ღრიალი. ქრისტეს <b>აღდგომა</b> და მეფობა; ლომი, შუა საუკუნეების რწმენით, თვალღია იძინებდა.','#E0B450',90,190],
+ ['ხარი','ლუკა','კურო ♉','ლუკას სახარება ზაქარიას მსხვერპლშეწირვით იწყება ტაძარში — ხარი მსხვერპლის ცხოველია. ქრისტეს <b>მსხვერპლი</b>. ლუკა, გადმოცემით, ხატმწერიც იყო — ღვთისმშობლის პირველი ხატის ავტორი.','#b3242a',270,190],
+ ['არწივი','იოანე','მორიელი ♏ (არწივი)','იოანეს სახარება „ზეცაში“ იწყება: „თავიდან იყო სიტყვა“. არწივი ყველაზე მაღლა დაფრინავს და მზეს პირდაპირ უყურებს. ქრისტეს <b>ამაღლება</b>. ასტროლოგიურ ტრადიციაში არწივი მორიელის „ამაღლებული“ სახეა.','#7fb8ff',270,40]];
+let TI=0;
+function tUI(){let s='<svg viewBox="0 0 360 250" role="img" aria-label="ტეტრამორფი"><circle cx="180" cy="125" r="54" fill="none" stroke="#E0B450" stroke-dasharray="3 3"/><text x="180" y="120" fill="#F3DDA4" font-size="13" text-anchor="middle">ქრისტე</text><text x="180" y="138" fill="#9aa3b6" font-size="10" text-anchor="middle">მანდორლაში</text>';
+  TM.forEach((t,i)=>{s+=`<g data-i="${i}" style="cursor:pointer"><rect x="${t[5]-62}" y="${t[6]-4}" width="124" height="${i===TI?54:50}" rx="10" fill="${i===TI?'rgba(224,180,80,.18)':'#0e1424'}" stroke="${t[4]}" stroke-width="${i===TI?2.5:1}"/><text x="${t[5]}" y="${t[6]+18}" fill="${t[4]}" font-size="12.5" text-anchor="middle">${t[0]}</text><text x="${t[5]}" y="${t[6]+36}" fill="#cfd5e2" font-size="11" text-anchor="middle">${t[1]} · ${t[2]}</text></g>`;});
+  s+='<text x="180" y="244" fill="#9aa3b6" font-size="10" text-anchor="middle">ეზეკიელი 1:10 · გამოცხადება 4:7</text></svg>';$('tD').innerHTML=s;
+  const t=TM[TI];$('tC').style.setProperty('--k',t[4]);
+  $('tC').innerHTML=`<h3>${t[0]} — ${t[1]}</h3>${t[3]}<div class="ex"><b>ზოდიაქოში:</b> ${t[2]} — ოთხი <b>ფიქსირებული</b> ნიშანი, ოთხი სტიქია (ჰაერი, ცეცხლი, მიწა, წყალი). ეს ოთხი ცხოველი ტაროს „<b>სამყაროს</b>“ (XXI) და „<b>ბედის ბორბლის</b>“ (X) ოთხ კუთხეშია — <a href="course_tarot6.html#21" style="color:#E3BE84">🃏 სამყარო</a> · <a href="course_tarot6.html#10" style="color:#E3BE84">🃏 ბედის ბორბალი</a>.</div>`;}
+$('tD').addEventListener('click',e=>{const g=e.target.closest('g[data-i]');if(!g)return;TI=+g.dataset.i;tUI();});
+tUI();
+
+/* ── who is it? game ── */
+const POOL=[].concat(A.ap.it,A.st.it,A.an.it.slice(0,3));let G=null,gn=0,gok=0;
+function gNew(){const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);const ans=POOL[Math.floor(Math.random()*POOL.length)],opts=sh([ans].concat(sh(POOL.filter(x=>x!==ans)).slice(0,3)));
+  G={ans,opts,done:false};$('gQ').innerHTML=`<span class="gi" aria-hidden="true">${ans[0]}</span> <b>${ans[2]}</b>`;
+  $('gO').innerHTML=opts.map((o,i)=>`<button type="button" data-i="${i}">${o[1]}</button>`).join('');$('gX').innerHTML='';}
+$('gO').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(G.done){gNew();return;}const o=G.opts[+b.dataset.i],ok=o===G.ans;G.done=true;gn++;if(ok)gok++;
+  $('gO').querySelectorAll('button').forEach((x,i)=>{if(G.opts[i]===G.ans)x.classList.add('ok');else if(x===b)x.classList.add('no');});
+  $('gX').innerHTML=`${ok?'სწორია! ':'ეს '+G.ans[1]+'-ა. '}${esc(G.ans[3]).split('. ').slice(0,2).join('. ')}.<br><button type="button" class="nx" id="gN">შემდეგი →</button>`;$('gS').textContent=`${gok} / ${gn}`;
+  $('gN').onclick=gNew;});
+gNew();
+
+/* ── typology ── */
+const TY=[['ადამი და ევა სამოთხეში','ქრისტე და ეკლესია / ახალი ადამი','ძველი ადამის ურჩობით სიკვდილი შემოვიდა, „ახალი ადამის“ მორჩილებით — სიცოცხლე (პავლე). ჯვარი ხშირად ადამის თავის ქალაზეა აღმართული: გოლგოთაზე, გადმოცემით, ადამია დაკრძალული — ამიტომ ჯვარცმის ძირში თავის ქალაა.'],
+ ['ევა','მარიამი — ახალი ევა','ევამ ურჩობით დაკარგა, მარიამმა მორჩილებით დაიბრუნა. „EVA“ შებრუნებით „AVE“ — ანგელოზის მისალმება. პირველი გაკვეთილის ფრა ანჯელიკოს „ხარება“ ზუსტად ამ წყვილს ხატავს.'],
+ ['ისაკის მსხვერპლშეწირვა','ჯვარცმა','მამა (აბრაამი) ერთადერთ ძეს სწირავს; ისაკს თავად მიაქვს შეშა მთაზე — როგორც ქრისტეს ჯვარი გოლგოთაზე. ბოლოს ვერძი ჩანაცვლდა: „კრავი ღვთისა“.'],
+ ['იონა ვეშაპის მუცელში','დაფლვა და აღდგომა','„როგორც იონა სამ დღეს და სამ ღამეს იყო ვეშაპის მუცელში, ასე იქნება ძე კაცისა მიწის გულში“ (მათე 12:40). კატაკომბებში იონა აღდგომის ყველაზე ხშირი სიმბოლოა.'],
+ ['სპილენძის გველი უდაბნოში','ჯვარცმა','მოსემ ბოძზე აღმართა სპილენძის გველი, და ვინც მას შეხედავდა, განიკურნებოდა. „როგორც მოსემ აღმართა გველი უდაბნოში, ასე უნდა აღიმართოს ძე კაცისა“ (იოანე 3:14).'],
+ ['ანთებული მაყვლოვანი','ქალწულებრივი შობა','ბუჩქი იწვოდა და არ იწვოდა — მარიამმა ღმერთი შობა და ქალწულად დარჩა. მართლმადიდებლობაში — ღვთისმშობლის ხატი „უწველი მაყვლოვანი“.'],
+ ['მანანა უდაბნოში','ევქარისტია','ზეციური პური, რომლითაც ისრაელი უდაბნოში იკვებებოდა, ზიარების პურის წინასახეა: „მე ვარ პური ცხოველი, ზეცით გარდამოსული“.'],
+ ['იაკობის კიბე','მარიამი / ქრისტე — ზეცისა და მიწის კავშირი','კიბე, რომელზეც ანგელოზები ადიან და ჩადიან — ზეცისა და მიწის შეერთება; ღვთისმშობლის ეპითეტი „კიბე ზეცისა“.']];
+let YI=0;
+function yUI(){$('yL').innerHTML=TY.map((t,i)=>`<button type="button" data-i="${i}" class="${i===YI?'on':''}"><span class="o">${t[0]}</span><span class="ar" aria-hidden="true">⟶</span><span class="n">${t[1]}</span></button>`).join('');
+  const t=TY[YI];$('yC').innerHTML=`<h3>${t[0]} → ${t[1]}</h3>${t[2]}`;}
+$('yL').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;YI=+b.dataset.i;yUI();});
+yUI();
+
+/* ── Marian symbols ── */
+const MS=[['⚜️','შროშანი','უბიწოება, სიწმინდე — ხარების სცენის მუდმივი ყვავილი. სამი ყვავილი ღეროზე — უბიწოება შობამდე, შობისას და შობის შემდეგ.'],
+ ['🌹','ვარდი უეკლო','„ვარდი ეკლის გარეშე“ — მარიამი ცოდვის „ეკლის“ გარეშე; ვარდების ბაღი — როზარიუმი, ლოცვა-კრიალოსანი.'],
+ ['🌙','ნამგალა მთვარე ფეხქვეშ','„ქალი, მზით შემოსილი, და მთვარე მის ფეხქვეშ“ (გამოცხადება 12) — უმანკო ჩასახვის გამოსახულებები. მთვარე — ცვალებადობა, რომელსაც ის „ზემოთ“ დგას.'],
+ ['⭐','ზღვის ვარსკვლავი','Stella maris — მეზღვაურების ვარსკვლავი, რომელიც გზას აჩვენებს. მოსასხამზე მხარზე და შუბლზე სამი ვარსკვლავი (მართლმადიდებლურ ხატზე) — უბიწოება სამგზის.'],
+ ['🏡','დახურული ბაღი','Hortus conclusus — „ბაღი დახურული ხარ, დაო ჩემო, პატარძალო“ (ქებათა ქება). კედლით შემოზღუდული ბაღი — ქალწულებრიობა, სამოთხის აღდგენა.'],
+ ['🗼','სპილოს ძვლის კოშკი','Turris eburnea — ლიტანიის ეპითეტი: სიწმინდე და სიმტკიცე. ასევე — „დავითის კოშკი“, „ოქროს სახლი“, „ცის კარი“.'],
+ ['🪞','უბიწო სარკე','Speculum sine macula — სარკე, რომელიც ღვთის სინათლეს უცვლელად ირეკლავს (სიბრძნის წიგნი 7:26). პირველი გაკვეთილის არნოლფინის სარკე!'],
+ ['🦄','მარტორქა','შუა საუკუნეების ლეგენდით, მარტორქას მხოლოდ ქალწული მოათვინიერებდა — მარტორქა ქალწულის კალთაში ქრისტეს განკაცების ალეგორია იყო.']];
+let MI=0;
+function mUI(){$('mG').innerHTML=MS.map((m,i)=>`<button type="button" data-i="${i}" class="${i===MI?'on':''}"><span class="ic" aria-hidden="true">${m[0]}</span>${m[1]}</button>`).join('');
+  $('mC').innerHTML=`<h3>${MS[MI][0]} ${MS[MI][1]}</h3>${MS[MI][2]}`;}
+$('mG').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;MI=+b.dataset.i;mUI();});
+mUI();
+window.MG_ART2=()=>({ap:A.ap.it.length,st:A.st.it.length,an:A.an.it.length,ty:TY.length,ms:MS.length});
+
+/* ── quiz ── */
+const Q=[['ფიგურას ხელში ორი გასაღები უჭირავს. ვინ არის?',['პავლე','პეტრე','იაკობი','იოანე'],1,'„მოგცემ შენ კლიტეთა სასუფეველისათა“.'],
+ ['X-ისებრი ჯვარი რომელი მოციქულის ატრიბუტია?',['ფილიპე','ანდრია','თომა','მათე'],1,'ანდრია პირველწოდებული — ქართული ეკლესიის მოციქული.'],
+ ['ტეტრამორფში ხარი რომელ მახარებელს ეკუთვნის?',['მათე','მარკოზი','ლუკა','იოანე'],2,'ლუკას სახარება ტაძარში მსხვერპლშეწირვით იწყება.'],
+ ['ბორბალი და გვირგვინი —',['ბარბარე','ლუკია','ეკატერინე ალექსანდრიელი','მაგდალინელი'],2,''],
+ ['იონა ვეშაპის მუცელში ტიპოლოგიურად წინასახეა —',['ნათლობის','დაფლვისა და აღდგომის','ხარების','ამაღლების'],1,'„სამ დღეს და სამ ღამეს“.'],
+ ['ფიგურას ლანგარზე ორი თვალი უჭირავს —',['ლუკია','ბარბარე','სებასტიანე','ნინო'],0,'lux — სინათლე.'],
+ ['რატომ არის ჯვარცმის ძირში თავის ქალა?',['memento mori','გადმოცემით, გოლგოთაზე ადამია დაკრძალული','მხატვრის ხელმოწერა','მოწამეობის ნიშანი'],1,'ახალი ადამის სისხლი ძველ ადამს გამოისყიდის.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
