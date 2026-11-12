@@ -154,11 +154,18 @@ const TM=[['ადამიანი / ანგელოზი','მათე',
  ['ხარი','ლუკა','კურო ♉','ლუკას სახარება ზაქარიას მსხვერპლშეწირვით იწყება ტაძარში — ხარი მსხვერპლის ცხოველია. ქრისტეს <b>მსხვერპლი</b>. ლუკა, გადმოცემით, ხატმწერიც იყო — ღვთისმშობლის პირველი ხატის ავტორი.','#b3242a',270,190],
  ['არწივი','იოანე','მორიელი ♏ (არწივი)','იოანეს სახარება „ზეცაში“ იწყება: „თავიდან იყო სიტყვა“. არწივი ყველაზე მაღლა დაფრინავს და მზეს პირდაპირ უყურებს. ქრისტეს <b>ამაღლება</b>. ასტროლოგიურ ტრადიციაში არწივი მორიელის „ამაღლებული“ სახეა.','#7fb8ff',270,40]];
 let TI=0;
-function tUI(){let s='<svg viewBox="0 0 360 250" role="img" aria-label="ტეტრამორფი"><circle cx="180" cy="125" r="54" fill="none" stroke="#E0B450" stroke-dasharray="3 3"/><text x="180" y="120" fill="#F3DDA4" font-size="13" text-anchor="middle">ქრისტე</text><text x="180" y="138" fill="#9aa3b6" font-size="10" text-anchor="middle">მანდორლაში</text>';
-  TM.forEach((t,i)=>{s+=`<g data-i="${i}" style="cursor:pointer"><rect x="${t[5]-62}" y="${t[6]-4}" width="124" height="${i===TI?54:50}" rx="10" fill="${i===TI?'rgba(224,180,80,.18)':'#0e1424'}" stroke="${t[4]}" stroke-width="${i===TI?2.5:1}"/><text x="${t[5]}" y="${t[6]+18}" fill="${t[4]}" font-size="12.5" text-anchor="middle">${t[0]}</text><text x="${t[5]}" y="${t[6]+36}" fill="#cfd5e2" font-size="11" text-anchor="middle">${t[1]} · ${t[2]}</text></g>`;});
-  s+='<text x="180" y="244" fill="#9aa3b6" font-size="10" text-anchor="middle">ეზეკიელი 1:10 · გამოცხადება 4:7</text></svg>';$('tD').innerHTML=s;
+function tUI(){const IC=['👼','🦁','🐂','🦅'],P=[[100,100],[100,360],[360,360],[360,100]],bw=184,bh=156;
+  let s='<svg viewBox="0 0 460 460" role="img" aria-label="ტეტრამორფი: ოთხი ცხოველი ქრისტეს ირგვლივ">';
+  s+='<path d="M100 100 L360 360 M360 100 L100 360" stroke="rgba(224,180,80,.25)" stroke-width="1.5"/>';
+  TM.forEach((t,i)=>{const [cx,cy]=P[i],on=i===TI;s+=`<g data-i="${i}" style="cursor:pointer"><rect x="${cx-bw/2+6}" y="${cy-bh/2+6}" width="${bw-12}" height="${bh-12}" rx="16" fill="${on?'rgba(224,180,80,.16)':'#0e1424'}" stroke="${t[4]}" stroke-width="${on?3:1.5}"/>`+
+   `<text x="${cx}" y="${cy-14}" font-size="46" text-anchor="middle" dominant-baseline="middle">${IC[i]}</text>`+
+   `<text x="${cx}" y="${cy+30}" fill="${t[4]}" font-size="17" font-weight="600" text-anchor="middle">${t[1]}</text>`+
+   `<text x="${cx}" y="${cy+52}" fill="#cfd5e2" font-size="13.5" text-anchor="middle">${t[0]} · ${t[2].split(' ')[1]}</text></g>`;});
+  s+='<ellipse cx="230" cy="230" rx="40" ry="62" fill="#0C1222" stroke="#E0B450" stroke-width="2"/><ellipse cx="230" cy="230" rx="33" ry="54" fill="rgba(224,180,80,.12)"/>';
+  s+='<text x="230" y="226" fill="#F3DDA4" font-size="14" text-anchor="middle">ქრისტე</text><text x="230" y="244" fill="#9aa3b6" font-size="9.5" text-anchor="middle">მანდორლა</text>';
+  s+='</svg><div style="text-align:center;font-size:12px;color:#9aa3b6;margin-top:4px">ეზეკიელი 1:10 · გამოცხადება 4:7 — დააჭირე ცხოველს</div>';$('tD').innerHTML=s;
   const t=TM[TI];$('tC').style.setProperty('--k',t[4]);
-  $('tC').innerHTML=`<h3>${t[0]} — ${t[1]}</h3>${t[3]}<div class="ex"><b>ზოდიაქოში:</b> ${t[2]} — ოთხი <b>ფიქსირებული</b> ნიშანი, ოთხი სტიქია (ჰაერი, ცეცხლი, მიწა, წყალი). ეს ოთხი ცხოველი ტაროს „<b>სამყაროს</b>“ (XXI) და „<b>ბედის ბორბლის</b>“ (X) ოთხ კუთხეშია — <a href="course_tarot6.html#21" style="color:#E3BE84">🃏 სამყარო</a> · <a href="course_tarot6.html#10" style="color:#E3BE84">🃏 ბედის ბორბალი</a>.</div>`;}
+  $('tC').innerHTML=`<h3>${IC[TI]} ${t[0]} — ${t[1]}</h3>${t[3]}<div class="ex"><b>ზოდიაქოში:</b> ${t[2]} — ოთხი <b>ფიქსირებული</b> ნიშანი, ოთხი სტიქია (ჰაერი, ცეცხლი, მიწა, წყალი). ეს ოთხი ცხოველი ტაროს „<b>სამყაროს</b>“ (XXI) და „<b>ბედის ბორბლის</b>“ (X) ოთხ კუთხეშია — <a href="course_tarot6.html#21" style="color:#E3BE84">🃏 სამყარო</a> · <a href="course_tarot6.html#10" style="color:#E3BE84">🃏 ბედის ბორბალი</a>.</div>`;}
 $('tD').addEventListener('click',e=>{const g=e.target.closest('g[data-i]');if(!g)return;TI=+g.dataset.i;tUI();});
 tUI();
 
