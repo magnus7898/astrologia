@@ -51,6 +51,8 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:720px){.two{grid-template-columns:1fr}}
 #mD svg{max-width:420px;margin:0 auto}.kbody{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 .sec p a{color:#E3BE84}
+.hero{margin:22px 0 0;border:1px solid rgba(184,137,74,.4);border-radius:12px;overflow:hidden;background:#141b2c}.hero img{display:block;width:100%;height:auto}.hero figcaption,.pf figcaption{font-size:12px;color:#9aa3b6;padding:6px 10px}.hero a,.pf a{color:#C9A24C}
+.pf{margin:-4px -6px 10px;border-radius:8px;overflow:hidden;background:#141b2c}.pf img{display:block;width:100%;max-height:360px;object-fit:contain;background:#0b1020}
 </style>
 </head>
 <body>
@@ -61,8 +63,10 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
 
   <div class="intro">1508 წელს პაპმა იულიუს II-მ მიქელანჯელოს — რომელიც თავს <b>მოქანდაკედ</b> თვლიდა და არა მხატვრად — კაპელის ჭერის მოხატვა დაავალა. თავდაპირველი გეგმა თორმეტი მოციქული იყო; მიქელანჯელომ უარი თქვა და ოთხ წელიწადში, თითქმის მარტომ, 500 კვ. მეტრზე მეტი ფართობი დაფარა <b>სამასზე მეტი ფიგურით</b>. ეს არ არის სცენების ნაკრები — ეს ერთიანი <b>კოსმოლოგიაა</b>: ზეციდან მიწამდე და მიწიდან ზეცამდე. ჭერი ორი მიმართულებით იკითხება — და სწორედ ამაშია მისი საიდუმლო.</div>
 
+  <figure class="hero"><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Lightmatter_Sistine_Chapel_ceiling2.jpg?width=1600" alt="სიქსტის კაპელის ჭერი — მიქელანჯელო" onerror="this.parentNode.style.display='none'"><figcaption>მიქელანჯელო, სიქსტის კაპელის ჭერი, 1508–1512 · <a href="https://commons.wikimedia.org/wiki/File:Lightmatter_Sistine_Chapel_ceiling2.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></figcaption></figure>
+
   <div class="sec"><h2>1 · ჭერის რუკა</h2>
-    <p style="margin-bottom:10px">ქვემოთ — ჭერის <b>სქემატური გეგმა</b> (არა ფრესკა): საკურთხეველი ზემოთაა, შესასვლელი — ქვემოთ. დააჭირე ნებისმიერ ველს. ფრესკის ფოტოები: <a href="https://commons.wikimedia.org/wiki/Category:Sistine_Chapel_ceiling" target="_blank" rel="noopener" style="color:#E3BE84">Wikimedia Commons ↗</a></p>
+    <p style="margin-bottom:10px">ჭერის გეგმა: საკურთხეველი ზემოთაა, შესასვლელი — ქვემოთ. დააჭირე ნებისმიერ ველს — მარჯვნივ გაიხსნება <b>ფრესკის ფოტო</b> და განმარტება. ფრესკის ფოტოები: <a href="https://commons.wikimedia.org/wiki/Category:Sistine_Chapel_ceiling" target="_blank" rel="noopener" style="color:#E3BE84">Wikimedia Commons ↗</a></p>
     <div class="kbody"><div class="kdia" id="mD"></div><div><div class="kcard" id="mC"></div>
       <div class="rd"><button type="button" data-r="g">▶ შესაქმის რიგით (საკურთხევლიდან)</button><button type="button" data-r="a">▶ სულის გზით (შესასვლელიდან)</button></div>
       <div class="lg" id="mL"></div></div></div>
@@ -95,6 +99,16 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
 const $=id=>document.getElementById(id);
 const TC=['#FFD36A','#8fd19a','#7fb8ff'];
 /* nine histories, from the altar: [n, title, big?, triad, text] */
+const FP='https://commons.wikimedia.org/wiki/Special:FilePath/',CP='https://commons.wikimedia.org/wiki/File:';
+const HI=[['Michelangelo_separation.jpg','Dividing_Light_from_Darkness.jpg'],['The_Creation_of_the_Sun_and_the_Moon,_Michelangelo_(1508-1512).jpg','Michelangelo_Buonarroti_018.jpg'],['Michelangelo,_Separation_of_the_Earth_from_the_Waters_00.jpg'],
+ ['Michelangelo_-_Creation_of_Adam_(cropped).jpg'],['Michelangelo,_Creation_of_Eve_01.jpg','Michelangelo,_Creation_of_Eve_00.jpg'],['Michelangelo,_Fall_and_Expulsion_from_Garden_of_Eden_00.jpg'],
+ ['Michelangelo,_Sacrifice_of_Noah_00.jpg','Michelangelo,_Sacrifice_of_Noah_01.jpg'],['The_Deluge_after_restoration.jpg'],['Ivresse_de_noe.jpg','Michelangelo_Buonarroti_021.jpg']];
+const SI=[['Michelangelo,_profeti,_zaccaria_01.jpg'],['Sibyl_of_Delphi_-_Sistine_Chapel_-_closeup.JPG','Michelangelo,_sibille,_delfica_01.jpg'],['Michelangelo,_profeti,_gioele_01.jpg'],['Isaiah-Michelangelo.jpg'],['Michelangelo,_sibille,_eritrea_01.jpg'],
+ ['CumaeanSibylByMichelangelo.jpg'],['Michelangelo,_profeti,_ezechiele_01.jpg'],['Michelangelo,_profeti,_daniele_01.jpg'],['Michelangelo,_sibille,_persica_01.jpg'],['LibyanSibyl_SistineChapel.jpg','Michelangelo,_sibille,_libica_01.jpg'],['Michelangelo_Buonarroti_027.jpg'],['Prophet_Jonah.jpg']];
+const PI_=[['Michelangelo,_David_and_Goliath_00.jpg'],['Michelangelo,_Judith_and_Holofernes_00.jpg'],['Michelangelo,_Punishment_of_Haman_00.jpg'],['Michelangelo_Buonarroti_024.jpg']];
+const enc=f=>encodeURIComponent(f).replace(/%2C/g,',');
+function pic(list){if(!list||!list.length)return '';return `<figure class="pf"><img alt="" loading="lazy" data-c="${list.map(enc).join('|')}" data-k="0" src="${FP+enc(list[0])}?width=900" onerror="nextPic(this)"><figcaption><a href="${CP+enc(list[0])}" target="_blank" rel="noopener">Wikimedia Commons ↗</a></figcaption></figure>`;}
+window.nextPic=function(im){const c=im.dataset.c.split('|'),k=+im.dataset.k+1;if(k<c.length){im.dataset.k=k;im.src=FP+c[k]+'?width=900';const a=im.parentNode.querySelector('a');if(a)a.href=CP+c[k];}else im.parentNode.style.display='none';};
 const H=[[1,'სინათლის გაყოფა ბნელისგან',0,0,'„იყოს ნათელი“ — ღმერთი მარტოა ქაოსში, ქვემოდან დანახული, თითქოს თავად ხვდება სინათლეს და სიბნელეს ხელებით. ეს ბოლო სცენაა, რომელიც მიქელანჯელომ დახატა — და ყველაზე თავისუფალი: ფუნჯი თითქმის აბსტრაქტულია. ნეოპლატონური კითხვით — სულის მიზანი: <b>წმინდა სინათლე</b>, სადაც მატერია ჯერ არ არსებობს. ზოგი მკვლევარი ღმერთის კისერში თავის ტვინის ღეროს ანატომიურ ფორმასაც ხედავს — მიქელანჯელო გვამებს კვეთდა და ანატომია კარგად იცოდა.'],
  [2,'მზის, მთვარის და მცენარეების შექმნა',1,0,'ღმერთი ორჯერ ჩანს ერთ კადრში: მარჯვნივ, სახით, ერთი ხელით ოქროს <b>მზეს</b> ქმნის, მეორით — ფერმკრთალ <b>მთვარეს</b>; მარცხნივ, ზურგით, სიღრმეში მიფრინავს და მიწაზე <b>მცენარეებს</b> „ტოვებს“. დრო და მოძრაობა ერთ კადრშია — სიმულტანური თხრობა. მზე და მთვარე — ორი მნათობი, ორი პრინციპი (გაკვეთილი 3: ოქრო და ვერცხლი).'],
  [3,'წყლების გაყოფა',0,0,'ღმერთი, ღრუბლებით გარშემორტყმული, ჩვენკენ მოფრინავს და ხელებს წყლებზე აკურთხებს — „ღვთის სული იძვროდა წყალთა ზედა“. ზოგი მკვლევარი ამ სცენას ხმელეთისა და ზღვის გაყოფად კითხულობს. ღმერთი პირდაპირ მნახველისკენაა მოძრავი — ერთადერთხელ ამ ტრიადაში.'],
@@ -137,9 +151,9 @@ function map(){const X0=70,W=160,Y0=90,PH=[52,74],G=8;let ys=[],y=Y0;H.forEach(h
     s+=`<g data-t="p" data-i="${i}" style="cursor:pointer"><polygon points="${pts}" fill="${on?'#ff8a8a':'#0C1222'}" stroke="#ff8a8a" stroke-width="${on?2.5:1.2}"/><text x="${l?x+18:x+38}" y="${top?y+20:y+44}" font-size="13" text-anchor="middle">${['🪨','🗡️','⚖️','🐍'][i]}</text></g>`;});
   $('mD').innerHTML=s+'</svg>';card();}
 function card(){const c=$('mC');let h='';
-  if(SEL.t==='h'){const x=H[SEL.i];c.style.setProperty('--k',TC[x[3]]);h=`<h3>${x[0]}. ${x[1]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">${['სამყაროს შექმნა','ადამიანის შექმნა და დაცემა','ნოე'][x[3]]} · ${x[2]?'დიდი პანელი':'პატარა პანელი, ოთხი ინიუდით'}</div>${x[4]}`;}
-  else if(SEL.t==='s'){const x=SE[SEL.i];c.style.setProperty('--k',x[1]==='P'?'#E3BE84':'#c9a0ff');h=`<h3>${x[0]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">${x[1]==='P'?'ებრაელი წინასწარმეტყველი':'წარმართი სიბილა'}</div>${x[4]}`;}
-  else{const x=PD[SEL.i];c.style.setProperty('--k','#ff8a8a');h=`<h3>${x[0]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">კუთხის პანდანტივი · ${x[1]==='W'?'საკურთხეველთან':'შესასვლელთან'}</div>${x[3]}`;}
+  if(SEL.t==='h'){const x=H[SEL.i];c.style.setProperty('--k',TC[x[3]]);h=pic(HI[SEL.i])+`<h3>${x[0]}. ${x[1]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">${['სამყაროს შექმნა','ადამიანის შექმნა და დაცემა','ნოე'][x[3]]} · ${x[2]?'დიდი პანელი':'პატარა პანელი, ოთხი ინიუდით'}</div>${x[4]}`;}
+  else if(SEL.t==='s'){const x=SE[SEL.i];c.style.setProperty('--k',x[1]==='P'?'#E3BE84':'#c9a0ff');h=pic(SI[SEL.i])+`<h3>${x[0]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">${x[1]==='P'?'ებრაელი წინასწარმეტყველი':'წარმართი სიბილა'}</div>${x[4]}`;}
+  else{const x=PD[SEL.i];c.style.setProperty('--k','#ff8a8a');h=pic(PI_[SEL.i])+`<h3>${x[0]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">კუთხის პანდანტივი · ${x[1]==='W'?'საკურთხეველთან':'შესასვლელთან'}</div>${x[3]}`;}
   c.innerHTML=h;}
 $('mD').addEventListener('click',e=>{const g=e.target.closest('g[data-t]');if(!g)return;stop();SEL={t:g.dataset.t,i:+g.dataset.i};map();});
 $('mL').innerHTML='<span><i style="background:#FFD36A"></i>სამყარო</span><span><i style="background:#8fd19a"></i>ადამიანი</span><span><i style="background:#7fb8ff"></i>ნოე</span><span><i style="background:#E3BE84"></i>წინასწარმეტყველი</span><span><i style="background:#c9a0ff"></i>სიბილა</span><span><i style="background:#ff8a8a"></i>კუთხე</span>';
