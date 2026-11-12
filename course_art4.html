@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 4</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+.rd{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.rd button{background:#0e1424;border:1px solid rgba(184,137,74,.5);color:#E3BE84;border-radius:999px;padding:7px 14px;font:13px 'Noto Serif Georgian',serif;cursor:pointer}.rd button.on{background:#C9A24C;color:#0b1020}
+.lg{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;font-size:12px;color:#9aa3b6}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:720px){.two{grid-template-columns:1fr}}
+#mD svg{max-width:420px;margin:0 auto}.kbody{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.sec p a{color:#E3BE84}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 2 · მიქელანჯელო</div>
+  <h1>გაკვეთილი 4 — სიქსტის კაპელის ჭერი</h1>
+  <div class="sub">მიქელანჯელო, 1508–1512: შესაქმის ცხრა სცენა, წინასწარმეტყველები და სიბილები, ნეოპლატონური კოსმოლოგია</div>
+
+  <div class="intro">1508 წელს პაპმა იულიუს II-მ მიქელანჯელოს — რომელიც თავს <b>მოქანდაკედ</b> თვლიდა და არა მხატვრად — კაპელის ჭერის მოხატვა დაავალა. თავდაპირველი გეგმა თორმეტი მოციქული იყო; მიქელანჯელომ უარი თქვა და ოთხ წელიწადში, თითქმის მარტომ, 500 კვ. მეტრზე მეტი ფართობი დაფარა <b>სამასზე მეტი ფიგურით</b>. ეს არ არის სცენების ნაკრები — ეს ერთიანი <b>კოსმოლოგიაა</b>: ზეციდან მიწამდე და მიწიდან ზეცამდე. ჭერი ორი მიმართულებით იკითხება — და სწორედ ამაშია მისი საიდუმლო.</div>
+
+  <div class="sec"><h2>1 · ჭერის რუკა</h2>
+    <p style="margin-bottom:10px">ქვემოთ — ჭერის <b>სქემატური გეგმა</b> (არა ფრესკა): საკურთხეველი ზემოთაა, შესასვლელი — ქვემოთ. დააჭირე ნებისმიერ ველს. ფრესკის ფოტოები: <a href="https://commons.wikimedia.org/wiki/Category:Sistine_Chapel_ceiling" target="_blank" rel="noopener" style="color:#E3BE84">Wikimedia Commons ↗</a></p>
+    <div class="kbody"><div class="kdia" id="mD"></div><div><div class="kcard" id="mC"></div>
+      <div class="rd"><button type="button" data-r="g">▶ შესაქმის რიგით (საკურთხევლიდან)</button><button type="button" data-r="a">▶ სულის გზით (შესასვლელიდან)</button></div>
+      <div class="lg" id="mL"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>2 · ორი კითხვა — ორი მიმართულება</h2>
+    <div class="two"><div class="kcard" style="--k:#E0B450"><h3>⬆ ბიბლიური დრო: საკურთხევლიდან</h3>მიქელანჯელომ მუშაობა <b>შესასვლელიდან</b> დაიწყო — ნოეს სცენებით — მაგრამ ამბავი საკურთხევლიდან იწყება: ღმერთი სინათლეს ბნელისგან ყოფს. ასე იკითხება „შესაქმის წიგნი“: ღმერთი → სამყარო → ადამიანი → დაცემა → ნოე. ეს <b>დაშვებაა</b>: ღვთაებრივი თანდათან მატერიაში ეშვება.</div>
+      <div class="kcard" style="--k:#7fb8ff"><h3>⬇ სულის აღმასვლა: შესასვლელიდან</h3>ვინც კაპელაში შედის, პირველს <b>ნოეს სიმთვრალეს</b> ხედავს — ადამიანს, რომელიც სხეულის ტყვეა. საკურთხევლისკენ სვლისას ის „უკან“ მიდის დროში: დაცემა, ადამის შექმნა, ღმერთი, რომელიც მარტოა სინათლესთან. ხელოვნებათმცოდნე შარლ დე ტოლნაიმ ეს ნეოპლატონურად განმარტა: <b>სულის აღმასვლა</b> სხეულიდან სულისკენ, ფიჩინოსა და პიკოს ფილოსოფიის მიხედვით.</div></div>
+    <p style="margin-top:12px">ცხრა სცენა სამ <b>ტრიადად</b> იყოფა: <span style="color:#FFD36A">სამყაროს შექმნა</span> (1–3), <span style="color:#8fd19a">ადამიანის შექმნა და დაცემა</span> (4–6), <span style="color:#7fb8ff">ნოე</span> (7–9). 3 × 3 — სამების რიცხვი, და დიდი და პატარა პანელების მონაცვლეობა რიტმს ქმნის: პატარა პანელებს ოთხი შიშველი ჭაბუკი (<b>ინიუდი</b>) ახლავს — სულ 20.</p>
+  </div>
+
+  <div class="sec"><h2>3 · თორმეტი მხილველი</h2>
+    <p>ჭერის ირგვლივ შვიდი ებრაელი <b>წინასწარმეტყველი</b> და ხუთი წარმართი <b>სიბილა</b> ზის — 7 + 5 = 12, თორმეტი მოციქულის ნაცვლად. სიბილებს რენესანსი ქრისტეს მოსვლის „წარმართ მოწმეებად“ თვლიდა: კუმელი სიბილას წინასწარმეტყველება ვერგილიუსის მეოთხე ეკლოგაში ღვთაებრივი ყრმის დაბადებაზე ქრისტიანებმა ქრისტეს შესახებ წაიკითხეს. ასე ჭერზე ორი სიბრძნე ხვდება ერთმანეთს — ბიბლიური და ანტიკური — <b>prisca theologia</b>, „ძველი თეოლოგიის“ იდეა, რომ ჭეშმარიტება ყველა ხალხს ჰქონდა.</p>
+    <p style="margin-top:8px">ფიგურები საკურთხევლისკენ <b>იზრდება</b>: ზაქარია შესასვლელთან მშვიდად კითხულობს, იონა საკურთხევლის თავზე უკან გადაწოლილა და ზემოთ, ღმერთის პირველ აქტს უყურებს — ის ყველაზე დიდია. იონა საკურთხევლის ზემოთ შემთხვევით არ არის: სამი დღე ვეშაპის მუცელში — <b>აღდგომის</b> წინასახე (გაკვეთილი 2, ტიპოლოგია), და სწორედ საკურთხეველზე სრულდება ევქარისტია.</p>
+  </div>
+
+  <div class="sec"><h2>4 · ოთხი კუთხე — ოთხი გადარჩენა</h2>
+    <p>კუთხის სამკუთხა ველებში (პანდანტივებში) — ისრაელის ოთხი სასწაულებრივი <b>გადარჩენა</b>: დავითი და გოლიათი, იუდითი და ჰოლოფერნე (შესასვლელთან), ამანის დასჯა და სპილენძის გველი (საკურთხეველთან). ოთხივე — ტიპოლოგიური: სუსტი ამარცხებს ძლიერს, და სპილენძის გველი ჯვარცმის ყველაზე ცნობილი წინასახეა („როგორც მოსემ აღმართა გველი უდაბნოში“). ხოლო ფანჯრების ზემოთ, ლუნეტებში — ქრისტეს <b>წინაპრები</b> მათეს სახარების გენეალოგიიდან: უბრალო, დაღლილი ოჯახები, რომლებიც ელოდებიან.</p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art3.html">← ასტროლოგია, ალქიმია, კაბალა</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 5 — მალე →</a></div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const TC=['#FFD36A','#8fd19a','#7fb8ff'];
+/* nine histories, from the altar: [n, title, big?, triad, text] */
+const H=[[1,'სინათლის გაყოფა ბნელისგან',0,0,'„იყოს ნათელი“ — ღმერთი მარტოა ქაოსში, ქვემოდან დანახული, თითქოს თავად ხვდება სინათლეს და სიბნელეს ხელებით. ეს ბოლო სცენაა, რომელიც მიქელანჯელომ დახატა — და ყველაზე თავისუფალი: ფუნჯი თითქმის აბსტრაქტულია. ნეოპლატონური კითხვით — სულის მიზანი: <b>წმინდა სინათლე</b>, სადაც მატერია ჯერ არ არსებობს. ზოგი მკვლევარი ღმერთის კისერში თავის ტვინის ღეროს ანატომიურ ფორმასაც ხედავს — მიქელანჯელო გვამებს კვეთდა და ანატომია კარგად იცოდა.'],
+ [2,'მზის, მთვარის და მცენარეების შექმნა',1,0,'ღმერთი ორჯერ ჩანს ერთ კადრში: მარჯვნივ, სახით, ერთი ხელით ოქროს <b>მზეს</b> ქმნის, მეორით — ფერმკრთალ <b>მთვარეს</b>; მარცხნივ, ზურგით, სიღრმეში მიფრინავს და მიწაზე <b>მცენარეებს</b> „ტოვებს“. დრო და მოძრაობა ერთ კადრშია — სიმულტანური თხრობა. მზე და მთვარე — ორი მნათობი, ორი პრინციპი (გაკვეთილი 3: ოქრო და ვერცხლი).'],
+ [3,'წყლების გაყოფა',0,0,'ღმერთი, ღრუბლებით გარშემორტყმული, ჩვენკენ მოფრინავს და ხელებს წყლებზე აკურთხებს — „ღვთის სული იძვროდა წყალთა ზედა“. ზოგი მკვლევარი ამ სცენას ხმელეთისა და ზღვის გაყოფად კითხულობს. ღმერთი პირდაპირ მნახველისკენაა მოძრავი — ერთადერთხელ ამ ტრიადაში.'],
+ [4,'ადამის შექმნა',1,1,'ყველაზე ცნობილი გამოსახულება დასავლურ ხელოვნებაში: ორი თითი, რომლებიც <b>თითქმის</b> ეხება ერთმანეთს. ადამი უკვე სრულყოფილია სხეულით, მაგრამ უსიცოცხლოა — სიცოცხლე (სული) იმ სივრცეში უნდა გადავიდეს, რომელიც ორ თითს შორის რჩება. ღმერთის მოსასხამი თავის ტვინის ფორმას ჰგავს — ამაზე მომდევნო, მე-5 გაკვეთილი მთლიანად ამ სცენას ეძღვნება.'],
+ [5,'ევას შექმნა',0,1,'ევა მძინარე ადამის გვერდიდან ამოდის და ხელებაპყრობილი ლოცულობს ღმერთს. ეს ჭერის <b>ცენტრია</b> — და თავდაპირველად კაპელაში ტიხარი სწორედ ამ სცენის ქვეშ გადიოდა: სასულიერო პირების ნაწილი საკურთხეველთან, ერისკაცებისა — შესასვლელთან. ევა, როგორც „ახალი ევას“ — მარიამის — წინასახე (გაკვეთილი 2), და მძინარე ადამის გვერდი — ჯვარზე ქრისტეს განგმირული გვერდის, საიდანაც ეკლესია „იბადება“.'],
+ [6,'ცდუნება და სამოთხიდან გაძევება',1,1,'ერთ პანელში ორი მომენტი, შუაში — ცოდნის ხე. მარცხნივ: ქალის თავიანი გველი ხეზე ეხვევა და ევა ნაყოფს იღებს. მარჯვნივ: ანგელოზი მახვილით აძევებს ადამსა და ევას, რომლებიც უცბად <b>დაბერდნენ</b> — სხეული მძიმე და ნაცრისფერია. ხე — ცენტრალური ღერძი, „მარცხენა და მარჯვენა“ (გაკვეთილი 1): სამოთხე და გაძევება.'],
+ [7,'ნოეს მსხვერპლშეწირვა',0,2,'წარღვნის შემდეგ ნოე და მისი ოჯახი ღმერთს მსხვერპლს სწირავენ. ქრონოლოგიურად ეს წარღვნის შემდეგ უნდა იყოს, მაგრამ მიქელანჯელომ ის <b>წინ</b> დასვა — დიდ პანელს პატარა ადგილი არ ეყო, და/ან, ერთი განმარტებით, ეს კაენისა და აბელის მსხვერპლია. ცეცხლი, ცხვარი, ხარის შიგნეულობა — ძველაღთქმისეული მსხვერპლი, ევქარისტიის წინასახე.'],
+ [8,'წარღვნა',1,2,'პირველი დიდი სცენა, რომელიც მიქელანჯელომ დახატა — და ფიგურები აქ ჯერ კიდევ პატარაა: მან მოგვიანებით გაიგო, რომ ქვემოდან ისინი ძნელად იკითხება, და შემდეგ სცენებში ფიგურები გაადიდა. ადამიანები მთის მწვერვალებზე ეძებენ ხსნას, შორს — კიდობანი. კიდობანი — <b>ეკლესიის</b> ტრადიციული სიმბოლო: მხოლოდ მასში გადარჩება სიცოცხლე.'],
+ [9,'ნოეს სიმთვრალე',0,2,'ნოე, პირველი მევენახე, ღვინით დამთვრალი, შიშველი წევს; ქამი დასცინის, სემი და იაფეთი მამას აფარებენ. ეს არის ის, რასაც სტუმარი <b>პირველს</b> ხედავს — ადამიანი, რომელიც სხეულის და ვნების ტყვეა, „ძილში“. აქედან იწყება სულის აღმასვლა საკურთხევლისკენ. ირონიულად, ნოე უკვე მოხუცია და ზის — როგორც ადამი, რომელიც „დაიღალა“.']];
+/* seers: [name, kind P/S, side L/R, row 0..4 from entrance, text] ; Zechariah & Jonah at ends */
+const SE=[['ზაქარია','P','E',0,'შესასვლელის თავზე: მოხუცი, წიგნში ჩაფლული — იერუსალიმის აღდგენისა და მესიის მოსვლის წინასწარმეტყველი („აჰა, მეფე შენი მოვა შენთან“). ის პირველია და მშვიდია — დასაწყისი.'],
+ ['დელფოს სიბილა','S','L',0,'ახალგაზრდა, თვალებგაფართოებული, გრაგნილით — აპოლონის ორაკულის ქურუმი. მისი მზერა თითქოს უცბად დაინახა მომავალი. ერთ-ერთი ყველაზე ლამაზი ფიგურა ჭერზე.'],
+ ['იოელი','P','R',0,'კითხულობს გრაგნილს და ფიქრობს: „და იქნება ამის შემდეგ, მოვჰფენ სულს ჩემსას ყოველ ხორციელზე“ — სულიწმიდის მოფენის წინასწარმეტყველება.'],
+ ['ესაია','P','L',1,'მოულოდნელად შემობრუნებული — თითქოს ანგელოზმა (მის მხარზე პატარა ყრმამ) დაუძახა. ესაია ყველაზე ხშირად ციტირებული წინასწარმეტყველია ქრისტეს შესახებ: „აჰა, ქალწული მუცლად იღებს“.'],
+ ['ერითრეის სიბილა','S','R',1,'ზის და წიგნს ფურცლავს; ყრმა ლამპარს ანთებს — ცოდნის სინათლე. ერითრეის სიბილას მიეწერებოდა აკროსტიქი, რომლის თავსართები ასე იკითხებოდა: „იესო ქრისტე, ღმერთის ძე, მხსნელი“.'],
+ ['კუმელი სიბილა','S','L',2,'მოხუცი, უზარმაზარი, კუნთოვანი ქალი წიგნით — ვერგილიუსის „ენეიდაში“ ის ენეასს ქვესკნელში ატარებს, მეოთხე ეკლოგაში კი ახალ „ოქროს საუკუნეს“ და ღვთაებრივ ყრმას აცხადებს.'],
+ ['ეზეკიელი','P','R',2,'ეზეკიელი — ოთხი ცხოველის ხილვის წინასწარმეტყველი (ტეტრამორფი, გაკვეთილი 2) და „ჩაკეტილი კარის“, რომელიც მარიამის სიმბოლოდ იკითხებოდა. აქ ის მკვეთრად შემობრუნებულია, გრაგნილით, თითქოს კამათობს.'],
+ ['დანიელი','P','L',3,'ახალგაზრდა, მუხლებზე დადებულ დიდ წიგნს კითხულობს და იწერს — სიზმრების ამხსნელი და „ძე კაცისას“ ხილვის წინასწარმეტყველი.'],
+ ['სპარსი სიბილა','S','R',3,'მოხუცი, მოხრილი, წიგნს თვალთან ძალიან ახლოს იჭერს — მხედველობა ჰკარგავს, მაგრამ მაინც კითხულობს. აღმოსავლეთის სიბრძნე.'],
+ ['ლიბიის სიბილა','S','L',4,'უზარმაზარ ღია წიგნს ჩამოდებს ან აიღებს — დაგრეხილი, თითქმის ცეკვის მოძრაობა. მიქელანჯელოს მოსამზადებელი ნახატი ამ ფიგურისთვის მამაკაცი მოდელისგან არის შესრულებული.'],
+ ['იერემია','P','R',4,'მოხრილი, ხელი წვერზე, ღრმა მწუხარებაში — „გლოვის წინასწარმეტყველი“, რომელიც იერუსალიმის დაცემას დასტიროდა. ბევრი მას მიქელანჯელოს <b>ავტოპორტრეტად</b> თვლის: მელანქოლიური, სატურნისეული ხელოვანი (გაკვეთილი 3).'],
+ ['იონა','P','W',4,'საკურთხევლის თავზე, ყველაზე დიდი — უკან გადაწოლილი, ზემოთ, ღმერთის პირველ აქტს უყურებს. გვერდით — დიდი თევზი. სამი დღე ვეშაპის მუცელში — ქრისტეს დაფლვისა და <b>აღდგომის</b> წინასახე. ტექნიკურად — ფერწერის შედევრი: ჩაზნექილ ზედაპირზე ფიგურა უკან იხრება, თუმცა კედელი წინ მოდის.']];
+const PD=[['დავითი და გოლიათი','E','L','პატარა მწყემსი დიდ გოლიათს ამარცხებს და თავს კვეთს — სუსტის გამარჯვება ძლიერზე, ქრისტეს გამარჯვება სატანაზე.'],
+ ['იუდითი და ჰოლოფერნე','E','R','ქვრივი იუდითი ასურელ სარდალს თავს კვეთს და ქალაქს იხსნის; ტრადიციით — მარიამის წინასახე, რომელიც „გველს თავს უჭეჭყავს“.'],
+ ['ამანის დასჯა','W','L','ებრაელების მტერი ამანი ჯვარზე (ან ხეზე) ისჯება, ესთერის შუამავლობით — ზოგი განმარტებით, ჯვარცმის კიდევ ერთი წინასახე.'],
+ ['სპილენძის გველი','W','R','მოსე აღმართავს სპილენძის გველს — ვინც შეხედავს, გადარჩება. „როგორც მოსემ აღმართა გველი უდაბნოში, ასე უნდა აღიმართოს ძე კაცისა“ — ჯვარცმის კლასიკური წინასახე, ამიტომ საკურთხეველთან.']];
+let SEL={t:'h',i:3},TIM=null;
+function map(){const X0=70,W=160,Y0=90,PH=[52,74],G=8;let ys=[],y=Y0;H.forEach(h=>{ys.push(y);y+=(h[2]?PH[1]:PH[0])+G;});const yEnd=y;
+  let s=`<svg viewBox="0 0 300 ${yEnd+88}" role="img" aria-label="სიქსტის კაპელის ჭერის სქემა"><rect x="4" y="4" width="292" height="${yEnd+80}" rx="10" fill="#0e1424" stroke="rgba(184,137,74,.4)"/>`;
+  s+=`<text x="150" y="20" fill="#9aa3b6" font-size="10" text-anchor="middle">⛪ საკურთხეველი · „განკითხვის დღე“</text><text x="150" y="${yEnd+78}" fill="#9aa3b6" font-size="10" text-anchor="middle">🚪 შესასვლელი</text>`;
+  const sel=(t,i)=>SEL.t===t&&SEL.i===i;
+  H.forEach((h,i)=>{const hh=h[2]?PH[1]:PH[0],on=sel('h',i);s+=`<g data-t="h" data-i="${i}" style="cursor:pointer"><rect x="${X0}" y="${ys[i]}" width="${W}" height="${hh}" rx="4" fill="${on?TC[h[3]]:'rgba(255,255,255,.04)'}" stroke="${TC[h[3]]}" stroke-width="${on?2.5:1.2}"/>`+
+    `<text x="${X0+W/2}" y="${ys[i]+hh/2-5}" font-size="13" font-weight="700" fill="${on?'#0b1020':TC[h[3]]}" text-anchor="middle">${h[0]}</text><text x="${X0+W/2}" y="${ys[i]+hh/2+11}" font-size="8.6" fill="${on?'#0b1020':'#cfd5e2'}" text-anchor="middle">${h[1].length>26?h[1].slice(0,25)+'…':h[1]}</text>`+
+    (h[2]?'':`<g fill="${on?'#0b1020':'#9aa3b6'}" opacity=".7"><circle cx="${X0+8}" cy="${ys[i]+8}" r="3"/><circle cx="${X0+W-8}" cy="${ys[i]+8}" r="3"/><circle cx="${X0+8}" cy="${ys[i]+hh-8}" r="3"/><circle cx="${X0+W-8}" cy="${ys[i]+hh-8}" r="3"/></g>`)+'</g>';});
+  const rowY=r=>{const t=Y0+30,b=yEnd-70;return b-(b-t)*r/4;};
+  SE.forEach((e,i)=>{let x,y,w=56,h=46;if(e[2]==='L'){x=8;y=rowY(e[3])-h/2;}else if(e[2]==='R'){x=236;y=rowY(e[3])-h/2;}else if(e[2]==='W'){x=110;y=28;w=80;h=56;y=28;}else{x=110;y=yEnd+6;w=80;h=50;}
+    if(e[2]==='W'){y=30;}const on=sel('s',i),c=e[1]==='P'?'#E3BE84':'#c9a0ff';
+    s+=`<g data-t="s" data-i="${i}" style="cursor:pointer"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${on?c:'#0C1222'}" stroke="${c}" stroke-width="${on?2.5:1.2}"/><text x="${x+w/2}" y="${y+h/2-3}" font-size="9.4" fill="${on?'#0b1020':c}" text-anchor="middle">${e[0].split(' ')[0]}</text><text x="${x+w/2}" y="${y+h/2+10}" font-size="8" fill="${on?'#0b1020':'#9aa3b6'}" text-anchor="middle">${e[1]==='P'?'წინასწ.':'სიბილა'}</text></g>`;});
+  PD.forEach((p,i)=>{const top=p[1]==='W',l=p[2]==='L',y=top?28:yEnd+6,x=l?8:236,on=sel('p',i);const pts=top?(l?`${x},${y} ${x+56},${y} ${x},${y+56}`:`${x},${y} ${x+56},${y} ${x+56},${y+56}`):(l?`${x},${y+56} ${x+56},${y+56} ${x},${y}`:`${x},${y+56} ${x+56},${y+56} ${x+56},${y}`);
+    s+=`<g data-t="p" data-i="${i}" style="cursor:pointer"><polygon points="${pts}" fill="${on?'#ff8a8a':'#0C1222'}" stroke="#ff8a8a" stroke-width="${on?2.5:1.2}"/><text x="${l?x+18:x+38}" y="${top?y+20:y+44}" font-size="13" text-anchor="middle">${['🪨','🗡️','⚖️','🐍'][i]}</text></g>`;});
+  $('mD').innerHTML=s+'</svg>';card();}
+function card(){const c=$('mC');let h='';
+  if(SEL.t==='h'){const x=H[SEL.i];c.style.setProperty('--k',TC[x[3]]);h=`<h3>${x[0]}. ${x[1]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">${['სამყაროს შექმნა','ადამიანის შექმნა და დაცემა','ნოე'][x[3]]} · ${x[2]?'დიდი პანელი':'პატარა პანელი, ოთხი ინიუდით'}</div>${x[4]}`;}
+  else if(SEL.t==='s'){const x=SE[SEL.i];c.style.setProperty('--k',x[1]==='P'?'#E3BE84':'#c9a0ff');h=`<h3>${x[0]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">${x[1]==='P'?'ებრაელი წინასწარმეტყველი':'წარმართი სიბილა'}</div>${x[4]}`;}
+  else{const x=PD[SEL.i];c.style.setProperty('--k','#ff8a8a');h=`<h3>${x[0]}</h3><div style="font-size:12.5px;color:#B8894A;margin-bottom:6px">კუთხის პანდანტივი · ${x[1]==='W'?'საკურთხეველთან':'შესასვლელთან'}</div>${x[3]}`;}
+  c.innerHTML=h;}
+$('mD').addEventListener('click',e=>{const g=e.target.closest('g[data-t]');if(!g)return;stop();SEL={t:g.dataset.t,i:+g.dataset.i};map();});
+$('mL').innerHTML='<span><i style="background:#FFD36A"></i>სამყარო</span><span><i style="background:#8fd19a"></i>ადამიანი</span><span><i style="background:#7fb8ff"></i>ნოე</span><span><i style="background:#E3BE84"></i>წინასწარმეტყველი</span><span><i style="background:#c9a0ff"></i>სიბილა</span><span><i style="background:#ff8a8a"></i>კუთხე</span>';
+function stop(){clearTimeout(TIM);TIM=null;document.querySelectorAll('.rd button').forEach(b=>b.classList.remove('on'));}
+document.querySelector('.rd').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const was=b.classList.contains('on');stop();if(was)return;b.classList.add('on');
+  const ord=b.dataset.r==='g'?[0,1,2,3,4,5,6,7,8]:[8,7,6,5,4,3,2,1,0];let k=0;const step=()=>{SEL={t:'h',i:ord[k]};map();k++;if(k<ord.length)TIM=setTimeout(step,5200);else TIM=setTimeout(stop,5200);};step();});
+map();
+window.MG_ART4=()=>({h:H.length,se:SE.length,pd:PD.length,sel:SEL});
+window.MG_ART4s=(t,i)=>{SEL={t,i};map();};
+
+const Q=[['რამდენი სცენაა შესაქმის წიგნიდან ჭერის ცენტრში?',['7','9','12','3'],1,'სამი ტრიადა: სამყარო, ადამიანი, ნოე.'],
+ ['რომელ სცენას ხედავს სტუმარი პირველს, შესასვლელიდან?',['სინათლის გაყოფას','ადამის შექმნას','ნოეს სიმთვრალეს','წარღვნას'],2,'აქედან იწყება „სულის აღმასვლა“.'],
+ ['რატომ არიან ჭერზე სიბილები?',['დეკორაციისთვის','როგორც ქრისტეს მოსვლის წარმართი მოწმეები','პაპის ნათესავები იყვნენ','ისინი მოციქულების ცოლები არიან'],1,'prisca theologia — ჭეშმარიტება ყველა ხალხს ჰქონდა.'],
+ ['რომელი წინასწარმეტყველია საკურთხევლის თავზე?',['ზაქარია','იერემია','იონა','ესაია'],2,'იონა — აღდგომის წინასახე.'],
+ ['ჭერის ცენტრში, სადაც თავდაპირველად ტიხარი გადიოდა, არის —',['ევას შექმნა','წარღვნა','ადამის შექმნა','ნოეს მსხვერპლი'],0,''],
+ ['რომელ წინასწარმეტყველს თვლიან ხშირად მიქელანჯელოს ავტოპორტრეტად?',['დანიელს','იერემიას','იოელს','ზაქარიას'],1,'მელანქოლიური, სატურნისეული ფიგურა.'],
+ ['წარღვნის ფიგურები პატარაა, რადგან —',['ეს გვიანდელი სცენაა','ეს პირველი დახატული დიდი სცენა იყო, მერე ფიგურები გაადიდა','დამკვეთმა მოითხოვა','ეს სხვა მხატვარმა დახატა'],1,'ქვემოდან პატარა ფიგურები ძნელად იკითხება.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
