@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 3</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+.gm{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:14px;background:rgba(14,20,36,.5)}
+.gq{font-size:16px;line-height:1.6;margin-bottom:10px}.gq b{color:#F3DDA4}
+.gm .op{display:flex;flex-wrap:wrap;gap:6px}.gm .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:7px 14px;font:14px 'Noto Serif Georgian',serif;cursor:pointer}
+.gm .op button.ok{background:#2f6b45;border-color:#8fd19a}.gm .op button.no{background:#6b2f2f;border-color:#e05050}
+.gm .ex{margin-top:10px;font-size:13.5px;line-height:1.7;color:#d8dbe2}.gs{margin-top:8px;font:600 13px Cinzel,serif;color:#B8894A;text-align:right}
+.nx{margin-top:8px;background:#C9A24C;color:#0b1020;border:0;border-radius:8px;padding:6px 14px;font:600 13px 'Noto Serif Georgian',serif;cursor:pointer}
+.pl{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}@media(max-width:620px){.pl{grid-template-columns:repeat(4,1fr)}}
+.pl button{background:#0e1424;border:1px solid var(--k);border-radius:10px;padding:8px 4px;color:#EDE6D8;font:12.5px 'Noto Serif Georgian',serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pl button .g{font-size:26px;color:var(--k);line-height:1}.pl button.on{background:color-mix(in srgb,var(--k) 22%,#0e1424);box-shadow:0 0 0 2px var(--k)}
+.tg{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.tg span{border:1px solid rgba(184,137,74,.35);border-radius:999px;padding:2px 10px;font-size:12.5px;color:#cfd5e2}.tg b{color:#F3DDA4}
+.stg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}@media(max-width:620px){.stg{grid-template-columns:repeat(2,1fr)}}
+.stg>button{background:#0e1424;border:1px solid rgba(184,137,74,.3);border-radius:10px;padding:8px;color:#EDE6D8;font:13px 'Noto Serif Georgian',serif;cursor:pointer;display:flex;flex-direction:column;gap:3px;text-align:center}
+.stg>button .sw{height:26px;border-radius:6px;border:1px solid rgba(255,255,255,.2)}.stg>button small{color:#9aa3b6;font-size:11.5px}.stg>button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.35)}
+#kD svg{max-width:380px;margin:0 auto}#zD svg{max-width:300px;margin:0 auto}#eD svg{max-width:340px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 1 · როგორ ვკითხულობთ სიმბოლოს</div>
+  <h1>გაკვეთილი 3 — ასტროლოგია, ალქიმია, კაბალა ხელოვნებაში</h1>
+  <div class="sub">პლანეტები, ზოდიაქო, ოთხი სტიქია, ლითონები, სეფიროტი — როგორ ვიცნოთ სურათში</div>
+
+  <div class="intro">რენესანსის მხატვარი, დამკვეთი და მნახველი ერთ <b>კოსმოსში</b> ცხოვრობდნენ: შვიდი პლანეტა მართავდა ლითონებს, დღეებს, ფერებს, ხასიათებს და ხელობებს; ზოდიაქო — სხეულის ნაწილებს და წლის საქმეებს; ოთხი სტიქია — ტემპერამენტებს. ეკლესიის კედელზე და მეფის ჟამნში ასტროლოგია არ ეწინააღმდეგებოდა რწმენას — ის ღვთის შექმნილი წესრიგის <b>რუკა</b> იყო. ალქიმიამ და ქრისტიანულმა კაბალამ ამ რუკას ფარული ენა დაუმატა. ამ გაკვეთილში ვსწავლობთ, როგორ ვიცნოთ ეს ენები ნახატში.</div>
+
+  <div class="sec"><h2>1 · შვიდი პლანეტა — შვიდი ღმერთი</h2>
+    <p style="margin-bottom:10px">ნახატში პლანეტა თითქმის არასოდეს ჩანს ციურ სხეულად — ის <b>ღმერთად</b> ჩნდება, თავისი ატრიბუტებით, ეტლით და „შვილებით“ (ადამიანებით, რომლებსაც მართავს).</p>
+    <div class="pl" id="pT"></div>
+    <div class="kcard" id="pC" style="margin-top:12px"></div>
+  </div>
+
+  <div class="sec"><h2>2 · ზოდიაქო: ზოდიაქოს ადამიანი და თვეების შრომა</h2>
+    <div class="kbody"><div class="kdia" id="zD"></div><div><div class="kcard" id="zC" style="--k:#E0B450"></div><p style="margin-top:10px;font-size:13px;color:#9aa3b6">„ზოდიაქოს ადამიანი“ (Homo signorum) შუა საუკუნეების სამედიცინო წიგნებსა და ჟამნებში ჩანს: ექიმი ამოწმებდა, რომელ ნიშანშია მთვარე, სანამ სხეულის იმ ნაწილს შეეხებოდა. დააჭირე ნიშანს.</p></div></div>
+  </div>
+
+  <div class="sec"><h2>3 · ოთხი სტიქია და ოთხი ტემპერამენტი</h2>
+    <div class="kbody"><div class="kdia" id="eD"></div><div><div class="kcard" id="eC" style="--k:#ff8a8a"></div></div></div>
+  </div>
+
+  <div class="sec"><h2>4 · ალქიმიის ენა</h2>
+    <p style="margin-bottom:10px">ალქიმიური სურათი <b>რებუსია</b>: ლომი, რომელიც მზეს ყლაპავს, მეფე და დედოფალი აბანოში, ჰერმაფროდიტი ორი თავით. ოთხი ფერი — ოთხი სტადია: ტყვია უნდა „მოკვდეს“, რომ ოქრო დაიბადოს. ეს არის ლითონის — და სულის — გარდაქმნა.</p>
+    <div class="stg" id="sT"></div>
+    <div class="kgrid" id="aG" style="margin-top:12px"></div>
+    <div class="kcard" id="aC" style="--k:#c9a0ff;margin-top:12px"></div>
+  </div>
+
+  <div class="sec"><h2>5 · კაბალა: სიცოცხლის ხე</h2>
+    <div class="kbody"><div class="kdia" id="kD"></div><div><div class="kcard" id="kC" style="--k:#7fb8ff"></div><p style="margin-top:10px;font-size:13px;color:#9aa3b6">რენესანსში პიკო დელა მირანდოლამ და იოჰან როიხლინმა კაბალა ქრისტიანულ ფილოსოფიაში შემოიტანეს; XVII საუკუნეში რობერტ ფლადმა და ათანასიუს კირხერმა სიცოცხლის ხე გრავიურებად დახატეს. ნახატში იცანი: <b>ათი წრე</b>, <b>სამი სვეტი</b>, ებრაული ასოები, ზეციდან მიწამდე დაშვებული სინათლე. 22 ბილიკი — ებრაული ანბანის 22 ასო და ტაროს 22 მთავარი არკანი.</p></div></div>
+  </div>
+
+  <div class="sec"><h2>6 · იცანი — რომელი პლანეტაა?</h2>
+    <div class="gm"><div class="gq" id="gQ"></div><div class="op" id="gO"></div><div class="ex" id="gX"></div><div class="gs" id="gS"></div></div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art2.html">← ქრისტიანული იკონოგრაფია</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 4 — მალე →</a></div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+/* planets: glyph, name, god, colour, metal, day, attributes, children, text, example */
+const PL=[['♄','სატურნი','კრონოსი','#8a8f9c','ტყვია','შაბათი','მოხუცი <b>ცელით</b> ან ნამგლით, ყავარჯენი, ხის ფეხი; შვილების მჭამელი (დრო, რომელიც ყველაფერს ყლაპავს); ქვიშის საათი; გველი, რომელიც კუდს იკბენს.','მიწათმოქმედები, მესაფლავეები, მეთევზეები, ტყავის მკეთებლები, პატიმრები, მელანქოლიკები — და ფილოსოფოსები.','ყველაზე შორეული და ნელი პლანეტა — <b>დრო, სიკვდილი, საზღვარი</b>, მაგრამ ასევე ღრმა ფიქრი. ფიჩინოს ფლორენციაში სატურნი რეაბილიტირდა: მელანქოლია გენიოსის ნიშნად იქცა. ბერძნული კრონოსი და chronos (დრო) აირია — ასე გაჩნდა „მამა დრო“ ცელით.','დიურერის „მელანქოლია I“ (გაკვეთილი 16): ქვიშის საათი, მაგიური კვადრატი, მელანქოლიური ფიგურა — სატურნის სამყარო.'],
+ ['♃','იუპიტერი','ზევსი','#5aa8e8','კალა','ხუთშაბათი','მეფე <b>არწივით</b>, ელვის ისრით (კონა), კვერთხი, ტახტი; ზოგჯერ ეპისკოპოსის ან მოსამართლის სახით.','მოსამართლეები, მღვდლები, მეფეები, ბანკირები, მეცნიერები — წესრიგი და კეთილდღეობა.','<b>კანონი, სიუხვე, სიბრძნე</b>. „დიდი ბედნიერება“ ასტროლოგიაში. ხელოვნებაში იუპიტერი ხშირად ძალაუფლების ალეგორიაა — მეფეები და პაპები თავს იუპიტერთან აიგივებდნენ.','რაფაელის ფრესკები და მედიჩების ვილები — იუპიტერი, როგორც კეთილი მმართველი.'],
+ ['♂','მარსი','არესი','#e05050','რკინა','სამშაბათი','მეომარი <b>ჯავშნით</b>, მახვილით, შუბით, მუზარადით; მგელი; წითელი სამოსი; ეტლი, რომელსაც მგლები ან ცხენები ეწევიან.','ჯარისკაცები, მჭედლები, ყაჩაღები, მზარეულები, დალაქ-ქირურგები — ყველა, ვინც რკინითა და ცეცხლით მუშაობს.','<b>ომი, ძალა, ვნება, გამბედაობა</b>. „მცირე უბედურება“. ხშირად ვენერასთან წყვილში: სიყვარული ამარცხებს ომს — მარსი სძინავს, ვენერა ფხიზლობს.','ბოტიჩელის „ვენერა და მარსი“: მარსს სძინავს, სატირები მის ჯავშანს ეთამაშებიან.'],
+ ['☉','მზე','აპოლონი / ჰელიოსი','#FFD36A','ოქრო','კვირა','ახალგაზრდა ღმერთი <b>ოქროს ეტლით</b> და ოთხი ცხენით, სხივოსანი გვირგვინი, <b>ლირა</b>, მშვილდი, დაფნის გვირგვინი.','მეფეები, მუსიკოსები, პოეტები, ათლეტები — ყველა, ვინც ანათებს.','<b>სიცოცხლე, ცნობიერება, დიდება</b>. ოქრო — ალქიმიის მიზანი. ქრისტიანულ ხელოვნებაში მზე ქრისტეა („სიმართლის მზე“) — მიქელანჯელოს „განკითხვის დღის“ ქრისტე აპოლონის სახით არის დახატული.','მიქელანჯელოს „განკითხვის დღე“ (გაკვეთილი 6): ქრისტე-აპოლონი.'],
+ ['♀','ვენერა','აფროდიტე','#8fd19a','სპილენძი','პარასკევი','ქალღმერთი <b>მტრედებით</b> ან გედებით გაწეულ ეტლში, ამური (კუპიდონი) ისრებით, ნიჟარა, ვარდები, მირტი, სარკე, ოქროს ვაშლი.','შეყვარებულები, მუსიკოსები, მხატვრები, მკერავები, სუნამოს მკეთებლები — სილამაზე და სიამოვნება.','<b>სიყვარული, სილამაზე, ჰარმონია</b>. „მცირე ბედნიერება“. ნეოპლატონიკოსებისთვის — ორი ვენერა: ციური (სულს აღავლენს) და მიწიერი. სპილენძი კვიპროსიდანაა — ვენერას კუნძულიდან (cuprum).','ბოტიჩელის „ვენერას დაბადება“ და „პრიმავერა“ (გაკვეთილები 1 და 9).'],
+ ['☿','მერკური','ჰერმესი','#c9a0ff','ვერცხლისწყალი','ოთხშაბათი','ახალგაზრდა <b>ფრთოსანი ქუდით</b> და ფრთოსანი სანდლებით, <b>კადუცეუსი</b> (კვერთხი ორი გველით), ქისა; მამალი.','ვაჭრები, მწერლები, მათემატიკოსები, მხატვრები, ექიმები, ქურდები, მოგზაურები — ყველა, ვინც გონებით და ხელით „ცვლის“.','<b>გონება, ენა, ვაჭრობა, შუამავლობა</b>. ღმერთების მაცნე და სულების გამცილებელი. ჰერმეს ტრისმეგისტოსი — ალქიმიისა და ჰერმეტიზმის ლეგენდარული მამა. ვერცხლისწყალი — თხევადი ლითონი, ალქიმიის „მერკური“, ყველა გარდაქმნის შუამავალი.','ბოტიჩელის „პრიმავერაში“ მერკური კადუცეუსით ღრუბლებს ფანტავს.'],
+ ['☽','მთვარე','დიანა / არტემიდე','#EDE6D8','ვერცხლი','ორშაბათი','ქალღმერთი <b>ნამგალა მთვარით</b> შუბლზე, მშვილდ-ისრით, მწევრებით; ირემი; ეტლი, რომელსაც ქალწულები ან ხარები ეწევიან.','მეზღვაურები, მეთევზეები, მოგზაურები, მეწისქვილეები, მონადირეები — ყველა, ვისაც ცვალებადობა და წყალი მართავს.','<b>ცვალებადობა, ღამე, ქალწულებრიობა, წყალი</b>. ქრისტიანულ ხელოვნებაში ნამგალა მთვარე ღვთისმშობლის ფეხქვეშაა (გაკვეთილი 2) — ის „ცვალებადობაზე მაღლა“ დგას.','ტიციანის „დიანა და აქტეონი“ (გაკვეთილი 21).']];
+let PI=0;
+function pUI(){$('pT').innerHTML=PL.map((p,i)=>`<button type="button" data-i="${i}" class="${i===PI?'on':''}" style="--k:${p[3]}"><span class="g">${p[0]}</span><span>${p[1]}</span></button>`).join('');
+  const p=PL[PI];$('pC').style.setProperty('--k',p[3]);
+  $('pC').innerHTML=`<h3><span style="color:${p[3]};font-size:22px">${p[0]}</span> ${p[1]} — <span style="font-weight:400;color:#d8dbe2">${p[2]}</span></h3>
+   <div class="tg"><span>ლითონი: <b>${p[4]}</b></span><span>დღე: <b>${p[5]}</b></span></div>
+   <p style="margin:8px 0 6px"><b style="color:${p[3]}">როგორ ვიცნოთ:</b> ${p[6]}</p>${p[8]}
+   <div class="ex"><b>„პლანეტის შვილები“:</b> ${p[7]}<br><b>ნახატში:</b> ${p[9]}</div>`;}
+$('pT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;PI=+b.dataset.i;pUI();});pUI();
+
+/* zodiac man */
+const Z=[['♈','ვერძი','თავი','მარტი','ბაღის დამუშავება, ვაზის გასხვლა',50,10],['♉','კურო','კისერი, ყელი','აპრილი','ყვავილები, ახალგაზრდობის გართობა, მწყემსობა',50,20],
+ ['♊','ტყუპები','მხრები, ხელები','მაისი','ნადირობა შევარდნით, სიყვარული, ჯირითი',27,27],['♋','კირჩხიბი','მკერდი','ივნისი','თივის თიბვა',50,30],
+ ['♌','ლომი','გული, ზურგი','ივლისი','მკა — პურის მოჭრა',57,35],['♍','ქალწული','მუცელი, ნაწლავები','აგვისტო','ლეწვა',50,42],
+ ['♎','სასწორი','თირკმელები, წელი','სექტემბერი','რთველი, ყურძნის დაწურვა',38,47],['♏','მორიელი','სასქესო ორგანოები','ოქტომბერი','ხვნა და თესვა',50,52],
+ ['♐','მშვილდოსანი','ბარძაყები','ნოემბერი','ღორების გამოკვება მუხის რკოთი',43,62],['♑','თხის რქა','მუხლები','დეკემბერი','ღორის დაკვლა, ზამთრის მარაგი',43,72],
+ ['♒','მერწყული','წვივები','იანვარი','ქეიფი ბუხართან, ორსახიანი იანუსი',57,82],['♓','თევზები','ტერფები','თებერვალი','შეშის ჭრა, ცეცხლთან გათბობა',57,95]];
+let ZI=0;
+function zUI(){let s='<svg viewBox="0 0 200 330" role="img" aria-label="ზოდიაქოს ადამიანი"><g fill="#1a2236" stroke="#B8894A" stroke-width="1.2">'+
+  '<circle cx="100" cy="30" r="17"/><path d="M92 46 h16 v8 h-16z"/><path d="M70 56 Q100 50 130 56 L134 150 Q100 162 66 150Z"/>'+
+  '<path d="M70 58 L44 130 L52 134 L76 72"/><path d="M130 58 L156 130 L148 134 L124 72"/>'+
+  '<path d="M68 150 L82 312 L96 312 L98 160"/><path d="M132 150 L118 312 L104 312 L102 160"/></g>';
+  Z.forEach((z,i)=>{const x=z[5]*2,y=z[6]*3.2+4,on=i===ZI;s+=`<g data-i="${i}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="${on?12:10}" fill="${on?'#E0B450':'#0C1222'}" stroke="#E0B450" stroke-width="1.5"/><text x="${x}" y="${y+1}" font-size="${on?13:11}" fill="${on?'#0b1020':'#F3DDA4'}" text-anchor="middle" dominant-baseline="middle">${z[0]}︎</text></g>`;});
+  $('zD').innerHTML=s+'</svg>';const z=Z[ZI];
+  $('zC').innerHTML=`<h3>${z[0]}︎ ${z[1]} — <span style="font-weight:400;color:#d8dbe2">${z[2]}</span></h3>ზოდიაქოს ადამიანზე ${z[1]} მართავს: <b>${z[2]}</b>.<div class="ex"><b>თვეების შრომა — ${z[3]}:</b> ${z[4]}. ტაძრების პორტალებზე და ჟამნების კალენდრებში (მაგ., „ბერის ჰერცოგის ძალიან მდიდრული ჟამნი“, გაკვეთილი 14) ყოველ თვეს თავისი ნიშანი და საქმე აქვს.</div>`;}
+$('zD').addEventListener('click',e=>{const g=e.target.closest('g[data-i]');if(!g)return;ZI=+g.dataset.i;zUI();});zUI();
+
+/* elements square */
+const EL=[['ცეცხლი','🔥','ცხელი და მშრალი','ყვითელი ნაღველი','ქოლერიკი','ზაფხული','ახალგაზრდობა','♈ ♌ ♐','#ff8a8a','ფიცხი, გაბედული, ამბიციური. ხელოვნებაში — ლომი, სალამანდრა, მარსის ატრიბუტები.'],
+ ['ჰაერი','💨','ცხელი და ნოტიო','სისხლი','სანგვინიკი','გაზაფხული','ბავშვობა','♊ ♎ ♒','#fff2b3','მხიარული, გულღია, მუსიკოსი და შეყვარებული. ფრინველები, ქარი, ბუშტები.'],
+ ['წყალი','💧','ცივი და ნოტიო','ლორწო','ფლეგმატიკი','ზამთარი','სიბერე','♋ ♏ ♓','#7fb8ff','მშვიდი, ნელი, ზოგჯერ ზარმაცი. თევზები, ზღვის არსებები, მთვარე.'],
+ ['მიწა','⛰️','ცივი და მშრალი','შავი ნაღველი','მელანქოლიკი','შემოდგომა','მომწიფებული ასაკი','♉ ♍ ♑','#8fd19a','ფიქრიანი, სევდიანი, ღრმა — სატურნის შვილი; რენესანსიდან — გენიოსის ტემპერამენტიც.']];
+let EI=0;
+function eUI(){const P=[[150,40],[260,150],[150,260],[40,150]];let s='<svg viewBox="0 0 300 300" role="img" aria-label="სტიქიების კვადრატი"><rect x="60" y="60" width="180" height="180" fill="none" stroke="#B8894A" stroke-dasharray="4 3" transform="rotate(45 150 150)"/>'+
+  '<text x="150" y="154" fill="#9aa3b6" font-size="10.5" text-anchor="middle">ოთხი თვისება</text>'+[['ცხელი',228,72],['ნოტიო',228,234],['ცივი',72,234],['მშრალი',72,72]].map(q=>`<text x="${q[1]}" y="${q[2]}" fill="#E3BE84" font-size="12" text-anchor="middle">${q[0]}</text>`).join('');
+  const ord=[0,1,2,3];ord.forEach((k,i)=>{const e=EL[k],[x,y]=P[i],on=k===EI;s+=`<g data-i="${k}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="${on?36:32}" fill="${on?'rgba(255,255,255,.08)':'#0e1424'}" stroke="${e[8]}" stroke-width="${on?3:1.5}"/><text x="${x}" y="${y-4}" font-size="22" text-anchor="middle" dominant-baseline="middle">${e[1]}</text><text x="${x}" y="${y+20}" font-size="11.5" fill="${e[8]}" text-anchor="middle">${e[0]}</text></g>`;});
+  $('eD').innerHTML=s+'</svg>';const e=EL[EI];$('eC').style.setProperty('--k',e[8]);
+  $('eC').innerHTML=`<h3>${e[1]} ${e[0]} — <span style="font-weight:400;color:#d8dbe2">${e[2]}</span></h3><div class="tg"><span>სითხე: <b>${e[3]}</b></span><span>ტემპერამენტი: <b>${e[4]}</b></span><span>სეზონი: <b>${e[5]}</b></span><span>ასაკი: <b>${e[6]}</b></span><span>ნიშნები: <b>${e[7]}</b></span></div><p style="margin-top:8px">${e[9]}</p><div class="ex">არისტოტელეს წესით ყოველი სტიქია ორი თვისებისგან შედგება; მეზობელი სტიქიები ერთ თვისებას იზიარებენ, მოპირდაპირეები — არცერთს. ამიტომ ცეცხლი წყალს ვერ „გადაიქცევა“ პირდაპირ — მხოლოდ ჰაერის ან მიწის გავლით. <b>ნახატში:</b> არჩიმბოლდოს „სტიქიები“ — თავები, შედგენილი ფრინველებისგან (ჰაერი), თევზებისგან (წყალი), ცხოველებისგან (მიწა) და ცეცხლის საგნებისგან; დიურერის „ოთხი მოციქული“ — ოთხი ტემპერამენტი.</div>`;}
+$('eD').addEventListener('click',e=>{const g=e.target.closest('g[data-i]');if(!g)return;EI=+g.dataset.i;eUI();});eUI();
+
+/* alchemy */
+const ST=[['ნიგრედო','#222','გაშავება','დაშლა, „სიკვდილი“, ლპობა. ლითონი (ან სული) კარგავს ძველ ფორმას. სიმბოლოები: <b>ყორანი</b>, თავის ქალა, შავი მზე, მეფე, რომელიც კვდება ან კუბოშია.'],
+ ['ალბედო','#f2efe6','გათეთრება','განწმენდა, „დაბანა“, მთვარე. სიმბოლოები: <b>გედი</b>, თეთრი დედოფალი, ვერცხლი, მთვარე, მტრედი.'],
+ ['ციტრინიტასი','#d9b521','გაყვითლება','„გათენება“, მზის ამოსვლა. ხშირად ალბედოსა და რუბედოს შორის; ზოგ ტექსტში გამოტოვებულია. გადასვლის სტადიაზე — <b>ფარშევანგის კუდი</b> (cauda pavonis): ყველა ფერი ერთად.'],
+ ['რუბედო','#b3242a','გაწითლება','დასრულება, ფილოსოფიური ქვა, ოქრო. სიმბოლოები: <b>ფენიქსი</b>, პელიკანი, წითელი მეფე, მზე, ქიმიური ქორწილის ნაყოფი.']];
+const AL=[['🦁','მწვანე ლომი, რომელიც მზეს ყლაპავს','„მწვანე ლომი“ — მჟავა (ან უმი ნივთიერება), რომელიც ოქროსაც კი ხსნის; სულიერად — ნედლი ბუნების ძალა, რომელიც „ყლაპავს“ ცნობიერებას. Rosarium philosophorum-ის ცნობილი გრავიურა.'],
+ ['🐍','ურობოროსი','გველი, რომელიც საკუთარ კუდს ყლაპავს: „ერთი არის ყველაფერი“ (hen to pan). ციკლი, მარადისობა, მატერია, რომელიც თავისით იქმნება და იშლება.'],
+ ['👑','მეფე და დედოფალი','მზე და მთვარე, გოგირდი და ვერცხლისწყალი, მამრობითი და მდედრობითი. მათი „ქიმიური ქორწილი“ (coniunctio) — დაპირისპირებულების შეერთება.'],
+ ['⚥','რებისი','„ორმაგი ნივთი“ — ორთავიანი ჰერმაფროდიტი: ქორწილის ნაყოფი, სადაც მზე და მთვარე ერთ სხეულში ცხოვრობენ. ხშირად დგას დრაკონზე ან მთვარეზე.'],
+ ['🪶','პელიკანი','ლეგენდით, პელიკანი ბარტყებს საკუთარი სისხლით კვებავს — ქრისტეს სიმბოლო. ალქიმიაში ასევე ჭურჭელია, რომელშიც სითხე უსასრულოდ ცირკულირებს.'],
+ ['🔥','ფენიქსი','ფრინველი, რომელიც ცეცხლში იწვის და ფერფლიდან აღდგება — რუბედოს და აღდგომის სიმბოლო.'],
+ ['🦎','სალამანდრა','ცეცხლში მცხოვრები არსება — ცეცხლის სტიქიის სული. ალქიმიურ ღუმელში ცეცხლის ხარისხის ნიშანი.'],
+ ['🐉','დრაკონი','პირველმატერია (prima materia), ქაოსი, ვერცხლისწყალი. ფრთოსანი დრაკონი — აქროლადი, უფრთო — მყარი; ორი დრაკონი ერთმანეთს კბენს — დაშლა და შეკავშირება.'],
+ ['△','მარილი · გოგირდი · ვერცხლისწყალი','პარაცელსის tria prima: სხეული (მარილი), სული (გოგირდი), სულიერი შუამავალი (ვერცხლისწყალი). ხშირად სამკუთხედით ან სამი ფიგურით.']];
+let SI=0,AI=0;
+function sUI(){$('sT').innerHTML=ST.map((s,i)=>`<button type="button" data-i="${i}" class="${i===SI?'on':''}"><span class="sw" style="background:${s[1]}"></span><b>${s[0]}</b><small>${s[2]}</small></button>`).join('')+`<div class="kcard" style="--k:${ST[SI][1]==='#222'?'#9aa3b6':ST[SI][1]};grid-column:1/-1"><h3>${ST[SI][0]} — ${ST[SI][2]}</h3>${ST[SI][3]}</div>`;}
+function aUI(){$('aG').innerHTML=AL.map((a,i)=>`<button type="button" data-i="${i}" class="${i===AI?'on':''}"><span class="ic" aria-hidden="true">${a[0]}</span>${a[1]}</button>`).join('');
+  $('aC').innerHTML=`<h3>${AL[AI][0]} ${AL[AI][1]}</h3>${AL[AI][2]}<div class="ex"><b>სად ვნახოთ:</b> „Splendor Solis“ (1582), Rosarium philosophorum (1550), მიხაელ მაიერის „Atalanta fugiens“ (1617) — ემბლემები მუსიკით. ტაროში: „ზომიერება“ (XIV) — სითხის გადასხმა, ალქიმიური შეზავება.</div>`;}
+$('sT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;SI=+b.dataset.i;sUI();});
+$('aG').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;AI=+b.dataset.i;aUI();});sUI();aUI();
+
+/* tree of life */
+const SF=[['כתר','კეთერი','გვირგვინი','პირველმოძრავი','წყარო, „არაფერი“, საიდანაც ყველაფერი იწყება.',200,36],
+ ['חכמה','ხოხმა','სიბრძნე','ზოდიაქო','პირველი ნაპერწკალი, მამრობითი სიბრძნე.',310,96],['בינה','ბინა','გაგება','♄ სატურნი','ფორმის მიმცემი დედა, ზღვა, საზღვარი.',90,96],
+ ['חסד','ხესედი','წყალობა','♃ იუპიტერი','სიუხვე, სიყვარული, გაცემა.',310,206],['גבורה','გევურა','ძალა / სამართალი','♂ მარსი','შეზღუდვა, მსჯავრი, სიმკაცრე.',90,206],
+ ['תפארת','ტიფერეთი','სილამაზე','☉ მზე','ხის გული — ჰარმონია; ქრისტიანულ კაბალაში — ძე.',200,262],
+ ['נצח','ნეცახი','გამარჯვება','♀ ვენერა','გრძნობა, ხელოვნება, სიყვარულის ძალა.',310,362],['הוד','ჰოდი','დიდება','☿ მერკური','გონება, ენა, რიტუალი.',90,362],
+ ['יסוד','იესოდი','საფუძველი','☽ მთვარე','ხატები, სიზმრები, ფორმების „ფიცარნაგი“.',200,418],['מלכות','მალხუთი','სამეფო','ოთხი სტიქია','მიწიერი სამყარო, შეხინა — ღვთის მყოფობა მიწაზე.',200,500]];
+const PATH=[[0,1],[0,2],[0,5],[1,2],[1,5],[1,3],[2,5],[2,4],[3,4],[3,5],[3,6],[4,5],[4,7],[5,6],[5,8],[5,7],[6,7],[6,8],[6,9],[7,8],[7,9],[8,9]];
+let KI=5;
+function kUI(){let s='<svg viewBox="40 0 320 560" role="img" aria-label="სიცოცხლის ხე">';
+  s+='<text x="90" y="552" fill="#9aa3b6" font-size="10" text-anchor="middle">სიმკაცრე</text><text x="200" y="552" fill="#9aa3b6" font-size="10" text-anchor="middle">წონასწორობა</text><text x="310" y="552" fill="#9aa3b6" font-size="10" text-anchor="middle">წყალობა</text>';
+  PATH.forEach(([a,b])=>{const A=SF[a],B=SF[b],on=a===KI||b===KI;s+=`<line x1="${A[5]}" y1="${A[6]}" x2="${B[5]}" y2="${B[6]}" stroke="${on?'#E0B450':'rgba(184,137,74,.35)'}" stroke-width="${on?2.5:1.5}"/>`;});
+  SF.forEach((f,i)=>{const on=i===KI;s+=`<g data-i="${i}" style="cursor:pointer"><circle cx="${f[5]}" cy="${f[6]}" r="${on?27:24}" fill="${on?'#E0B450':'#0e1424'}" stroke="#7fb8ff" stroke-width="${on?3:1.5}"/><text x="${f[5]}" y="${f[6]-5}" font-size="12" fill="${on?'#0b1020':'#F3DDA4'}" text-anchor="middle">${f[0]}</text><text x="${f[5]}" y="${f[6]+11}" font-size="8.6" fill="${on?'#0b1020':'#cfd5e2'}" text-anchor="middle">${f[1]}</text></g>`;});
+  $('kD').innerHTML=s+'</svg>';const f=SF[KI];
+  $('kC').innerHTML=`<h3>${KI+1}. ${f[1]} <span style="font-family:serif">${f[0]}</span> — <span style="font-weight:400;color:#d8dbe2">${f[2]}</span></h3>${f[4]}<div class="ex"><b>ციური შესაბამისობა:</b> ${f[3]}. ${KI>=2&&KI<=8?'შვიდი პლანეტა ხის შვიდ სეფირაზე ზუსტად ეწყობა — ამიტომ პლანეტური სიმბოლოები კაბალისტურ გრავიურებში ხის „ნაყოფად“ ჩანს.':''}</div>`;}
+$('kD').addEventListener('click',e=>{const g=e.target.closest('g[data-i]');if(!g)return;KI=+g.dataset.i;kUI();});kUI();
+
+/* recognise game */
+const GS=[];PL.forEach((p,i)=>{p[6].replace(/<[^>]+>/g,'').split(/[;,]/).map(x=>x.trim()).filter(x=>x.length>3).forEach(x=>GS.push([x,i]));});
+let G=null,gn=0,gok=0;
+function gNew(){const r=GS[Math.floor(Math.random()*GS.length)];G={r,done:false};$('gQ').innerHTML=`ნახატში ჩანს: <b>${r[0]}</b>. რომელი პლანეტაა?`;
+  $('gO').innerHTML=PL.map((p,i)=>`<button type="button" data-i="${i}">${p[0]} ${p[1]}</button>`).join('');$('gX').innerHTML='';}
+$('gO').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(G.done){gNew();return;}const i=+b.dataset.i,ok=i===G.r[1];G.done=true;gn++;if(ok)gok++;
+  $('gO').querySelectorAll('button').forEach((x,k)=>{if(k===G.r[1])x.classList.add('ok');else if(x===b)x.classList.add('no');});
+  const p=PL[G.r[1]];$('gX').innerHTML=`${ok?'სწორია!':'ეს '+p[1]+'-ა.'} ${p[1]} — ${p[2]}: ${p[6]}<br><button type="button" class="nx" id="gN">შემდეგი →</button>`;$('gS').textContent=`${gok} / ${gn}`;$('gN').onclick=gNew;});
+gNew();
+window.MG_ART3=()=>({pl:PL.length,z:Z.length,el:EL.length,al:AL.length,sf:SF.length,paths:PATH.length,gs:GS.length});
+
+const Q=[['მოხუცი ცელით და ქვიშის საათით — რომელი პლანეტაა?',['იუპიტერი','სატურნი','მარსი','მერკური'],1,'კრონოსი და chronos (დრო) აირია — „მამა დრო“.'],
+ ['კადუცეუსი და ფრთოსანი სანდლები —',['აპოლონი','მერკური','მარსი','დიანა'],1,''],
+ ['რომელი ლითონი ეკუთვნის ვენერას?',['ოქრო','რკინა','სპილენძი','კალა'],2,'cuprum — კვიპროსი, ვენერას კუნძული.'],
+ ['ზოდიაქოს ადამიანზე თევზები მართავს —',['თავს','მუხლებს','ტერფებს','გულს'],2,'ვერძიდან (თავი) თევზებამდე (ტერფები).'],
+ ['მელანქოლიკის სტიქია და სითხე —',['ცეცხლი, ყვითელი ნაღველი','მიწა, შავი ნაღველი','წყალი, ლორწო','ჰაერი, სისხლი'],1,''],
+ ['ალქიმიის „გაშავება“, ყორნის სტადია —',['რუბედო','ალბედო','ნიგრედო','ციტრინიტასი'],2,''],
+ ['სიცოცხლის ხის ცენტრი, მზის სეფირა —',['კეთერი','იესოდი','ტიფერეთი','მალხუთი'],2,'ტიფერეთი — სილამაზე, ჰარმონია.'],
+ ['რამდენი ბილიკია სიცოცხლის ხეზე?',['10','12','22','32'],2,'22 — ებრაული ანბანი და ტაროს მთავარი არკანები (10 სეფირა + 22 ბილიკი = 32 „სიბრძნის გზა“).']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
