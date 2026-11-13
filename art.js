@@ -51,7 +51,7 @@ function tour(host,works){style();let wi=0,st=0,timer=null,play=false,nat=null;
    <div class="at-txt"><h2></h2><div class="st"></div><div class="tx"></div><div class="at-ch"></div><div class="at-keys"></div></div></div>`;
   const q=s=>host.querySelector(s),vp=q('.at-vp'),img=q('.at-vp img'),ring=q('.at-ring'),miss=q('.at-miss');
   const W=()=>works[wi];
-  const steps=()=>{const w=W();return [{x:50,y:50,z:1,t:'ნახატი მთლიანად',d:w.i,o:1}].concat(w.spots).concat([{x:50,y:50,z:1,t:'ყველაფერი ერთად',d:w.e,o:2}]);};
+  const steps=()=>{const w=W(),sp=w.spots||[];return [{x:50,y:50,z:1,t:'ნახატი მთლიანად',d:w.i,o:1}].concat(sp).concat(w.e?[{x:50,y:50,z:1,t:'ყველაფერი ერთად',d:w.e,o:2}]:[]);};
   function picker(){q('.at-pk').innerHTML=works.map((w,i)=>`<button type="button" data-w="${i}" class="${i===wi?'on':''}"><img loading="lazy" src="${src(w.file,240)}" alt="">${w.short||w.title}</button>`).join('');}
   function ratio(){const w=W();vp.style.aspectRatio=nat?`${nat[0]}/${nat[1]}`:(w.ar||'1.3');}
   function view(){const s=steps()[st],z=s.z||2.6,Wd=vp.clientWidth,H=vp.clientHeight,x=s.x/100,y=s.y/100;
@@ -59,14 +59,14 @@ function tour(host,works){style();let wi=0,st=0,timer=null,play=false,nat=null;
     img.style.transform=`translate(${tx}px,${ty}px) scale(${z})`;
     if(z>1.01){ring.style.left=(x*Wd*z+tx)+'px';ring.style.top=(y*H*z+ty)+'px';ring.style.borderColor=KEYS[s.k]?KEYS[s.k][1]:'#FFD36A';ring.classList.remove('on');const k=st;setTimeout(()=>{if(st===k)ring.classList.add('on');},1300);}else ring.classList.remove('on');
     dots();}
-  function text(){const S=steps(),s=S[st],L=S.length,w=W(),n=w.spots.length;
+  function text(){const S=steps(),s=S[st],L=S.length,w=W(),n=(w.spots||[]).length;
     q('.at-txt h2').textContent=w.title;
-    q('.st').textContent=st===0?`${w.author} · ${w.year} · ${n} სიმბოლო`:st===L-1?'შეჯამება':`${st} / ${n} · ${KEYS[s.k][0]}`;
+    q('.st').textContent=st===0?`${w.author} · ${w.year}${n?` · ${n} სიმბოლო`:''}`:st===L-1?'შეჯამება':`${st} / ${n} · ${KEYS[s.k][0]}`;
     const tx=q('.tx');tx.innerHTML=(s.o?'':`<b>${s.t}.</b> `)+s.d;tx.style.animation='none';void tx.offsetWidth;tx.style.animation='';
     q('.at-ch').innerHTML=S.map((p,i)=>`<button type="button" data-s="${i}" class="${i===st?'on':i<st?'done':''}">${p.o?'':`<i style="background:${KEYS[p.k][1]}"></i>`}${p.o===1?'ნახატი':p.o===2?'შეჯამება':p.t}</button>`).join('');
-    const used=[...new Set(w.spots.map(p=>p.k))];q('.at-keys').innerHTML=used.map(k=>`<span><i style="background:${KEYS[k][1]}"></i>${KEYS[k][0]}</span>`).join('');
-    q('.at-bar i').style.width=(st/(L-1)*100)+'%';}
-  function dots(){vp.querySelectorAll('.at-dot').forEach(d=>d.remove());if(!EDIT||st!==0)return;W().spots.forEach((s,i)=>{const d=document.createElement('div');d.className='at-dot';d.style.left=s.x+'%';d.style.top=s.y+'%';d.style.background=KEYS[s.k][1];d.textContent=i+1;d.dataset.i=i;vp.appendChild(d);});
+    const used=[...new Set((w.spots||[]).map(p=>p.k))];q('.at-ch').style.display=L>1?'':'none';q('.at-ctl').style.visibility=L>1?'':'hidden';q('.at-bar').style.visibility=L>1?'':'hidden';q('.at-keys').innerHTML=used.map(k=>`<span><i style="background:${KEYS[k][1]}"></i>${KEYS[k][0]}</span>`).join('');
+    q('.at-bar i').style.width=(L>1?st/(L-1)*100:0)+'%';}
+  function dots(){vp.querySelectorAll('.at-dot').forEach(d=>d.remove());if(!EDIT||st!==0||!W().spots)return;W().spots.forEach((s,i)=>{const d=document.createElement('div');d.className='at-dot';d.style.left=s.x+'%';d.style.top=s.y+'%';d.style.background=KEYS[s.k][1];d.textContent=i+1;d.dataset.i=i;vp.appendChild(d);});
     q('.at-edit').value='spots x,y:\n'+W().spots.map((s,i)=>`${i+1}. {x:${s.x.toFixed(1)},y:${s.y.toFixed(1)}} ${s.t}`).join('\n');}
   function go(i){const L=steps().length;st=Math.max(0,Math.min(L-1,i));view();text();}
   function load(i){wi=i;st=0;nat=null;stop();miss.style.display='none';const w=W();ratio();img.style.transition='none';img.src=src(w.file,w.px||1600);img.alt=`${w.title} — ${w.author}`;
