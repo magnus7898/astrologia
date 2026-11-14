@@ -3078,7 +3078,9 @@ function drawWheel(data1,data2,dualAsp){
       const tickR1=isInner?R_iz_out:R1+1,tickR2=isInner?R_iz_out+6:R1+9;
       el('line',{x1:CX+Math.cos(tA)*tickR1,y1:CY+Math.sin(tA)*tickR1,x2:CX+Math.cos(tA)*tickR2,y2:CY+Math.sin(tA)*tickR2,stroke:color,'stroke-width':1.5},svg);
       el('circle',{cx:CX+Math.cos(tA)*tickR1,cy:CY+Math.sin(tA)*tickR1,r:1.8,fill:color},svg);
-      /* no connector lines: the tick on the ring marks the true degree */
+      /* leader line from the true-degree tick to a glyph that had to move */
+      if(!isInner&&Math.abs(diff)*Rg>3.5){const q1=pxy(tA,tickR2+1),q2=pxy(dispA[name],Rg-_gR-1);
+        el('line',{x1:q1.x,y1:q1.y,x2:q2.x,y2:q2.y,stroke:color,'stroke-width':.9,opacity:.7},svg);}
       const fsz=isInner?12:18;
       if(name==='მზე'&&!isInner){
         const sg2=el('g',{},svg);

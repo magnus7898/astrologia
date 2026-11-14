@@ -36,6 +36,32 @@ function spread(items){
     break;
   }
 }
+/* keep every body inside its own house: each house is packed on its own and its
+   cusps act as walls (wider margin at the AC / MC axes). If a house is too crowded,
+   the free spread is kept for the whole chart. */
+function houseWalls(items,data,asc){
+  if(data._timeUnknown||!Array.isArray(data.houses)||data.houses.length<12)return;
+  const T=2*Math.PI,N=x=>((x%T)+T)%T,X=data.houses.slice(0,12).map(h=>N((h-asc)*Math.PI/180));X[0]=0;
+  for(let i=1;i<12;i++)if(X[i]<X[i-1])return;X.push(T);
+  const mcx=data.mc!=null?N((data.mc-asc)*Math.PI/180):null;
+  const mg=i=>{const ax=i%12===0||i%12===6||(mcx!=null&&(Math.abs(X[i]-mcx)<1e-4||Math.abs(X[i]-N(mcx+Math.PI))<1e-4));return (ax?7:2)/RG;};
+  const G=Array.from({length:12},()=>[]);
+  for(const it of items){const x=N(Math.PI-it.t);let h=11;for(let i=0;i<12;i++)if(x>=X[i]&&x<X[i+1]){h=i;break;}G[h].push({it,x,w:it.w,wt:it.wt});}
+  const out=[];
+  for(let h=0;h<12;h++){const L=G[h].sort((p,q)=>p.x-q.x);if(!L.length)continue;
+    const A=X[h]+mg(h),B=X[h+1]-mg(h+1);if(L.reduce((s,e)=>s+e.w,0)>B-A+1e-9)return;
+    const place=c=>{let off=0,sw=0,sx=0;const offs=c.map((e,k)=>{if(k)off+=(c[k-1].w+e.w)/2;return off;});
+      c.forEach((e,k)=>{sw+=e.wt;sx+=e.wt*(e.x-offs[k]);});let a0=sx/sw;
+      const l=a0-c[0].w/2,r=a0+offs[offs.length-1]+c[c.length-1].w/2;
+      if(l<A)a0+=A-l;else if(r>B)a0-=r-B;c.forEach((e,k)=>{e.p=a0+offs[k];});};
+    let C=L.map(e=>[e]);C.forEach(place);
+    for(let g=0;g<200;g++){let m=false;
+      for(let k=0;k+1<C.length;k++){const x=C[k][C[k].length-1],y=C[k+1][0];
+        if(y.p-x.p<(x.w+y.w)/2-1e-9){C.splice(k,2,[...C[k],...C[k+1]]);place(C[k]);m=true;break;}}
+      if(!m)break;}
+    L.forEach(e=>out.push(e));}
+  out.forEach(e=>{e.it.a=Math.PI-e.p;});
+}
 const dm=deg=>{const s=((deg%30)+30)%30;let d=Math.floor(s),m=Math.round((s-d)*60);if(m===60){m=0;d+=1;}return [d,m];};
 const xy=(a,r)=>({x:CX+Math.cos(a)*r,y:CY+Math.sin(a)*r});
 const line=(svg,a1,r1,a2,r2,attrs)=>{const p=xy(a1,r1),q=xy(a2,r2);return el('line',{x1:p.x,y1:p.y,x2:q.x,y2:q.y,...attrs},svg);};
@@ -107,12 +133,12 @@ window.drawWheelClassic=function(data1,dualAsp){
   /* planets: radial columns inside the zodiac */
   const names=Object.keys(P).filter(n=>n!=='AC'&&n!=='MC'&&P[n]&&P[n].degree!=null);
   const _w0=window.innerWidth||1200,sc=Math.min(1.5,Math.max(1,700/Math.max(320,_w0-24)));
-  const gR=12.5*Math.min(sc,1.2),fs=10.5*Math.min(sc,1.35);
+  const gR=10.5*Math.min(sc,1.2),fs=8.5*Math.min(sc,1.35);
   const gw=n=>{const s=(PI[n]||{}).sym||'?';return (s.length>1&&s!=='sun'&&s!=='SEL')?gR*2*(0.62+0.5*(s.length-1)):gR*2;};
   const R_DEG=RG-gR-fs*0.85,R_SIG=R_DEG-fs*1.25,R_MIN=R_SIG-fs*1.25;
   /* angular width: the glyph at its radius, the text column at the innermost radius (columns converge inward) */
   const items=names.map(n=>({n,t:e2s(P[n].degree,asc),w:Math.max((gw(n)+1.5)/RG,(fs*2+1.5)/R_MIN),wt:wt(n)}));
-  spread(items);
+  spread(items);houseWalls(items,data1,asc);
   for(const it of items){
     const n=it.n,info=PI[n]||{sym:'?',color:'#fff'},col=info.color,pd=P[n];
     const tA=it.t,dA=it.a;
