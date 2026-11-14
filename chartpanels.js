@@ -454,7 +454,6 @@ if(typeof drawWheel==='function'){
   window.drawWheel=function(d1,d2){
     const r=orig.apply(this,arguments);
     try{if(d1&&!d2&&d1.planets)render(d1);else showCp(false);}catch(e){}
-    try{markLots(d1,d2);}catch(e){}
     return r;
   };
 }
