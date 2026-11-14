@@ -171,19 +171,7 @@ function starRows(tb,list){
   }
 }
 
-/* 3 ── aspect list: planet ☌ star ── */
-if(typeof calcAllNatalAspects==='function'){
-  const orig=calcAllNatalAspects;
-  window.calcAllNatalAspects=function(data){
-    const res=orig.apply(this,arguments)||[];
-    try{
-      const st=starsFor(data);
-      if(st)st.forEach(s=>s.hits.forEach(h=>res.push({p1:h.n,p2:NAME(s),type:'შეერთება',sym:'☌',color:COL,
-        orb:Math.round(h.orb*100)/100,angle:0,star:true})));
-    }catch(e){}
-    return res;
-  };
-}
+/* 3 ── fixed stars are NOT added to the aspect list (they live in their own table) ── */
 if(typeof isAspectVisible==='function'){
   const orig=isAspectVisible;
   window.isAspectVisible=function(asp){

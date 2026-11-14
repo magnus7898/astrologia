@@ -10,7 +10,7 @@
      aspect circle
    Single charts only; synastry/transit keeps the modern wheel. */
 (function(){
-const RZo=298,RZi=264,RG=247,RHo=156,RHi=134,RA=134;
+const RZo=298,RZi=264,RG=237,RHo=156,RHi=134,RA=134;
 const GOLD='rgba(227,190,132,',AX='#e8c06e';
 const MAIN=['მზე','მთვარე','მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
 const wt=n=>n==='მზე'||n==='მთვარე'?60:MAIN.includes(n)?40:(n==='ჩრდ. კვანძი'||n==='სამხ. კვანძი'||n==='ქირონი')?6:1;

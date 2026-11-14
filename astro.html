@@ -2993,7 +2993,7 @@ function drawWheel(data1,data2,dualAsp){
        move out of the way. AC / MC badges are fixed obstacles. */
     const _w0=(typeof window!=='undefined'?window.innerWidth:1200),_narrow=_w0<560;
     const _b0=Math.min(_narrow?2.1:1.6,Math.max(1,780/Math.max(320,_w0-24)));
-    const _fs=(isInner?6:7)*_b0,_gR=isInner?7:11,_showLbl=SHOW_DEGREES&&!isInner;
+    const _fs=(isInner?6:7)*_b0,_gR=isInner?6.5:9.5,_showLbl=SHOW_DEGREES&&!isInner;
     const _degTxt=n=>{const pd=data.planets[n];return _narrow?(Math.floor(((pd.degree%30)+30)%30)+'°'):fmtDeg(pd.degree);};
     const _hasLbl=n=>_showLbl&&data.planets[n]&&data.planets[n].sign_degree!=null;
     const _boxes=n=>{const s=(PI[n]||{}).sym||'?';
@@ -3004,7 +3004,7 @@ function drawWheel(data1,data2,dualAsp){
     const _ext=(b,a)=>{const c=Math.abs(Math.cos(a)),sn=Math.abs(Math.sin(a));return {rad:c*b[0]+sn*b[1],tan:sn*b[0]+c*b[1]};};
     const MAIN=['მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
     const _wt=n=>n==='მზე'||n==='მთვარე'?60:n==='AC'||n==='MC'?1e6:MAIN.includes(n)?40:(n==='ჩრდ. კვანძი'||n==='სამხ. კვანძი'||n==='ქირონი')?6:1;
-    const items=present.map(n=>{const ex=_boxes(n).map(b=>_ext(b,trueA[n]));return {n,t:trueA[n],w:(Math.max(...ex.map(e=>e.tan))+(isInner?3:5))/Rg,wt:_wt(n)};});
+    const items=present.map(n=>{const ex=_boxes(n).map(b=>_ext(b,trueA[n]));return {n,t:trueA[n],w:(Math.max(...ex.map(e=>e.tan))+(isInner?1.5:2))/Rg,wt:_wt(n)};});
     if(!isInner&&!data._timeUnknown){
       if(data.asc!=null&&!present.includes('AC'))items.push({n:'#AC',t:e2s(data.asc,asc),w:34/Rg,wt:1e6});
       if(data.mc!=null&&!present.includes('MC'))items.push({n:'#MC',t:e2s(data.mc,asc),w:42/Rg,wt:1e6});
