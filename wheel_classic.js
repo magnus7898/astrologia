@@ -151,7 +151,7 @@ function ui(){
   const d=document.createElement('div');d.id='wheel-style';
   d.style.cssText='display:flex;justify-content:center;gap:6px;margin:0 0 8px';
   d.innerHTML=['modern','classic'].map(k=>`<button type="button" data-ws="${k}" style="background:${k===window.WHEEL_STYLE?'#C9A24C':'#0e1424'};color:${k===window.WHEEL_STYLE?'#0b1020':'#E3BE84'};border:1px solid rgba(201,162,76,.6);border-radius:999px;padding:5px 14px;font:13px 'Noto Serif Georgian',serif;cursor:pointer">${k==='modern'?'თანამედროვე რკალი':'კლასიკური რკალი'}</button>`).join('');
-  wrap.parentNode.insertBefore(d,wrap);
+  wrap.insertBefore(d,wrap.firstChild);
   d.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;window.WHEEL_STYLE=b.dataset.ws;try{localStorage.setItem(KEY,b.dataset.ws);}catch(e){}
     d.querySelectorAll('button').forEach(x=>{const on=x===b;x.style.background=on?'#C9A24C':'#0e1424';x.style.color=on?'#0b1020':'#E3BE84';});
     if(typeof redrawCurrent==='function')redrawCurrent();});
