@@ -114,6 +114,10 @@ async function hdSvg(){
 async function hdDraw(host){
   const T=hdTransit(S.hd.personality||[]),sv=await hdSvg();
   T.gates.forEach(g=>sv.classList.add('active-p-'+g));T.cen.forEach(c=>sv.classList.add('center-active-'+c.replace(/ /g,'')));
+  // integration channels (10-20, 10-34, 10-57, 20-34, 20-57, 34-57) are drawn by one of 256 .detail-part
+  // variants in the SVG: n = s10*64 + s57*16 + s34*4 + s20 + 1 (1 = personality); transit = personality only
+  const st=g=>T.gates.has(g)?1:0,n=st(10)*64+st(57)*16+st(34)*4+st(20)+1;
+  sv.classList.add('detail-on-'+n);const dp=sv.querySelector(`.detail-part[data-detail="${n}"]`);if(dp)dp.style.setProperty('display','block','important');
   host.innerHTML='';host.appendChild(sv);return T;}
 
 /* ───────────── numerology ───────────── */
@@ -196,8 +200,9 @@ function mount(){
     else{row.style.display='flex';[L,R].forEach(x=>x.style.display='none');
       ['astro','hd','py','mx'].forEach(id=>{const c=document.querySelector(`.nw-card[data-nw="${id}"]`);if(c&&c.parentNode!==row)row.appendChild(c);});}};
   place();addEventListener('resize',place);setTimeout(place,600);setTimeout(place,2000);
-  document.addEventListener('click',e=>{const c=e.target.closest('.nw-card');if(c)open(c.dataset.nw);});
-  document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('nw-card')){e.preventDefault();open(e.target.dataset.nw);}});
+  const go=id=>{const c=CARDS.find(x=>x.id===id);if(c)location.href=c.href+'?now=1';};
+  document.addEventListener('click',e=>{const c=e.target.closest('.nw-card');if(c)go(c.dataset.nw);});
+  document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('nw-card')){e.preventDefault();go(e.target.dataset.nw);}});
   fillAll();load();setInterval(load,10*60*1000);setInterval(()=>{['py','mx'].forEach(id=>{const c=document.querySelector(`.nw-card[data-nw="${id}"]`);if(c)fill(c);});},30*60*1000);}
 
 async function load(){const t=new Date(),Y=t.getFullYear(),M=t.getMonth()+1,D=t.getDate(),h=t.getHours(),mi=t.getMinutes();
