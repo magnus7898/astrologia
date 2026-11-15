@@ -44,7 +44,7 @@ function style(){if(css)return;css=true;const s=document.createElement('style');
 .at-edit{width:100%;height:150px;margin-top:8px;background:#0e1424;color:#9fe;border:1px dashed #7fe3ff;font:11px monospace;padding:6px}
 `;document.head.appendChild(s);}
 
-function tour(host,works){style();let wi=0,st=0,timer=null,play=false,nat=null;
+function tour(host,works){style();let wi=0,st=0,timer=null,play=false,nat=null,tall=false,G={tx:0,ty:0,z:1,Wd:1,Hi:1};
   host.innerHTML=`<div class="at-pk"></div><div class="at-tour"><div class="at-vw"><div class="at-vp"><img alt=""><div class="at-ring"></div><div class="at-miss"></div></div>
    <div class="at-ctl"><button type="button" data-a="pv" aria-label="წინა">◀</button><button type="button" data-a="pl" aria-label="დაკვრა">▶</button><button type="button" data-a="nx" aria-label="შემდეგი">▶▶</button></div>
    <div class="at-bar"><i></i></div><div class="at-cap"></div>${EDIT?'<textarea class="at-edit" readonly></textarea>':''}</div>
@@ -53,11 +53,17 @@ function tour(host,works){style();let wi=0,st=0,timer=null,play=false,nat=null;
   const W=()=>works[wi];
   const steps=()=>{const w=W(),sp=w.spots||[];return [{x:50,y:50,z:1,t:'ნახატი მთლიანად',d:w.i,o:1}].concat(sp).concat(w.e?[{x:50,y:50,z:1,t:'ყველაფერი ერთად',d:w.e,o:2}]:[]);};
   function picker(){q('.at-pk').innerHTML=works.map((w,i)=>`<button type="button" data-w="${i}" class="${i===wi?'on':''}"><img loading="lazy" src="${src(w.file,240)}" alt="">${w.short||w.title}</button>`).join('');}
-  function ratio(){const w=W();vp.style.aspectRatio=nat?`${nat[0]}/${nat[1]}`:(w.ar||'1.3');}
-  function view(){const s=steps()[st],z=s.z||2.6,Wd=vp.clientWidth,H=vp.clientHeight,x=s.x/100,y=s.y/100;
-    let tx=Wd/2-x*Wd*z,ty=H/2-y*H*z;tx=Math.min(0,Math.max(Wd-Wd*z,tx));ty=Math.min(0,Math.max(H-H*z,ty));
+  /* very tall pictures (scrolls, ratio < .5) get a bounded viewport; the overview fits the whole
+     picture, the stops zoom relative to full width (z=1 → picture as wide as the viewport) */
+  function rr(){const w=W();return nat?nat[0]/nat[1]:parseFloat(w.ar||'1.3');}
+  function ratio(){const w=W();tall=rr()<.5;vp.style.aspectRatio=tall?'0.75':(nat?`${nat[0]}/${nat[1]}`:(w.ar||'1.3'));img.style.height=tall?'auto':'100%';}
+  function view(){const s=steps()[st],Wd=vp.clientWidth,H=vp.clientHeight,Hi=tall?Wd/rr():H,x=s.x/100,y=s.y/100;
+    const z=s.o?(tall?Math.min(1,H/Hi):1):(s.z||(tall?1.6:2.6));
+    let tx=Wd/2-x*Wd*z,ty=H/2-y*Hi*z;
+    tx=Wd*z<=Wd?(Wd-Wd*z)/2:Math.min(0,Math.max(Wd-Wd*z,tx));ty=Hi*z<=H?(H-Hi*z)/2:Math.min(0,Math.max(H-Hi*z,ty));
+    G={tx,ty,z,Wd,Hi};
     img.style.transform=`translate(${tx}px,${ty}px) scale(${z})`;
-    if(z>1.01){ring.style.left=(x*Wd*z+tx)+'px';ring.style.top=(y*H*z+ty)+'px';ring.style.borderColor=KEYS[s.k]?KEYS[s.k][1]:'#FFD36A';ring.classList.remove('on');const k=st;setTimeout(()=>{if(st===k)ring.classList.add('on');},1300);}else ring.classList.remove('on');
+    if(!s.o){ring.style.left=(x*Wd*z+tx)+'px';ring.style.top=(y*Hi*z+ty)+'px';ring.style.borderColor=KEYS[s.k]?KEYS[s.k][1]:'#FFD36A';ring.classList.remove('on');const k=st;setTimeout(()=>{if(st===k)ring.classList.add('on');},1300);}else ring.classList.remove('on');
     dots();}
   function text(){const S=steps(),s=S[st],L=S.length,w=W(),n=(w.spots||[]).length;
     q('.at-txt h2').textContent=w.title;
@@ -66,7 +72,7 @@ function tour(host,works){style();let wi=0,st=0,timer=null,play=false,nat=null;
     q('.at-ch').innerHTML=S.map((p,i)=>`<button type="button" data-s="${i}" class="${i===st?'on':i<st?'done':''}">${p.o?'':`<i style="background:${KEYS[p.k][1]}"></i>`}${p.o===1?'ნახატი':p.o===2?'შეჯამება':p.t}</button>`).join('');
     const used=[...new Set((w.spots||[]).map(p=>p.k))];q('.at-ch').style.display=L>1?'':'none';q('.at-ctl').style.visibility=L>1?'':'hidden';q('.at-bar').style.visibility=L>1?'':'hidden';q('.at-keys').innerHTML=used.map(k=>`<span><i style="background:${KEYS[k][1]}"></i>${KEYS[k][0]}</span>`).join('');
     q('.at-bar i').style.width=(L>1?st/(L-1)*100:0)+'%';}
-  function dots(){vp.querySelectorAll('.at-dot').forEach(d=>d.remove());if(!EDIT||st!==0||!W().spots)return;W().spots.forEach((s,i)=>{const d=document.createElement('div');d.className='at-dot';d.style.left=s.x+'%';d.style.top=s.y+'%';d.style.background=KEYS[s.k][1];d.textContent=i+1;d.dataset.i=i;vp.appendChild(d);});
+  function dots(){vp.querySelectorAll('.at-dot').forEach(d=>d.remove());if(!EDIT||st!==0||!W().spots)return;W().spots.forEach((s,i)=>{const d=document.createElement('div');d.className='at-dot';d.style.left=(G.tx+s.x/100*G.Wd*G.z)+'px';d.style.top=(G.ty+s.y/100*G.Hi*G.z)+'px';d.style.background=KEYS[s.k][1];d.textContent=i+1;d.dataset.i=i;vp.appendChild(d);});
     q('.at-edit').value='spots x,y:\n'+W().spots.map((s,i)=>`${i+1}. {x:${s.x.toFixed(1)},y:${s.y.toFixed(1)}} ${s.t}`).join('\n');}
   function go(i){const L=steps().length;st=Math.max(0,Math.min(L-1,i));view();text();}
   function load(i){wi=i;st=0;nat=null;stop();miss.style.display='none';const w=W();ratio();img.style.transition='none';img.src=src(w.file,w.px||1600);img.alt=`${w.title} — ${w.author}`;
@@ -81,9 +87,9 @@ function tour(host,works){style();let wi=0,st=0,timer=null,play=false,nat=null;
     if(b&&b.dataset.w!=null){load(+b.dataset.w);return;}
     if(b&&b.dataset.s!=null){stop();go(+b.dataset.s);return;}
     if(b&&b.dataset.a){const a=b.dataset.a;if(a==='pl')play?stop():start();else{stop();go(st+(a==='nx'?1:-1));}return;}
-    if(EDIT&&st===0&&(e.target===img||e.target===vp)){const r=vp.getBoundingClientRect();W().spots.push({x:(e.clientX-r.left)/r.width*100,y:(e.clientY-r.top)/r.height*100,k:'sym',t:'ახალი',d:''});text();dots();}});
+    if(EDIT&&st===0&&(e.target===img||e.target===vp)){const r=vp.getBoundingClientRect();W().spots.push({x:(e.clientX-r.left-G.tx)/(G.Wd*G.z)*100,y:(e.clientY-r.top-G.ty)/(G.Hi*G.z)*100,k:'sym',t:'ახალი',d:''});text();dots();}});
   if(EDIT){let drag=null;vp.addEventListener('pointerdown',e=>{const d=e.target.closest('.at-dot');if(!d)return;drag=d;d.setPointerCapture(e.pointerId);});
-    vp.addEventListener('pointermove',e=>{if(!drag)return;const r=vp.getBoundingClientRect(),s=W().spots[+drag.dataset.i];s.x=Math.max(0,Math.min(100,(e.clientX-r.left)/r.width*100));s.y=Math.max(0,Math.min(100,(e.clientY-r.top)/r.height*100));drag.style.left=s.x+'%';drag.style.top=s.y+'%';q('.at-edit').value='spots x,y:\n'+W().spots.map((s,i)=>`${i+1}. {x:${s.x.toFixed(1)},y:${s.y.toFixed(1)}} ${s.t}`).join('\n');});
+    vp.addEventListener('pointermove',e=>{if(!drag)return;const r=vp.getBoundingClientRect(),s=W().spots[+drag.dataset.i];s.x=Math.max(0,Math.min(100,(e.clientX-r.left-G.tx)/(G.Wd*G.z)*100));s.y=Math.max(0,Math.min(100,(e.clientY-r.top-G.ty)/(G.Hi*G.z)*100));drag.style.left=(G.tx+s.x/100*G.Wd*G.z)+'px';drag.style.top=(G.ty+s.y/100*G.Hi*G.z)+'px';q('.at-edit').value='spots x,y:\n'+W().spots.map((s,i)=>`${i+1}. {x:${s.x.toFixed(1)},y:${s.y.toFixed(1)}} ${s.t}`).join('\n');});
     vp.addEventListener('pointerup',()=>{drag=null;});}
   document.addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input,textarea'))return;const r=host.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight)return;if(e.key==='ArrowRight'){stop();go(st+1);}else if(e.key==='ArrowLeft'){stop();go(st-1);}});
   window.addEventListener('resize',view);
