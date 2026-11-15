@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 36</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 8 · საქართველო</div>
+  <h1>გაკვეთილი 36 — ატენის სიონის ფრესკები</h1>
+  <div class="sub">XI ს.: ბიბლიური ციკლი, წმინდანები და ცის სიმბოლიკა</div>
+
+  <div class="intro">გორიდან სამხრეთით, ტანას ხეობაში, ფრიალო კლდის კიდეზე დგას <b>ატენის სიონი</b> — VII საუკუნის ტაძარი, რომლის სახელიც იერუსალიმის <b>სიონის მთიდან</b> მოდის. მისი გეგმა — <b>ტეტრაკონქი</b>: ოთხი აფსიდა ჯვრის ფორმით, და მათ შორის ოთხი ნიში (ჯვრის ტაძრის მსგავსად). ტაძრის კედლები ერთი დიდი ქვის წიგნია: აქ შემორჩენილია წარწერები <b>ქართულ, სომხურ, ბერძნულ, არაბულ, სირიულ, ებრაულ და სლავურ</b> ენებზე, და მხედრულის უძველესი ცნობილი ნიმუშები (980-იანი წლები). შიგნით კი — XI საუკუნის მეორე ნახევრის (დაახ. 1080 წ.) <b>ფრესკები</b>, ქართული შუა საუკუნეების ფერწერის ერთ-ერთი საუკეთესო ანსამბლი. 1080 — დიდი თურქობის წლები; მხატვრობა ომისა და ნგრევის ჟამს შეიქმნა, როგორც ლოცვა.</div>
+
+  <div class="sec"><h2>1 · ტაძარი დეტალებად</h2>
+    <p style="margin-bottom:10px">დააჭირე ▶ — ფოტო თავად გადიდდება ყოველ დეტალზე და ახსნის მას. (ფოტოები ტაძრის ინტერიერისაა — ზოგი დეტალი შეიძლება ზუსტად ვერ ემთხვეოდეს; რედაქტირების რეჟიმში წერტილები გადაადგილდება.)</p>
+    <div id="rd"></div>
+  </div>
+
+  <div class="sec"><h2>2 · ტაძარი, როგორც სამყარო</h2>
+    <p>ბიზანტიურ-ქართული ტაძარი არ არის უბრალოდ შენობა — ის <b>კოსმოსის მოდელია</b>. <b>გუმბათი</b> — ზეცაა, მარადისობა, ღვთის სამყოფელი. <b>გუმბათის ყელი</b> თავისი ფანჯრებით — ზეცისა და მიწის საზღვარი, საიდანაც სინათლე ეშვება. <b>აფსიდები და კედლები</b> — წმინდა ისტორია, დრო. <b>იატაკი</b> — მიწა, სადაც ადამიანი დგას. ტაძარში შესვლა ნიშნავს მთელი სამყაროს შიგნით შესვლას — და ზემოთ, გუმბათისკენ ახედვა — ზეცისკენ ახედვაა.</p>
+    <p style="margin-top:8px">ტეტრაკონქი — <b>ოთხი აფსიდა</b> — ამ სიმბოლიკას კიდევ აძლიერებს: ოთხი მხარე, ოთხი სამოთხის მდინარე, ოთხი მახარობელი, ოთხი სტიქია — და ცენტრში, გუმბათის ქვეშ, <b>ჯვრის</b> გადაკვეთა, სადაც ოთხივე ერთდება. ეს იგივე სქემაა, რაც მანდალისა (გაკვეთილი 2) — წრე კვადრატზე, ზეცა მიწაზე. ატენის მხატვრობის <b>პირველი ფენა</b> (X ს.) ფიგურებს არ შეიცავდა — მხოლოდ ჯვრებს და ორნამენტს: ანიკონური, „უხატო“ სიმბოლიკა, სადაც ჯვარი თავადაა სამყაროს ღერძი.</p>
+    <p style="margin-top:8px">ტაროში — „<b>ვარსკვლავი</b>“ (XVII): ცა, რომელიც მიწაზე სინათლეს ღვრის. <a href="course_tarot6.html#17" style="color:#E3BE84">🃏 ვარსკვლავი</a> · „<b>სამყარო</b>“ (XXI): ოთხი ცხოველი-მახარობელი ოთხ კუთხეში, ცენტრში — ერთობა. <a href="course_tarot6.html#21" style="color:#E3BE84">🃏 სამყარო</a></p>
+  </div>
+
+  <div class="sec"><h2>3 · ფრესკების პროგრამა</h2>
+    <p>XI საუკუნის მხატვრობა ტაძრის სივრცეს წმინდა ისტორიად აქცევს. <b>სამხრეთ აფსიდაში</b> — ღვთისმშობლის ცხოვრება: იოაკიმეს ხარება (ანგელოზი მწუხარე მამას მოუვლინდება), <b>ხარება</b> (გაბრიელი და მარიამი) და <b>მიძინება</b>. <b>დასავლეთ აფსიდაში</b> — <b>ქტიტორთა რიგი</b>: ტაძრის შემწენი და მმართველები, მათ შორის ერისთავი <b>სუმბატი</b> — ადამიანები, რომლებიც საკუთარ თავს წმინდა ისტორიის გვერდით ხატავდნენ, ლოცვის იმედით.</p>
+    <p style="margin-top:8px"><b>მიძინების</b> ხატწერაში ქრისტე დგას ღვთისმშობლის სასიკვდილო სარეცელთან და ხელში უჭირავს პატარა, თეთრად შეხვეული ფიგურა — <b>ღვთისმშობლის სული</b>, ჩვილის სახით. ეს ერთ-ერთი ყველაზე ღრმა ეზოთერული სახეა ქრისტიანულ ხელოვნებაში: სიკვდილი — <b>დაბადებაა</b> სხვა სამყაროში. შობისას დედას ხელში ჰყავდა შვილი; მიძინებისას შვილს ხელში ჰყავს დედის სული. წრე იკვრება.</p>
+    <p style="margin-top:8px">ატენის ოსტატის ხელწერა — წაგრძელებული, მსუბუქი ფიგურები, თბილი ოხრა და ცისფერი, მოძრავი, თითქმის მოცეკვავე ხაზი. ტაძარმა გადაიტანა შაჰ-აბასის ლაშქრობა (XVII ს.), როცა მასში კოცონი დაანთეს — კვამლის კვალი დღესაც ჩანს ფრესკებზე. ტაროში — „<b>განკითხვა</b>“ (XX): სული, რომელიც ახალ სიცოცხლეში დგება. <a href="course_tarot6.html#20" style="color:#E3BE84">🃏 განკითხვა</a></p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art35.html">← გელათის მოზაიკა</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 37 — მალე →</a></div>
+</div>
+
+<script src="art.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const TL=(n,t)=>`<a href="course_tarot6.html#${n}" style="color:#E3BE84">🃏 ${t}</a>`;
+const W=[{short:'ინტერიერი',title:'ატენის სიონის ინტერიერი',author:'XI ს. მხატვრები (ფოტო: ა. მუხრანოვი, 2011)',year:'~1080',place:'ატენის სიონი, გორის მუნიციპალიტეტი',file:'Ateni_Sioni_church_interior_(Photo_A._Muhranoff,_2011).jpg',ar:'1.310',px:1310,
+ i:'ტაძრის შიდა სივრცე: კედლები და თაღები მთლიანად მოხატულია <b>ფრესკებით</b> — წმინდანები, ბიბლიური სცენები, ორნამენტული სარტყლები. სინათლე ზემოდან, ფანჯრებიდან ეცემა. ფრესკებზე ჩანს დროის, ცეცხლისა და კვამლის კვალი.',
+ e:'ფრესკა (ital. fresco — „სველი“) — ნედლ კირის ბათქაშზე ხატვა: საღებავი კედლის ნაწილი ხდება და საუკუნეებს უძლებს. მთელი ტაძარი ერთი უწყვეტი <b>წიგნია</b>, რომელიც წაკითხვა თვალით, ტაძარში სიარულით ხდება — აღმოსავლეთიდან (საკურთხეველი, მარადისობა) დასავლეთისკენ (გასასვლელი, განკითხვა, სამყარო).<br><br>ტაროში — „<b>სამყარო</b>“ (XXI). '+TL(21,'სამყარო'),
+ spots:[{x:50,y:45,z:1.6,k:'sym',t:'მოხატული სივრცე',d:'კედლები, თაღები და აფსიდები — ყველაფერი <b>ფრესკებითაა</b> დაფარული. ეს არ არის „დეკორაცია“ — ტაძარში მდგომი ადამიანი წმინდა ისტორიის <b>შიგნით</b> დგას, წმინდანები კი მის გარშემო, როგორც ცოცხალი თანამლოცველები.'},
+  {x:50,y:15,z:2.6,k:'light',t:'ზედა ზონა — ცა',d:'მაღლა — თაღები და კონქები, ყველაზე მნიშვნელოვანი, „ზეციური“ სცენებით. რაც უფრო ზემოთ — მით უფრო ახლოსაა მარადისობასთან. ტაძრის იერარქია ვერტიკალურია: ზემოთ ღმერთი და ანგელოზები, შუაში — წმინდა ისტორია, ქვემოთ — წმინდანები და ადამიანები.'},
+  {x:22,y:50,z:2.8,k:'gesture',t:'წმინდანთა ფიგურები',d:'კედლებზე — მდგომი <b>წმინდანები</b>, წაგრძელებული, მსუბუქი ფიგურები, თითქოს სიმძიმეს მოკლებულნი. XI საუკუნის ქართული მხატვრობის ნიშანი: სხეული — სულის სამოსია, არა მისი ციხე.'},
+  {x:78,y:50,z:2.8,k:'color',t:'ფერები',d:'ფრესკების პალიტრა — თბილი <b>ოხრა</b> (მიწა), ცისფერი-ლურჯი (ცა), წითელი (სიცოცხლე, სისხლი), თეთრი (სინათლე). ბევრი ფერი დროთა განმავლობაში შეიცვალა — ლურჯი ზოგან გაქრა, და ახლა ჩანს მისი ქვედა, მუქი ფენა.'},
+  {x:50,y:70,z:2.6,k:'sym',t:'კვამლის კვალი',d:'ფრესკებზე — ჩამუქებული, დამწვარი ადგილები. XVII საუკუნეში <b>შაჰ-აბასის</b> ლაშქარმა ტაძარში კოცონი დაანთო. ფრესკები ნაწილობრივ დაზიანდა, მაგრამ გადარჩა — როგორც მოწმეები.'},
+  {x:50,y:90,z:2.2,k:'number',t:'ადამიანის ზონა',d:'ქვემოთ — ადამიანის სიმაღლე, იატაკი, მიწა. აქ დგას მლოცველი — და აქედან იწყება მზერის მოგზაურობა ზემოთ, ზეცისკენ. ტაძარი — <b>კიბეა</b>.'}]},
+{short:'გუმბათი',title:'ატენის სიონის გუმბათი შიგნიდან',author:'VII–XI სს.',year:'',place:'ატენის სიონი',file:'Dome_of_the_Ateni_Sioni_church,_Georgia.jpg',ar:'1.333',px:2400,
+ i:'ქვემოდან, ტაძრის ცენტრიდან, ზემოთ — <b>გუმბათისკენ</b> ახედვა: წრიული ყელი ფანჯრებით, მის თავზე — თაღი, ზეცის ნახევარსფერო.',
+ e:'გუმბათი — ტაძრის <b>ცა</b>. ცენტრში დგომა და ზემოთ ახედვა — ეს არის ის მომენტი, როცა ადამიანი სამყაროს ღერძის ქვეშ დგას: ზემოთ — მარადისობა, გარშემო — ოთხი აფსიდა, ოთხი მხარე. ატენში გუმბათის მხატვრობის პირველი ფენა ანიკონური იყო — ჯვრით და ორნამენტით.<br><br>ტაროში — „<b>ვარსკვლავი</b>“ (XVII). '+TL(17,'ვარსკვლავი'),
+ spots:[{x:50,y:45,z:1.8,k:'light',t:'გუმბათის ცენტრი',d:'გუმბათის <b>ზენიტი</b> — ტაძრის ყველაზე მაღალი წერტილი, ზეცის ცენტრი. ბიზანტიურ ტაძრებში აქ ხშირად პანტოკრატორი (ყოვლისმპყრობელი) ან ჯვარია. ეს არის სამყაროს ღერძის (axis mundi) ზედა ბოლო.'},
+  {x:50,y:85,z:2.4,k:'light',t:'ყელის ფანჯრები',d:'გუმბათის ყელში — <b>ფანჯრები</b>, წრეზე განლაგებული. დღისით მათგან სინათლე ეშვება ტაძრის ცენტრში, და მზის მოძრაობასთან ერთად სინათლის სხივიც მოძრაობს — ტაძარი ცოცხალი მზის საათია.'},
+  {x:25,y:40,z:2.6,k:'number',t:'წრე და კვადრატი',d:'გუმბათის <b>წრე</b> კვადრატულ საფუძველზე დგას (ტრომპებისა და აფრების მეშვეობით). წრე — ზეცა, კვადრატი — მიწა. ქრისტიანული ტაძრის ეს გეომეტრია იგივეა, რაც ჩინური კოსმოლოგიის „მრგვალი ცა, კვადრატული მიწა“ და მანდალის სქემა.'},
+  {x:75,y:40,z:2.6,k:'color',t:'მხატვრობის კვალი',d:'გუმბათის ზედაპირზე — მხატვრობის ნაშთები: ორნამენტი, ფერადი სარტყლები. პირველი ფენა (X ს.) <b>ანიკონური</b> იყო: არა ფიგურები, არამედ ჯვრები და ორნამენტი — ზეცა, როგორც წმინდა ნიშანი, არა სცენა.'}]},
+{short:'სუმბატი',title:'ქტიტორის პორტრეტი (სუმბატი)',author:'XI ს. მხატვარი',year:'XI ს.',place:'ატენის სიონი, დასავლეთი აფსიდა, ქტიტორთა რიგი',file:'Smbat_I_of_Armenia_fresco_at_Ateni_Sioni.jpg',ar:'0.827',px:706,
+ i:'ქტიტორთა (შემომწირველთა) რიგიდან — მამაკაცის <b>პორტრეტი</b>, საზეიმო სამოსში, თავსაბურავით, წარწერით გვერდით.',
+ e:'ქართველი მკვლევრები ამ ფიგურას <b>ერისთავ სუმბატად</b> კითხულობენ, Commons-ის აღწერა კი მას სომეხთა მეფე სმბატ I ბაგრატუნს უკავშირებს — ატენის მრავალენოვანი კედლების კიდევ ერთი გამოძახილი. ქტიტორის პორტრეტი ნიშნავს: ადამიანი, რომელმაც ტაძარს შესწირა, მარადიულად დგას წმინდანების რიგში — ლოცვით, რომ მისი სახელი „სიცოცხლის წიგნში“ ჩაიწეროს.<br><br>ტაროში — „<b>იმპერატორი</b>“ (IV). '+TL(4,'იმპერატორი'),
+ spots:[{x:50,y:28,z:2.4,k:'gesture',t:'სახე',d:'ქტიტორის <b>სახე</b> — ფრონტალური, დიდი თვალებით, ხატწერის კანონით. ეს არ არის „რეალისტური“ პორტრეტი: ადამიანი უკვე მარადისობის ენაზეა დახატული — ისე, როგორც ის ღმერთის წინაშე წარდგება.'},
+  {x:50,y:12,z:2.6,k:'sym',t:'თავსაბურავი',d:'<b>თავსაბურავი</b> — წოდების, ხელისუფლების ნიშანი. ქტიტორები თავიანთი მიწიერი რანგით დგანან, მაგრამ წმინდანთა სამყაროში, ხელები ხშირად ლოცვით ან შეწირვის ჟესტით აქვთ აღმართული.'},
+  {x:50,y:70,z:2,k:'color',t:'სამოსი',d:'მდიდრული, ორნამენტირებული <b>სამოსი</b>. ბიზანტიურ-კავკასიურ სამყაროში სამოსი იერარქიის ენაა — ფერი, ქსოვილი, ორნამენტი ზუსტად ამბობს, ვინ დგას შენ წინ.'},
+  {x:18,y:22,z:3,k:'number',t:'წარწერა',d:'გვერდით — <b>წარწერა</b>, რომელიც ფიგურის სახელს ასახელებს. ატენის სიონში წარწერები ბევრ ენაზეა, და ფრესკების „განმარტებითი“ წარწერები ცალკე ჯგუფს ქმნის: სახელი ხატწერაში — არსის ნიშანია; უწარწერო ხატი სრულ ხატად არ ითვლებოდა.'}]}];
+const R=ART.tour($('rd'),W);window.MG_ART36=()=>R.state();
+
+const Q=[['საიდან მოდის სახელი „სიონი“?',['მდინარის სახელიდან','იერუსალიმის სიონის მთიდან','მეფის სახელიდან','სომხური სიტყვიდან'],1,''],
+ ['რა ტიპის გეგმა აქვს ატენის სიონს?',['ბაზილიკა','ტეტრაკონქი — ოთხი აფსიდა','როტონდა','ერთნავიანი დარბაზი'],1,'ჯვრის ტაძრის მსგავსად.'],
+ ['როდის შეიქმნა ატენის ფრესკების ძირითადი ფენა?',['VII ს.','XI ს. მეორე ნახევარი (~1080)','XIV ს.','XVII ს.'],1,''],
+ ['რომელი დამწერლობის უძველესი ცნობილი ნიმუშებია ატენში?',['ასომთავრული','ნუსხური','მხედრული','ბერძნული'],2,'980-იანი წლები.'],
+ ['რას ნიშნავს ტაძრის გუმბათი?',['მიწას','ზეცას — მარადისობას','ზღვას','ქალაქს'],1,'ტაძარი — კოსმოსის მოდელი.'],
+ ['როგორი იყო ატენის მხატვრობის პირველი (X ს.) ფენა?',['ფიგურული სცენები','ანიკონური — ჯვრები და ორნამენტი','მოზაიკა','ოქროს ფონი'],1,''],
+ ['რა უჭირავს ქრისტეს ხელში „მიძინების“ სცენაში?',['წიგნი','ღვთისმშობლის სული — თეთრად შეხვეული ჩვილი','ჯვარი','სანთელი'],1,'სიკვდილი — დაბადებაა.'],
+ ['ვინ არიან ქტიტორები?',['მხატვრები','ტაძრის შემომწირველები, შემწენი','ბერები','მეომრები'],1,'']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
