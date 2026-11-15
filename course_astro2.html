@@ -89,6 +89,13 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
 .ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
 .ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
 .ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ctl .sl{font-size:11px;letter-spacing:1.5px;color:#9aa3b6;min-width:54px;text-align:right}
+.hz{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;height:64px;max-width:520px;margin:6px auto 0}
+.hz div{background:rgba(201,162,76,.35);border-radius:3px 3px 0 0;position:relative;min-height:2px;transition:height .15s}
+.hz div.sun{background:#FFD36A}.hz div.big{background:rgba(227,120,90,.6)}.hz div.small{background:rgba(120,160,230,.6)}
+.hz div span{position:absolute;bottom:-15px;left:0;right:0;text-align:center;font-size:9.5px;color:#9aa3b6}
+.hz div b{position:absolute;top:-14px;left:-4px;right:-4px;text-align:center;font-size:9px;color:#cfd5e2;font-weight:400}
+.sec3 p{margin-top:8px}
 .ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
 .ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
@@ -200,8 +207,17 @@ table.pt{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:6px}
    </div><div class="stage">
     <canvas id="cvT" aria-label="ზოდიაქოს ბრუნვა 24 საათის განმავლობაში"></canvas>
     <div class="ctl"><button type="button" id="tPl" aria-label="დაკვრა">▶</button><input type="range" id="tSl" min="-12" max="12" step="0.01" value="0" aria-label="საათები დაბადებიდან"><button type="button" id="t0">დაბადება</button></div>
+    <div class="ctl"><button type="button" id="dPl" aria-label="სეზონის დაკვრა">▶</button><label for="dSl" class="sl">სეზონი</label><input type="range" id="dSl" min="-182" max="182" step="1" value="0" aria-label="დღეები დაბადების თარიღიდან"><button type="button" id="d0">თარიღი</button></div>
+    <div class="ctl"><button type="button" id="lPl" aria-label="განედის დაკვრა">▶</button><label for="lSl" class="sl">განედი</label><input type="range" id="lSl" min="-72" max="72" step="0.1" value="41.7" aria-label="განედი"><button type="button" id="l0">ადგილი</button></div>
     <div class="ro" id="tRo"></div>
+    <div class="hz" id="hz" aria-label="სახლების ზომა"></div>
    </div></div>
+   <div class="sec3">
+    <h3 style="color:#F3DDA4;font-size:15px;margin:16px 0 6px">დრო, სეზონი და ადგილი — სამი ძალა, რომელიც სახლებს ცვლის</h3>
+    <p><b>დრო (24 საათი)</b> — ზოდიაქო ერთ ვარსკვლავურ დღეში სრულ წრეს აკეთებს: ყოველ ~2 საათში ახალი ნიშანი ამოდის. მზე კი ამ დროს თითქმის უძრავია ზოდიაქოში, ამიტომ ის სახლებში „მოძრაობს“: დილით — მე-12 სახლში, შუადღეს — მე-10-ში (MC-სთან), საღამოს — მე-7-ში, შუაღამისას — მე-4-ში (IC-სთან).</p>
+    <p><b>სეზონი (თარიღი)</b> — გადაატარე „სეზონი“: საათი იგივე რჩება, თარიღი იცვლება. მზე ზოდიაქოში წელიწადში სრულ წრეს აკეთებს (~1° დღეში), დედამიწის ვარსკვლავური დღე კი მზის დღეზე ~4 წუთით მოკლეა — ამიტომ <b>ერთსა და იმავე საათზე ASC ყოველდღე ~1°-ით წინ მიიწევს</b>, და ყოველ თვეში დაახლოებით ერთი ნიშნით. მზე კი იგივე სახლში რჩება (12 საათზე ის ყოველთვის MC-ს ახლოსაა) — მთელი რუკა მის გარშემო ბრუნავს. სეზონი ცვლის <b>დღის სიგრძესაც</b>: ზაფხულში მზე ჰორიზონტზე დიდხანს რჩება, და მისი გზა ზედა სახლებში უფრო გრძელია.</p>
+    <p><b>ადგილი (განედი)</b> — გადაატარე „განედი“: ეკვატორზე (0°) პლაციდუსის სახლები თითქმის თანაბარია (~30°). რაც უფრო ჩრდილოეთით ან სამხრეთით მივდივართ, მით უფრო <b>უთანაბრო</b> ხდება სახლები: ზოგი 50°-ზე მეტია, ზოგი 15°-ზე ნაკლები, ზოგ ნიშანს ორი სახლის კასპი აქვს, ზოგი კი მთლიანად „ჩაკეტილია“ (interception) სახლში. პოლარული წრის მიღმა (~66°) ეკლიპტიკის ნაწილი საერთოდ აღარ ამოდის და პლაციდუსი ვერ იგება — იქ ასტროლოგები სხვა სისტემას (თანაბარს, პორფირიოსს, მთლიან ნიშნებს) იყენებენ. <b>გრძედი</b> კი (აღმოსავლეთ–დასავლეთი) უბრალოდ ადგილობრივ დროს ცვლის: 15° = 1 საათი.</p>
+   </div>
    <canvas id="cvR" class="wide" style="display:block;width:100%;margin-top:14px" aria-label="ნიშნების ამოსვლის ხანგრძლივობა"></canvas>
    <div class="ro" id="rRo"></div>
   </div>
@@ -360,7 +376,7 @@ function readIn(){const g=id=>+$(id).value;let y=cl(Math.round(g('yy'))||1990,18
 function compute(){keepBirth();const I=readIn(),u=Date.UTC(I.y,I.m-1,I.d,I.hh,I.mi)/6e4-I.off,ud=new Date(u*6e4);
   const J=jd(ud.getUTCFullYear(),ud.getUTCMonth()+1,ud.getUTCDate(),ud.getUTCHours()+ud.getUTCMinutes()/60);
   CH={I,u,ud,J,pls:planets(J),hs:houses(J,I.lat,I.lon),gm:gmst(J)};CH.lst=norm(CH.gm+I.lon);
-  T.off=0;updateAll();}
+  T.off=0;T.day=0;T.lat=null;updateAll();}
 function chartAt(dh){const J=CH.J+dh/24;return {pls:planets(J),hs:houses(J,CH.I.lat,CH.I.lon)};}
 /* ── section 1 ── */
 function sec1(){const I=CH.I,ud=CH.ud,ut=`${p2(ud.getUTCDate())}.${p2(ud.getUTCMonth()+1)}.${ud.getUTCFullYear()} ${p2(ud.getUTCHours())}:${p2(ud.getUTCMinutes())}`;
@@ -374,17 +390,23 @@ function sec1(){const I=CH.I,ud=CH.ud,ut=`${p2(ud.getUTCDate())}.${p2(ud.getUTCM
     row('5. გრინვიჩის ვარსკვლავური დრო',`<b>${hms(CH.gm)}</b> (${CH.gm.toFixed(3)}°)`)+
     row('6. ადგილობრივი ვარსკვლავური დრო',`GMST + გრძედი (${I.lon.toFixed(2)}° = ${(I.lon/15).toFixed(2)} სთ) = <b>${hms(CH.lst)}</b> · RAMC = <b>${CH.lst.toFixed(2)}°</b>`);}
 /* ── section 2: 24 h ── */
-const T={cv:$('cvT'),off:0,play:false,g:null};
-function drawT(){if(!T.g)return;const ch=chartAt(T.off);wheel(T.g.c,T.g.w,T.g.h,{hs:ch.hs,pls:ch.pls,rot:1,ax:1,nh:12,np:11,sky:1});
-  const I=CH.I,loc=I.hh*60+I.mi+T.off*60,dd=Math.floor((I.hh*60+I.mi+T.off*60)/1440);
-  const su=ch.pls[0],h=houseOf(su.lon,ch.hs.cu);
-  $('tRo').innerHTML=`ადგილობრივი დრო <b>${hm(loc)}</b>${dd?` <small>(${dd>0?'+':''}${dd} დღე)</small>`:''} · ASC <b>${fl(ch.hs.asc)}</b> · MC <b>${fl(ch.hs.mc)}</b><br><small style="color:#9aa3b6">მზე ${h>=7?'ჰორიზონტის ზემოთაა — დღე':'ჰორიზონტის ქვემოთაა — ღამე'} (${ord(h)} სახლი)</small>`;
-  $('tSl').value=T.off.toFixed(2);}
-function risingDur(lat){const e=obl(CH.J)*D,f=lat*D,cnt=new Array(12).fill(0);let n=0;
+const T={cv:$('cvT'),off:0,day:0,lat:null,play:false,mode:'t',g:null};
+const tLat=()=>T.lat==null?CH.I.lat:T.lat;
+function chartT(){const J=CH.J+T.off/24+T.day;return {J,pls:planets(J),hs:houses(J,tLat(),CH.I.lon)};}
+function drawT(){if(!T.g)return;const ch=chartT();wheel(T.g.c,T.g.w,T.g.h,{hs:ch.hs,pls:ch.pls,rot:1,ax:1,nh:12,np:11,sky:1});
+  const I=CH.I,loc=I.hh*60+I.mi+T.off*60,dd=Math.floor((I.hh*60+I.mi+T.off*60)/1440),lat=tLat();
+  const su=ch.pls[0],h=houseOf(su.lon,ch.hs.cu),dt=new Date(Date.UTC(I.y,I.m-1,I.d)+(T.day+dd)*864e5);
+  const sl=su.lon,season=sl<90?'გაზაფხული':sl<180?'ზაფხული':sl<270?'შემოდგომა':'ზამთარი';
+  const e=obl(ch.J)*D,dec=Math.asin(Math.sin(e)*Math.sin(sl*D)),ra=Math.atan2(Math.cos(e)*Math.sin(sl*D),Math.cos(sl*D)),alt=Math.asin(Math.sin(lat*D)*Math.sin(dec)+Math.cos(lat*D)*Math.cos(dec)*Math.cos(ch.hs.ramc*D-ra))/D,x=-Math.tan(lat*D)*Math.tan(dec),dl=x<=-1?24:x>=1?0:2*Math.acos(x)/D/15;
+  const sz=[];for(let k=1;k<=12;k++)sz.push(norm(ch.hs.cu[k%12+1]-ch.hs.cu[k]));const mx=Math.max(...sz),mn=Math.min(...sz),bi=sz.indexOf(mx)+1,si=sz.indexOf(mn)+1;
+  $('tRo').innerHTML=`<b>${p2(dt.getUTCDate())}.${p2(dt.getUTCMonth()+1)}.${dt.getUTCFullYear()}</b> ${hm(loc)} · ${season} · განედი <b>${Math.abs(lat).toFixed(1)}° ${lat>=0?'ჩრდ.':'სამხრ.'}</b><br>ASC <b>${fl(ch.hs.asc)}</b> · MC <b>${fl(ch.hs.mc)}</b> · მზე <b>${ord(h)} სახლში</b> (${alt>0?'ჰორიზონტის ზემოთ — დღე':'ჰორიზონტის ქვემოთ — ღამე'}, სიმაღლე ${alt.toFixed(0)}°)<br><small style="color:#9aa3b6">დღის სიგრძე ${dl>=24?'24 სთ (პოლარული დღე)':dl<=0?'0 სთ (პოლარული ღამე)':Math.floor(dl)+' სთ '+p2(Math.round(dl%1*60)%60)+' წთ'} · უდიდესი სახლი ${ord(bi)} (${mx.toFixed(0)}°), უმცირესი ${ord(si)} (${mn.toFixed(0)}°)${ch.hs.ok?'':' · <span style="color:#e3785a">პოლარული განედი — პლაციდუსი ვერ იგება, ნაჩვენებია პორფირიოსი</span>'}</small>`;
+  $('hz').innerHTML=sz.map((v,i)=>`<div class="${i+1===h?'sun':v===mx?'big':v===mn?'small':''}" style="height:${Math.max(3,v/Math.max(60,mx)*100)}%" title="${ord(i+1)} სახლი — ${v.toFixed(1)}°"><b>${v.toFixed(0)}°</b><span>${i+1}</span></div>`).join('');
+  $('tSl').value=T.off.toFixed(2);$('dSl').value=Math.round(T.day);$('lSl').value=lat.toFixed(1);}
+function risingDur(lat){const e=obl(CH.J)*D,f=cl(lat,-66,66)*D,cnt=new Array(12).fill(0);let n=0;
   for(let r=0;r<360;r+=0.1){const rr=r*D,a=norm(Math.atan2(Math.cos(rr),-(Math.sin(rr)*Math.cos(e)+Math.tan(f)*Math.sin(e)))/D);cnt[sidx(a)]++;n++;}
   return cnt.map(x=>x/n*1436.07);}
 const Rb={cv:$('cvR'),g:null};
-function drawR(){if(!Rb.g)return;const {c,w,h}=Rb.g;c.clearRect(0,0,w,h);const du=risingDur(CH.I.lat),mx=Math.max(...du),cur=sidx(chartAt(T.off).hs.asc);
+function drawR(){if(!Rb.g)return;const {c,w,h}=Rb.g;c.clearRect(0,0,w,h);const du=risingDur(tLat()),mx=Math.max(...du),cur=sidx(chartT().hs.asc);
   const pl=8,pb=34,pt_=22,bw=(w-pl*2)/12;
   for(let k=0;k<12;k++){const bh=(h-pb-pt_)*du[k]/mx,x=pl+k*bw+bw*.18,y=h-pb-bh;c.fillStyle=hexA(EC[k%4],k===cur?.85:.45);c.fillRect(x,y,bw*.64,bh);
     if(k===cur){c.strokeStyle='#FFD36A';c.lineWidth=1.5;c.strokeRect(x,y,bw*.64,bh);}
@@ -392,7 +414,7 @@ function drawR(){if(!Rb.g)return;const {c,w,h}=Rb.g;c.clearRect(0,0,w,h);const d
     txt(c,SG[k][0]+VS,x+bw*.32,h-pb+14,Math.max(12,Math.min(18,bw*.3)),hexA(EC[k%4],1));}
   c.strokeStyle='rgba(227,190,132,.35)';c.beginPath();c.moveTo(pl,h-pb);c.lineTo(w-pl,h-pb);c.stroke();
   const mn=Math.min(...du),lst=a=>a.map(k=>SG[k][1]).join(', ').replace(/, ([^,]*)$/,' და $1'),fast=[...Array(12).keys()].filter(k=>du[k]-mn<3),slow=[...Array(12).keys()].filter(k=>mx-du[k]<3),mm=x=>Math.floor(Math.round(x)/60)+':'+p2(Math.round(x)%60);
-  $('rRo').innerHTML=`ნიშნის ამოსვლის ხანგრძლივობა (სთ:წთ) <b>${Math.abs(CH.I.lat).toFixed(1)}° ${CH.I.lat>=0?'ჩრდ.':'სამხრ.'}</b> განედზე: ყველაზე სწრაფად ამოდის <b>${lst(fast)}</b> (~${mm(mn)}), ყველაზე ნელა — <b>${lst(slow)}</b> (~${mm(mx)}). ოქროსფერი ჩარჩო — ამ წამს ამომავალი ნიშანი.`;}
+  $('rRo').innerHTML=`ნიშნის ამოსვლის ხანგრძლივობა (სთ:წთ) <b>${Math.abs(tLat()).toFixed(1)}° ${tLat()>=0?'ჩრდ.':'სამხრ.'}</b> განედზე: ყველაზე სწრაფად ამოდის <b>${lst(fast)}</b> (~${mm(mn)}), ყველაზე ნელა — <b>${lst(slow)}</b> (~${mm(mx)}). ოქროსფერი ჩარჩო — ამ წამს ამომავალი ნიშანი.`;}
 /* ── section 3 ── */
 function sec3(){const hs=CH.hs,A=[['ASC',hs.asc,'აღმოსავლეთი · 1-ლი სახლი'],['DSC',hs.cu[7],'დასავლეთი · მე-7 სახლი'],['MC',hs.mc,'მერიდიანი, ზემოთ · მე-10 სახლი'],['IC',hs.cu[4],'მერიდიანი, ქვემოთ · მე-4 სახლი']];
   $('ang').innerHTML=A.map(a=>`<div><div class="k">${a[0]}</div><div class="g" style="color:${EC[sidx(a[1])%4]}">${SG[sidx(a[1])][0]}${VS}</div><div class="v">${inS(a[1])} ${SG[sidx(a[1])][1]}</div><div class="s">${a[2]}</div></div>`).join('');
@@ -442,14 +464,18 @@ function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p
 /* ── loop and wiring ── */
 let raf=0;
 function loop(){raf=0;let more=false;
-  if(T.play){T.off+=0.02;if(T.off>12)T.off=-12;more=true;drawT();drawR();}
+  if(T.play){if(T.mode==='t'){T.off+=0.02;if(T.off>12)T.off=-12;}else if(T.mode==='d'){T.day+=0.6;if(T.day>182)T.day=-182;}else{T.ls=T.ls||1;let L=tLat()+0.12*T.ls;if(L>72){L=72;T.ls=-1;}if(L<-72){L=-72;T.ls=1;}T.lat=L;}more=true;drawT();drawR();}
   if(stepW()){more=true;}else if(W.play){W.wait++;more=true;const L=$('bTx').textContent.length;if(W.wait>Math.max(300,L*2.6)){if(W.st<ST.length-1){W.st++;showStep();}else{W.play=false;$('wPl').textContent='▶';}}}
   drawW();if(more)raf=requestAnimationFrame(loop);}
 function kick(){if(!raf)raf=requestAnimationFrame(loop);}
 function updateAll(){sec1();sec3();drawT();drawR();showStep();ptable();dtable();drawW();}
-$('tPl').onclick=()=>{T.play=!T.play;$('tPl').textContent=T.play?'❚❚':'▶';kick();};
-$('t0').onclick=()=>{T.off=0;drawT();drawR();};
+const PB={t:'tPl',d:'dPl',l:'lPl'};
+function playT(m){if(T.play&&T.mode===m){T.play=false;}else{T.play=true;T.mode=m;}Object.entries(PB).forEach(([k,id])=>$(id).textContent=T.play&&T.mode===k?'❚❚':'▶');kick();}
+$('tPl').onclick=()=>playT('t');$('dPl').onclick=()=>playT('d');$('lPl').onclick=()=>playT('l');
+$('t0').onclick=()=>{T.off=0;drawT();drawR();};$('d0').onclick=()=>{T.day=0;drawT();drawR();};$('l0').onclick=()=>{T.lat=null;drawT();drawR();};
 $('tSl').oninput=e=>{T.off=+e.target.value;drawT();drawR();};
+$('dSl').oninput=e=>{T.day=+e.target.value;drawT();drawR();};
+$('lSl').oninput=e=>{T.lat=+e.target.value;drawT();drawR();};
 $('wPl').onclick=()=>{W.play=!W.play;$('wPl').textContent=W.play?'❚❚':'▶';if(W.play&&W.st===ST.length-1){W.st=0;W.s={rot:0,ax:0,nh:0,np:0};showStep();}kick();};
 $('wNx').onclick=()=>{if(W.st<ST.length-1){W.st++;showStep();}};$('wPv').onclick=()=>{if(W.st>0){W.st--;showStep();}};
 $('bCh').addEventListener('click',e=>{const b=e.target.closest('button');if(b){W.st=+b.dataset.s;showStep();}});
