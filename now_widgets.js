@@ -28,6 +28,19 @@ const S={astro:null,hd:null,svg:null,err:{}};
 
 /* ───────────── styles ───────────── */
 function css(){if($('#nw-css'))return;const s=document.createElement('style');s.id='nw-css';s.textContent=`
+.nw-moon{display:none;align-items:center;gap:14px;margin:0 auto 22px;padding:9px 18px 9px 12px;max-width:560px;width:max-content;
+  background:linear-gradient(160deg,rgba(18,16,34,.92),rgba(8,8,18,.92));border:1px solid rgba(201,168,76,.28);border-radius:40px;
+  cursor:pointer;text-decoration:none;color:#e8d5a0;transition:border-color .3s,box-shadow .3s}
+.nw-moon:hover,.nw-moon:focus-visible{border-color:rgba(201,168,76,.6);box-shadow:0 0 22px rgba(201,168,76,.15);outline:none}
+.nw-moon .em{font-size:30px;line-height:1;filter:drop-shadow(0 0 8px rgba(220,225,255,.35))}
+.nw-moon .no{font-family:Cinzel,serif;font-size:26px;color:#FFD36A;min-width:30px;text-align:center}
+.nw-moon .tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nw-moon .l1{font-family:Cinzel,'Noto Serif Georgian',serif;font-size:9.5px;letter-spacing:2.5px;color:#9ba8b8;text-transform:uppercase}
+.nw-moon .l2{font-size:15px;color:#e8d5a0;white-space:nowrap}
+.nw-moon .l3{font-size:11px;color:#9ba8b8;white-space:nowrap}
+.nw-moon .bar{height:3px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:3px;width:100%}
+.nw-moon .bar i{display:block;height:100%;background:linear-gradient(90deg,#8a7cff,#FFD36A)}
+@media(max-width:480px){.nw-moon{gap:10px;padding:8px 14px 8px 10px}.nw-moon .l2{font-size:13.5px}.nw-moon .l3{white-space:normal}}
 .nw-side{position:absolute;z-index:3;display:flex;flex-direction:column;gap:16px;width:212px}
 .nw-row{display:none;flex-wrap:wrap;justify-content:center;gap:14px;width:100%;max-width:1000px;margin:34px auto 0}
 .nw-row .nw-card{flex:0 0 212px}
@@ -181,6 +194,20 @@ async function open(id){const c=CARDS.find(x=>x.id===id);if(!c)return;
     <table>${[['E','ცენტრი — დღის მთავარი ენერგია'],['A','დღე'],['B','თვე'],['C','წელი'],['D','ქვედა წერტილი']].map(([k,t])=>`<tr><td class="g" style="color:#FFD36A">${m[k]}</td><td>${t}</td><td><b style="color:#e8d5a0">${nm(m[k])}</b><br><span style="color:#9ba8b8;font-size:12px">${kw(m[k])}</span></td></tr>`).join('')}</table><a class="nw-go" href="${c.href}">გამოთვალე შენი მატრიცა →</a>`;}
   }catch(e){info.innerHTML=`<h2>${c.h}</h2><p>მონაცემები ჯერ არ ჩაიტვირთა — სცადე რამდენიმე წამში.</p>`;}}
 
+/* ───────────── moon day (same convention as moon.html: tithi = elongation/12°) ───────────── */
+const MD=['','ლამპარი','უხვობის რქა','ლეოპარდი','შემეცნების ხე','ერთრქა','წერო','ქარის ვარდი','ფენიქსი','ღამურა','შადრევანი','გვირგვინი','გული','ბორბალი','საყვირი','გველი','პეპელა','ზარი','სარკე','ობობა','არწივი','ცხენი','სპილო','ნიანგი','დათვი','კუ','გომბეშო','სამკაპი','ლოტოსი','რვაფეხა','ოქროს გედი'];
+const PH={'New Moon':'ახალმთვარე','Waxing Crescent':'მზარდი ნამგალა','First Quarter':'პირველი მეოთხედი','Waxing Gibbous':'მზარდი მთვარე','Full Moon':'სავსემთვარე','Waning Gibbous':'კლებადი მთვარე','Last Quarter':'ბოლო მეოთხედი','Waning Crescent':'კლებადი ნამგალა'};
+async function moonLoad(){const el=$('#nw-moon');if(!el)return;const t=new Date();
+  try{const d=await fetch(`${API}/api/moon?date=${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}&time=${pad(t.getHours())}:${pad(t.getMinutes())}&timezone=${encodeURIComponent(TZ)}`).then(r=>r.json());
+    if(!d||d.error)throw 0;S.moon=d;const n=d.tithi!=null?d.tithi:d.lunar_day,pc=d.tithi_pct!=null?d.tithi_pct:null;
+    let nxt='';if(pc!=null){const h=(100-pc)/100*12/(360/29.53059)*24;nxt=` · ${n<30?(n+1)+'-ე':'1-ლი'} დღე ≈ ${h<1?Math.round(h*60)+' წთ-ში':Math.round(h)+' სთ-ში'}`;}
+    el.innerHTML=`<span class="em">${d.emoji||'☽'}</span><span class="no">${n}</span><span class="tx"><span class="l1">მთვარის დღე · ახლა</span>
+      <span class="l2">${n}-ე მთვარის დღე${MD[n]?' — <b style="color:#FFD36A;font-weight:500">'+esc(MD[n])+'</b>':''}</span>
+      <span class="l3">${esc(PH[d.phase]||d.phase||'')} · განათება ${Math.round(d.illumination)}%${nxt}</span>
+      ${pc!=null?`<span class="bar"><i style="width:${Math.max(2,Math.min(100,pc))}%"></i></span>`:''}</span>`;
+    el.title=`მთვარის ${n}-ე დღე${pc!=null?' · '+pc.toFixed(1)+'% გავლილია':''}`;el.style.display='flex';
+  }catch(e){el.style.display='none';}}
+
 /* ───────────── layout ───────────── */
 function mount(){
   const grid=document.querySelector('.grid.main4')||document.querySelector('.grid');if(!grid||$('#nw-left'))return;
@@ -188,6 +215,7 @@ function mount(){
   const L=document.createElement('div');L.id='nw-left';L.className='nw-side';L.innerHTML=cardHTML(CARDS[0])+cardHTML(CARDS[1]);
   const R=document.createElement('div');R.id='nw-right';R.className='nw-side';R.innerHTML=cardHTML(CARDS[2])+cardHTML(CARDS[3]);
   const row=document.createElement('div');row.id='nw-row';row.className='nw-row';
+  const mo=document.createElement('a');mo.id='nw-moon';mo.className='nw-moon';mo.href='moon.html?now=1';grid.parentNode.insertBefore(mo,grid);
   page.appendChild(L);page.appendChild(R);grid.parentNode.insertBefore(row,grid.nextSibling);
   if(getComputedStyle(page).position==='static')page.style.position='relative';
   const place=()=>{const gr=grid.getBoundingClientRect(),pr=page.getBoundingClientRect(),W=212,G=26;
@@ -203,7 +231,7 @@ function mount(){
   const go=id=>{const c=CARDS.find(x=>x.id===id);if(c)location.href=c.href+'?now=1';};
   document.addEventListener('click',e=>{const c=e.target.closest('.nw-card');if(c)go(c.dataset.nw);});
   document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('nw-card')){e.preventDefault();go(e.target.dataset.nw);}});
-  fillAll();load();setInterval(load,10*60*1000);setInterval(()=>{['py','mx'].forEach(id=>{const c=document.querySelector(`.nw-card[data-nw="${id}"]`);if(c)fill(c);});},30*60*1000);}
+  fillAll();load();moonLoad();setInterval(load,10*60*1000);setInterval(moonLoad,10*60*1000);setInterval(()=>{['py','mx'].forEach(id=>{const c=document.querySelector(`.nw-card[data-nw="${id}"]`);if(c)fill(c);});},30*60*1000);}
 
 async function load(){const t=new Date(),Y=t.getFullYear(),M=t.getMonth()+1,D=t.getDate(),h=t.getHours(),mi=t.getMinutes();
   const a=fetch(API+'/chart',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({year:Y,month:M,day:D,hour:h,minute:mi,second:0,lat:LAT,lon:LON,tz_name:TZ,time_unknown:false})})

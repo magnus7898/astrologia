@@ -14,6 +14,8 @@ function moment(p){set(p+'-day',t.getDate());set(p+'-month',t.getMonth()+1);set(
 function go(){try{
   if(P.startsWith('astro')){set('n-name','ცა ახლა');moment('n');place('n');window.generate&&generate();}
   else if(P.startsWith('hd')){moment('n');place('n');window.generate&&generate();}
+  else if(P.startsWith('moon')){['day','month','year','hour','minute','second'].forEach((k,i)=>set(k,[t.getDate(),t.getMonth()+1,t.getFullYear(),t.getHours(),t.getMinutes(),t.getSeconds()][i]));
+    set('city','თბილისი');set('lat','41.7151');set('lon','44.8271');set('tz_name',TZ);window.calculate&&calculate();}
   else if(P.startsWith('matrix')){const q=n=>document.querySelector('[name='+n+']');q('dd').value=pad(t.getDate());q('mm').value=pad(t.getMonth()+1);q('yyyy').value=t.getFullYear();window.calculate&&calculate();}
   else if(P.startsWith('pythagoras')){set('birth',pad(t.getDate())+'/'+pad(t.getMonth()+1)+'/'+t.getFullYear());window.calculate&&calculate();}
 }catch(e){console.warn('now_fill',e);}}
