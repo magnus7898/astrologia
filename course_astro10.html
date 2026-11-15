@@ -317,6 +317,13 @@ function ring(c,cx,cy,ri,R){for(let k=0;k<12;k++){sector(c,cx,cy,ri,R,30*k,30*k+
 /* ── 1 · geometry + graph ── */
 const AU={me:.387,ve:.723,ma:1.524,ju:5.203,sa:9.537};
 const H={p:'ma',t:0,g:null,gl:null,win:null,v:'h'};
+/* asteroid belt: deterministic particles (a, phase, e-jitter), Kirkwood gaps, Jupiter Trojans */
+const BELT=(()=>{let x=12345;const rnd=()=>(x=(x*16807)%2147483647)/2147483647;const gaps=[[2.50,.035],[2.82,.03],[2.95,.022],[3.27,.03]],o=[];
+  while(o.length<1500){const a=2.1+Math.pow(rnd(),.85)*1.2;if(gaps.some(([g,wd])=>Math.abs(a-g)<wd))continue;o.push([a,rnd()*360,(rnd()-.5)*.18]);}
+  const tr=[];for(let i=0;i<260;i++){const s=i%2?60:-60;tr.push([5.2+(rnd()-.5)*.35,s+(rnd()-.5)*26]);}return {o,tr};})();
+function drawBelt(c,P,J,jl){const t=J-2451545;c.fillStyle='rgba(190,180,160,.42)';
+  BELT.o.forEach(([a,ph,ej])=>{const n=360/(Math.pow(a,1.5)*365.25),ang=(ph+n*t)*D,r=a+ej;const q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillRect(q[0],q[1],1.1,1.1);});
+  if(jl!=null){c.fillStyle='rgba(232,162,90,.45)';BELT.tr.forEach(([r,da])=>{const ang=(jl+da)*D,q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillRect(q[0],q[1],1.2,1.2);});}}
 const STW={me:1,ve:2,ma:3,ju:5,sa:6,ur:7,ne:7,pl:7};
 const dist=(k,J)=>{const a=hpos(k,J),b=hpos('em',J);return Math.hypot(a[0]-b[0],a[1]-b[1]);};
 function hBuild(){const k=H.p,step=k==='me'?1:k==='ve'?2:3,st=stations(k,JNOW-30,JNOW+(k==='me'?200:k==='ve'?700:k==='ma'?900:420),step);
@@ -333,6 +340,7 @@ function drawH(){if(!H.g||!H.win)return;const {c,w,h}=H.g;c.clearRect(0,0,w,h);c
   const rel=t=>{const a=hpos(k,t),b=hpos('em',t);return geo?[a[0]-b[0],a[1]-b[1]]:a;},eP=t=>{const b=hpos('em',t);return geo?[0,0]:b;},sP=t=>{const b=hpos('em',t);return geo?[-b[0],-b[1]]:[0,0];};
   let mx;if(geo){mx=1.05;W.pts.forEach(p=>{const v=rel(p[0]);mx=Math.max(mx,Math.hypot(v[0],v[1]));});}else mx=Math.max(AU[k],1);
   const sc=ri*.8/mx,P=v=>[cx-v[0]*sc,cy+v[1]*sc];
+  if(!geo&&AU[k]>3){const jv=hpos('ju',J);drawBelt(c,P,J,Math.atan2(jv[1],jv[0])/D);const bq=P([0,-3.45]);txt(c,'ასტეროიდების სარტყელი',bq[0],bq[1],Math.max(8.5,R*.036),'rgba(220,210,190,.7)',GEO);}
   if(!geo){[1,AU[k]].forEach((a,i)=>{c.strokeStyle=i?hexA(PG[k][2],.35):'rgba(90,150,230,.35)';c.lineWidth=1;c.beginPath();c.arc(cx,cy,a*sc,0,7);c.stroke();});}
   else{/* planet's path relative to Earth over the whole window (the loop) */
     c.lineWidth=1;for(let n=1;n<=120;n++){const t0=W.J0+(W.J1-W.J0)*(n-1)/120,t1=W.J0+(W.J1-W.J0)*n/120,a=P(rel(t0)),b=P(rel(t1));line(c,a,b,spd(k,t1)<0?'rgba(255,122,106,.6)':hexA(PG[k][2],.45),1.3);}
