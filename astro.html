@@ -3113,7 +3113,8 @@ function drawWheel(data1,data2,dualAsp){
         txt(svg,ZSYM[si],CX+Math.cos(ang)*rs[2],CY+Math.sin(ang)*rs[2],
           {fill:ZCOL[si],'font-size':_fs*1.15,'font-family':'serif',opacity:.95});
       }
-      if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
+      if(data.planets[name].stationary)txt(svg,'St',gxy.x+(isInner?8:11),gxy.y-(isInner?6:8),{fill:'#FFD36A','font-size':6.5,'font-family':'Cinzel,serif','font-weight':700});
+      else if(data.planets[name].retrograde)txt(svg,'℞',gxy.x+(isInner?8:10),gxy.y-(isInner?6:8),{fill:'#f87171','font-size':7,'font-family':'serif'});
       // Hover hit area for aspect highlighting
       const hit=el('circle',{cx:gxy.x,cy:gxy.y,r:14,fill:'transparent','stroke-width':0},svg);
       hit.dataset.planet=name;
@@ -3216,7 +3217,7 @@ function drawPlanetTable(planets,isB,tbodyId){
     const sc=si>=0?signClass(si):'';
     const symCell=name==='მზე'?sunSVG(18):name==='მთვარე'?'<span class="moon-sym" style="font-size:16px">☽</span>':`<span class="p-sym" style="color:${isB?'#E3BE84':info.color};font-size:16px;font-family:serif">${info.sym}</span>`;
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${symCell}</td><td style="color:${isB?'#E3BE84':info.color};font-size:11px;white-space:nowrap">${name}</td><td class="deg-val">${fmtDeg(d.degree)}</td><td><span class="${sc}" style="font-size:13px;font-family:serif">${si>=0?ZSYM[si]:''}</span> <span style="font-size:10px;color:${sCol}">${d.sign}</span></td><td><span class="house-badge" style="${isB?'border-color:rgba(227,190,132,.4);color:#E3BE84':''}">H${d.house||'?'}</span></td><td>${d.retrograde?'<span class="retro">℞</span>':''}</td>`;
+    tr.innerHTML=`<td>${symCell}</td><td style="color:${isB?'#E3BE84':info.color};font-size:11px;white-space:nowrap">${name}</td><td class="deg-val">${fmtDeg(d.degree)}</td><td><span class="${sc}" style="font-size:13px;font-family:serif">${si>=0?ZSYM[si]:''}</span> <span style="font-size:10px;color:${sCol}">${d.sign}</span></td><td><span class="house-badge" style="${isB?'border-color:rgba(227,190,132,.4);color:#E3BE84':''}">H${d.house||'?'}</span></td><td>${d.stationary?`<span class="retro" style="color:#FFD36A" title="სტაციონარული — ${d.station==='SR'?'რეტროგრადულად შემობრუნება (SR)':'პირდაპირ სვლაზე გადასვლა (SD)'}, სადგომამდე ${Math.abs(d.station_days)} დღე">St${d.station==='SR'?'℞':'D'}</span>`:d.retrograde?'<span class="retro">℞</span>':''}</td>`;
     tbody.appendChild(tr);
   }
 }

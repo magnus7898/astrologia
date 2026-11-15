@@ -160,7 +160,7 @@ window.drawWheelClassic=function(data1,dualAsp){
     const p1=xy(dA,R_DEG),p2=xy(dA,R_SIG),p3=xy(dA,R_MIN);
     txt(svg,`${d}°`,p1.x,p1.y,{fill:'#EDE6D8','font-size':fs,'font-family':'Cinzel,serif','font-weight':'bold'});
     txt(svg,ZSYM[si],p2.x,p2.y,{fill:ZCOL[si],'font-size':fs*1.15,'font-family':'serif'});
-    txt(svg,`${String(m).padStart(2,'0')}'`+(pd.retrograde?'℞':''),p3.x,p3.y,{fill:pd.retrograde?'#f87171':'#cfd5e2','font-size':fs*.92,'font-family':'Cinzel,serif'});
+    txt(svg,`${String(m).padStart(2,'0')}'`+(pd.stationary?'St':pd.retrograde?'℞':''),p3.x,p3.y,{fill:pd.stationary?'#FFD36A':pd.retrograde?'#f87171':'#cfd5e2','font-size':fs*.92,'font-family':'Cinzel,serif'});
     const hit=el('circle',{cx:g.x,cy:g.y,r:gR+3,fill:'transparent'},svg);
     hit.dataset.planet=n;hit.dataset.inner='0';hit.style.cursor='crosshair';hit.style.pointerEvents='all';
     hit.addEventListener('mouseenter',()=>highlightAspects(n,false));hit.addEventListener('mouseleave',()=>clearHighlight());

@@ -248,6 +248,8 @@ function right(d,asps){
     <div class="cp-row"><span>ჰარმონიული ${hm}</span><span>დაძაბული ${te}</span></div>`;}
   const ret=REAL.filter(n=>P[n]&&P[n].retrograde&&n!=='მზე'&&n!=='მთვარე');
   h+=`<h3>℞ რეტროგრადული</h3><div class="cp-hint">${ret.length?ret.map(n=>`${glyph(n)} ${n}`).join(' · '):'არცერთი'}</div>`;
+  const sta=REAL.filter(n=>P[n]&&P[n].stationary);
+  if(sta.length)h+=`<h3>St სტაციონარული</h3><div class="cp-hint">${sta.map(n=>`${glyph(n)} ${n} <b style="color:#FFD36A">${P[n].station==='SR'?'St℞':'StD'}</b>`).join(' · ')}<br><span style="opacity:.7">პლანეტა „დგას“ — მიმართულებას იცვლის; ტრადიციულად ასეთი პლანეტა რუკაში განსაკუთრებით ძლიერია.</span></div>`;
   const bySign={},byHouse={};
   REAL.forEach(n=>{const p=P[n];if(!p||p.degree==null)return;const s=si(p.degree);
     (bySign[s]=bySign[s]||[]).push(n);if(!d._timeUnknown&&p.house)(byHouse[p.house]=byHouse[p.house]||[]).push(n);});

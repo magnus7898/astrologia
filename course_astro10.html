@@ -126,6 +126,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 .inp .ck input{width:auto;accent-color:#C9A24C}.inp .ck label{margin:0;letter-spacing:0;font-size:12.5px;color:#cfd5e2}
 .sum{margin-top:12px;font-size:13px;color:#cfd5e2;line-height:1.8;text-align:center}.sum b{color:#FFE7A0;font-weight:600}
 
+.seg+.seg{margin-top:6px}
 .seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 .seg button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
 .seg button.on{background:#C9A24C;color:#0C1222;font-weight:600}
@@ -166,8 +167,12 @@ table.rt{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
     <canvas id="cvH" aria-label="რეტროგრადული მოძრაობის გეომეტრია: მზის სისტემა ზემოდან"></canvas>
     <canvas id="cvL" class="gr" aria-label="პლანეტის გრძედი დროში: სადგომები და ჩრდილი"></canvas>
     <div class="seg" id="hT"><button type="button" data-p="me">☿︎ მერკური</button><button type="button" data-p="ve">♀︎ ვენერა</button><button type="button" data-p="ma" class="on">♂︎ მარსი</button><button type="button" data-p="ju">♃︎ იუპიტერი</button><button type="button" data-p="sa">♄︎ სატურნი</button></div>
+    <div class="seg" id="hV"><button type="button" data-v="h" class="on">☉ ჰელიოცენტრული</button><button type="button" data-v="g">⊕ გეოცენტრული</button></div>
     <div class="ro" id="hRo"></div>
    </div></div>
+   <p style="margin-top:14px"><b>ორი ხედი.</b> <b>ჰელიოცენტრულში</b> მზე ცენტრშია და ყველა პლანეტა წრეზე ერთი მიმართულებით, თანაბრად მოძრაობს — აქ რეტროგრადი არ არსებობს. <b>გეოცენტრულში</b> ცენტრში დედამიწაა (ასე ვხედავთ ცას და ასე იგება რუკა): პლანეტის გზა დედამიწის მიმართ <b>მარყუჟს</b> ხაზავს — სწორედ ეს მარყუჟია რეტროგრადი. ძველი ასტრონომები ამ მარყუჟებს „ეპიციკლებით“ ხსნიდნენ.</p>
+   <p><b>მანძილი.</b> რეტროგრადი ყოველთვის იმ დროს ხდება, როცა პლანეტა დედამიწასთან <b>ყველაზე ახლოსაა</b>: გარე პლანეტა — მზესთან ოპოზიციისას (ღამე მთელი ღამე ჩანს და ყველაზე კაშკაშაა), შიდა პლანეტა — ქვედა შეერთებისას, როცა მზესა და დედამიწას შორის გადის. ქვედა გრაფიკზე ლურჯი მრუდი მანძილია (ასტრონომიულ ერთეულებში, 1 AU ≈ 149,6 მლნ კმ): მისი მინიმუმი რეტროგრადის შუაშია. ასტროლოგიურად ეს კარგად ერგება აზრს: რეტროგრადული პლანეტა „ახლოა“, მისი თემა უფრო პირადი და შინაგანია.</p>
+   <p><b>სტაციონარული პლანეტა (St).</b> სადგომის გარშემო რამდენიმე დღე პლანეტა თითქმის არ მოძრაობს. ტრადიციულად პლანეტა სტაციონარულად ითვლება, თუ სადგომამდე ან სადგომიდან: მერკური — 1 დღე, ვენერა — 2, მარსი — 3, იუპიტერი — 5, სატურნი — 6, ურანი, ნეპტუნი და პლუტონი — 7 დღე. ნატალურ რუკაში მას აღნიშნავენ <b>St</b> (ან S): <b>St℞</b> — რეტროგრადულად შემობრუნების წინ/შემდეგ (SR), <b>StD</b> — პირდაპირ სვლაზე გადასვლისას (SD). სტაციონარული პლანეტა რუკაში განსაკუთრებით ძლიერია — მისი თემა მთელი ცხოვრების ღერძად იქცევა. MAGNUS-ის რუკაში ასეთ პლანეტას ახლა ოქროსფერი „St“ აწერია.</p>
   </div>
 
   <div class="sec"><h2>2 · რამდენად ხშირად?</h2>
@@ -311,25 +316,41 @@ function ring(c,cx,cy,ri,R){for(let k=0;k<12;k++){sector(c,cx,cy,ri,R,30*k,30*k+
   const p=pt(cx,cy,(R+ri)/2,30*k+15);txt(c,SG[k][0]+VS,p[0],p[1],Math.max(11,(R-ri)*.5),hexA(EC[k%4],.88));}}
 /* ── 1 · geometry + graph ── */
 const AU={me:.387,ve:.723,ma:1.524,ju:5.203,sa:9.537};
-const H={p:'ma',t:0,g:null,gl:null,win:null};
+const H={p:'ma',t:0,g:null,gl:null,win:null,v:'h'};
+const STW={me:1,ve:2,ma:3,ju:5,sa:6,ur:7,ne:7,pl:7};
+const dist=(k,J)=>{const a=hpos(k,J),b=hpos('em',J);return Math.hypot(a[0]-b[0],a[1]-b[1]);};
 function hBuild(){const k=H.p,step=k==='me'?1:k==='ve'?2:3,st=stations(k,JNOW-30,JNOW+(k==='me'?200:k==='ve'?700:k==='ma'?900:420),step);
   let i=st.findIndex(s=>s.t==='SR');if(i<0||!st[i+1]){H.win=null;return;}const sr=st[i],sd=st[i+1];
   const pre=(()=>{let J=sr.J;while(J>sr.J-400&&el(LO(k,J),sd.lon)>0)J-=1;return J;})(),post=(()=>{let J=sd.J;while(J<sd.J+400&&el(LO(k,J),sr.lon)<0)J+=1;return J;})();
   const span=post-pre,J0=pre-span*.25,J1=post+span*.25,N=240,pts=[];let base=null,prev=null;
   for(let n=0;n<=N;n++){const J=J0+(J1-J0)*n/N;let l=LO(k,J);if(prev!=null){let d=l-prev;if(d>180)d-=360;if(d<-180)d+=360;base+=d;}else base=l;prev=l;pts.push([J,base]);}
-  H.win={sr,sd,pre,post,J0,J1,pts};H.t=0;
-  $('hRo').innerHTML=`<span style="color:${PG[k][2]}">${PG[k][0]}${VS}</span> შემდეგი რეტროგრადი: ჩრდილი იწყება <b>${dS(pre)}</b> · SR <b>${dS(sr.J)}</b> ${fl(sr.lon)} · SD <b>${dS(sd.J)}</b> ${fl(sd.lon)} · ჩრდილი მთავრდება <b>${dS(post)}</b> <small>(${Math.round(sd.J-sr.J)} დღე რეტროგრადულად)</small>`;}
+  const ds=pts.map(p=>dist(k,p[0]));let mi=0;ds.forEach((d,i)=>{if(d<ds[mi])mi=i;});
+  H.win={sr,sd,pre,post,J0,J1,pts,ds,mi};H.t=0;
+  $('hRo').innerHTML=`<span style="color:${PG[k][2]}">${PG[k][0]}${VS}</span> შემდეგი რეტროგრადი: ჩრდილი იწყება <b>${dS(pre)}</b> · SR <b>${dS(sr.J)}</b> ${fl(sr.lon)} · SD <b>${dS(sd.J)}</b> ${fl(sd.lon)} · ჩრდილი მთავრდება <b>${dS(post)}</b> <small>(${Math.round(sd.J-sr.J)} დღე რეტროგრადულად)</small><br>უახლოესი მანძილი <b>${dS(pts[mi][0])}</b>: <b>${ds[mi].toFixed(3)} AU</b> (${Math.round(ds[mi]*149.6)} მლნ კმ) · ყველაზე შორს ამ ფანჯარაში: ${Math.max(...ds).toFixed(3)} AU`;}
 function hpos(k,J){const T=(J-2451545)/36525,p=helio(k,T),pr=PREC_T(T)*D,c=Math.cos(pr),s=Math.sin(pr);return [p[0]*c-p[1]*s,p[0]*s+p[1]*c];}
 function drawH(){if(!H.g||!H.win)return;const {c,w,h}=H.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.86,W=H.win,J=W.J0+(W.J1-W.J0)*H.t,k=H.p;
-  ring(c,cx,cy,ri,R);const mx=Math.max(AU[k],1),sc=ri*.78/mx,P=v=>[cx-v[0]*sc,cy+v[1]*sc];
-  [1,AU[k]].forEach((a,i)=>{c.strokeStyle=i?hexA(PG[k][2],.35):'rgba(90,150,230,.35)';c.lineWidth=1;c.beginPath();c.arc(cx,cy,a*sc,0,7);c.stroke();});
-  for(let n=0;n<=60;n++){const t=W.J0+(J-W.J0)*n/60;if(t>J)break;const e=P(hpos('em',t)),q=P(hpos(k,t)),l=LO(k,t),r=spd(k,t)<0,z=pt(cx,cy,ri-4,l);c.fillStyle=r?'rgba(255,122,106,.85)':'rgba(227,190,132,.6)';c.beginPath();c.arc(z[0],z[1],2,0,7);c.fill();}
-  const sg=c.createRadialGradient(cx,cy,0,cx,cy,R*.09);sg.addColorStop(0,'rgba(255,220,120,.9)');sg.addColorStop(1,'rgba(255,200,90,0)');c.fillStyle=sg;c.beginPath();c.arc(cx,cy,R*.09,0,7);c.fill();c.fillStyle='#FFD36A';c.beginPath();c.arc(cx,cy,Math.max(4,R*.03),0,7);c.fill();
-  const e=P(hpos('em',J)),q=P(hpos(k,J)),dx=q[0]-e[0],dy=q[1]-e[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,fx=e[0]-cx,fy=e[1]-cy,bq=fx*ux+fy*uy,cq=fx*fx+fy*fy-(ri-4)*(ri-4),tt=-bq+Math.sqrt(bq*bq-cq),end=[e[0]+ux*tt,e[1]+uy*tt],r=spd(k,J)<0;
+  ring(c,cx,cy,ri,R);const geo=H.v==='g',r=spd(k,J)<0,dn=Math.min(Math.abs(J-W.sr.J),Math.abs(J-W.sd.J)),st=dn<=STW[k],stT=Math.abs(J-W.sr.J)<Math.abs(J-W.sd.J)?'SR':'SD';
+  const rel=t=>{const a=hpos(k,t),b=hpos('em',t);return geo?[a[0]-b[0],a[1]-b[1]]:a;},eP=t=>{const b=hpos('em',t);return geo?[0,0]:b;},sP=t=>{const b=hpos('em',t);return geo?[-b[0],-b[1]]:[0,0];};
+  let mx;if(geo){mx=1.05;W.pts.forEach(p=>{const v=rel(p[0]);mx=Math.max(mx,Math.hypot(v[0],v[1]));});}else mx=Math.max(AU[k],1);
+  const sc=ri*.8/mx,P=v=>[cx-v[0]*sc,cy+v[1]*sc];
+  if(!geo){[1,AU[k]].forEach((a,i)=>{c.strokeStyle=i?hexA(PG[k][2],.35):'rgba(90,150,230,.35)';c.lineWidth=1;c.beginPath();c.arc(cx,cy,a*sc,0,7);c.stroke();});}
+  else{/* planet's path relative to Earth over the whole window (the loop) */
+    c.lineWidth=1;for(let n=1;n<=120;n++){const t0=W.J0+(W.J1-W.J0)*(n-1)/120,t1=W.J0+(W.J1-W.J0)*n/120,a=P(rel(t0)),b=P(rel(t1));line(c,a,b,spd(k,t1)<0?'rgba(255,122,106,.6)':hexA(PG[k][2],.45),1.3);}
+    for(let n=1;n<=60;n++){const t0=W.J0+(W.J1-W.J0)*(n-1)/60,t1=W.J0+(W.J1-W.J0)*n/60;line(c,P(sP(t0)),P(sP(t1)),'rgba(255,211,106,.18)',1);}}
+  for(let n=0;n<=60;n++){const t=W.J0+(J-W.J0)*n/60;if(t>J)break;const l=LO(k,t),rr=spd(k,t)<0,z=pt(cx,cy,ri-4,l);c.fillStyle=rr?'rgba(255,122,106,.85)':'rgba(227,190,132,.6)';c.beginPath();c.arc(z[0],z[1],2,0,7);c.fill();
+    if(geo){const q=P(rel(t));c.fillStyle=rr?'rgba(255,122,106,.9)':hexA(PG[k][2],.7);c.beginPath();c.arc(q[0],q[1],1.8,0,7);c.fill();}}
+  const sp=P(sP(J)),sr_=geo?R*.06:R*.09,sg=c.createRadialGradient(sp[0],sp[1],0,sp[0],sp[1],sr_);sg.addColorStop(0,'rgba(255,220,120,.9)');sg.addColorStop(1,'rgba(255,200,90,0)');c.fillStyle=sg;c.beginPath();c.arc(sp[0],sp[1],sr_,0,7);c.fill();c.fillStyle='#FFD36A';c.beginPath();c.arc(sp[0],sp[1],Math.max(4,R*.03),0,7);c.fill();
+  const e=P(eP(J)),q=P(rel(J)),dx=q[0]-e[0],dy=q[1]-e[1],L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,fx=e[0]-cx,fy=e[1]-cy,bq=fx*ux+fy*uy,cq=fx*fx+fy*fy-(ri-4)*(ri-4),tt=-bq+Math.sqrt(bq*bq-cq),end=[e[0]+ux*tt,e[1]+uy*tt];
   line(c,e,end,r?'rgba(255,122,106,.9)':'rgba(255,231,160,.6)',1.4);
+  /* distance label on the Earth–planet line */
+  const dAU=dist(k,J),mxD=Math.max(...W.ds),mnD=W.ds[W.mi];
+  {const m=[(e[0]+q[0])/2,(e[1]+q[1])/2];c.fillStyle='rgba(12,18,34,.8)';const tx=dAU.toFixed(2)+' AU';c.font=Math.max(10,R*.045)+'px '+GEO;const tw=c.measureText(tx).width;c.fillRect(m[0]-tw/2-4,m[1]-9,tw+8,18);txt(c,tx,m[0],m[1],Math.max(10,R*.045),'#9fd0ff',GEO);}
   c.fillStyle='#2f6db8';c.beginPath();c.arc(e[0],e[1],Math.max(4,R*.03),0,7);c.fill();
-  c.fillStyle='#0e1424';c.beginPath();c.arc(q[0],q[1],Math.max(7,R*.045),0,7);c.fill();c.strokeStyle=r?'#ff7a6a':PG[k][2];c.lineWidth=1.6;c.stroke();txt(c,PG[k][0]+VS,q[0],q[1],Math.max(9,R*.055),PG[k][2]);
-  txt(c,dS(J),8,12,Math.max(11,R*.052),'#F3DDA4',GEO,'left');if(r)txt(c,'℞ რეტროგრადი',w-8,12,Math.max(11,R*.05),'#ff9a8a',GEO,'right');
+  c.fillStyle='#0e1424';c.beginPath();c.arc(q[0],q[1],Math.max(7,R*.045),0,7);c.fill();c.strokeStyle=st?'#FFD36A':r?'#ff7a6a':PG[k][2];c.lineWidth=1.6;c.stroke();txt(c,PG[k][0]+VS,q[0],q[1],Math.max(9,R*.055),PG[k][2]);
+  txt(c,dS(J),8,12,Math.max(11,R*.052),'#F3DDA4',GEO,'left');
+  if(st)txt(c,'St სტაციონარული ('+stT+')',w-8,12,Math.max(11,R*.05),'#FFD36A',GEO,'right');else if(r)txt(c,'℞ რეტროგრადი',w-8,12,Math.max(11,R*.05),'#ff9a8a',GEO,'right');
+  txt(c,(geo?'⊕ გეოცენტრული':'☉ ჰელიოცენტრული'),8,h-12,Math.max(10,R*.045),'rgba(237,230,216,.6)',GEO,'left');
+  txt(c,'მანძილი '+dAU.toFixed(3)+' AU · '+Math.round(dAU*149.6)+' მლნ კმ'+(dAU-mnD<(mxD-mnD)*.08?' · უახლოესი':''),w-8,h-12,Math.max(10,R*.045),'#9fd0ff',GEO,'right');
   drawL(J);}
 function drawL(J){if(!H.gl||!H.win)return;const {c,w,h}=H.gl;c.clearRect(0,0,w,h);const W=H.win,L=40,Rr=w-10,T=12,B=h-22;
   let lo=1e9,hi=-1e9;W.pts.forEach(p=>{lo=Math.min(lo,p[1]);hi=Math.max(hi,p[1]);});const pad=(hi-lo)*.12;lo-=pad;hi+=pad;
@@ -341,6 +362,10 @@ function drawL(J){if(!H.gl||!H.win)return;const {c,w,h}=H.gl;c.clearRect(0,0,w,h
   [[W.sr.J,ys,'SR'],[W.sd.J,yd,'SD']].forEach(([t,v,l])=>{c.fillStyle='#FFE7A0';c.beginPath();c.arc(X(t),Y(v),3.5,0,7);c.fill();txt(c,l,X(t),Y(v)+(l==='SR'?-11:12),11,'#FFE7A0',GEO);});
   txt(c,inS(ys),4,Y(ys),10,'rgba(237,230,216,.7)',GEO,'left');txt(c,inS(yd),4,Y(yd),10,'rgba(237,230,216,.7)',GEO,'left');
   txt(c,'ჩრდილი',(X(W.pre)+X(W.post))/2,B+12,10.5,'rgba(170,178,196,.9)',GEO);
+  {const dmx=Math.max(...W.ds),dmn=Math.min(...W.ds),YD=v=>B-(B-T)*(.08+.84*(v-dmn)/((dmx-dmn)||1));c.lineWidth=1.6;c.strokeStyle='rgba(120,180,255,.75)';c.setLineDash([5,3]);c.beginPath();W.pts.forEach((p,i)=>{const x=X(p[0]),y=YD(W.ds[i]);i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();c.setLineDash([]);
+   const xm=X(W.pts[W.mi][0]),ym=YD(dmn);c.fillStyle='#9fd0ff';c.beginPath();c.arc(xm,ym,3,0,7);c.fill();txt(c,'უახლოესი '+dmn.toFixed(2)+' AU',xm,ym+11,10,'#9fd0ff',GEO);
+   txt(c,dmx.toFixed(2)+' AU',Rr,T+4,9.5,'rgba(159,208,255,.75)',GEO,'right');
+   [[W.sr.J,'SR'],[W.sd.J,'SD']].forEach(([t])=>{c.fillStyle='rgba(255,211,106,.12)';c.fillRect(X(t-STW[H.p]),T,X(t+STW[H.p])-X(t-STW[H.p]),B-T);});}
   const cur=W.pts.reduce((a,p)=>Math.abs(p[0]-J)<Math.abs(a[0]-J)?p:a);line(c,[X(J),T],[X(J),B],'rgba(255,211,106,.5)',1);c.fillStyle='#fff';c.beginPath();c.arc(X(J),Y(cur[1]),3,0,7);c.fill();}
 /* ── 2 · frequency table ── */
 function ftab(){const J0=jd(1950,1,1,0),J1=jd(2050,1,1,0);
@@ -377,6 +402,7 @@ function loop(ts){raf=0;const dt=last?Math.min(.1,(ts-last)/1000):0;last=ts;let 
   if(H.win&&!RM){H.t+=dt/9;if(H.t>1)H.t=0;more=true;}
   drawH();if(more)raf=requestAnimationFrame(loop);else last=0;}
 function kick(){if(!raf){last=0;raf=requestAnimationFrame(loop);}}
+$('hV').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;H.v=b.dataset.v;$('hV').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawH();});
 $('hT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;H.p=b.dataset.p;$('hT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));hBuild();kick();});
 $('rcd').innerHTML=PO.map(k=>`<div><div class="h"><span style="color:${PG[k][2]}">${PG[k][0]}${VS}</span>${PG[k][1]} ℞</div><p>${RT[k]}</p></div>`).join('');
 function sizes(){H.g=fit($('cvH'),1);H.gl=fit($('cvL'),.42);if(!H.win)hBuild();drawH();}
