@@ -210,6 +210,8 @@ async function moonLoad(){const el=$('#nw-moon');if(!el)return;const t=new Date(
 
 /* ───────────── layout ───────────── */
 function mount(){
+  // home page only — not on the group pages (index.html?g=astrology, ?g=courses …)
+  if(new URLSearchParams(location.search).has('g'))return;
   const grid=document.querySelector('.grid.main4')||document.querySelector('.grid');if(!grid||$('#nw-left'))return;
   const page=grid.closest('.page')||document.body;
   const L=document.createElement('div');L.id='nw-left';L.className='nw-side';L.innerHTML=cardHTML(CARDS[0])+cardHTML(CARDS[1]);
