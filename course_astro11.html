@@ -472,28 +472,31 @@ const AST=[['ce','ცერერა (დემეტრე)','1801 · ჯუზ
  ['jn','იუნონა (ჰერა)','1804 · კარლ ჰარდინგი','ქორწინების მფარველი, ზევსის მეუღლე. რუკაში — პარტნიორობის მოთხოვნილება: ერთგულება, თანასწორობა, ვალდებულება — და ეჭვიანობა, ძალაუფლების ბალანსი ურთიერთობაში.'],
  ['vs','ვესტა (ჰესტია)','1807 · ჰაინრიხ ოლბერსი','წმინდა კერის ქალღმერთი, რომლის ცეცხლს ქალწული ქურუმები იცავდნენ. რუკაში — ერთგულება და ფოკუსი: საქმე, რომელსაც მთელ თავს ვუძღვნით, შინაგანი ცეცხლი, სიწმინდე, ზოგჯერ განმარტოება.']];
 const TA={g:null,v:'g'};
-/* asteroid belt: deterministic particles (a, phase, e-jitter), Kirkwood gaps, Jupiter Trojans */
-const BELT=(()=>{let x=12345;const rnd=()=>(x=(x*16807)%2147483647)/2147483647;const gaps=[[2.50,.035],[2.82,.03],[2.95,.022],[3.27,.03]],o=[];
-  while(o.length<1500){const a=2.1+Math.pow(rnd(),.85)*1.2;if(gaps.some(([g,wd])=>Math.abs(a-g)<wd))continue;o.push([a,rnd()*360,(rnd()-.5)*.18]);}
-  const tr=[];for(let i=0;i<260;i++){const s=i%2?60:-60;tr.push([5.2+(rnd()-.5)*.35,s+(rnd()-.5)*26]);}return {o,tr};})();
-function drawBelt(c,P,J,jl){const t=J-2451545;c.fillStyle='rgba(190,180,160,.42)';
-  BELT.o.forEach(([a,ph,ej])=>{const n=360/(Math.pow(a,1.5)*365.25),ang=(ph+n*t)*D,r=a+ej;const q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillRect(q[0],q[1],1.1,1.1);});
-  if(jl!=null){c.fillStyle='rgba(232,162,90,.45)';BELT.tr.forEach(([r,da])=>{const ang=(jl+da)*D,q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillRect(q[0],q[1],1.2,1.2);});}}
+/* asteroid belt: soft annulus + fine dust, Kirkwood gaps as dark rings, Jupiter Trojans as glowing clouds */
+const BELT=(()=>{let x=12345;const rnd=()=>(x=(x*16807)%2147483647)/2147483647,g=()=>{let s=0;for(let i=0;i<4;i++)s+=rnd();return s/4;};const o=[];
+  for(let i=0;i<1700;i++){const a=2.1+g()*1.2;o.push([a,rnd()*360,.35+rnd()*.65,.5+rnd()*.8]);}
+  const tr=[];for(let i=0;i<120;i++){const s=i%2?60:-60;tr.push([5.2+(g()-.5)*.5,s+(g()-.5)*40,.3+rnd()*.6]);}return {o,tr};})();
+function drawBelt(c,P,J,jl){const t=J-2451545,O=P([0,0]),cx=O[0],cy=O[1],u=Math.abs(P([1,0])[0]-cx),r1=2.1*u,r2=3.3*u;
+  const gr=c.createRadialGradient(cx,cy,r1,cx,cy,r2);gr.addColorStop(0,'rgba(200,185,150,0)');gr.addColorStop(.45,'rgba(200,185,150,.16)');gr.addColorStop(.6,'rgba(200,185,150,.13)');gr.addColorStop(1,'rgba(200,185,150,0)');
+  c.fillStyle=gr;c.beginPath();c.arc(cx,cy,r2,0,2*Math.PI);c.moveTo(cx+r1,cy);c.arc(cx,cy,r1,2*Math.PI,0,true);c.fill('evenodd');
+  BELT.o.forEach(([a,ph,al,sz])=>{const n=360/(Math.pow(a,1.5)*365.25),ang=(ph+n*t)*D,q=P([a*Math.cos(ang),a*Math.sin(ang)]);c.fillStyle=`rgba(225,212,182,${(al*.38).toFixed(2)})`;c.beginPath();c.arc(q[0],q[1],sz*.48,0,7);c.fill();});
+  [[2.50,.05],[2.82,.035],[2.95,.025],[3.27,.03]].forEach(([a,wd])=>{c.strokeStyle='rgba(10,14,28,.7)';c.lineWidth=Math.max(1,wd*u);c.beginPath();c.arc(cx,cy,a*u,0,2*Math.PI);c.stroke();});
+  if(jl!=null){[60,-60].forEach(dl=>{for(let k=-3;k<=3;k++){const ang=(jl+dl+k*5)*D,q=P([5.2*Math.cos(ang),5.2*Math.sin(ang)]),rr=u*(.32-Math.abs(k)*.06),g2=c.createRadialGradient(q[0],q[1],0,q[0],q[1],rr);g2.addColorStop(0,'rgba(232,162,90,.16)');g2.addColorStop(1,'rgba(232,162,90,0)');c.fillStyle=g2;c.beginPath();c.arc(q[0],q[1],rr,0,7);c.fill();}});
+    BELT.tr.forEach(([r,da,al])=>{const ang=(jl+da)*D,q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillStyle=`rgba(240,180,110,${(al*.45).toFixed(2)})`;c.beginPath();c.arc(q[0],q[1],.6,0,7);c.fill();});}}
 const AA={ce:2.77,pa:2.77,jn:2.67,vs:2.36};
 function astHel(k,J){const l=LO(k,J)*D,u=[Math.cos(l),Math.sin(l)],E=hpos('em',J),b=E[0]*u[0]+E[1]*u[1],rho=-b+Math.sqrt(Math.max(0,b*b-(E[0]*E[0]+E[1]*E[1])+AA[k]*AA[k]));return [E[0]+rho*u[0],E[1]+rho*u[1]];}
 function drawTH(){const {c,w,h}=TA.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.84,J=JNOW,sc=ri*.95/5.6,P=v=>[cx-v[0]*sc,cy+v[1]*sc];
   ring(c,cx,cy,ri,R,-1);
   [['em',1,'rgba(90,150,230,.45)'],['ma',1.524,'rgba(239,107,90,.4)'],['ju',5.203,'rgba(232,162,90,.45)']].forEach(([k,a,col])=>{c.strokeStyle=col;c.lineWidth=1;c.beginPath();c.arc(cx,cy,a*sc,0,7);c.stroke();});
   const jv=hpos('ju',J),jl=Math.atan2(jv[1],jv[0])/D;drawBelt(c,P,J,jl);
-  [2.1,3.3].forEach(a=>{c.strokeStyle='rgba(190,180,160,.25)';c.setLineDash([2,4]);c.beginPath();c.arc(cx,cy,a*sc,0,7);c.stroke();c.setLineDash([]);});
   const sg=c.createRadialGradient(cx,cy,0,cx,cy,R*.07);sg.addColorStop(0,'rgba(255,220,120,.95)');sg.addColorStop(1,'rgba(255,200,90,0)');c.fillStyle=sg;c.beginPath();c.arc(cx,cy,R*.07,0,7);c.fill();
   [['em','#2f6db8','⊕'],['ma','#ef6b5a','♂'],['ju','#e8a25a','♃']].forEach(([k,col,g])=>{const q=P(hpos(k,J));c.fillStyle=col;c.beginPath();c.arc(q[0],q[1],Math.max(3.5,R*(k==='ju'?.032:.024)),0,7);c.fill();txt(c,g+(g==='⊕'?'':VS),q[0]+R*.05,q[1]-R*.03,Math.max(10,R*.045),col);});
-  const rows=[];AST.forEach(([k])=>{const v=astHel(k,J),q=P(v);gdot(c,q[0],q[1],Math.max(8,R*.045),k,spd(k,J)<0);rows.push(`<span style="color:${PG[k][2]}">${PG[k][0]}${VS}</span> ${AA[k].toFixed(2).replace('.',',')} ა.ე.`);});
-  {const q=P([-3.3*Math.cos(225*D),3.3*Math.sin(225*D)]);}
-  txt(c,'ასტეროიდების სარტყელი',cx,cy+3.55*sc,Math.max(9,R*.04),'rgba(220,210,190,.75)',GEO);
-  {const a=(jl+60)*D,b=(jl-60)*D,qa=P([5.75*Math.cos(a),5.75*Math.sin(a)]),qb=P([5.75*Math.cos(b),5.75*Math.sin(b)]);txt(c,'ტროიანელები',qa[0],qa[1],Math.max(8.5,R*.036),'rgba(232,162,90,.8)',GEO);txt(c,'ტროიანელები',qb[0],qb[1],Math.max(8.5,R*.036),'rgba(232,162,90,.8)',GEO);}
+  const rows=[];AST.forEach(([k])=>{const v=astHel(k,J),q=P(v),col=PG[k][2];c.fillStyle='#0c1222';c.beginPath();c.arc(q[0],q[1],Math.max(4,R*.022),0,7);c.fill();c.strokeStyle=col;c.lineWidth=1.6;c.stroke();
+    const d=Math.hypot(q[0]-cx,q[1]-cy)||1,lx=q[0]+(q[0]-cx)/d*R*.055,ly=q[1]+(q[1]-cy)/d*R*.055;txt(c,PG[k][0]+VS,lx,ly,Math.max(11,R*.05),col);rows.push(`<span style="color:${col}">${PG[k][0]}${VS} ${PG[k][1].split(' ')[0]}</span>`);});
+  {const lq=P([0,-3.62]);txt(c,'ასტეროიდების სარტყელი',lq[0],lq[1],Math.max(9,R*.038),'rgba(225,212,182,.8)',GEO);}
+  [60,-60].forEach(dl=>{const a=(jl+dl)*D,q=P([4.55*Math.cos(a),4.55*Math.sin(a)]);txt(c,'ტროიანელები',q[0],q[1],Math.max(8.5,R*.034),'rgba(240,180,110,.85)',GEO);});
   txt(c,dS(J),8,12,Math.max(11,R*.052),'#F3DDA4',GEO,'left');txt(c,'☉ მზის სისტემა ზემოდან',w-8,12,Math.max(10,R*.045),'rgba(237,230,216,.6)',GEO,'right');
-  $('tRo').innerHTML='სარტყლის საშუალო მანძილი მზიდან: '+rows.join(' · ')+'<br><small style="color:#9aa3b6">ასტეროიდების მიმართულება ზუსტია, მანძილი — საშუალო ორბიტით · წერტილები — სარტყლის სქემა კირკვუდის ღრმულებით</small>';}
+  $('tRo').innerHTML=rows.join(' · ')+'<br><small style="color:#9aa3b6">სარტყელი 2,1–3,3 ა.ე. · ბნელი ზოლები — კირკვუდის ღრმულები · ასტეროიდების მიმართულება ზუსტია, მანძილი — საშუალო</small>';}
 function drawT(){if(!TA.g)return;if(TA.v==='h')return drawTH();const {c,w,h}=TA.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.84,J=JNOW,rr={ce:.78,pa:.62,jn:.46,vs:.3};
   ring(c,cx,cy,ri,R,-1);const rows=[];
   AST.forEach(([k])=>{const r=ri*rr[k];c.strokeStyle='rgba(227,190,132,.14)';c.setLineDash([2,4]);c.beginPath();c.arc(cx,cy,r,0,7);c.stroke();c.setLineDash([]);

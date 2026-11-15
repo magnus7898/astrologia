@@ -317,13 +317,17 @@ function ring(c,cx,cy,ri,R){for(let k=0;k<12;k++){sector(c,cx,cy,ri,R,30*k,30*k+
 /* ── 1 · geometry + graph ── */
 const AU={me:.387,ve:.723,ma:1.524,ju:5.203,sa:9.537};
 const H={p:'ma',t:0,g:null,gl:null,win:null,v:'h'};
-/* asteroid belt: deterministic particles (a, phase, e-jitter), Kirkwood gaps, Jupiter Trojans */
-const BELT=(()=>{let x=12345;const rnd=()=>(x=(x*16807)%2147483647)/2147483647;const gaps=[[2.50,.035],[2.82,.03],[2.95,.022],[3.27,.03]],o=[];
-  while(o.length<1500){const a=2.1+Math.pow(rnd(),.85)*1.2;if(gaps.some(([g,wd])=>Math.abs(a-g)<wd))continue;o.push([a,rnd()*360,(rnd()-.5)*.18]);}
-  const tr=[];for(let i=0;i<260;i++){const s=i%2?60:-60;tr.push([5.2+(rnd()-.5)*.35,s+(rnd()-.5)*26]);}return {o,tr};})();
-function drawBelt(c,P,J,jl){const t=J-2451545;c.fillStyle='rgba(190,180,160,.42)';
-  BELT.o.forEach(([a,ph,ej])=>{const n=360/(Math.pow(a,1.5)*365.25),ang=(ph+n*t)*D,r=a+ej;const q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillRect(q[0],q[1],1.1,1.1);});
-  if(jl!=null){c.fillStyle='rgba(232,162,90,.45)';BELT.tr.forEach(([r,da])=>{const ang=(jl+da)*D,q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillRect(q[0],q[1],1.2,1.2);});}}
+/* asteroid belt: soft annulus + fine dust, Kirkwood gaps as dark rings, Jupiter Trojans as glowing clouds */
+const BELT=(()=>{let x=12345;const rnd=()=>(x=(x*16807)%2147483647)/2147483647,g=()=>{let s=0;for(let i=0;i<4;i++)s+=rnd();return s/4;};const o=[];
+  for(let i=0;i<1700;i++){const a=2.1+g()*1.2;o.push([a,rnd()*360,.35+rnd()*.65,.5+rnd()*.8]);}
+  const tr=[];for(let i=0;i<120;i++){const s=i%2?60:-60;tr.push([5.2+(g()-.5)*.5,s+(g()-.5)*40,.3+rnd()*.6]);}return {o,tr};})();
+function drawBelt(c,P,J,jl){const t=J-2451545,O=P([0,0]),cx=O[0],cy=O[1],u=Math.abs(P([1,0])[0]-cx),r1=2.1*u,r2=3.3*u;
+  const gr=c.createRadialGradient(cx,cy,r1,cx,cy,r2);gr.addColorStop(0,'rgba(200,185,150,0)');gr.addColorStop(.45,'rgba(200,185,150,.16)');gr.addColorStop(.6,'rgba(200,185,150,.13)');gr.addColorStop(1,'rgba(200,185,150,0)');
+  c.fillStyle=gr;c.beginPath();c.arc(cx,cy,r2,0,2*Math.PI);c.moveTo(cx+r1,cy);c.arc(cx,cy,r1,2*Math.PI,0,true);c.fill('evenodd');
+  BELT.o.forEach(([a,ph,al,sz])=>{const n=360/(Math.pow(a,1.5)*365.25),ang=(ph+n*t)*D,q=P([a*Math.cos(ang),a*Math.sin(ang)]);c.fillStyle=`rgba(225,212,182,${(al*.38).toFixed(2)})`;c.beginPath();c.arc(q[0],q[1],sz*.48,0,7);c.fill();});
+  [[2.50,.05],[2.82,.035],[2.95,.025],[3.27,.03]].forEach(([a,wd])=>{c.strokeStyle='rgba(10,14,28,.7)';c.lineWidth=Math.max(1,wd*u);c.beginPath();c.arc(cx,cy,a*u,0,2*Math.PI);c.stroke();});
+  if(jl!=null){[60,-60].forEach(dl=>{for(let k=-3;k<=3;k++){const ang=(jl+dl+k*5)*D,q=P([5.2*Math.cos(ang),5.2*Math.sin(ang)]),rr=u*(.32-Math.abs(k)*.06),g2=c.createRadialGradient(q[0],q[1],0,q[0],q[1],rr);g2.addColorStop(0,'rgba(232,162,90,.16)');g2.addColorStop(1,'rgba(232,162,90,0)');c.fillStyle=g2;c.beginPath();c.arc(q[0],q[1],rr,0,7);c.fill();}});
+    BELT.tr.forEach(([r,da,al])=>{const ang=(jl+da)*D,q=P([r*Math.cos(ang),r*Math.sin(ang)]);c.fillStyle=`rgba(240,180,110,${(al*.45).toFixed(2)})`;c.beginPath();c.arc(q[0],q[1],.6,0,7);c.fill();});}}
 const STW={me:1,ve:2,ma:3,ju:5,sa:6,ur:7,ne:7,pl:7};
 const dist=(k,J)=>{const a=hpos(k,J),b=hpos('em',J);return Math.hypot(a[0]-b[0],a[1]-b[1]);};
 function hBuild(){const k=H.p,step=k==='me'?1:k==='ve'?2:3,st=stations(k,JNOW-30,JNOW+(k==='me'?200:k==='ve'?700:k==='ma'?900:420),step);
