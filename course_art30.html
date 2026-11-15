@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 30</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 6 · ალქიმია და კოსმოსი</div>
+  <h1>გაკვეთილი 30 — ფლამარიონის გრავიურა</h1>
+  <div class="sub">1888: ცის გუმბათის მიღმა გახედვა</div>
+
+  <div class="intro">1888 წელს ფრანგმა ასტრონომმა და მწერალმა <b>კამილ ფლამარიონმა</b> გამოსცა წიგნი „ატმოსფერო: პოპულარული მეტეოროლოგია“. 163-ე გვერდზე — ხეზე ამოკვეთილი გრავიურა, უცნობი მხატვრის: მოგზაური, რომელიც დედამიწის კიდეს მიაღწია, ცის გუმბათში თავს გაჰყოფს და მის <b>მიღმა</b> იყურება. წარწერა: „შუა საუკუნეების მისიონერი მოგვითხრობს, რომ მან იპოვა წერტილი, სადაც ცა და დედამიწა ერთმანეთს ეხება…“ დიდხანს ფიქრობდნენ, რომ ეს შუა საუკუნეების ან რენესანსის გრავიურაა; სინამდვილეში ის, სავარაუდოდ, XIX საუკუნეში, თავად ფლამარიონის წიგნისთვის შეიქმნა. მაგრამ მისი ძალა სწორედ ამაშია: ეს არის <b>ყოველი დროის</b> ხატი — ადამიანი, რომელიც ცნობილი სამყაროს საზღვარს არღვევს.</div>
+
+  <div class="sec"><h2>1 · გრავიურები დეტალებად</h2>
+    <p style="margin-bottom:10px">აირჩიე გრავიურა და დააჭირე ▶. მეორე — გუსტავ დორეს გრავიურა დანტეს „სამოთხისთვის“ (1868): სადაც ფლამარიონის მოგზაური მხოლოდ იყურება, დანტე უკვე <b>შედის</b>.</p>
+    <div id="rd"></div>
+  </div>
+
+  <div class="sec"><h2>2 · ცის გუმბათი — „ფირმამენტი“</h2>
+    <p>ბიბლიის პირველ თავში ღმერთი ქმნის „<b>მყარს</b>“ (ებრ. raqia, ლათ. firmamentum) — გუმბათს, რომელიც ზედა წყლებს ქვედასგან ყოფს (დაბადება 1:6–8). ანტიკურ და შუა საუკუნეების კოსმოლოგიაში ცა მართლაც „მყარი“ იყო: კონცენტრული, ბროლის მსგავსი სფეროები, რომლებზეც პლანეტები და ვარსკვლავები იყო დამაგრებული (გაკვეთილები 24, 27). <b>უძრავი ვარსკვლავების სფეროს</b> მიღმა კი იწყებოდა „პრიმუმ მობილე“ — პირველმამოძრავებელი, და შემდეგ ემპირეუმი — ღვთის სამყოფელი (გაკვეთილი 21).</p>
+    <p style="margin-top:8px">ფლამარიონის მოგზაური სწორედ ამ საზღვარს გადის: გუმბათის მიღმა ის ხედავს <b>ბორბლებს ბორბლებში</b> — ეზეკიელის ხილვის ბორბლებს (ეზეკიელი 1), ცის მექანიზმს, რომელიც ვარსკვლავებს ამოძრავებს. ის, რაც ჩვენ „ცაზე“ ვხედავთ — მზე, მთვარე, ვარსკვლავები — მხოლოდ ზედაპირია. მის მიღმა — <b>მიზეზების</b> სამყაროა.</p>
+  </div>
+
+  <div class="sec"><h2>3 · საზღვრის გარღვევა — ინიციაციის ხატი</h2>
+    <p>ფლამარიონის გრავიურა XX საუკუნეში ეზოთერიზმის, ფსიქოდელიის და მეცნიერების <b>საერთო ემბლემა</b> გახდა: პირველი ფერადი ვერსია 1970 წელს ბერკლიში დაიბეჭდა, და მას შემდეგ მას იყენებენ წიგნებზე მეცნიერების ისტორიის, ცნობიერების, ასტროლოგიის და მისტიკის შესახებ. რატომ? იმიტომ, რომ ის ასახავს ერთ ჟესტს, რომელიც ყველა ამ გზას აერთიანებს: <b>„ხედვის მიღმა გახედვა“</b>.</p>
+    <p style="margin-top:8px">ეს არის ინიციაციის ხატი: მოგზაური მუხლმოყრილია (თავმდაბლობა), ხელში ჯოხი აქვს (გზა — გაკვეთილი 20: მოხეტიალე), და მისი სხეული ჯერ კიდევ ამქვეყნიურ სამყაროშია — მხოლოდ თავი (ცნობიერება) გადის საზღვარს. პლატონის „მღვიმის“ ალეგორია, ამოტრიალებული: არა მღვიმიდან სინათლეზე, არამედ ცის ჭერიდან — მიზეზთა სამყაროში. ასტროლოგიისთვის კი ეს გრავიურა განსაკუთრებით ახლოა: ჰოროსკოპი — სწორედ ცის „ზედაპირის“ რუკაა, რომლის მიღმაც ჩვენ ცის <b>მიზეზებს</b> ვეძებთ.</p>
+    <p style="margin-top:8px">ტაროში — „<b>სულელი</b>“ (0): მოგზაური ზღვარზე; „<b>ვარსკვლავი</b>“ (XVII): ცის ხედვა; „<b>სამყარო</b>“ (XXI): კოსმოსის მთლიანობა. <a href="course_tarot6.html#0" style="color:#E3BE84">🃏 სულელი</a> · <a href="course_tarot6.html#17" style="color:#E3BE84">🃏 ვარსკვლავი</a> · <a href="course_tarot6.html#21" style="color:#E3BE84">🃏 სამყარო</a></p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art29.html">← ჰილდეგარდის ხილვები</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 31 — მალე →</a></div>
+</div>
+
+<script src="art.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const TL=(n,t)=>`<a href="course_tarot6.html#${n}" style="color:#E3BE84">🃏 ${t}</a>`;
+const W=[{short:'ფლამარიონის გრავიურა',title:'ფლამარიონის გრავიურა',author:'უცნობი მხატვარი, კ. ფლამარიონის წიგნისთვის',year:'1888',place:'„L\'Atmosphère: météorologie populaire“, პარიზი, გვ. 163',file:'FlammarionWoodcut.jpg',ar:'1.10',px:2400,
+ i:'მარჯვნივ — ჩვეულებრივი სამყარო: მინდვრები, ხეები, ქალაქის სახურავები და ეკლესიის შპილი, ზემოთ — ვარსკვლავებიანი ცა, მზე და მთვარე სახეებით. მარცხნივ, სადაც ცის გუმბათი დედამიწას ეხება — <b>მუხლმოყრილი მოგზაური</b>, ხელში ჯოხით, რომელმაც თავი და ხელი ცის „ჭერში“ გაჰყო. გუმბათის მიღმა ის ხედავს სხვა სამყაროს: <b>ბორბლებს ბორბლებში</b>, ღრუბლებს, სხივებს. ქვემოთ — ფრანგული წარწერა.',
+ e:'გრავიურა ორ სამყაროდ იყოფა: <b>ხილული</b> (მარჯვნივ — ცა ვარსკვლავებით, დედამიწა, ქალაქი) და <b>უხილავი</b> (მარცხნივ, ზემოთ — მექანიზმი, მიზეზები, ღვთიური წესრიგი). საზღვარი მათ შორის — ცის გუმბათი, ზუსტად იქ, სადაც მოგზაურის კისერია. მისი სხეული ჯერ კიდევ აქ არის, მისი ცნობიერება — უკვე იქ. ეს არის ცოდნის ყოველი ნამდვილი მომენტი: როცა ნაცნობი სურათის ზედაპირს „გაარღვევ“ და მის მიღმა სტრუქტურას დაინახავ.<br><br>ტაროში — „<b>სულელი</b>“ (0). '+TL(0,'სულელი'),
+ spots:[{x:24,y:36,z:2.6,k:'gesture',t:'მოგზაურის თავი გუმბათის მიღმა',d:'მოგზაური <b>თავს და ხელს</b> ცის გუმბათში ჰყოფს. საზღვარი ზუსტად მის კისერზე გადის: სხეული აქაა, ცნობიერება — იქ. გაოცებით, თითქმის ბავშვური ცნობისმოყვარეობით იყურება — ეს ინიციაციის მომენტია.'},
+  {x:14,y:18,z:2.8,k:'sym',t:'ბორბლები ბორბლებში',d:'გუმბათის მიღმა — <b>ბორბლები ბორბლებში</b>, ერთმანეთში გადაჯაჭვული: ეზეკიელის ხილვის ბორბლები („და იყო მათი სახე, როგორც ბორბალი ბორბალში“ — ეზეკიელი 1:16), ღვთიური ეტლის — მერკავას — მექანიზმი. კოსმოსის მამოძრავებელი, რომელიც ჩვენთვის უხილავია.'},
+  {x:8,y:40,z:2.6,k:'light',t:'ღრუბლები და სხივები',d:'მიღმა სამყაროში — <b>ღრუბლები, სხივები, ცეცხლის ენები</b>: სინათლე, რომელიც ჩვენს ცაზე არ ჩანს. ემპირეუმი — წმინდა სინათლის ცა (გაკვეთილი 21).'},
+  {x:34,y:60,z:2.8,k:'gesture',t:'მუხლი და ჯოხი',d:'მოგზაური <b>მუხლმოყრილია</b> — თავმდაბლობა, თაყვანისცემა. ხელში — <b>მოგზაურის ჯოხი</b>: ის შორი გზიდან მოვიდა, დედამიწის კიდემდე (გაკვეთილი 20: ბოსხის მოხეტიალე, ტაროს „სულელი“). ზურგზე — მოსასხამი, ფეხსაცმელი — გზის კვალი.'},
+  {x:40,y:28,z:2.6,k:'lr',t:'ცის გუმბათის კიდე',d:'<b>ცის გუმბათი</b> (ფირმამენტი) — ვარსკვლავებით მოჭედილი ზედაპირი, რომელიც დედამიწის კიდესთან მიწას ეხება, როგორც ქოლგის ან კარვის კიდე. ბიბლიური raqia — „მყარი“, რომელიც ზედა და ქვედა წყლებს ყოფს.'},
+  {x:66,y:16,z:2.8,k:'light',t:'მზე, მთვარე და ვარსკვლავები',d:'ხილულ ცაზე — <b>მზე</b> და <b>მთვარე</b> ადამიანის სახეებით, და ვარსკვლავები. ეს არის ის ცა, რასაც ჩვენ ვხედავთ — ასტროლოგის ცა, ჰოროსკოპის ცა. გრავიურა გვეკითხება: რა არის მის მიღმა?'},
+  {x:82,y:60,z:2.6,k:'color',t:'ქალაქი და ეკლესია',d:'მარჯვნივ, სიღრმეში — <b>ქალაქი</b>, სახურავები, ეკლესიის შპილი, მინდვრები. ჩვეულებრივი ადამიანური სამყარო, რომელიც მოგზაურმა დატოვა. ეკლესიის შპილი ზეცისკენ მიუთითებს — მოგზაური კი უკვე იქ იყურება.'},
+  {x:90,y:46,z:2.6,k:'sym',t:'ხე',d:'მარჯვენა კიდეზე — მაღალი <b>ხე</b>, რომელიც ცისკენ იზრდება — მიწიერი სიცოცხლის „ღერძი“ (axis mundi), ბუნებრივი გზა ზემოთ. მოგზაურმა სხვა გზა აირჩია: არა ზრდა, არამედ <b>გარღვევა</b>.'},
+  {x:50,y:94,z:2.6,k:'number',t:'წარწერა',d:'ქვემოთ — ფრანგული წარწერა: „შუა საუკუნეების მისიონერი მოგვითხრობს, რომ მან იპოვა წერტილი, სადაც ცა და დედამიწა ერთმანეთს ეხება…“ ფლამარიონი ამ გრავიურით შუა საუკუნეების გულუბრყვილო კოსმოლოგიაზე ირონიზებდა — მაგრამ სურათმა თავისი, ბევრად ღრმა სიცოცხლე დაიწყო.'}]},
+ {short:'დორე: ემპირეუმი',title:'ემპირეუმი — ციური ვარდი (დანტე, „სამოთხე“, XXXI)',author:'გუსტავ დორე',year:'1868',place:'ილუსტრაცია დანტეს „ღვთაებრივი კომედიისთვის“',file:'Paradiso_Canto_31.jpg',ar:'0.79',
+ i:'ღრუბელზე, წინა პლანზე — ორი პაწაწინა ფიგურა: <b>დანტე</b> და მისი გამცილებელი. ზემოთ, მთელ ცაზე — უზარმაზარი, კონცენტრული <b>რგოლები</b>, ასობით ანგელოზისგან შემდგარი, რომლებიც სპირალურად ადიან ცენტრისკენ, სადაც თვალისმომჭრელი თეთრი სინათლეა.',
+ e:'ფლამარიონის მოგზაური ცის მიღმა <b>იყურება</b>; დანტე — მის მიღმა <b>შედის</b>. დანტეს „სამოთხეში“ სული ცხრა ციურ სფეროს გადის (შვიდი პლანეტის ცა მთვარიდან სატურნამდე, შემდეგ უძრავი ვარსკვლავები და პრიმუმ მობილე) და ბოლოს ემპირეუმს აღწევს, სადაც ნეტარნი თეთრ <b>ვარდად</b> არიან შეკრებილი, ღმერთის სინათლის გარშემო. ეს — ბოსხის სინათლის გვირაბის (გაკვეთილი 21) და ხუნრატის კოსმოსური ვარდის (გაკვეთილი 28) დასრულებული სახეა: აღსვლის ბოლო.<br><br>ტაროში — „<b>ვარსკვლავი</b>“ (XVII) და „<b>სამყარო</b>“ (XXI). '+TL(17,'ვარსკვლავი')+' · '+TL(21,'სამყარო'),
+ spots:[{x:50,y:30,z:2.4,k:'light',t:'სინათლე ცენტრში',d:'ცენტრში — თეთრი, თვალისმომჭრელი <b>სინათლე</b>: ღმერთი, რომელსაც დანტე ბოლო სიმღერაში უწოდებს „სიყვარულს, რომელიც ამოძრავებს მზესა და სხვა ვარსკვლავებს“. ფორმა არ არის — მხოლოდ სინათლე.'},
+  {x:50,y:55,z:1.8,k:'sym',t:'ანგელოზთა რგოლები',d:'ცენტრის ირგვლივ — <b>ანგელოზთა კონცენტრული რგოლები</b>, რომლებიც სპირალურად ადიან სინათლისკენ: ციური ვარდის ფურცლები. ცხრა დასი (სერაფიმებიდან ანგელოზებამდე) — ფსევდო-დიონისეს იერარქია (გაკვეთილი 27).'},
+  {x:46,y:88,z:3,k:'gesture',t:'დანტე და გამცილებელი',d:'ქვემოთ, ღრუბელზე — <b>დანტე</b> და მისი გამცილებელი (ბერნარდ კლერვოელი, ბეატრიჩეს შემდეგ), პაწაწინები უზარმაზარ ხედვასთან შედარებით. ადამიანი — მოწმე, რომელიც ზემოთ იყურება, ისევე როგორც ფლამარიონის მოგზაური.'}]}];
+const R=ART.tour($('rd'),W);window.MG_ART30=()=>R.state();
+
+const Q=[['რომელ წიგნში გამოჩნდა გრავიურა პირველად?',['„კოსმოსი“','ფლამარიონის „ატმოსფერო: პოპულარული მეტეოროლოგია“ (1888)','დანტეს „კომედია“','ფლადის „ორი სამყარო“'],1,''],
+ ['შუა საუკუნეების გრავიურაა?',['კი, XV საუკუნის','არა — სავარაუდოდ XIX საუკუნეში, ფლამარიონის წიგნისთვის შეიქმნა','კი, XII საუკუნის','ძველი ბერძნულია'],1,''],
+ ['რას ხედავს მოგზაური გუმბათის მიღმა?',['ჯოჯოხეთს','ბორბლებს ბორბლებში — ეზეკიელის ხილვა','ზღვას','სხვა დედამიწას'],1,'ცის მექანიზმი.'],
+ ['როგორ ჰქვია ბიბლიაში ცის გუმბათს?',['ემპირეუმი','ფირმამენტი (raqia, „მყარი“)','ეთერი','ზოდიაქო'],1,'დაბადება 1:6–8.'],
+ ['სხეულის რომელი ნაწილი გადის მოგზაურს საზღვარს?',['ფეხები','თავი და ხელი','მთელი სხეული','არაფერი'],1,'სხეული აქ, ცნობიერება იქ.'],
+ ['რა არის დორეს გრავიურის ცენტრში?',['ღმერთი ტახტზე','თეთრი სინათლე, ანგელოზთა რგოლების ცენტრში','მზე','ჯვარი'],1,'„სიყვარული, რომელიც ამოძრავებს მზესა და ვარსკვლავებს“.'],
+ ['რომელ ტაროს ბარათს ჰგავს მოგზაური?',['იმპერატორს','სულელს (0)','ეშმაკს','მთვარეს'],1,'']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
