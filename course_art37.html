@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 37</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 8 · საქართველო</div>
+  <h1>გაკვეთილი 37 — ფიროსმანი: კრავი და ჟირაფი</h1>
+  <div class="sub">ნიკო ფიროსმანი, 1900–1910-იანი: შავი მუშამბა, უმანკო მზერა, სუფრა როგორც ლიტურგია</div>
+
+  <div class="intro"><b>ნიკო ფიროსმანაშვილი</b> (1862–1918) — მირზაანელი გლეხის შვილი, რომელიც თბილისის დუქნებისა და სარდაფებისთვის ხატავდა აბრებს და სურათებს — ხშირად პურისა და ღვინის სანაცვლოდ. ის არ სწავლობდა არც ერთ აკადემიაში, ცხოვრობდა კიბის ქვეშ, და გარდაიცვალა სიღარიბეში, დაუდგენელ საფლავში. მაგრამ მის ნახატებში არის ის, რასაც ვერცერთი აკადემია ვერ ასწავლის: <b>უმანკო მზერა</b>. ქართველები მას <b>სალოსს</b> — „ქრისტესთვის სულელს“ — ადარებდნენ: კაცს, რომელიც სამყაროს ბავშვის თვალით ხედავს, და ამიტომ ხედავს მის ნამდვილ სახეს. ამ გაკვეთილში — ორი ნახატი: <b>აღდგომის კრავი</b> და <b>ჟირაფი</b>.</div>
+
+  <div class="sec"><h2>1 · ნახატები დეტალებად</h2>
+    <p style="margin-bottom:10px">დააჭირე ▶ — ნახატი თავად გადიდდება ყოველ დეტალზე და ახსნის მას.</p>
+    <div id="rd"></div>
+  </div>
+
+  <div class="sec"><h2>2 · სინათლე სიბნელიდან</h2>
+    <p>ფიროსმანი ტილოზე კი არა, <b>შავ მუშამბაზე</b> (ზეთოვანი ქსოვილი, რომლითაც დუქნებში მაგიდებს აფარებდნენ) ხატავდა. ის შავ ფონს არ ფარავდა — პირიქით, <b>ტოვებდა</b> და მასზე მხოლოდ იმას ხატავდა, რაც ნათელია: თეთრ კრავს, ცხოველის სხეულს, სუფრის თეთრ გადასაფარებელს. ფორმა სიბნელიდან <b>ამოდის</b>, როგორც შექმნის პირველ დღეს — „და ბნელი იყო უფსკრულის პირზე… და თქვა ღმერთმა: იყოს ნათელი“.</p>
+    <p style="margin-top:8px">ეს თითქმის <b>ალქიმიური</b> პროცესია: ნიგრედო (შავი, ქაოსი, გაკვეთილი 25) — და მისგან ალბედო (თეთრი, განწმენდა). ფიროსმანის თეთრი კრავი შავ ფონზე — სული, რომელიც სიბნელიდან ამოვიდა და განათდა. მისი ცხოველები — ირმები, ლომები, კრავები, ჟირაფი — <b>ადამიანური თვალებით</b> გვიყურებენ. მათში არ არის აგრესია, მხოლოდ მოთმინება, სევდა და სიწმინდე: სამოთხის ცხოველები, ადამის დაცემამდე, როცა ადამიანი და მხეცი ერთ ენაზე საუბრობდნენ.</p>
+    <p style="margin-top:8px">ტაროში — „<b>სულელი</b>“ (0): მოგზაური, რომელიც სამყაროს საზომებს არ ცნობს და ამიტომ თავისუფალია; მისი უმანკოება — სიბრძნის უმაღლესი ფორმაა. <a href="course_tarot6.html#0" style="color:#E3BE84">🃏 სულელი</a></p>
+  </div>
+
+  <div class="sec"><h2>3 · კრავი და სუფრა</h2>
+    <p><b>კრავი</b> — ერთ-ერთი უძველესი საკრალური სიმბოლოა. ებრაულ პასექში კრავის სისხლი სიკვდილის ანგელოზისგან იცავდა. იოანე ნათლისმცემელმა ქრისტეზე თქვა: „აჰა, <b>კრავი ღვთისა</b>, რომელიც იღებს სამყაროს ცოდვას“ (Agnus Dei). გამოცხადების წიგნში კრავი ტახტზე ზის და შვიდბეჭდიან წიგნს ხსნის. ფიროსმანის აღდგომის კრავი ამ ყველაფრის ხალხური გამოძახილია: მსხვერპლი, რომელიც <b>გამარჯვებად</b> იქცევა.</p>
+    <p style="margin-top:8px">აღდგომის სუფრაზე — <b>წითელი კვერცხები</b>: კვერცხი — სიცოცხლის, კოსმოსის ჩანასახის უძველესი სიმბოლო (ორფიკული კოსმიური კვერცხი, ალქიმიკოსთა „ფილოსოფიური კვერცხი“), წითელი — სისხლი და აღდგომა: ქვის „ნაჭუჭი“ (საფლავი) იმსხვრევა და მისგან სიცოცხლე გამოდის. ფიროსმანის <b>სუფრები</b> — ქეიფები, ნადიმები — ყოველთვის ერთგვარი <b>ლიტურგიაა</b>: პური, ღვინო, კრავი, სადღეგრძელო — ქართულ სუფრაში ქრისტიანული ზიარება და წარმართული მსხვერპლშეწირვა ერთმანეთს ხვდება.</p>
+    <p style="margin-top:8px">ტაროში — „<b>მზე</b>“ (XIX): ბავშვი თეთრ ცხენზე, მზის ქვეშ — უმანკოება, რომელიც სიბნელის შემდეგ ბრუნდება. <a href="course_tarot6.html#19" style="color:#E3BE84">🃏 მზე</a></p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art36.html">← ატენის სიონი</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 38 — მალე →</a></div>
+</div>
+
+<script src="art.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const TL=(n,t)=>`<a href="course_tarot6.html#${n}" style="color:#E3BE84">🃏 ${t}</a>`;
+const W=[{short:'აღდგომის კრავი',title:'კრავი და აღდგომის სუფრა მფრინავი ანგელოზებით',author:'ნიკო ფიროსმანი',year:'1900–1910-იანი',place:'საქართველოს ხელოვნების მუზეუმი, თბილისი',file:'Pirosmani._lamb,_easter_eggs_and_angels.jpg',ar:'1.229',px:1024,
+ i:'შავ ფონზე — თეთრი <b>კრავი</b> და აღდგომის <b>სუფრა</b>: შეღებილი წითელი კვერცხები, პასქა, ღვინო. ზემოთ, ცაში, <b>ანგელოზები</b> დაფრინავენ.',
+ e:'ხალხური აღდგომის ხატი, დუქნის კედლისთვის დახატული — და მაინც ღრმად საკრალური. კრავი — <b>Agnus Dei</b>, ღვთის კრავი, მსხვერპლი და გამარჯვება. წითელი კვერცხები — სისხლი და ახალი სიცოცხლე, საფლავის ნაჭუჭის მსხვრევა. ანგელოზები სუფრის თავზე — ზეცა, რომელიც ჩვეულებრივ, ხალხურ დღესასწაულში ეშვება. ფიროსმანისთვის ზეცა და დუქანი ერთმანეთს არ ეწინააღმდეგება.<br><br>ტაროში — „<b>მზე</b>“ (XIX) და „<b>განკითხვა</b>“ (XX). '+TL(19,'მზე')+' · '+TL(20,'განკითხვა'),
+ spots:[{x:38,y:66,z:2.6,k:'sym',t:'კრავი',d:'თეთრი <b>კრავი</b> — ფიროსმანის ერთ-ერთი საყვარელი სახე. Agnus Dei — „ღვთის კრავი“, რომელიც სამყაროს ცოდვას იღებს. ის მშვიდად, თითქმის ფიქრიანად დგას — მსხვერპლი, რომელმაც იცის თავისი ბედი და მაინც არ შიშობს.'},
+  {x:34,y:58,z:3.4,k:'gesture',t:'კრავის თვალი',d:'ფიროსმანის ცხოველებს <b>ადამიანური თვალები</b> აქვთ. ისინი მაყურებელს უყურებენ — წყნარად, სევდიანად, მიმნდობლად. ეს სამოთხის ცხოველების მზერაა, ადამის დაცემამდე.'},
+  {x:68,y:58,z:2.6,k:'sym',t:'აღდგომის სუფრა',d:'თეთრგადაფარებული <b>სუფრა</b> — აღდგომის საზეიმო მაგიდა. ფიროსმანის სუფრები ყოველთვის ლიტურგიას ჰგავს: პური, ღვინო, კრავი — ზიარების ნიშნები, ხალხურ დღესასწაულად ქცეული.'},
+  {x:72,y:52,z:3.4,k:'color',t:'წითელი კვერცხები',d:'<b>წითლად შეღებილი კვერცხები</b> — აღდგომის უძველესი სიმბოლო. კვერცხი — სიცოცხლის ჩანასახი, კოსმიური კვერცხი (ორფიკები, ალქიმიკოსები); წითელი — ქრისტეს სისხლი. გატეხილი ნაჭუჭი — გახსნილი საფლავი.'},
+  {x:30,y:20,z:2.6,k:'light',t:'ანგელოზები',d:'შავ ცაში მფრინავი <b>ანგელოზები</b> — ფიროსმანის ხალხური, მსუბუქი, თითქმის ბავშვური ანგელოზები. ზეცა ჩამოდის დუქნის კედელზე: ყოველდღიური და საკრალური ერთ სურათშია.'},
+  {x:72,y:20,z:2.6,k:'light',t:'მეორე ანგელოზი',d:'მეორე <b>ანგელოზი</b> — ორი ზეციური მაცნე სუფრის თავზე, როგორც ორი მთავარანგელოზი ღვთისმშობლის გარშემო (გაკვეთილი 35). აღდგომის უწყება: „აღდგა!“'},
+  {x:50,y:40,z:2,k:'color',t:'შავი მუშამბა',d:'ფონი — <b>შავი მუშამბა</b>, რომელიც ფიროსმანმა დაუფარავად დატოვა. ფორმები სიბნელიდან ამოდის: თეთრი კრავი, თეთრი სუფრა, ანგელოზები — როგორც სინათლე, რომელიც შექმნის პირველ დღეს უფსკრულიდან ამოვიდა.'}]},
+{short:'ჟირაფი',title:'ჟირაფი',author:'ნიკო ფიროსმანი',year:'1905',place:'საქართველოს ხელოვნების მუზეუმი, თბილისი',file:'Pirosmani_-_Giraffe.jpg',ar:'0.809',px:3000,
+ i:'შავ ფონზე — დიდი, მარტოსული <b>ჟირაფი</b>, გრძელი კისრით და ფეხებით, ლაქებიანი ტყავით. ის პროფილში დგას, მაგრამ თავი და <b>თვალი</b> ჩვენკენ აქვს მიპყრობილი.',
+ e:'ფიროსმანის ერთ-ერთი ყველაზე ცნობილი ნახატი. ეგზოტიკური, უცხო ცხოველი, რომელიც თბილისურ დუქანში გამოჩნდა — და რომელიც ჩვენ ადამიანის თვალით გვიყურებს. ჟირაფი ფიროსმანის <b>ავტოპორტრეტად</b> იკითხება: უცხო, მარტოსული, დიდი, უცნაური არსება, რომელიც ზედმეტად მაღლაა ამ სამყაროსთვის და ვერ ერგება მას.<br><br>ტაროში — „<b>სულელი</b>“ (0) და „<b>განდეგილი</b>“ (IX). '+TL(0,'სულელი')+' · '+TL(9,'განდეგილი'),
+ spots:[{x:50,y:50,z:1.4,k:'sym',t:'ჟირაფი',d:'დიდი, მარტოსული <b>ჟირაფი</b> შავ სიცარიელეში. არც საცხოვრისი, არც სხვა ცხოველები — მხოლოდ ის და ჩვენ. ეგზოტიკური არსება, რომელიც თავის სამყაროს დაშორდა.'},
+  {x:34,y:16,z:3.6,k:'gesture',t:'თვალი',d:'ჟირაფის <b>თვალი</b> — დიდი, მუქი, ადამიანური. ის პირდაპირ გვიყურებს: არა ცხოველური ცნობისმოყვარეობით, არამედ სევდით, მოთმინებით, თითქოს რაღაცას გვეკითხება. ფიროსმანის ცხოველების ცენტრი ყოველთვის თვალია.'},
+  {x:42,y:30,z:2.8,k:'sym',t:'გრძელი კისერი',d:'გრძელი, დაჭიმული <b>კისერი</b> — მიწიდან ზეცისკენ. ჟირაფი — ცხოველი, რომელიც ყველაზე მაღლა წვდება. სიმბოლურად — სული, რომელიც მაღლა იყურება, მაგრამ ფეხები მიწაზე აქვს.'},
+  {x:58,y:58,z:2.8,k:'color',t:'ლაქები',d:'ტყავის <b>ლაქები</b> — ფიროსმანის მარტივი, რიტმული, თითქმის ორნამენტული ფორმები. არა ანატომია, არამედ ნიშანი: ის არ ხატავს ჟირაფს, როგორც ზოოლოგი, არამედ როგორც ხატმწერი — არსის მიხედვით.'},
+  {x:55,y:88,z:2.6,k:'gesture',t:'ფეხები და მიწა',d:'წვრილი, მაღალი <b>ფეხები</b> მიწაზე. მიწის ზოლი თითქმის არ ჩანს — ჟირაფი თითქოს შავ სიცარიელეში დგას, დაუსაყრდენოდ. მარტოობის ხატი.'},
+  {x:82,y:22,z:2.2,k:'color',t:'შავი სიცარიელე',d:'გარშემო — ხელუხლებელი <b>შავი მუშამბა</b>. ფიროსმანი სივრცეს არ ხატავს: ცა, ჰორიზონტი, პეიზაჟი — არაფერი. ცხოველი მარტოა მარადისობის წინაშე, როგორც ხატში წმინდანი — ოქროს წინაშე.'}]}];
+const R=ART.tour($('rd'),W);window.MG_ART37=()=>R.state();
+
+const Q=[['რაზე ხატავდა ფიროსმანი?',['ტილოზე','შავ მუშამბაზე','ხის დაფაზე','ქაღალდზე'],1,'დუქნის მაგიდის გადასაფარებელზე.'],
+ ['რას აკეთებდა ფიროსმანი შავ ფონთან?',['მთლიანად ფარავდა','ტოვებდა და მასზე მხოლოდ ნათელ ფორმებს ხატავდა','თეთრად ღებავდა','ოქროთი ფარავდა'],1,'სინათლე სიბნელიდან.'],
+ ['რას ნიშნავს Agnus Dei?',['ღვთის მწყემსი','ღვთის კრავი','ღვთის სინათლე','ღვთის სახლი'],1,'იოანე ნათლისმცემლის სიტყვები.'],
+ ['რას გამოხატავს წითელი აღდგომის კვერცხი?',['სიმდიდრეს','სიცოცხლის ჩანასახს და ქრისტეს სისხლს — აღდგომას','მზეს','გაზაფხულის ყვავილს'],1,''],
+ ['რა არის ფიროსმანის ცხოველების მთავარი ნიშანი?',['აგრესია','ადამიანური, უმანკო თვალები','ფერადი ფონი','ზუსტი ანატომია'],1,''],
+ ['ვის ადარებდნენ ფიროსმანს?',['მეფეს','სალოსს — „ქრისტესთვის სულელს“','ალქიმიკოსს','ფილოსოფოსს'],1,'უმანკო მზერა.'],
+ ['ტაროს რომელი არკანი შეესაბამება ფიროსმანის უმანკოებას?',['XV ეშმაკი','0 სულელი','X ბორბალი','VII ეტლი'],1,''],
+ ['ალქიმიის რომელი ეტაპი ჰგავს თეთრი ფორმის შავიდან ამოსვლას?',['რუბედო','ნიგრედოდან ალბედოში გადასვლა','ციტრინიტასი','პროექცია'],1,'შავიდან თეთრისკენ.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
