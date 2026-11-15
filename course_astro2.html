@@ -89,6 +89,14 @@ h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font
 .ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
 .ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
 .ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.hx{margin:18px auto 0;max-width:900px;background:rgba(201,162,76,.06);border:1px solid rgba(201,162,76,.28);border-radius:14px;padding:14px 18px;font-size:14px;line-height:1.75;color:#dfe3ea}
+.hx h3{color:#F3DDA4;font-size:15.5px;margin:0 0 4px}.hx .who{font-size:12px;color:#9aa3b6;margin-bottom:8px}
+.hx ol{margin:6px 0 6px 20px;padding:0}.hx li{margin:3px 0}
+.hx .calc2{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;background:rgba(0,0,0,.25);border-radius:8px;padding:8px 10px;margin:8px 0;color:#cfd5e2;line-height:1.8;overflow-x:auto}
+.hx .pm{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;font-size:13px}.hx .pm div{background:rgba(0,0,0,.18);border-radius:8px;padding:8px 10px}
+@media(max-width:640px){.hx .pm{grid-template-columns:1fr}}
+.pt.hc td,.pt.hc th{text-align:center;white-space:nowrap}.pt.hc th.on,.pt.hc td.on{background:rgba(255,211,106,.12);color:#FFD36A}
+.pt.hc td.df{color:#ffb38a}
 .seg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 0 10px}
 .seg button{background:rgba(201,162,76,.08);border:1px solid rgba(201,162,76,.4);color:#F3DDA4;border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit}
 .seg button.on{background:#C9A24C;color:#0C1222;font-weight:600}
@@ -217,6 +225,9 @@ table.pt{border-collapse:collapse;width:100%;font-size:13.5px;margin-top:6px}
     <div class="ro" id="tRo"></div>
     <div class="hz" id="hz" aria-label="სახლების ზომა"></div>
    </div></div>
+   <div class="hx" id="hExp"></div>
+   <div class="tw"><table class="pt hc"><thead><tr><th>კასპი</th><th data-s="P">პლაციდუსი</th><th data-s="K">კოხი</th><th data-s="O">პორფირიოსი</th><th data-s="E">თანაბარი</th><th data-s="W">მთლ. ნიშნები</th></tr></thead><tbody id="hCmp"></tbody></table></div>
+   <div class="ro" style="min-height:0;font-size:12px;color:#9aa3b6">იგივე მომენტი, იგივე ადგილი — ხუთი სისტემა. ოქროსფრად — არჩეული სისტემა; ნარინჯისფრად — კასპი, რომელიც არჩეულ სისტემაში სხვა ნიშანშია, ვიდრე პლაციდუსში. სლაიდერები ამ ცხრილსაც ცვლის.</div>
    <div class="sec3">
     <h3 style="color:#F3DDA4;font-size:15px;margin:16px 0 6px">დრო, სეზონი და ადგილი — სამი ძალა, რომელიც სახლებს ცვლის</h3>
     <p><b>დრო (24 საათი)</b> — ზოდიაქო ერთ ვარსკვლავურ დღეში სრულ წრეს აკეთებს: ყოველ ~2 საათში ახალი ნიშანი ამოდის. მზე კი ამ დროს თითქმის უძრავია ზოდიაქოში, ამიტომ ის სახლებში „მოძრაობს“: დილით — მე-12 სახლში, შუადღეს — მე-10-ში (MC-სთან), საღამოს — მე-7-ში, შუაღამისას — მე-4-ში (IC-სთან).</p>
@@ -417,6 +428,7 @@ function drawT(){if(!T.g)return;const ch=chartT();wheel(T.g.c,T.g.w,T.g.h,{hs:ch
   const sz=[];for(let k=1;k<=12;k++)sz.push(norm(ch.hs.cu[k%12+1]-ch.hs.cu[k]));const mx=Math.max(...sz),mn=Math.min(...sz),bi=sz.indexOf(mx)+1,si=sz.indexOf(mn)+1;
   $('tRo').innerHTML=`<b>${p2(dt.getUTCDate())}.${p2(dt.getUTCMonth()+1)}.${dt.getUTCFullYear()}</b> ${hm(loc)} · ${season} · განედი <b>${Math.abs(lat).toFixed(1)}° ${lat>=0?'ჩრდ.':'სამხრ.'}</b><br>ASC <b>${fl(ch.hs.asc)}</b> · MC <b>${fl(ch.hs.mc)}</b> · მზე <b>${ord(h)} სახლში</b> (${alt>0?'ჰორიზონტის ზემოთ — დღე':'ჰორიზონტის ქვემოთ — ღამე'}, სიმაღლე ${alt.toFixed(0)}°)<br><small style="color:#9aa3b6">დღის სიგრძე ${dl>=24?'24 სთ (პოლარული დღე)':dl<=0?'0 სთ (პოლარული ღამე)':Math.floor(dl)+' სთ '+p2(Math.round(dl%1*60)%60)+' წთ'} · უდიდესი სახლი ${ord(bi)} (${mx.toFixed(0)}°), უმცირესი ${ord(si)} (${mn.toFixed(0)}°)${ch.hs.ok?'':' · <span style="color:#e3785a">პოლარული განედი — '+HSN[HSYS]+' ვერ იგება, ნაჩვენებია პორფირიოსი</span>'}</small>`;
   $('hz').innerHTML=sz.map((v,i)=>`<div class="${i+1===h?'sun':v===mx?'big':v===mn?'small':''}" style="height:${Math.max(3,v/Math.max(60,mx)*100)}%" title="${ord(i+1)} სახლი — ${v.toFixed(1)}°"><b>${v.toFixed(0)}°</b><span>${i+1}</span></div>`).join('');
+  if(!T.play||(T._hx=(T._hx||0)+1)%6===0)hExp(ch);
   $('tSl').value=T.off.toFixed(2);$('dSl').value=Math.round(T.day);$('lSl').value=lat.toFixed(1);}
 function risingDur(lat){const e=obl(CH.J)*D,f=cl(lat,-66,66)*D,cnt=new Array(12).fill(0);let n=0;
   for(let r=0;r<360;r+=0.1){const rr=r*D,a=norm(Math.atan2(Math.cos(rr),-(Math.sin(rr)*Math.cos(e)+Math.tan(f)*Math.sin(e)))/D);cnt[sidx(a)]++;n++;}
@@ -431,6 +443,47 @@ function drawR(){if(!Rb.g)return;const {c,w,h}=Rb.g;c.clearRect(0,0,w,h);const d
   c.strokeStyle='rgba(227,190,132,.35)';c.beginPath();c.moveTo(pl,h-pb);c.lineTo(w-pl,h-pb);c.stroke();
   const mn=Math.min(...du),lst=a=>a.map(k=>SG[k][1]).join(', ').replace(/, ([^,]*)$/,' და $1'),fast=[...Array(12).keys()].filter(k=>du[k]-mn<3),slow=[...Array(12).keys()].filter(k=>mx-du[k]<3),mm=x=>Math.floor(Math.round(x)/60)+':'+p2(Math.round(x)%60);
   $('rRo').innerHTML=`ნიშნის ამოსვლის ხანგრძლივობა (სთ:წთ) <b>${Math.abs(tLat()).toFixed(1)}° ${tLat()>=0?'ჩრდ.':'სამხრ.'}</b> განედზე: ყველაზე სწრაფად ამოდის <b>${lst(fast)}</b> (~${mm(mn)}), ყველაზე ნელა — <b>${lst(slow)}</b> (~${mm(mx)}). ოქროსფერი ჩარჩო — ამ წამს ამომავალი ნიშანი.`;}
+
+/* ── house system explainer + comparison ── */
+const RA_=(l,e)=>norm(Math.atan2(Math.cos(e)*Math.sin(l*D),Math.cos(l*D))/D),DEC_=(l,e)=>Math.asin(Math.sin(e)*Math.sin(l*D))/D;
+const ADf=(lat,dec)=>Math.asin(Math.max(-1,Math.min(1,Math.tan(lat*D)*Math.tan(dec*D))))/D;
+const HTX={
+ P:{n:'პლაციდუსი',who:'XVII ს. · პლაციდუს დე ტიტისი (იტალიელი ბერი-მათემატიკოსი) · ყველაზე გავრცელებული დასავლურ ასტროლოგიაში',
+  how:['ყოველი ზოდიაქოს გრადუსი დღე-ღამეში ამოდის, ავა MC-მდე და ჩადის. დრო, რომელსაც გრადუსი ჰორიზონტიდან მერიდიანამდე ხარჯავს, მისი <b>დღის ნახევარრკალია</b> (DSA). ის გრადუსის დახრილობაზე (δ) და შენს განედზე (φ) არის დამოკიდებული: DSA = 90° + AD, სადაც AD = asin(tan φ · tan δ).',
+   'მე-11 სახლის საზღვარი ის გრადუსია, რომელმაც თავისი DSA-ის <b>2/3 უკვე გაიარა</b> ამოსვლის შემდეგ (ანუ MC-მდე 1/3 დარჩა). მე-12 — ის, რომელმაც 1/3 გაიარა. ე.ი. თითოეული გრადუსი <b>საკუთარი</b> საათით იზომება.',
+   'რადგან ეს პირობა თვით კასპიდზეა დამოკიდებული, მას პირდაპირ ვერ გამოვთვლით — ვეძებთ <b>იტერაციით</b> (ვცდით, ვასწორებთ, სანამ არ დაემთხვევა).',
+   'ქვედა სახლები (2, 3) — იგივე, ღამის ნახევარრკალით. დანარჩენი 6 კასპი მოპირდაპირეა (5=11+180° და ა.შ.).'],
+  pro:'გამოხატავს რეალურ დროს: პლანეტა მე-12 სახლში ნიშნავს, რომ ის ბოლო ~2 საათში ამოვიდა. ყველაზე მეტი ინტერპრეტაციული ლიტერატურა.',con:'განედზე ძლიერ რეაგირებს — ჩრდილოეთით სახლები ძალიან უთანაბრო ხდება; ~66°-ს ზემოთ საერთოდ ვერ იგება.'},
+ K:{n:'კოხი',who:'XX ს. · ვალტერ კოხი (გერმანელი ასტროლოგი) · „დაბადების ადგილის“ სისტემა, პოპულარული გერმანულ და ამერიკულ სკოლაში',
+  how:['კოხი პლაციდუსივით <b>დროით</b> ყოფს ცას, მაგრამ ყველა გრადუსის ნაცვლად იღებს <b>ერთს — MC-ის გრადუსს</b>.',
+   'ვიანგარიშებთ, როდის ამოვიდა MC-ის გრადუსი ამ ადგილას: ის MC-მდე DSA = 90° + AD დროს გადის, სადაც AD = asin(tan φ · tan δ<sub>MC</sub>).',
+   'ეს დრო სამად იყოფა. „ვაბრუნებთ ცას“ MC-ის გრადუსის ამოსვლის მომენტში და ვხედავთ, რა ამოდიოდა ჰორიზონტზე ამ დროის 1/3-სა და 2/3-ზე — ეს ამომავალი გრადუსები მე-11 და მე-12 კასპებია.',
+   'ქვედა სახლები — ანალოგიურად, IC-ის გრადუსით. ფაქტობრივად ყველა კასპი სხვადასხვა მომენტის <b>ასცენდენტია</b> იმავე ადგილზე.'],
+  pro:'ყველა კასპი დაკავშირებულია დაბადების ადგილის ჰორიზონტთან; ბევრი მკვლევარი მას ტრანზიტებსა და დირექციებში ზუსტად თვლის. ფორმულა პირდაპირია, იტერაცია არ სჭირდება.',con:'განედზე კიდევ უფრო მგრძნობიარეა, ვიდრე პლაციდუსი; ~66°-ს ზემოთ ვერ იგება, მაღალ განედებზე სახლები ძლიერ დამახინჯებულია.'},
+ O:{n:'პორფირიოსი',who:'III ს. · ნეოპლატონიკოსი პორფირიოსი (ვეტიუს ვალენსის ტრადიცია) · უძველესი კვადრანტული სისტემა',
+  how:['ვიღებთ ოთხ კუთხეს — ASC, MC, DSC, IC.','ეკლიპტიკის რკალს MC-დან ASC-მდე ვყოფთ <b>სამ თანაბარ ნაწილად</b> — ეს მე-11 და მე-12 კასპებია. ASC-დან IC-მდე — ასევე სამად: მე-2 და მე-3.','არანაირი დრო, არანაირი იტერაცია — მხოლოდ გეომეტრია ეკლიპტიკაზე.'],
+  pro:'მარტივი, გამჭვირვალე, ნებისმიერ განედზე მუშაობს (ამიტომ ვიყენებთ სარეზერვოდ პოლარულ ზონაში).',con:'არ ითვალისწინებს, რომ ეკლიპტიკის სხვადასხვა ნაწილი სხვადასხვა სიჩქარით ამოდის.'},
+ E:{n:'თანაბარი სახლები',who:'ანტიკური · პტოლემაიოსის ტრადიცია · დღესაც პოპულარულია ბრიტანულ სკოლაში',
+  how:['პირველი სახლი იწყება <b>ზუსტად ASC-ის გრადუსზე</b>.','ყოველი შემდეგი სახლი — <b>30°-ით</b> შემდეგ: 2 = ASC+30°, 3 = ASC+60° და ა.შ.','MC ამ სისტემაში X სახლის საზღვარი <b>არ არის</b> — ის „თავისუფლად“ ხვდება IX, X ან XI სახლში, როგორც მნიშვნელოვანი წერტილი.'],
+  pro:'ყველა სახლი 30°, ნებისმიერ განედზე; ჩაკეტილი ნიშნები არ არსებობს.',con:'MC და ჰორიზონტის რეალური გეომეტრია სახლების საზღვრებს აღარ ემთხვევა.'},
+ W:{n:'მთლიანი ნიშნები',who:'ელინისტური და ვედური (ჯიოტიში) ტრადიცია · ყველაზე ძველი სისტემა',
+  how:['ASC-ის <b>მთელი ნიშანი</b> — I სახლია, 0°-დან 30°-მდე, მიუხედავად იმისა, რა გრადუსზეა ASC.','შემდეგი ნიშანი — II სახლი, მის შემდეგი — III და ა.შ.: <b>სახლი = ნიშანი</b>.','ASC და MC რჩება მნიშვნელოვან წერტილებად სახლების შიგნით.'],
+  pro:'უმარტივესი და უძველესი; ელინისტური ტექნიკები (ლოტები, მმართველები) და ვედური ასტროლოგია მასზეა აგებული.',con:'ASC 29°-ზე და 1°-ზე ერთსა და იმავე სახლს იძლევა — ზუსტი დროის დეტალი იკარგება.'}};
+function hExp(ch){const lat=tLat(),hs=ch.hs,e=hs.eps*D,ramc=hs.ramc,X=HTX[HSYS],f=x=>x.toFixed(2)+'°';let calc='';
+  if(HSYS==='P'&&hs.ok){const l=hs.cu[11],d=DEC_(l,e),ad=ADf(lat,d),dsa=90+ad,ra=RA_(l,e);
+    calc=`შენი რუკა, მე-11 კასპი: λ = ${fl(l)}<br>δ = ${f(d)} · AD = asin(tan ${lat.toFixed(1)}° · tan ${d.toFixed(2)}°) = ${f(ad)} · DSA = 90° + AD = ${f(dsa)}<br>RA(კასპი) = ${f(ra)} = RAMC ${f(ramc)} + DSA/3 (${f(dsa/3)}) ✓`;}
+  else if(HSYS==='K'&&hs.ok){const d=DEC_(hs.mc,e),ad=ADf(lat,d),dsa=90+ad;
+    calc=`შენი რუკა: MC = ${fl(hs.mc)} · δ<sub>MC</sub> = ${f(d)}<br>AD = asin(tan ${lat.toFixed(1)}° · tan ${d.toFixed(2)}°) = ${f(ad)} · DSA = ${f(dsa)} · DSA/3 = ${f(dsa/3)} (≈ ${Math.round(dsa/3*4)} წუთი)<br>მე-11 = ASC იმ მომენტში, როცა RAMC იყო ${f(norm(ramc-2*dsa/3))} → ${fl(hs.cu[11])}<br>მე-12 = ASC როცა RAMC იყო ${f(norm(ramc-dsa/3))} → ${fl(hs.cu[12])}`;}
+  else if(HSYS==='O'){const q=norm(hs.asc-hs.mc)/3;calc=`შენი რუკა: MC ${fl(hs.mc)} → ASC ${fl(hs.asc)} = ${f(norm(hs.asc-hs.mc))} · ÷3 = ${f(q)}<br>მე-11 = MC + ${f(q)} → ${fl(hs.cu[11])} · მე-12 = MC + ${f(2*q)} → ${fl(hs.cu[12])}`;}
+  else if(HSYS==='E')calc=`შენი რუკა: ASC = ${fl(hs.asc)} → II = ${fl(hs.cu[2])} → III = ${fl(hs.cu[3])} … · MC (${fl(hs.mc)}) ხვდება ${ord(houseOf(hs.mc,hs.cu))} სახლში`;
+  else if(HSYS==='W')calc=`შენი რუკა: ASC = ${fl(hs.asc)} → I სახლი = მთელი ${SG[sidx(hs.asc)][1]} (0°–30°) · MC (${fl(hs.mc)}) ხვდება ${ord(houseOf(hs.mc,hs.cu))} სახლში`;
+  else calc='ამ განედზე სისტემა ვერ იგება — ნაჩვენებია პორფირიოსი.';
+  $('hExp').innerHTML=`<h3>როგორ მუშაობს: ${X.n}</h3><div class="who">${X.who}</div><ol>${X.how.map(x=>`<li>${x}</li>`).join('')}</ol><div class="calc2">${calc}</div><div class="pm"><div><b style="color:#9fd8a8">+</b> ${X.pro}</div><div><b style="color:#ffb38a">−</b> ${X.con}</div></div>`;
+  const keep=HSYS,cmp={};['P','K','O','E','W'].forEach(k=>{HSYS=k;cmp[k]=houses(ch.J,lat,CH.I.lon).cu;});HSYS=keep;
+  const sh=l=>`${inS(l)} ${SG[sidx(l)][0]}${VS}`;
+  $('hCmp').innerHTML=[1,2,3,4,5,6,7,8,9,10,11,12].map(i=>`<tr><td>${ROMN[i]}</td>${['P','K','O','E','W'].map(k=>`<td class="${k===HSYS?'on':''}${k!=='P'&&sidx(cmp[k][i])!==sidx(cmp.P[i])?' df':''}">${sh(cmp[k][i])}</td>`).join('')}</tr>`).join('');
+  document.querySelectorAll('.pt.hc th[data-s]').forEach(t=>t.classList.toggle('on',t.dataset.s===HSYS));}
+const ROMN=['','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 /* ── section 3 ── */
 function sec3(){const hs=CH.hs,A=[['ASC',hs.asc,'აღმოსავლეთი · 1-ლი სახლი'],['DSC',hs.cu[7],'დასავლეთი · მე-7 სახლი'],['MC',hs.mc,'მერიდიანი, ზემოთ · მე-10 სახლი'],['IC',hs.cu[4],'მერიდიანი, ქვემოთ · მე-4 სახლი']];
   $('ang').innerHTML=A.map(a=>`<div><div class="k">${a[0]}</div><div class="g" style="color:${EC[sidx(a[1])%4]}">${SG[sidx(a[1])][0]}${VS}</div><div class="v">${inS(a[1])} ${SG[sidx(a[1])][1]}</div><div class="s">${a[2]}</div></div>`).join('');
