@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ხელოვნების სიმბოლიკა — გაკვეთილი 33</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}
+.sec{margin-top:26px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px;background:rgba(17,26,46,.35)}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em;color:#E3BE84;margin-bottom:10px}
+.sec p{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p b{color:#F3DDA4}
+.ktabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ktabs button{background:none;border:1px solid var(--k);color:#EDE6D8;border-radius:999px;padding:7px 15px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer}
+.ktabs button.on{background:var(--k);color:#0b1020}
+.kbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+@media(max-width:820px){.kbody{grid-template-columns:1fr}}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.kgrid button{border:1px solid rgba(184,137,74,.3);background:#0e1424;color:#EDE6D8;border-radius:10px;padding:10px 8px;cursor:pointer;font:13px 'Noto Serif Georgian',serif;text-align:center;line-height:1.35}
+.kgrid button.on{border-color:#F3DDA4;box-shadow:0 0 0 2px rgba(243,221,164,.4)}
+.kgrid .sw{display:block;height:34px;border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,.15)}
+.kgrid .ic{display:block;font-size:26px;margin-bottom:4px}
+.kgrid .nm{display:block;font:600 24px Cinzel,serif;color:#F3DDA4;margin-bottom:2px}
+.kcard{border:1px solid rgba(184,137,74,.35);border-left:4px solid var(--k);border-radius:10px;padding:14px 16px;background:rgba(17,26,46,.6);font-size:14px;line-height:1.85}
+.kcard h3{font:600 17px 'Noto Serif Georgian',serif;color:#F3DDA4;margin-bottom:6px}
+.kcard .ex{margin-top:8px;font-size:13px;color:#BCC0CA}.kcard .ex b{color:#E3BE84}
+.kdia{margin-top:12px}
+.kdia svg{width:100%;height:auto;display:block}
+.steps{counter-reset:s;list-style:none;display:grid;gap:8px}
+.steps li{counter-increment:s;position:relative;padding:10px 12px 10px 48px;border:1px solid rgba(184,137,74,.25);border-radius:10px;font-size:14px;line-height:1.75;background:rgba(14,20,36,.5)}
+.steps li::before{content:counter(s);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid #C9A24C;color:#F3DDA4;font:13px Cinzel,serif;display:flex;align-items:center;justify-content:center}
+.steps b{color:#F3DDA4}
+.quiz .qq{border:1px solid rgba(184,137,74,.25);border-radius:10px;padding:12px 14px;margin-top:10px}
+.quiz .qq p{font-size:14px;margin-bottom:8px}
+.quiz .op{display:flex;flex-wrap:wrap;gap:6px}
+.quiz .op button{background:#0e1424;border:1px solid rgba(184,137,74,.4);color:#EDE6D8;border-radius:8px;padding:6px 12px;font:13.5px 'Noto Serif Georgian',serif;cursor:pointer;text-align:left}
+.quiz .op button.ok{background:#2f6b45;border-color:#8fd19a}.quiz .op button.no{background:#6b2f2f;border-color:#e05050}
+.quiz .ex{margin-top:8px;font-size:13px;color:#BCC0CA}
+#qs{margin-top:12px;font:600 15px 'Noto Serif Georgian',serif;color:#F3DDA4}
+.nav{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
+.nav a{color:#E3BE84;border:1px solid rgba(184,137,74,.45);border-radius:999px;padding:8px 16px;text-decoration:none;font-size:13.5px}
+.nav a.off{opacity:.45;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ხელოვნების ეზოთერული სიმბოლიკა · მოდული 7 · ხატი, ხილვა და ღამე</div>
+  <h1>გაკვეთილი 33 — ბლეიკი: დღეთა მოხუცი და ნიუტონი</h1>
+  <div class="sub">უილიამ ბლეიკი, 1794–1805: ფარგალი, ურიზენი, გონების ტირანია</div>
+
+  <div class="intro"><b>უილიამ ბლეიკი</b> (1757–1827) — ლონდონელი გრავიორი, პოეტი და ხილვების მნახველი, რომელიც ბავშვობიდან ამბობდა, რომ ხეებზე ანგელოზებს ხედავდა. სიცოცხლეში თითქმის უცნობი და ღარიბი, მან შექმნა საკუთარი <b>მითოლოგია</b> — ღმერთების, ტიტანებისა და სულის ძალების მთელი პანთეონი, რომელიც თავად დაწერა, ამოჭრა სპილენძზე, დაბეჭდა და ხელით გააფერადა. მისი ორი ყველაზე ცნობილი გამოსახულება ერთ თემას ეძღვნება: <b>ფარგალი</b> — ინსტრუმენტი, რომლითაც სამყაროს ზომავენ. ბლეიკისთვის ეს არ იყო ქება. ეს იყო გაფრთხილება.</div>
+
+  <div class="sec"><h2>1 · ნამუშევრები დეტალებად</h2>
+    <p style="margin-bottom:10px">დააჭირე ▶ — ნამუშევარი თავად გადიდდება ყოველ დეტალზე და ახსნის მას.</p>
+    <div id="rd"></div>
+  </div>
+
+  <div class="sec"><h2>2 · ურიზენი — „საზღვრის“ ღმერთი</h2>
+    <p>ბლეიკის მითოლოგიაში არის ოთხი „<b>ზოა</b>“ — ადამიანის სულის ოთხი ძალა, რომლებიც თავდაპირველად ჰარმონიაში იყო: <b>ურიზენი</b> (გონება), <b>ლუვა</b> (გრძნობა, ვნება), <b>ურთონა / ლოსი</b> (წარმოსახვა, შემოქმედება) და <b>თარმასი</b> (სხეული, ინსტინქტი). დაცემა იწყება მაშინ, როცა ერთი ძალა დანარჩენებზე ბატონობას ცდილობს. ურიზენი — სახელი შესაძლოა მოდის ბერძნული horizein-დან, „საზღვრის დადება“ (აქედან — „ჰორიზონტი“), ან „your reason“-დან — სწორედ ეს ცდუნებაა: გონება, რომელსაც ჰგონია, რომ თავად შექმნა სამყარო.</p>
+    <p style="margin-top:8px">„დღეთა მოხუცი“ ბიბლიური სახელია (დანიელი 7:9) — ღმერთი-მსაჯული. ბლეიკი მას ფარგალს აძლევს — იგავთა წიგნიდან: „როცა ცას აწყობდა… როცა უფსკრულის პირზე წრეს ხაზავდა“ (იგავ. 8:27). ზედაპირულად ეს შემოქმედი ღმერთია. მაგრამ ბლეიკის მითში — ეს <b>ურიზენია</b>, რომელიც უსაზღვრო, ცოცხალ მარადისობას <b>ზღუდავს</b>, ზომავს, კანონებად ჭრის. ბლეიკისთვის ეს არის ძველი აღთქმის მკაცრი, კანონმდებელი ღმერთი, „ნობოდადი“ (Nobodaddy — „არავის მამა“), რომელიც შიშით მართავს.</p>
+    <p style="margin-top:8px">ეზოთერული პარალელი — გნოსტიკოსთა <b>დემიურგი</b>: ქვედა ღმერთი, რომელმაც მატერიალური სამყარო ააშენა და ჰგონია, რომ მის ზემოთ არაფერია. და მასონური სიმბოლო — ფარგალი და კუთხე (გაკვეთილი 14: ელჩები). ტაროში — „<b>იმპერატორი</b>“ (IV): წესრიგი, საზღვარი, კანონი — თავისი ჩრდილით. <a href="course_tarot6.html#4" style="color:#E3BE84">🃏 იმპერატორი</a></p>
+  </div>
+
+  <div class="sec"><h2>3 · „ერთი ხედვა და ნიუტონის ძილი“</h2>
+    <p>„ნიუტონში“ (1795–1805) მეცნიერი ზღვის ფსკერზე, წყალმცენარეებით დაფარულ კლდეზე ზის — შიშველი, ლამაზი, ღმერთივით აგებული — და <b>ქვემოთ</b> იყურება, გრაგნილზე, სადაც ფარგლით სამკუთხედს ხაზავს. მის ზურგს უკან — ფერადი, ცოცხალი კლდე, ზღვის სიღრმე, სიცოცხლე. ის მას ვერ ხედავს. ბლეიკი წერდა: „ღმერთმა დაგვიფაროს <b>ერთი ხედვისა და ნიუტონის ძილისგან</b>“.</p>
+    <p style="margin-top:8px">„ერთი ხედვა“ — მხოლოდ ზომა, რიცხვი, მექანიკა. ბლეიკისთვის არსებობს ოთხი ხედვა: ერთმაგი (მხოლოდ მატერია), ორმაგი (ხედავ საგანს და მის მნიშვნელობას), სამმაგი (სიყვარულისა და შემოქმედების ხედვა — „ბეულა“) და ოთხმაგი — სრული, მისტიკური ხედვა („ედემი“). ნიუტონი გენიოსია — და სწორედ ამიტომ ტრაგიკულია: მისი ძალა <b>ერთ წერტილზეა</b> მიმართული. „ფარგლის“ შემზღუდველი წრე — ხედვის წრეც არის.</p>
+    <p style="margin-top:8px">ბლეიკის პასუხი: „დაინახე სამყარო <b>ქვიშის მარცვალში</b>, და ზეცა — ველურ ყვავილში; დაიჭირე უსასრულობა ხელისგულში, და მარადისობა — ერთ საათში.“ გონება — მსახურია, არა ბატონი. ტაროში — „<b>მაგი</b>“ (I): ინსტრუმენტები მის მაგიდაზე, ხელი ზემოთ — ზემოთაც და ქვემოთაც. <a href="course_tarot6.html#1" style="color:#E3BE84">🃏 მაგი</a></p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav"><a href="course_art32.html">← მათეს მოწოდება</a><a href="course_art.html">გაკვეთილების სია</a><a class="off" href="#" aria-disabled="true">გაკვეთილი 34 — მალე →</a></div>
+</div>
+
+<script src="art.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const TL=(n,t)=>`<a href="course_tarot6.html#${n}" style="color:#E3BE84">🃏 ${t}</a>`;
+const W=[{short:'დღეთა მოხუცი',title:'დღეთა მოხუცი („ევროპა. წინასწარმეტყველება“, ფრონტისპისი)',author:'უილიამ ბლეიკი',year:'1794',place:'ბრიტანეთის მუზეუმი, ლონდონი (ეგზემპლარი D)',file:'Europe_a_Prophecy_copy_D_1794_British_Museum_object_1.jpg',ar:'0.735',px:686,
+ i:'მზის უზარმაზარ, ცეცხლოვან <b>დისკოში</b>, მუხლმოყრილი — თეთრწვერა, ძლიერი მოხუცი. მისი თმა და წვერი ქარში ქანაობს. მარცხენა ხელი ქვემოთ, სიბნელეში ჩაუშვია და უზარმაზარი <b>ფარგალი</b> უჭირავს, რომელიც უფსკრულს ზომავს. გარშემო — მუქი ღრუბლები.',
+ e:'ბლეიკის მითში — <b>ურიზენი</b>, გონების ზოა, რომელიც უსასრულობას საზღვრებად ჭრის. ბიბლიური „დღეთა მოხუცი“ (დანიელი 7:9) და შემოქმედი, რომელიც „უფსკრულის პირზე წრეს ხაზავს“ (იგავ. 8:27). ბლეიკს ეს გამოსახულება ყველაზე მეტად უყვარდა — და ამბობენ, სიკვდილის წინა დღესაც ხატავდა. მისი აზრით, ეს ღმერთი ნამდვილი ღმერთი არ არის, არამედ <b>დემიურგი</b>: გონება, რომელსაც ჰგონია, რომ ყველაფერია.<br><br>ტაროში — „<b>იმპერატორი</b>“ (IV). '+TL(4,'იმპერატორი'),
+ spots:[{x:50,y:36,z:1.8,k:'light',t:'მზის დისკო',d:'ფიგურა ცეცხლოვან <b>მზის დისკოშია</b> ჩაკეტილი — წრე, რომელიც ძალასაც გამოხატავს და ციხესაც. ურიზენი სინათლის ცენტრშია, მაგრამ ეს სინათლე მის გარშემო ჩაკეტილია: გონების ბრწყინვალე, მაგრამ დახურული სფერო.'},
+  {x:50,y:28,z:3,k:'gesture',t:'დღეთა მოხუცი',d:'მუხლმოყრილი, დაძაბული, კუნთოვანი მოხუცი — „<b>დღეთა მოხუცი</b>“, ბიბლიის ღმერთი-მსაჯული. ბლეიკისთვის — <b>ურიზენი</b>: კანონი, ზომა, შეზღუდვა. მისი სხეული ჰორიზონტალურად არის მოხრილი — თითქოს თავად წრეშია მოქცეული.'},
+  {x:66,y:28,z:3,k:'sym',t:'წვერი ქარში',d:'თეთრი <b>თმა და წვერი</b> მარჯვნივ არის გაშლილი, ქარისგან. ეს ქარი — სული, რომელიც მოძრაობს; ურიზენი კი გაქვავებულია. ცოცხალი ძალა მას ეხება, მაგრამ ის მაინც ზომავს.'},
+  {x:38,y:58,z:3,k:'gesture',t:'ხელი',d:'მარცხენა, დაჭიმული <b>ხელი</b> დისკოდან სიბნელეში არის ჩაშვებული — თითები ფარგლის თავზე. ხელი ქვემოთ, უფსკრულისკენ: გონება, რომელიც მატერიას ეშვება და მას ფორმას აძლევს.'},
+  {x:33,y:78,z:3,k:'number',t:'ფარგალი',d:'უზარმაზარი, ოქროსფერი <b>ფარგალი</b> — ბლეიკის მთავარი სიმბოლო. იგავთა წიგნში: „როცა უფსკრულის პირზე წრეს ხაზავდა“. ფარგალი ზომავს და <b>საზღვრავს</b>: ქმნის ფორმას — და ზღუდავს უსასრულოს. მისი ორი ფეხი — სამყაროს „ორი წერტილი“, რომლებს შორისაც ყველაფერი გაზომვადი ხდება.'},
+  {x:20,y:18,z:2.6,k:'sym',t:'შავი ღრუბლები',d:'დისკოს გარშემო — მუქი, მძიმე <b>ღრუბლები</b>. სინათლე და სიბნელე ერთად: ურიზენის სამყარო ბრწყინავს, მაგრამ მის გარეთ — ქაოსი, რომელიც მან ჯერ არ გაზომა, და რომელსაც ეშინია.'},
+  {x:50,y:92,z:2.4,k:'light',t:'უფსკრული',d:'ქვემოთ — ცარიელი, ბნელი <b>უფსკრული</b>, სადაც ფარგალი ეშვება. ეს არის მარადისობა მანამ, სანამ მას გაზომავენ: უფორმო, თავისუფალი, საშიში. ბლეიკის კითხვა: გაზომვა — შექმნაა, თუ ციხე?'}]},
+{short:'ნიუტონი',title:'ნიუტონი',author:'უილიამ ბლეიკი',year:'1795 / ~1805',place:'ტეიტ ბრიტანი, ლონდონი',file:'Newton-WilliamBlake.jpg',ar:'1.300',px:3000,
+ i:'ზღვის ფსკერზე, წყალმცენარეებითა და მარჯნით დაფარულ <b>კლდეზე</b>, ზის შიშველი, ახალგაზრდა, ძლიერი კაცი — <b>ისააკ ნიუტონი</b>. ის ქვემოთ არის დახრილი და ფარგლით რაღაცას ხაზავს თეთრ <b>გრაგნილზე</b>, რომელიც მის ფეხებთან უდევს. ფონი — ბნელი, ზღვის სიღრმე.',
+ e:'ბლეიკის „ერთი ხედვის“ პორტრეტი: გენიოსი, რომელიც სიცოცხლის სიღრმეშია, მაგრამ მხოლოდ <b>დიაგრამას</b> ხედავს. ზურგს უკან ფერადი, ცოცხალი კლდე — მისთვის უხილავი. ის „ზღვის ფსკერზეა“ — ბლეიკის სიმბოლიკაში მატერიის, „დროისა და სივრცის ზღვაში“ ჩაძირული. „ღმერთმა დაგვიფაროს ერთი ხედვისა და <b>ნიუტონის ძილისგან</b>.“<br><br>ტაროში — „<b>მაგი</b>“ (I) და „<b>განდეგილი</b>“ (IX). '+TL(1,'მაგი')+' · '+TL(9,'განდეგილი'),
+ spots:[{x:45,y:45,z:1.8,k:'gesture',t:'ნიუტონი',d:'ახალგაზრდა, შიშველი, ანტიკური ქანდაკებასავით აგებული <b>ნიუტონი</b>. ბლეიკი მას არ აბუჩად იგდებს — ის მშვენიერია, ძლიერია, გენიოსია. ტრაგედია სწორედ ესაა: მთელი ეს ძალა ერთ, ვიწრო წერტილზეა მიმართული.'},
+  {x:52,y:38,z:3,k:'gesture',t:'დახრილი თავი',d:'თავი <b>ქვემოთ</b> არის დახრილი, მზერა — გრაგნილზე. ის ზემოთ არ იყურება, არც გვერდზე. ეს არის „ერთი ხედვა“: მხოლოდ ის, რაც გაზომვადია. ბლეიკი: „ნიუტონის ძილი“.'},
+  {x:63,y:73,z:3.4,k:'number',t:'ფარგალი',d:'მარჯვენა ხელში — <b>ფარგალი</b>, ისევე როგორც „დღეთა მოხუცის“ ხელში. ნიუტონი — ურიზენის მიწიერი შვილი: ადამიანი, რომელიც ღვთის ინსტრუმენტით ზომავს სამყაროს და ჰგონია, რომ ასე შეიცნობს მას.'},
+  {x:67,y:84,z:3.2,k:'number',t:'გრაგნილი და სამკუთხედი',d:'ფეხებთან — თეთრი <b>გრაგნილი</b>, რომელზეც გეომეტრიული ფიგურა — სამკუთხედი და რკალი — იხაზება. თეთრი, ბრტყელი, მკვდარი ფურცელი — ცოცხალი, ფერადი ზღვის ფსკერზე. სამყაროს რუკა, რომელიც სამყაროს ცვლის.'},
+  {x:18,y:55,z:2.6,k:'color',t:'ცოცხალი კლდე',d:'ნიუტონის ზურგს უკან — წყალმცენარეებით, მარჯნით, ლიქენებით დაფარული <b>კლდე</b>, ბლეიკის ფერადი ტექნიკით (მონოტიპი + აკვარელი) ცოცხლად აჭრელებული. აქ არის სიცოცხლე, სილამაზე, ქაოსი — და ნიუტონი მას ზურგით უზის.'},
+  {x:82,y:28,z:2.4,k:'light',t:'ზღვის სიღრმე',d:'ფონი — ბნელი, თითქმის შავი <b>ზღვის სიღრმე</b>. ბლეიკის სიმბოლიკაში წყალი — „დროისა და სივრცის ზღვაა“, მატერიალური სამყარო, რომელშიც სული ჩაიძირა. ნიუტონი ფსკერზეა — და არ იცის, რომ ზემოთ ზედაპირი და ცაა.'},
+  {x:30,y:84,z:3,k:'gesture',t:'ფეხი კლდეზე',d:'მოხრილი სხეული: ფეხები, ზურგი, მხრები, ხელი — ყველაფერი ერთ ჩაკეტილ, ქვემოთ მიმართულ <b>რკალს</b> ქმნის. ნიუტონი თავად გახდა ფარგალი — სხეული, რომელიც საკუთარ თავში წრედ შეიკრა.'}]}];
+const R=ART.tour($('rd'),W);window.MG_ART33=()=>R.state();
+
+const Q=[['რა ინსტრუმენტი უჭირავთ ორივე ნამუშევარში?',['სასწორი','ფარგალი','გასაღები','მახვილი'],1,'საზღვრის, ზომის სიმბოლო.'],
+ ['ვინ არის „დღეთა მოხუცი“ ბლეიკის მითოლოგიაში?',['ლოსი','ურიზენი','ლუვა','ალბიონი'],1,'გონების ზოა — საზღვრის ღმერთი.'],
+ ['რას ნიშნავს ურიზენი ბლეიკის მითში?',['წარმოსახვას','გონებას, რომელიც ზღუდავს და კანონებს ქმნის','სიყვარულს','სხეულს'],1,''],
+ ['რომელი ბიბლიური წიგნიდანაა სიტყვები „უფსკრულის პირზე წრეს ხაზავდა“?',['გამოცხადება','იგავნი','ფსალმუნები','იობი'],1,'იგავ. 8:27.'],
+ ['სად ზის ნიუტონი ბლეიკის ნამუშევარში?',['ბიბლიოთეკაში','ზღვის ფსკერზე, კლდეზე','მთის მწვერვალზე','ვაშლის ხის ქვეშ'],1,'„დროისა და სივრცის ზღვა“.'],
+ ['რისგან ითხოვს ბლეიკი დაცვას?',['ღამისგან','ერთი ხედვისა და ნიუტონის ძილისგან','სიკვდილისგან','სიღარიბისგან'],1,''],
+ ['გნოსტიკოსთა რომელ ფიგურას ჰგავს ურიზენი?',['სოფიას','დემიურგს','ლოგოსს','აბრაქსასს'],1,'ქვედა შემოქმედი, რომელსაც ჰგონია, რომ ერთადერთია.'],
+ ['რისი ნახვა უნდა შეგეძლოს „ქვიშის მარცვალში“?',['ოქროსი','სამყაროსი','ზღვისა','საკუთარი თავისა'],1,'„და ზეცა — ველურ ყვავილში“.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js"></script>
+<script src="account.js"></script>
+</body>
+</html>
