@@ -60,11 +60,20 @@ Object.entries(VARS).forEach(([kind,V])=>V.t.forEach((x,i)=>{
 }));
 CEN.forEach(([en,ka,k])=>ITEMS.push({kind:'center',value:en,side:null,grp:'ცენტრი',label:`${ka} (${en})`,
   keys:`center ცენტრი ჩაკრა chakra ${en} ${k} განსაზღვრა აქტივაცია`}));
-const GROUPS=['ტიპი','პროფილი','საკვები','გარემო','მოტივაცია','პერსპექტივა','ცენტრი'];
+CEN.forEach(([en,ka,k])=>ITEMS.push({kind:'copen',value:en,side:null,grp:'ღია ცენტრი',label:`${ka} (${en}) — ღია`,
+  keys:`open undefined ღია განუსაზღვრელი ცენტრი ჩაკრა chakra ${en} ${k}`}));
+CEN.forEach(([en,ka,k])=>ITEMS.push({kind:'cempty',value:en,side:null,grp:'ცარიელი ცენტრი',label:`${ka} (${en}) — სრულიად ცარიელი`,
+  keys:`empty completely open ცარიელი სრულიად ღია ცენტრი ჩაკრა chakra ${en} ${k} კარიბჭე gate`}));
+for(let g=1;g<=64;g++)ITEMS.push({kind:'nogate',value:g,side:null,grp:'კარიბჭე არ არის',label:`კარიბჭე ${g} — არ არის აქტივირებული`,
+  keys:`gate კარიბჭე ${g} არ არის no absent not activated`});
+const GROUPS=['ტიპი','პროფილი','საკვები','გარემო','მოტივაცია','პერსპექტივა','ცენტრი','ღია ცენტრი','ცარიელი ცენტრი','კარიბჭე არ არის'];
 const GHELP={'ტიპი':'როდის იბადება / დაიბადა ადამიანი ამ ტიპით (რეფლექტორი იშვიათია — ძებნა ~10 წმ)','პროფილი':'როდის იბადება / დაიბადა ადამიანი ამ პროფილით',
   'საკვები':'დიზაინის მზის ფერი · ← / → ისარი ტონიდან (1-3 / 4-6)','გარემო':'დიზაინის ჩრდ. კვანძის ფერი',
   'მოტივაცია':'პიროვნების მზის ფერი','პერსპექტივა':'პიროვნების ჩრდ. კვანძის ფერი',
-  'ცენტრი':'როდის განსაზღვრავს ტრანზიტი ამ ცენტრს შენს რუქაში (ან თვითონ ცაში)'};
+  'ცენტრი':'როდის განსაზღვრავს ტრანზიტი ამ ცენტრს შენს რუქაში (ან თვითონ ცაში)',
+  'ღია ცენტრი':'როდის იბადება ადამიანი, ვისაც ეს ცენტრი ღია (განუსაზღვრელი) აქვს — შეიძლება ჰქონდეს ცალკეული კარიბჭეები',
+  'ცარიელი ცენტრი':'როდის იბადება ადამიანი, ვისაც ამ ცენტრის არცერთი კარიბჭე არ აქვს აქტივირებული (26 აქტივაციიდან) — სრულიად ღია ცენტრი',
+  'კარიბჭე არ არის':'როდის იბადება ადამიანი, ვისაც ეს კარიბჭე საერთოდ არ აქვს — არც პიროვნებაში, არც დიზაინში'};
 const BODY_KA={"Sun":"☉ მზე","Earth":"⊕ დედამიწა","North Node":"☊ ჩრდ. კვანძი","South Node":"☋ სამხ. კვანძი",
   "Moon":"☽ მთვარე","Mercury":"☿ მერკური","Venus":"♀ ვენერა","Mars":"♂ მარსი","Jupiter":"♃ იუპიტერი",
   "Saturn":"♄ სატურნი","Uranus":"♅ ურანი","Neptune":"♆ ნეპტუნი","Pluto":"♇ პლუტონი"};
@@ -371,8 +380,8 @@ function natalGates(){
   const G=gatesAt(jd);for(const x of gatesAt(designJD(jd)))G.add(x);
   return G;
 }
-const STEP={type:1/48,profile:1/72,digestion:1/72,motivation:1/72,environment:1/24,perspective:1/24};
-const HOR={type:800,profile:800,digestion:120,motivation:120,environment:1100,perspective:1100};
+const STEP={copen:1/48,cempty:1/48,nogate:1/48,type:1/48,profile:1/72,digestion:1/72,motivation:1/72,environment:1/24,perspective:1/24};
+const HOR={copen:800,cempty:800,nogate:800,type:800,profile:800,digestion:120,motivation:120,environment:1100,perspective:1100};
 const TYPE_KA2={"Manifestor":"მანიფესტორი","Generator":"გენერატორი","Manifesting Generator":"მანიფესტირებადი გენერატორი","Projector":"პროექტორი","Reflector":"რეფლექტორი"};
 async function search(more){
   if(!sel){$('hf-q').focus();drop();return;}
@@ -410,9 +419,11 @@ async function search(more){
       }
     }else{
       const k=sel.kind,v=sel.value,sd=sel.side;
-      const ok=k==='type'?(jd=>valueAt(k,jd)===v):k==='profile'?(jd=>valueAt(k,jd)===v)
+      const full=jd=>{const G=gatesAt(jd);for(const g of gatesAt(designJD(jd)))G.add(g);return G;};
+      const ok=k==='copen'?(jd=>!centersOf(full(jd)).C.has(v)):k==='cempty'?(jd=>{const G=full(jd);return !CG[v].some(g=>G.has(g));})
+        :k==='nogate'?(jd=>!full(jd).has(v)):k==='type'?(jd=>valueAt(k,jd)===v):k==='profile'?(jd=>valueAt(k,jd)===v)
         :(jd=>{const x=valueAt(k,jd);return x[0]===v&&(!sd||x[1]===sd);});
-      d.label=k==='type'?'ტიპი · '+TYPE_KA2[v]:k==='profile'?sel.label:sel.label.replace(' · ←','').replace(' · →','');
+      d.label=k==='copen'||k==='cempty'?sel.label:k==='nogate'?`კარიბჭე ${v} — არ არის აქტივირებული`:k==='type'?'ტიპი · '+TYPE_KA2[v]:k==='profile'?sel.label:sel.label.replace(' · ←','').replace(' · →','');
       const r=await scan(ok,jd0,dir,n,STEP[k],HOR[k],prog,tok);
       d.windows=r.wins.map(([s,e,now])=>({start:s,end:e,start_local:fmt(s,tz),end_local:fmt(e,tz),mid_local:fmt((s+e)/2,tz),hours:(e-s)*24,active_now:now}));
       if(!d.windows.length)d.note='ვერ მოიძებნა '+fmt(r.edge,tz).slice(0,5).replace(/-$/,'')+'-მდე.';
