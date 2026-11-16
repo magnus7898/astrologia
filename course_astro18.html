@@ -144,7 +144,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 <div class="page">
   <div class="kicker">ასტროლოგიის კურსი · მოდული 5 · ასპექტები</div>
   <h1>გაკვეთილი 18 — ასპექტური ფიგურები</h1>
-  <div class="sub">დიდი ტრიგონი, T-კვადრატი, დიდი ჯვარი, იოდი, ფრანი, მისტიკური მართკუთხედი, სოლომონის ბეჭედი, მცირე დიდი ტრიგონი, სტელიუმი — ცაზე და შენს რუკაში</div>
+  <div class="sub">დიდი ტრიგონი, T-კვადრატი, დიდი ჯვარი, იოდი, ფრანი, მისტიკური მართკუთხედი, სოლომონის ბეჭედი, მცირე დიდი ტრიგონი, ბუმერანგი, თორის ჩაქუჩი, აკვანი, სოლი, პენტაგრამა, სტელიუმი — და მთელი რუკის შვიდი ფორმა (მარკ ჯონსი)</div>
 
   <div class="intro">როცა რამდენიმე ასპექტი ერთმანეთს უერთდება, რუკაზე <b>გეომეტრიული ფიგურა</b> ჩნდება: სამკუთხედი, ჯვარი, ფრანი. ფიგურა ცალკეულ ასპექტებზე ძლიერია — ის პიროვნების მთელ ქვესისტემას ქმნის, რომელიც ერთიანად მუშაობს. ფიგურის „თავი“ (აპექსი) ხშირად რუკის ყველაზე მნიშვნელოვანი პლანეტაა, ხოლო თავისუფალი წერტილი — ის, რისი განვითარებაც ცხოვრების ამოცანაა.</div>
 
@@ -155,6 +155,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
      <div class="ctl"><button type="button" id="gPl" aria-label="ბრუნვა: დაკვრა / პაუზა">❚❚</button></div>
     </div><div>
      <div class="ztx fi" id="gRo"></div>
+     <p style="margin-top:10px;font-size:13px;color:#aab2c4">რუსულ სკოლაში ზოგ ფიგურას სხვა სახელი აქვს: ფრანი — „<b>იალქანი</b>“ (парус), მისტიკური მართკუთხედი — „<b>კონვერტი</b>“, მცირე დიდი ტრიგონი — „<b>ბისექსტილი</b>“, დიდი ჯვარი — „<b>დიდი კვადრატი</b>“, თორის ჩაქუჩი — „<b>ღმერთის მუშტი</b>“.</p>
      <p style="margin-top:10px">ფიგურა ზოდიაქოზე ნელა ბრუნავს: ერთი და იგივე გეომეტრია სხვადასხვა სტიქიასა და ჯვარში სხვადასხვაგვარად ჟღერს. ტრიგონები ერთი სტიქიის ნიშნებს აკავშირებს, კვადრატები და ოპოზიციები — ერთი ჯვრისას. ქვემოთ ჩანს, რომელ სტიქიაში ან ჯვარშია ფიგურა ახლა.</p>
    </div></div>
   </div>
@@ -189,6 +190,13 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <div class="warn" id="yW"></div>
     <div class="duo" style="margin-top:12px"><div class="stage"><canvas id="cvY" aria-label="შენი ასპექტური ფიგურები"></canvas></div>
      <div><div class="pl" id="yL"></div></div></div>
+  </div>
+
+
+  <div class="sec"><h2>4 · მთელი რუკის ფორმა — მარკ ჯონსის შვიდი ტიპი</h2>
+    <p>ასპექტური ფიგურა რუკის ნაწილია. არსებობს მეორე, უფრო ფართო „ფიგურაც“ — ათი პლანეტის <b>განაწილება</b> მთელ წრეზე. ამერიკელმა ასტროლოგმა <b>მარკ ედმუნდ ჯონსმა</b> (1941) შვიდი ტიპი გამოყო. ფორმას ასპექტები არ განსაზღვრავს — ის <b>ცარიელი ადგილებით</b> იკითხება: სად არის დიდი წყვეტა და რომელი პლანეტა „უძღვება“ ჯგუფს.</p>
+    <div class="duo"><div class="stage"><canvas id="cvJ" aria-label="რუკის ფორმა: პლანეტების განაწილება"></canvas><div class="seg" id="jT"></div></div>
+     <div><div class="ztx fi" id="jRo"></div><div class="ptx" id="yJ" style="margin-top:12px"></div></div></div>
   </div>
 
   <div class="sec"><h2>შეამოწმე თავი</h2>
@@ -290,7 +298,8 @@ function initPanel(cb){$('city').innerHTML=CITIES.map((c,i)=>`<option value="${i
 const el=(p,s)=>norm(p-s+180)-180;
 const sgS=k=>`<span style="color:${EC[k%4]}">${SG[k][0]}${VS}</span> ${SG[k][1]}`;
 const ELN=['ცეცხლის','მიწის','ჰაერის','წყლის'],MOD=['კარდინალური','ფიქსირებული','მუტაბელური'];
-const COL={t:'#5aa8e8',s:'#5aa8e8',q:'#ef6b5a',o:'#ef6b5a',x:'#8fc46a',c:'#FFD36A'};
+const COL={t:'#5aa8e8',s:'#5aa8e8',q:'#ef6b5a',o:'#ef6b5a',x:'#8fc46a',c:'#FFD36A',h:'#e8935a',f:'#c98ad8',b:'#c98ad8',z:'#8fc46a'};
+const DSH={x:[6,4],h:[3,3],z:[2,4],b:[5,4]};
 const PT={gt:['დიდი ტრიგონი','სამი პლანეტა ერთი სტიქიის ნიშნებში, ერთმანეთთან ტრიგონებში. ჩაკეტილი წრე: ნიჭი და შინაგანი თავისუფლება ამ სტიქიის სფეროში. ადამიანი თვითკმარია — ზოგჯერ ზედმეტადაც: ენერგია წრეზე ტრიალებს და გარეთ ვერ გამოდის.','როგორ ვიმუშაოთ: ფიგურას „გასასვლელი“ სჭირდება — კვადრატი ან ოპოზიცია სხვა პლანეტიდან, რომელიც ნიჭს საქმედ აქცევს.',[[0,'a'],[120,'b'],[240,'c']],[[0,1,'t'],[1,2,'t'],[2,0,'t']],'el'],
  ts:['T-კვადრატი','ორი პლანეტა ოპოზიციაში, მესამე ორივესთან კვადრატში — ის ფიგურის აპექსია. რუკის ყველაზე ძლიერი ძრავა: დაძაბულობა აპექსის პლანეტაზე იყრის თავს და მოქმედებას აიძულებს. ჯვარი სტილს აჩვენებს: კარდინალური — მოქმედება, ფიქსირებული — სიჯიუტე და გამძლეობა, მუტაბელური — მერყეობა და მოქნილობა.','როგორ ვიმუშაოთ: „ცარიელი ფეხი“ — წერტილი აპექსის საპირისპიროდ — ის თვისებაა, რომლის განვითარებაც დაძაბულობას აბალანსებს.',[[0,'a'],[180,'b'],[90,'apex']],[[0,1,'o'],[0,2,'q'],[1,2,'q']],'mod'],
  gx:['დიდი ჯვარი','ოთხი პლანეტა: ორი ოპოზიცია, ერთმანეთთან კვადრატებში, ყველა ერთი ჯვრის ნიშნებში. უზარმაზარი დაძაბულობა ოთხივე მხარეს — და უზარმაზარი ძალა. ადამიანი ხშირად გრძნობს, რომ ყველაფერი ერთდროულად ითხოვს ყურადღებას.','როგორ ვიმუშაოთ: ერთი ღერძის გაძლიერება მეორეს ასუსტებს; ამოცანა ოთხივე ფუნქციის ერთდროული ბალანსია. ასეთ ადამიანებს დიდი გამძლეობა აქვთ.',[[0,'a'],[90,'b'],[180,'c'],[270,'d']],[[0,2,'o'],[1,3,'o'],[0,1,'q'],[1,2,'q'],[2,3,'q'],[3,0,'q']],'mod'],
@@ -299,8 +308,13 @@ const PT={gt:['დიდი ტრიგონი','სამი პლანე
  mr:['მისტიკური მართკუთხედი','ორი ოპოზიცია, რომლებიც ერთმანეთთან ტრიგონებითა და სექსტილებით ერთდება. დაძაბულობა (ოპოზიციები) და ჰარმონია (ტრიგონები, სექსტილები) ერთ ფიგურაშია — „პრაქტიკული მისტიკა“: კონფლიქტის პროდუქტიულად გამოყენების ნიჭი.','როგორ ვიმუშაოთ: ფიგურა სტაბილურია; მისი ძალა იმაშია, რომ ორივე ოპოზიციის მხარეებს ერთმანეთთან „ხიდი“ აქვთ.',[[0,'a'],[60,'b'],[180,'c'],[240,'d']],[[0,2,'o'],[1,3,'o'],[0,1,'s'],[2,3,'s'],[1,2,'t'],[3,0,'t']],'none'],
  ss:['სოლომონის ბეჭედი — დიდი სექსტილი','ექვსი პლანეტა ყოველ 60°-ზე: ორი დიდი ტრიგონი, ერთმანეთში ჩახლართული ექვსქიმიანი ვარსკვლავივით (დავითის ვარსკვლავი). ერთი სამკუთხედი ცეცხლის ნიშნებშია, მეორე — ჰაერისა (ან მიწისა და წყლისა). ჰარმონიისა და დაძაბულობის სრული წრე: ექვსი სექსტილი, ექვსი ტრიგონი და სამი ოპოზიცია. უიშვიათესი ფიგურა — დიდი პოტენციალი, რომელიც ზოგჯერ ძალიან „მოწესრიგებულ“, უმოძრაო ცხოვრებად იქცევა.','როგორ ვიმუშაოთ: სამი ოპოზიცია ფიგურის ღერძებია; ტრანზიტი, რომელიც ერთ წერტილს ეხება, მთელ ვარსკვლავს აამოძრავებს — სწორედ მაშინ იხსნება მისი ნიჭი.',[[0,'a'],[60,'b'],[120,'c'],[180,'d'],[240,'e'],[300,'f']],[[0,1,'s'],[1,2,'s'],[2,3,'s'],[3,4,'s'],[4,5,'s'],[5,0,'s'],[0,2,'t'],[2,4,'t'],[4,0,'t'],[1,3,'t'],[3,5,'t'],[5,1,'t']],'pol'],
  mg:['მცირე დიდი ტრიგონი','ორი პლანეტა ტრიგონში და მესამე, რომელიც ორივესთან სექსტილშია — მათ შორის, შუაში. ნიჭი შუა პლანეტაზე იყრის თავს: ის ფიგურის „ხელია“, რომლითაც ჰარმონია საქმედ იქცევა.','როგორ ვიმუშაოთ: შუა პლანეტის სახლი ის სფეროა, სადაც ყველაზე ადვილად იხსნება შესაძლებლობები.',[[0,'a'],[120,'b'],[60,'apex']],[[0,1,'t'],[0,2,'s'],[1,2,'s']],'none'],
+ bm:['ბუმერანგი','იოდი, რომლის „რეაქციის წერტილზე“ — აპექსის საპირისპიროდ — მეოთხე პლანეტა დგას: ის აპექსთან ოპოზიციაშია და ფუძის ორივე პლანეტასთან ნახევარსექსტილში (30°). იოდის ისარი ახლა ორივე მიმართულებით მოძრაობს: ენერგია აპექსში გროვდება და ოპოზიციით გარეთ „ბრუნდება“, როგორც ბუმერანგი.','როგორ ვიმუშაოთ: ოპოზიციის პლანეტა იოდის მისიას ხილულ, გარე მოვლენად აქცევს — შედეგი ბრუნდება, როცა აპექსის საქმე ბოლომდეა მიყვანილი.',[[0,'a'],[60,'b'],[210,'apex'],[30,'d']],[[0,1,'s'],[0,2,'x'],[1,2,'x'],[2,3,'o'],[3,0,'z'],[3,1,'z']],'none'],
+ th:['თორის ჩაქუჩი — „ღმერთის მუშტი“','ორი პლანეტა კვადრატში, ორივე სესკვიკვადრატში (135°) მესამესთან — აპექსთან. იოდის „დაძაბული“ ტყუპია: კვადრატის წნეხი აპექსზე მიდის და იქ ჩაქუჩის დარტყმასავით, მოულოდნელი, ძლიერი მოქმედებით იხსნება.','როგორ ვიმუშაოთ: აპექსის პლანეტა იმპულსურია — მისი ენერგია ცნობიერ, დოზირებულ საქმეში უნდა წავიდეს, სანამ თავად „დაარტყამს“.',[[0,'a'],[90,'b'],[225,'apex']],[[0,1,'q'],[0,2,'h'],[1,2,'h']],'none'],
+ cr:['აკვანი','ოთხი პლანეტა: ორ კიდურს შორის ოპოზიციაა, შუაში კი ორი პლანეტა, რომლებიც მათ სექსტილების ჯაჭვით აერთებს (60° + 60° + 60°), ორი ტრიგონით. დიდი სექსტილის ნახევარია: ოპოზიციის დაძაბულობა ჰარმონიულ „აკვანში“ წევს.','როგორ ვიმუშაოთ: შუა პლანეტები ოპოზიციის ხიდებია; ოპოზიციის საპირისპირო, ცარიელი მხარე კი ის თემაა, საიდანაც ზრდა შემოდის.',[[0,'a'],[60,'b'],[120,'c'],[180,'d']],[[0,1,'s'],[1,2,'s'],[2,3,'s'],[0,2,'t'],[1,3,'t'],[0,3,'o']],'pol'],
+ wd:['სოლი — შუამავალი სამკუთხედი','ოპოზიცია, რომლის ერთ ბოლოსთან მესამე პლანეტა ტრიგონშია, მეორესთან — სექსტილში. ის ოპოზიციის „შუამავალია“: დაძაბულობის განმუხტვის ჰარმონიული გასასვლელი. ფრანისა და მისტიკური მართკუთხედის აგურია.','როგორ ვიმუშაოთ: აპექსის პლანეტით ოპოზიციის ორი მხარე ერთ საქმეში ერთიანდება — ის ბუნებრივი მედიატორია.',[[0,'a'],[180,'b'],[120,'apex']],[[0,1,'o'],[0,2,'t'],[1,2,'s']],'pol'],
+ pg:['პენტაგრამა — დიდი კვინტილი','ხუთი პლანეტა ყოველ 72°-ზე — წრის ხუთად გაყოფა, ხუთკუთხედი კვინტილებით, შიგნით კი ბიკვინტილების (144°) ხუთქიმიანი ვარსკვლავი. ძალიან იშვიათია. კვინტილი (72°) შემოქმედების, ოსტატობისა და ნიჭის ასპექტია (გაკვეთილი 17): პენტაგრამა — თითქმის „მაგიური“ შემოქმედებითი ძალა.','როგორ ვიმუშაოთ: ხუთივე პლანეტის თემები ერთ შემოქმედებით სისტემაში ერთიანდება; ორბისი ვიწროა (2°), ამიტომ ხშირად მხოლოდ ნაწილობრივი პენტაგრამა გვხვდება.',[[0,'a'],[72,'b'],[144,'c'],[216,'d'],[288,'e']],[[0,1,'f'],[1,2,'f'],[2,3,'f'],[3,4,'f'],[4,0,'f'],[0,2,'b'],[2,4,'b'],[4,1,'b'],[1,3,'b'],[3,0,'b']],'none'],
  st:['სტელიუმი','სამი ან მეტი პლანეტა ერთ ნიშანში (ან სახლში). ეს არა ასპექტების ქსელი, არამედ კონცენტრაცია: ნიშნისა და სახლის თემა პიროვნებაში დომინირებს. ენერგია ძლიერი და ფოკუსირებულია, მაგრამ ცალმხრივიც.','როგორ ვიმუშაოთ: საპირისპირო ნიშნის თემები ხშირად „ჩრდილშია“ — მათი შეგნებული განვითარება ბალანსს აძლევს.',[[0,'a'],[8,'b'],[17,'c'],[24,'d']],[],'el']};
-const ORDER=['gt','ts','gx','yd','kt','mr','ss','mg','st'];const POL=['ცეცხლი და ჰაერი','მიწა და წყალი'];
+const ORDER=['gt','ts','gx','yd','kt','mr','ss','mg','bm','th','cr','wd','pg','st'];const POL=['ცეცხლი და ჰაერი','მიწა და წყალი'];
 function ring(c,cx,cy,ri,R){for(let k=0;k<12;k++){sector(c,cx,cy,ri,R,30*k,30*k+30);c.fillStyle=hexA(EC[k%4],.13);c.fill();c.strokeStyle='rgba(227,190,132,.35)';c.lineWidth=1;c.stroke();
   const p=pt(cx,cy,(R+ri)/2,30*k+15);txt(c,SG[k][0]+VS,p[0],p[1],Math.max(11,(R-ri)*.5),hexA(EC[k%4],.88));}}
 function dot(c,x,y,r,g,col,hl){c.fillStyle='#0e1424';c.beginPath();c.arc(x,y,r,0,7);c.fill();c.strokeStyle=col;c.lineWidth=1.8;c.stroke();if(hl){c.strokeStyle='#FFD36A';c.lineWidth=2;c.beginPath();c.arc(x,y,r+4,0,7);c.stroke();}txt(c,g+VS,x,y,r*1.2,col);}
@@ -309,34 +323,39 @@ const G={p:'gt',rot:15,play:!RM,g:null};
 function drawG(){if(!G.g)return;const {c,w,h}=G.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.84,r=ri*.72,P=PT[G.p],pos=P[3].map(x=>norm(x[0]+G.rot));
   ring(c,cx,cy,ri,R);c.strokeStyle='rgba(227,190,132,.18)';c.beginPath();c.arc(cx,cy,r,0,7);c.stroke();
   pos.forEach(l=>{sector(c,cx,cy,ri,R,Math.floor(l/30)*30,Math.floor(l/30)*30+30);c.fillStyle='rgba(255,211,106,.14)';c.fill();});
-  P[4].forEach(([i,j,t])=>{const a=pt(cx,cy,r,pos[i]),b=pt(cx,cy,r,pos[j]);c.strokeStyle=COL[t];c.lineWidth=2.2;c.setLineDash(t==='x'?[6,4]:[]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();c.setLineDash([]);});
+  P[4].forEach(([i,j,t])=>{const a=pt(cx,cy,r,pos[i]),b=pt(cx,cy,r,pos[j]);c.strokeStyle=COL[t];c.lineWidth=2.2;c.setLineDash(DSH[t]||[]);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();c.setLineDash([]);});
   if(G.p==='ts'){const e=pt(cx,cy,r,pos[2]+180);c.strokeStyle='rgba(255,211,106,.7)';c.setLineDash([3,4]);c.beginPath();c.arc(e[0],e[1],R*.05,0,7);c.stroke();c.setLineDash([]);txt(c,'ცარიელი ფეხი',e[0],e[1]+R*.09,Math.max(9,R*.04),'#FFE7A0',GEO);}
   if(G.p==='yd'){const e=pt(cx,cy,r,pos[2]+180);c.strokeStyle='rgba(143,196,106,.7)';c.setLineDash([3,4]);c.beginPath();c.arc(e[0],e[1],R*.05,0,7);c.stroke();c.setLineDash([]);txt(c,'რეაქციის წერტილი',e[0],e[1]+R*.09,Math.max(9,R*.04),'#cff2d6',GEO);}
   pos.forEach((l,i)=>{const q=pt(cx,cy,r,l),ap=P[3][i][1]==='apex'||(G.p==='kt'&&i===3);dot(c,q[0],q[1],Math.max(9,R*.055),'●','#F3DDA4',ap);});
   const ks=pos.map(l=>sidx(l));let tag='';if(P[5]==='pol'){const q=ks[0]%2;tag=ks.every(k=>k%2===q)?POL[q]:'დისოცირებული';}if(P[5]==='el'){const e=ks[0]%4;tag=ks.every(k=>k%4===e)?`${ELN[e]} ${G.p==='st'?'ნიშანში':'სტიქიაში'}`:'სტიქიებს შორის (დისოცირებული)';}else if(P[5]==='mod'){const m=ks[0]%3;tag=ks.every(k=>k%3===m)?`${MOD[m]} ჯვარში`:'ჯვრებს შორის (დისოცირებული)';}
   c.fillStyle='rgba(12,18,34,.78)';c.beginPath();c.ellipse(cx,cy+R*.02,R*.3,R*.1,0,0,7);c.fill();txt(c,P[0].split(' — ')[0],cx,cy-R*.03,Math.max(13,R*.068),'#F3DDA4',GEO);if(tag)txt(c,tag,cx,cy+R*.07,Math.max(10,R*.048),'rgba(237,230,216,.8)',GEO);}
 function gText(){const P=PT[G.p],e=$('gRo');e.classList.remove('fi');void e.offsetWidth;e.classList.add('fi');
-  e.innerHTML=`<b>${P[0]}</b><br>${P[1]}<br><small>${P[2]}</small><br><small><span style="color:#5aa8e8">━</span> ტრიგონი/სექსტილი · <span style="color:#ef6b5a">━</span> კვადრატი/ოპოზიცია · <span style="color:#8fc46a">┅</span> კვინკუნსი · ოქროსფერი რგოლი — აპექსი</small>`;}
+  e.innerHTML=`<b>${P[0]}</b><br>${P[1]}<br><small>${P[2]}</small><br><small><span style="color:#5aa8e8">━</span> ტრიგონი/სექსტილი · <span style="color:#ef6b5a">━</span> კვადრატი/ოპოზიცია · <span style="color:#8fc46a">┅</span> კვინკუნსი · <span style="color:#e8935a">┄</span> სესკვიკვადრატი · <span style="color:#c98ad8">━</span> კვინტილი · <span style="color:#8fc46a">┈</span> ნახევარსექსტილი · ოქროსფერი რგოლი — აპექსი</small>`;}
 /* ── pattern finder ── */
 function A(p,q,ang,o){const d=Math.abs(el(p.lon,q.lon)),lum=(p.k==='su'||p.k==='mo'||q.k==='su'||q.k==='mo')?1:0;return Math.abs(d-ang)<=o+lum;}
-const TR=(p,q)=>A(p,q,120,7),SQ=(p,q)=>A(p,q,90,7),OP=(p,q)=>A(p,q,180,7),SX=(p,q)=>A(p,q,60,5),QX=(p,q)=>A(p,q,150,3);
+const TR=(p,q)=>A(p,q,120,7),SQ=(p,q)=>A(p,q,90,7),OP=(p,q)=>A(p,q,180,7),SX=(p,q)=>A(p,q,60,5),QX=(p,q)=>A(p,q,150,3),HQ=(p,q)=>A(p,q,135,2),QN=(p,q)=>A(p,q,72,2),SS=(p,q)=>A(p,q,30,2),BQ=(p,q)=>A(p,q,144,2);
 function find(P,cu){const o=[],n=P.length,key=a=>a.map(x=>x.k).sort().join(),seen=new Set(),add=(t,m,ex)=>{const k=t+key(m);if(seen.has(k))return;seen.add(k);o.push({t,m,...ex});};
   for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)for(let k=j+1;k<n;k++){const a=P[i],b=P[j],c=P[k];
     if(TR(a,b)&&TR(b,c)&&TR(a,c))add('gt',[a,b,c],{});
-    [[a,b,c],[a,c,b],[b,c,a]].forEach(([x,y,z])=>{if(OP(x,y)&&SQ(z,x)&&SQ(z,y))add('ts',[x,y,z],{apex:z});if(SX(x,y)&&QX(z,x)&&QX(z,y))add('yd',[x,y,z],{apex:z});if(TR(x,y)&&SX(z,x)&&SX(z,y))add('mg',[x,y,z],{apex:z});});}
+    [[a,b,c],[a,c,b],[b,c,a]].forEach(([x,y,z])=>{if(OP(x,y)&&SQ(z,x)&&SQ(z,y))add('ts',[x,y,z],{apex:z});if(SX(x,y)&&QX(z,x)&&QX(z,y))add('yd',[x,y,z],{apex:z});if(TR(x,y)&&SX(z,x)&&SX(z,y))add('mg',[x,y,z],{apex:z});if(SQ(x,y)&&HQ(z,x)&&HQ(z,y))add('th',[x,y,z],{apex:z});if(OP(x,y)&&((TR(z,x)&&SX(z,y))||(SX(z,x)&&TR(z,y))))add('wd',[x,y,z],{apex:z});});}
   for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)for(let k=j+1;k<n;k++)for(let l=k+1;l<n;l++){const q=[P[i],P[j],P[k],P[l]];
     const prs=[[0,1,2,3],[0,2,1,3],[0,3,1,2]];
     prs.forEach(([a,b,c,d])=>{const A1=q[a],B1=q[b],C1=q[c],D1=q[d];if(OP(A1,B1)&&OP(C1,D1)){if(SQ(A1,C1)&&SQ(A1,D1)&&SQ(B1,C1)&&SQ(B1,D1))add('gx',q,{});
       const m1=SX(A1,C1)&&TR(A1,D1)&&TR(B1,C1)&&SX(B1,D1),m2=TR(A1,C1)&&SX(A1,D1)&&SX(B1,C1)&&TR(B1,D1);if(m1||m2)add('mr',q,{});}});
+    prs.forEach(([a,b,c,d])=>{const A1=q[a],B1=q[b],C1=q[c],D1=q[d];if(!OP(A1,B1))return;[[C1,D1],[D1,C1]].forEach(([m1,m2])=>{if(SX(A1,m1)&&SX(m1,m2)&&SX(m2,B1)&&TR(A1,m2)&&TR(m1,B1))add('cr',q,{});});});
+    for(let x=0;x<4;x++){const z=q[x],b=q.filter((_,y)=>y!==x);for(let y=0;y<3;y++){const ap=b[y],bs=b.filter((_,u)=>u!==y);if(SX(bs[0],bs[1])&&QX(ap,bs[0])&&QX(ap,bs[1])&&OP(z,ap))add('bm',q,{apex:ap,axis:z});}}
     for(let x=0;x<4;x++){const rest=q.filter((_,y)=>y!==x),d=q[x];if(TR(rest[0],rest[1])&&TR(rest[1],rest[2])&&TR(rest[0],rest[2])){rest.forEach((r,y)=>{const ot=rest.filter((_,z)=>z!==y);if(OP(d,r)&&SX(d,ot[0])&&SX(d,ot[1]))add('kt',q,{apex:d,axis:r});});}}}
+  if(n>=5)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)for(let k=j+1;k<n;k++)for(let l=k+1;l<n;l++)for(let u=l+1;u<n;u++){const m=[P[i],P[j],P[k],P[l],P[u]].sort((x,y)=>x.lon-y.lon);if(m.every((x,v)=>QN(x,m[(v+1)%5])))add('pg',m,{});}
   const gts=o.filter(p=>p.t==='gt');for(let i=0;i<gts.length;i++)for(let j=i+1;j<gts.length;j++){const a=gts[i].m,b=gts[j].m;if(a.some(x=>b.includes(x)))continue;if(a.every(x=>b.some(y=>OP(x,y)))){const m=[...a,...b].sort((x,y)=>x.lon-y.lon);add('ss',m,{});}}
   const ssk=o.filter(p=>p.t==='ss').map(p=>p.m.map(x=>x.k));for(let i=o.length-1;i>=0;i--){if(['gt','kt','mr','mg'].includes(o[i].t)&&ssk.some(g=>o[i].m.every(x=>g.includes(x.k))))o.splice(i,1);}
+  const sub=(big,small)=>{const bk=o.filter(p=>big.includes(p.t)).map(p=>p.m.map(x=>x.k));for(let i=o.length-1;i>=0;i--){if(small.includes(o[i].t)&&bk.some(g=>o[i].m.every(x=>g.includes(x.k))))o.splice(i,1);}};
+  sub(['bm'],['yd']);sub(['cr','ss'],['mg','wd']);sub(['kt','mr'],['wd']);
   const gxk=o.filter(p=>p.t==='gx').map(p=>p.m.map(x=>x.k));for(let i=o.length-1;i>=0;i--){if(o[i].t==='ts'&&gxk.some(g=>o[i].m.every(x=>g.includes(x.k))))o.splice(i,1);}
   const bySign={};P.forEach(p=>{const s=sidx(p.lon);(bySign[s]=bySign[s]||[]).push(p);});Object.entries(bySign).forEach(([s,m])=>{if(m.length>=3)add('st',m,{sign:+s});});
   if(cu){const byH={};P.forEach(p=>{const h=houseOf(p.lon,cu);(byH[h]=byH[h]||[]).push(p);});Object.entries(byH).forEach(([h,m])=>{if(m.length>=3&&!o.some(x=>x.t==='st'&&x.m.length===m.length&&x.m.every(y=>m.includes(y))))add('st',m,{house:+h});});}
   return o.sort((a,b)=>ORDER.indexOf(a.t)-ORDER.indexOf(b.t));}
-function edges(p){const m=p.m,E=[];const kind=(a,b)=>OP(a,b)?'o':SQ(a,b)?'q':TR(a,b)?'t':SX(a,b)?'s':QX(a,b)?'x':null;if(p.t==='st')return E;for(let i=0;i<m.length;i++)for(let j=i+1;j<m.length;j++){const t=kind(m[i],m[j]);if(t)E.push([m[i],m[j],t]);}return E;}
-function drawPat(c,cx,cy,r,p,alpha){edges(p).forEach(([a,b,t])=>{const qa=pt(cx,cy,r,a.lon),qb=pt(cx,cy,r,b.lon);c.globalAlpha=alpha;c.strokeStyle=COL[t];c.lineWidth=2.2;c.setLineDash(t==='x'?[6,4]:[]);c.beginPath();c.moveTo(qa[0],qa[1]);c.lineTo(qb[0],qb[1]);c.stroke();c.setLineDash([]);c.globalAlpha=1;});}
+function edges(p){const m=p.m,E=[];const ext=['th','pg','bm'].includes(p.t),kind=(a,b)=>OP(a,b)?'o':SQ(a,b)?'q':TR(a,b)?'t':SX(a,b)?'s':QX(a,b)?'x':ext&&HQ(a,b)?'h':ext&&QN(a,b)?'f':ext&&BQ(a,b)?'b':ext&&SS(a,b)?'z':null;if(p.t==='st')return E;for(let i=0;i<m.length;i++)for(let j=i+1;j<m.length;j++){const t=kind(m[i],m[j]);if(t)E.push([m[i],m[j],t]);}return E;}
+function drawPat(c,cx,cy,r,p,alpha){edges(p).forEach(([a,b,t])=>{const qa=pt(cx,cy,r,a.lon),qb=pt(cx,cy,r,b.lon);c.globalAlpha=alpha;c.strokeStyle=COL[t];c.lineWidth=2.2;c.setLineDash(DSH[t]||[]);c.beginPath();c.moveTo(qa[0],qa[1]);c.lineTo(qb[0],qb[1]);c.stroke();c.setLineDash([]);c.globalAlpha=1;});}
 /* ── 2 · sky ── */
 const S={J:Date.now()/864e5+2440587.5,play:!RM,g:null,last:''};
 function drawS(){if(!S.g)return;const {c,w,h}=S.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.84,r=ri*.72;
@@ -361,7 +380,7 @@ function drawY(){if(!Y.g||!Y.P)return;const {c,w,h}=Y.g;c.clearRect(0,0,w,h);con
 const HN=[null,'პიროვნება','რესურსები','კომუნიკაცია','ფესვები','შემოქმედება','სამსახური','პარტნიორობა','ტრანსფორმაცია','აზრი','მიზანი','საზოგადოება','ფარული'];
 function desc(p,first){const P=PT[p.t],ks=p.m.map(x=>sidx(x.lon)),hs=Y.cu?(l=>` · ${ord(houseOf(l,Y.cu))} სახლი`):(()=>'');let tag='';
   if(p.t==='gt'||p.t==='kt'){const e=ks[0]%4;tag=ks.every(k=>k%4===e)?`${ELN[e]} სტიქია`:'სტიქიებს შორის (დისოცირებული)';}
-  if(p.t==='ss'){const q=ks[0]%2;tag=ks.every(k=>k%2===q)?POL[q]:'დისოცირებული';}
+  if(p.t==='ss'||p.t==='cr'||p.t==='wd'){const q=ks[0]%2;tag=ks.every(k=>k%2===q)?POL[q]:'დისოცირებული';}
   if(p.t==='ts'||p.t==='gx'){const m=ks[0]%3;tag=ks.every(k=>k%3===m)?`${MOD[m]} ჯვარი`:'ჯვრებს შორის (დისოცირებული)';}
   if(p.t==='st')tag=p.sign!=null?`ნიშანში: ${SG[p.sign][1]}`:`${ord(p.house)} სახლში (${HN[p.house]})`;
   let x=`<b>${P[0]}</b>${tag?' · '+tag:''}<br>`+p.m.map(q=>`<span style="color:${q.c}">${q.g}${VS}</span> ${q.n} ${inS(q.lon)} ${SG[sidx(q.lon)][0]}${VS}${hs(q.lon)}`).join('<br>');
@@ -373,7 +392,7 @@ function desc(p,first){const P=PT[p.t],ks=p.m.map(x=>sidx(x.lon)),hs=Y.cu?(l=>` 
 function upd(){const CH=chartNow(),I=CH.I,place=I.ci>=0?CITIES[I.ci][0]:'სხვა ადგილი';
   $('sum').innerHTML=`${p2(I.d)}.${p2(I.m)}.${I.y} ${I.unk?'(დრო უცნობია)':p2(I.hh)+':'+p2(I.mi)} · ${place} · UTC${offS(I.off)}`;
   $('yW').innerHTML=I.unk?'დაბადების დრო უცნობია: სახლები არ ჩანს, მთვარის ფიგურები კი მიახლოებითია.':'';
-  Y.P=CH.pls.filter(p=>p.k!=='nn');Y.cu=I.unk?null:CH.hs.cu;Y.pats=find(Y.P,Y.cu);Y.sel=0;drawY();
+  Y.P=CH.pls.filter(p=>p.k!=='nn');Y.cu=I.unk?null:CH.hs.cu;Y.pats=find(Y.P,Y.cu);Y.sel=0;drawY();if(typeof jMine==='function'){jMine();if(J4.p==='me')drawJ();}
   $('yL').innerHTML=Y.pats.length?Y.pats.map((p,i)=>`<button type="button" class="${i?'':'on'}" data-i="${i}">${desc(p,!i||Y.pats[i-1].t!==p.t)}</button>`).join(''):'<div class="ptx">შენს რუკაში კლასიკური ფიგურა არ არის — ასპექტები ცალ-ცალკე მუშაობს. ეს ჩვეულებრივია: ფიგურა არ არის „უკეთესი“, ის უბრალოდ ფოკუსს ქმნის.</div>';}
 /* ── loop & wiring ── */
 let raf=0,last=0;
@@ -386,7 +405,48 @@ $('gT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)re
 const tg=(id,o)=>{$(id).textContent=o.play?'❚❚':'▶';$(id).onclick=()=>{o.play=!o.play;$(id).textContent=o.play?'❚❚':'▶';kick();};};tg('gPl',G);tg('sPl',S);
 $('sNow').onclick=()=>{S.J=Date.now()/864e5+2440587.5;drawS();kick();};
 $('yL').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;Y.sel=+b.dataset.i;$('yL').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawY();});
-function sizes(){G.g=fit($('cvG'),1);S.g=fit($('cvS'),1);Y.g=fit($('cvY'),1);drawG();drawS();drawY();}
+
+/* ── 4 · Jones chart shapes ── */
+const JN={bd:['შეკვრა (Bundle)','ყველა პლანეტა 120°-იან სექტორშია — წრის მესამედში. ვიწრო, მაგრამ ძალიან კონცენტრირებული ინტერესები; პიროვნება „სპეციალისტია“, საკუთარ სამყაროს ღრმად ამუშავებს. ცარიელი ორი მესამედი — ის, რასაც ცხოვრება გარედან მოუტანს.'],
+ bw:['თასი (Bowl)','ყველა პლანეტა ნახევარ წრეზეა (180°). ცხოვრების ნახევარი სავსეა, ნახევარი — ცარიელი: ადამიანი თავისთავში იტევს, აგროვებს, „ატარებს“ რაღაცას — და ცარიელ ნახევარს ეძებს. მნიშვნელოვანია, რომელი ნახევარია: ზედა (საჯარო) თუ ქვედა (პირადი), აღმოსავლეთი (საკუთარი ინიციატივა) თუ დასავლეთი (სხვები).'],
+ bk:['ვედრო (Bucket)','თასი პლუს ერთი პლანეტა საპირისპირო, ცარიელ ნახევარში — ეს „სახელურია“. მთელი ენერგია ამ ერთ პლანეტაზე გადის: ის მიზანია, მიმართულება, ცხოვრების „ბერკეტი“. სახელურის პლანეტა, ნიშანი და სახლი — რუკის გასაღები.'],
+ lc:['ლოკომოტივი (Locomotive)','პლანეტები 240°-ზეა გაშლილი, ცარიელია ერთი მესამედი (≈120°). ძლიერი, თვითმავალი ენერგია, რომელიც სიცარიელის შევსებისკენ მიიწევს. „ლიდერი“ — პლანეტა ცარიელი სექტორის კიდეზე, რომელიც ყოველდღიურ (საათის ისრის) ბრუნვაში ჯგუფს წინ მიუძღვის — ლოკომოტივის „ორთქლმავალია“.'],
+ ss:['საქანელა (Seesaw)','ორი ჯგუფი ერთმანეთის საპირისპიროდ, ორი ცარიელი სექტორით შუაში. ცხოვრება ორ პოლუსს შორის ირხევა — მუდმივი აწონ-დაწონვა, ორი თვალსაზრისი, ურთიერთობების დინამიკა. ძალა — ბალანსის პოვნაში.'],
+ sp:['შხეფი (Splash)','პლანეტები თანაბრად არის მიმოფანტული მთელ წრეზე, დიდი წყვეტის გარეშე. მრავალმხრივი, ყველაფრით დაინტერესებული პიროვნება — უნივერსალისტი. საფრთხე — ენერგიის გაფანტვა.'],
+ sl:['გაშლილი (Splay)','პლანეტები რამდენიმე არათანაბარ ჯგუფადაა, ცალკეული „სხივებით“. ინდივიდუალისტი, რომელიც არცერთ ჩარჩოში არ ეტევა; ძლიერი, მაგრამ „თავისებური“ ინტერესები.']};
+const JORD=['bd','bw','bk','lc','ss','sp','sl'];
+const JEX={bd:[10,22,30,45,55,68,80,95,105,118],bw:[0,18,35,52,70,90,110,130,150,172],bk:[0,20,40,60,80,100,120,140,165,265],lc:[0,25,50,75,100,125,150,180,205,232],ss:[0,15,30,45,62,180,195,210,228,245],sp:[0,36,72,108,144,180,216,252,288,324],sl:[0,10,22,118,128,140,230,240,252,264]};
+function jgaps(L){const a=[...L].sort((x,y)=>x-y);return a.map((x,i)=>({g:norm(a[(i+1)%a.length]-x),from:x,to:a[(i+1)%a.length]}));}
+function jshape(L){const G=jgaps(L),mx=Math.max(...G.map(x=>x.g));
+  if(mx>=240)return {t:'bd'};if(mx>=180)return {t:'bw'};
+  for(let i=0;i<L.length;i++){const rest=L.filter((_,j)=>j!==i),g2=jgaps(rest),m2=Math.max(...g2.map(x=>x.g));if(m2>=180){const big=g2.find(x=>x.g===m2),d1=norm(L[i]-big.from),d2=norm(big.to-L[i]);if(d1>=45&&d2>=45)return {t:'bk',h:i};}}
+  if(mx>=120)return {t:'lc'};
+  const big=G.filter(x=>x.g>=60);if(big.length===2&&Math.abs(w180(big[0].from+big[0].g/2-(big[1].from+big[1].g/2)))>=120)return {t:'ss'};
+  if(mx<=60&&new Set(L.map(sidx)).size>=7)return {t:'sp'};return {t:'sl'};}
+const w180=x=>norm(x+180)-180;
+const J4={p:'bd',g:null};
+function drawJ(){if(!J4.g)return;const {c,w,h}=J4.g;c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-6,ri=R*.84,r=ri*.72;ring(c,cx,cy,ri,R);
+  const mine=J4.p==='me'&&Y.P,L=mine?Y.P.filter(p=>p.k!=='nn').map(p=>p.lon):JEX[J4.p],sh=jshape(L),G=jgaps(L),mx=G.reduce((a,b)=>b.g>a.g?b:a);
+  /* empty sector */
+  if(mx.g>=60){c.fillStyle='rgba(255,255,255,.05)';c.beginPath();c.moveTo(cx,cy);for(let t=0;t<=24;t++){const q=pt(cx,cy,ri,mx.from+mx.g*t/24);c.lineTo(q[0],q[1]);}c.closePath();c.fill();const m=pt(cx,cy,r*.82,mx.from+mx.g/2);txt(c,'ცარიელი '+Math.round(mx.g)+'°',m[0],m[1],Math.max(10,R*.045),'rgba(227,190,132,.7)',GEO);}
+  /* occupied arc */
+  const occ=360-mx.g;c.strokeStyle='rgba(255,211,106,.45)';c.lineWidth=5;c.beginPath();for(let t=0;t<=40;t++){const q=pt(cx,cy,r*1.08,mx.to+occ*t/40);t?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}c.stroke();
+  /* leader for locomotive: first planet after the gap (counter-clockwise) */
+  L.forEach((l,i)=>{const q=pt(cx,cy,r,l),hl=(sh.t==='bk'&&sh.h===i)||(sh.t==='lc'&&Math.abs(w180(l-mx.to))<.01);const pp=mine?Y.P.filter(p=>p.k!=='nn')[i]:null;line(c,[cx,cy],q,'rgba(227,190,132,.12)',1);dot(c,q[0],q[1],Math.max(8,R*.045),pp?pp.g:'●',pp?pp.c:'#F3DDA4',hl);});
+  c.fillStyle='rgba(12,18,34,.78)';c.beginPath();c.ellipse(cx,cy,R*.28,R*.08,0,0,7);c.fill();txt(c,JN[sh.t][0].split(' (')[0],cx,cy,Math.max(13,R*.065),'#F3DDA4',GEO);
+  if(!mine){const e=$('jRo');e.innerHTML=`<b>${JN[J4.p][0]}</b><br>${JN[J4.p][1]}`;}else{$('jRo').innerHTML=`<b>შენი რუკა: ${JN[sh.t][0]}</b><br>${JN[sh.t][1]}`;}}
+function jMine(){if(!Y.P)return;const pl=Y.P.filter(p=>p.k!=='nn'),L=pl.map(p=>p.lon),sh=jshape(L),G=jgaps(L),mx=G.reduce((a,b)=>b.g>a.g?b:a);
+  let x=`<b>შენი რუკის ფორმა: ${JN[sh.t][0]}</b> · ყველაზე დიდი ცარიელი სექტორი ${Math.round(mx.g)}° (${fl(mx.from)} → ${fl(mx.to)})`;
+  if(sh.t==='bk'){const hd=pl[sh.h];x+=`<br>სახელური: <span style="color:${hd.c}">${hd.g}${VS}</span> <b>${hd.n}</b> ${fl(hd.lon)}${Y.cu?' · '+ord(houseOf(hd.lon,Y.cu))+' სახლი':''}`;}
+  if(sh.t==='lc'){const ld=pl.find(p=>Math.abs(w180(p.lon-mx.to))<.01);if(ld)x+=`<br>ლიდერი: <span style="color:${ld.c}">${ld.g}${VS}</span> <b>${ld.n}</b> ${fl(ld.lon)}`;}
+  if(sh.t==='bw'||sh.t==='bd'){const lead=pl.find(p=>Math.abs(w180(p.lon-mx.to))<.01);if(lead)x+=`<br>წინამძღოლი (პირველი გაჭრის შემდეგ): <span style="color:${lead.c}">${lead.g}${VS}</span> <b>${lead.n}</b>`;}
+  $('yJ').innerHTML=x+'<br><button type="button" class="apb" id="jMe" style="margin-top:8px;background:none;border:1px solid rgba(201,168,76,.6);color:#F3DDA4;border-radius:8px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer">აჩვენე წრეზე</button>';
+  $('jMe').onclick=()=>{J4.p='me';$('jT').querySelectorAll('button').forEach(b=>b.classList.remove('on'));drawJ();};}
+$('jT').innerHTML=JORD.map(k=>`<button type="button" data-p="${k}" class="${k==='bd'?'on':''}">${JN[k][0].split(' (')[0]}</button>`).join('');
+$('jT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;J4.p=b.dataset.p;$('jT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawJ();});
+window.MG_A18F=L=>find(L.map((l,i)=>({k:'p'+i,lon:l,g:'●',c:'#fff',n:'p'+i})),null).map(p=>p.t);
+window.MG_A18J=()=>({mine:Y.P?jshape(Y.P.filter(p=>p.k!=='nn').map(p=>p.lon)).t:null,ex:Object.fromEntries(JORD.map(k=>[k,jshape(JEX[k]).t]))});
+function sizes(){G.g=fit($('cvG'),1);S.g=fit($('cvS'),1);Y.g=fit($('cvY'),1);J4.g=fit($('cvJ'),1);drawG();drawS();drawY();drawJ();}
 let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
 const Q=[['რა არის დიდი ტრიგონი?',['სამი პლანეტა კვადრატებში','სამი პლანეტა ერთმანეთთან ტრიგონებში, ერთი სტიქიის ნიშნებში','ორი ოპოზიცია','ოთხი პლანეტა ერთ ნიშანში'],1,'დიდი ტრიგონი ერთი სტიქიის ჩაკეტილი სამკუთხედია.'],
  ['T-კვადრატში რომელი პლანეტაა აპექსი?',['ოპოზიციის ერთ-ერთი','ის, რომელიც ორივე ოპოზიციურ პლანეტასთან კვადრატშია','ყველაზე სწრაფი','ყველაზე ნელი'],1,'აპექსი ორივე ოპოზიციურ პლანეტასთან კვადრატშია — დაძაბულობა მასზე იყრის თავს.'],
@@ -395,7 +455,11 @@ const Q=[['რა არის დიდი ტრიგონი?',['სამ�
  ['რით განსხვავდება ფრანი დიდი ტრიგონისგან?',['არაფრით','მეოთხე პლანეტით, რომელიც ერთი წერტილის საპირისპიროდაა და ორ დანარჩენთან სექსტილშია','ის მხოლოდ კვადრატებისგან შედგება','ის ერთ ნიშანშია'],1,'ოპოზიცია ჩაკეტილ დიდ ტრიგონს მიმართულებას აძლევს.'],
  ['რა არის „სოლომონის ბეჭედი“?',['ექვსი პლანეტა ყოველ 60°-ზე — ორი ჩახლართული დიდი ტრიგონი','ორი ოპოზიცია კვადრატებში','სამი პლანეტა ერთ ნიშანში','იოდი ოპოზიციით'],0,'დიდი სექსტილი: ექვსქიმიანი ვარსკვლავი, ორი დიდი ტრიგონი და სამი ოპოზიცია.'],
  ['რა არის სტელიუმი?',['სამი ან მეტი პლანეტა ერთ ნიშანში ან სახლში','ორი ოპოზიცია','იოდის აპექსი','რეტროგრადული პლანეტა'],0,'სტელიუმი ასპექტების ფიგურა კი არა, ენერგიის კონცენტრაციაა.'],
- ['რომელი ფიგურა აერთიანებს ოპოზიციებს ტრიგონებითა და სექსტილებით?',['დიდი ჯვარი','მისტიკური მართკუთხედი','იოდი','T-კვადრატი'],1,'მისტიკური მართკუთხედი — ორი ოპოზიცია, რომლებიც ერთმანეთთან ჰარმონიული ასპექტებით ერთდება.']];
+ ['რომელი ფიგურა აერთიანებს ოპოზიციებს ტრიგონებითა და სექსტილებით?',['დიდი ჯვარი','მისტიკური მართკუთხედი','იოდი','T-კვადრატი'],1,'მისტიკური მართკუთხედი — ორი ოპოზიცია, რომლებიც ერთმანეთთან ჰარმონიული ასპექტებით ერთდება.'],
+ ['რა არის ბუმერანგი?',['იოდი, რომლის რეაქციის წერტილზე მეოთხე პლანეტა დგას','ორი T-კვადრატი','დიდი ტრიგონი ოპოზიციით','ხუთი პლანეტა 72°-ზე'],0,'ბუმერანგი = იოდი + პლანეტა აპექსის საპირისპიროდ.'],
+ ['რომელი ასპექტებით იქმნება თორის ჩაქუჩი?',['სექსტილი და ორი კვინკუნსი','კვადრატი და ორი სესკვიკვადრატი (135°)','ოპოზიცია და ორი ტრიგონი','სამი კვადრატი'],1,'კვადრატი + ორი სესკვიკვადრატი აპექსთან — იოდის დაძაბული ტყუპი.'],
+ ['მარკ ჯონსის რომელ ფორმას აქვს „სახელური“?',['თასს','ვედროს','შეკვრას','შხეფს'],1,'ვედრო = თასი + ერთი პლანეტა ცარიელ ნახევარში — სახელური.'],
+ ['ლოკომოტივის ფორმაში რამდენი გრადუსია ცარიელი?',['≈ 30°','≈ 120°','≈ 180°','≈ 240°'],1,'ლოკომოტივი — პლანეტები 240°-ზე, ცარიელი ≈ 120°.']];
 
 const QA=[];
 function quiz(){$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
