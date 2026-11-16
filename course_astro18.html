@@ -193,8 +193,8 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
   </div>
 
 
-  <div class="sec"><h2>4 · მთელი რუკის ფორმა — მარკ ჯონსის შვიდი ტიპი</h2>
-    <p>ასპექტური ფიგურა რუკის ნაწილია. არსებობს მეორე, უფრო ფართო „ფიგურაც“ — ათი პლანეტის <b>განაწილება</b> მთელ წრეზე. ამერიკელმა ასტროლოგმა <b>მარკ ედმუნდ ჯონსმა</b> (1941) შვიდი ტიპი გამოყო. ფორმას ასპექტები არ განსაზღვრავს — ის <b>ცარიელი ადგილებით</b> იკითხება: სად არის დიდი წყვეტა და რომელი პლანეტა „უძღვება“ ჯგუფს.</p>
+  <div class="sec"><h2>4 · მთელი რუკის ფორმა — ჯონსის შვიდი ტიპი და იანსკის მერვე</h2>
+    <p>ასპექტური ფიგურა რუკის ნაწილია. არსებობს მეორე, უფრო ფართო „ფიგურაც“ — ათი პლანეტის <b>განაწილება</b> მთელ წრეზე. ამერიკელმა ასტროლოგმა <b>მარკ ედმუნდ ჯონსმა</b> (1941) შვიდი ტიპი გამოყო. მოგვიანებით <b>რობერტ კარლ იანსკიმ</b> მერვე, „<b>მარაო</b>“ (Fan) დაამატა და ზოგი სახელი შეცვალა (გაშლილი → „სამფეხა“). ფორმას ასპექტები არ განსაზღვრავს — ის <b>ცარიელი ადგილებით</b> იკითხება: სად არის დიდი წყვეტა და რომელი პლანეტა „უძღვება“ ჯგუფს.</p>
     <div class="duo"><div class="stage"><canvas id="cvJ" aria-label="რუკის ფორმა: პლანეტების განაწილება"></canvas><div class="seg" id="jT"></div></div>
      <div><div class="ztx fi" id="jRo"></div><div class="ptx" id="yJ" style="margin-top:12px"></div></div></div>
   </div>
@@ -413,12 +413,15 @@ const JN={bd:['შეკვრა (Bundle)','ყველა პლანეტ�
  lc:['ლოკომოტივი (Locomotive)','პლანეტები 240°-ზეა გაშლილი, ცარიელია ერთი მესამედი (≈120°). ძლიერი, თვითმავალი ენერგია, რომელიც სიცარიელის შევსებისკენ მიიწევს. „ლიდერი“ — პლანეტა ცარიელი სექტორის კიდეზე, რომელიც ყოველდღიურ (საათის ისრის) ბრუნვაში ჯგუფს წინ მიუძღვის — ლოკომოტივის „ორთქლმავალია“.'],
  ss:['საქანელა (Seesaw)','ორი ჯგუფი ერთმანეთის საპირისპიროდ, ორი ცარიელი სექტორით შუაში. ცხოვრება ორ პოლუსს შორის ირხევა — მუდმივი აწონ-დაწონვა, ორი თვალსაზრისი, ურთიერთობების დინამიკა. ძალა — ბალანსის პოვნაში.'],
  sp:['შხეფი (Splash)','პლანეტები თანაბრად არის მიმოფანტული მთელ წრეზე, დიდი წყვეტის გარეშე. მრავალმხრივი, ყველაფრით დაინტერესებული პიროვნება — უნივერსალისტი. საფრთხე — ენერგიის გაფანტვა.'],
- sl:['გაშლილი (Splay)','პლანეტები რამდენიმე არათანაბარ ჯგუფადაა, ცალკეული „სხივებით“. ინდივიდუალისტი, რომელიც არცერთ ჩარჩოში არ ეტევა; ძლიერი, მაგრამ „თავისებური“ ინტერესები.']};
-const JORD=['bd','bw','bk','lc','ss','sp','sl'];
-const JEX={bd:[10,22,30,45,55,68,80,95,105,118],bw:[0,18,35,52,70,90,110,130,150,172],bk:[0,20,40,60,80,100,120,140,165,265],lc:[0,25,50,75,100,125,150,180,205,232],ss:[0,15,30,45,62,180,195,210,228,245],sp:[0,36,72,108,144,180,216,252,288,324],sl:[0,10,22,118,128,140,230,240,252,264]};
+ fn:['მარაო (Fan) · იანსკი','მერვე ტიპი, რომელიც რობერტ კარლ იანსკიმ დაამატა: შეკვრა (ცხრა პლანეტა წრის მესამედში) პლუს ერთი განცალკევებული პლანეტა — „სახელური“. ვიწრო, კონცენტრირებული ინტერესები, რომლებსაც ერთი პლანეტა გარე სამყაროში გამოაქვს. სახელურის პლანეტა — რუკის გასაღები, როგორც ვედროში.'],
+ sl:['გაშლილი (Splay) · იანსკისთან „სამფეხა“ (Tripod)','პლანეტები რამდენიმე არათანაბარ ჯგუფადაა, ცალკეული „სხივებით“. ინდივიდუალისტი, რომელიც არცერთ ჩარჩოში არ ეტევა; ძლიერი, მაგრამ „თავისებური“ ინტერესები.']};
+const JORD=['bd','bw','bk','lc','ss','sp','sl','fn'];
+const JEX={bd:[10,22,30,45,55,68,80,95,105,118],bw:[0,18,35,52,70,90,110,130,150,172],bk:[0,20,40,60,80,100,120,140,165,265],fn:[0,12,25,38,50,64,78,92,108,250],lc:[0,25,50,75,100,125,150,180,205,232],ss:[0,15,30,45,62,180,195,210,228,245],sp:[0,36,72,108,144,180,216,252,288,324],sl:[0,10,22,118,128,140,230,240,252,264]};
 function jgaps(L){const a=[...L].sort((x,y)=>x-y);return a.map((x,i)=>({g:norm(a[(i+1)%a.length]-x),from:x,to:a[(i+1)%a.length]}));}
 function jshape(L){const G=jgaps(L),mx=Math.max(...G.map(x=>x.g));
-  if(mx>=240)return {t:'bd'};if(mx>=180)return {t:'bw'};
+  if(mx>=240)return {t:'bd'};
+  for(let i=0;i<L.length;i++){const rest=L.filter((_,j)=>j!==i),g2=jgaps(rest),m2=Math.max(...g2.map(x=>x.g));if(m2>=240){const big=g2.find(x=>x.g===m2),d1=norm(L[i]-big.from),d2=norm(big.to-L[i]);if(d1>=60&&d2>=60)return {t:'fn',h:i};}}
+  if(mx>=180)return {t:'bw'};
   for(let i=0;i<L.length;i++){const rest=L.filter((_,j)=>j!==i),g2=jgaps(rest),m2=Math.max(...g2.map(x=>x.g));if(m2>=180){const big=g2.find(x=>x.g===m2),d1=norm(L[i]-big.from),d2=norm(big.to-L[i]);if(d1>=45&&d2>=45)return {t:'bk',h:i};}}
   if(mx>=120)return {t:'lc'};
   const big=G.filter(x=>x.g>=60);if(big.length===2&&Math.abs(w180(big[0].from+big[0].g/2-(big[1].from+big[1].g/2)))>=120)return {t:'ss'};
@@ -432,12 +435,12 @@ function drawJ(){if(!J4.g)return;const {c,w,h}=J4.g;c.clearRect(0,0,w,h);const c
   /* occupied arc */
   const occ=360-mx.g;c.strokeStyle='rgba(255,211,106,.45)';c.lineWidth=5;c.beginPath();for(let t=0;t<=40;t++){const q=pt(cx,cy,r*1.08,mx.to+occ*t/40);t?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]);}c.stroke();
   /* leader for locomotive: first planet after the gap (counter-clockwise) */
-  L.forEach((l,i)=>{const q=pt(cx,cy,r,l),hl=(sh.t==='bk'&&sh.h===i)||(sh.t==='lc'&&Math.abs(w180(l-mx.to))<.01);const pp=mine?Y.P.filter(p=>p.k!=='nn')[i]:null;line(c,[cx,cy],q,'rgba(227,190,132,.12)',1);dot(c,q[0],q[1],Math.max(8,R*.045),pp?pp.g:'●',pp?pp.c:'#F3DDA4',hl);});
+  L.forEach((l,i)=>{const q=pt(cx,cy,r,l),hl=((sh.t==='bk'||sh.t==='fn')&&sh.h===i)||(sh.t==='lc'&&Math.abs(w180(l-mx.to))<.01);const pp=mine?Y.P.filter(p=>p.k!=='nn')[i]:null;line(c,[cx,cy],q,'rgba(227,190,132,.12)',1);dot(c,q[0],q[1],Math.max(8,R*.045),pp?pp.g:'●',pp?pp.c:'#F3DDA4',hl);});
   c.fillStyle='rgba(12,18,34,.78)';c.beginPath();c.ellipse(cx,cy,R*.28,R*.08,0,0,7);c.fill();txt(c,JN[sh.t][0].split(' (')[0],cx,cy,Math.max(13,R*.065),'#F3DDA4',GEO);
   if(!mine){const e=$('jRo');e.innerHTML=`<b>${JN[J4.p][0]}</b><br>${JN[J4.p][1]}`;}else{$('jRo').innerHTML=`<b>შენი რუკა: ${JN[sh.t][0]}</b><br>${JN[sh.t][1]}`;}}
 function jMine(){if(!Y.P)return;const pl=Y.P.filter(p=>p.k!=='nn'),L=pl.map(p=>p.lon),sh=jshape(L),G=jgaps(L),mx=G.reduce((a,b)=>b.g>a.g?b:a);
   let x=`<b>შენი რუკის ფორმა: ${JN[sh.t][0]}</b> · ყველაზე დიდი ცარიელი სექტორი ${Math.round(mx.g)}° (${fl(mx.from)} → ${fl(mx.to)})`;
-  if(sh.t==='bk'){const hd=pl[sh.h];x+=`<br>სახელური: <span style="color:${hd.c}">${hd.g}${VS}</span> <b>${hd.n}</b> ${fl(hd.lon)}${Y.cu?' · '+ord(houseOf(hd.lon,Y.cu))+' სახლი':''}`;}
+  if(sh.t==='bk'||sh.t==='fn'){const hd=pl[sh.h];x+=`<br>სახელური: <span style="color:${hd.c}">${hd.g}${VS}</span> <b>${hd.n}</b> ${fl(hd.lon)}${Y.cu?' · '+ord(houseOf(hd.lon,Y.cu))+' სახლი':''}`;}
   if(sh.t==='lc'){const ld=pl.find(p=>Math.abs(w180(p.lon-mx.to))<.01);if(ld)x+=`<br>ლიდერი: <span style="color:${ld.c}">${ld.g}${VS}</span> <b>${ld.n}</b> ${fl(ld.lon)}`;}
   if(sh.t==='bw'||sh.t==='bd'){const lead=pl.find(p=>Math.abs(w180(p.lon-mx.to))<.01);if(lead)x+=`<br>წინამძღოლი (პირველი გაჭრის შემდეგ): <span style="color:${lead.c}">${lead.g}${VS}</span> <b>${lead.n}</b>`;}
   $('yJ').innerHTML=x+'<br><button type="button" class="apb" id="jMe" style="margin-top:8px;background:none;border:1px solid rgba(201,168,76,.6);color:#F3DDA4;border-radius:8px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer">აჩვენე წრეზე</button>';
