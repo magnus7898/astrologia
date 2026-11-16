@@ -165,12 +165,12 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
    </ol>
   </div>
 
-  <div class="sec"><h2>2 · რუკის შვიდი ფორმა</h2>
+  <div class="sec"><h2>2 · რუკის ფორმები: ჯონსის შვიდი და იანსკის მერვე</h2>
    <div class="duo"><div class="stage">
      <canvas id="cvF" aria-label="რუკის ფორმები"></canvas>
      <div class="seg" id="fT"></div>
     </div><div>
-     <p>ამერიკელმა ასტროლოგმა <b>მარკ ედმუნდ ჯონსმა</b> შენიშნა, რომ ათი პლანეტის განლაგება წრეზე — მათი ნიშნების მიუხედავად — ხასიათის ზოგად სტილს აჩვენებს. ფორმა მხოლოდ გეომეტრიაა: რამდენად კომპაქტურად ან ფართოდ არის პლანეტები გაფანტული და სად არის ცარიელი სივრცე.</p>
+     <p>ამერიკელმა ასტროლოგმა <b>მარკ ედმუნდ ჯონსმა</b> შენიშნა, რომ ათი პლანეტის განლაგება წრეზე — მათი ნიშნების მიუხედავად — ხასიათის ზოგად სტილს აჩვენებს. ფორმა მხოლოდ გეომეტრიაა: რამდენად კომპაქტურად ან ფართოდ არის პლანეტები გაფანტული და სად არის ცარიელი სივრცე. ჯონსმა შვიდი ფორმა აღწერა; მოგვიანებით <b>რობერტ კარლ იანსკიმ</b> მერვე, „<b>მარაო</b>“ (Fan) დაამატა, „ვარსკვლავს“ (Splay) კი „სამფეხა“ (Tripod) უწოდა.</p>
      <div class="ztx fi" id="fTx"></div>
    </div></div>
   </div>
@@ -347,11 +347,13 @@ const SH={bundle:['შეკვრა','ყველა პლანეტა 12
  locomotive:['ლოკომოტივი','პლანეტები წრის ორ მესამედშია, ერთი მესამედი ცარიელია. ძლიერი შინაგანი ძრავა, შეუპოვრობა, მიზანმიმართულობა; წამყვანი პლანეტა ძრავის „ლოკომოტივია“.'],
  seesaw:['საქანელა','ორი ჯგუფი ერთმანეთის პირისპირ. ცხოვრება ორ პოლუსს შორის ბალანსია; სხვადასხვა თვალსაზრისის დანახვის ნიჭი და ზოგჯერ — მერყეობა.'],
  splash:['შხეფი','პლანეტები თანაბრად მთელ წრეზე. ფართო ინტერესები, მრავალმხრივობა, ყველაფრით დაინტერესება — და ზოგჯერ გაფანტულობა.'],
- splay:['ვარსკვლავი','რამდენიმე არათანაბარი ჯგუფი. ინდივიდუალისტი, საკუთარი გზით მიმავალი, მკვეთრი და დამოუკიდებელი ინტერესები.']};
-const SHO=['bundle','bowl','bucket','locomotive','seesaw','splash','splay'];
-const SMP={bundle:[0,12,25,38,50,62,75,88,100,115],bowl:[0,20,40,58,75,95,115,135,155,175],bucket:[0,20,40,60,80,100,120,140,160,260],locomotive:[0,25,50,75,100,125,150,175,205,235],seesaw:[0,20,40,60,75,180,195,210,225,250],splash:[0,36,72,108,144,180,216,252,288,324],splay:[0,10,20,100,110,200,215,230,290,300]};
+ fan:['მარაო','რობერტ კარლ იანსკის მერვე ფორმა: შეკვრა (ცხრა პლანეტა 120°-ის ფარგლებში) და მარტოხელა „სახელური“ ცარიელ მხარეში. ვიწრო, კონცენტრირებული ინტერესები, რომლებსაც ერთი პლანეტა გარე სამყაროში გამოაქვს — სახელური რუკის გასაღებია.'],
+ splay:['ვარსკვლავი','იანსკისთან — „სამფეხა“ (Tripod). რამდენიმე არათანაბარი ჯგუფი. ინდივიდუალისტი, საკუთარი გზით მიმავალი, მკვეთრი და დამოუკიდებელი ინტერესები.']};
+const SHO=['bundle','bowl','bucket','locomotive','seesaw','splash','splay','fan'];
+const SMP={bundle:[0,12,25,38,50,62,75,88,100,115],bowl:[0,20,40,58,75,95,115,135,155,175],bucket:[0,20,40,60,80,100,120,140,160,260],locomotive:[0,25,50,75,100,125,150,175,205,235],seesaw:[0,20,40,60,75,180,195,210,225,250],splash:[0,36,72,108,144,180,216,252,288,324],fan:[0,12,25,38,50,62,75,88,105,250],splay:[0,10,20,100,110,200,215,230,290,300]};
 function shape(L){const a=L.map(norm).sort((x,y)=>x-y),n=a.length,g=a.map((v,i)=>({i,g:norm(a[(i+1)%n]-v)}));const gs=g.slice().sort((x,y)=>y.g-x.g),G=gs[0],span=360-G.g,lead=a[(G.i+1)%n];
-  if(span<=120)return {t:'bundle',lead,gap:G};if(span<=180)return {t:'bowl',lead,gap:G};
+  if(span<=120)return {t:'bundle',lead,gap:G};
+  for(let i=0;i<n;i++){const r=a.filter((_,j)=>j!==i),rg=r.map((v,j)=>norm(r[(j+1)%r.length]-v)),rs=360-Math.max(...rg),gp=norm(a[i]-a[(i-1+n)%n]),gn=norm(a[(i+1)%n]-a[i]);if(rs<=120&&gp>=60&&gn>=60)return {t:'fan',handle:a[i],gap:G};}if(span<=180)return {t:'bowl',lead,gap:G};
   for(let i=0;i<n;i++){const r=a.filter((_,j)=>j!==i),rg=r.map((v,j)=>norm(r[(j+1)%r.length]-v)),rs=360-Math.max(...rg),gp=norm(a[i]-a[(i-1+n)%n]),gn=norm(a[(i+1)%n]-a[i]);if(rs<=180&&gp>=40&&gn>=40)return {t:'bucket',handle:a[i],gap:G};}
   if(span<=240)return {t:'locomotive',lead,gap:G};
   if(gs[1].g>=60&&gs[2].g<45){const i1=Math.min(G.i,gs[1].i),i2=Math.max(G.i,gs[1].i);if(i2-i1>=2&&n-(i2-i1)>=2)return {t:'seesaw',gap:G};}
@@ -369,7 +371,7 @@ function drawF(){if(!F.g)return;const {c,w,h}=F.g;c.clearRect(0,0,w,h);const cx=
   c.strokeStyle='rgba(227,190,132,.2)';c.beginPath();c.arc(cx,cy,r,0,7);c.stroke();
   L.forEach((l,i)=>{const q=Q(r,l),hl=(s.lead!=null&&Math.abs(norm(l-s.lead))<.01)||(s.handle!=null&&Math.abs(norm(l-s.handle))<.01);dot(c,q[0],q[1],Math.max(9,R*.05),PG[i],PC[i],hl);});
   c.fillStyle='rgba(12,18,34,.8)';c.beginPath();c.ellipse(cx,cy,R*.24,R*.09,0,0,7);c.fill();txt(c,SH[s.t][0],cx,cy,Math.max(13,R*.075),'#F3DDA4',GEO);}
-function fText(){const e=$('fTx');e.classList.remove('fi');void e.offsetWidth;e.classList.add('fi');e.innerHTML=`<b>${SH[F.t][0]}</b><br>${SH[F.t][1]}<br><small>ოქროსფერი რგოლი — ${F.t==='bucket'?'სახელური':'წამყვანი პლანეტა (პირველი ცარიელი სივრცის შემდეგ, ზოდიაქოს მიმართულებით)'}${['bowl','bucket','locomotive'].includes(F.t)?'':' · ამ ფორმას წამყვანი პლანეტა არ სჭირდება'}. ღია ზოლი — ყველაზე დიდი ცარიელი სივრცე.</small>`;}
+function fText(){const e=$('fTx');e.classList.remove('fi');void e.offsetWidth;e.classList.add('fi');e.innerHTML=`<b>${SH[F.t][0]}</b><br>${SH[F.t][1]}<br><small>ოქროსფერი რგოლი — ${F.t==='bucket'||F.t==='fan'?'სახელური':'წამყვანი პლანეტა (პირველი ცარიელი სივრცის შემდეგ, ზოდიაქოს მიმართულებით)'}${['bowl','bucket','locomotive','fan'].includes(F.t)?'':' · ამ ფორმას წამყვანი პლანეტა არ სჭირდება'}. ღია ზოლი — ყველაზე დიდი ცარიელი სივრცე.</small>`;}
 /* ── 3 · portrait ── */
 const STN=['სტიქიები','ფორმა','მზე','მთვარე','ASC','დომინანტი','ასპექტები','სინთეზი'];
 const Y={g:null,st:0,D:null};
@@ -391,7 +393,7 @@ function build(){const CH=chartNow(),I=CH.I,J=CH.J,unk=I.unk,P=CH.pls.filter(p=>
   const hs=l=>unk?'':` · ${ord(hof(l))} სახლი`;
   const par=[
    `<b>ტემპერამენტი.</b> ჭარბობს <b>${ELN[eO[0]].toLowerCase()}</b> (${(el[eO[0]]/et*100).toFixed(0)}%) — ${ELT[eO[0]]}; მეორე ადგილზეა ${ELN[eO[1]].toLowerCase()} (${(el[eO[1]]/et*100).toFixed(0)}%).${el[eO[3]]/et<.15?' '+ELL[eO[3]]+'.':''} ჯვრებიდან ძლიერია <b>${MDN[mO[0]].toLowerCase()}</b> (${(mo[mO[0]]/mt*100).toFixed(0)}%): ${MDT[mO[0]]}.`,
-   `<b>რუკის ფორმა — ${SH[s.t][0].toLowerCase()}.</b> ${SH[s.t][1]}${s.lead!=null&&['bowl','locomotive'].includes(s.t)?` წამყვანი პლანეტა — ${G(pk(s.lead))} ${pk(s.lead).n}.`:''}${s.t==='bucket'?` სახელური — ${G(pk(s.handle))} ${pk(s.handle).n}${unk?'':', '+ord(hof(s.handle))+' სახლი: ენერგია მიემართება '+HL[hof(s.handle)]}.`:''}`+(unk?'':` ${above>=7?'პლანეტების უმეტესობა ჰორიზონტს ზემოთაა — ორიენტაცია გარე სამყაროზე, საზოგადოებაზე, ხილვად მიღწევებზე.':above<=3?'პლანეტების უმეტესობა ჰორიზონტს ქვემოთაა — ორიენტაცია შინაგან სამყაროზე, პირად ცხოვრებაზე, ფესვებზე.':'ზედა და ქვედა ნახევარი დაბალანსებულია.'} ${east>=7?'აღმოსავლეთი ნახევარი ჭარბობს — საკუთარი ინიციატივა, ბედს თავად ქმნი.':east<=3?'დასავლეთი ნახევარი ჭარბობს — ბევრი რამ სხვებთან ურთიერთობით, პარტნიორებით მოდის.':'აღმოსავლეთი და დასავლეთი დაბალანსებულია.'}`),
+   `<b>რუკის ფორმა — ${SH[s.t][0].toLowerCase()}.</b> ${SH[s.t][1]}${s.lead!=null&&['bowl','locomotive'].includes(s.t)?` წამყვანი პლანეტა — ${G(pk(s.lead))} ${pk(s.lead).n}.`:''}${s.t==='bucket'||s.t==='fan'?` სახელური — ${G(pk(s.handle))} ${pk(s.handle).n}${unk?'':', '+ord(hof(s.handle))+' სახლი: ენერგია მიემართება '+HL[hof(s.handle)]}.`:''}`+(unk?'':` ${above>=7?'პლანეტების უმეტესობა ჰორიზონტს ზემოთაა — ორიენტაცია გარე სამყაროზე, საზოგადოებაზე, ხილვად მიღწევებზე.':above<=3?'პლანეტების უმეტესობა ჰორიზონტს ქვემოთაა — ორიენტაცია შინაგან სამყაროზე, პირად ცხოვრებაზე, ფესვებზე.':'ზედა და ქვედა ნახევარი დაბალანსებულია.'} ${east>=7?'აღმოსავლეთი ნახევარი ჭარბობს — საკუთარი ინიციატივა, ბედს თავად ქმნი.':east<=3?'დასავლეთი ნახევარი ჭარბობს — ბევრი რამ სხვებთან ურთიერთობით, პარტნიორებით მოდის.':'აღმოსავლეთი და დასავლეთი დაბალანსებულია.'}`),
    `<b>მზე</b> ${G(su)} ${SGN(ss)} ${inS(su.lon)}${hs(su.lon)}. შენი არსი — ${SK[ss]}.${unk?'':` ყველაზე მეტად ანათებ ${HL[hof(su.lon)]}.`}`,
    `<b>მთვარე</b> ${G(moP)} ${SGN(ms)} ${inS(moP.lon)}${hs(moP.lon)}. შინაგანად, ემოციურად — ${SK[ms]}; გჭირდება ${MN[ms]}.${unk?' <small>(დრო უცნობია — მთვარე შეიძლება მეზობელ ნიშანშიც იყოს.)</small>':` სიმშვიდეს პოულობ ${HL[hof(moP.lon)]}.`}${ss===ms?' მზე და მთვარე ერთ ნიშანშია — ნება და გრძნობა ერთ ხმაზე ჟღერს.':(ss%4)===(ms%4)?' მზე და მთვარე ერთ სტიქიაშია — შინაგანი თანხმობა.':''}`,
    unk?'<b>ASC</b> უცნობია — დაბადების დროის გარეშე ასცენდენტი და რუკის მმართველი არ ითვლება.':`<b>ASC</b> ${SGN(as)} ${inS(asc)}. პირველი შთაბეჭდილება და ცხოვრების სტილი — ${SK[as]}. <b>რუკის მმართველი</b> — ${rl.map(p=>`${G(p)} ${p.n} (${SGN(sidx(p.lon))}, ${ord(hof(p.lon))} სახლი)`).join(' და ')}: ცხოვრების „ძრავა“ მუშაობს ${HL[hof(rl[0].lon)]}.`,
@@ -414,7 +416,7 @@ function drawP(){if(!Y.g||!Y.D)return;const D=Y.D,st=Y.st,{c,w,h}=Y.g;c.clearRec
   if(st===6||st===7)D.top.forEach(x=>line(c,Q(rh,x.a.lon),Q(rh,x.b.lon),x.A[4],x.o<2?2.2:1.4));
   if(st===0){let a0=-90;D.eO.forEach(()=>{});[0,1,2,3].forEach(e=>{const sw=D.el[e]/D.et*360;c.strokeStyle=EC[e];c.lineWidth=R*.07;c.beginPath();c.arc(cx,cy,R*.2,a0*Math.PI/180,(a0+sw)*Math.PI/180);c.stroke();
     const m=(a0+sw/2)*Math.PI/180;if(sw>25)txt(c,Math.round(D.el[e]/D.et*100)+'%',cx+Math.cos(m)*R*.33,cy+Math.sin(m)*R*.33,Math.max(10,R*.045),EC[e],GEO);a0+=sw;});c.lineWidth=1;}
-  const HLk=new Set(st===2?['su']:st===3?['mo']:st===4&&!D.unk?D.rl.map(p=>p.k):st===5?[D.dom]:st===6?D.top.flatMap(x=>[x.a.k,x.b.k]):st===1&&D.s.lead!=null&&['bowl','locomotive'].includes(D.s.t)?[D.P.find(p=>Math.abs(norm(p.lon-D.s.lead))<1e-6).k]:st===1&&D.s.t==='bucket'?[D.P.find(p=>Math.abs(norm(p.lon-D.s.handle))<1e-6).k]:st===7?['su','mo',D.dom]:[]);
+  const HLk=new Set(st===2?['su']:st===3?['mo']:st===4&&!D.unk?D.rl.map(p=>p.k):st===5?[D.dom]:st===6?D.top.flatMap(x=>[x.a.k,x.b.k]):st===1&&D.s.lead!=null&&['bowl','locomotive'].includes(D.s.t)?[D.P.find(p=>Math.abs(norm(p.lon-D.s.lead))<1e-6).k]:st===1&&(D.s.t==='bucket'||D.s.t==='fan')?[D.P.find(p=>Math.abs(norm(p.lon-D.s.handle))<1e-6).k]:st===7?['su','mo',D.dom]:[]);
   const pl=D.P.map(p=>({...p,d:p.lon})).sort((a,b)=>a.lon-b.lon);for(let i=1;i<pl.length;i++){if(norm(pl[i].d-pl[i-1].d)<7)pl[i].d=pl[i-1].d+7;}
   const dim=st===2||st===3||st===4||st===5||st===6;
   pl.forEach(p=>{const q=Q((rh*.55+rh*.95)/2+rh*.08,p.d),on=HLk.has(p.k);c.globalAlpha=dim&&!on?.35:1;line(c,Q(rh,p.lon),Q(rh-5,p.lon),p.c,1.5);dot(c,q[0],q[1],Math.max(8,R*.048),p.g,st===0?EC[sidx(p.lon)%4]:p.c,on);c.globalAlpha=1;});
