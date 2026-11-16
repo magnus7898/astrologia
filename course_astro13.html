@@ -339,7 +339,7 @@ function wText(){const H=HS[W.k],k=NAT[W.k],e=$('wRo');e.classList.remove('fi');
   e.innerHTML=`<b>${ROM[W.k]} სახლი — ${H[0]}</b><br>${H[1]}.<br><i style="color:#cfd5e2">${H[2]}</i><br><small>ბუნებრივი ნიშანი: ${sgS(k)} · ძველი სახელი: ${H[3]}</small><br><small style="color:#aab2c4">ცხოვრების ისტორიაში: ${STORY[W.k]}</small>`;}
 function gText(){$('gRo').innerHTML=W.g==='n'?'<b>როგორ იკითხება.</b> სახლი ცხოვრების სფეროა; ბუნებრივი ნიშანი (ვერძი I-ში, კურო II-ში და ა.შ.) მის ხასიათს აჩვენებს. ძველი ბერძნული სახელები და პლანეტების „სიხარულები“ — სახლები, სადაც პლანეტა თავს განსაკუთრებით კარგად გრძნობს — ელინისტური ტრადიციიდანაა. დააჭირე სახლს წრეზე.':GRP[W.g].map(x=>`<span style="color:${x[3]}">●</span> <b>${x[0]}</b> <small>(${x[1]})</small> — ${x[2]}`).join('<br>');}
 /* ── 2 · rulers (your chart) ── */
-const RUL=[['pl','ma'],['ve'],['me'],['mo'],['su'],['me'],['ve'],['ma','pl'],['ju','sa'],['sa','ur'],['ur','sa'],['ne','ju']];
+const RUL=[['pl','ma'],['ve'],['me'],['mo'],['su'],['me'],['ve'],['ma','pl'],['ju','ne'],['sa','ur'],['ur','sa'],['ne','ju']];
 const C={h:10,g:null,CH:null};
 function chartWheel(c,w,h,cu,pls,hl,arrows){c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math.min(w,h)/2-8,ri=R*.84,rh=ri*.86,asc=cu[1];
   const Q=(r,l)=>{const a=(l-asc)*D;return [cx-r*Math.cos(a),cy+r*Math.sin(a)];};

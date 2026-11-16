@@ -339,7 +339,7 @@ function initPanel(cb){$('city').innerHTML=CITIES.map((c,i)=>`<option value="${i
   ['dd','mm','yy','th','tm','city','lat','lon','off','auto','unk'].forEach(id=>$(id).addEventListener(id==='city'||id==='auto'||id==='unk'?'change':'input',cb));fillBirth();}
 
 const PG={su:['☉','მზე','#FFD36A'],me:['☿','მერკური','#b8c4d8'],ve:['♀','ვენერა','#8fc46a'],ma:['♂','მარსი','#ef6b5a']};
-const RUL=[['pl','ma'],['ve'],['me'],['mo'],['su'],['me'],['ve'],['ma','pl'],['ju','sa'],['sa','ur'],['ur','sa'],['ne','ju']];
+const RUL=[['pl','ma'],['ve'],['me'],['mo'],['su'],['me'],['ve'],['ma','pl'],['ju','ne'],['sa','ur'],['ur','sa'],['ne','ju']];
 const EXA={me:[5,15],ve:[11,27],ma:[9,28]};
 function dig(p,k){const o=(k+6)%12,f=[];let pts=0;const ri=RUL[k].indexOf(p),di=RUL[o].indexOf(p);
   if(ri>=0){f.push(ri===0?'dom':'dom2');pts+=ri===0?5:3;}if(di>=0){f.push(di===0?'det':'det2');pts-=di===0?5:3;}

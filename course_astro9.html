@@ -333,7 +333,7 @@ function initPanel(cb){$('city').innerHTML=CITIES.map((c,i)=>`<option value="${i
 
 const PG={ur:['♅','ურანი','#5ad0e8'],ne:['♆','ნეპტუნი','#7aa4f2'],pl:['♇','პლუტონი','#c050a0']};
 const PN={su:['☉','მზე','#FFD36A'],mo:['☽','მთვარე','#dfe6f2'],me:['☿','მერკური','#b8c4d8'],ve:['♀','ვენერა','#8fc46a'],ma:['♂','მარსი','#ef6b5a'],asc:['ASC','ასცენდენტი','#F3DDA4'],mc:['MC','MC','#F3DDA4']};
-const RUL=[['pl','ma'],['ve'],['me'],['mo'],['su'],['me'],['ve'],['ma','pl'],['ju','sa'],['sa','ur'],['ur','sa'],['ne','ju']];
+const RUL=[['pl','ma'],['ve'],['me'],['mo'],['su'],['me'],['ve'],['ma','pl'],['ju','ne'],['sa','ur'],['ur','sa'],['ne','ju']];
 function dig(p,k){const o=(k+6)%12,f=[];const ri=RUL[k].indexOf(p),di=RUL[o].indexOf(p);if(ri>=0)f.push(ri===0?'dom':'dom2');if(di>=0)f.push(di===0?'det':'det2');return {f};}
 const LBL={dom:'სახლი',dom2:'II მმართველი',det:'განდევნა',det2:'II განდევნა'},SH={dom:'სახლი',dom2:'II',det:'განდ.',det2:'II განდ.'};
 const LC={dom:'#FFE7A0',dom2:'#F3DDA4',det:'#ffd2cb',det2:'#f3c1b9'};
