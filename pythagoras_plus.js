@@ -154,17 +154,19 @@ const curMode=()=>(typeof activeMode!=='undefined'&&activeMode)||'classic';
 /* ═══════════ NAV & PANELS ═══════════ */
 const page=document.querySelector('.page'),header=document.querySelector('.page-header');
 const nav=document.createElement('div');nav.id='pp-nav';
-nav.innerHTML=[['main','კვადრატი'],['stats','სტატისტიკა'],['compat','შეთავსება']].map(([k,n])=>`<div class="mode-pill${k==='main'?' active':''}" data-v="${k}">${n}</div>`).join('');
+nav.innerHTML=[['main','კვადრატი'],['search','ძებნა'],['stats','სტატისტიკა'],['compat','შეთავსება']].map(([k,n])=>`<div class="mode-pill${k==='main'?' active':''}" data-v="${k}">${n}</div>`).join('');
 header.after(nav);
 const pStats=document.createElement('div');pStats.className='pp-panel';pStats.id='pp-stats';
 const pComp=document.createElement('div');pComp.className='pp-panel';pComp.id='pp-compat';
-page.appendChild(pStats);page.appendChild(pComp);
+const pSrch=document.createElement('div');pSrch.className='pp-panel';pSrch.id='pp-search';
+page.appendChild(pSrch);page.appendChild(pStats);page.appendChild(pComp);
 let view='main';
 function setView(v){
   view=v;
   nav.querySelectorAll('.mode-pill').forEach(e=>e.classList.toggle('active',e.dataset.v===v));
   document.body.classList.toggle('pp-alt',v!=='main');
-  pStats.classList.toggle('on',v==='stats');pComp.classList.toggle('on',v==='compat');
+  pStats.classList.toggle('on',v==='stats');pComp.classList.toggle('on',v==='compat');pSrch.classList.toggle('on',v==='search');
+  if(v==='search')initSearch();
   if(v==='stats')initStats();
   if(v==='compat')initCompat();
 }
@@ -515,5 +517,73 @@ async function runCompat(){
       ყველაზე მძიმე წონა აქვს ტემპერამენტს (3-5-7), ხასიათს (1) და ენერგიას (2) — ესენია კლასიკური კვადრატის შეთავსების ძირითადი ნიშნები. შემდეგ — ოჯახის ხაზი, ჩვევები, მიზანდასახულობა, ურთიერთშევსება და ბედისწერის რიცხვები (ჰარმონიული ჯგუფები 1-5-7 · 2-4-8 · 3-6-9). ეს ორიენტირია და არა განაჩენი.</div>`;
 }
 
-window._pyPlus={serverStats,sqKey,enrich,setView,parseDate};
+/* ═══════════ SEARCH: which dates give a chosen square ═══════════
+   POST /api/pythagoras/search (numcalc.py): every date of the span is checked on the server */
+const SX={init:false,last:null,offset:0,rows:[]};
+const WLAB={classic:['I','II','III','IV'],corrected:['I','±','III','IV'],crisis:['I','II','III','IV']};
+const cellOpts=n=>[['','ნებისმიერი'],['=0','— არ არის'],['>=1','არის (≥ 1)'],['=1',`${n}`],['=2',`${n}${n}`],['=3',`${n}${n}${n}`],['=4',`${String(n).repeat(4)}`],['>=5',`${String(n).repeat(5)}+`],['>=2',`≥ ${n}${n}`],['>=3',`≥ ${n}${n}${n}`],['<=1',`≤ ${n}`]];
+const PRESETS=[['III = 0 და IV = 0',{w:{3:'0',4:'0'}}],['1 არ არის',{c:{1:'=0'}}],['მხოლოდ ერთი 1',{c:{1:'=1'}}],['111 (სამი ერთიანი)',{c:{1:'=3'}}],['8 და 9 არ არის',{c:{8:'=0',9:'=0'}}],['ყველა უჯრა სავსე',{e:'0'}],['5+ ცარიელი უჯრა',{e:'5+'}]];
+function initSearch(){
+  if(SX.init)return;SX.init=true;const Y=new Date().getFullYear();
+  pSrch.innerHTML=`
+  <div class="pp-card">
+    <div class="pp-h" style="text-align:center">თარიღების ძებნა კვადრატის მიხედვით</div>
+    <div class="pp-note" style="text-align:center;margin-bottom:12px">აირჩიე, როგორი უნდა იყოს უჯრები და სამუშაო რიცხვები — სერვერი შეამოწმებს არჩეული წლების ყველა თარიღს და აჩვენებს, როდის გვხვდება ასეთი კვადრატი.</div>
+    <div class="pp-row" style="margin-bottom:12px">
+      <span class="pp-note">წლები</span><input class="pp-in yr" id="sx-y0" value="${Y}"><span class="pp-note">—</span><input class="pp-in yr" id="sx-y1" value="${Y+30}">
+      <select class="pp-sel" id="sx-pre"><option value="">შაბლონი…</option><option value="${Y}-${Y+30}">${Y} – ${Y+30}</option><option value="1900-2099">1900 – 2099</option><option value="2000-2099">2000 – 2099</option><option value="1-9999">1 – 9999</option></select>
+      ${modeSel('sx-mode',curMode())}
+    </div>
+    <div class="pp-h" style="text-align:center;margin-top:6px">უჯრები</div>
+    <div id="sx-grid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:520px;margin:0 auto 14px">${GRID_ORDER.map(n=>`<label style="display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted);text-align:center"><span style="color:${COLORS[n]}">${n} · ${LABELS[n]}</span><select class="pp-sel" data-c="${n}" style="width:100%">${cellOpts(n).map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select></label>`).join('')}</div>
+    <div class="pp-h" style="text-align:center">სამუშაო რიცხვები</div>
+    <div class="pp-row" id="sx-w" style="margin-bottom:10px">${[1,2,3,4].map(i=>`<label class="pp-note" style="display:flex;align-items:center;gap:6px"><b id="sx-wl${i}">${WLAB.classic[i-1]}</b><input class="pp-in" style="width:62px" data-w="${i}" placeholder="—" inputmode="numeric"></label>`).join('')}</div>
+    <div class="pp-row" style="margin-bottom:12px"><label class="pp-note" style="display:flex;align-items:center;gap:6px">ცარიელი უჯრები <select class="pp-sel" id="sx-e"><option value="">ნებისმიერი</option>${[0,1,2,3,4,5,6,7].map(k=>`<option value="${k}">${k}</option>`).join('')}<option value="5+">5+</option></select></label></div>
+    <div class="pp-row" style="margin-bottom:12px">${PRESETS.map((p,i)=>`<span class="pp-btn sm" data-p="${i}">${p[0]}</span>`).join('')}</div>
+    <div class="pp-row"><span class="pp-btn sm" id="sx-clr">გასუფთავება</span><span class="pp-btn" id="sx-run">ძებნა</span></div>
+    <div class="pp-note" style="text-align:center;margin-top:10px">სამუშაო რიცხვები: ცარიელი — ნებისმიერი; შეიძლება ჩაწერო ზუსტი მნიშვნელობა (0) ან „≥10“, „≤3“. მაგალითი: 05.01.2002 → 10 · 1 · 0 · 0.</div>
+  </div>
+  <div id="sx-out"></div>`;
+  const pre=$('sx-pre');pre.onchange=()=>{if(!pre.value)return;const[a,b]=pre.value.split('-');$('sx-y0').value=a;$('sx-y1').value=b;pre.value='';};
+  const wl=()=>{const m=$('sx-mode').value;[1,2,3,4].forEach(i=>$('sx-wl'+i).textContent=WLAB[m][i-1]);const w2=pSrch.querySelector('[data-w="2"]');w2.disabled=m==='corrected';if(m==='corrected')w2.value='';};$('sx-mode').onchange=wl;wl();
+  const clr=()=>{pSrch.querySelectorAll('[data-c]').forEach(e=>e.value='');pSrch.querySelectorAll('[data-w]').forEach(e=>e.value='');$('sx-e').value='';};
+  $('sx-clr').onclick=clr;
+  pSrch.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{clr();const P=PRESETS[+b.dataset.p][1];
+    Object.entries(P.c||{}).forEach(([d,v])=>pSrch.querySelector(`[data-c="${d}"]`).value=v);Object.entries(P.w||{}).forEach(([i,v])=>pSrch.querySelector(`[data-w="${i}"]`).value=v);if(P.e!=null)$('sx-e').value=P.e;runSearch(0);});
+  $('sx-run').onclick=()=>runSearch(0);
+}
+function sxConds(){
+  const C=[],op=v=>v.startsWith('>=')?['≥',+v.slice(2)]:v.startsWith('<=')?['≤',+v.slice(2)]:['=',+v.slice(1)];
+  pSrch.querySelectorAll('[data-c]').forEach(e=>{if(e.value){const[o,k]=op(e.value);C.push({t:'d',d:+e.dataset.c,op:o,k});}});
+  pSrch.querySelectorAll('[data-w]').forEach(e=>{const v=e.value.replace(/\s/g,'');if(!v||e.disabled)return;const m=v.match(/^(>=|≥|<=|≤|=)?(-?\d+)$/);if(!m)return;const o=m[1]==='>='||m[1]==='≥'?'≥':m[1]==='<='||m[1]==='≤'?'≤':'=';C.push({t:'w',d:+e.dataset.w,op:o,k:+m[2]});});
+  const e=$('sx-e').value;if(e)C.push(e==='5+'?{t:'e',op:'≥',k:5}:{t:'e',op:'=',k:+e});
+  return C;}
+const sxName=c=>c.t==='d'?`${c.op==='='&&c.k===0?`${c.d} არ არის`:c.op==='='?String(c.d).repeat(c.k):`${c.d}: ${c.op} ${c.k}`}`:c.t==='w'?`${WLAB[SX.last.mode][c.d-1]} ${c.op} ${c.k}`:`ცარიელი ${c.op} ${c.k}`;
+async function runSearch(offset){
+  const y0=+$('sx-y0').value||1,y1=+$('sx-y1').value||9999,mode=$('sx-mode').value,conds=offset?SX.last.conds:sxConds(),out=$('sx-out');
+  if(!offset&&!conds.length){out.innerHTML='<div class="pp-card pp-note" style="text-align:center">აირჩიე ერთი პირობა მაინც.</div>';return;}
+  const t=new Date(),q=offset?SX.last.q:{y0,y1,mode,conds,from:[t.getFullYear(),t.getMonth()+1,t.getDate()]};
+  if(!offset)out.innerHTML='<div class="pp-card pp-note" style="text-align:center">ვეძებ…</div>';
+  let d;try{d=await post('/api/pythagoras/search',{...q,offset,limit:200});}catch(e){out.innerHTML=`<div class="pp-card pp-note" style="text-align:center">${esc(e.message)}</div>`;return;}
+  if(!offset){SX.last={q,conds,mode:d.mode,d};SX.rows=[];}
+  SX.rows=SX.rows.concat(d.rows);SX.offset=offset+d.rows.length;drawSearch(d);
+}
+function drawSearch(d){
+  const L=SX.last,D0=L.d,out=$('sx-out'),p2=n=>String(n).padStart(2,'0'),ds=r=>`${p2(r[2])}.${p2(r[1])}.${String(r[0]).padStart(4,'0')}`;
+  const wl=r=>r[3].map((w,i)=>L.mode==='corrected'&&i===1?(w>0?'+19':'−2'):w).join(' · ');
+  if(!D0.NC){out.innerHTML=`<div class="pp-card pp-note" style="text-align:center">${D0.y0}–${D0.y1} წლებში ასეთი თარიღი არ არის.<br>პირობა: <b>${L.conds.map(sxName).join(' · ')}</b></div>`;return;}
+  const PY=D0.perYear,mx=Math.max(...PY),bars=PY.length<=400?`<div style="display:flex;align-items:flex-end;gap:1px;height:60px;margin:10px 0">${PY.map((v,i)=>`<i title="${D0.y0+i}: ${v}" style="flex:1;min-width:1px;background:rgba(201,168,76,${v?.35+.6*v/mx:.06});height:${v?Math.max(6,v/mx*100):3}%"></i>`).join('')}</div><div class="pp-row" style="justify-content:space-between;font-size:10px;color:var(--muted)"><span>${D0.y0}</span><span>${D0.y1}</span></div>`:'';
+  let nx='';if(D0.next!=null){const r=SX.rows[D0.next];nx=r?`<div class="pp-note" style="text-align:center;margin-top:8px">უახლოესი დღეიდან: <b style="color:var(--gold);cursor:pointer" data-go="${D0.next}">${ds(r)}</b></div>`:`<div class="pp-note" style="text-align:center;margin-top:8px">უახლოესი დღეიდან — სიის #${D0.next+1} <span class="pp-btn sm" id="sx-jump">გადასვლა</span></div>`;}
+  out.innerHTML=`<div class="pp-card">
+    <div class="pp-h" style="text-align:center">ნაპოვნია ${D0.NC.toLocaleString('en')} თარიღი · ${(D0.NC/D0.N*100).toFixed(D0.NC/D0.N<.001?4:2)}%</div>
+    <div class="pp-note" style="text-align:center">პირობა: <b>${L.conds.map(sxName).join(' · ')}</b> · ${MODE_NAMES[L.mode]} · ${D0.y0}–${D0.y1}</div>${nx}${bars}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px">${SX.rows.map((r,i)=>`<div data-go="${i}" style="cursor:pointer;border:1px solid ${i===D0.next?'var(--gold)':'var(--border)'};border-radius:10px;padding:8px;text-align:center"><div style="color:var(--gold);font-size:14px">${ds(r)}</div><div class="pp-note">${wl(r)}</div>${mini([0,...r[4]])}</div>`).join('')}</div>
+    ${SX.offset<D0.NC?`<div class="pp-row" style="margin-top:12px"><span class="pp-btn sm" id="sx-more">მეტი (${SX.offset} / ${D0.NC})</span></div>`:''}
+    <div class="pp-note" style="text-align:center;margin-top:8px">დააჭირე თარიღს — კვადრატი გაიხსნება.</div></div>`;
+  out.querySelectorAll('[data-go]').forEach(e=>e.onclick=()=>{const r=SX.rows[+e.dataset.go];if(!r)return;$('birth').value=ds(r).replace(/\./g,'/');setView('main');if(typeof setMode==='function'&&L.mode!==curMode())activeMode=L.mode;calculate();});
+  const mo=$('sx-more');if(mo)mo.onclick=()=>runSearch(SX.offset);
+  const j=$('sx-jump');if(j)j.onclick=async()=>{while(SX.rows.length<=D0.next&&SX.offset<D0.NC){const d=await post('/api/pythagoras/search',{...L.q,offset:SX.offset,limit:500});SX.rows=SX.rows.concat(d.rows);SX.offset+=d.rows.length;}drawSearch(D0);const el=out.querySelector(`[data-go="${D0.next}"]`);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});};
+}
+
+window._pyPlus={serverStats,sqKey,enrich,setView,parseDate,runSearch};
 })();
