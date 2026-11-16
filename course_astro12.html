@@ -131,6 +131,8 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 .seg button.on{background:#C9A24C;color:#0C1222;font-weight:600}
 .stage canvas.gr{max-width:none;margin-top:10px}
 .sl{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:8px;font-size:13px;color:#F3DDA4}
+.sl .rs{background:none;border:1px solid rgba(201,162,76,.45);color:#F3DDA4;border-radius:999px;padding:3px 10px;font-size:11.5px;cursor:pointer;font-family:inherit}
+.sl span{min-width:64px;text-align:left}
 .sl input{width:min(260px,60vw);accent-color:#C9A24C}
 .tw{overflow-x:auto;margin-top:12px}
 table.rt{border-collapse:collapse;width:100%;min-width:680px;font-size:13px}
@@ -163,9 +165,11 @@ table.rt{border-collapse:collapse;width:100%;min-width:680px;font-size:13px}
    </div><div class="stage">
     <canvas id="cvD" aria-label="ზოდიაქოს დღიური ბრუნვა ჰორიზონტის მიმართ"></canvas>
     <div class="ctl"><button type="button" id="dPl" aria-label="დაკვრა / პაუზა">❚❚</button><span id="dSp"><button type="button" data-r="0.5">30 წთ/წმ</button><button type="button" data-r="1.5" class="on">1,5 სთ/წმ</button><button type="button" data-r="4">4 სთ/წმ</button></span></div>
+    <div class="seg" id="dSys"><button type="button" data-s="P" class="on">პლაციდუსი</button><button type="button" data-s="K">კოხი</button><button type="button" data-s="R">რეგიომონტანუსი</button><button type="button" data-s="C">კამპანუსი</button><button type="button" data-s="O">პორფირიოსი</button><button type="button" data-s="E">თანაბარი</button><button type="button" data-s="W">მთლიანი ნიშნები</button></div>
     <div class="ro" id="dRo"></div>
    </div></div>
-   <div class="sl"><label for="dLat">განედი</label><input type="range" id="dLat" min="0" max="65" step="0.5" value="41.7"><span id="dLatV"></span></div>
+   <div class="sl"><label for="dLat">განედი</label><input type="range" id="dLat" min="-66" max="72" step="0.5" value="41.7"><span id="dLatV"></span></div>
+   <div class="sl"><label for="dDay">სეზონი</label><input type="range" id="dDay" min="-182" max="182" step="1" value="0"><span id="dDayV"></span></div>
    <div class="stage"><canvas id="cvR" class="gr" aria-label="თითო ნიშნის ამოსვლის დრო არჩეულ განედზე"></canvas></div>
   </div>
 
@@ -184,6 +188,8 @@ table.rt{border-collapse:collapse;width:100%;min-width:680px;font-size:13px}
     <p>კუთხეები ასტრონომიულად ერთმნიშვნელოვანია, მაგრამ მათ შორის სივრცის სამად დაყოფა სხვადასხვაგვარად შეიძლება — დროით, ეკვატორით, ჰორიზონტით ან უბრალოდ ეკლიპტიკით. ამიტომ არსებობს სახლების ბევრი სისტემა. ქვემოთ <b>შენი რუკაა</b> (მონაცემები მე-5 ნაწილიდან) — გადართე სისტემები და ნახე, როგორ მოძრაობს კუსპიდები და ზოგი პლანეტა როგორ ინაცვლებს სახლს.</p>
     <div class="duo"><div class="stage">
       <canvas id="cvH" aria-label="შენი რუკა არჩეული სახლების სისტემით"></canvas>
+      <div class="sl"><label for="hLat">განედი</label><input type="range" id="hLat" min="-66" max="72" step="0.5" value="41.7"><span id="hLatV"></span><button type="button" class="rs" id="hLat0">შენი</button></div>
+      <div class="sl"><label for="hDay">სეზონი</label><input type="range" id="hDay" min="-182" max="182" step="1" value="0"><span id="hDayV"></span><button type="button" class="rs" id="hDay0">შენი</button></div>
       <div class="seg" id="hT"><button type="button" data-s="P" class="on">პლაციდუსი</button><button type="button" data-s="K">კოხი</button><button type="button" data-s="R">რეგიომონტანუსი</button><button type="button" data-s="C">კამპანუსი</button><button type="button" data-s="O">პორფირიოსი</button><button type="button" data-s="E">თანაბარი</button><button type="button" data-s="W">მთლიანი ნიშნები</button></div>
      </div><div>
       <div class="ztx fi" id="hRo"></div>
@@ -198,8 +204,10 @@ table.rt{border-collapse:collapse;width:100%;min-width:680px;font-size:13px}
     <p>როცა სახლი ნიშანზე დიდია, მთელი ნიშანი შეიძლება მის შიგნით მოექცეს, ისე რომ არცერთი კუსპიდი მასში არ ხვდება — ეს <b>ჩაკეტილი (ინტერცეპტირებული) ნიშანია</b>, საპირისპირო ნიშანთან ერთად. ამავდროულად ორი ნიშანი ორ კუსპიდზე მეორდება. ჩაკეტილი ნიშნის პლანეტები ხშირად „ჩაკეტილ“ ნიჭად აღიქმება — ძალით, რომელიც გვიან იხსნება. გადაათრიე განედის სლაიდერი და ნახე, როდის ჩნდება.</p>
     <div class="ptx" id="lRo"></div>
    </div><div class="stage">
-    <canvas id="cvL" aria-label="პლაციდუსის სახლები სხვადასხვა განედზე"></canvas>
-    <div class="sl"><label for="lLat">განედი</label><input type="range" id="lLat" min="0" max="70" step="0.5" value="41.7"><span id="lLatV"></span></div>
+    <canvas id="cvL" aria-label="სახლები სხვადასხვა განედზე და სეზონში"></canvas>
+    <div class="sl"><label for="lLat">განედი</label><input type="range" id="lLat" min="-70" max="70" step="0.5" value="41.7"><span id="lLatV"></span></div>
+    <div class="sl"><label for="lDay">სეზონი</label><input type="range" id="lDay" min="0" max="364" step="1" value="0"><span id="lDayV"></span></div>
+    <div class="seg" id="lSys"><button type="button" data-s="P" class="on">პლაციდუსი</button><button type="button" data-s="K">კოხი</button><button type="button" data-s="R">რეგიომონტანუსი</button><button type="button" data-s="C">კამპანუსი</button><button type="button" data-s="O">პორფირიოსი</button><button type="button" data-s="E">თანაბარი</button><button type="button" data-s="W">მთლიანი ნიშნები</button></div>
    </div></div>
   </div>
 
@@ -368,27 +376,33 @@ function wheel(c,w,h,cu,pls,opt){c.clearRect(0,0,w,h);const cx=w/2,cy=h/2,R=Math
   if(opt&&opt.sun!=null){const q=Q(rh*.78,opt.sun),g=c.createRadialGradient(q[0],q[1],0,q[0],q[1],R*.12);g.addColorStop(0,'rgba(255,220,120,.6)');g.addColorStop(1,'rgba(255,200,90,0)');c.fillStyle=g;c.beginPath();c.arc(q[0],q[1],R*.12,0,7);c.fill();c.fillStyle=SUC;c.beginPath();c.arc(q[0],q[1],Math.max(6,R*.045),0,7);c.fill();}
   line(c,[cx-ri,cy],[cx+ri,cy],'rgba(255,231,160,.25)',1);}
 /* ── 1 · daily rotation ── */
-const Dd={J:null,rate:1.5,play:!RM,lat:41.7,g:null};
+const Dd={J:null,rate:1.5,play:!RM,lat:41.7,g:null,s:'P',day:0};
+const dSn=J=>{const d=new Date((J-2440587.5)*864e5+4*36e5);return p2(d.getUTCDate())+'.'+p2(d.getUTCMonth()+1);},seasonOf=l=>l<90?'გაზაფხული':l<180?'ზაფხული':l<270?'შემოდგომა':'ზამთარი';
 (()=>{const n=new Date(),u=Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate(),2,0);Dd.J=u/864e5+2440587.5;})();
-function drawD(){if(!Dd.g)return;const {c,w,h}=Dd.g,J=Dd.J,lon=44.8271,e=obl(J),ramc=norm(gmst(J)+lon),asc=ascOf(ramc,Dd.lat,e),mc=mcOf(ramc,e),cu=cusps('P',ramc,Dd.lat,e,asc,mc),su=lonOf('su',J),hs=houseOf(su,cu),day=hs>=7;
+function drawD(){if(!Dd.g)return;const {c,w,h}=Dd.g,J=Dd.J+Dd.day,lon=44.8271,e=obl(J),ramc=norm(gmst(J)+lon),asc=ascOf(ramc,Dd.lat,e),mc=mcOf(ramc,e),cu=cusps(Dd.s,ramc,Dd.lat,e,asc,mc),su=lonOf('su',J),hs=houseOf(su,cu),day=hs>=7;
   wheel(c,w,h,cu,null,{sun:su,sky:day?'rgba(90,150,230,.10)':'rgba(10,14,30,.0)'});
-  const lt=new Date((J-2440587.5)*864e5+4*36e5);txt(c,'თბილისი · '+p2(lt.getUTCHours())+':'+p2(lt.getUTCMinutes()),8,12,Math.max(11,Math.min(w,h)*.026),'#F3DDA4',GEO,'left');
+  const lt=new Date((J-2440587.5)*864e5+4*36e5);txt(c,dSn(J)+' · '+p2(lt.getUTCHours())+':'+p2(lt.getUTCMinutes())+' · '+SYS[Dd.s][0],8,12,Math.max(11,Math.min(w,h)*.026),'#F3DDA4',GEO,'left');
   txt(c,'აღმოსავლეთი',6,h/2+16,Math.max(9,Math.min(w,h)*.022),'rgba(237,230,216,.5)',GEO,'left');txt(c,'დასავლეთი',w-6,h/2+16,Math.max(9,Math.min(w,h)*.022),'rgba(237,230,216,.5)',GEO,'right');
-  $('dRo').innerHTML=`ASC ${fl(asc)} · MC ${fl(mc)}<br><span style="color:${SUC}">☉︎</span> მზე ${ord(hs)} სახლში — ${day?'ჰორიზონტს ზემოთ (დღე)':'ჰორიზონტს ქვემოთ (ღამე)'}`;}
+  {const sz=[];for(let i=1;i<=12;i++)sz.push(norm(cu[i%12+1]-cu[i]));Dd.sz=[Math.min(...sz),Math.max(...sz)];}
+  $('dRo').innerHTML=`${seasonOf(su)} · განედი ${Math.abs(Dd.lat).toFixed(1).replace('.',',')}° ${Dd.lat>=0?'ჩრდ.':'სამხრ.'} · სახლები ${Math.round(Dd.sz[0])}°–${Math.round(Dd.sz[1])}°${Math.abs(Dd.lat)>=66&&(Dd.s==='P'||Dd.s==='K')?' <span style="color:#ffcf9a">(პოლარული — პორფირიოსი)</span>':''}<br>ASC ${fl(asc)} · MC ${fl(mc)}<br><span style="color:${SUC}">☉︎</span> მზე ${ord(hs)} სახლში — ${day?'ჰორიზონტს ზემოთ (დღე)':'ჰორიზონტს ქვემოთ (ღამე)'}`;}
 const RIS={g:null};
 function oa(l,lat,e){const ra=Math.atan2(Math.sin(l*D)*Math.cos(e*D),Math.cos(l*D))/D,dec=Math.asin(Math.sin(e*D)*Math.sin(l*D)),x=Math.max(-1,Math.min(1,Math.tan(lat*D)*Math.tan(dec)));return ra-Math.asin(x)/D;}
 function riseTimes(lat){const e=23.44;return SG.map((s,k)=>{let d=oa(30*k+30,lat,e)-oa(30*k,lat,e);d=norm(d);return d*4*0.99727;});}
-function drawR(){if(!RIS.g)return;const {c,w,h}=RIS.g;c.clearRect(0,0,w,h);const t=riseTimes(Dd.lat),mx=200,bw=(w-20)/12,T=16,B=h-26;
+function drawR(){if(!RIS.g)return;const {c,w,h}=RIS.g;c.clearRect(0,0,w,h);const t=riseTimes(Math.max(-66,Math.min(66,Dd.lat))),mx=200,bw=(w-20)/12,T=16,B=h-26;
   t.forEach((m,k)=>{const x=10+k*bw,bh=(B-T)*m/mx;c.fillStyle=hexA(EC[k%4],.6);c.fillRect(x+bw*.15,B-bh,bw*.7,bh);txt(c,Math.floor(m/60)+':'+p2(Math.round(m%60)),x+bw/2,B-bh-8,Math.max(9,Math.min(12,bw*.28)),'rgba(237,230,216,.85)',GEO);txt(c,SG[k][0]+VS,x+bw/2,B+12,Math.max(11,Math.min(16,bw*.45)),EC[k%4]);});
   const y2=B-(B-T)*120/mx;c.setLineDash([3,3]);line(c,[10,y2],[w-10,y2],'rgba(227,190,132,.4)',1);c.setLineDash([]);txt(c,'2 სთ',w-10,y2-7,10,'rgba(227,190,132,.7)',GEO,'right');}
 /* ── 3 · your chart, systems ── */
-const H={s:'P',g:null,CH:null};
-function sysCusps(s){const CH=H.CH,hs=CH.hs;return cusps(s,hs.ramc,CH.I.lat,hs.eps,hs.asc,hs.mc);}
-function drawH(){if(!H.g||!H.CH)return;const {c,w,h}=H.g,cu=sysCusps(H.s),pls=H.CH.pls.filter(p=>p.k!=='nn');
-  wheel(c,w,h,cu,pls,{mcFree:(H.s==='E'||H.s==='W')?H.CH.hs.mc:null});
+const H={s:'P',g:null,CH:null,lat:null,day:0};
+function hView(){const CH=H.CH,lat=H.lat==null?CH.I.lat:H.lat;if(H.lat==null&&!H.day)return {lat,J:CH.J,hs:CH.hs,pls:CH.pls,mod:false};
+  const J=CH.J+H.day,e=obl(J),ramc=norm(gmst(J)+CH.I.lon),asc=ascOf(ramc,lat,e),mc=mcOf(ramc,e);return {lat,J,hs:{ramc,eps:e,asc,mc},pls:H.day?planets(J):CH.pls,mod:true};}
+function sysCusps(s){const V=hView(),hs=V.hs;return cusps(s,hs.ramc,V.lat,hs.eps,hs.asc,hs.mc);}
+function drawH(){if(!H.g||!H.CH)return;const {c,w,h}=H.g,V=hView(),cu=sysCusps(H.s),pls=V.pls.filter(p=>p.k!=='nn');
+  wheel(c,w,h,cu,pls,{mcFree:(H.s==='E'||H.s==='W')?V.hs.mc:null});
+  {const d=new Date((V.J-2440587.5)*864e5);$('hLatV').textContent=Math.abs(V.lat).toFixed(1).replace('.',',')+'° '+(V.lat>=0?'ჩრდ.':'სამხ.');$('hDayV').textContent=p2(d.getUTCDate())+'.'+p2(d.getUTCMonth()+1)+'.'+d.getUTCFullYear();$('hLat').value=V.lat;$('hDay').value=H.day;
+   if(V.mod)txt(c,'შეცვლილი: '+(H.lat!=null?'ადგილი ':'')+(H.day?'სეზონი':''),8,12,Math.max(10,Math.min(w,h)*.026),'#ffcf9a',GEO,'left');}
   if(H.s==='E'||H.s==='W'){}
   const S=SYS[H.s],e=$('hRo');e.classList.remove('fi');void e.offsetWidth;e.classList.add('fi');
-  const polar=Math.abs(H.CH.I.lat)>=66&&(H.s==='P'||H.s==='K');
+  const polar=Math.abs(V.lat)>=66&&(H.s==='P'||H.s==='K');
   e.innerHTML=`<b>${S[0]}</b> <small>· ${S[1]}</small><br>${S[2]}${polar?'<br><span style="color:#ffcf9a">ამ განედზე სისტემა ვერ ითვლება — ნაჩვენებია პორფირიოსი.</span>':''}${(H.s==='E'||H.s==='W')?'<br><small>წყვეტილი ხაზი — MC, რომელიც ამ სისტემაში X სახლის კუსპიდს არ ემთხვევა.</small>':''}`;
   const base=sysCusps('P'),mv=[];pls.forEach(p=>{const a=houseOf(p.lon,base),b=houseOf(p.lon,cu);if(a!==b)mv.push(`<span style="color:${p.c}">${p.g}${VS}</span> ${p.n}: ${ROM[a]} → <b>${ROM[b]}</b>`);});
   $('hMv').innerHTML=H.s==='P'?'პლაციდუსი ამოსავალია. აირჩიე სხვა სისტემა — აქ გამოჩნდება პლანეტები, რომლებიც სახლს იცვლის.':(mv.length?`<b>პლაციდუსთან შედარებით სახლს იცვლის:</b><br>${mv.join('<br>')}`:'ამ სისტემაში არცერთი პლანეტა არ იცვლის სახლს პლაციდუსთან შედარებით.');
@@ -396,11 +410,13 @@ function drawH(){if(!H.g||!H.CH)return;const {c,w,h}=H.g,cu=sysCusps(H.s),pls=H.
   const all={};Object.keys(SYS).forEach(k=>all[k]=sysCusps(k));
   $('ctb').innerHTML=[1,2,3,4,5,6,7,8,9,10,11,12].map(i=>`<tr><td class="k">${ROM[i]}</td>`+Object.keys(SYS).map(k=>{const l=all[k][i],s=sidx(l);return `<td class="${k===H.s?'on':''}">${inS(l)} <span style="color:${EC[s%4]}">${SG[s][0]}${VS}</span></td>`;}).join('')+'</tr>').join('');}
 /* ── 4 · latitude ── */
-const LT={lat:41.7,g:null,ramc:122};
-function drawLt(){if(!LT.g)return;const {c,w,h}=LT.g,e=23.44,asc=ascOf(LT.ramc,LT.lat,e),mc=mcOf(LT.ramc,e),cu=cusps('P',LT.ramc,LT.lat,e,asc,mc);wheel(c,w,h,cu,null,{});
+const LT={lat:41.7,g:null,ramc:122,s:'P',day:null};
+const LJ=()=>{const y=new Date().getUTCFullYear();return Date.UTC(y,0,1,8,0)/864e5+2440587.5+(LT.day==null?Math.floor((Date.now()-Date.UTC(y,0,1))/864e5):LT.day);};
+function drawLt(){if(!LT.g)return;const J=LJ();LT.ramc=norm(gmst(J)+44.8271);const {c,w,h}=LT.g,e=obl(J),asc=ascOf(LT.ramc,LT.lat,e),mc=mcOf(LT.ramc,e),cu=cusps(LT.s,LT.ramc,LT.lat,e,asc,mc),su=lonOf('su',J);wheel(c,w,h,cu,null,{sun:su,mcFree:(LT.s==='E'||LT.s==='W')?mc:null});
+  {const d=new Date((J-2440587.5)*864e5);$('lDayV').textContent=p2(d.getUTCDate())+'.'+p2(d.getUTCMonth()+1)+' · 12:00';$('lDay').value=Math.round(J-(Date.UTC(d.getUTCFullYear(),0,1,8,0)/864e5+2440587.5));txt(c,SYS[LT.s][0]+' · '+seasonOf(su),8,12,Math.max(10,Math.min(w,h)*.026),'#F3DDA4',GEO,'left');}
   const {ic,dup}=intercepts(cu),sz=[];for(let i=1;i<=12;i++)sz.push(norm(cu[i%12+1]-cu[i]));const mn=Math.min(...sz),mx=Math.max(...sz);
   if(ic.length){const cx=w/2,cy=h/2,R=Math.min(w,h)/2-8,ri=R*.84;ic.forEach(k=>{for(let t=0;t<30;t+=1){const a=(30*k+t-asc)*D,b=(30*k+t+1-asc)*D;c.strokeStyle='rgba(255,122,106,.85)';c.lineWidth=3;c.beginPath();c.arc(cx,cy,R+3,Math.PI-a,Math.PI-b,true);c.stroke();}});}
-  $('lRo').innerHTML=`განედი <b>${LT.lat.toFixed(1).replace('.',',')}°</b>${Math.abs(LT.lat)>=66?' — <span style="color:#ffcf9a">პლაციდუსი აქ ვერ ითვლება; ნაჩვენებია პორფირიოსი</span>':''}<br>ყველაზე პატარა სახლი ${dm(mn)}, ყველაზე დიდი ${dm(mx)}.<br>`+
+  $('lRo').innerHTML=`<b>${SYS[LT.s][0]}</b> · განედი <b>${Math.abs(LT.lat).toFixed(1).replace('.',',')}° ${LT.lat>=0?'ჩრდ.':'სამხრ.'}</b>${Math.abs(LT.lat)>=66&&(LT.s==='P'||LT.s==='K')?' — <span style="color:#ffcf9a">'+SYS[LT.s][0]+' აქ ვერ ითვლება; ნაჩვენებია პორფირიოსი</span>':''}${LT.s==='E'||LT.s==='W'?' — <span style="color:#9fd8a8">ამ სისტემაში სახლები ყოველთვის 30°-ია, ჩაკეტილი ნიშნები არ არსებობს</span>':''}<br>ყველაზე პატარა სახლი ${dm(mn)}, ყველაზე დიდი ${dm(mx)}.<br>`+
    (ic.length?`<span style="color:#ff9a8a">ჩაკეტილი ნიშნები:</span> ${ic.map(sgS).join(', ')}<br>ორ კუსპიდზე მეორდება: ${dup.map(sgS).join(', ')}`:'ჩაკეტილი ნიშანი ჯერ არ არის.');}
 /* ── 5 · yours ── */
 const ASCX=['პირდაპირი, სწრაფი, ენერგიული შთაბეჭდილება; ცხოვრებას „თავით“ ხვდება.','მშვიდი, სასიამოვნო, მყარი ყოფნა; ნელი, მაგრამ საიმედო სტარტი.','ცოცხალი, მოლაპარაკე, ცნობისმოყვარე; ახალგაზრდული იერი.','რბილი, მზრუნველი, ფრთხილი; პირველ რიგში უსაფრთხოებას ამოწმებს.','თბილი, თავდაჯერებული, შესამჩნევი; ღირსებით შემოდის.','მოწესრიგებული, თავშეკავებული, დაკვირვებული; სასარგებლოობით ჩნდება.','მომხიბვლელი, დიპლომატიური, ესთეტიკური; ურთიერთობით იწყებს.','ინტენსიური, იდუმალი, მაგნეტური; ჯერ აკვირდება.','ღია, ოპტიმისტური, მოგზაური; იუმორითა და იდეით შემოდის.','სერიოზული, თავშეკავებული, ზრდასრული იერი; პასუხისმგებლობით იწყებს.','ორიგინალური, მეგობრული, ცოტა დისტანციური; „სხვანაირი“.','რბილი, ოცნებიანი, თანამგრძნობი; ადვილად ერწყმის გარემოს.'];
@@ -429,6 +445,12 @@ $('dSp').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
 $('dLat').addEventListener('input',()=>{Dd.lat=+$('dLat').value;$('dLatV').textContent=Dd.lat.toFixed(1).replace('.',',')+'°';drawD();drawR();});$('dLatV').textContent='41,7°';
 $('lLat').addEventListener('input',()=>{LT.lat=+$('lLat').value;$('lLatV').textContent=LT.lat.toFixed(1).replace('.',',')+'°';drawLt();});$('lLatV').textContent='41,7°';
 $('hT').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;H.s=b.dataset.s;$('hT').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));drawH();});
+const segW=(id,f)=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$(id).querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));f(b.dataset.s);});
+segW('dSys',v=>{Dd.s=v;drawD();});segW('lSys',v=>{LT.s=v;drawLt();});
+$('dDay').addEventListener('input',()=>{Dd.day=+$('dDay').value;$('dDayV').textContent=(Dd.day>0?'+':'')+Dd.day+' დღე';drawD();});$('dDayV').textContent='დღეს';
+$('hLat').addEventListener('input',()=>{H.lat=+$('hLat').value;drawH();});$('hDay').addEventListener('input',()=>{H.day=+$('hDay').value;drawH();});
+$('hLat0').onclick=()=>{H.lat=null;drawH();};$('hDay0').onclick=()=>{H.day=0;drawH();};
+$('lDay').addEventListener('input',()=>{LT.day=+$('lDay').value;drawLt();});
 function sizes(){Dd.g=fit($('cvD'),1);RIS.g=fit($('cvR'),($('cvR').clientWidth||600)<520?.55:.22);H.g=fit($('cvH'),1);LT.g=fit($('cvL'),1);drawD();drawR();drawH();drawLt();}
 let rt=0;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(sizes,120);});
 const Q=[['რას ჰქვია ასცენდენტი?',['ცის უმაღლესი წერტილი','ეკლიპტიკის გრადუსი, რომელიც დაბადების მომენტში აღმოსავლეთ ჰორიზონტზე ამოდის','მზის ნიშანი','მთვარის კვანძი'],1,'ASC ჰორიზონტისა და ეკლიპტიკის გადაკვეთაა აღმოსავლეთით — I სახლის კუსპიდი.'],
