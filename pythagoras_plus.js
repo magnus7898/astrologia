@@ -111,7 +111,7 @@ const NUMTXT={1:"ლიდერი, დამოუკიდებელი",2:
 const API='https://astrology-production-b165.up.railway.app';
 async function post(path,body){
   const h={'Content-Type':'application/json'},tok=window.MAGNUS&&window.MAGNUS.token;if(tok)h.Authorization='Bearer '+tok;
-  const r=await fetch(API+path,{method:'POST',headers:h,body:JSON.stringify(body)});let d=null;try{d=await r.json();}catch(e){}
+  let r;try{r=await fetch(API+path,{method:'POST',headers:h,body:JSON.stringify(body)});}catch(e){throw new Error('სერვერთან კავშირი ვერ დამყარდა — სცადე ცოტა ხანში (სერვერი შეიძლება ახლდება).');}let d=null;try{d=await r.json();}catch(e){}
   if(r.status===402&&window.MAGNUS){window.MAGNUS.toast((d&&d.error)||'Pro',5000);if(!window.MAGNUS.user)window.MAGNUS.open('login');}
   if(!r.ok)throw new Error((d&&d.error)||('სერვერის შეცდომა '+r.status));return d;
 }
