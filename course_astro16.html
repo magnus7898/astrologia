@@ -359,7 +359,7 @@ function upd(){const CH=chartNow(),I=CH.I,place=I.ci>=0?CITIES[I.ci][0]:'სხ�
   $('yW').innerHTML=I.unk?'დაბადების დრო უცნობია: ASC და MC არ ითვლება, მთვარის ასპექტები კი მიახლოებითია (12:00).':'';
   const P=CH.pls.map(p=>({k:p.k,g:p.g,n:p.n,c:p.c,lon:p.lon}));const nn=P.find(p=>p.k==='nn');const T=(CH.J-2451545)/36525;
   if(nn)P.push({k:'sn',g:'☋',n:'სამხ. კვანძი',c:'#aab2c4',lon:norm(nn.lon+180)});
-  P.push({k:'li',g:'⚸',n:'ლილიტი',c:'#b07ad8',lon:norm(83.3532465+4069.0137287*T-0.01032*T*T)});
+  P.push({k:'li',g:'⚸',n:'ლილიტი',c:'#b07ad8',lon:norm(83.3532465+4069.0137287*T-0.01032*T*T+180)});
   if(!I.unk){P.push({k:'asc',g:'ASC',n:'ასცენდენტი',c:'#F3DDA4',lon:CH.hs.asc});P.push({k:'mc',g:'MC',n:'MC',c:'#F3DDA4',lon:CH.hs.mc});}
   const J2=CH.J+0.05,P2={};planets(J2).forEach(p=>P2[p.k]=p.lon);
   const L=[];for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j];if((a.k==='asc'&&b.k==='mc')||(a.k==='nn'&&b.k==='sn'))continue;const hit=aspect(a.lon,b.lon,a.k,b.k);if(!hit)continue;
