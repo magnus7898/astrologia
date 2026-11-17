@@ -77,7 +77,16 @@ function decorate(){
     if(!bod||bod.querySelector('.mxci2'))return;
     const d=document.createElement('div');d.className='mxci2';d.style.setProperty('--c',c.c);
     d.innerHTML=`<h4>${c.n} <small>· ${c.t}</small></h4>${c.x.map(t=>'<p>'+t+'</p>').join('')}`;
-    bod.insertBefore(d,bod.firstChild);});
+    bod.insertBefore(d,bod.firstChild);
+    const ci=['sahasrara','ajna','vishudha','anahata','manipura','svadhistana','muladhara'].indexOf(c.k.slice(4));
+    const key=document.querySelector('#'+id+' .mx-key');const nums=key?(key.textContent.match(/\d+/g)||[]).map(Number):[];
+    if(ci>=0&&nums.length===3&&window.MX_CHE){const [e,sm,ph]=nums,T=window.MX_CHE,E=(typeof ENERGIES!=='undefined'?ENERGIES:{});
+      const nm=n=>(E[n]||E[String(n)]||{}).name||'';
+      const row=(lab,n,i,col)=>T[n]?`<p><b style="color:${col}">${lab} — ${n} ${nm(n)}:</b> ${T[n][ci][i]}</p>`:'';
+      const m=document.createElement('div');m.className='mxci2';m.style.setProperty('--c',c.c);
+      m.innerHTML=`<h4>შენი რიცხვები ამ ჩაკრაში</h4>${row('ენერგია',e,0,'#b9a8ff')}${row('ფიზიკა',ph,1,'#8fd36a')}${row('ემოცია',sm,2,'#f2a65a')}`;
+      d.after(m);}
+  });
 }
 function hook(){const o=window.buildMatrixBoxes;if(typeof o!=='function'||o._ci)return;
   const w=function(){const r=o.apply(this,arguments);try{decorate();}catch(e){console.warn('chakra info',e);}return r;};w._ci=true;window.buildMatrixBoxes=w;}
