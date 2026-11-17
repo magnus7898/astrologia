@@ -271,14 +271,35 @@ window.MX_EMO_CH={"emo_crown": "სულიერი ემოცია — რ
 
 (function(){
   const DB=window.MATRIX_DB;if(!DB)return;
-  const E=typeof ENERGIES!=='undefined'?ENERGIES:{};
+  const E=typeof ENERGIES!=='undefined'?ENERGIES:{},A=window.MX_ARCANA||[],X=window.MX_ARCANA_X||{};
   Object.keys(E).forEach(n=>{E[n].ru=window.MX_RU[+n-1];});
   const nm=n=>{const e=E[String(n)]||{};return (e.name||('ენ.'+n))+' · '+window.MX_RU[n-1];};
+  const H=(t,c)=>`<div style="margin:10px 0 4px;font-weight:600;color:${c||'#E3BE84'}">${t}</div>`,P=t=>t?`<p style="margin:4px 0">${t}</p>`:'',
+    UL=(L,c)=>L&&L.length?`<ul style="margin:4px 0 4px 18px;padding:0${c?';color:'+c:''}">${L.map(x=>`<li>${x}</li>`).join('')}</ul>`:'';
+  const plus=a=>a&&a.p?H('+ პლიუსში','#7ec850')+UL(a.p):'',minus=a=>a&&a.m?H('− მინუსში','#ef6b5a')+UL(a.m):'',adv=a=>a&&a.a?H('რჩევა')+P(a.a):'';
+  /* what goes into each position: [extra sections built from the energy's own texts] */
+  const MORE={
+   comfort:(a,x)=>P(a.e)+plus(a)+minus(a)+(x.hp?H('რა გაბრუნებს ჰარმონიაში')+UL(x.hp):'')+adv(a),
+   l3:(a,x)=>P(a.e)+plus(a)+minus(a)+adv(a),
+   t3:(a,x)=>(a.tal?H('ტალანტები')+P(a.tal):'')+(x.dp?H('სულიერი მხარე')+P(x.dp):'')+adv(a),
+   l2:(a,x)=>H('ბავშვობიდან წამოყოლილი მინუსები','#ef6b5a')+UL(a.m)+(x.an&&x.an.f?H('როგორ განიკურნება')+P(x.an.f):'')+adv(a),
+   t2:(a,x)=>(a.tal?H('სად ვლინდება გონება')+P(a.tal):'')+plus(a),
+   l1:(a,x)=>(x.pc?H('ბავშვი ამ ენერგიით')+P(x.pc):'')+(a.l?H('ურთიერთობის სტილი')+P(a.l):'')+adv(a),
+   t1:(a,x)=>(a.tal?H('ტალანტები')+P(a.tal):'')+(a.pr?H('პროფესიები')+P(a.pr):'')+plus(a),
+   g1:(a,x)=>(a.h?H('სხეული და ჯანმრთელობა')+P(a.h):'')+(a.$?H('მატერიალური მხარე')+P(a.$):'')+minus(a),
+   g2:(a,x)=>plus(a)+minus(a)+(x.sd&&x.sd.d?H('რა გააკეთო საზოგადოებაში')+UL(x.sd.d):''),
+   heart:(a,x)=>(a.l?H('ურთიერთობა ამ ენერგიით')+P(a.l):'')+(x.sd&&x.sd.n?H('რაზე თქვა უარი წყვილში','#ef6b5a')+UL(x.sd.n):'')+adv(a),
+   gel:(a,x)=>(a.pr?H('პროფესიები')+P(a.pr):'')+(a.$?H('ფული')+P(a.$):'')+(x.md?H('ფული იზრდება','#7ec850')+UL(x.md):'')+(x.mb?H('ფულის ბლოკები','#ef6b5a')+UL(x.mb):''),
+   b3:(a,x)=>(x.pl?H('წარსული ცხოვრების ამოცანა')+P(x.pl[0])+UL(x.pl[1]):'')+(x.s40?H('40 წლამდე')+P(x.s40[0])+UL(x.s40[1]):'')+minus(a)+adv(a),
+   b1:(a,x)=>(a.l?H('ურთიერთობებში')+P(a.l):'')+plus(a)+minus(a),
+   r3:(a,x)=>(a.$?H('ფული')+P(a.$):'')+(x.mb?H('ფულის ბლოკები','#ef6b5a')+UL(x.mb):'')+(x.md?H('რა ზრდის ფულს','#7ec850')+UL(x.md):''),
+   r1:(a,x)=>(a.pr?H('პროფესიები')+P(a.pr):'')+(x.md?H('ფული იზრდება','#7ec850')+UL(x.md):'')+(x.mb?H('რას უნდა ერიდო','#ef6b5a')+UL(x.mb):'')};
+  const EMOM=(a,x)=>(a.h?H('სხეული')+P(a.h):'')+plus(a)+minus(a);
   const put=(zone,n,text)=>{DB[zone]=DB[zone]||{};DB[zone].singles=DB[zone].singles||{};const s=DB[zone].singles[String(n)];if(s&&s.text&&String(s.text).trim())return;DB[zone].singles[String(n)]={title:nm(n),text};};
-  for(let n=1;n<=22;n++){
-    Object.entries(window.MX_SINGLES).forEach(([z,L])=>put(z,n,L[n-1]));
-    if(window.MX_POS){[['b3','B3'],['b1','B1'],['r3','R3'],['r1','R1']].forEach(([z,k])=>{const t=window.MX_POS[k]&&window.MX_POS[k][n];if(t)put(z,n,t);});}
-    Object.entries(window.MX_EMO_CH).forEach(([z,c])=>put(z,n,'<i>'+c+'.</i><br>'+window.MX_EMO[n-1]));
-    if(DB.cp_center&&DB.cp_center.singles)['cp_center','cp_tl3','cp_tr3','cp_br3','cp_bl3','cp_love','cp_money'].forEach(z=>{const s=DB[z]&&DB[z].singles&&DB[z].singles[String(n)];if(s&&s.title&&!/·/.test(s.title))s.title=s.title+' · '+window.MX_RU[n-1];});
+  for(let n=1;n<=22;n++){const a=A[n-1]||{},x=X[n]||{},kw=a.k?`<div style="color:#9aa3b6;font-size:12px;margin-bottom:6px">${a.k}</div>`:'';
+    Object.entries(window.MX_SINGLES).forEach(([z,L])=>put(z,n,kw+P('<b>'+L[n-1]+'</b>')+(MORE[z]?MORE[z](a,x):'')));
+    if(window.MX_POS){[['b3','B3'],['b1','B1'],['r3','R3'],['r1','R1']].forEach(([z,k])=>{const t=window.MX_POS[k]&&window.MX_POS[k][n];if(t)put(z,n,kw+P('<b>'+t+'</b>')+MORE[z](a,x));});}
+    Object.entries(window.MX_EMO_CH).forEach(([z,c])=>put(z,n,kw+P('<i>'+c+'.</i>')+P('<b>'+window.MX_EMO[n-1]+'</b>')+EMOM(a,x)));
+    ['cp_center','cp_tl3','cp_tr3','cp_br3','cp_bl3','cp_love','cp_money'].forEach(z=>{const s=DB[z]&&DB[z].singles&&DB[z].singles[String(n)];if(s&&s.title&&!/·/.test(s.title))s.title=s.title+' · '+window.MX_RU[n-1];});
   }
 })();
