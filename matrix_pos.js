@@ -142,4 +142,4 @@ R1:{
 22:'სამუშაოში გჭირდება კრეატიულობა, თავისუფალი გრაფიკი, არასტანდარტული მიდგომა.'}};
 /* author's own texts take priority where written */
 (function(){const U=window.MX_UP;if(!U)return;const M={B3:'b3',B1:'b1',R3:'r3',R1:'r1'};
-  Object.entries(M).forEach(([k,z])=>{for(let n=1;n<=22;n++){if(U[n]&&U[n][z])window.MX_POS[k][n]=U[n][z];}});})();
+  Object.entries(M).forEach(([k,z])=>{for(let n=1;n<=22;n++){if(U[n]&&U[n][z])window.MX_POS[k][n]=typeof U[n][z]==='string'?U[n][z]:U[n][z].t;}});})();
