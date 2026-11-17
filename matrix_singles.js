@@ -296,10 +296,12 @@ window.MX_EMO_CH={"emo_crown": "სულიერი ემოცია — რ
    r1:(a,x)=>(a.pr?H('პროფესიები')+P(a.pr):'')+(x.md?H('ფული იზრდება','#7ec850')+UL(x.md):'')+(x.mb?H('რას უნდა ერიდო','#ef6b5a')+UL(x.mb):'')};
   const EMOM=(a,x)=>(a.h?H('სხეული')+P(a.h):'')+plus(a)+minus(a);
   const put=(zone,n,text)=>{DB[zone]=DB[zone]||{};DB[zone].singles=DB[zone].singles||{};const s=DB[zone].singles[String(n)];if(s&&s.text&&String(s.text).trim())return;DB[zone].singles[String(n)]={title:nm(n),text};};
-  for(let n=1;n<=22;n++){const a=A[n-1]||{},x=X[n]||{},kw=a.k?`<div style="color:#9aa3b6;font-size:12px;margin-bottom:6px">${a.k}</div>`:'';
-    Object.entries(window.MX_SINGLES).forEach(([z,L])=>put(z,n,kw+P('<b>'+L[n-1]+'</b>')+(MORE[z]?MORE[z](a,x):'')));
-    if(window.MX_POS){[['b3','B3'],['b1','B1'],['r3','R3'],['r1','R1']].forEach(([z,k])=>{const t=window.MX_POS[k]&&window.MX_POS[k][n];if(t)put(z,n,kw+P('<b>'+t+'</b>')+MORE[z](a,x));});}
-    Object.entries(window.MX_EMO_CH).forEach(([z,c])=>put(z,n,kw+P('<i>'+c+'.</i>')+P('<b>'+window.MX_EMO[n-1]+'</b>')+EMOM(a,x)));
-    /* russian suffix removed */
+  const HL=t=>t.replace(/მინუსში/g,'<b style="color:#ef6b5a">მინუსში</b>').replace(/პლიუსში/g,'<b style="color:#7ec850">პლიუსში</b>');
+  const CHI={emo_crown:0,emo_thirdeye:1,emo_throat:2,emo_heart:3,emo_solar:4,emo_sacral:5,emo_root:6};
+  for(let n=1;n<=22;n++){
+    const U=window.MX_UP&&window.MX_UP[n];
+    if(U){Object.entries(U).forEach(([z,t])=>put(z,n,P(HL(t))));}
+    Object.entries(window.MX_EMO_CH).forEach(([z,c])=>{const T=window.MX_CHE&&window.MX_CHE[n];
+      put(z,n,P('<i>'+c+'.</i>')+(T&&CHI[z]!=null?P(HL(T[CHI[z]][2])):P(window.MX_EMO[n-1])));});
   }
 })();
