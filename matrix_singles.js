@@ -1,5 +1,5 @@
 /* matrix_singles.js — texts for every single coloured position of the Destiny Matrix (original Georgian, MAGNUS) and the Russian-school titles of the 22 energies. */
-window.MX_RU=["Маг", "Жрица", "Императрица", "Император", "Иерофант", "Влюблённые", "Колесница", "Справедливость", "Отшельник", "Колесо Фортуны", "Сила", "Повешенный", "Смерть", "Умеренность", "Дьявол", "Башня", "Звезда", "Луна", "Солнце", "Суд", "Мир", "Шут"];
+window.MX_RU=[];
 window.MX_SINGLES={
 "comfort": [
 "კომფორტს გაძლევს ახალი წამოწყება, სწავლა და საკუთარი იდეის განხორციელება. ძალას იბრუნებ, როცა ინიციატივა შენს ხელშია; რუტინა და სხვისი ბრძანებით მუშაობა გცლის.",
@@ -272,8 +272,8 @@ window.MX_EMO_CH={"emo_crown": "სულიერი ემოცია — რ
 (function(){
   const DB=window.MATRIX_DB;if(!DB)return;
   const E=typeof ENERGIES!=='undefined'?ENERGIES:{},A=window.MX_ARCANA||[],X=window.MX_ARCANA_X||{};
-  Object.keys(E).forEach(n=>{E[n].ru=window.MX_RU[+n-1];});
-  const nm=n=>{const e=E[String(n)]||{};return (e.name||('ენ.'+n))+' · '+window.MX_RU[n-1];};
+  Object.keys(E).forEach(n=>{delete E[n].ru;});
+  const nm=n=>{const e=E[String(n)]||{};return (e.name||('ენ.'+n));};
   const H=(t,c)=>`<div style="margin:10px 0 4px;font-weight:600;color:${c||'#E3BE84'}">${t}</div>`,P=t=>t?`<p style="margin:4px 0">${t}</p>`:'',
     UL=(L,c)=>L&&L.length?`<ul style="margin:4px 0 4px 18px;padding:0${c?';color:'+c:''}">${L.map(x=>`<li>${x}</li>`).join('')}</ul>`:'';
   const plus=a=>a&&a.p?H('+ პლიუსში','#7ec850')+UL(a.p):'',minus=a=>a&&a.m?H('− მინუსში','#ef6b5a')+UL(a.m):'',adv=a=>a&&a.a?H('რჩევა')+P(a.a):'';
@@ -300,6 +300,6 @@ window.MX_EMO_CH={"emo_crown": "სულიერი ემოცია — რ
     Object.entries(window.MX_SINGLES).forEach(([z,L])=>put(z,n,kw+P('<b>'+L[n-1]+'</b>')+(MORE[z]?MORE[z](a,x):'')));
     if(window.MX_POS){[['b3','B3'],['b1','B1'],['r3','R3'],['r1','R1']].forEach(([z,k])=>{const t=window.MX_POS[k]&&window.MX_POS[k][n];if(t)put(z,n,kw+P('<b>'+t+'</b>')+MORE[z](a,x));});}
     Object.entries(window.MX_EMO_CH).forEach(([z,c])=>put(z,n,kw+P('<i>'+c+'.</i>')+P('<b>'+window.MX_EMO[n-1]+'</b>')+EMOM(a,x)));
-    ['cp_center','cp_tl3','cp_tr3','cp_br3','cp_bl3','cp_love','cp_money'].forEach(z=>{const s=DB[z]&&DB[z].singles&&DB[z].singles[String(n)];if(s&&s.title&&!/·/.test(s.title))s.title=s.title+' · '+window.MX_RU[n-1];});
+    /* russian suffix removed */
   }
 })();

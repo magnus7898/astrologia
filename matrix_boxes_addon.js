@@ -207,7 +207,7 @@ function buildMatrixBoxes(v, method){
       art={title,text};
     }
     if(!art && nums.length===1 && typeof getE==='function'){
-      const e=getE(nums[0]); art={title:e.name+(e.ru?' · '+e.ru:''), text:e.desc};
+      const e=getE(nums[0]); art={title:e.name, text:e.desc};
     }
     const subtitle=art&&art.title?art.title:'';
     const body=art&&art.text?art.text

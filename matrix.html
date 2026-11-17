@@ -410,7 +410,7 @@ function showAgeRow(ageLabel, energy){
     '<tr class="anchor">'+
       '<td class="tc-age">'+ageLabel+' <span style="font-size:9px;opacity:.6">წელი</span></td>'+
       '<td class="tc-num">'+energy+'</td>'+
-      '<td class="tc-arch"><span class="e-badge" style="background:'+en.color+'">'+en.name+'<span class="e-en">'+(en.ru||en.en)+'</span></span></td>'+
+      '<td class="tc-arch"><span class="e-badge" style="background:'+en.color+'">'+en.name+'<span class="e-en">'+en.en+'</span></span></td>'+
       '<td class="tc-desc">'+en.desc+'</td>'+
     '</tr>';
   panel.style.display='block';
@@ -706,6 +706,7 @@ let a=v.age%80; if(a<0)a+=80;
 <script src="matrix_arcana_x.js"></script>
 <script src="matrix_pos.js"></script>
 <script src="matrix_singles.js"></script>
+<script src="matrix_chakra_info.js"></script>
 <script src="matrix_pythagoras.js"></script>
 <script src="matrix_stats.js"></script>
 <script src="matrix_people.js"></script>

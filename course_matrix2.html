@@ -79,6 +79,27 @@ details.chk>summary{cursor:pointer;padding:12px 16px;list-style:none;display:fle
 details.chk>summary b{font-size:17px;color:var(--c)}details.chk>summary .me{margin-left:auto;font-size:13px;color:#e8dcff}
 .chb{padding:4px 18px 16px;line-height:1.7}.chb .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px 16px;margin:8px 0 10px;font-size:14px}.chb .grid span{color:#9aa3b6}
 .chb h4{margin:12px 0 4px;color:#E3BE84;font-weight:600;font-size:15px}.chb ul{margin:4px 0 4px 18px;padding:0}.chb .mine{background:rgba(255,211,106,.08);border:1px dashed rgba(255,211,106,.5);border-radius:10px;padding:10px 14px;margin-top:10px}
+
+.ckfig{display:grid;grid-template-columns:minmax(260px,380px) 1fr;gap:18px;align-items:center;margin:18px 0;background:radial-gradient(ellipse at 30% 50%,rgba(120,80,200,.18),transparent 70%);border:1px solid rgba(227,190,132,.2);border-radius:16px;padding:14px}
+@media(max-width:720px){.ckfig{grid-template-columns:1fr}}
+.ckfig svg{width:100%;height:auto;display:block}
+.ckfig .cn{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .3s}
+.ckfig .cn:hover,.ckfig .cn.on{transform:scale(1.25)}
+.ckfig .halo{animation:ckp 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes ckp{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:.7;transform:scale(1.25)}}
+.ckfig .lotus{transform-box:fill-box;transform-origin:center;animation:ckr 40s linear infinite}
+@keyframes ckr{to{transform:rotate(360deg)}}
+.ckfig .ida{stroke-dasharray:6 8;animation:ckf 2.4s linear infinite}.ckfig .pin{stroke-dasharray:6 8;animation:ckf 2.4s linear infinite reverse}
+@keyframes ckf{to{stroke-dashoffset:-28}}
+.ckinfo{min-height:220px;line-height:1.7}.ckinfo h3{margin:0 0 6px;font-family:'Marcellus SC',serif;font-weight:400}
+.ckinfo .bars{margin-top:10px}.ckinfo .bar{display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0}.ckinfo .bar i{display:block;height:9px;border-radius:5px;transition:width .8s}
+.ckbtn{margin-top:10px;background:rgba(227,190,132,.12);border:1px solid rgba(227,190,132,.4);color:#E3BE84;border-radius:20px;padding:6px 14px;cursor:pointer;font:inherit}
+.minilotus{float:right;width:92px;height:92px;margin:0 0 6px 10px}.minilotus g{transform-origin:50px 50px;animation:ckr 30s linear infinite}
+.ebar{display:grid;grid-template-columns:70px 1fr 28px;gap:8px;align-items:center;font-size:13px;margin:3px 0}.ebar i{height:8px;border-radius:4px;display:block;width:0;transition:width 1s}
+details.chk[open] .ebar i{width:var(--w)}
+.flow3{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.flow3 .fb{border:1px solid rgba(227,190,132,.35);border-radius:10px;padding:8px 12px;text-align:center;min-width:110px}.flow3 .ar{color:#E3BE84;animation:cka 1.6s ease-in-out infinite}
+@keyframes cka{0%,100%{opacity:.3;transform:translateX(-3px)}50%{opacity:1;transform:translateX(3px)}}
 </style>
 </head>
 <body>
@@ -121,6 +142,10 @@ details.chk>summary b{font-size:17px;color:var(--c)}details.chk>summary .me{marg
       <p><b>კუნდალინი</b> — მთვლემარე ენერგია ხერხემლის ძირში. ტრადიციის მიხედვით, ის ქვემოდან ზემოთ, ჩაკრიდან ჩაკრამდე ადის; ქვედა ჩაკრები სხეულს და მატერიას ეხება, ზედა — ცნობიერებას და სულს. ჯანმრთელი სისტემა ორივე მიმართულებით მუშაობს: ენერგია ზემოდან ჩამოდის (იდეა → ქმედება → შედეგი) და ქვემოდან ადის (სხეული → გრძნობა → გაგება).</p>
       <p><b>მატრიცაში</b> („ჯანმრთელობის რუკა“, რუსული სკოლა) თითოეულ ჩაკრას სამი რიცხვი აქვს: <b>ენერგია</b> — რა ძალა მოდის ამ ცენტრში, <b>ფიზიკა</b> — როგორ ვლინდება სხეულსა და ქმედებაში, <b>ემოცია</b> — მათი ჯამი, როგორ განიცდის ადამიანი ამ სფეროს. ზედა ჩაკრები (საჰასრარა–ვიშუდჰა) სულიერ და მენტალურ ხაზს ეკუთვნის (თვე და დღე), გული — სურვილებს, მანიპურა — ცენტრს, ქვედა ორი — კარმულ და მატერიალურ კუდს.</p>
     </div>
+
+    <div class="ckfig"><svg id="ckSvg" viewBox="-30 0 360 470" aria-label="ჩაკრების სქემა"></svg>
+      <div class="ckinfo" id="ckInfo"></div></div>
+    <div class="flow3"><div class="fb"><b style="color:#9b8cff">ენერგია</b><br><small>რა მოდის</small></div><span class="ar">+</span><div class="fb"><b style="color:#7ec850">ფიზიკა</b><br><small>როგორ ვლინდება</small></div><span class="ar">=</span><div class="fb"><b style="color:#ef8a27">ემოცია</b><br><small>როგორ განიცდი</small></div></div>
     <div class="ckt"><b>როგორ ვკითხულობთ ჯანმრთელობის რუკას</b>
       <ul>
         <li><b>ენერგია = ფიზიკა</b> — ჩაკრა ერთიან ტალღაზეა: რაც მოდის, იმავე სახით ვლინდება. ძლიერი წერტილია, მაგრამ მინუსში ორმაგად აწუხებს.</li>
@@ -262,7 +287,7 @@ function draw(){const st=S[cur],K=known(cur),hi=new Set(st.hi),src=new Set(st.sr
 function render(){
   $('steps').innerHTML=S.map((s,i)=>`<button type="button" data-i="${i}" class="${i===cur?'on':i<cur?'done':''}">${i+1}</button>`).join('');
   $('card').innerHTML=`<h2>${S[cur].t}</h2>${S[cur].body(V)}`;
-  $('prev').disabled=cur===0;$('next').disabled=cur===S.length-1;draw();table();ckList();}
+  $('prev').disabled=cur===0;$('next').disabled=cur===S.length-1;draw();table();ckList();ckFig();}
 function table(){const st=S[cur],done=new Set();for(let j=0;j<=cur;j++)(S[j].rows||[]).forEach(r=>done.add(r));
   let h='<tr><th>ჩაკრა</th><th>ენერგია</th><th>ფიზიკა</th><th>ემოცია</th></tr>';
   CK.forEach((r,i)=>{const x=ROW(r),ok=done.has(i),on=(st.rows||[]).length===1&&st.rows[0]===i;
@@ -273,48 +298,77 @@ function table(){const st=S[cur],done=new Set();for(let j=0;j<=cur;j++)(S[j].row
 
 /* ── full chakra reference, personalised with this date's numbers ── */
 const ENM=['მაგი','მღვდელმთავარი','იმპერატრიცა','იმპერატორი','იერარქი','შეყვარებულები','ეტლი','სამართლიანობა','განდეგილი','ბედის ბორბალი','სიძლიერე','ჩამოხრჩობილი','ტრანსფორმაცია','ზომიერება','ეშმაკი','კოშკი','ვარსკვლავი','მთვარე','მზე','განსჯა','სამყარო','სულელი'];
-const RUN=['Маг','Жрица','Императрица','Император','Иерофант','Влюблённые','Колесница','Справедливость','Отшельник','Колесо Фортуны','Сила','Повешенный','Смерть','Умеренность','Дьявол','Башня','Звезда','Луна','Солнце','Суд','Мир','Шут'];
-const EN=n=>`<b>${n}</b> ${ENM[n-1]} <span style="color:#9aa3b6">· ${RUN[n-1]}</span>`;
+const EN=n=>`<b>${n}</b> ${ENM[n-1]}`;
 const CKD=[
  {c:'#9b6bd6',skt:'सहस्रार — „ათასფურცლიანი“',loc:'თხემი, თავის ზემოთ',col:'იისფერი / თეთრი',el:'—  (ცნობიერება)',pet:'1000',bija:'— (სიჩუმე, ॐ)',gl:'ეპიფიზი',body:'ტვინის ქერქი, ნერვული სისტემა, ბიორიტმები, ძილი',age:'42–49 (ერთ-ერთი ტრადიციით)',
   rule:'კავშირი უმაღლესთან, რწმენა, ცხოვრების აზრი, ღირებულებები, სულიერი გამოცდილება.',
   bal:['მშვიდი ნდობა ცხოვრებისადმი, აზრის და მიზნის შეგრძნება','მადლიერება, სიბრძნე, ღიაობა ახალი ცოდნისთვის'],
   low:['აპათია, „არაფერს აქვს აზრი“, დეპრესიული ფონი','ცინიზმი ან, პირიქით, ფანატიზმი და სექტანტობა','ძილის დარღვევა, თავის ტკივილი, მეტეოდამოკიდებულება'],
   harm:['მედიტაცია სიჩუმეში, ლოცვა','ძილის რეჟიმი, ბუნება, ცის ყურება','მადლიერების დღიური, სულიერი ლიტერატურა']},
- {c:'#5c7fd6',skt:'आज्ञा — „ბრძანება, ცოდნა“',loc:'წარბებს შორის',col:'ინდიგო',el:'სინათლე / გონება',pet:'2',bija:'ॐ (ОМ)',gl:'ჰიპოფიზი',body:'თვალები, ცხვირი, ყურები, ტვინის ქვედა ნაწილი, ჰორმონული რეგულაცია',age:'35–42',
+ {c:'#5c7fd6',skt:'आज्ञा — „ბრძანება, ცოდნა“',loc:'წარბებს შორის',col:'ინდიგო',el:'სინათლე / გონება',pet:'2',bija:'ॐ (OM)',gl:'ჰიპოფიზი',body:'თვალები, ცხვირი, ყურები, ტვინის ქვედა ნაწილი, ჰორმონული რეგულაცია',age:'35–42',
   rule:'ხედვა, ინტუიცია, აზროვნება, წარმოსახვა, მეხსიერება — როგორ აღვიქვამთ სამყაროს.',
   bal:['მკაფიო აზროვნება და ინტუიცია','შორს ხედვა, სწორი პროგნოზი, კარგი მეხსიერება'],
   low:['გაფანტული ფიქრი, ილუზიები, „ჰაერში კოშკები“','ზედმეტი ანალიზი, ეჭვი, შფოთვა','თავის ტკივილი, მხედველობის და სინუსების პრობლემები'],
   harm:['ვიზუალიზაცია, მეხსიერების ვარჯიში','სიზმრების დღიური, ინტუიციის ვარჯიში','ეკრანის დროის შემცირება, თვალების დასვენება']},
- {c:'#5cb8d6',skt:'विशुद्ध — „განწმენდილი“',loc:'ყელი',col:'ცისფერი',el:'ეთერი (აკაშა)',pet:'16',bija:'हं (ХАМ)',gl:'ფარისებრი ჯირკვალი',body:'ყელი, ხმის იოგები, კისერი, მხრები, ყურები, ფარისებრი',age:'28–35',
+ {c:'#5cb8d6',skt:'विशुद्ध — „განწმენდილი“',loc:'ყელი',col:'ცისფერი',el:'ეთერი (აკაშა)',pet:'16',bija:'हं (HAM)',gl:'ფარისებრი ჯირკვალი',body:'ყელი, ხმის იოგები, კისერი, მხრები, ყურები, ფარისებრი',age:'28–35',
   rule:'თვითგამოხატვა, სიტყვა, კომუნიკაცია, შემოქმედებითი რეალიზაცია, სიმართლის თქმა.',
   bal:['თავისუფლად და მკაფიოდ ლაპარაკობს, უსმენს სხვას','ავლენს შემოქმედებას, ამბობს „არა“-ს'],
   low:['ჩახშობილი სიტყვა, „ყელში ბურთი“, შიში საჯარო გამოსვლის','ზედმეტი ლაპარაკი, ჭორი, სიმკაცრე სიტყვაში','ყელის ტკივილი, ფარისებრის დარღვევა, კისრის დაძაბულობა'],
   harm:['სიმღერა, მანტრები, ხმამაღლა კითხვა','წერა, დღიური, საკუთარი აზრის თქმა','კისრის და მხრების გაჭიმვა']},
- {c:'#5cb85c',skt:'अनाहत — „დაუზიანებელი“',loc:'მკერდის ცენტრი',col:'მწვანე (ზოგჯერ ვარდისფერი)',el:'ჰაერი',pet:'12',bija:'यं (ЯМ)',gl:'მკერდუკანა ჯირკვალი (ტიმუსი)',body:'გული, ფილტვები, მკერდი, ხელები, იმუნიტეტი',age:'21–28',
+ {c:'#5cb85c',skt:'अनाहत — „დაუზიანებელი“',loc:'მკერდის ცენტრი',col:'მწვანე (ზოგჯერ ვარდისფერი)',el:'ჰაერი',pet:'12',bija:'यं (YAM)',gl:'მკერდუკანა ჯირკვალი (ტიმუსი)',body:'გული, ფილტვები, მკერდი, ხელები, იმუნიტეტი',age:'21–28',
   rule:'სიყვარული, თანაგრძნობა, ურთიერთობები, მიღება და პატიება — ზედა და ქვედა ჩაკრების ხიდი.',
   bal:['უყვარს და იღებს სიყვარულს, აპატიებს','თანაგრძნობა საზღვრების დაკარგვის გარეშე'],
   low:['წყენა, ეჭვიანობა, „დახურული გული“','მსხვერპლობა, სხვაზე დამოკიდებულება','გულ-სისხლძარღვთა და სასუნთქი სისტემის სისუსტე, იმუნიტეტის დაცემა'],
   harm:['სუნთქვის პრაქტიკები, ბუნებაში სეირნობა','პატიების და მადლიერების წერილები','სხვების დახმარება, ცხოველები, ჩახუტება']},
- {c:'#e8c02e',skt:'मणिपूर — „ძვირფასი ქვების ქალაქი“',loc:'მზის წნული, ჭიპის ზემოთ',col:'ყვითელი',el:'ცეცხლი',pet:'10',bija:'रं (РАМ)',gl:'პანკრეასი, თირკმელზედა',body:'კუჭი, ღვიძლი, ნაღვლის ბუშტი, პანკრეასი, მონელება',age:'14–21',
+ {c:'#e8c02e',skt:'मणिपूर — „ძვირფასი ქვების ქალაქი“',loc:'მზის წნული, ჭიპის ზემოთ',col:'ყვითელი',el:'ცეცხლი',pet:'10',bija:'रं (RAM)',gl:'პანკრეასი, თირკმელზედა',body:'კუჭი, ღვიძლი, ნაღვლის ბუშტი, პანკრეასი, მონელება',age:'14–21',
   rule:'ნება, ძალა, თავდაჯერებულობა, სოციალური როლი, კონტროლი და პასუხისმგებლობა. მატრიცაში — ცენტრი, კომფორტის ზონა.',
   bal:['თავდაჯერებული, აქვს მიზანი და მისკენ მიდის','იცავს საზღვრებს, იღებს გადაწყვეტილებებს'],
   low:['გაუბედაობა, „სხვამ გადაწყვიტოს“','კონტროლი, ბრაზი, ძალაუფლების ჟინი, პერფექციონიზმი','მონელების პრობლემები, გასტრიტი, ღვიძლი, შაქრის ბალანსი'],
   harm:['ფიზიკური აქტივობა, მზე','პატარა გადაწყვეტილებების მიღება ყოველდღე','კვების რეჟიმი, ცხარე და ცხიმიანის შეზღუდვა']},
- {c:'#ef8a27',skt:'स्वाधिष्ठान — „საკუთარი ადგილი“',loc:'მუცლის ქვედა ნაწილი',col:'ნარინჯისფერი',el:'წყალი',pet:'6',bija:'वं (ВАМ)',gl:'სასქესო ჯირკვლები',body:'რეპროდუქციული სისტემა, თირკმელები, შარდის ბუშტი, მენჯი, ლიმფა',age:'7–14',
+ {c:'#ef8a27',skt:'स्वाधिष्ठान — „საკუთარი ადგილი“',loc:'მუცლის ქვედა ნაწილი',col:'ნარინჯისფერი',el:'წყალი',pet:'6',bija:'वं (VAM)',gl:'სასქესო ჯირკვლები',body:'რეპროდუქციული სისტემა, თირკმელები, შარდის ბუშტი, მენჯი, ლიმფა',age:'7–14',
   rule:'სიამოვნება, სურვილები, სექსუალურობა, შემოქმედება, ემოციების დინება; ფული როგორც სიხარული.',
   bal:['უხარია ცხოვრება, იცის სიამოვნების მიღება','შემოქმედებითი, მოქნილი, ემოციურად ცოცხალი'],
   low:['დანაშაულის გრძნობა სიამოვნებაზე, სიხისტე','დამოკიდებულებები, ზედმეტი სიამოვნებები','რეპროდუქციული და შარდსასქესო სისტემის პრობლემები, წელის ტკივილი'],
   harm:['ცეკვა, წყალი, ცურვა','შემოქმედება ხელით, ხელოვნება','საკუთარი სურვილების დაშვება დანაშაულის გარეშე']},
- {c:'#d64545',skt:'मूलाधार — „ფესვის საყრდენი“',loc:'ხერხემლის ძირი, შორისი',col:'წითელი',el:'მიწა',pet:'4',bija:'लं (ЛАМ)',gl:'თირკმელზედა ჯირკვლები',body:'ძვლები, ფეხები, ნაწლავი, სისხლი, ხერხემლის ქვედა ნაწილი',age:'0–7',
+ {c:'#d64545',skt:'मूलाधार — „ფესვის საყრდენი“',loc:'ხერხემლის ძირი, შორისი',col:'წითელი',el:'მიწა',pet:'4',bija:'लं (LAM)',gl:'თირკმელზედა ჯირკვლები',body:'ძვლები, ფეხები, ნაწლავი, სისხლი, ხერხემლის ქვედა ნაწილი',age:'0–7',
   rule:'სხეული, უსაფრთხოება, საყრდენი, ფული როგორც გადარჩენა, გვარი, ფიზიკური ძალა. მატრიცაში — კარმული და მატერიალური კუდი.',
   bal:['უსაფრთხოების შეგრძნება, მყარად დგას ფეხზე','სტაბილური შემოსავალი, ჯანსაღი სხეული'],
   low:['შიში მომავლის, ფულის, „მიწის გამოცლა ფეხქვეშ“','სიხარბე, ნივთებზე მიჯაჭვულობა ან, პირიქით, უსახსრობა','ფეხის, ძვლების, ნაწლავის პრობლემები, დაბალი ენერგია'],
   harm:['სიარული ფეხშიშველა, ბუნება, ბაღი','რეჟიმი, ძილი, ჯანსაღი საკვები','ფინანსური გეგმა, სახლის მოწესრიგება']}];
+
+const CKY=[52,108,160,214,268,322,378];
+function lotusPath(cx,cy,r,n,col){let g='';const k=Math.min(n,32);for(let i=0;i<k;i++){const a=i*360/k;g+=`<ellipse cx="${cx}" cy="${cy-r*0.62}" rx="${r*Math.max(0.12,Math.min(0.42,1.6/k*2))}" ry="${r*0.42}" fill="${col}" fill-opacity=".55" stroke="${col}" stroke-width=".6" transform="rotate(${a} ${cx} ${cy})"/>`;}return g;}
+let ckSel=-1,ckTimer=null;
+function ckFig(){const sv=$('ckSvg');if(!sv)return;let h=`<defs><radialGradient id="kg"><stop offset="0" stop-color="#fff"/><stop offset=".4" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff6a3d" stop-opacity="0"/></radialGradient>
+<linearGradient id="bodyg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6b5bd6" stop-opacity=".35"/><stop offset="1" stop-color="#d64545" stop-opacity=".25"/></linearGradient></defs>
+<path d="M150 20c-22 0-34 18-34 38s12 36 34 36 34-16 34-36-12-38-34-38zM150 96c-46 0-74 20-78 60l-8 120c-2 24 8 38 22 52-38 12-70 30-72 58-2 22 30 34 136 34s138-12 136-34c-2-28-34-46-72-58 14-14 24-28 22-52l-8-120c-4-40-32-60-78-60z" fill="url(#bodyg)" stroke="rgba(227,190,132,.35)"/>
+<line x1="150" y1="40" x2="150" y2="392" stroke="#E3BE84" stroke-opacity=".5" stroke-width="2"/>`;
+let ida='M150 392',pin='M150 392';for(let i=6;i>0;i--){const y0=CKY[i],y1=CKY[i-1],m=(y0+y1)/2,dx=(i%2?1:-1)*30;ida+=` Q${150+dx} ${m} 150 ${y1}`;pin+=` Q${150-dx} ${m} 150 ${y1}`;}
+h+=`<path class="ida" d="${ida}" fill="none" stroke="#9fc3ff" stroke-width="2"/><path class="pin" d="${pin}" fill="none" stroke="#ff9a6a" stroke-width="2"/>
+<text x="92" y="440" fill="#9fc3ff" font-size="11" text-anchor="middle">იდა · მთვარე</text><text x="208" y="440" fill="#ff9a6a" font-size="11" text-anchor="middle">პინგალა · მზე</text><text x="150" y="460" fill="#E3BE84" font-size="11" text-anchor="middle">სუშუმნა</text>`;
+CKD.forEach((d,i)=>{const y=CKY[i],r=i===0?16:13;h+=`<g class="cn" data-i="${i}"><circle class="halo" cx="150" cy="${y}" r="${r+8}" fill="${d.c}" style="animation-delay:${i*.35}s"/><g class="lotus" style="animation-duration:${30+i*6}s">${lotusPath(150,y,r,+d.pet||8,d.c)}</g><circle cx="150" cy="${y}" r="${r*.45}" fill="${d.c}" stroke="#fff" stroke-opacity=".6"/><text x="150" y="${y+3.5}" font-size="9" fill="#fff" text-anchor="middle" font-weight="700">${i+1}</text></g>`;
+ const x=ROW(CK[i]);h+=`<text x="${i%2?186:114}" y="${y+4}" fill="${d.c}" font-size="11" text-anchor="${i%2?'start':'end'}">${CK[i][1].replace(/\s*\(.*\)/,'')} · ${x.e}-${x.s}-${x.l}</text>`;});
+h+=`<circle r="9" fill="url(#kg)"><animateMotion dur="7s" repeatCount="indefinite" path="M150 392 L150 40"/><animate attributeName="r" values="6;11;6" dur="1.2s" repeatCount="indefinite"/></circle>`;
+sv.innerHTML=h;sv.querySelectorAll('.cn').forEach(g=>g.onclick=()=>{stopK();ckShow(+g.dataset.i,true);});
+if(ckSel<0)ckInfoIntro();else ckShow(ckSel);}
+function ckInfoIntro(){$('ckInfo').innerHTML=`<h3 style="color:#E3BE84">შვიდი ცენტრი — ერთი ხერხემალი</h3><p>დააჭირე ნებისმიერ ჩაკრას ფიგურაზე: გამოჩნდება მისი აზრი, სტიქია, ფურცლების რაოდენობა და <b>შენი</b> სამი რიცხვი. ოქროსფერი სინათლე — <b>კუნდალინი</b>, რომელიც ფუძიდან გვირგვინისკენ ადის; ლურჯი და ნარინჯისფერი არხები — <b>იდა</b> და <b>პინგალა</b>, რომლებიც ჩაკრებთან იკვეთება.</p><button class="ckbtn" id="ckPlay">▶ კუნდალინის აღმასვლა</button>`;$('ckPlay').onclick=playK;}
+function ckShow(i,open){ckSel=i;const d=CKD[i],x=ROW(CK[i]),nm=CK[i][1];
+ $('ckSvg').querySelectorAll('.cn').forEach(g=>g.classList.toggle('on',+g.dataset.i===i));
+ const bar=(l,v,c)=>`<div class="bar"><span style="width:62px">${l}</span><i style="width:${v/22*100}%;background:${c}"></i><b>${v}</b></div>`;
+ $('ckInfo').innerHTML=`<h3 style="color:${d.c}">${i+1}. ${nm}</h3><div style="color:#9aa3b6;font-size:13px">${d.skt} · ${d.loc} · ${d.el} · ${d.pet} ფურცელი · ${d.bija}</div><p>${d.rule}</p>
+ <div class="bars">${bar('ენერგია',x.e,'#9b8cff')}${bar('ფიზიკა',x.l,'#7ec850')}${bar('ემოცია',x.s,'#ef8a27')}</div>
+ <p style="font-size:13px;color:#cfc6e8">${EN(x.e)} + ${EN(x.l)} → ${EN(x.s)}</p>
+ <button class="ckbtn" id="ckOpen">დაწვრილებით ↓</button> <button class="ckbtn" id="ckPlay">▶ აღმასვლა</button>`;
+ $('ckPlay').onclick=playK;$('ckOpen').onclick=()=>{const el=document.querySelectorAll('#ckList details.chk')[i];if(el){el.open=true;el.scrollIntoView({behavior:'smooth',block:'start'});}};}
+function stopK(){if(ckTimer){clearInterval(ckTimer);ckTimer=null;}}
+function playK(){stopK();let k=6;ckShow(k);ckTimer=setInterval(()=>{k--;if(k<0){stopK();return;}ckShow(k);},2200);}
+function miniLotus(d){const n=Math.min(+d.pet||8,32);let p='';for(let i=0;i<n;i++)p+=`<ellipse cx="50" cy="24" rx="${Math.max(3,Math.min(10,40/n))}" ry="20" fill="${d.c}" fill-opacity=".45" stroke="${d.c}" transform="rotate(${i*360/n} 50 50)"/>`;
+ const b=(d.bija.match(/\(([A-Z]+)\)/)||[,'∞'])[1];return `<svg class="minilotus" viewBox="0 0 100 100"><g>${p}</g><circle cx="50" cy="50" r="17" fill="${d.c}"/><text x="50" y="55" font-size="12" fill="#fff" text-anchor="middle" font-weight="700">${b}</text></svg>`;}
 function ckList(){if(!$('ckList'))return;$('ckList').innerHTML=CK.map((r,i)=>{const d=CKD[i],x=ROW(r);const nm=r[1].replace(/\s*\(.*\)/,''),sub=(r[1].match(/\((.*)\)/)||[,''])[1];
   const diff=x.e===x.l?'ენერგია და ფიზიკა ერთნაირია — ჩაკრა ერთიან ტალღაზეა.':Math.abs(x.e-x.l)>=9?'ენერგია და ფიზიკა ძლიერ განსხვავდება — ამ ზონას განსაკუთრებული ყურადღება სჭირდება.':'ენერგია და ფიზიკა განსხვავებულია — დააკვირდი, როგორ ერწყმის ისინი ემოციაში.';
   return `<details class="chk" style="--c:${d.c}"><summary><b>${i+1}. ${nm}</b><span style="color:#9aa3b6">${sub} · ${d.skt}</span><span class="me">შენთან: ${x.e}-${x.s}-${x.l}</span></summary><div class="chb">
-   <p>${d.rule}</p>
+   ${miniLotus(d)}<p>${d.rule}</p>
+   <div class="ebar"><span>ენერგია</span><i style="--w:${x.e/22*100}%;background:#9b8cff"></i><b>${x.e}</b></div><div class="ebar"><span>ფიზიკა</span><i style="--w:${x.l/22*100}%;background:#7ec850"></i><b>${x.l}</b></div><div class="ebar"><span>ემოცია</span><i style="--w:${x.s/22*100}%;background:#ef8a27"></i><b>${x.s}</b></div>
    <div class="grid"><div><span>მდებარეობა:</span> ${d.loc}</div><div><span>ფერი:</span> ${d.col}</div><div><span>სტიქია:</span> ${d.el}</div><div><span>ფურცლები:</span> ${d.pet}</div><div><span>ბიჯა-მანტრა:</span> ${d.bija}</div><div><span>ჯირკვალი:</span> ${d.gl}</div><div style="grid-column:1/-1"><span>სხეული:</span> ${d.body}</div><div style="grid-column:1/-1"><span>განვითარების ასაკი:</span> ${d.age}</div></div>
    <h4 style="color:#7ec850">ჰარმონიაში</h4><ul>${d.bal.map(t=>`<li>${t}</li>`).join('')}</ul>
    <h4 style="color:#ef6b5a">დისბალანსის ნიშნები</h4><ul>${d.low.map(t=>`<li>${t}</li>`).join('')}</ul>
