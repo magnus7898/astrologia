@@ -43,12 +43,12 @@ const CI=[
      'ჰარმონიაში — უსაფრთხოების შეგრძნება, სტაბილური შემოსავალი, ჯანსაღი და ძლიერი სხეული.',
      'დისბალანსში — შიში მომავლის და ფულის, სიხარბე ან უსახსრობა; ფეხები, ძვლები, ხერხემლის ქვედა ნაწილი, თირკმელები.',
      'ჰარმონიზაცია: ფეხშიშველა სიარული, ბაღი და მიწა, ძილი და რეჟიმი, ფინანსური გეგმა.']},
- {k:'row-lelia',n:'ლელია',c:'#ff8fb3',t:'ქალის ხაზი (მეთოდი 3)',
+ {k:'row-lelia',n:'დალი',c:'#ff8fb3',t:'ქალის ხაზი (მეთოდი 3)',
   x:['ქალი წინაპრების ხაზით მიღებული ენერგია: ინტუიცია, ზრუნვა, შემოქმედება, მიღების უნარი.',
      'აჩვენებს, რა ძალა და რა ამოცანა გადმოგეცა დედის, ბებიების ხაზით.',
      'ჰარმონიაში — რბილი ძალა, ზრუნვა საკუთარ თავზე და სხვებზე.',
      'დისბალანსში — წინაპარი ქალების განმეორებადი სცენარები, ქალური ენერგიის უარყოფა.']},
- {k:'row-lada',n:'ლადა',c:'#8fb8ff',t:'მამაკაცის ხაზი (მეთოდი 3)',
+ {k:'row-lada',n:'კოპალა',c:'#8fb8ff',t:'მამაკაცის ხაზი (მეთოდი 3)',
   x:['მამაკაცი წინაპრების ხაზით მიღებული ენერგია: ნება, მოქმედება, მატერიალური საყრდენი.',
      'აჩვენებს, რა ძალა და რა ამოცანა გადმოგეცა მამის, ბაბუების ხაზით.',
      'ჰარმონიაში — გადაწყვეტილების და მოქმედების უნარი, პასუხისმგებლობა.',
@@ -60,7 +60,7 @@ const CI=[
      'თუ ჯამები ახლოსაა — სისტემა დაბალანსებულია; დიდი სხვაობა აჩვენებს, სად ხარჯავ ან სად აგროვებ ძალას.']}
 ];
 const BY={};CI.forEach(c=>BY[c.k]=c);
-const css=`.mxci{margin-top:14px;border:1px solid rgba(227,190,132,.25);border-radius:12px;padding:12px 14px;background:rgba(10,8,30,.35);line-height:1.6;font-size:14px}
+const _unused=`.mxci{margin-top:14px;border:1px solid rgba(227,190,132,.25);border-radius:12px;padding:12px 14px;background:rgba(10,8,30,.35);line-height:1.6;font-size:14px}
 .mxci .in{color:#d9d0ef;margin:0 0 10px}.mxci .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
 .mxci .chips button{border:1px solid var(--c);background:transparent;color:var(--c);border-radius:14px;padding:3px 10px;cursor:pointer;font:inherit;font-size:12px}
 .mxci .chips button.on{background:var(--c);color:#110b24}
@@ -68,27 +68,18 @@ const css=`.mxci{margin-top:14px;border:1px solid rgba(227,190,132,.25);border-r
 .mxci .bx small{color:#9aa3b6}.mxci .bx p{margin:3px 0}.mxci .bx .me{margin-top:6px;color:#f3e7c9}
 @keyframes mxciIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .chakra-table tbody tr.mxci-on td{outline:2px solid #E3BE84;outline-offset:-2px}`;
-let cur='row-sahasrara';
-function rowVals(k){const tr=document.querySelector('#chakra-body tr.'+k);if(!tr)return null;const t=[...tr.children].map(td=>td.textContent.trim());return {e:t[1],l:t[2],s:t[3]};}
-function show(k){cur=k;const c=BY[k],box=document.getElementById('mxciBox');if(!c||!box)return;
-  document.querySelectorAll('.mxci .chips button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
-  document.querySelectorAll('#chakra-body tr').forEach(tr=>tr.classList.toggle('mxci-on',tr.classList.contains(k)));
-  const v=rowVals(k);
-  box.innerHTML=`<div class="bx" style="--c:${c.c}"><h4>${c.n} <small>· ${c.t}</small></h4>${c.x.map(t=>'<p>'+t+'</p>').join('')}${v?`<div class="me">შენთან: ენერგია <b>${v.e}</b> · ფიზიკა <b>${v.l}</b> · ემოცია <b>${v.s}</b></div>`:''}</div>`;}
-function build(){
-  const panel=document.getElementById('chakra-panel');if(!panel)return;
-  let w=document.getElementById('mxci');
-  if(!w){const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
-    w=document.createElement('div');w.id='mxci';w.className='mxci';panel.appendChild(w);}
-  const present=CI.filter(c=>document.querySelector('#chakra-body tr.'+c.k));
-  const list=present.length?present:CI.filter(c=>!/lelia|lada/.test(c.k));
-  w.innerHTML=`<p class="in"><b style="color:#E3BE84">ჯანმრთელობის რუკა.</b> თითოეულ ჩაკრას სამი რიცხვი აქვს: <b>ენერგია</b> — რა ძალა მოდის ამ ცენტრში, <b>ფიზიკა</b> — როგორ ვლინდება სხეულსა და ქმედებაში, <b>ემოცია</b> — მათი ჯამი, როგორ განიცდი ამ სფეროს. ზედა ჩაკრები სულიერ ხაზს ეკუთვნის, გული — სურვილებს, მანიპურა — ცენტრს, ქვედა ორი — კარმულ და მატერიალურ კუდს. როცა ენერგია მეტია ფიზიკაზე — ძალა ვერ ეტევა (გადაძაბვა); როცა ფიზიკა მეტია — ადამიანი იცლება. მატრიცა არ არის დიაგნოზი.</p>
-  <div class="chips">${list.map(c=>`<button data-k="${c.k}" style="--c:${c.c}">${c.n}</button>`).join('')}</div><div id="mxciBox"></div>`;
-  w.querySelectorAll('.chips button').forEach(b=>b.onclick=()=>show(b.dataset.k));
-  document.querySelectorAll('#chakra-body tr').forEach(tr=>{const k=[...tr.classList].find(x=>BY[x]);if(k&&!tr.dataset.ci){tr.dataset.ci=1;tr.addEventListener('mouseenter',()=>show(k));}});
-  show(BY[cur]&&list.includes(BY[cur])?cur:list[0].k);
+
+const css2=`.mxci2{border-left:4px solid var(--c);padding:6px 0 6px 12px;margin:0 0 12px;line-height:1.6;background:rgba(255,255,255,.03);border-radius:0 8px 8px 0}
+.mxci2 h4{margin:0 0 4px;color:var(--c);font-weight:600}.mxci2 small{color:#9aa3b6;font-weight:400}.mxci2 p{margin:3px 0}`;
+function decorate(){
+  if(!document.getElementById('mxci2css')){const st=document.createElement('style');st.id='mxci2css';st.textContent=css2;document.head.appendChild(st);}
+  CI.forEach(c=>{const id='mxbox-ch_'+c.k.slice(4);const bod=document.querySelector('#'+id+' .mx-box-body');
+    if(!bod||bod.querySelector('.mxci2'))return;
+    const d=document.createElement('div');d.className='mxci2';d.style.setProperty('--c',c.c);
+    d.innerHTML=`<h4>${c.n} <small>· ${c.t}</small></h4>${c.x.map(t=>'<p>'+t+'</p>').join('')}`;
+    bod.insertBefore(d,bod.firstChild);});
 }
-function hook(){const o=window.renderChakra;if(typeof o!=='function'||o._ci)return;
-  const w=function(){const r=o.apply(this,arguments);try{build();}catch(e){console.warn('chakra info',e);}return r;};w._ci=true;window.renderChakra=w;}
+function hook(){const o=window.buildMatrixBoxes;if(typeof o!=='function'||o._ci)return;
+  const w=function(){const r=o.apply(this,arguments);try{decorate();}catch(e){console.warn('chakra info',e);}return r;};w._ci=true;window.buildMatrixBoxes=w;}
 hook();
 })();
