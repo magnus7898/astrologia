@@ -63,6 +63,7 @@ const css=`#matrix-boxes .mx-box{background:#2b2d33!important;border:1px solid #
 .mxen-h{font-weight:600;color:#f6f0e2;margin-bottom:4px}
 .mxen-n{display:inline-block;min-width:26px;padding:0 6px;margin-right:6px;border-radius:12px;background:#4a4d56;color:#ffd98a;text-align:center;font-family:'JetBrains Mono',monospace}
 .mxen-l{font-weight:400;color:#b9bcc6}.mxen-t{color:#e9eaee}
+.mx-grp-body{padding:8px 10px 12px!important}.mx-grp-body .mx-box{margin-top:6px;background:#2f3238!important}.mx-grp-body .mx-box-head{background:#383b42}
 .mxen-more{margin-top:6px}.mxen-more summary{cursor:pointer;color:#c9a96a;font-size:13px}.mxen-more p{margin:4px 0;color:#d9dbe2}`;
 const $=id=>document.getElementById(id);
 function energyRow(key,label,n,txt){
@@ -82,6 +83,18 @@ function organize(v,method){
     b.style.display=(HOME[id]&&!(id==='comfort'&&!hasSex))?'none':'';});
   ORDER.forEach(id=>{const el=$('mxbox-'+id);if(el)panel.appendChild(el);});
   [...panel.querySelectorAll('.mx-box')].forEach(b=>{const id=b.id.replace('mxbox-','');if(!ORDER.includes(id)&&!HOME[id])panel.appendChild(b);});
+  group(panel,'grp_anc','წინაპრები — კარმა და საჩუქრები','#b07acc',['br','bl','tl','tr']);
+  group(panel,'grp_ch','ჩაკრები','#5cb85c',['ch_sahasrara','ch_ajna','ch_vishudha','ch_lelia','ch_lada','ch_anahata','ch_manipura','ch_svadhistana','ch_muladhara','ch_total']);
+}
+/* several boxes inside one box */
+function group(panel,gid,title,color,ids){
+  const els=ids.map(id=>$('mxbox-'+id)).filter(Boolean);if(!els.length)return;
+  const w=document.createElement('div');w.className='mx-box mx-grp';w.id='mxbox-'+gid;
+  const h=document.createElement('div');h.className='mx-box-head';
+  h.innerHTML='<span><span class="mx-dot" style="background:'+color+'"></span>'+title+'</span><span class="mx-key">'+els.length+'<span class="mx-arrow">▼</span></span>';
+  const b=document.createElement('div');b.className='mx-box-body mx-grp-body';b.style.display='none';
+  h.onclick=()=>{b.style.display=b.style.display==='block'?'none':'block';};
+  panel.insertBefore(w,els[0]);els.forEach(e=>b.appendChild(e));w.appendChild(h);w.appendChild(b);
 }
 /* sky / earth / man / woman / spiritual knowledge — at the end */
 const PUR=[
@@ -113,9 +126,10 @@ wrap('renderChakra',function(){purposes();});
 const ob=window.openBoxById;
 if(typeof ob==='function')window.openBoxById=function(id){
   const el=$('mxbox-'+id);
-  if(HOME[id]&&el&&el.style.display==='none'){const host=HOME[id],r=ob.call(this,host);
+  if(HOME[id]&&el&&el.style.display==='none'){const host=HOME[id];const hg=$('mxbox-'+host);const g=hg&&hg.closest('.mx-grp');if(g){const gb=g.querySelector(':scope>.mx-box-body');if(gb)gb.style.display='block';}const r=ob.call(this,host);
     const row=KEY[id]&&document.querySelector('#mxbox-'+host+' .mxen-r[data-k="'+KEY[id]+'"]');
     if(row){row.style.transition='background .6s';row.style.background='rgba(255,217,138,.15)';setTimeout(()=>row.style.background='',1600);}
     return r;}
+  const g=el&&el.closest('.mx-grp');if(g){const gb=g.querySelector(':scope>.mx-box-body');if(gb)gb.style.display='block';}
   return ob.apply(this,arguments);};
 })();
