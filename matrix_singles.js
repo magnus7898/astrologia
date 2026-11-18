@@ -302,7 +302,7 @@ window.MX_ARC_NAMES=window.MX_ARC_NAMES||['','მაგი','მღვდელ�
   const CHI={emo_crown:0,emo_thirdeye:1,emo_throat:2,emo_heart:3,emo_solar:4,emo_sacral:5,emo_root:6};
   for(let n=1;n<=22;n++){
     const U=window.MX_UP&&window.MX_UP[n];
-    const ORIG=window.MX_ORIG&&window.MX_ORIG[n-1]?H('ენერგიის არსი','#b9a8ff')+'<p style="margin:4px 0;color:#cfc6e8;font-style:italic">'+window.MX_ORIG[n-1]+'</p>':'';
+    const ORIG=window.MX_ORIG&&window.MX_ORIG[n-1]?H('ენერგიის არსი','#b9a8ff')+'<p style="margin:4px 0;color:#E4DCF5">'+window.MX_ORIG[n-1]+'</p>':'';
     if(U){Object.entries(U).forEach(([z,o])=>{if(typeof o==='string')o={t:o};
       put(z,n,P(HL(o.t))+(o.p?H('+ პლიუსში','#7ec850')+P(o.p):'')+(o.m?H('− მინუსში','#ef6b5a')+P(o.m):'')+(o.a?H('რა გააკეთო')+P(o.a):'')+ORIG);});}
     Object.entries(window.MX_EMO_CH).forEach(([z,c])=>{const T=window.MX_CHE&&window.MX_CHE[n];

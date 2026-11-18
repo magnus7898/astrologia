@@ -70,7 +70,7 @@ const _unused=`.mxci{margin-top:14px;border:1px solid rgba(227,190,132,.25);bord
 .chakra-table tbody tr.mxci-on td{outline:2px solid #E3BE84;outline-offset:-2px}`;
 
 const css2=`.mxci2{border-left:4px solid var(--c);padding:6px 0 6px 12px;margin:0 0 12px;line-height:1.6;background:rgba(255,255,255,.03);border-radius:0 8px 8px 0}
-.mxci2 h4{margin:0 0 4px;color:var(--c);font-weight:600}.mxci2 small{color:#9aa3b6;font-weight:400}.mxci2 p{margin:3px 0}`;
+.mxci2 h4{margin:0 0 6px;color:var(--c);font-weight:600;font-size:17px}.mxci2 small{color:#c9c2d8;font-weight:400}.mxci2 p{margin:3px 0}`;
 function decorate(){
   if(!document.getElementById('mxci2css')){const st=document.createElement('style');st.id='mxci2css';st.textContent=css2;document.head.appendChild(st);}
   CI.forEach(c=>{const id='mxbox-ch_'+c.k.slice(4);const bod=document.querySelector('#'+id+' .mx-box-body');

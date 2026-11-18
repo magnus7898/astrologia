@@ -60,22 +60,22 @@ const SEC=[
 const ORD=['karmic_tail','b3','love','heart','b1','comfort','material_karma','r3','money','gel','r1','sex','g1','g2','l1','t1','l2','t2','l3','t3','persona','talent_zone','br','bl','tl','tr'];
 
 const css=`.mxsec{margin:14px 0 0;border:1px solid var(--rule,rgba(227,190,132,.25));background:rgba(10,8,30,.25)}
-.mxsec>.mxsec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-left:5px solid var(--c);font-family:'Marcellus SC',serif;font-size:17px;color:var(--c)}
+.mxsec>.mxsec-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;border-left:6px solid var(--c);font-family:'Noto Sans Georgian',sans-serif;font-weight:600;font-size:18px;line-height:1.35;color:#F3E6C8;background:rgba(227,190,132,.07)}
 .mxsec>.mxsec-h .no{display:inline-block;min-width:24px;height:24px;line-height:24px;text-align:center;border-radius:50%;background:var(--c);color:#110b24;font-size:12px;margin-right:8px;font-family:sans-serif;font-weight:700}
-.mxsec>.mxsec-h small{font-family:inherit;font-size:12px;color:#9aa3b6;white-space:nowrap}
-.mxsec .mxsec-d{padding:2px 16px 12px 19px;color:#d9d0ef;line-height:1.65;font-size:14px}
-.mxsec .mxsub-h{padding:10px 16px 2px;font-weight:600;color:#E3BE84;border-top:1px dashed rgba(227,190,132,.25)}
-.mxsec .mxsub-d{padding:2px 16px 10px;color:#cfc6e8;line-height:1.6;font-size:13.5px}
+.mxsec>.mxsec-h small{font-family:inherit;font-weight:400;font-size:13px;color:#c9c2d8;white-space:nowrap}
+.mxsec .mxsec-d{padding:12px 20px 16px;color:#EDE6D8;line-height:1.75;font-size:16px;font-family:'Noto Sans Georgian',sans-serif}
+.mxsec .mxsub-h{padding:14px 20px 4px;font-weight:600;font-size:17px;color:#F0CF94;font-family:'Noto Sans Georgian',sans-serif;border-top:1px dashed rgba(227,190,132,.25)}
+.mxsec .mxsub-d{padding:2px 20px 14px;color:#EDE6D8;line-height:1.7;font-size:15.5px;font-family:'Noto Sans Georgian',sans-serif}
 .mxsec.closed .mxsec-b{display:none}.mxsec .mxsec-h .ar{display:inline-block;transition:transform .2s}.mxsec.closed .mxsec-h .ar{transform:rotate(-90deg)}
-.mxfig{display:flex;justify-content:center;padding:4px 10px 14px}.mxfig svg{width:100%;max-width:520px;height:auto}
+.mxfig{display:flex;justify-content:center;padding:4px 10px 14px}.mxfig svg{width:100%;max-width:460px;height:auto}
 .mxfig .cg{cursor:pointer}.mxfig .cg:hover .core{stroke:#fff;stroke-width:2}
 .mxfig .halo{animation:mxp 3s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes mxp{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.65;transform:scale(1.3)}}
 .mxfig .lot{transform-box:fill-box;transform-origin:center;animation:mxr 40s linear infinite}@keyframes mxr{to{transform:rotate(360deg)}}
 .mxfig .flow{stroke-dasharray:5 7;animation:mxf 2.2s linear infinite}@keyframes mxf{to{stroke-dashoffset:-24}}
-.mxyr{width:100%;border-collapse:collapse;font-size:13.5px}.mxyr td{padding:6px 10px;border-top:1px solid rgba(227,190,132,.12);vertical-align:top}
+.mxyr{width:100%;border-collapse:collapse;font-size:16px;font-family:'Noto Sans Georgian',sans-serif;color:#EDE6D8}.mxyr td{padding:10px 14px;border-top:1px solid rgba(227,190,132,.12);vertical-align:top}
 .mxyr tr.rw{cursor:pointer}.mxyr tr.rw:hover{background:rgba(227,190,132,.06)}.mxyr tr.now td{background:rgba(255,215,0,.12)}
-.mxyr .ag{color:#E3BE84;white-space:nowrap;width:90px}.mxyr .nm{width:40px;text-align:center;font-weight:700}.mxyr tr.dsc td{color:#cfc6e8;line-height:1.6;display:none}.mxyr tr.dsc.op td{display:table-cell}`;
+.mxyr tr.rw:nth-of-type(4n+1){background:rgba(255,255,255,.025)}.mxyr .ag{color:#F0CF94;white-space:nowrap;width:110px}.mxyr .nm{width:46px;text-align:center;font-weight:700;font-size:18px}.mxyr tr.dsc td{color:#EDE6D8;line-height:1.7;display:none;padding:4px 14px 14px 30px;border-top:none}.mxyr tr.dsc.op td{display:table-cell}`;
 const $=id=>document.getElementById(id);
 const E=n=>{try{return (typeof ENERGIES!=='undefined'&&ENERGIES[String(n)])||{};}catch(e){return {};}};
 function shell(id,t,c,d,no){
@@ -99,17 +99,17 @@ function grp(panel,s,no){
 const CK=[['sahasrara','საჰასრარა','#9b6bd6',32],['ajna','აჯნა','#5c7fd6',2],['vishudha','ვიშუდჰა','#5cb8d6',16],['anahata','ანაჰატა','#5cb85c',12],['manipura','მანიპურა','#e8c02e',10],['svadhistana','სვადჰისტანა','#ef8a27',6],['muladhara','მულადჰარა','#d64545',4]];
 function figure(){
   const host=$('mxfig');if(!host)return;
-  const Y=CK.map((_,i)=>40+i*58);let s=`<svg viewBox="0 0 520 440"><defs><radialGradient id="mxk"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff6a3d" stop-opacity="0"/></radialGradient></defs>
-  <line x1="260" y1="${Y[0]}" x2="260" y2="${Y[6]}" stroke="#E3BE84" stroke-opacity=".45" stroke-width="2"/>`;
-  let a='M260 '+Y[6],b='M260 '+Y[6];for(let i=6;i>0;i--){const m=(Y[i]+Y[i-1])/2,dx=(i%2?1:-1)*34;a+=` Q${260+dx} ${m} 260 ${Y[i-1]}`;b+=` Q${260-dx} ${m} 260 ${Y[i-1]}`;}
+  const Y=CK.map((_,i)=>46+i*62);let s=`<svg viewBox="0 0 440 470"><defs><radialGradient id="mxk"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff6a3d" stop-opacity="0"/></radialGradient></defs>
+  <line x1="200" y1="${Y[0]}" x2="200" y2="${Y[6]}" stroke="#E3BE84" stroke-opacity=".45" stroke-width="2"/>`;
+  let a='M200 '+Y[6],b='M200 '+Y[6];for(let i=6;i>0;i--){const m=(Y[i]+Y[i-1])/2,dx=(i%2?1:-1)*34;a+=` Q${200+dx} ${m} 200 ${Y[i-1]}`;b+=` Q${200-dx} ${m} 200 ${Y[i-1]}`;}
   s+=`<path class="flow" d="${a}" fill="none" stroke="#9fc3ff" stroke-width="2"/><path class="flow" d="${b}" fill="none" stroke="#ff9a6a" stroke-width="2" style="animation-direction:reverse"/>`;
   CK.forEach(([k,nm,c,pet],i)=>{const y=Y[i],key=document.querySelector('#mxbox-ch_'+k+' .mx-key'),nums=key?(key.textContent.match(/\d+/g)||[]):[];
-    let p='';const n=Math.min(pet,24);for(let j=0;j<n;j++)p+=`<ellipse cx="260" cy="${y-11}" rx="${Math.max(2.5,Math.min(7,28/n))}" ry="10" fill="${c}" fill-opacity=".5" transform="rotate(${j*360/n} 260 ${y})"/>`;
-    s+=`<g class="cg" data-k="${k}"><circle class="halo" cx="260" cy="${y}" r="24" fill="${c}" style="animation-delay:${i*.3}s"/><g class="lot" style="animation-duration:${28+i*5}s">${p}</g><circle class="core" cx="260" cy="${y}" r="9" fill="${c}"/>
-      <text x="196" y="${y+5}" fill="${c}" font-size="14" text-anchor="end">${nm}</text>`;
-    if(nums.length===3)s+=`<text x="324" y="${y+5}" font-size="14"><tspan fill="#b9a8ff" font-weight="700">${nums[0]}</tspan><tspan fill="#9aa3b6"> · </tspan><tspan fill="#8fd36a" font-weight="700">${nums[2]}</tspan><tspan fill="#9aa3b6"> → </tspan><tspan fill="#f2a65a" font-weight="700">${nums[1]}</tspan></text>`;
+    let p='';const n=Math.min(pet,24);for(let j=0;j<n;j++)p+=`<ellipse cx="200" cy="${y-9}" rx="${Math.max(2,Math.min(5,22/n))}" ry="8" fill="${c}" fill-opacity=".5" transform="rotate(${j*360/n} 200 ${y})"/>`;
+    s+=`<g class="cg" data-k="${k}"><circle class="halo" cx="200" cy="${y}" r="17" fill="${c}" style="animation-delay:${i*.3}s"/><g class="lot" style="animation-duration:${28+i*5}s">${p}</g><circle class="core" cx="200" cy="${y}" r="7" fill="${c}"/>
+      <text x="168" y="${y+6}" fill="#F3E6C8" font-size="18" font-weight="600" text-anchor="end">${nm}</text>`;
+    if(nums.length===3)s+=`<text x="232" y="${y+6}" font-size="19"><tspan fill="#b9a8ff" font-weight="700">${nums[0]}</tspan><tspan fill="#c9c2d8"> · </tspan><tspan fill="#8fd36a" font-weight="700">${nums[2]}</tspan><tspan fill="#c9c2d8"> → </tspan><tspan fill="#f2a65a" font-weight="700">${nums[1]}</tspan></text>`;
     s+='</g>';});
-  s+=`<text x="324" y="20" font-size="11" fill="#9aa3b6">ენერგია · ფიზიკა → ემოცია</text><circle r="8" fill="url(#mxk)"><animateMotion dur="7s" repeatCount="indefinite" path="M260 ${Y[6]} L260 ${Y[0]}"/></circle></svg>`;
+  s+=`<text x="232" y="20" font-size="14" fill="#c9c2d8">ენერგია · ფიზიკა → ემოცია</text><circle r="8" fill="url(#mxk)"><animateMotion dur="7s" repeatCount="indefinite" path="M200 ${Y[6]} L200 ${Y[0]}"/></circle></svg>`;
   host.innerHTML=s;host.querySelectorAll('.cg').forEach(g=>g.onclick=()=>window.openBoxById('ch_'+g.dataset.k));
 }
 function sectionize(method){
@@ -140,7 +140,7 @@ function box(id,title,color,num,html){
 }
 function energyHtml(n,lead){const e=E(n),o=window.MX_ORIG&&window.MX_ORIG[n-1];
   return '<p style="margin:4px 0">'+lead+'</p><div style="margin:10px 0 4px;font-weight:600;color:#E3BE84">'+n+' — '+(e.name||'')+'</div>'+(e.desc?'<p style="margin:4px 0">'+e.desc+'</p>':'')+
-    (o?'<div style="margin:10px 0 4px;font-weight:600;color:#b9a8ff">ენერგიის არსი</div><p style="margin:4px 0;color:#cfc6e8;font-style:italic">'+o+'</p>':'');}
+    (o?'<div style="margin:10px 0 4px;font-weight:600;color:#b9a8ff">ენერგიის არსი</div><p style="margin:4px 0;color:#E4DCF5">'+o+'</p>':'');}
 function purposes(){
   const panel=$('matrix-boxes');if(!panel||!$('mxsec-karma'))return;
   const old=$('mxsec-purpose');if(old)old.remove();
