@@ -54,16 +54,16 @@ const HOME={b3:'karmic_tail',r3:'material_karma',r1:'material_karma',b1:'love',h
   emo_crown:'ch_sahasrara',emo_thirdeye:'ch_ajna',emo_throat:'ch_vishudha',emo_heart:'ch_anahata',emo_solar:'ch_manipura',emo_sacral:'ch_svadhistana',emo_root:'ch_muladhara'};
 const KEY={g1:'G1',g2:'G2',b3:'B3',r3:'R3',r1:'R1',b1:'B1',heart:'W1',gel:'W3',comfort:'Cv',l3:'L3',l2:'L2',l1:'L1',t3:'T3',t2:'T2',t1:'T1'};
 
-const css=`#matrix-boxes .mx-box{background:#16302b!important;border:1px solid rgba(184,137,74,.55)!important;margin-top:6px}
-#matrix-boxes .mx-box-head{background:#1b3933;color:#f1f2f5;font-size:14px}
-#matrix-boxes .mx-box-head:hover{background:#214640}
-#matrix-boxes .mx-box-body{background:#16302b;color:#e9eaee;font-size:14.5px;line-height:1.75;font-weight:400;border-top:1px solid rgba(184,137,74,.55)}
+const css=`#matrix-boxes .mx-box{background:transparent!important;border:1px solid rgba(184,137,74,.55)!important;margin-top:6px}
+#matrix-boxes .mx-box-head{background:rgba(255,255,255,.035);color:#f1f2f5;font-size:14px}
+#matrix-boxes .mx-box-head:hover{background:rgba(227,190,132,.08)}
+#matrix-boxes .mx-box-body{background:transparent;color:#e9eaee;font-size:14.5px;line-height:1.75;font-weight:400;border-top:1px solid rgba(184,137,74,.55)}
 .mxen{margin-top:14px;border-top:1px solid rgba(184,137,74,.35)}
 .mxen-r{padding:12px 0;border-bottom:1px solid rgba(184,137,74,.2)}.mxen-r:last-child{border-bottom:none}
 .mxen-h{font-weight:600;color:#f6f0e2;margin-bottom:4px}
 .mxen-n{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin-right:8px;border-radius:50%;background:rgba(20,14,50,0.92);border:2px solid rgba(180,160,255,0.75);color:#fff;font-weight:700;font-size:14px;font-family:'Cinzel',serif;vertical-align:middle}
 .mxen-l{font-weight:400;color:#b9bcc6}.mxen-t{color:#e9eaee}
-.mx-grp-body{padding:8px 10px 12px!important}.mx-grp-body .mx-box{margin-top:6px;background:#1c3b35!important}.mx-grp-body .mx-box-head{background:#21443d}
+.mx-grp-body{padding:8px 10px 12px!important}.mx-grp-body .mx-box{margin-top:6px;background:transparent!important}.mx-grp-body .mx-box-head{background:rgba(255,255,255,.03)}
 .mxen-more{margin-top:6px}.mxen-more summary{cursor:pointer;color:#c9a96a;font-size:13px}.mxen-more p{margin:4px 0;color:#d9dbe2}`;
 const $=id=>document.getElementById(id);
 /* circle colours exactly as the matrix diagram draws them (draw() in matrix.html) */
