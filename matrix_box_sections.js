@@ -46,13 +46,13 @@ const ROLES={
  tl:[['TL3','მამის ხაზის საჩუქარი',n=>EN(n).desc||''],['TL2','როგორ ვლინდება ჩვენში',n=>part(UP(n),'t3','p')],['TL1','როგორ გამოვიყენოთ',n=>part(UP(n),'t1','a')]],
  tr:[['TR3','დედის ხაზის საჩუქარი',n=>EN(n).desc||''],['TR2','როგორ ვლინდება ჩვენში',n=>part(UP(n),'t3','p')],['TR1','როგორ გამოვიყენოთ',n=>part(UP(n),'t1','a')]]
 };
-const ORDER=['karmic_tail','material_karma','love','money','sex','comfort','persona','talent_zone','br','bl','tl','tr',
+const ORDER=['karmic_tail','material_karma','love','money','sex','comfort','wish','persona','talent_zone','br','bl','tl','tr',
   'ch_sahasrara','ch_ajna','ch_vishudha','ch_lelia','ch_lada','ch_anahata','ch_manipura','ch_svadhistana','ch_muladhara','ch_total'];
 /* single boxes → the combo that holds them */
 const HOME={b3:'karmic_tail',r3:'material_karma',r1:'material_karma',b1:'love',heart:'love',gel:'money',comfort:'sex',
-  l3:'persona',l2:'persona',l1:'persona',t3:'talent_zone',t2:'talent_zone',t1:'talent_zone',g1:'ch_anahata',g2:'ch_anahata',
+  l3:'persona',l2:'persona',l1:'persona',t3:'talent_zone',t2:'talent_zone',t1:'talent_zone',g1:'wish',g2:'wish',
   emo_crown:'ch_sahasrara',emo_thirdeye:'ch_ajna',emo_throat:'ch_vishudha',emo_heart:'ch_anahata',emo_solar:'ch_manipura',emo_sacral:'ch_svadhistana',emo_root:'ch_muladhara'};
-const KEY={b3:'B3',r3:'R3',r1:'R1',b1:'B1',heart:'W1',gel:'W3',comfort:'Cv',l3:'L3',l2:'L2',l1:'L1',t3:'T3',t2:'T2',t1:'T1'};
+const KEY={g1:'G1',g2:'G2',b3:'B3',r3:'R3',r1:'R1',b1:'B1',heart:'W1',gel:'W3',comfort:'Cv',l3:'L3',l2:'L2',l1:'L1',t3:'T3',t2:'T2',t1:'T1'};
 
 const css=`#matrix-boxes .mx-box{background:#2b2d33!important;border:1px solid #43464e!important;margin-top:6px}
 #matrix-boxes .mx-box-head{background:#33363d;color:#f1f2f5;font-size:14px}
@@ -91,6 +91,15 @@ function organize(v,method){
     const rows=ROLES[id].map(([k,lab,fn])=>{const n=v[k];return n?energyRow(k,lab,n,fn(n)):'';}).join('');
     if(rows){const d=document.createElement('div');d.className='mxen';d.innerHTML=rows;bod.appendChild(d);}}
   METHOD=method;
+  /* our wishes — the green circles: physical (G1) and energetic (G2) */
+  if(method!==3&&v.G1&&v.G2&&!$('mxbox-wish')){const R=typeof r22==='function'?r22:(n=>n),S=R(v.G1+v.G2),c=CHE(S);
+    const w=document.createElement('div');w.className='mx-box';w.id='mxbox-wish';
+    const h=document.createElement('div');h.className='mx-box-head';
+    h.innerHTML='<span><span class="mx-dot" style="background:#639922"></span>ჩვენი სურვილები — მწვანე წრეები</span><span class="mx-key">'+v.G1+'-'+v.G2+'-'+S+'<span class="mx-arrow">▼</span></span>';
+    const b=document.createElement('div');b.className='mx-box-body';b.style.display='none';
+    b.innerHTML='<p style="margin:0 0 6px">მწვანე წრეები გვიჩვენებს, რა გვინდა. მარცხენა მწვანე წრე ფიზიკური სურვილებია: სხეული, კომფორტი, მატერია, ის, რისი შეხებაც შეიძლება. ზედა მწვანე წრე ენერგეტიკული სურვილებია: რა გვინდა ადამიანებისგან და სამყაროსგან, რა გვკვებავს შიგნიდან. მათი ჯამი გულის (ანაჰატას) ემოციაა: როგორ განიცდის გული ამ სურვილებს.</p>'+
+      '<div class="mxen">'+energyRow('G1','ფიზიკური სურვილები',v.G1,t(UP(v.G1),'g1'))+energyRow('G2','ენერგეტიკული სურვილები',v.G2,t(UP(v.G2),'g2'))+energyRow('','სურვილების ჯამი — გულის ემოცია',S,c?c[3][2]:'')+'</div>';
+    h.onclick=()=>{b.style.display=b.style.display==='block'?'none':'block';};w.appendChild(h);w.appendChild(b);panel.appendChild(w);}
   panel.querySelectorAll('.mxen-n[data-pk]').forEach(b=>paint(b,b.dataset.pk));
   /* chakra rows: energy / emotion / physics take the colours of the circles they come from */
   const CKEY=method===3?{sahasrara:['T3','L3'],ajna:['T2','L2'],vishudha:['T1','L1'],lelia:['TR3','BL3'],lada:['TL3','BR3'],anahata:['Cv','Cv'],manipura:['B1','R1'],svadhistana:['B2','R2'],muladhara:['B3','R3']}
