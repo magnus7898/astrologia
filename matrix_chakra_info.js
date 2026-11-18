@@ -74,18 +74,16 @@ const css2=`.mxci2{border-left:4px solid var(--c);padding:6px 0 6px 12px;margin:
 function decorate(){
   if(!document.getElementById('mxci2css')){const st=document.createElement('style');st.id='mxci2css';st.textContent=css2;document.head.appendChild(st);}
   CI.forEach(c=>{const id='mxbox-ch_'+c.k.slice(4);const bod=document.querySelector('#'+id+' .mx-box-body');
-    if(!bod||bod.querySelector('.mxci2'))return;
-    const d=document.createElement('div');d.className='mxci2';d.style.setProperty('--c',c.c);
-    d.innerHTML=`<h4>${c.n} <small>· ${c.t}</small></h4>${c.x.map(t=>'<p>'+t+'</p>').join('')}`;
-    bod.insertBefore(d,bod.firstChild);
+    if(!bod||bod.querySelector('.mxen'))return;
     const ci=['sahasrara','ajna','vishudha','anahata','manipura','svadhistana','muladhara'].indexOf(c.k.slice(4));
     const key=document.querySelector('#'+id+' .mx-key');const nums=key?(key.textContent.match(/\d+/g)||[]).map(Number):[];
-    if(ci>=0&&nums.length===3&&window.MX_CHE){const [e,sm,ph]=nums,T=window.MX_CHE,E=(typeof ENERGIES!=='undefined'?ENERGIES:{});
-      const nm=n=>(E[n]||E[String(n)]||{}).name||'';
-      const row=(lab,n,i,col)=>T[n]?`<p><b style="color:${col}">${lab} — ${n} ${nm(n)}:</b> ${T[n][ci][i]}</p>`:'';
-      const m=document.createElement('div');m.className='mxci2';m.style.setProperty('--c',c.c);
-      m.innerHTML=`<h4>შენი რიცხვები ამ ჩაკრაში</h4>${row('ენერგია',e,0,'#b9a8ff')}${row('ფიზიკა',ph,1,'#8fd36a')}${row('ემოცია',sm,2,'#f2a65a')}`;
-      d.after(m);}
+    if(ci<0||nums.length!==3||!window.MX_CHE)return;
+    const [e,sm,ph]=nums,T=window.MX_CHE,E=(typeof ENERGIES!=='undefined'?ENERGIES:{});
+    const nm=n=>(E[n]||E[String(n)]||{}).name||'';
+    const row=(lab,n,i)=>T[n]?`<div class="mxen-r"><div class="mxen-h"><span class="mxen-n">${n}</span> ${nm(n)} <span class="mxen-l">· ${lab}</span></div><div class="mxen-t">${T[n][ci][i]}</div></div>`:'';
+    const m=document.createElement('div');m.className='mxen';
+    m.innerHTML=row('ენერგია',e,0)+row('ემოცია',sm,2)+row('ფიზიკა',ph,1);
+    bod.appendChild(m);
   });
 }
 function hook(){const o=window.buildMatrixBoxes;if(typeof o!=='function'||o._ci)return;
