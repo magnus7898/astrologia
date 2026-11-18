@@ -107,7 +107,7 @@ const PUR=[
  ['ep-misia','სულიერი ცოდნა','პირადი და სოციალური დანიშნულების ჯამი: მთავარი გზა მთელი ცხოვრებისთვის.']];
 function purposes(){
   const panel=$('matrix-boxes');if(!panel||!$('mxbox-css'))return;
-  panel.querySelectorAll('.mx-pur').forEach(e=>e.remove());
+  panel.querySelectorAll('.mx-pur').forEach(e=>e.remove());const og=$('mxbox-grp_pur');if(og)og.remove();
   PUR.forEach(([eid,title,lead])=>{const n=parseInt(($(eid)||{}).textContent);if(!n)return;
     const w=document.createElement('div');w.className='mx-box mx-pur';w.id='mxbox-pur_'+eid;
     const h=document.createElement('div');h.className='mx-box-head';
@@ -115,6 +115,7 @@ function purposes(){
     const b=document.createElement('div');b.className='mx-box-body';b.style.display='none';
     b.innerHTML='<p style="margin:0 0 6px">'+lead+'</p><div class="mxen">'+energyRow('',title,n,EN(n).desc)+'</div>';
     h.onclick=()=>{b.style.display=b.style.display==='block'?'none':'block';};w.appendChild(h);w.appendChild(b);panel.appendChild(w);});
+  group(panel,'grp_pur','დანიშნულებები — ცა, მიწა, კაცი, ქალი, სულიერი ცოდნა','#c9a96a',PUR.map(p=>'pur_'+p[0]));
 }
 function wrap(name,after){const o=window[name];if(typeof o!=='function'||o['_o_'+name])return;
   const f=function(){const r=o.apply(this,arguments);try{after.apply(this,arguments);}catch(e){console.warn(name,e);}return r;};f['_o_'+name]=true;window[name]=f;}
