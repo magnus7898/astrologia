@@ -331,7 +331,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
 /* ── grey boxes everywhere: every dark navy/black box (card, panel, box) becomes grey ── */
 (function(){
-  const BG='#2b2d33',BG2='#33363d',BD='#43464e';
+  const BG='#16302b',BG2='#1c3b35',BD='rgba(184,137,74,.55)';
   const SKIP=/^(HTML|BODY|INPUT|SELECT|TEXTAREA|BUTTON|OPTION|CANVAS|SVG|IMG|VIDEO|IFRAME|HEADER|FOOTER|NAV)$/;
   function dark(c){const m=c&&c.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/);if(!m)return false;
     const a=m[4]===undefined?1:+m[4];if(a<.2)return false;const r=+m[1],g=+m[2],b=+m[3];
@@ -345,6 +345,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const w=el.offsetWidth,h=el.offsetHeight;if(w<40||h<24)return false;
     const vw=document.documentElement.clientWidth;
     if((w>vw*.8&&h>window.innerHeight*1.1)||el.querySelector('h1')||(w>vw*.8&&el.querySelector('main,section,article')))return false;  /* page plates & backdrops */
+    if(parseFloat(cs.borderTopLeftRadius)>=Math.min(w,h)/2-1)return false;   /* circles stay as they are */
     const bw=parseFloat(cs.borderTopWidth)+parseFloat(cs.borderLeftWidth)+parseFloat(cs.borderBottomWidth)+parseFloat(cs.borderRightWidth);
     return bw>0||parseFloat(cs.borderTopLeftRadius)>0||cs.boxShadow!=='none';
   }
