@@ -61,14 +61,26 @@ const css=`#matrix-boxes .mx-box{background:#2b2d33!important;border:1px solid #
 .mxen{margin-top:14px;border-top:1px solid #4a4d55}
 .mxen-r{padding:12px 0;border-bottom:1px solid #3c3f47}.mxen-r:last-child{border-bottom:none}
 .mxen-h{font-weight:600;color:#f6f0e2;margin-bottom:4px}
-.mxen-n{display:inline-block;min-width:26px;padding:0 6px;margin-right:6px;border-radius:12px;background:#4a4d56;color:#ffd98a;text-align:center;font-family:'JetBrains Mono',monospace}
+.mxen-n{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin-right:8px;border-radius:50%;background:rgba(20,14,50,0.92);border:2px solid rgba(180,160,255,0.75);color:#fff;font-weight:700;font-size:14px;font-family:'Cinzel',serif;vertical-align:middle}
 .mxen-l{font-weight:400;color:#b9bcc6}.mxen-t{color:#e9eaee}
 .mx-grp-body{padding:8px 10px 12px!important}.mx-grp-body .mx-box{margin-top:6px;background:#2f3238!important}.mx-grp-body .mx-box-head{background:#383b42}
 .mxen-more{margin-top:6px}.mxen-more summary{cursor:pointer;color:#c9a96a;font-size:13px}.mxen-more p{margin:4px 0;color:#d9dbe2}`;
 const $=id=>document.getElementById(id);
+/* circle colours exactly as the matrix diagram draws them (draw() in matrix.html) */
+const DK=['rgba(20,14,50,0.92)','rgba(180,160,255,0.75)','#fff'];
+let METHOD=1;
+function posCol(k){const m3=METHOD===3;
+  const P={L3:['#7F77DD','#534AB7'],T3:['#7F77DD','#534AB7'],L2:['#2060a8','#0a3878'],T2:['#2060a8','#0a3878'],L1:['#4a8cc8','#1a5090'],T1:['#4a8cc8','#1a5090'],
+    Cv:['#FFD700','#BA7517','#2a1d00'],G1:['#639922','#3B6D11'],G2:['#639922','#3B6D11'],
+    B1:m3?['#F2C230','#B08A10','#2a1d00']:['#EF9F27','#BA7517'],R1:m3?['#F2C230','#B08A10','#2a1d00']:['#EF9F27','#BA7517'],
+    B2:m3?['#EF9F27','#BA7517']:null,R2:m3?['#EF9F27','#BA7517']:null,B3:['#E24B4A','#A32D2D'],R3:['#E24B4A','#A32D2D'],
+    TL3:m3?['#1F6E5C','#0F4437']:null,BR3:m3?['#1F6E5C','#0F4437']:null,TR3:m3?['#3A6EA5','#22466B']:null,BL3:m3?['#3A6EA5','#22466B']:null};
+  if(k==='EP')return ['#18223A','rgba(184,137,74,.22)','#EDE6D8'];if(k==='EPG')return ['#18223A','#B8894A','#E3BE84'];
+  const c=P[k];return c?[c[0],c[1],c[2]||'#fff']:DK;}
+function paint(el,k){const [f,st,fg]=posCol(k);el.style.background=f;el.style.border='2px solid '+st;el.style.color=fg;}
 function energyRow(key,label,n,txt){
   const e=EN(n),o=ORIG(n);
-  return `<div class="mxen-r" data-k="${key}"><div class="mxen-h"><span class="mxen-n">${n}</span>${e.name||''} <span class="mxen-l">· ${label}</span></div>
+  return `<div class="mxen-r" data-k="${key}"><div class="mxen-h"><span class="mxen-n" data-pk="${key}">${n}</span>${e.name||''} <span class="mxen-l">· ${label}</span></div>
     <div class="mxen-t">${txt||e.desc||''}</div>${o?`<details class="mxen-more"><summary>ენერგიის არსი</summary><p>${o}</p></details>`:''}</div>`;
 }
 function organize(v,method){
@@ -78,6 +90,12 @@ function organize(v,method){
   for(const id in ROLES){const bod=document.querySelector('#mxbox-'+id+' .mx-box-body');if(!bod||bod.querySelector('.mxen'))continue;
     const rows=ROLES[id].map(([k,lab,fn])=>{const n=v[k];return n?energyRow(k,lab,n,fn(n)):'';}).join('');
     if(rows){const d=document.createElement('div');d.className='mxen';d.innerHTML=rows;bod.appendChild(d);}}
+  METHOD=method;
+  panel.querySelectorAll('.mxen-n[data-pk]').forEach(b=>paint(b,b.dataset.pk));
+  /* chakra rows: energy / emotion / physics take the colours of the circles they come from */
+  const CKEY=method===3?{sahasrara:['T3','L3'],ajna:['T2','L2'],vishudha:['T1','L1'],lelia:['TR3','BL3'],lada:['TL3','BR3'],anahata:['Cv','Cv'],manipura:['B1','R1'],svadhistana:['B2','R2'],muladhara:['B3','R3']}
+    :{sahasrara:['T3','L3'],ajna:['T2','L2'],vishudha:['T1','L1'],anahata:['G2','G1'],manipura:['Cv','Cv'],svadhistana:['B1','R1'],muladhara:['B3','R3']};
+  for(const ck in CKEY){const r=document.querySelectorAll('#mxbox-ch_'+ck+' .mxen-r .mxen-n');if(r.length===3){paint(r[0],CKEY[ck][0]);paint(r[1],'');paint(r[2],CKEY[ck][1]);}}
   const hasSex=!!$('mxbox-sex');   /* method 1 only — otherwise comfort stays a box of its own */
   [...panel.querySelectorAll('.mx-box')].forEach(b=>{const id=b.id.replace('mxbox-','');
     b.style.display=(HOME[id]&&!(id==='comfort'&&!hasSex))?'none':'';});
@@ -113,7 +131,7 @@ function purposes(){
     const h=document.createElement('div');h.className='mx-box-head';
     h.innerHTML='<span><span class="mx-dot" style="background:#c9a96a"></span>'+title+'</span><span class="mx-key">'+n+'<span class="mx-arrow">▼</span></span>';
     const b=document.createElement('div');b.className='mx-box-body';b.style.display='none';
-    b.innerHTML='<p style="margin:0 0 6px">'+lead+'</p><div class="mxen">'+energyRow('',title,n,EN(n).desc)+'</div>';
+    b.innerHTML='<p style="margin:0 0 6px">'+lead+'</p><div class="mxen">'+energyRow(/mid|misia/.test(eid)?'EPG':'EP',title,n,EN(n).desc)+'</div>';b.querySelectorAll('.mxen-n[data-pk]').forEach(x=>paint(x,x.dataset.pk));
     h.onclick=()=>{b.style.display=b.style.display==='block'?'none':'block';};w.appendChild(h);w.appendChild(b);panel.appendChild(w);});
   group(panel,'grp_pur','დანიშნულებები — ცა, მიწა, კაცი, ქალი, სულიერი ცოდნა','#c9a96a',PUR.map(p=>'pur_'+p[0]));
 }
