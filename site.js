@@ -351,7 +351,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const pageDark=dark(cs.backgroundColor)||gradDark(cs.backgroundImage)||dark(hs.backgroundColor)||(rgb(cs.backgroundColor)||[0,0,0,0])[3]===0;
     if(!pageDark)return false;
     if(!document.getElementById('mg-tex')){const st=document.createElement('style');st.id='mg-tex';
-      st.textContent='html{background:#0b1024!important}body{background:'+TEX+'!important;background-attachment:fixed!important;background-size:240px 240px,420px 420px,100% 100%,100% 100%,100% 100%,100% 100%!important}';
+      st.textContent='html{background:#0b1024!important}html body{background:'+TEX+'!important;background-attachment:fixed!important;background-size:240px 240px,420px 420px,100% 100%,100% 100%,100% 100%,100% 100%!important}';
       document.head.appendChild(st);}
     return true;
   }
@@ -368,11 +368,23 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       el.style.setProperty('background','transparent','important');
       if(parseFloat(cs.borderTopWidth)>0)el.style.setProperty('border-color',BD,'important');
       el.style.setProperty('box-shadow','none','important');
-      el.dataset.mgTex='1';}
+      el.dataset.mgTex='1';rec(el,parseFloat(cs.borderTopWidth)>0);}
+    save();
   }
+  /* remember converted boxes per page so the next load paints them right from the first frame (boot snippet in <head>) */
+  const SB=new Set(),SN=new Set();
+  const esc=x=>(window.CSS&&window.CSS.escape)?window.CSS.escape(x):String(x).replace(/[^\w-]/g,'\\$&');
+  function selOf(el){if(el.id&&!/\d{3,}/.test(el.id))return '#'+esc(el.id);
+    const c=[...el.classList].filter(x=>!/^(on|open|active|show|closed|hidden)$/.test(x));return c.length?el.tagName.toLowerCase()+'.'+c.map(esc).join('.'):null;}
+  function rec(el,b){const q=selOf(el);if(q&&SB.size+SN.size<300)(b?SB:SN).add(q);}
+  let sv=null;function save(){clearTimeout(sv);sv=setTimeout(()=>{try{
+    let css=document.getElementById('mg-tex')?document.getElementById('mg-tex').textContent:'';
+    if(SN.size)css+=[...SN].join(',')+'{background:transparent!important;box-shadow:none!important}';
+    if(SB.size)css+=[...SB].join(',')+'{background:transparent!important;box-shadow:none!important;border-color:'+BD+'!important}';
+    localStorage.setItem('mg_tex:'+location.pathname,css);}catch(e){}},400);}
   let t=null;const later=()=>{clearTimeout(t);t=setTimeout(pass,250);};
   function start(){pass();new MutationObserver(later).observe(document.body,{childList:true,subtree:true});}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+  if(document.body){start();}else document.addEventListener('DOMContentLoaded',start);
   window.MAGNUS_TEX=pass;
 })();
 })();
