@@ -71,3 +71,22 @@ w.querySelector('select').addEventListener('change',e=>{const to=e.target.value;
   location.href=HREF[to]||to;});
 if(document.readyState==='complete')setTimeout(restore,50);else addEventListener('load',()=>setTimeout(restore,50));
 })();
+/* charts on these pages: no backdrop square behind the wheel — the chart sits on the page texture like the Western one */
+(function(){
+const PAGE=(location.pathname.split('/').pop()||'').toLowerCase();
+if(!/^(astro|vedic|vedictrop|true_sidereal|hdastro|moon|asteroid|planeta|skycal|bazi|ziwei|tibet|tzolkin|celtic|compat)\.html$/.test(PAGE))return;
+function dark(c){const m=c&&c.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/);if(!m)return false;return (m[4]===undefined||+m[4]>.15)&&(.2126*m[1]+.7152*m[2]+.0722*m[3])/255<.18;}
+function clean(svg){
+  const vb=svg.viewBox&&svg.viewBox.baseVal;const W=vb&&vb.width||svg.clientWidth,H=vb&&vb.height||svg.clientHeight;
+  if(!W||!H||svg.getBoundingClientRect().width<160)return;
+  svg.querySelectorAll(':scope > rect, :scope > g > rect').forEach(r=>{
+    const w=r.width.baseVal,h=r.height.baseVal;const rw=w.unitType===2?W*w.valueInSpecifiedUnits/100:w.value,rh=h.unitType===2?H*h.valueInSpecifiedUnits/100:h.value;
+    if(rw<W*.8||rh<H*.8)return;
+    const f=getComputedStyle(r).fill;if(/^url\(/.test(f)||dark(f))r.style.setProperty('fill','none','important');});
+  const cs=getComputedStyle(svg);if(dark(cs.backgroundColor)||/gradient/.test(cs.backgroundImage))svg.style.setProperty('background','transparent','important');
+}
+function run(){document.querySelectorAll('svg').forEach(clean);
+  document.querySelectorAll('canvas').forEach(c=>{const cs=getComputedStyle(c);if(dark(cs.backgroundColor))c.style.setProperty('background','transparent','important');});}
+let t=null;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,60);}).observe(document.documentElement,{childList:true,subtree:true});
+addEventListener('load',run);run();
+})();
