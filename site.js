@@ -295,9 +295,9 @@ const CARD_SKIP=new Set(['cards.html','tarot.html','tarotborth.html','fool_journ
 const BOX_SEL='.panel,.form-card,.form-shell,.data-card,.input-panel,.stat,.box,#orb-panel,#asp-filters,.mg-tiles>*'+(CARD_SKIP.has(P)?'':',.card');
 /* box colours — to go back to the old dark boxes set BOX_GREEN=false */
 const BOX_GREEN=true;
-const BOX_BG=BOX_GREEN?'rgba(0,0,0,.9)':'rgba(8,6,18,.72)';
-const BOX_BG_HI=BOX_GREEN?'rgba(16,16,20,.95)':'rgba(14,11,28,.88)';
-const BOX_LINE=BOX_GREEN?'#C9A24C':'rgba(201,168,76,.16)';
+const BOX_BG=BOX_GREEN?'transparent':'rgba(8,6,18,.72)';   /* boxes share the textured page background */
+const BOX_BG_HI=BOX_GREEN?'rgba(227,190,132,.07)':'rgba(14,11,28,.88)';
+const BOX_LINE=BOX_GREEN?'rgba(201,162,76,.5)':'rgba(201,168,76,.16)';
 const BOX_TEXT='#FFFFFF';
 const BOX_SEL2=BOX_SEL+(BOX_GREEN?',.cp,.nx,#lunar-badge,.result-box,.info-box,.section-card,.chart-box,.panel-box':'');
 const BOX_R='14px';   /* corner radius of every box */
@@ -355,22 +355,30 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       document.head.appendChild(st);}
     return true;
   }
+  function fix(el){
+    if(el.nodeType!==1||el.dataset.mgTex||SKIP.test(el.tagName.toUpperCase()))return;
+    if(el.closest('#mg-head,#mg-foot,#mg-consent,svg'))return;
+    const cs=getComputedStyle(el);if(!(dark(cs.backgroundColor)||gradDark(cs.backgroundImage)))return;
+    if(cs.position==='fixed'||cs.position==='absolute'||cs.position==='sticky')return;   /* menus, pop-ups, tooltips keep their fill */
+    const w=el.offsetWidth,h=el.offsetHeight,rad=cs.borderTopLeftRadius;
+    if(w||h){if(w<30||h<20)return;if(parseFloat(rad)>=Math.min(w,h)/2-1)return;}          /* small badges and circles stay */
+    else if(/%$/.test(rad)?parseFloat(rad)>=50:parseFloat(rad)>=100)return;                 /* hidden right now: decide by radius */
+    el.style.setProperty('background','transparent','important');
+    if(parseFloat(cs.borderTopWidth)>0)el.style.setProperty('border-color',BD,'important');
+    el.style.setProperty('box-shadow','none','important');
+    el.dataset.mgTex='1';rec(el,parseFloat(cs.borderTopWidth)>0);
+  }
+  let ON=false;
   function pass(){
     if(!document.body||document.body.dataset.nogrey!==undefined)return;
-    if(!texture())return;
-    const vw=document.documentElement.clientWidth,all=document.body.getElementsByTagName('*');
-    for(let i=0;i<all.length;i++){const el=all[i];if(el.dataset.mgTex||SKIP.test(el.tagName.toUpperCase()))continue;
-      if(el.closest('#mg-head,#mg-foot,#mg-consent,svg'))continue;
-      const cs=getComputedStyle(el);if(!(dark(cs.backgroundColor)||gradDark(cs.backgroundImage)))continue;
-      if(cs.position==='fixed'||cs.position==='absolute'||cs.position==='sticky')continue;   /* menus, pop-ups, tooltips keep their fill */
-      const w=el.offsetWidth,h=el.offsetHeight;if(w<30||h<20)continue;
-      if(parseFloat(cs.borderTopLeftRadius)>=Math.min(w,h)/2-1)continue;                     /* circles stay as they are */
-      el.style.setProperty('background','transparent','important');
-      if(parseFloat(cs.borderTopWidth)>0)el.style.setProperty('border-color',BD,'important');
-      el.style.setProperty('box-shadow','none','important');
-      el.dataset.mgTex='1';rec(el,parseFloat(cs.borderTopWidth)>0);}
+    if(!texture())return;ON=true;
+    const all=document.body.getElementsByTagName('*');for(let i=0;i<all.length;i++)fix(all[i]);
     save();
   }
+  /* new content is fixed in the same frame it is added (mutation callbacks run before paint) */
+  function onMut(ms){if(!ON)return;let n=0;
+    for(const m of ms)for(const nd of m.addedNodes){if(nd.nodeType!==1)continue;fix(nd);const d=nd.getElementsByTagName('*');for(let i=0;i<d.length;i++)fix(d[i]);n++;}
+    if(n)save();}
   /* remember converted boxes per page so the next load paints them right from the first frame (boot snippet in <head>) */
   const SB=new Set(),SN=new Set();
   const esc=x=>(window.CSS&&window.CSS.escape)?window.CSS.escape(x):String(x).replace(/[^\w-]/g,'\\$&');
@@ -382,10 +390,10 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     if(SN.size)css+=[...SN].join(',')+'{background:transparent!important;box-shadow:none!important}';
     if(SB.size)css+=[...SB].join(',')+'{background:transparent!important;box-shadow:none!important;border-color:'+BD+'!important}';
     localStorage.setItem('mg_tex:'+location.pathname,css);}catch(e){}},400);}
-  let t=null;const later=()=>{clearTimeout(t);t=setTimeout(pass,250);};
-  function reveal(){document.documentElement.classList.remove('mg-pre');}
-  function start(){try{pass();}catch(e){}reveal();new MutationObserver(later).observe(document.body,{childList:true,subtree:true});}
-  if(document.body){start();}else document.addEventListener('DOMContentLoaded',start);
+  function reveal(){requestAnimationFrame(()=>requestAnimationFrame(()=>document.documentElement.classList.remove('mg-pre')));}
+  function start(){try{pass();}catch(e){}reveal();new MutationObserver(onMut).observe(document.body,{childList:true,subtree:true});}
+  function go(){start();}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(go,0));else setTimeout(go,0);
   window.MAGNUS_TEX=pass;
 })();
 })();
