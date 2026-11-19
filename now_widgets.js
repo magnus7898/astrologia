@@ -41,6 +41,9 @@ function css(){if($('#nw-css'))return;const s=document.createElement('style');s.
 .nw-moon .bar{height:3px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:3px;width:100%}
 .nw-moon .bar i{display:block;height:100%;background:linear-gradient(90deg,#8a7cff,#FFD36A)}
 @media(max-width:480px){.nw-moon{gap:10px;padding:8px 14px 8px 10px}.nw-moon .l2{font-size:13.5px}.nw-moon .l3{white-space:normal}}
+.nw-moon.side{width:212px;max-width:212px;box-sizing:border-box;margin:0;padding:8px 12px;border-radius:14px;gap:9px;align-items:center;background:transparent}
+.nw-moon.side .em{font-size:24px}.nw-moon.side .no{font-size:21px;min-width:22px}
+.nw-moon.side .l1,.nw-moon.side .l3{display:none}.nw-moon.side .l2{white-space:normal;font-size:12.5px;line-height:1.3}.nw-moon.side .tx{flex:1}
 .nw-side{position:absolute;z-index:3;display:flex;flex-direction:column;gap:16px;width:212px}
 .nw-row{display:none;flex-wrap:wrap;justify-content:center;gap:14px;width:100%;max-width:1000px;margin:34px auto 0}
 .nw-row .nw-card{flex:0 0 212px}
@@ -205,7 +208,7 @@ async function moonLoad(){const el=$('#nw-moon');if(!el)return;const t=new Date(
       <span class="l2">${n}-ე მთვარის დღე${MD[n]?' — <b style="color:#FFD36A;font-weight:500">'+esc(MD[n])+'</b>':''}</span>
       <span class="l3">${esc(PH[d.phase]||d.phase||'')} · განათება ${Math.round(d.illumination)}%${nxt}</span>
       ${pc!=null?`<span class="bar"><i style="width:${Math.max(2,Math.min(100,pc))}%"></i></span>`:''}</span>`;
-    el.title=`მთვარის ${n}-ე დღე${pc!=null?' · '+pc.toFixed(1)+'% გავლილია':''}`;el.style.display='flex';
+    el.title=`მთვარის ${n}-ე დღე${pc!=null?' · '+pc.toFixed(1)+'% გავლილია':''}`;el.style.display='flex';if(window._nwPlace)setTimeout(window._nwPlace,0);
   }catch(e){el.style.display='none';}}
 
 /* ───────────── layout ───────────── */
@@ -225,11 +228,14 @@ function mount(){
     if(room>=W+G+8&&gr.width>0){[L,R].forEach(x=>{x.style.display='flex';if(x.parentNode!==page){page.appendChild(x);}});
       row.style.display='none';
       const top=gr.top-pr.top+Math.max(0,(gr.height-(178+92)*2-16)/2);
-      L.style.top=R.style.top=top+'px';L.style.left=(gr.left-pr.left-W-G)+'px';R.style.left=(gr.right-pr.left+G)+'px';
+      if(mo.parentNode!==R){R.insertBefore(mo,R.firstChild);mo.classList.add('side');}
+      const mh=mo.style.display==='none'||!mo.offsetHeight?0:mo.offsetHeight+16;
+      L.style.top=top+'px';R.style.top=Math.max(0,top-mh)+'px';L.style.left=(gr.left-pr.left-W-G)+'px';R.style.left=(gr.right-pr.left+G)+'px';
       [...row.children].forEach(c=>(c.dataset.nw==='astro'||c.dataset.nw==='hd'?L:R).appendChild(c));}
-    else{row.style.display='flex';[L,R].forEach(x=>x.style.display='none');
+    else{if(mo.parentNode===R){mo.classList.remove('side');grid.parentNode.insertBefore(mo,grid);}
+      row.style.display='flex';[L,R].forEach(x=>x.style.display='none');
       ['astro','hd','py','mx'].forEach(id=>{const c=document.querySelector(`.nw-card[data-nw="${id}"]`);if(c&&c.parentNode!==row)row.appendChild(c);});}};
-  place();addEventListener('resize',place);setTimeout(place,600);setTimeout(place,2000);
+  window._nwPlace=place;place();addEventListener('resize',place);setTimeout(place,600);setTimeout(place,2000);
   const go=id=>{const c=CARDS.find(x=>x.id===id);if(c)location.href=c.href+'?now=1';};
   document.addEventListener('click',e=>{const c=e.target.closest('.nw-card');if(c)go(c.dataset.nw);});
   document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('nw-card')){e.preventDefault();go(e.target.dataset.nw);}});
