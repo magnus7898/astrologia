@@ -383,7 +383,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     if(SB.size)css+=[...SB].join(',')+'{background:transparent!important;box-shadow:none!important;border-color:'+BD+'!important}';
     localStorage.setItem('mg_tex:'+location.pathname,css);}catch(e){}},400);}
   let t=null;const later=()=>{clearTimeout(t);t=setTimeout(pass,250);};
-  function start(){pass();new MutationObserver(later).observe(document.body,{childList:true,subtree:true});}
+  function reveal(){document.documentElement.classList.remove('mg-pre');}
+  function start(){try{pass();}catch(e){}reveal();new MutationObserver(later).observe(document.body,{childList:true,subtree:true});}
   if(document.body){start();}else document.addEventListener('DOMContentLoaded',start);
   window.MAGNUS_TEX=pass;
 })();
