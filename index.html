@@ -1049,12 +1049,12 @@
      label: how a member is titled INSIDE its box (optional).            */
   /* pages that live inside games.html (games is a tile in გასართობი) */
   /* pages that now live inside another page (not as a home tile): შეთავსება → astro.html, couple group */
-  const ELSEWHERE=['compat.html'];
+  const ELSEWHERE=['compat.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','asteroid.html'];  /* chosen from the astrology-system list on the chart pages */
   const IN_GAMES=['intuition.html','memory.html','logic.html','hardest.html','sudoku.html','nonogram.html','pythagames.html'];
   const GROUPS=[
     {key:'astrology',title:'ასტროლოგია',sub:'Western · Vedic · Sidereal · Chinese · Tibetan · Maya…',css:'c-astro',art:'astro.html',
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="9"/><path d="M25.00 16.00L30.00 16.00M23.79 20.50L28.12 23.00M20.50 23.79L23.00 28.12M16.00 25.00L16.00 30.00M11.50 23.79L9.00 28.12M8.21 20.50L3.88 23.00M7.00 16.00L2.00 16.00M8.21 11.50L3.88 9.00M11.50 8.21L9.00 3.88M16.00 7.00L16.00 2.00M20.50 8.21L23.00 3.88M23.79 11.50L28.12 9.00"/><circle cx="27.11" cy="18.98" r=".75" fill="currentColor" stroke="none"/><circle cx="24.13" cy="24.13" r=".75" fill="currentColor" stroke="none"/><circle cx="18.98" cy="27.11" r=".75" fill="currentColor" stroke="none"/><circle cx="13.02" cy="27.11" r=".75" fill="currentColor" stroke="none"/><circle cx="7.87" cy="24.13" r=".75" fill="currentColor" stroke="none"/><circle cx="4.89" cy="18.98" r=".75" fill="currentColor" stroke="none"/><circle cx="4.89" cy="13.02" r=".75" fill="currentColor" stroke="none"/><circle cx="7.87" cy="7.87" r=".75" fill="currentColor" stroke="none"/><circle cx="13.02" cy="4.89" r=".75" fill="currentColor" stroke="none"/><circle cx="18.98" cy="4.89" r=".75" fill="currentColor" stroke="none"/><circle cx="24.13" cy="7.87" r=".75" fill="currentColor" stroke="none"/><circle cx="27.11" cy="13.02" r=".75" fill="currentColor" stroke="none"/><path d="M16 9v14M9 16h14" opacity=".45"/><circle cx="16" cy="16" r="2.3"/></svg>',
-     members:['astro.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html'],
+     members:['astro.html','planeta.html','skycal.html','bazi.html','ziwei.html','tibet.html','Tzolkin.html','celtic.html'],
      label:{'astro.html':'დასავლური ასტროლოგია'}},
     {key:'numerology',title:'ნუმეროლოგია',sub:'Matrix · Pythagoras · Name · Tarot · Kabbalah',css:'c-name',art:'name.html',
      sym:'<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="6.5" width="19" height="19"/><path d="M16 2.5L29.5 16L16 29.5L2.5 16Z"/><path d="M6.5 6.5L25.5 25.5M25.5 6.5L6.5 25.5M16 2.5V29.5M2.5 16H29.5" opacity=".35"/><circle cx="16" cy="2.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="29.5" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="29.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="2.5" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="25.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="25.5" cy="25.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="25.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="2.6"/></svg>',
@@ -1078,9 +1078,7 @@
   ];
   /* boxes inside a box: on the parent's page these members fold into one box that opens its own page */
   const SUBS=[
-    {parent:'astrology',key:'western',title:'დასავლური ასტროლოგია',sub:'Tropical · Vedic · Sidereal · Astro-HD · Moon · Asteroids',css:'c-astro',art:'astro.html',
-     members:['astro.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','asteroid.html'],
-     label:{'astro.html':'დასავლური (ტროპიკული)'}}];
+  ];
   /* ?g=<key> → that box's own page (its tiles in the normal grid);
      no parameter → the four boxes. Same file, so the admin-panel order
      and visibility apply on both, and the back button works.           */
@@ -1206,7 +1204,7 @@
 })();
 </script>
 <script src="now_widgets.js?v=20261119m"></script>
-<script src="site.js?v=20261119e"></script>
+<script src="site.js?v=20261119f"></script>
 <script src="account.js"></script>
 </body>
 </html>
