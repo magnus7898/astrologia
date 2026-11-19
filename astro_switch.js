@@ -9,23 +9,33 @@ const SYS=[
   ['true_sidereal.html','ნამდვილი სიდერიული'],
   ['hdastro.html','ასტრო-დიზაინი (ასტროლოგია × HD)'],
   ['moon.html','მთვარის ფაზები'],
-  ['asteroid.html','ასტეროიდები']];
+  ['asteroid.html','ასტეროიდები'],
+  ['planeta.html','პლანეტარული ასტროლოგია'],
+  ['skycal.html','ცის კალენდარი'],
+  ['bazi.html','ბაძი · საჯუ (ჩინური)'],
+  ['ziwei.html','ძი ვეი დოუ შუ (ჩინური)'],
+  ['tibet.html','ტიბეტური ასტროლოგია'],
+  ['tzolkin.html','მაიას ცოლკინი'],
+  ['celtic.html','კელტური ხეები']];
 const PAGE=(location.pathname.split('/').pop()||'').toLowerCase();
 if(!SYS.some(s=>s[0]===PAGE))return;
+const HREF={'tzolkin.html':'Tzolkin.html'};
 const KEY='mg_astro_carry';
 const $=id=>document.getElementById(id);
 /* the birth-data fields of this page (astro.html uses the natal tab's n-* fields) */
-const P=$('n-day')?'n-':'';
-const F={name:$(P+'name'),day:$(P+'day'),month:$(P+'month'),year:$(P+'year'),hour:$(P+'hour'),minute:$(P+'minute'),city:$(P+'city')||$('bcity'),
-  date:$('bdate'),time:$('btime'),lat:$('lat'),lon:$('lon'),tz:$('tz_name')};
-const anchor=F.day||F.date||F.year;
+const P=$('n-day')?'n-':$('i-day')?'i-':'';
+const F={name:$(P+'name'),day:$(P+'day'),month:$(P+'month'),year:$(P+'year'),hour:$(P+'hour'),minute:$(P+'minute')||$(P+'min'),city:$(P+'city')||$('bcity'),
+  date:$('bdate')||$('d0'),time:$('btime'),dmy:$('d1'),hm:$('t1'),lat:$('lat')||$('i-elat'),lon:$('lon')||$('i-elon'),tz:$('tz_name')};
+const anchor=F.day||F.date||F.year||F.dmy;
 if(!anchor)return;
 const pad=n=>String(n).padStart(2,'0');
 function collect(){const v=x=>x&&x.value!==undefined?String(x.value).trim():'';
   const o={name:v(F.name),city:v(F.city),lat:v(F.lat),lon:v(F.lon),tz:v(F.tz)};
-  if(F.date&&v(F.date)){const [y,m,d]=v(F.date).split('-');Object.assign(o,{year:y,month:+m,day:+d});}
+  if(F.dmy&&v(F.dmy)){const [d,m,y]=v(F.dmy).split('/');Object.assign(o,{year:y,month:+m,day:+d});}
+  else if(F.date&&v(F.date)){const [y,m,d]=v(F.date).split('-');Object.assign(o,{year:y,month:+m,day:+d});}
   else Object.assign(o,{day:v(F.day),month:v(F.month),year:v(F.year)});
-  if(F.time&&v(F.time)){const [h,mi]=v(F.time).split(':');Object.assign(o,{hour:+h,minute:+mi});}
+  if(F.hm&&v(F.hm)){const [h,mi]=v(F.hm).split(':');Object.assign(o,{hour:+h,minute:+mi});}
+  else if(F.time&&v(F.time)){const [h,mi]=v(F.time).split(':');Object.assign(o,{hour:+h,minute:+mi});}
   else Object.assign(o,{hour:v(F.hour),minute:v(F.minute)});
   return o;}
 function put(el,val){if(!el||val===''||val===undefined||val===null)return;
@@ -35,9 +45,11 @@ function put(el,val){if(!el||val===''||val===undefined||val===null)return;
 function restore(){let o=null;try{o=JSON.parse(sessionStorage.getItem(KEY)||'null');sessionStorage.removeItem(KEY);}catch(e){}
   if(!o)return;
   put(F.name,o.name);
-  if(F.date){if(o.year&&o.month&&o.day)put(F.date,o.year+'-'+pad(o.month)+'-'+pad(o.day));}
+  if(F.dmy){if(o.year&&o.month&&o.day)put(F.dmy,pad(o.day)+'/'+pad(o.month)+'/'+o.year);}
+  else if(F.date){if(o.year&&o.month&&o.day)put(F.date,o.year+'-'+pad(o.month)+'-'+pad(o.day));}
   else{put(F.year,o.year);put(F.month,o.month);put(F.day,o.day);}
-  if(F.time){if(o.hour!==''&&o.hour!==undefined)put(F.time,pad(o.hour)+':'+pad(o.minute||0));}
+  if(F.hm){if(o.hour!==''&&o.hour!==undefined)put(F.hm,pad(o.hour)+':'+pad(o.minute||0));}
+  else if(F.time){if(o.hour!==''&&o.hour!==undefined)put(F.time,pad(o.hour)+':'+pad(o.minute||0));}
   else{put(F.hour,o.hour);put(F.minute,o.minute);}
   put(F.lat,o.lat);put(F.lon,o.lon);put(F.tz,o.tz);
   if(F.city&&o.city&&!(o.lat&&F.lat)){F.city.value=o.city;F.city.dispatchEvent(new Event('input',{bubbles:true}));F.city.focus();}
@@ -56,6 +68,6 @@ document.head.appendChild(st);
 box.insertBefore(w,box.firstChild);
 w.querySelector('select').addEventListener('change',e=>{const to=e.target.value;if(to===PAGE)return;
   try{sessionStorage.setItem(KEY,JSON.stringify(collect()));}catch(_){}
-  location.href=to;});
+  location.href=HREF[to]||to;});
 if(document.readyState==='complete')setTimeout(restore,50);else addEventListener('load',()=>setTimeout(restore,50));
 })();

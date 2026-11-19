@@ -25,7 +25,7 @@ if(/^admin/.test(P))return;
 
 /* sections = the boxes of index.html (GROUPS there); first match wins for a page in several boxes */
 const SECTIONS=[
-  {key:'astrology',t:'ასტროლოგია',href:'index.html?g=astrology',pages:['astro.html','compat.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','tzolkin.html','celtic.html','sky.html','mars.html']},
+  {key:'astrology',t:'ასტროლოგია',href:'astro.html',pages:['astro.html','compat.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','tzolkin.html','celtic.html','sky.html','mars.html']},
   {key:'numerology',t:'ნუმეროლოგია',href:'index.html?g=numerology',pages:['matrix.html','pythagoras.html','name.html','tarotborth.html','kabbalah.html','numerology.html']},
   {key:'hd',t:'ადამიანის დიზაინი',href:'index.html?g=hd',pages:['hd.html','genekeys.html','iching.html','types.html']},
   {key:'life',t:'ცხოვრების რუქა',href:'life.html',parent:'stats',pages:['life.html','work.html','duty.html','energy.html','body.html']},
