@@ -25,6 +25,7 @@ if(/^admin/.test(P))return;
 
 /* sections = the boxes of index.html (GROUPS there); first match wins for a page in several boxes */
 const SECTIONS=[
+  {key:'western',t:'დასავლური ასტროლოგია',href:'index.html?g=western',parent:'astrology',pages:['astro.html','compat.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','asteroid.html']},
   {key:'astrology',t:'ასტროლოგია',href:'index.html?g=astrology',pages:['astro.html','compat.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','tzolkin.html','celtic.html','sky.html','mars.html']},
   {key:'numerology',t:'ნუმეროლოგია',href:'index.html?g=numerology',pages:['matrix.html','pythagoras.html','name.html','tarotborth.html','kabbalah.html','numerology.html']},
   {key:'hd',t:'ადამიანის დიზაინი',href:'index.html?g=hd',pages:['hd.html','genekeys.html','iching.html','types.html']},
@@ -96,6 +97,8 @@ function header(){
   let crumbs=`<a class="home" href="index.html">მთავარი</a>`;
   const par=sec&&sec.parent&&SECTIONS.find(x=>x.key===sec.parent);
   if(par&&P!=='index.html')crumbs+=`<span class="sep">›</span><a href="${par.href}">${esc(par.t)}</a>`;
+  const gp=gs&&gs.parent&&SECTIONS.find(x=>x.key===gs.parent);
+  if(P==='index.html'&&gp)crumbs+=`<span class="sep">›</span><a href="${gp.href}">${esc(gp.t)}</a>`;
   if(P==='index.html'&&gs)crumbs+=`<span class="sep">›</span><span class="cur">${esc(gs.t)}</span>`;
   else if(sec&&HUBS.has(P)&&sec.href===P)crumbs+=`<span class="sep">›</span><span class="cur">${esc(sec.t)}</span>`;
   else{if(sec)crumbs+=`<span class="sep">›</span><a href="${sec.href}">${esc(sec.t)}</a>`;
@@ -104,7 +107,7 @@ function header(){
   h.innerHTML=`<a class="brand" href="index.html" aria-label="MAGNUS — მთავარი მენიუ">MAGNUS</a>
     <div class="crumbs" aria-label="სად ხართ">${sec&&!(P==='index.html')?`<a href="${sec.href}" aria-label="უკან: ${esc(sec.t)}">←</a>`:''}${crumbs}</div>
     <button class="burger" type="button" aria-label="განყოფილებები" aria-expanded="false">☰<span class="w"> განყოფილებები</span></button>
-    <nav aria-label="განყოფილებები">${SECTIONS.filter(s=>!s.parent).map(s=>`<a href="${s.href}" class="${s.key===active||(sec&&sec.parent===s.key&&!gs)?'on':''}">${s.t}</a>`).join('')}</nav>`;
+    <nav aria-label="განყოფილებები">${SECTIONS.filter(s=>!s.parent).map(s=>`<a href="${s.href}" class="${s.key===active||(gs&&gs.parent===s.key)||(sec&&sec.parent===s.key&&!gs)?'on':''}">${s.t}</a>`).join('')}</nav>`;
   const b=h.querySelector('.burger');b.onclick=()=>{const o=h.classList.toggle('open');b.setAttribute('aria-expanded',o);};
   document.body.insertBefore(h,document.body.firstChild);
   document.querySelectorAll('a.back,#grp-back').forEach(a=>{const href=a.getAttribute('href')||'';

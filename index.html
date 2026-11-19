@@ -1076,6 +1076,11 @@
     {key:'fun',title:'გასართობი',sub:'Games · Tarot · Frequencies · Cards · Calendars · Sky…',css:'c-stone',art:'cards.html',
      members:'*',label:{}},
   ];
+  /* boxes inside a box: on the parent's page these members fold into one box that opens its own page */
+  const SUBS=[
+    {parent:'astrology',key:'western',title:'დასავლური ასტროლოგია',sub:'Tropical · Vedic · Sidereal · Astro-HD · Moon · Asteroids',css:'c-astro',art:'astro.html',
+     members:['astro.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','asteroid.html'],
+     label:{'astro.html':'დასავლური (ტროპიკული)'}}];
   /* ?g=<key> → that box's own page (its tiles in the normal grid);
      no parameter → the four boxes. Same file, so the admin-panel order
      and visibility apply on both, and the back button works.           */
@@ -1096,10 +1101,16 @@
   function applyGroups(){
     const all=[...grid.querySelectorAll(':scope > a.card:not(.grp)')];
     const want=params.get('g');
-    const G0=GROUPS.find(G=>G.key===want);
+    const G0=GROUPS.find(G=>G.key===want)||SUBS.find(G=>G.key===want);
     const head=document.getElementById('grp-head');
     if(G0){
-      const tiles=groupTiles(G0,all);
+      let tiles=groupTiles(G0,all);
+      if(G0.parent){const bk=document.getElementById('grp-back');if(bk)bk.href=homeHref+'?g='+encodeURIComponent(G0.parent);}
+      /* fold sub-groups of this box into one box each */
+      SUBS.filter(S=>S.parent===G0.key).forEach(S=>{
+        const st=tiles.filter(t=>S.members.includes(t.getAttribute('href')));if(st.length<2)return;
+        const box=makeBox(S,st);box.classList.remove('main');
+        const at=tiles.indexOf(st[0]);tiles=tiles.filter(t=>!st.includes(t));tiles.splice(at,0,box);});
       if(tiles.length){
         tiles.forEach(t=>{const lb=G0.label[t.getAttribute('href')];
           if(lb){const x=t.querySelector('.card-title');if(x)x.textContent=lb;}});
@@ -1125,6 +1136,14 @@
         const tt=t.querySelector('.card-title');if(tt)tt.textContent=G.title;
         boxes.push(t);continue;
       }
+      boxes.push(makeBox(G,tiles));
+    }
+    grid.innerHTML='';grid.classList.remove('sub');grid.classList.add('main4');
+    grid.style.setProperty('--n',boxes.length===9?3:boxes.length>5?Math.ceil(boxes.length/2):boxes.length);  /* 9 → 3 × 3 */  /* ≤5 → one row; more → two rows, last row centred */
+    boxes.forEach(b=>grid.appendChild(b));
+    document.title='MAGNUS';
+  }
+  function makeBox(G,tiles){
       const src=original[G.art]||tiles[0];
       const box=document.createElement('a');
       box.className='card grp main '+G.css;box.dataset.grp=G.key;
@@ -1136,12 +1155,7 @@
         '<div class="card-title"></div><div class="card-sub"></div>';
       box.querySelector('.card-title').textContent=G.title;
       box.querySelector('.card-sub').textContent=G.sub;
-      boxes.push(box);
-    }
-    grid.innerHTML='';grid.classList.remove('sub');grid.classList.add('main4');
-    grid.style.setProperty('--n',boxes.length===9?3:boxes.length>5?Math.ceil(boxes.length/2):boxes.length);  /* 9 → 3 × 3 */  /* ≤5 → one row; more → two rows, last row centred */
-    boxes.forEach(b=>grid.appendChild(b));
-    document.title='MAGNUS';
+      return box;
   }
   applyGroups();
 
@@ -1192,7 +1206,7 @@
 })();
 </script>
 <script src="now_widgets.js?v=20261119m"></script>
-<script src="site.js?v=20261119d"></script>
+<script src="site.js?v=20261119e"></script>
 <script src="account.js"></script>
 </body>
 </html>
