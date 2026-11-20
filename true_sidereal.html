@@ -360,209 +360,23 @@ function ascConStart(asc_trop){
 }
 function pxy(a,r){return{x:CX+Math.cos(a)*r,y:CY+Math.sin(a)*r};}
 
+/* the same wheel as the western chart (mg_wheel.js): IAU constellations of unequal size on the zodiac band */
+function conOf(d){d=((d%360)+360)%360;for(const con of CONS){const ss=con.start%360,ee=con.end%360;
+  if(ss<ee?(ss<=d&&d<ee):(d>=ss||d<ee))return con;}return CONS[0];}
 function drawWheel(data){
   const svg=document.getElementById('wheel');
-  svg.innerHTML='';
-  // Rising constellation start at left
-  // ASC degree at left (9 o'clock position)
   const aries=CONS.find(c=>c.name==='Aries');
-  const ascRef=data._timeUnknown?(aries?aries.start:ARIES_START):data.asc;
-  // ── DEFS ──
-  const defs=el('defs',{},svg);
-  const bgG=el('radialGradient',{id:'bgG',cx:'50%',cy:'50%',r:'50%'},defs);
-  el('stop',{offset:'0%','stop-color':'#120e2a'},bgG);
-  el('stop',{offset:'60%','stop-color':'#0a0820'},bgG);
-  el('stop',{offset:'100%','stop-color':'#04030e'},bgG);
-  const sf=el('filter',{id:'sunF',x:'-60%',y:'-60%',width:'220%',height:'220%'},defs);
-  el('feGaussianBlur',{stdDeviation:'3',result:'blur'},sf);
-  const sfm=el('feMerge',{},sf);el('feMergeNode',{in:'blur'},sfm);el('feMergeNode',{in:'SourceGraphic'},sfm);
-  const mf=el('filter',{id:'moonF',x:'-60%',y:'-60%',width:'220%',height:'220%'},defs);
-  el('feGaussianBlur',{stdDeviation:'2.5',result:'blur'},mf);
-  const mfc=el('feFlood',{'flood-color':'#4090ff','flood-opacity':'0.45','result':'color'},mf);
-  el('feComposite',{in:'color',in2:'blur',operator:'in','result':'cb'},mf);
-  const mfmg=el('feMerge',{},mf);el('feMergeNode',{in:'cb'},mfmg);el('feMergeNode',{in:'SourceGraphic'},mfmg);
-  el('rect',{width:700,height:700,fill:'url(#bgG)'},svg);
-
-  // ── CONSTELLATION SEGMENTS (variable size!) ──
-  for(const con of CONS){
-    const color=CON_COLORS[con.name]||'#8888aa';
-    const fill=CON_FILLS[con.name]||'#08081a';
-    const a0=t2a(con.start,ascRef), a1=t2a(con.end%360,ascRef);
-    // span > 180 needs large arc flag
-    const span=con.span;
-    const la=span>180?1:0;
-
-    const p=(a,r)=>`${CX+Math.cos(a)*r},${CY+Math.sin(a)*r}`;
-
-    // Outer zodiac ring R2→R1
-    el('path',{
-      d:`M${p(a0,R2)} L${p(a0,R1)} A${R1},${R1} 0 ${la},0 ${p(a1,R1)} L${p(a1,R2)} A${R2},${R2} 0 ${la},1 ${p(a0,R2)} Z`,
-      fill
-    },svg);
-    // Colored inner edge arc
-    el('path',{d:`M${p(a0,R2)} A${R2},${R2} 0 ${la},0 ${p(a1,R2)}`,
-      fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
-    // House band R3→R2
-    el('path',{
-      d:`M${p(a0,R3)} L${p(a0,R2)} A${R2},${R2} 0 ${la},0 ${p(a1,R2)} L${p(a1,R3)} A${R3},${R3} 0 ${la},1 ${p(a0,R3)} Z`,
-      fill:(CONS.indexOf(con)%2)?'rgba(6,5,18,1)':'rgba(10,8,26,1)'
-    },svg);
-    // Divider line at start
-    el('line',{x1:CX+Math.cos(a0)*R1,y1:CY+Math.sin(a0)*R1,
-      x2:CX+Math.cos(a0)*R2,y2:CY+Math.sin(a0)*R2,
-      stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
-
-    // Symbol at midpoint of outer ring
-    const mt=con.start+con.span/2;          // works across 0° (Pisces) too
-    const amid=t2a(((mt%360)+360)%360,ascRef);
-    const Rzs=(R1+R2)/2;
-    const symText=el('text',{'text-anchor':'middle','dominant-baseline':'central',
-      x:CX+Math.cos(amid)*Rzs,y:CY+Math.sin(amid)*Rzs,
-      fill:color,'font-size':con.name==='Scorpius'?14:con.name==='Ophiuchus'?17:19,
-      'font-family':'serif','font-weight':'bold'},svg);
-    symText.textContent=con.sym+'\ufe0e';
-
-    // No inner names
-  }
-
-  // ── MOON PATH (time-unknown) ──
-  if(data._timeUnknown && data._moonPath){
-    const mp=data._moonPath;
-    const R_outer=R1-1, R_inner=R1-8;
-    const span=((mp.end-mp.start)+360)%360;
-    const la=span>180?1:0;
-    const a0=t2a(mp.start,ascRef), a1e=t2a(mp.end,ascRef);
-    const x0o=CX+Math.cos(a0)*R_outer, y0o=CY+Math.sin(a0)*R_outer;
-    const x1o=CX+Math.cos(a1e)*R_outer,y1o=CY+Math.sin(a1e)*R_outer;
-    const x1i=CX+Math.cos(a1e)*R_inner,y1i=CY+Math.sin(a1e)*R_inner;
-    const x0i=CX+Math.cos(a0)*R_inner, y0i=CY+Math.sin(a0)*R_inner;
-    el('path',{
-      d:`M${x0o},${y0o} A${R_outer},${R_outer} 0 ${la},0 ${x1o},${y1o} L${x1i},${y1i} A${R_inner},${R_inner} 0 ${la},1 ${x0i},${y0i} Z`,
-      fill:'rgba(100,160,255,0.35)',stroke:'none'},svg);
-  }
-
-  // ── INNERMOST FILL ──
-  el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(4,3,14,1)'},svg);
-
-  // ── DEGREE TICKS — all identical ──
-  for(let deg=0;deg<360;deg++){
-    const trop=((aries?aries.start:ARIES_START)+deg)%360;
-    const a=t2a(trop,ascRef);
-    el('line',{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,
-      x2:CX+Math.cos(a)*(R1-7),y2:CY+Math.sin(a)*(R1-7),
-      stroke:'rgba(227,190,132,.3)','stroke-width':0.6},svg);
-  }
-
-  // ── CIRCLES ──
-  el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(227,190,132,.6)','stroke-width':1.6},svg);
-  el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.3},svg);
-  el('circle',{cx:CX,cy:CY,r:R3,fill:'none',stroke:'rgba(227,190,132,.3)','stroke-width':1.1},svg);
-  el('circle',{cx:CX,cy:CY,r:R4,fill:'none',stroke:'rgba(227,190,132,.25)','stroke-width':1},svg);
-
-  // ── PLACIDUS HOUSE LINES + NUMBERS + ASC/MC ──
-  if(!data._timeUnknown){
-    const angCol='#e8c06e';
-    const Rhn=(R2+R3)/2;
-    const ROMAN12=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-    for(let i=0;i<12;i++){
-      const ha=t2a(data.houses[i],ascRef);
-      const isAngle=[0,3,6,9].includes(i);
-      el('line',{x1:CX+Math.cos(ha)*R2,y1:CY+Math.sin(ha)*R2,
-        x2:CX+Math.cos(ha)*R3,y2:CY+Math.sin(ha)*R3,
-        stroke:isAngle?angCol:'rgba(100,65,200,.55)',
-        'stroke-width':isAngle?2:.7},svg);
-      const next=data.houses[(i+1)%12];
-      let mid=data.houses[i]+((next-data.houses[i]+360)%360)/2;
-      if(mid>=360) mid-=360;
-      const ma=t2a(mid,ascRef);
-      txt(svg,ROMAN12[i],CX+Math.cos(ma)*Rhn,CY+Math.sin(ma)*Rhn,
-        {fill:'rgba(180,150,255,0.8)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});
-    }
-    // ASC line
-    const ascA=t2a(data.asc,ascRef);
-    el('line',{x1:CX+Math.cos(ascA)*R1,y1:CY+Math.sin(ascA)*R1,
-      x2:CX+Math.cos(ascA)*(R1+28),y2:CY+Math.sin(ascA)*(R1+28),
-      stroke:angCol,'stroke-width':2.5},svg);
-    txt(svg,'AC',CX+Math.cos(ascA)*(R1+42),CY+Math.sin(ascA)*(R1+42),
-      {fill:angCol,'font-size':12,'font-weight':'bold','font-family':'Cinzel,serif'});
-    // MC circle
-    const mcA=t2a(data.mc,ascRef);
-    const mcDist=R1+52,mcR=19;
-    const mcCX=CX+Math.cos(mcA)*mcDist,mcCY=CY+Math.sin(mcA)*mcDist;
-    el('line',{x1:CX+Math.cos(mcA)*R1,y1:CY+Math.sin(mcA)*R1,
-      x2:CX+Math.cos(mcA)*(mcDist-mcR-2),y2:CY+Math.sin(mcA)*(mcDist-mcR-2),
-      stroke:angCol,'stroke-width':2.5},svg);
-    el('circle',{cx:mcCX,cy:mcCY,r:mcR,fill:'rgba(10,8,20,.95)',stroke:angCol,'stroke-width':2},svg);
-    txt(svg,'MC',mcCX,mcCY,{fill:angCol,'font-size':11,'font-weight':'bold','font-family':'Cinzel,serif'});
-  }
-
-  // ── ASPECT LINES — inside center circle ──
-  if(data.aspects){
-    for(const asp of data.aspects){
-      if(!data.planets[asp.p1]||!data.planets[asp.p2]) continue;
-      const a1=t2a(data.planets[asp.p1].tropical,ascRef);
-      const a2=t2a(data.planets[asp.p2].tropical,ascRef);
-      const p1=pxy(a1,R4-4),p2=pxy(a2,R4-4);
-      const isDash=asp.angle===90||asp.angle===180;
-      el('line',{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,
-        stroke:asp.color,'stroke-width':isDash?0.7:0.9,
-        opacity:isDash?.4:.6,'stroke-dasharray':isDash?'3 3':''},svg);
-    }
-  }
-
-  // ── PLANETS outside wheel ──
-  const present=PORDER.filter(n=>data.planets[n]);
-  const trueA={};
-  for(const n of present) trueA[n]=t2a(data.planets[n].tropical,ascRef);
-  const sorted=[...present].sort((a,b)=>trueA[a]-trueA[b]);
-  const dispA={};
-  for(const n of present) dispA[n]=trueA[n];
-  const Rg=R1+30, MINGAP=24/Rg;
-
-  for(let it=0;it<600;it++){
-    let moved=false;
-    for(let i=0;i<sorted.length;i++){
-      for(let j=i+1;j<sorted.length;j++){
-        const a=sorted[i],b=sorted[j];
-        let d=dispA[b]-dispA[a];
-        while(d>Math.PI) d-=2*Math.PI; while(d<-Math.PI) d+=2*Math.PI;
-        if(Math.abs(d)<MINGAP&&Math.abs(d)>0.0001){
-          const push=(MINGAP-Math.abs(d))/2,dir=d>0?1:-1;
-          dispA[a]-=push*dir;dispA[b]+=push*dir;moved=true;
-        }
-      }
-    }
-    if(!moved) break;
-  }
-
-  for(const name of present){
-    const info=PI[name]||{sym:'?',color:'#fff'};
-    const p=data.planets[name];
-    const tA=trueA[name],color=info.color;
-    let diff=dispA[name]-tA;
-    while(diff>Math.PI) diff-=2*Math.PI; while(diff<-Math.PI) diff+=2*Math.PI;
-    const wasMoved=Math.abs(diff)>0.015;
-    const gxy=pxy(wasMoved?dispA[name]:tA,Rg);
-    el('line',{x1:CX+Math.cos(tA)*(R1+1),y1:CY+Math.sin(tA)*(R1+1),
-      x2:CX+Math.cos(tA)*(R1+9),y2:CY+Math.sin(tA)*(R1+9),stroke:color,'stroke-width':1.5},svg);
-    el('circle',{cx:CX+Math.cos(tA)*(R1+1),cy:CY+Math.sin(tA)*(R1+1),r:1.8,fill:color},svg);
-    if(wasMoved) el('line',{x1:CX+Math.cos(tA)*(R1+10),y1:CY+Math.sin(tA)*(R1+10),
-      x2:gxy.x,y2:gxy.y,stroke:color,'stroke-width':.5,opacity:.45,'stroke-dasharray':'2 2'},svg);
-    if(name==='Sun'){
-      const sg=el('g',{},svg);
-      el('circle',{cx:gxy.x,cy:gxy.y,r:12,fill:'rgba(249,198,70,.12)'},sg);
-      el('circle',{cx:gxy.x,cy:gxy.y,r:9,fill:'none',stroke:'#f9c646','stroke-width':'2',filter:'url(#sunF)'},sg);
-      el('circle',{cx:gxy.x,cy:gxy.y,r:9,fill:'none',stroke:'#ffe8a0','stroke-width':'.8'},sg);
-      el('circle',{cx:gxy.x,cy:gxy.y,r:2.5,fill:'#f9c646',filter:'url(#sunF)'},sg);
-      el('circle',{cx:gxy.x,cy:gxy.y,r:1.2,fill:'#fff7d0'},sg);
-    } else if(name==='Moon'){
-      const mg=el('g',{filter:'url(#moonF)'},svg);
-      txt(mg,'\u263d',gxy.x,gxy.y,{fill:'#b8d8ff','font-size':22,'font-family':'serif'});
-    } else {
-      txt(svg,info.sym,gxy.x,gxy.y,{fill:color,'font-size':20,'font-family':'serif'});
-    }
-    if(p.retrograde) txt(svg,'\u211e',gxy.x+11,gxy.y-9,{fill:'#f87171','font-size':8,'font-family':'serif'});
-  }
+  const signs=CONS.map(con=>({start:con.start%360,end:(con.start+con.span)%360,sym:con.sym+'\ufe0e',color:CON_COLORS[con.name]||'#8888aa',fill:CON_FILLS[con.name]||'#1e2b2c'}));
+  const planets={};
+  for(const n of PORDER){const p=data.planets[n];if(!p)continue;const info=PI[n]||{sym:'?',color:'#fff'};
+    planets[n]={deg:p.tropical,sym:info.sym,color:info.color,retro:!!p.retrograde,
+      heavy:n==='Sun'||n==='Moon'?60:['Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'].includes(n)?40:n==='Chiron'||/Node/.test(n)?6:1};}
+  const dIn=d=>{const c=conOf(d);let x=((d-c.start)%360+360)%360;const g=Math.floor(x),m=Math.floor((x-g)*60);return g+'°'+String(m).padStart(2,'0')+"'";};
+  MGWheel.draw(svg,{asc:data._timeUnknown?(aries?aries.start:ARIES_START):data.asc,mc:data.mc,timeUnknown:data._timeUnknown,
+    houses:data.houses,planets,signs,
+    aspects:(data.aspects||[]).filter(x=>data.planets[x.p1]&&data.planets[x.p2]).map(x=>({p1:x.p1,p2:x.p2,color:x.color})),
+    degLabel:n=>dIn(data.planets[n].tropical),
+    signOf:d=>{const c=conOf(d);return {sym:c.sym+'\ufe0e',color:CON_COLORS[c.name]||'#8888aa'};}});
 }
 
 // ── PLANET TABLE ──
@@ -661,6 +475,7 @@ function drawConTable(data){
   }
 }
 </script>
+<script src="mg_wheel.js?v=2"></script>
 <script src="astro_switch.js?v=9"></script>
 <script src="site.js?v=20261121a"></script>
 <script src="account.js"></script>
