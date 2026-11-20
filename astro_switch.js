@@ -156,12 +156,24 @@ if(FULL){let tm=null,seq=0;const inp=U('city'),hint=U('hint');
   new MutationObserver(tidy).observe(target,{childList:true,subtree:true});setTimeout(tidy,600);setTimeout(tidy,2000);
   U('month').addEventListener('change',push);
   U('tu').addEventListener('change',()=>{U('hour').disabled=U('minute').disabled=U('tu').checked;push();});
-  U('go').addEventListener('click',()=>{const o=read();
-    if(!o.day||!o.year){U('hint').textContent='⚠ შეიყვანე თარიღი';return;}
-    if(N.lat&&o.lat===''&&o.city){U('hint').textContent='⏳ ჯერ აირჩიე ქალაქი სიიდან';return;}
-    if(N.lat&&o.lat===''){U('hint').textContent='⚠ შეიყვანე დაბადების ადგილი';return;}
-    push();setTimeout(generate,30);});
+  U('go').addEventListener('click',()=>run(false));
+  w.querySelectorAll('input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();run(false);}}));
 }
+
+
+/* one step: a typed city that was not picked from the list is looked up here (first match) */
+async function lookup(q){let list=null;
+  try{const r=await fetch(BACKEND+'/geocode/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q})});if(r.ok){const j=await r.json();if(Array.isArray(j.results))list=j.results;}}catch(_){}
+  if(list===null){try{const r=await fetch(BACKEND+'/geocode',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({city:q})});const d=await r.json();list=d.error?[]:[d];}catch(_){list=[];}}
+  return list[0]||null;}
+async function run(quietly){if(!FULL){generate();return;}const o=read();
+  if(!o.day||!o.year){if(!quietly)U('hint').textContent='⚠ შეიყვანე თარიღი';return;}
+  if(N.lat&&o.lat===''){
+    if(!o.city){if(!quietly)U('hint').textContent='⚠ შეიყვანე დაბადების ადგილი';return;}
+    U('hint').textContent='⏳ ძიება…';const d=await lookup(o.city);
+    if(!d){U('hint').textContent='❌ ქალაქი ვერ მოიძებნა — სცადეთ ლათინურად';return;}
+    GEO={lat:+d.lat,lon:+d.lon,tz:d.tz_name||'UTC',display:d.display||o.city};U('hint').textContent='📍 '+GEO.display+' · 🕐 '+GEO.tz;}
+  push();setTimeout(generate,30);}
 
 /* ── switching systems ── */
 const KEY='mg_astro_carry';
@@ -175,7 +187,7 @@ function start(){if(!FULL)return;let o=null,auto=false;
   if(!o){const n=fromNative();if(n.day&&n.year)o=n;}
   if(!o)return;
   fill(o);push();
-  if(auto&&o.day&&o.year&&(!N.lat||o.lat!==''))setTimeout(generate,350);
+  if(auto&&o.day&&o.year)setTimeout(()=>run(true),350);
 }
 if(document.readyState==='complete')setTimeout(start,50);else addEventListener('load',()=>setTimeout(start,50));
 })();
