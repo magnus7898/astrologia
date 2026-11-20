@@ -1086,6 +1086,8 @@
   if(params.get('g')==='games'){location.replace('games.html');return;}
   if(params.get('g')==='stats'){location.replace('stats.html');return;}
   if(params.get('g')==='life'){location.replace('life.html');return;}
+  if(params.get('g')==='hd'){location.replace('hd.html');return;}           /* Human Design → straight to the birth form */
+  if(params.get('g')==='astrology'){location.replace('astro.html');return;}
   const homeHref=location.pathname.split('/').pop()||'index.html';
   {const bk=document.getElementById('grp-back');if(bk)bk.href=homeHref;}
   function groupTiles(G,all){
