@@ -27,7 +27,7 @@ if(/^admin/.test(P))return;
 const SECTIONS=[
   {key:'astrology',t:'ასტროლოგია',href:'astro.html',pages:['astro.html','compat.html','vedic.html','vedictrop.html','true_sidereal.html','hdastro.html','moon.html','planeta.html','asteroid.html','skycal.html','bazi.html','ziwei.html','tibet.html','tzolkin.html','celtic.html','sky.html','mars.html']},
   {key:'numerology',t:'ნუმეროლოგია',href:'index.html?g=numerology',pages:['matrix.html','pythagoras.html','name.html','tarotborth.html','kabbalah.html','numerology.html']},
-  {key:'hd',t:'ადამიანის დიზაინი',href:'index.html?g=hd',pages:['hd.html','genekeys.html','iching.html','types.html']},
+  {key:'hd',t:'ადამიანის დიზაინი',href:'hd.html',pages:['hd.html','genekeys.html','iching.html','types.html']},
   {key:'life',t:'ცხოვრების რუქა',href:'life.html',parent:'stats',pages:['life.html','work.html','duty.html','energy.html','body.html']},
   {key:'stats',t:'სტატისტიკა',href:'stats.html',pages:['stats.html']},
   {key:'health',t:'ჯანმრთელობა',href:'index.html?g=health',pages:['daily.html','breath.html','sleep.html','water.html','move.html','eyes.html','meditation.html','cold.html','fasting.html','rhythm.html','recover.html','bio.html']},

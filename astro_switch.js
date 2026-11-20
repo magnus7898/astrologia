@@ -9,7 +9,7 @@ const ASTRO=[
   ['true_sidereal.html','ნამდვილი სიდერიული'],['moon.html','მთვარის ფაზები'],['asteroid.html','ასტეროიდები'],['planeta.html','პლანეტარული ასტროლოგია'],
   ['skycal.html','ცის კალენდარი'],['bazi.html','ბაძი · საჯუ (ჩინური)'],['ziwei.html','ძი ვეი დოუ შუ (ჩინური)'],['tibet.html','ტიბეტური ასტროლოგია'],
   ['tzolkin.html','მაიას ცოლკინი'],['celtic.html','კელტური ხეები']];
-const HD=[['hd.html','ადამიანის დიზაინი — ბოდიგრაფი'],['genekeys.html','გენის გასაღებები'],['hdastro.html','ასტრო-დიზაინი (ასტროლოგია × HD)']];
+const HD=[['hd.html','ადამიანის დიზაინი — ბოდიგრაფი'],['genekeys.html','გენის გასაღებები'],['hdastro.html','ასტრო-დიზაინი (ასტროლოგია × HD)'],['iching.html','ი-ძინი — დაბადების ჰექსაგრამა']];
 const ALL=ASTRO.concat(HD);
 const HREF={'tzolkin.html':'Tzolkin.html'};
 const PAGE=(location.pathname.split('/').pop()||'').toLowerCase();
