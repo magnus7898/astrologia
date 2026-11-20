@@ -25,7 +25,7 @@ const $=id=>document.getElementById(id);
 /* the birth-data fields of this page (astro.html uses the natal tab's n-* fields) */
 const P=$('n-day')?'n-':$('i-day')?'i-':'';
 const F={name:$(P+'name'),day:$(P+'day'),month:$(P+'month'),year:$(P+'year'),hour:$(P+'hour'),minute:$(P+'minute')||$(P+'min'),city:$(P+'city')||$('bcity'),
-  date:$('bdate')||$('d0'),time:$('btime'),dmy:$('d1'),hm:$('t1'),lat:$('lat')||$('i-elat'),lon:$('lon')||$('i-elon'),tz:$('tz_name')};
+  date:$('bdate')||$('d0'),time:$('btime'),dmy:$('d1'),hm:$('t1'),lat:$(P+'lat')||$('lat')||$('i-elat'),lon:$(P+'lon')||$('lon')||$('i-elon'),tz:$(P+'tz')||$('tz_name')||$('tz')||$('i-tz')};
 const anchor=F.day||F.date||F.year||F.dmy;
 if(!anchor)return;
 const pad=n=>String(n).padStart(2,'0');
@@ -51,9 +51,22 @@ function restore(){let o=null;try{o=JSON.parse(sessionStorage.getItem(KEY)||'nul
   if(F.hm){if(o.hour!==''&&o.hour!==undefined)put(F.hm,pad(o.hour)+':'+pad(o.minute||0));}
   else if(F.time){if(o.hour!==''&&o.hour!==undefined)put(F.time,pad(o.hour)+':'+pad(o.minute||0));}
   else{put(F.hour,o.hour);put(F.minute,o.minute);}
-  put(F.lat,o.lat);put(F.lon,o.lon);put(F.tz,o.tz);
-  if(F.city&&o.city&&!(o.lat&&F.lat)){F.city.value=o.city;F.city.dispatchEvent(new Event('input',{bubbles:true}));F.city.focus();}
+  const tzOk=o.tz&&/\//.test(o.tz);
+  if(F.lat&&o.lat){F.lat.value=o.lat;F.lon.value=o.lon;if(F.tz&&tzOk&&F.tz.tagName!=='SELECT')F.tz.value=o.tz;
+    const td=$('tz-display')||$(P+'tz-display');if(td&&tzOk)td.textContent=o.tz;
+    const st=$('city-status')||$(P+'city-status');if(st)st.textContent='✓ '+(o.city||'');}
+  if(F.city&&o.city){F.city.value=o.city;if(!(o.lat&&F.lat)){F.city.dispatchEvent(new Event('input',{bubbles:true}));F.city.focus();}}
+  /* everything needed is there → build the chart straight away */
+  const ready=(o.year&&o.month&&o.day)&&(!F.lat||(F.lat.value&&F.lon.value));
+  if(ready)setTimeout(autogen,350);
 }
+const GEN={'astro.html':()=>window.generate&&window.generate(),'vedic.html':()=>window.generate&&window.generate(),'vedictrop.html':()=>window.generate&&window.generate(),
+  'true_sidereal.html':()=>window.generateChart&&window.generateChart(),'moon.html':()=>window.calculate&&window.calculate(),'asteroid.html':()=>window.calc&&window.calc(),
+  'hdastro.html':()=>$('go')&&$('go').click(),'planeta.html':()=>$('btn-gen')&&$('btn-gen').click()};
+function autogen(){try{
+  if(GEN[PAGE])return GEN[PAGE]();
+  const b=[...document.querySelectorAll('button')].find(x=>/გამოთვლა/.test(x.textContent)&&x.offsetParent);if(b)b.click();
+}catch(e){console.warn('autogen',e);}}
 /* the list itself, at the top of the form */
 const box=anchor.closest('.form-card,.input-panel,.form-shell,.panel,form,.card')||anchor.parentElement;
 const w=document.createElement('div');w.className='mg-sys';
