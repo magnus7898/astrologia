@@ -141,6 +141,16 @@
   .grid.sub > .card .sym { width:40px;height:40px;margin-bottom:13px; }
   .grid.sub > .card .card-title { font-size:11px;letter-spacing:2px; }
   .grid.sub > .card .card-sub { opacity:.4; }
+  /* courses: big boxes */
+  .grid.sub[data-g="courses"] { --gap:22px;max-width:calc(var(--cols) * 400px + (var(--cols) - 1) * var(--gap)); }
+  .grid.sub[data-g="courses"] > .card { height:290px; }
+  .grid.sub[data-g="courses"] > .card .sym { width:72px;height:72px;margin-bottom:22px; }
+  .grid.sub[data-g="courses"] > .card .card-title { font-size:16px;letter-spacing:3px; }
+  .grid.sub[data-g="courses"] > .card .card-sub { font-size:13px;opacity:.55;margin-top:6px; }
+  @media (max-width:520px) {
+    .grid.sub[data-g="courses"] { --cols:1 !important; }
+    .grid.sub[data-g="courses"] > .card { height:200px; }
+  }
   .grp-head { justify-content:center;position:relative; }
   .grp-head a { position:absolute;left:0; }
   @media (max-width:520px) {
@@ -1118,7 +1128,7 @@
         /* 2×2 / 3×3 style: 3 → one row of 3, ≤4 → 2 columns, ≤9 → 3, 10 → 5×2, more → 4;
            an incomplete last row is centred */
         const n=tiles.length,cols=n===3?3:n<=4?2:n<=9?3:n===10?5:4;
-        grid.classList.add('sub');grid.style.setProperty('--cols',cols);
+        grid.classList.add('sub');grid.dataset.g=G0.key;grid.style.setProperty('--cols',cols);
         tiles.forEach(t=>grid.appendChild(t));
         if(head){head.querySelector('h2').textContent=G0.title;head.hidden=false;}
         document.title='MAGNUS · '+G0.title;
