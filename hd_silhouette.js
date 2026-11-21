@@ -28,11 +28,15 @@ function defsFor(svg){
   const d=mk('defs',{},svg);
   /* inner shadow: light purple glowing inward from the edge, body itself stays clear */
   const f=mk('filter',{id:'hdSilInner',x:'-5%',y:'-5%',width:'110%',height:'110%','color-interpolation-filters':'sRGB'},d);
-  mk('feFlood',{'flood-color':'#6d28d9','flood-opacity':'1',result:'c'},f);
+  /* inner-shadow colour flows through the seven chakra colours, endlessly */
+  const CH='#e11d48;#f97316;#facc15;#22c55e;#0ea5e9;#4f46e5;#9333ea;#e11d48';
+  const fc=mk('feFlood',{'flood-color':'#9333ea','flood-opacity':'1',result:'c'},f);
+  mk('animate',{attributeName:'flood-color',values:CH,dur:'28s',repeatCount:'indefinite'},fc);
   mk('feComposite',{in:'c',in2:'SourceAlpha',operator:'out',result:'outside'},f);
   mk('feGaussianBlur',{in:'outside',stdDeviation:'16',result:'b'},f);
   mk('feComposite',{in:'b',in2:'SourceAlpha',operator:'in',result:'inner'},f);
-  mk('feFlood',{'flood-color':'#4c1d95','flood-opacity':'.06',result:'t'},f);
+  const ft=mk('feFlood',{'flood-color':'#4c1d95','flood-opacity':'.07',result:'t'},f);
+  mk('animate',{attributeName:'flood-color',values:CH,dur:'28s',repeatCount:'indefinite'},ft);
   mk('feComposite',{in:'t',in2:'SourceAlpha',operator:'in',result:'tint'},f);
   const m=mk('feMerge',{},f);mk('feMergeNode',{in:'tint'},m);mk('feMergeNode',{in:'inner'},m);
   /* outline gradient: lilac at the head → violet → deep violet at the base */
