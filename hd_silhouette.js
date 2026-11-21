@@ -69,12 +69,24 @@ function stars(p){
     const s=mk('path',{d:`M${x} ${y-a}Q${x+b} ${y-b} ${x+a} ${y}Q${x+b} ${y+b} ${x} ${y+a}Q${x-b} ${y+b} ${x-a} ${y}Q${x-b} ${y-b} ${x} ${y-a}Z`,fill:['#f5f3ff','#a5f3fc','#f9a8d4','#fde68a','#c4b5fd','#ffffff'][i],'class':'hd-spark'},g);
     s.style.transformOrigin=x+'px '+y+'px';s.style.animationDelay=(-rnd()*6).toFixed(2)+'s';}
 }
+
+/* the silhouette is not in the middle of the SVG's viewBox — shift the viewBox so the body is centred in its box */
+function centre(p){
+  const svg=p.ownerSVGElement;
+  const go=()=>{const sr=svg.getBoundingClientRect(),pr=p.getBoundingClientRect(),vb=svg.viewBox&&svg.viewBox.baseVal;
+    if(!sr.width||!pr.width||!vb||!vb.width){requestAnimationFrame(go);return;}
+    const k=Math.max(vb.width/sr.width,vb.height/sr.height);          /* user units per px (meet) */
+    const dx=((pr.left+pr.width/2)-(sr.left+sr.width/2))*k;
+    if(Math.abs(dx)>1)svg.setAttribute('viewBox',(vb.x+dx)+' '+vb.y+' '+vb.width+' '+vb.height);};
+  requestAnimationFrame(go);
+}
 function build(){
   document.querySelectorAll('svg path.st0:not(.hd-c):not(.hd-edge)').forEach(p=>{
     if(p.dataset.hdc)return;p.dataset.hdc='1';
     defsFor(p.ownerSVGElement);
     let last=p;   /* no outline — only the inner shadow */
     stars(p);
+    centre(p);
     [0,50].forEach(phase=>{LAYERS.forEach(([L],i)=>{
       const r=p.cloneNode(false);r.removeAttribute('data-hdc');r.classList.add('hd-c','l'+i);r.setAttribute('pathLength','100');
       const s=-phase-(LAYERS[0][0]-L);            /* front edges aligned: tail trails the head */

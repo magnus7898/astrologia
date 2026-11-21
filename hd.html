@@ -114,7 +114,7 @@ header::after{content:"";display:block;width:280px;height:1px;
 /* ── CHART AREA ── */
 .chart-area{flex:1;display:grid;grid-template-columns:110px 1fr 110px;
   background:var(--surface);border:1px solid var(--border);border-radius:6px;
-  padding:16px;align-items:start;position:relative;overflow:hidden;}
+  padding:16px;align-items:center;position:relative;overflow:hidden;}
 .chart-area::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--gold-dim) 30%,var(--gold) 50%,var(--gold-dim) 70%,transparent);}
 
@@ -1126,7 +1126,7 @@ loadSVG('bodygraph','natal').catch(e=>{
 });
 </script>
 <script src="hd_transit.js"></script>
-<script src="hd_silhouette.js?v=9"></script>
+<script src="hd_silhouette.js?v=10"></script>
 <script src="hd_find.js"></script>
 <script src="hd_stats.js"></script>
 <script src="people_core.js"></script>
