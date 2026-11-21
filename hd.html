@@ -119,8 +119,8 @@ header::after{content:"";display:block;width:280px;height:1px;
   background:linear-gradient(90deg,transparent,var(--gold-dim) 30%,var(--gold) 50%,var(--gold-dim) 70%,transparent);}
 
 /* ── FOUR ARROWS ── */
-.hd-arrow{cursor:help;filter:drop-shadow(0 0 4px rgba(167,139,250,.55));animation:hdArrIn .8s ease-out both}
-.hd-arrow:hover{filter:drop-shadow(0 0 8px rgba(196,181,253,.95))}
+.hd-arrow{cursor:help;filter:drop-shadow(0 0 3px rgba(0,0,0,.6));animation:hdArrIn .8s ease-out both}
+.hd-arrow:hover{filter:drop-shadow(0 0 7px rgba(255,255,255,.55))}
 @keyframes hdArrIn{from{opacity:0}to{opacity:1}}
 /* ── PLANET COLS ── */
 .planet-col{align-self:start;padding:4px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;}
@@ -681,7 +681,7 @@ function clearSVG(sv){
 
 
 /* ── FOUR ARROWS (variables) — beside Head and Ajna: left = Design (Sun → digestion, Node → environment),
-   right = Personality (Sun → motivation, Node → perspective); tone 1–3 points left, 4–6 points right ── */
+   right = Personality (Sun → motivation, Node → perspective) — red (#E75A7C) / black (#2C363F) as the channels; tone 1–3 points left, 4–6 points right ── */
 /* how far the body silhouette reaches beyond the centres at head height — arrows sit outside it, not touching */
 function L0(sv,head,hb,ab){
   const sil=sv.querySelector('path.st0:not(.hd-c):not(.hd-edge)');if(!sil||!sil.isPointInFill)return 60;
@@ -705,18 +705,20 @@ function drawArrows(sv,chart){
   const g=mk('g',{'class':'hd-arrows'},head.parentNode);   /* same coordinate system as the centres */
   const cx=hb.x+hb.width/2,off=Math.max(hb.width,ab.width)/2+44+L0(sv,head,hb,ab),L=42;
   const items=[
-    [find(chart.design,'Sun'),-1,hb.y+hb.height*.55,'#c4b5fd','საკვები (დიზაინის მზე)',chart.digestion],
-    [find(chart.design,'North Node'),-1,ab.y+ab.height*.45,'#c4b5fd','გარემო (დიზაინის კვანძი)',chart.environment],
-    [find(chart.personality,'Sun'),1,hb.y+hb.height*.55,'#a5b4fc','მოტივაცია (პიროვნების მზე)',chart.motivation],
-    [find(chart.personality,'North Node'),1,ab.y+ab.height*.45,'#a5b4fc','პერსპექტივა (პიროვნების კვანძი)',chart.perspective]];
+    [find(chart.design,'Sun'),-1,hb.y+hb.height*.55,'#E75A7C','საკვები (დიზაინის მზე)',chart.digestion],
+    [find(chart.design,'North Node'),-1,ab.y+ab.height*.45,'#E75A7C','გარემო (დიზაინის კვანძი)',chart.environment],
+    [find(chart.personality,'Sun'),1,hb.y+hb.height*.55,'#2C363F','მოტივაცია (პიროვნების მზე)',chart.motivation],
+    [find(chart.personality,'North Node'),1,ab.y+ab.height*.45,'#2C363F','პერსპექტივა (პიროვნების კვანძი)',chart.perspective]];
   items.forEach(([p,side,y,col,name,val])=>{if(!p||!p.tone)return;
     const dir=p.tone<=3?-1:1;                        /* left / right */
     const x0=cx+side*off-L/2,x1=x0+L,tipX=dir<0?x0:x1,tailX=dir<0?x1:x0;
     const a=mk('g',{'class':'hd-arrow'},g);
     mk('title',{},a).textContent=name+' — ტონი '+p.tone+' → '+(dir<0?'მარცხნივ':'მარჯვნივ')+(val?' · '+val:'');
+    const edge=side<0?'#ffd0dc':'#c9d3e6';
+    mk('line',{x1:tailX,y1:y,x2:tipX-dir*11,y2:y,stroke:edge,'stroke-width':7.5,'stroke-linecap':'round',opacity:side<0?.25:.55},a);
     mk('line',{x1:tailX,y1:y,x2:tipX-dir*11,y2:y,stroke:col,'stroke-width':5,'stroke-linecap':'round'},a);
-    mk('path',{d:`M${tipX} ${y} L${tipX-dir*16} ${y-10} L${tipX-dir*16} ${y+10} Z`,fill:col,'stroke-linejoin':'round',stroke:col,'stroke-width':1.5},a);
-    const t=mk('text',{x:(x0+x1)/2,y:y+21,'text-anchor':'middle','font-size':11,'font-family':'Cinzel,serif',fill:col,opacity:.85},a);t.textContent='ტ'+p.tone;
+    mk('path',{d:`M${tipX} ${y} L${tipX-dir*16} ${y-10} L${tipX-dir*16} ${y+10} Z`,fill:col,'stroke-linejoin':'round',stroke:edge,'stroke-opacity':side<0?.35:.7,'stroke-width':1.5},a);
+    const t=mk('text',{x:(x0+x1)/2,y:y+21,'text-anchor':'middle','font-size':11,'font-family':'Cinzel,serif',fill:side<0?'#E75A7C':'#c9d3e6',opacity:.9},a);t.textContent='ტ'+p.tone;
     mk('rect',{x:x0-4,y:y-14,width:L+8,height:36,fill:'transparent'},a);
   });
 }
