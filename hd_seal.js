@@ -9,7 +9,7 @@ const SKIP=new Set(['10','20','34','57']);
 const UNDER=new Set(['64']);
 function under(e,f){
   let u=e._under;
-  if(!u){u=e.cloneNode(false);u.dataset.under='1';u.removeAttribute('id');u.style.pointerEvents='none';u.style.strokeLinejoin='round';u.style.strokeWidth='2.4';
+  if(!u){u=e.cloneNode(false);u.dataset.under='1';u.removeAttribute('id');u.style.pointerEvents='none';u.style.strokeLinejoin='round';u.style.strokeWidth='4';
     e.parentNode.insertBefore(u,e.parentNode.firstChild);e._under=u;}
   if(u.style.stroke!==f){u.style.stroke=f;u.style.fill=f;}
 }
