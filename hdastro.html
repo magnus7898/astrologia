@@ -132,6 +132,7 @@ td.dd{color:#a9aeb7}
           <label><input type="checkbox" id="lines"> არხის ხაზები</label>
           <label><input type="checkbox" id="asp"> ასპექტები</label>
           <label><input type="checkbox" id="hexi" checked> ჰექსაგრამები</label>
+          <label>ზოდიაქო <select id="zmode"><option value="trop">ტროპიკული</option><option value="vedic">ვედური — ნაკშატრები და პადები</option></select></label>
         </div>
         <div class="legend">
           <span><b style="color:var(--gold-l)">ფერადი</b> — პიროვნება (დაბადების მომენტი)</span>
@@ -239,9 +240,19 @@ function hexIcon(g,m,r0,step,half,col){
          s+=`<path d="M${P(r,m+gap).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m+dh).map(f1).join(' ')}" stroke="${col}" stroke-width="2.1" fill="none"/>`;}});
   return s;
 }
+/* ── Vedic design: sidereal (Lahiri) signs, 27 nakshatras, 108 padas around the wheel ── */
+const NAK_KA=['აშვინი','ბჰარანი','კრიტიკა','როჰინი','მრიგაშირა','არდრა','პუნარვასუ','პუშია','აშლეშა','მაგჰა','პურვა ფალგუნი','უტარა ფალგუნი','ჰასტა','ჩიტრა','სვატი','ვიშაკჰა','ანურადჰა','ჯიეშთჰა','მულა','პურვა აშადჰა','უტარა აშადჰა','შრავანა','დჰანიშთა','შატაბჰიშა','პურვა ბჰადრაპადა','უტარა ბჰადრაპადა','რევატი'];
+const NAK_LORD=['კეტუ','ვენერა','მზე','მთვარე','მარსი','რაჰუ','იუპიტერი','სატურნი','მერკური'];
+const LORD_COL=['#a08070','#e878a8','#f9c646','#c8d8f0','#e84040','#9060d0','#e89040','#90a8c8','#50d890'];
+const lahiri=jd=>23.85305+0.0139697*((jd||2451545)-2451545)/365.25;
+const isVed=()=>$('zmode')&&$('zmode').value==='vedic';
+const AYA=()=>isVed()&&CH?lahiri(CH._jd):0;
+function vedInfo(lon){const sid=((lon-AYA())%360+360)%360,n=Math.floor(sid/(40/3)),p=Math.floor((sid%(40/3))/(10/3))+1;
+  return `${NAK_KA[n]} · პადა ${p} · მმართველი ${NAK_LORD[n%9]}`;}
 function draw(){
   const c=CH,svg=$('wheel'),op=+$('op').value/100;
   const HXI=$('hexi')&&$('hexi').checked;R.zi=HXI?466:442;R.hx=458;   /* hexagram ring between gate ring and zodiac */
+  const VED=isVed(),A0=AYA();svg.setAttribute('viewBox',VED?'-66 -66 1132 1132':'-30 -30 1060 1060');
   const H=c.houses;ROT=H?H.asc:0;
   let s=`<defs><radialGradient id="bgG"><stop offset="0" stop-color="#0d0a1f"/><stop offset="1" stop-color="#05040c"/></radialGradient></defs>`;
   s+=`<circle cx="500" cy="500" r="${R.zo}" fill="url(#bgG)" stroke="${'#c9a84c'}" stroke-opacity=".55" stroke-width="1.4"/>`;
@@ -261,13 +272,13 @@ function draw(){
 
   /* zodiac ring */
   for(let i=0;i<12;i++){
-    const a=i*30,col=ELEM_COL[i%4];
+    const a=i*30+A0,col=ELEM_COL[i%4];
     s+=`<path d="${wedge(R.zi,R.zo,a,a+30)}" fill="${col}" fill-opacity=".14" stroke="#E3BE84" stroke-opacity=".35" stroke-width=".8"/>`;
     s+=txt((R.zo+R.zi)/2,a+15,SIGN_G[i],`fill="${col}" font-size="${HXI?19:26}" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`);
   }
   /* degree ticks */
   s+='<g stroke="#c9a84c" stroke-opacity=".45">';
-  for(let d=0;d<360;d++){const L=d%10===0?8:d%5===0?6:3;s+=line(R.zi,R.zi-L,d,`stroke-width="${d%5===0?1:.6}"`);}
+  for(let d=0;d<360;d++){const L=d%10===0?8:d%5===0?6:3;s+=line(R.zi,R.zi-L,d+A0,`stroke-width="${d%5===0?1:.6}"`);}
   s+='</g>';
 
   /* gate ring — outer half = personality, inner half = design */
@@ -289,6 +300,16 @@ function draw(){
   });
   s+='</g>';
 
+  if(VED){
+    const N1=R.zo,N2=R.zo+30,P2=N2+12;
+    for(let n=0;n<27;n++){const a=A0+n*40/3,b=a+40/3,col=LORD_COL[n%9];
+      s+=`<path class="nak" data-n="${n}" d="${wedge(N1,N2,a,b)}" fill="${col}" fill-opacity=".1" stroke="#E3BE84" stroke-opacity=".45" stroke-width=".8"/>`;
+      {const m=a+40/6,[x,y]=P(N1+15,m);let rot=-ang(m)*180/Math.PI+90;rot=((rot%360)+360)%360;if(rot>90&&rot<270)rot-=180;   /* text along the arc, never upside down */
+       s+=`<text x="${f1(x)}" y="${f1(y)}" text-anchor="middle" dominant-baseline="central" transform="rotate(${f1(rot)} ${f1(x)} ${f1(y)})" fill="${col}" font-size="10.5"><tspan font-family="Cinzel,serif" font-weight="600">${n+1}</tspan> ${NAK_KA[n]}</text>`;}
+      for(let p=0;p<4;p++){const pa=a+p*10/3,si=(n*4+p)%12;
+        s+=`<path d="${wedge(N2,P2,pa,pa+10/3)}" fill="${ELEM_COL[si%4]}" fill-opacity=".35" stroke="#0a0817" stroke-width=".6"/>`;}}
+    s+=`<circle cx="500" cy="500" r="${P2}" fill="none" stroke="#c9a84c" stroke-opacity=".55" stroke-width="1.2"/>`;
+  }
   /* houses */
   if(H){
     s+='<g>';
@@ -299,8 +320,8 @@ function draw(){
       s+=txt(R.hn,mid,i+1,`fill="rgba(201,168,76,.5)" font-size="12" font-family="Cinzel,serif"`);
     });
     [[H.asc,'ASC'],[H.mc,'MC'],[HDA.norm(H.asc+180),'DSC'],[HDA.norm(H.mc+180),'IC']].forEach(([l,t])=>{
-      s+=line(R.zo,R.zo+10,l,`stroke="#f0d080" stroke-width="2"`);
-      s+=txt(R.zo+22,l,t,`fill="#f0d080" font-size="13" font-family="Cinzel,serif" font-weight="600"`);
+      const RB=VED?R.zo+42:R.zo;s+=line(RB,RB+10,l,`stroke="#f0d080" stroke-width="2"`);
+      s+=txt(RB+22,l,t,`fill="#f0d080" font-size="13" font-family="Cinzel,serif" font-weight="600"`);
     });
     s+='</g>';
   }
@@ -374,7 +395,7 @@ function bindWheel(){
   });
   document.querySelectorAll('#wheel .pl').forEach(el=>{
     el.addEventListener('mousemove',e=>{const side=el.dataset.side,b=el.dataset.b,a=CH[side][b],f=fmtDeg(a.lon);
-      show(e,`<b style="color:${side==='pers'?PCOL[b]:DCOL}">${PG[b]}${VS} ${PKA[b]}</b> · ${side==='pers'?'პიროვნება':'დიზაინი'}<br>${f.txt} ${SIGN_KA[f.s]}${a.house?` · ${a.house} სახლი`:''}<br>კარიბჭე ${a.gate}.${a.line} · ფერი ${a.color} · ტონი ${a.tone}${a.retro&&!/Node/.test(b)?' · ℞':''}`);});
+      show(e,`<b style="color:${side==='pers'?PCOL[b]:DCOL}">${PG[b]}${VS} ${PKA[b]}</b> · ${side==='pers'?'პიროვნება':'დიზაინი'}<br>${f.txt} ${SIGN_KA[f.s]}${a.house?` · ${a.house} სახლი`:''}<br>კარიბჭე ${a.gate}.${a.line} · ფერი ${a.color} · ტონი ${a.tone}${a.retro&&!/Node/.test(b)?' · ℞':''}${isVed()?'<br>'+vedInfo(a.lon):''}`);});
     el.addEventListener('mouseleave',hide);
   });
   document.querySelectorAll('#wheel .gt').forEach(el=>{
@@ -453,7 +474,7 @@ async function build(){
   try{
     await HDA.load();
     const jd=HDA.localToJD(y,m,d,h,mi,tz);
-    CH=HDA.chart({jd,lat,lon,hsys:$('hsys').value,timeKnown:tk});
+    CH=HDA.chart({jd,lat,lon,hsys:$('hsys').value,timeKnown:tk});CH._jd=jd;
     $('out').style.display='block';
     draw();panel();
   }catch(e){err.textContent='შეცდომა: '+e.message;console.error(e);}
@@ -464,6 +485,7 @@ $('op').addEventListener('input',()=>{$('opv').textContent=$('op').value+'%';if(
 $('lines').addEventListener('change',()=>CH&&draw());
 $('asp').addEventListener('change',()=>CH&&draw());
 $('hexi').addEventListener('change',()=>CH&&draw());
+$('zmode').addEventListener('change',()=>CH&&draw());
 $('hsys').addEventListener('change',()=>CH&&build());
 </script>
 <script src="astro_switch.js?v=12"></script>
