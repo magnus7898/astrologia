@@ -118,6 +118,10 @@ header::after{content:"";display:block;width:280px;height:1px;
 .chart-area::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--gold-dim) 30%,var(--gold) 50%,var(--gold-dim) 70%,transparent);}
 
+/* ── FOUR ARROWS ── */
+.hd-arrow{cursor:help;filter:drop-shadow(0 0 4px rgba(167,139,250,.55));animation:hdArrIn .8s ease-out both}
+.hd-arrow:hover{filter:drop-shadow(0 0 8px rgba(196,181,253,.95))}
+@keyframes hdArrIn{from{opacity:0}to{opacity:1}}
 /* ── PLANET COLS ── */
 .planet-col{align-self:start;padding:4px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;}
 .planet-col h3{font-family:'Cinzel',serif;font-size:.5rem;font-weight:500;letter-spacing:.18em;
@@ -675,6 +679,38 @@ function clearSVG(sv){
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));
 }
 
+
+/* ── FOUR ARROWS (variables) — beside Head and Ajna: left = Design (Sun → digestion, Node → environment),
+   right = Personality (Sun → motivation, Node → perspective); tone 1–3 points left, 4–6 points right ── */
+function drawArrows(sv,chart){
+  if(!sv)return;sv.querySelectorAll('.hd-arrows').forEach(e=>e.remove());
+  const head=sv.querySelector(".chakra[data-center='Head']"),ajna=sv.querySelector(".chakra[data-center='Ajna']");
+  if(!head||!ajna)return;
+  const hb=head.getBBox(),ab=ajna.getBBox();
+  if(!hb.width||!ab.width){                    /* chart not on screen yet — draw when it is */
+    const t=(drawArrows._n=(drawArrows._n||0)+1);if(t<200)setTimeout(()=>drawArrows(sv,chart),150);return;}
+  drawArrows._n=0;
+  const find=(list,n)=>(list||[]).find(p=>p.planet===n);
+  const NS='http://www.w3.org/2000/svg',mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+  const g=mk('g',{'class':'hd-arrows'},head.parentNode);   /* same coordinate system as the centres */
+  const cx=hb.x+hb.width/2,off=Math.max(hb.width,ab.width)/2+46,L=42;
+  const items=[
+    [find(chart.design,'Sun'),-1,hb.y+hb.height*.55,'#c4b5fd','საკვები (დიზაინის მზე)',chart.digestion],
+    [find(chart.design,'North Node'),-1,ab.y+ab.height*.45,'#c4b5fd','გარემო (დიზაინის კვანძი)',chart.environment],
+    [find(chart.personality,'Sun'),1,hb.y+hb.height*.55,'#a5b4fc','მოტივაცია (პიროვნების მზე)',chart.motivation],
+    [find(chart.personality,'North Node'),1,ab.y+ab.height*.45,'#a5b4fc','პერსპექტივა (პიროვნების კვანძი)',chart.perspective]];
+  items.forEach(([p,side,y,col,name,val])=>{if(!p||!p.tone)return;
+    const dir=p.tone<=3?-1:1;                        /* left / right */
+    const x0=cx+side*off-L/2,x1=x0+L,tipX=dir<0?x0:x1,tailX=dir<0?x1:x0;
+    const a=mk('g',{'class':'hd-arrow'},g);
+    mk('title',{},a).textContent=name+' — ტონი '+p.tone+' → '+(dir<0?'მარცხნივ':'მარჯვნივ')+(val?' · '+val:'');
+    mk('line',{x1:tailX,y1:y,x2:tipX-dir*11,y2:y,stroke:col,'stroke-width':5,'stroke-linecap':'round'},a);
+    mk('path',{d:`M${tipX} ${y} L${tipX-dir*16} ${y-10} L${tipX-dir*16} ${y+10} Z`,fill:col,'stroke-linejoin':'round',stroke:col,'stroke-width':1.5},a);
+    const t=mk('text',{x:(x0+x1)/2,y:y+21,'text-anchor':'middle','font-size':11,'font-family':'Cinzel,serif',fill:col,opacity:.85},a);t.textContent='ტ'+p.tone;
+    mk('rect',{x:x0-4,y:y-14,width:L+8,height:36,fill:'transparent'},a);
+  });
+}
+
 // ── NATAL RENDER ──
 function renderNatal(rawChart){
   _lastNatal=rawChart;
@@ -717,6 +753,7 @@ function _drawNatal(chart,keys){
   document.getElementById('summary-cards').innerHTML=cards.map(c=>`<div class="card${c.hi?' hi':''}"><div class="k">${c.k}</div><div class="v${c.xs?' xs':c.sm?' sm':''}">${c.v||'—'}</div></div>`).join('');
   // planet cols
   fillPlanetCol(chart.design,chart.personality,'col-design','col-personality',false);
+  drawArrows(svgNatal,chart);
   if(keys&&keys.length){
     const add=(id,side)=>{
       const el=document.getElementById(id);if(!el)return;
