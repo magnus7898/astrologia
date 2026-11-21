@@ -34,7 +34,11 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 .in.time{font-family:'Cinzel',serif;letter-spacing:2px;width:96px;text-align:center;font-size:15px}
 .btn{padding:10px 24px;background:linear-gradient(135deg,rgba(155,127,232,.2),rgba(120,100,200,.1));border:1px solid rgba(155,127,232,.3);border-radius:8px;color:var(--text);font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .25s}
 .btn:hover{border-color:rgba(155,127,232,.6);box-shadow:0 0 22px rgba(155,127,232,.2)}
-.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+:is(.card,.panel,div):has(>.mgb),:is(.card,.panel):has(.mgb){max-width:640px;margin-left:auto!important;margin-right:auto!important}
+.lead{max-width:640px;margin-left:auto;margin-right:auto}
+.pills{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:0 auto 22px;width:max-content;max-width:100%;padding:5px;border:1px solid rgba(201,162,76,.35);border-radius:999px;background:rgba(12,18,34,.55)}
+.pills .pill{border:1px solid transparent!important;background:transparent!important;font-family:'Noto Serif Georgian',serif!important;font-size:13px!important;letter-spacing:.5px!important;text-transform:none!important;color:#CFC6B0!important;padding:7px 16px!important}
+.pills .pill.active{border-color:#E3BE84!important;color:#E3BE84!important;background:rgba(227,190,132,.08)!important}
 .pill{padding:8px 18px;border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--muted);border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .25s;user-select:none}
 .pill:hover{color:var(--text)}
 .pill.active{color:var(--gold);border-color:rgba(200,169,110,.5);background:rgba(200,169,110,.07)}
@@ -351,7 +355,7 @@ $('toss').onclick=()=>{if(cast.length>=6)return;
 $('reset').onclick=()=>{cast=[];$('coins').innerHTML='';$('castLines').innerHTML='';$('toss').textContent='აგდება (0/6)';$('out').innerHTML='';};
 </script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261121b"></script>
+<script src="site.js?v=20261121c"></script>
 <script src="account.js"></script>
 </body>
 </html>

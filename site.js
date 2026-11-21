@@ -151,6 +151,7 @@ function consent(force){
    tab (its own key — natal, synastry, trutine … — or the Georgian label in Latin letters),
    writes the address on every switch (Back steps through tabs) and opens the tab from the
    address on load. The breadcrumb shows the open tab.                                      */
+const PILL_PAGES=new Set(['iching.html']);
 const NO_TABS=new Set(['index.html','account.html','about.html','contact.html','privacy.html','terms.html','refund.html','article.html']);
 const TAB_SEL='.tab-bar .tab-btn,.tab-btn,.method-bar .method-btn,.method-btn,#pp-nav .mode-pill,.mode-pill,[role=tab],.tabs>.tab,.tabs>button,.pills>.pill,.pill';
 const KA={'ა':'a','ბ':'b','გ':'g','დ':'d','ე':'e','ვ':'v','ზ':'z','თ':'t','ი':'i','კ':'k','ლ':'l','მ':'m','ნ':'n','ო':'o','პ':'p','ჟ':'zh','რ':'r','ს':'s','ტ':'t','უ':'u','ფ':'p','ქ':'k','ღ':'gh','ყ':'q','შ':'sh','ჩ':'ch','ც':'ts','ძ':'dz','წ':'ts','ჭ':'ch','ხ':'kh','ჯ':'j','ჰ':'h'};
@@ -271,6 +272,7 @@ function findBox(g){
 function sideNav(){
   if(NO_TABS.has(P))return;
   if(document.documentElement.hasAttribute('data-tabmenu'))return;   /* tabmenu.js draws a grouped menu instead */
+  if(PILL_PAGES.has(P))return;   /* keep the page's own pill row above the form, like the astrology page */
   scanTabs();
   const vis=GROUPS.filter(g=>g.el.offsetParent!==null||g.el.classList.contains('mg-tiles'));
   const sn=document.getElementById('subnav');
