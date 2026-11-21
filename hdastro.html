@@ -235,10 +235,10 @@ const HX_KW=[[1,25,6,33,12,44,13,10],[34,51,40,62,16,32,55,54],[5,3,29,39,8,48,6
 const HX_LINES={};HX_ORD.forEach((u,i)=>HX_ORD.forEach((l,j)=>{HX_LINES[HX_KW[i][j]]=[...HX_TRI[l],...HX_TRI[u]];}));
 function hexIcon(g,m,r0,step,half,col){
   let s='';const L=HX_LINES[g];if(!L)return s;
-  L.forEach((yang,k)=>{const r=r0+k*step,dh=half/r*180/Math.PI,gap=1.6/r*180/Math.PI;
-    if(yang)s+=`<path d="M${P(r,m-dh).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m+dh).map(f1).join(' ')}" stroke="${col}" stroke-width="2.1" fill="none" stroke-linecap="butt"/>`;
-    else{s+=`<path d="M${P(r,m-dh).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m-gap).map(f1).join(' ')}" stroke="${col}" stroke-width="2.1" fill="none"/>`;
-         s+=`<path d="M${P(r,m+gap).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m+dh).map(f1).join(' ')}" stroke="${col}" stroke-width="2.1" fill="none"/>`;}});
+  L.forEach((yang,k)=>{const r=r0+k*step,dh=half/r*180/Math.PI,gap=2.2/r*180/Math.PI;
+    if(yang)s+=`<path d="M${P(r,m-dh).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m+dh).map(f1).join(' ')}" stroke="${col}" stroke-width="3" fill="none" stroke-linecap="butt"/>`;
+    else{s+=`<path d="M${P(r,m-dh).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m-gap).map(f1).join(' ')}" stroke="${col}" stroke-width="3" fill="none"/>`;
+         s+=`<path d="M${P(r,m+gap).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m+dh).map(f1).join(' ')}" stroke="${col}" stroke-width="3" fill="none"/>`;}});
   return s;
 }
 /* ── Vedic design: sidereal (Lahiri) signs, 27 nakshatras, 108 padas around the wheel ── */
@@ -261,9 +261,12 @@ const precShift=jd=>((jd||2451545)-2451545)/365.25*50.2879/3600;
 function iauInfo(lon){const sh=precShift(CH._jd);for(const c of IAU_CONS){const s=c[3]+sh,e=c[4]+sh,x=((lon-s)%360+360)%360;if(x<e-s){const d=Math.floor(x),m=Math.floor((x-d)*60);return `${c[1]} ${d}°${String(m).padStart(2,'0')}′ (IAU)`;}}return '';}
 function draw(){
   const c=CH,svg=$('wheel'),op=+$('op').value/100;
-  const HXI=$('hexi')&&$('hexi').checked;R.zi=HXI?466:442;R.hx=458;   /* hexagram ring between gate ring and zodiac */
-  const VED=isVed(),A0=isIau()?(28.69+precShift(CH._jd))%30:AYA();svg.setAttribute('viewBox',VED?'-66 -66 1132 1132':'-30 -30 1060 1060');
-  const H=c.houses;ROT=H?H.asc:0;
+  const HXI=$('hexi')&&$('hexi').checked;R.zo=HXI?514:488;R.zi=HXI?482:442;R.hx=476;   /* bigger hexagram ring */   /* hexagram ring between gate ring and zodiac */
+  const VED=isVed(),A0=isIau()?(28.69+precShift(CH._jd))%30:AYA();svg.setAttribute('viewBox',VED?(HXI?'-100 -100 1200 1200':'-74 -74 1148 1148'):(HXI?'-56 -56 1112 1112':'-30 -30 1060 1060'));
+  let H=c.houses;
+  /* Vedic: equal whole-sign houses — house 1 = the whole sidereal sign of the Lagna, each house 30° */
+  if(H&&VED){const st=Math.floor(HDA.norm(H.asc-A0)/30)*30+A0;H=Object.assign({},H,{cusps:[...Array(12)].map((_,i)=>HDA.norm(st+i*30)),sys:'W'});}
+  ROT=H?H.asc:0;
   let s=`<defs><radialGradient id="bgG"><stop offset="0" stop-color="#0d0a1f"/><stop offset="1" stop-color="#05040c"/></radialGradient></defs>`;
   s+=`<circle cx="500" cy="500" r="${R.zo}" fill="url(#bgG)" stroke="${'#c9a84c'}" stroke-opacity=".55" stroke-width="1.4"/>`;
 
@@ -310,19 +313,20 @@ function draw(){
     const gcol=on?(st.p?'#f6e3a6':'#d4d8de'):'rgba(201,168,76,.42)';
     /* own box for the hexagram, outside the number box */
     if(HXI)s+=`<path d="${wedge(R.go,R.hx,a,b)}" fill="#0a0817" stroke="#c9a84c" stroke-opacity=".28" stroke-width=".7"/>`
-      +hexIcon(g,(a+b)/2,R.go+4.5,3.3,6.5,on?gcol:'rgba(201,168,76,.55)');
+      +hexIcon(g,(a+b)/2,R.go+6,5.2,10,on?gcol:'rgba(201,168,76,.55)');
     s+=`<g class="gt" data-g="${g}">`+txt((R.go+R.gi)/2,(a+b)/2,g,`fill="${gcol}" font-size="${on?15:13}" font-weight="${on?600:400}" font-family="Cinzel,serif"`)+'</g>';
   });
   s+='</g>';
 
   if(VED){
-    const N1=R.zo,N2=R.zo+30,P2=N2+12;
+    const N1=R.zo,N2=R.zo+30,P2=N2+17;
     for(let n=0;n<27;n++){const a=A0+n*40/3,b=a+40/3,col=LORD_COL[n%9];
       s+=`<path class="nak" data-n="${n}" d="${wedge(N1,N2,a,b)}" fill="${col}" fill-opacity=".1" stroke="#E3BE84" stroke-opacity=".45" stroke-width=".8"/>`;
       {const m=a+40/6,[x,y]=P(N1+15,m);let rot=-ang(m)*180/Math.PI+90;rot=((rot%360)+360)%360;if(rot>90&&rot<270)rot-=180;   /* text along the arc, never upside down */
        s+=`<text x="${f1(x)}" y="${f1(y)}" text-anchor="middle" dominant-baseline="central" transform="rotate(${f1(rot)} ${f1(x)} ${f1(y)})" fill="${col}" font-size="10.5"><tspan font-family="Cinzel,serif" font-weight="600">${n+1}</tspan> ${NAK_KA[n]}</text>`;}
       for(let p=0;p<4;p++){const pa=a+p*10/3,si=(n*4+p)%12;
-        s+=`<path d="${wedge(N2,P2,pa,pa+10/3)}" fill="${ELEM_COL[si%4]}" fill-opacity=".35" stroke="#0a0817" stroke-width=".6"/>`;}}
+        s+=`<path d="${wedge(N2,P2,pa,pa+10/3)}" fill="${ELEM_COL[si%4]}" fill-opacity=".35" stroke="#0a0817" stroke-width=".6"/>`;
+        s+=txt((N2+P2)/2,pa+5/3,p+1,`fill="#f3e6c8" font-size="9" font-family="Cinzel,serif" font-weight="600"`);}}
     s+=`<circle cx="500" cy="500" r="${P2}" fill="none" stroke="#c9a84c" stroke-opacity=".55" stroke-width="1.2"/>`;
   }
   /* houses */
@@ -335,7 +339,7 @@ function draw(){
       s+=txt(R.hn,mid,i+1,`fill="rgba(201,168,76,.5)" font-size="12" font-family="Cinzel,serif"`);
     });
     [[H.asc,'ASC'],[H.mc,'MC'],[HDA.norm(H.asc+180),'DSC'],[HDA.norm(H.mc+180),'IC']].forEach(([l,t])=>{
-      const RB=VED?R.zo+42:R.zo;s+=line(RB,RB+10,l,`stroke="#f0d080" stroke-width="2"`);
+      const RB=VED?R.zo+47:R.zo;s+=line(RB,RB+10,l,`stroke="#f0d080" stroke-width="2"`);
       s+=txt(RB+22,l,t,`fill="#f0d080" font-size="13" font-family="Cinzel,serif" font-weight="600"`);
     });
     s+='</g>';
@@ -451,7 +455,7 @@ function panel(){
   });
   const tz=$('tz').value.trim()||'UTC',p=HDA.localParts(c.designJD,tz),pad=n=>String(n).padStart(2,'0');
   $('meta').innerHTML=`დიზაინის მომენტი: <b style="color:#c3c8d0">${p.y}-${pad(p.m)}-${pad(p.d)} ${pad(p.h)}:${pad(p.mi)}</b> (${tz})<br>`+
-    (c.houses?`სახლები: ${HSYS_KA[c.houses.sys]}${c.houses.sys!==$('hsys').value?' (ამ განედზე სისტემა ვერ აიგება — პორფირი)':''}`:'დრო უცნობია — სახლები და ASC არ აიგება, მთვარე 12:00-ზე');
+    (c.houses?isVed()?'სახლები: თანაბარი (მთელი ნიშანი, სიდერეული)':`სახლები: ${HSYS_KA[c.houses.sys]}${c.houses.sys!==$('hsys').value?' (ამ განედზე სისტემა ვერ აიგება — პორფირი)':''}`:'დრო უცნობია — სახლები და ASC არ აიგება, მთვარე 12:00-ზე');
   const row=b=>{
     const a=c.pers[b],d=c.des[b],fa=fmtDeg(a.lon),fd=fmtDeg(d.lon);
     const r=(x,b2)=>x.retro&&!/Node|Sun|Earth|Moon/.test(b2)?' ℞':'';
