@@ -131,6 +131,7 @@ td.dd{color:#a9aeb7}
           <label>ნაჭრების გამჭვირვალობა <input type="range" id="op" min="3" max="60" value="10"> <span id="opv">10%</span></label>
           <label><input type="checkbox" id="lines"> არხის ხაზები</label>
           <label><input type="checkbox" id="asp"> ასპექტები</label>
+          <label><input type="checkbox" id="hexi" checked> ჰექსაგრამები</label>
         </div>
         <div class="legend">
           <span><b style="color:var(--gold-l)">ფერადი</b> — პიროვნება (დაბადების მომენტი)</span>
@@ -225,6 +226,19 @@ function spread(items,minSep){
 }
 
 /* ── draw ── */
+/* ── gate icons: each gate's I Ching hexagram, drawn as lines (bottom line toward the centre) ── */
+const HX_TRI={1:[1,1,1],2:[1,1,0],3:[1,0,1],4:[1,0,0],5:[0,1,1],6:[0,1,0],7:[0,0,1],8:[0,0,0]};
+const HX_ORD=[1,4,6,7,8,5,3,2];
+const HX_KW=[[1,25,6,33,12,44,13,10],[34,51,40,62,16,32,55,54],[5,3,29,39,8,48,63,60],[26,27,4,52,23,18,22,41],[11,24,7,15,2,46,36,19],[9,42,59,53,20,57,37,61],[14,21,64,56,35,50,30,38],[43,17,47,31,45,28,49,58]];
+const HX_LINES={};HX_ORD.forEach((u,i)=>HX_ORD.forEach((l,j)=>{HX_LINES[HX_KW[i][j]]=[...HX_TRI[l],...HX_TRI[u]];}));
+function hexIcon(g,m,r0,step,half,col){
+  let s='';const L=HX_LINES[g];if(!L)return s;
+  L.forEach((yang,k)=>{const r=r0+k*step,dh=half/r*180/Math.PI,gap=1.6/r*180/Math.PI;
+    if(yang)s+=`<path d="M${P(r,m-dh).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m+dh).map(f1).join(' ')}" stroke="${col}" stroke-width="2.1" fill="none" stroke-linecap="butt"/>`;
+    else{s+=`<path d="M${P(r,m-dh).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m-gap).map(f1).join(' ')}" stroke="${col}" stroke-width="2.1" fill="none"/>`;
+         s+=`<path d="M${P(r,m+gap).map(f1).join(' ')}A${r} ${r} 0 0 0 ${P(r,m+dh).map(f1).join(' ')}" stroke="${col}" stroke-width="2.1" fill="none"/>`;}});
+  return s;
+}
 function draw(){
   const c=CH,svg=$('wheel'),op=+$('op').value/100;
   const H=c.houses;ROT=H?H.asc:0;
@@ -266,7 +280,9 @@ function draw(){
     if(chOf[g])s+=`<path d="${wedge(R.gi,R.gi+3,a,b)}" fill="${CH_COL[chOf[g][0]]}"/>`;
     for(let l=1;l<6;l++)s+=line(R.go,R.go-4,a+l*HDA.GW/6,`stroke="#c9a84c" stroke-opacity=".3" stroke-width=".5"`);
     const on=st.p||st.d;
-    s+=`<g class="gt" data-g="${g}">`+txt((R.go+R.gi)/2,(a+b)/2,g,`fill="${on?(st.p?'#f6e3a6':'#d4d8de'):'rgba(201,168,76,.42)'}" font-size="${on?15:13}" font-weight="${on?600:400}" font-family="Cinzel,serif"`)+'</g>';
+    const gcol=on?(st.p?'#f6e3a6':'#d4d8de'):'rgba(201,168,76,.42)',HXI=$('hexi')&&$('hexi').checked;
+    s+=`<g class="gt" data-g="${g}">`+(HXI?hexIcon(g,(a+b)/2,R.gm+1,3.9,7,on?gcol:'rgba(201,168,76,.55)'):'')
+      +txt(HXI?R.gi+11:(R.go+R.gi)/2,(a+b)/2,g,`fill="${gcol}" font-size="${HXI?(on?13:11.5):(on?15:13)}" font-weight="${on?600:400}" font-family="Cinzel,serif"`)+'</g>';
   });
   s+='</g>';
 
@@ -444,6 +460,7 @@ $('go').addEventListener('click',build);
 $('op').addEventListener('input',()=>{$('opv').textContent=$('op').value+'%';if(CH)applyHL();});
 $('lines').addEventListener('change',()=>CH&&draw());
 $('asp').addEventListener('change',()=>CH&&draw());
+$('hexi').addEventListener('change',()=>CH&&draw());
 $('hsys').addEventListener('change',()=>CH&&build());
 </script>
 <script src="astro_switch.js?v=12"></script>
