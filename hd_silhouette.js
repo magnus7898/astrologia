@@ -1,22 +1,22 @@
 /* hd_silhouette.js — body silhouette of the bodygraph: see-through body with a
-   light-purple inner shadow along its edges, a crisp gradient outline, and two
-   comets of light gliding around it.
+   dark-purple inner shadow along its edges and a dark violet outline
+   that pulses vividly.
    Self-injecting; hd.html only needs   <script src="hd_silhouette.js"></script>
    The silhouette is the single path.st0 of human_prepared.svg.             */
 (function(){
 'use strict';
 const NS='http://www.w3.org/2000/svg';
 /* comet layers: [dash length (of 100), width px, colour, opacity] — tail → head */
-const LAYERS=[[18,3,'#8b5cf6',.3],[9,3,'#c4b5fd',.6],[3,3,'#ede9fe',.9],[1,3.5,'#ffffff',1]];
+const LAYERS=[];   /* moving comets removed */
 const DUR=14;
 const css=document.createElement('style');
 let t=`
 svg path.st0{fill:#000!important;stroke:none!important;filter:url(#hdSilInner)}
-svg path.st0.hd-edge{fill:none!important;stroke:url(#hdSilGrad)!important;stroke-width:1.8px!important;filter:none;
-  vector-effect:non-scaling-stroke;stroke-linejoin:round;animation:hdEdge 6s ease-in-out infinite}
+svg path.st0.hd-edge{fill:none!important;stroke:#6d28d9!important;stroke-width:2px!important;
+  vector-effect:non-scaling-stroke;stroke-linejoin:round;animation:hdEdge 3.5s ease-in-out infinite}
 svg path.st0.hd-c{fill:none!important;filter:none;stroke-linecap:round;pointer-events:none;vector-effect:non-scaling-stroke;
   animation:hdComet ${DUR}s linear infinite}
-@keyframes hdEdge{0%,100%{opacity:.7}50%{opacity:1}}
+@keyframes hdEdge{0%,100%{stroke:#5b21b6;filter:drop-shadow(0 0 1px #5b21b6)}33%{stroke:#7e22ce;filter:drop-shadow(0 0 5px #9333ea)}66%{stroke:#6d28d9;filter:drop-shadow(0 0 3px #7c3aed)}}
 @keyframes hdComet{to{stroke-dashoffset:var(--o1)}}
 @media (prefers-reduced-motion:reduce){svg path.st0.hd-edge,svg path.st0.hd-c{animation:none}}`;
 LAYERS.forEach(([L,w,c,o],i)=>{t+=`svg path.st0.hd-c.l${i}{stroke:${c}!important;stroke-width:${w}px!important;opacity:${o};stroke-dasharray:${L} ${100-L};${i===LAYERS.length-1?'filter:drop-shadow(0 0 3px #e9d5ff)':''}}`;});
@@ -28,11 +28,11 @@ function defsFor(svg){
   const d=mk('defs',{},svg);
   /* inner shadow: light purple glowing inward from the edge, body itself stays clear */
   const f=mk('filter',{id:'hdSilInner',x:'-5%',y:'-5%',width:'110%',height:'110%','color-interpolation-filters':'sRGB'},d);
-  mk('feFlood',{'flood-color':'#d8b4fe','flood-opacity':'1',result:'c'},f);
+  mk('feFlood',{'flood-color':'#6d28d9','flood-opacity':'1',result:'c'},f);
   mk('feComposite',{in:'c',in2:'SourceAlpha',operator:'out',result:'outside'},f);
   mk('feGaussianBlur',{in:'outside',stdDeviation:'16',result:'b'},f);
   mk('feComposite',{in:'b',in2:'SourceAlpha',operator:'in',result:'inner'},f);
-  mk('feFlood',{'flood-color':'#a78bfa','flood-opacity':'.05',result:'t'},f);
+  mk('feFlood',{'flood-color':'#4c1d95','flood-opacity':'.06',result:'t'},f);
   mk('feComposite',{in:'t',in2:'SourceAlpha',operator:'in',result:'tint'},f);
   const m=mk('feMerge',{},f);mk('feMergeNode',{in:'tint'},m);mk('feMergeNode',{in:'inner'},m);
   /* outline gradient: lilac at the head → violet → deep violet at the base */
