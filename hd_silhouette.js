@@ -11,7 +11,7 @@ const LAYERS=[];   /* moving comets removed */
 const DUR=14;
 const css=document.createElement('style');
 let t=`
-svg path.st0{fill:#000!important;stroke:none!important;filter:url(#hdSilInner)}
+svg path.st0{fill:#000!important;stroke:none!important;opacity:0}
 svg path.st0.hd-edge{fill:none!important;stroke:#6d28d9!important;stroke-width:2px!important;
   vector-effect:non-scaling-stroke;stroke-linejoin:round;animation:hdEdge 3.5s ease-in-out infinite}
 svg path.st0.hd-c{fill:none!important;filter:none;stroke-linecap:round;pointer-events:none;vector-effect:non-scaling-stroke;
@@ -28,15 +28,12 @@ function defsFor(svg){
   const d=mk('defs',{},svg);
   /* inner shadow: light purple glowing inward from the edge, body itself stays clear */
   const f=mk('filter',{id:'hdSilInner',x:'-5%',y:'-5%',width:'110%',height:'110%','color-interpolation-filters':'sRGB'},d);
-  /* inner-shadow colour flows through the seven chakra colours, endlessly */
-  const CH='#e11d48;#f97316;#facc15;#22c55e;#0ea5e9;#4f46e5;#9333ea;#e11d48';
-  const fc=mk('feFlood',{'flood-color':'#9333ea','flood-opacity':'1',result:'c'},f);
-  mk('animate',{attributeName:'flood-color',values:CH,dur:'28s',repeatCount:'indefinite'},fc);
+  /* glow shape only — colour comes from the flowing chakra gradient (chakraFlow) */
+  mk('feFlood',{'flood-color':'#ffffff','flood-opacity':'1',result:'c'},f);   /* white glow → used as a mask */
   mk('feComposite',{in:'c',in2:'SourceAlpha',operator:'out',result:'outside'},f);
   mk('feGaussianBlur',{in:'outside',stdDeviation:'16',result:'b'},f);
   mk('feComposite',{in:'b',in2:'SourceAlpha',operator:'in',result:'inner'},f);
-  const ft=mk('feFlood',{'flood-color':'#4c1d95','flood-opacity':'.07',result:'t'},f);
-  mk('animate',{attributeName:'flood-color',values:CH,dur:'28s',repeatCount:'indefinite'},ft);
+  mk('feFlood',{'flood-color':'#ffffff','flood-opacity':'.08',result:'t'},f);
   mk('feComposite',{in:'t',in2:'SourceAlpha',operator:'in',result:'tint'},f);
   const m=mk('feMerge',{},f);mk('feMergeNode',{in:'tint'},m);mk('feMergeNode',{in:'inner'},m);
   /* outline gradient: lilac at the head → violet → deep violet at the base */
@@ -100,11 +97,29 @@ function centre(p){
     if(Math.abs(dx)>1)svg.setAttribute('viewBox',(vb.x+dx)+' '+vb.y+' '+vb.width+' '+vb.height);};
   requestAnimationFrame(go);
 }
+
+/* the chakra colours themselves: a root→crown rainbow (red at the base … violet at the crown) that keeps
+   flowing upward through the body, seen only through the inner-shadow glow */
+function chakraFlow(p){
+  const svg=p.ownerSVGElement;let bb;try{bb=p.getBBox();}catch(_){return;}
+  if(!bb.width){requestAnimationFrame(()=>chakraFlow(p));return;}
+  const d=svg.querySelector('defs')||mk('defs',{},svg);
+  const m=mk('mask',{id:'hdSilMask',maskUnits:'userSpaceOnUse',x:bb.x-20,y:bb.y-20,width:bb.width+40,height:bb.height+40},d);
+  const mc=p.cloneNode(false);['class','style','data-hdc'].forEach(a=>mc.removeAttribute(a));
+  mc.setAttribute('fill','#fff');mc.setAttribute('filter','url(#hdSilInner)');m.appendChild(mc);
+  const H=bb.height,y0=bb.y+H;
+  const g=mk('linearGradient',{id:'hdChakra',gradientUnits:'userSpaceOnUse',x1:0,y1:y0,x2:0,y2:bb.y,spreadMethod:'repeat'},d);
+  ['#e11d48','#f97316','#facc15','#22c55e','#0ea5e9','#4f46e5','#9333ea','#e11d48'].forEach((c,i,a)=>mk('stop',{offset:(i/(a.length-1)*100).toFixed(2)+'%','stop-color':c},g));
+  mk('animateTransform',{attributeName:'gradientTransform',type:'translate',from:'0 0',to:'0 '+(-H),dur:'12s',repeatCount:'indefinite'},g);
+  const r=mk('rect',{x:bb.x-20,y:bb.y-20,width:bb.width+40,height:bb.height+40,fill:'url(#hdChakra)',mask:'url(#hdSilMask)','class':'hd-chakra','pointer-events':'none'});
+  p.after(r);
+}
 function build(){
   document.querySelectorAll('svg path.st0:not(.hd-c):not(.hd-edge)').forEach(p=>{
     if(p.dataset.hdc)return;p.dataset.hdc='1';
     defsFor(p.ownerSVGElement);
     let last=p;   /* no outline — only the inner shadow */
+    chakraFlow(p);
     stars(p);
     centre(p);
     [0,50].forEach(phase=>{LAYERS.forEach(([L],i)=>{
