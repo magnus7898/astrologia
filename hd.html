@@ -682,6 +682,16 @@ function clearSVG(sv){
 
 /* ── FOUR ARROWS (variables) — beside Head and Ajna: left = Design (Sun → digestion, Node → environment),
    right = Personality (Sun → motivation, Node → perspective); tone 1–3 points left, 4–6 points right ── */
+/* how far the body silhouette reaches beyond the centres at head height — arrows sit outside it, not touching */
+function L0(sv,head,hb,ab){
+  const sil=sv.querySelector('path.st0:not(.hd-c):not(.hd-edge)');if(!sil||!sil.isPointInFill)return 60;
+  try{const m=(sil.getCTM().inverse()).multiply(head.getCTM());
+    const pt=(x,y)=>{const p=new DOMPoint(x,y).matrixTransform(m);return sil.isPointInFill(p);};
+    const cx=hb.x+hb.width/2,half=Math.max(hb.width,ab.width)/2;let ext=0;
+    for(const y of [hb.y+hb.height*.55,ab.y+ab.height*.45])
+      for(let d=half;d<half+260;d+=3){if(pt(cx-d,y)||pt(cx+d,y))ext=Math.max(ext,d-half+3);}
+    return ext+6;}catch(_){return 60;}
+}
 function drawArrows(sv,chart){
   if(!sv)return;sv.querySelectorAll('.hd-arrows').forEach(e=>e.remove());
   const head=sv.querySelector(".chakra[data-center='Head']"),ajna=sv.querySelector(".chakra[data-center='Ajna']");
@@ -693,7 +703,7 @@ function drawArrows(sv,chart){
   const find=(list,n)=>(list||[]).find(p=>p.planet===n);
   const NS='http://www.w3.org/2000/svg',mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
   const g=mk('g',{'class':'hd-arrows'},head.parentNode);   /* same coordinate system as the centres */
-  const cx=hb.x+hb.width/2,off=Math.max(hb.width,ab.width)/2+46,L=42;
+  const cx=hb.x+hb.width/2,off=Math.max(hb.width,ab.width)/2+44+L0(sv,head,hb,ab),L=42;
   const items=[
     [find(chart.design,'Sun'),-1,hb.y+hb.height*.55,'#c4b5fd','საკვები (დიზაინის მზე)',chart.digestion],
     [find(chart.design,'North Node'),-1,ab.y+ab.height*.45,'#c4b5fd','გარემო (დიზაინის კვანძი)',chart.environment],
