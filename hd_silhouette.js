@@ -12,8 +12,6 @@ const DUR=14;
 const css=document.createElement('style');
 let t=`
 svg path.st0{fill:#000!important;stroke:none!important;opacity:0}
-/* centre outlines and channel edges in gold (were #C49A6C) */
-svg .st126,svg .st14{stroke:#f2c94c!important}
 svg path.st0.hd-edge{fill:none!important;stroke:#6d28d9!important;stroke-width:2px!important;
   vector-effect:non-scaling-stroke;stroke-linejoin:round;animation:hdEdge 3.5s ease-in-out infinite}
 svg path.st0.hd-c{fill:none!important;filter:none;stroke-linecap:round;pointer-events:none;vector-effect:non-scaling-stroke;
