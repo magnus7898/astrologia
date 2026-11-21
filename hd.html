@@ -707,8 +707,8 @@ function drawArrows(sv,chart){
   const items=[
     [find(chart.design,'Sun'),-1,hb.y+hb.height*.55,'#E75A7C','საკვები (დიზაინის მზე)',chart.digestion],
     [find(chart.design,'North Node'),-1,ab.y+ab.height*.45,'#E75A7C','გარემო (დიზაინის კვანძი)',chart.environment],
-    [find(chart.personality,'Sun'),1,hb.y+hb.height*.55,'#2C363F','მოტივაცია (პიროვნების მზე)',chart.motivation],
-    [find(chart.personality,'North Node'),1,ab.y+ab.height*.45,'#2C363F','პერსპექტივა (პიროვნების კვანძი)',chart.perspective]];
+    [find(chart.personality,'Sun'),1,hb.y+hb.height*.55,'#b6c2ce','მოტივაცია (პიროვნების მზე)',chart.motivation],
+    [find(chart.personality,'North Node'),1,ab.y+ab.height*.45,'#b6c2ce','პერსპექტივა (პიროვნების კვანძი)',chart.perspective]];
   items.forEach(([p,side,y,col,name,val])=>{if(!p||!p.tone)return;
     const dir=p.tone<=3?-1:1;                        /* left / right */
     const x0=cx+side*off-L/2,x1=x0+L,tipX=dir<0?x0:x1,tailX=dir<0?x1:x0;
