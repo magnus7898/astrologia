@@ -173,7 +173,10 @@ function drawClassic(svg,D){
   el('circle',{cx:CX,cy:CY,r:RHi,fill:'rgba(8,12,24,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
   const H=!unk&&Array.isArray(D.houses)&&D.houses.length>=12?D.houses:null;
   /* cusp lines (the axes are drawn below) */
-  if(H)for(let i=0;i<12;i++){if([0,3,6,9].includes(i))continue;const a=e2s(H[i]);line(a,RHi,a,RZi,{stroke:'rgba(123,147,189,.55)','stroke-width':.9});}
+  /* skip a cusp only where an axis line already lies on it (whole-sign houses: cusps 1·4·7·10 differ from ASC/MC) */
+  const AXD=unk?[]:[D.asc,D.asc+180].concat(D.mc!=null?[D.mc,D.mc+180]:[]);
+  const onAxis=d=>AXD.some(x=>{const k=Math.abs(N360(d-x));return Math.min(k,360-k)<.3;});
+  if(H)for(let i=0;i<12;i++){if(onAxis(H[i]))continue;const a=e2s(H[i]);line(a,RHi,a,RZi,{stroke:'rgba(168,190,230,.8)','stroke-width':1.2});}
   /* house numbers (planetary astrology turns them off with houseNums:false) */
   if(H&&D.houseNums!==false)for(let i=0;i<12;i++){const h=H[i],mid=h+N360(H[(i+1)%12]-h)/2,q=xy(e2s(mid),(RHo+RHi)/2);
     txt(svg,String(i+1),q.x,q.y,{fill:GOLD+'.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}
