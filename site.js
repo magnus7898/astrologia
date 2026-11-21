@@ -51,6 +51,10 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;',
 const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1');let t=(h&&h.textContent.trim())||document.title.replace(/^MAGNUS\s*[·|—-]\s*/,'').replace(/\s*[·|—-]\s*MAGNUS$/,'');return t.replace(/[✦✧★☆⟡◆◇•·]/g,' ').replace(/\s+/g,' ').trim().slice(0,60);};
 
 const CSS=`
+/* dropdown lists: readable on every page (dark list, light text) */
+select option,select optgroup{background:#0e1424!important;color:#F3E6C8!important}
+select optgroup{color:#C9A24C!important;font-style:normal}
+select{color-scheme:dark}
 #mg-head::before,#mg-head::after{content:none!important;display:none!important}
 #mg-head{flex-direction:row!important;justify-content:flex-start!important;text-align:left!important;margin-bottom:0!important;box-sizing:border-box;width:100%;align-self:stretch;position:relative;z-index:50;display:flex;align-items:center;gap:10px 16px;flex-wrap:wrap;
   padding:9px max(16px,env(safe-area-inset-right,0px)) 9px max(16px,env(safe-area-inset-left,0px));margin:0 0 6px;
