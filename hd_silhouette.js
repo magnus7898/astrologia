@@ -45,8 +45,7 @@ function build(){
   document.querySelectorAll('svg path.st0:not(.hd-c):not(.hd-edge)').forEach(p=>{
     if(p.dataset.hdc)return;p.dataset.hdc='1';
     defsFor(p.ownerSVGElement);
-    const e=p.cloneNode(false);e.removeAttribute('data-hdc');e.classList.add('hd-edge');p.after(e);
-    let last=e;
+    let last=p;   /* no outline — only the inner shadow */
     [0,50].forEach(phase=>{LAYERS.forEach(([L],i)=>{
       const r=p.cloneNode(false);r.removeAttribute('data-hdc');r.classList.add('hd-c','l'+i);r.setAttribute('pathLength','100');
       const s=-phase-(LAYERS[0][0]-L);            /* front edges aligned: tail trails the head */
