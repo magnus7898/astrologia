@@ -206,6 +206,10 @@ function drawClassic(svg,D){
     let diff=dA-tA;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
     if(Math.abs(diff)*RG>3.5)line(tA,RZi-7,dA,RG+gR+1,{stroke:col,'stroke-width':.9,opacity:.75});
     const g=xy(dA,RG);
+    /* halo: house / axis / leader lines never run through a planet's glyph or its numbers */
+    {const HB='rgba(10,15,30,.96)',pR=[R_DEG,R_SIG,R_MIN].map(r=>xy(dA,r));
+     el('circle',{cx:g.x,cy:g.y,r:gR*1.02,fill:HB},svg);
+     pR.forEach(q=>el('circle',{cx:q.x,cy:q.y,r:fs*.78,fill:HB},svg));}
     if(info.sym==='sun'){el('circle',{cx:g.x,cy:g.y,r:gR*.78,fill:'none',stroke:'#f9c646','stroke-width':2,filter:'url(#'+id+'s)'},svg);el('circle',{cx:g.x,cy:g.y,r:1.8,fill:'#f9c646'},svg);}
     else if(info.sym==='SEL'){const rr=gR*.6;el('circle',{cx:g.x,cy:g.y,r:rr,fill:'none',stroke:col,'stroke-width':1.4},svg);el('path',{d:`M ${g.x-rr} ${g.y} a ${rr} ${rr} 0 0 1 ${rr*2} 0`,fill:col,opacity:.9},svg);}
     else txt(svg,info.sym,g.x,g.y,{fill:col,'font-size':gR*1.75,'font-family':'serif'});

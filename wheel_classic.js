@@ -149,6 +149,10 @@ window.drawWheelClassic=function(data1,dualAsp){
     let diff=dA-tA;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
     if(Math.abs(diff)*RG>3.5)line(svg,tA,RZi-7,dA,RG+gR+1,{stroke:col,'stroke-width':.9,opacity:.75});
     const g=xy(dA,RG);
+    /* halo: house / axis / leader lines never run through a planet's glyph or its numbers */
+    {const HB='rgba(10,15,30,.96)',pR=[R_DEG,R_SIG,R_MIN].map(r=>xy(dA,r));
+     el('circle',{cx:g.x,cy:g.y,r:gR*1.02,fill:HB},svg);
+     pR.forEach(q=>el('circle',{cx:q.x,cy:q.y,r:fs*.78,fill:HB},svg));}
     if(n==='მზე'){
       el('circle',{cx:g.x,cy:g.y,r:gR*.78,fill:'none',stroke:'#f9c646','stroke-width':2,filter:'url(#sunF)'},svg);
       el('circle',{cx:g.x,cy:g.y,r:1.8,fill:'#f9c646'},svg);
