@@ -18,7 +18,7 @@ svg path.st0.hd-c{fill:none!important;filter:none;stroke-linecap:round;pointer-e
   animation:hdComet ${DUR}s linear infinite}
 @keyframes hdEdge{0%,100%{stroke:#5b21b6;filter:drop-shadow(0 0 1px #5b21b6)}33%{stroke:#7e22ce;filter:drop-shadow(0 0 5px #9333ea)}66%{stroke:#6d28d9;filter:drop-shadow(0 0 3px #7c3aed)}}
 @keyframes hdComet{to{stroke-dashoffset:var(--o1)}}
-svg .hd-star{animation:hdTw 4s ease-in-out infinite;opacity:.5}\nsvg .hd-spark{animation:hdSp 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center;filter:drop-shadow(0 0 2px #d8b4fe)}\n@keyframes hdTw{0%,100%{opacity:.15}50%{opacity:.9}}\n@keyframes hdSp{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}}\n@media (prefers-reduced-motion:reduce){svg .hd-star,svg .hd-spark{animation:none}}\n@media (prefers-reduced-motion:reduce){svg path.st0.hd-edge,svg path.st0.hd-c{animation:none}}`;
+svg .hd-star{animation:hdTw 4s ease-in-out infinite;opacity:.5}\nsvg .hd-spark{animation:hdSp 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center;filter:drop-shadow(0 0 2px currentColor)}\nsvg .hd-neb{animation:hdNeb 18s ease-in-out infinite;mix-blend-mode:screen}\n@keyframes hdNeb{0%,100%{opacity:.75}50%{opacity:1}}\n@keyframes hdTw{0%,100%{opacity:.15}50%{opacity:.9}}\n@keyframes hdSp{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}}\n@media (prefers-reduced-motion:reduce){svg .hd-star,svg .hd-spark{animation:none}}\n@media (prefers-reduced-motion:reduce){svg path.st0.hd-edge,svg path.st0.hd-c{animation:none}}`;
 LAYERS.forEach(([L,w,c,o],i)=>{t+=`svg path.st0.hd-c.l${i}{stroke:${c}!important;stroke-width:${w}px!important;opacity:${o};stroke-dasharray:${L} ${100-L};${i===LAYERS.length-1?'filter:drop-shadow(0 0 3px #e9d5ff)':''}}`;});
 css.textContent=t;document.head.appendChild(css);
 
@@ -49,18 +49,24 @@ function stars(p){
   const d=svg.querySelector('defs')||mk('defs',{},svg);
   const cp=mk('clipPath',{id:'hdSilClip'},d);const cc=p.cloneNode(false);
   ['class','style','data-hdc'].forEach(a=>cc.removeAttribute(a));cp.appendChild(cc);
-  const ng=mk('radialGradient',{id:'hdNeb',cx:'50%',cy:'50%',r:'50%'},d);
-  mk('stop',{offset:'0%','stop-color':'#a855f7','stop-opacity':'.16'},ng);mk('stop',{offset:'100%','stop-color':'#a855f7','stop-opacity':'0'},ng);
+  /* nebula colours: violet, rose, teal-blue, gold */
+  const NEB=[['nbV','#a855f7',.45],['nbR','#ec4899',.38],['nbB','#22d3ee',.32],['nbG','#f59e0b',.24]];
+  NEB.forEach(([id,c,o])=>{const ng=mk('radialGradient',{id,cx:'50%',cy:'50%',r:'50%'},d);
+    mk('stop',{offset:'0%','stop-color':c,'stop-opacity':o},ng);mk('stop',{offset:'55%','stop-color':c,'stop-opacity':o*.45},ng);mk('stop',{offset:'100%','stop-color':c,'stop-opacity':'0'},ng);});
   const g=mk('g',{'clip-path':'url(#hdSilClip)','class':'hd-cosmos','pointer-events':'none'});p.after(g);
   let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
   const X=()=>bb.x+rnd()*bb.width,Y=()=>bb.y+rnd()*bb.height,u=bb.width/400;
   /* two faint nebula clouds */
-  [[.5,.42,.22],[.35,.78,.18]].forEach(([fx,fy,fr])=>mk('ellipse',{cx:bb.x+fx*bb.width,cy:bb.y+fy*bb.height,rx:fr*bb.width,ry:fr*bb.width*.7,fill:'url(#hdNeb)'},g));
-  for(let i=0;i<46;i++){const r=(.35+rnd()*rnd()*1.3)*u*1.6;
-    const c=mk('circle',{cx:X(),cy:Y(),r,fill:rnd()<.25?'#e9d5ff':'#ffffff','class':'hd-star'},g);
+  /* soft nebula clouds in several colours, slowly drifting */
+  [[.48,.40,.22,'nbV'],[.62,.30,.13,'nbR'],[.36,.62,.16,'nbB'],[.60,.74,.17,'nbR'],[.44,.86,.15,'nbV'],[.52,.16,.10,'nbB'],[.30,.40,.10,'nbG'],[.70,.55,.10,'nbG']]
+    .forEach(([fx,fy,fr,id],k)=>{const e=mk('ellipse',{cx:bb.x+fx*bb.width,cy:bb.y+fy*bb.height,rx:fr*bb.width,ry:fr*bb.width*(.55+rnd()*.35),fill:'url(#'+id+')','class':'hd-neb',
+      transform:'rotate('+Math.round(rnd()*180)+' '+(bb.x+fx*bb.width)+' '+(bb.y+fy*bb.height)+')'},g);e.style.animationDelay=(-k*3.1)+'s';});
+  const STARC=['#ffffff','#ffffff','#ffffff','#e9d5ff','#c4b5fd','#a5f3fc','#67e8f9','#f9a8d4','#fde68a','#93c5fd'];
+  for(let i=0;i<52;i++){const r=(.35+rnd()*rnd()*1.3)*u*1.6;
+    const c=mk('circle',{cx:X(),cy:Y(),r,fill:STARC[Math.floor(rnd()*STARC.length)],'class':'hd-star'},g);
     c.style.animationDelay=(-rnd()*5).toFixed(2)+'s';c.style.animationDuration=(2.5+rnd()*3.5).toFixed(2)+'s';}
   for(let i=0;i<6;i++){const x=X(),y=Y(),a=(1.6+rnd()*1.6)*u*2,b=a*.18;
-    const s=mk('path',{d:`M${x} ${y-a}Q${x+b} ${y-b} ${x+a} ${y}Q${x+b} ${y+b} ${x} ${y+a}Q${x-b} ${y+b} ${x-a} ${y}Q${x-b} ${y-b} ${x} ${y-a}Z`,fill:'#f5f3ff','class':'hd-spark'},g);
+    const s=mk('path',{d:`M${x} ${y-a}Q${x+b} ${y-b} ${x+a} ${y}Q${x+b} ${y+b} ${x} ${y+a}Q${x-b} ${y+b} ${x-a} ${y}Q${x-b} ${y-b} ${x} ${y-a}Z`,fill:['#f5f3ff','#a5f3fc','#f9a8d4','#fde68a','#c4b5fd','#ffffff'][i],'class':'hd-spark'},g);
     s.style.transformOrigin=x+'px '+y+'px';s.style.animationDelay=(-rnd()*6).toFixed(2)+'s';}
 }
 function build(){
