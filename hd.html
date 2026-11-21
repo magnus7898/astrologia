@@ -714,10 +714,8 @@ function drawArrows(sv,chart){
     const x0=cx+side*off-L/2,x1=x0+L,tipX=dir<0?x0:x1,tailX=dir<0?x1:x0;
     const a=mk('g',{'class':'hd-arrow'},g);
     mk('title',{},a).textContent=name+' — ტონი '+p.tone+' → '+(dir<0?'მარცხნივ':'მარჯვნივ')+(val?' · '+val:'');
-    const edge=side<0?'#ffd0dc':'#c9d3e6';
-    mk('line',{x1:tailX,y1:y,x2:tipX-dir*11,y2:y,stroke:edge,'stroke-width':7.5,'stroke-linecap':'round',opacity:side<0?.25:.55},a);
     mk('line',{x1:tailX,y1:y,x2:tipX-dir*11,y2:y,stroke:col,'stroke-width':5,'stroke-linecap':'round'},a);
-    mk('path',{d:`M${tipX} ${y} L${tipX-dir*16} ${y-10} L${tipX-dir*16} ${y+10} Z`,fill:col,'stroke-linejoin':'round',stroke:edge,'stroke-opacity':side<0?.35:.7,'stroke-width':1.5},a);
+    mk('path',{d:`M${tipX} ${y} L${tipX-dir*16} ${y-10} L${tipX-dir*16} ${y+10} Z`,fill:col,'stroke-linejoin':'round'},a);
     const t=mk('text',{x:(x0+x1)/2,y:y+21,'text-anchor':'middle','font-size':11,'font-family':'Cinzel,serif',fill:side<0?'#E75A7C':'#c9d3e6',opacity:.9},a);t.textContent='ტ'+p.tone;
     mk('rect',{x:x0-4,y:y-14,width:L+8,height:36,fill:'transparent'},a);
   });
