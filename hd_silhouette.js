@@ -98,8 +98,7 @@ function centre(p){
   requestAnimationFrame(go);
 }
 
-/* the chakra colours themselves: a root→crown rainbow (red at the base … violet at the crown) that keeps
-   flowing upward through the body, seen only through the inner-shadow glow */
+/* blue / purple / dark-green bands that keep flowing upward through the body, seen only through the inner-shadow glow */
 function chakraFlow(p){
   const svg=p.ownerSVGElement;let bb;try{bb=p.getBBox();}catch(_){return;}
   if(!bb.width){requestAnimationFrame(()=>chakraFlow(p));return;}
@@ -109,7 +108,7 @@ function chakraFlow(p){
   mc.setAttribute('fill','#fff');mc.setAttribute('filter','url(#hdSilInner)');m.appendChild(mc);
   const H=bb.height,y0=bb.y+H;
   const g=mk('linearGradient',{id:'hdChakra',gradientUnits:'userSpaceOnUse',x1:0,y1:y0,x2:0,y2:bb.y,spreadMethod:'repeat'},d);
-  ['#e11d48','#f97316','#facc15','#22c55e','#0ea5e9','#4f46e5','#9333ea','#e11d48'].forEach((c,i,a)=>mk('stop',{offset:(i/(a.length-1)*100).toFixed(2)+'%','stop-color':c},g));
+  ['#1d4ed8','#6d28d9','#047857','#2563eb','#7e22ce','#059669','#1d4ed8']   /* blue · purple · dark green */.forEach((c,i,a)=>mk('stop',{offset:(i/(a.length-1)*100).toFixed(2)+'%','stop-color':c},g));
   mk('animateTransform',{attributeName:'gradientTransform',type:'translate',from:'0 0',to:'0 '+(-H),dur:'12s',repeatCount:'indefinite'},g);
   const r=mk('rect',{x:bb.x-20,y:bb.y-20,width:bb.width+40,height:bb.height+40,fill:'url(#hdChakra)',mask:'url(#hdSilMask)','class':'hd-chakra','pointer-events':'none'});
   p.after(r);
