@@ -53,8 +53,8 @@ function offsetOf(tz,y,m,d,h,mi){try{const t=Date.UTC(y,m-1,d,h||12,mi||0);
 /* ── panel ── */
 const css=`.mgb{margin:0 0 18px;padding:0 0 16px;border-bottom:1px solid rgba(201,162,76,.25)}
 .mgb .r{display:grid;gap:10px;margin-bottom:10px}.mgb .r.c1{grid-template-columns:1fr}.mgb .r.c3{grid-template-columns:1fr 1.3fr 1fr}.mgb .r.c2{grid-template-columns:1fr 1fr}
-.mgb label{display:block;font-size:11px;letter-spacing:1.5px;color:#C9A24C;margin:0 0 5px}
-.mgb input,.mgb select{width:100%;box-sizing:border-box;padding:10px 12px;font-size:15px;background:rgba(12,18,34,.85);color:#F3E6C8;border:1px solid rgba(201,162,76,.45);border-radius:10px;font-family:inherit}
+.mgb label,html body .mgb label{display:block;font-size:11px;letter-spacing:1.5px;color:#C9A24C;margin:0 0 5px}
+html body .mgb input:not([type=checkbox]),html body .mgb select{width:100%;box-sizing:border-box;padding:10px 12px;font-size:15px;text-align:left;background:rgba(12,18,34,.85);color:#F3E6C8;border:1px solid rgba(201,162,76,.45);border-radius:10px;font-family:inherit;height:auto}
 .mgb input:focus,.mgb select:focus{outline:none;border-color:#E3BE84;box-shadow:0 0 0 3px rgba(227,190,132,.15)}
 .mgb .sys select{font-size:15.5px}.mgb .tu{display:flex;align-items:center;gap:8px;font-size:13px;color:#d8cfbd;margin:-2px 0 10px}.mgb .tu input{width:auto}
 .mgb .city{position:relative}.mgb .hint{font-size:12.5px;color:#cfc6e8;margin-top:6px;min-height:16px}
