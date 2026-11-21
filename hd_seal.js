@@ -5,12 +5,21 @@
 'use strict';
 const OK=new Set(['rgb(255, 255, 255)','rgb(231, 90, 124)','rgb(44, 54, 63)','rgb(195, 153, 108)','rgb(196, 154, 108)']);
 const SKIP=new Set(['10','20','34','57']);
+/* trial: these gates get a thicker filler copy UNDER the original pieces instead of a stroke on top */
+const UNDER=new Set(['64']);
+function under(e,f){
+  let u=e._under;
+  if(!u){u=e.cloneNode(false);u.dataset.under='1';u.removeAttribute('id');u.style.pointerEvents='none';u.style.strokeLinejoin='round';u.style.strokeWidth='2.4';
+    e.parentNode.insertBefore(u,e.parentNode.firstChild);e._under=u;}
+  if(u.style.stroke!==f){u.style.stroke=f;u.style.fill=f;}
+}
 function run(svg){
   svg.querySelectorAll('path').forEach(e=>{
-    if(e.classList.contains('st0')||e.classList.contains('chakra')||e.closest('.hd-arrows,.hd-cosmos,mask,clipPath,defs,.detail-part'))return;
+    if(e.dataset.under||e.classList.contains('st0')||e.classList.contains('chakra')||e.closest('.hd-arrows,.hd-cosmos,mask,clipPath,defs,.detail-part'))return;
     if(SKIP.has(e.getAttribute('data-gate')||''))return;
     const cs=getComputedStyle(e),f=cs.fill;
     if(e.classList.contains('gate-line')||(OK.has(f)&&(cs.stroke==='none'||e.dataset.sealed))){
+      if(UNDER.has(e.getAttribute('data-gate')||'')){under(e,f);return;}
       if(f&&f!=='none'&&e.style.stroke!==f){e.style.stroke=f;e.style.strokeWidth='0.9';e.style.strokeLinejoin='round';e.dataset.sealed='1';}}});
 }
 function hook(svg){
