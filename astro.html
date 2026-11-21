@@ -796,7 +796,7 @@ const PI={
   'მერკური':{sym:'☿',color:'#a0c8d0'},'ვენერა':{sym:'♀',color:'#e87878'},
   'მარსი':{sym:'♂',color:'#e84040'},'იუპიტერი':{sym:'♃',color:'#e89040'},
   'სატურნი':{sym:'♄',color:'#c8c840'},'ურანი':{sym:'♅',color:'#50c8d8'},
-  'ნეპტუნი':{sym:'♆',color:'#6070d8'},'პლუტონი':{sym:'♇',color:'#c050a0'},
+  'ნეპტუნი':{sym:'♆',color:'#6070d8'},'პლუტონი':{sym:'⯓',color:'#c050a0'},
   'ქირონი':{sym:'⚷',color:'#d08040'},'ლილიტი':{sym:'⚸',color:'#904060'},
   'ჩრდ. კვანძი':{sym:'☊',color:'#60c060'},'სამხ. კვანძი':{sym:'☋',color:'#c06060'},
   'ვერტექსი':{sym:'Vx',color:'#8090d0'},
@@ -1630,7 +1630,7 @@ function drawAcgLines(chartData,birthLon){
     'მარსი':'#cc2222','იუპიტერი':'#cc2222','სატურნი':'#111111','ურანი':'#335566',
     'ნეპტუნი':'#1144cc','პლუტონი':'#882244'};
   const PSYM={'მზე':'☉','მთვარე':'☽','მერკური':'☿','ვენერა':'♀','მარსი':'♂',
-    'იუპიტერი':'♃','სატურნი':'♄','ურანი':'♅','ნეპტუნი':'♆','პლუტონი':'♇'};
+    'იუპიტერი':'♃','სატურნი':'♄','ურანი':'♅','ნეპტუნი':'♆','პლუტონი':'⯓'};
   const PLANETS=['მზე','მთვარე','მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი'];
 
   const legend=document.getElementById('acg-legend-bar');
@@ -2353,7 +2353,7 @@ async function drawSkyPoster(){
   const PCOL={sun:'#ffb340',moon:'#e8e8f0',mercury:'#b0a0e0',venus:'#f0e0a0',mars:'#f07050',
     jupiter:'#f0b070',saturn:'#d8c890',uranus:'#80d0e0',neptune:'#6090f0',pluto:'#c07090',chiron:'#90e0b0'};
   const PGLYPH={sun:'☉',moon:'☽',mercury:'☿',venus:'♀',mars:'♂',jupiter:'♃',saturn:'♄',
-    uranus:'♅',neptune:'♆',pluto:'♇',chiron:'⚷'};
+    uranus:'♅',neptune:'♆',pluto:'⯓',chiron:'⚷'};
   const pts=bodies.map(bd=>{
     const[x,y]=XY(bd.ecl_lon,Math.max(-LATMAX+4,Math.min(LATMAX-4,bd.ecl_lat)));
     const r=bd.key==='sun'?15:(bd.key==='moon'?12:9);
@@ -3349,7 +3349,7 @@ setToday('pd');
 })();
 </script>
 <script src="tabmenu.js"></script>
-<script src="astro_switch.js?v=9"></script>
+<script src="astro_switch.js?v=10"></script>
 <script src="site.js?v=20261121a"></script>
 <script src="account.js"></script>
 <script src="wheel_classic.js?v=3"></script>

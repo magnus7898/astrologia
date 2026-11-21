@@ -211,3 +211,40 @@ function run(){document.querySelectorAll('svg').forEach(clean);
 let t=null;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,60);}).observe(document.documentElement,{childList:true,subtree:true});
 addEventListener('load',run);run();
 })();
+
+/* ── Pluto ⯓ drawn as a picture: many phone fonts have no ⯓ (it shows as an empty box),
+      so every ⯓ / ♇ on the astrology pages — in charts and in tables — is replaced by the same drawn glyph ── */
+(function(){
+const NS='http://www.w3.org/2000/svg',RE=/[⯓♇]︎?/;
+/* 20×20: small circle, the cup under it, the cross below */
+const SHAPE='<circle cx="10" cy="5.2" r="2.6"/><path d="M4.2 3.6a5.8 5.8 0 0 0 11.6 0"/><path d="M10 9.4V19M6.4 15.2h7.2"/>';
+function svgText(t){
+  if(t.dataset.pl||!RE.test(t.textContent)||t.textContent.replace(RE,'').trim())return;
+  const x=+t.getAttribute('x')||0,y=+t.getAttribute('y')||0,fs=parseFloat(t.getAttribute('font-size')||getComputedStyle(t).fontSize)||16;
+  const col=t.getAttribute('fill')||getComputedStyle(t).fill||'#c050a0',s=fs*0.95,anc=t.getAttribute('text-anchor')||'start';
+  const dx=anc==='middle'?-s/2:anc==='end'?-s:0,db=t.getAttribute('dominant-baseline');
+  const dy=db==='central'||db==='middle'?-s/2:-s*0.85;
+  const g=document.createElementNS(NS,'g');g.dataset.pl='1';
+  g.setAttribute('transform',`translate(${x+dx},${y+dy}) scale(${s/20})`);
+  g.setAttribute('fill','none');g.setAttribute('stroke',col);g.setAttribute('stroke-width','1.9');g.setAttribute('stroke-linecap','round');
+  g.innerHTML=SHAPE;if(t.getAttribute('class'))g.setAttribute('class',t.getAttribute('class'));
+  if(t.getAttribute('opacity'))g.setAttribute('opacity',t.getAttribute('opacity'));
+  t.replaceWith(g);
+}
+const ICON=`<svg viewBox="0 0 20 20" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" style="vertical-align:-0.12em;display:inline-block">${SHAPE}</svg>`;
+function htmlText(n){
+  const p=n.parentElement;if(!p||p.closest('svg,script,style,textarea,option,select,.mg-pl'))return;
+  const parts=n.nodeValue.split(/[⯓♇]︎?/);if(parts.length<2)return;
+  const f=document.createDocumentFragment();
+  parts.forEach((s,i)=>{if(i){const sp=document.createElement('span');sp.className='mg-pl';sp.innerHTML=ICON;f.appendChild(sp);}if(s)f.appendChild(document.createTextNode(s));});
+  n.replaceWith(f);
+}
+function run(){
+  document.querySelectorAll('svg text').forEach(svgText);
+  const w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:n=>RE.test(n.nodeValue)?1:3});
+  const L=[];while(w.nextNode())L.push(w.currentNode);L.forEach(htmlText);
+  document.querySelectorAll('option').forEach(o=>{if(RE.test(o.textContent))o.textContent=o.textContent.replace(/[⯓♇]︎?/g,'Pl');});
+}
+let t=null;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,40);}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+if(document.body)run();else addEventListener('DOMContentLoaded',run);
+})();
