@@ -231,19 +231,19 @@ function tabs(){
    they stay where the page put them, as a centred block.                                   */
 const TILE_CSS=`
 /* the page's mode tabs: one centred pill bar above the input form, like the Western astrology page */
-.mg-tiles{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:center!important;gap:4px!important;
+html body :is(.mg-tiles,#vp-tabs,.pills){display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:center!important;gap:4px!important;
   width:max-content!important;max-width:calc(100% - 24px)!important;margin:18px auto 22px!important;padding:5px!important;box-sizing:border-box!important;
   background:rgba(12,18,34,.55)!important;border:1px solid rgba(201,162,76,.35)!important;border-radius:999px!important;box-shadow:none!important;
   overflow:visible!important;flex-direction:row!important;position:relative!important;z-index:2;height:auto!important}
-.mg-tiles>*{flex:0 0 auto!important;width:auto!important;height:auto!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;
+html body :is(.mg-tiles,#vp-tabs,.pills)>*{flex:0 0 auto!important;width:auto!important;height:auto!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;
   display:inline-flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:7px 15px!important;
   white-space:nowrap!important;background:transparent!important;border:1px solid transparent!important;border-radius:999px!important;
   color:#CFC6B0!important;font:400 13px/1.3 'Noto Serif Georgian',Georgia,serif!important;letter-spacing:.3px!important;text-transform:none!important;text-decoration:none!important;
   box-shadow:none!important;transform:none!important;cursor:pointer;transition:border-color .2s,color .2s,background .2s!important}
-.mg-tiles>* i{font-style:normal;display:inline;font-size:14px;margin:0 5px 0 0}
-.mg-tiles>*:hover{color:#EDE6D8!important;border-color:rgba(184,137,74,.5)!important}
-.mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{color:#E3BE84!important;border-color:#E3BE84!important;background:rgba(227,190,132,.08)!important}
-@media(max-width:700px){.mg-tiles{border-radius:18px!important;width:auto!important}.mg-tiles>*{white-space:normal!important;padding:6px 11px!important;font-size:12.5px!important}}
+html body :is(.mg-tiles,#vp-tabs,.pills)>* i{font-style:normal;display:inline;font-size:14px;margin:0 5px 0 0}
+html body :is(.mg-tiles,#vp-tabs,.pills)>*:hover{color:#EDE6D8!important;border-color:rgba(184,137,74,.5)!important}
+html body :is(.mg-tiles,#vp-tabs,.pills)>.active,html body :is(.mg-tiles,#vp-tabs,.pills)>.on,html body :is(.mg-tiles,#vp-tabs,.pills)>.sel,html body :is(.mg-tiles,#vp-tabs,.pills)>[aria-selected=true]{color:#E3BE84!important;border-color:#E3BE84!important;background:rgba(227,190,132,.08)!important}
+@media(max-width:700px){html body :is(.mg-tiles,#vp-tabs,.pills){border-radius:18px!important;width:auto!important}html body :is(.mg-tiles,#vp-tabs,.pills)>*{white-space:normal!important;padding:6px 11px!important;font-size:12.5px!important}}
 `;
 let sideEl=null;
 function tileLayout(n,bench){
