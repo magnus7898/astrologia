@@ -241,6 +241,7 @@ function hexIcon(g,m,r0,step,half,col){
 }
 function draw(){
   const c=CH,svg=$('wheel'),op=+$('op').value/100;
+  const HXI=$('hexi')&&$('hexi').checked;R.zi=HXI?466:442;R.hx=458;   /* hexagram ring between gate ring and zodiac */
   const H=c.houses;ROT=H?H.asc:0;
   let s=`<defs><radialGradient id="bgG"><stop offset="0" stop-color="#0d0a1f"/><stop offset="1" stop-color="#05040c"/></radialGradient></defs>`;
   s+=`<circle cx="500" cy="500" r="${R.zo}" fill="url(#bgG)" stroke="${'#c9a84c'}" stroke-opacity=".55" stroke-width="1.4"/>`;
@@ -262,7 +263,7 @@ function draw(){
   for(let i=0;i<12;i++){
     const a=i*30,col=ELEM_COL[i%4];
     s+=`<path d="${wedge(R.zi,R.zo,a,a+30)}" fill="${col}" fill-opacity=".14" stroke="#E3BE84" stroke-opacity=".35" stroke-width=".8"/>`;
-    s+=txt((R.zo+R.zi)/2,a+15,SIGN_G[i],`fill="${col}" font-size="26" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`);
+    s+=txt((R.zo+R.zi)/2,a+15,SIGN_G[i],`fill="${col}" font-size="${HXI?19:26}" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`);
   }
   /* degree ticks */
   s+='<g stroke="#c9a84c" stroke-opacity=".45">';
@@ -280,9 +281,11 @@ function draw(){
     if(chOf[g])s+=`<path d="${wedge(R.gi,R.gi+3,a,b)}" fill="${CH_COL[chOf[g][0]]}"/>`;
     for(let l=1;l<6;l++)s+=line(R.go,R.go-4,a+l*HDA.GW/6,`stroke="#c9a84c" stroke-opacity=".3" stroke-width=".5"`);
     const on=st.p||st.d;
-    const gcol=on?(st.p?'#f6e3a6':'#d4d8de'):'rgba(201,168,76,.42)',HXI=$('hexi')&&$('hexi').checked;
-    s+=`<g class="gt" data-g="${g}">`+(HXI?hexIcon(g,(a+b)/2,R.gm+1,3.9,7,on?gcol:'rgba(201,168,76,.55)'):'')
-      +txt(HXI?R.gi+11:(R.go+R.gi)/2,(a+b)/2,g,`fill="${gcol}" font-size="${HXI?(on?13:11.5):(on?15:13)}" font-weight="${on?600:400}" font-family="Cinzel,serif"`)+'</g>';
+    const gcol=on?(st.p?'#f6e3a6':'#d4d8de'):'rgba(201,168,76,.42)';
+    /* own box for the hexagram, outside the number box */
+    if(HXI)s+=`<path d="${wedge(R.go,R.hx,a,b)}" fill="#0a0817" stroke="#c9a84c" stroke-opacity=".28" stroke-width=".7"/>`
+      +hexIcon(g,(a+b)/2,R.go+4.5,3.3,6.5,on?gcol:'rgba(201,168,76,.55)');
+    s+=`<g class="gt" data-g="${g}">`+txt((R.go+R.gi)/2,(a+b)/2,g,`fill="${gcol}" font-size="${on?15:13}" font-weight="${on?600:400}" font-family="Cinzel,serif"`)+'</g>';
   });
   s+='</g>';
 
