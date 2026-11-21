@@ -230,26 +230,21 @@ function tabs(){
    sits right before the page's data box, the tiles stand to the left of that box; otherwise
    they stay where the page put them, as a centred block.                                   */
 const TILE_CSS=`
-.mg-tiles{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:stretch!important;align-content:flex-start!important;
-  gap:var(--mg-gap)!important;width:var(--mg-tiles-w)!important;max-width:100%!important;margin:18px auto!important;padding:0!important;
-  background:none!important;border:0!important;box-shadow:none!important;overflow:visible!important;flex-direction:row!important;position:relative!important;z-index:2}
-.mg-tiles>*{flex:0 0 var(--mg-tile)!important;width:var(--mg-tile)!important;height:var(--mg-tile)!important;min-width:0!important;box-sizing:border-box!important;margin:0!important;
-  display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:8px 6px!important;
-  white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;hyphens:auto;
-  background:linear-gradient(160deg,#18223A,#111A2E)!important;border:1px solid rgba(184,137,74,.34)!important;border-radius:3px!important;
-  color:#BCC0CA!important;font:400 12.5px/1.3 'Noto Serif Georgian',Georgia,serif!important;letter-spacing:.02em!important;text-transform:none!important;text-decoration:none!important;
-  box-shadow:inset 0 1px 0 rgba(227,190,132,.06),0 2px 8px rgba(0,0,0,.35)!important;transform:none!important;cursor:pointer;transition:border-color .2s,color .2s,background .2s!important}
-.mg-tiles>* i{font-style:normal;display:block;font-size:20px;margin:0 0 4px}
-.mg-tiles>a{flex-direction:column!important}
-.mg-tiles>*:hover{border-color:#B8894A!important;color:#EDE6D8!important;background:linear-gradient(160deg,#1E2A45,#141E33)!important}
-.mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{color:#E3BE84!important;border-color:#E3BE84!important;
-  background:linear-gradient(160deg,#24304C,#18223A)!important;box-shadow:inset 0 0 0 1px rgba(227,190,132,.35),0 0 16px rgba(184,137,74,.22)!important}
-.mg-bench{position:relative;z-index:1;width:100%}
-@media(min-width:1000px){
- .mg-bench{display:flex;align-items:flex-start;justify-content:center;gap:22px;margin:18px auto 0;max-width:var(--mg-bench-w)}
- .mg-bench>.mg-tiles{margin:0!important;flex:0 0 auto!important;position:sticky!important;top:14px;order:2}
- .mg-bench>.mg-box{flex:1 1 auto!important;min-width:0!important;margin:0!important;max-width:var(--mg-box-w)!important}
-}`;
+/* the page's mode tabs: one centred pill bar above the input form, like the Western astrology page */
+.mg-tiles{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;align-items:center!important;gap:4px!important;
+  width:max-content!important;max-width:calc(100% - 24px)!important;margin:18px auto 22px!important;padding:5px!important;box-sizing:border-box!important;
+  background:rgba(12,18,34,.55)!important;border:1px solid rgba(201,162,76,.35)!important;border-radius:999px!important;box-shadow:none!important;
+  overflow:visible!important;flex-direction:row!important;position:relative!important;z-index:2;height:auto!important}
+.mg-tiles>*{flex:0 0 auto!important;width:auto!important;height:auto!important;min-width:0!important;margin:0!important;box-sizing:border-box!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:7px 15px!important;
+  white-space:nowrap!important;background:transparent!important;border:1px solid transparent!important;border-radius:999px!important;
+  color:#CFC6B0!important;font:400 13px/1.3 'Noto Serif Georgian',Georgia,serif!important;letter-spacing:.3px!important;text-transform:none!important;text-decoration:none!important;
+  box-shadow:none!important;transform:none!important;cursor:pointer;transition:border-color .2s,color .2s,background .2s!important}
+.mg-tiles>* i{font-style:normal;display:inline;font-size:14px;margin:0 5px 0 0}
+.mg-tiles>*:hover{color:#EDE6D8!important;border-color:rgba(184,137,74,.5)!important}
+.mg-tiles>.active,.mg-tiles>.on,.mg-tiles>.sel,.mg-tiles>[aria-selected=true]{color:#E3BE84!important;border-color:#E3BE84!important;background:rgba(227,190,132,.08)!important}
+@media(max-width:700px){.mg-tiles{border-radius:18px!important;width:auto!important}.mg-tiles>*{white-space:normal!important;padding:6px 11px!important;font-size:12.5px!important}}
+`;
 let sideEl=null;
 function tileLayout(n,bench){
   const gap=8,vw=Math.min(innerWidth,document.documentElement.clientWidth||innerWidth);
@@ -272,7 +267,6 @@ function findBox(g){
 function sideNav(){
   if(NO_TABS.has(P))return;
   if(document.documentElement.hasAttribute('data-tabmenu'))return;   /* tabmenu.js draws a grouped menu instead */
-  if(PILL_PAGES.has(P))return;   /* keep the page's own pill row above the form, like the astrology page */
   scanTabs();
   const vis=GROUPS.filter(g=>g.el.offsetParent!==null||g.el.classList.contains('mg-tiles'));
   const sn=document.getElementById('subnav');
@@ -283,9 +277,7 @@ function sideNav(){
   if(sideEl!==el){
     if(sideEl)sideEl.classList.remove('mg-tiles');
     sideEl=el;el.classList.add('mg-tiles');
-    if(!el.closest('.mg-bench')){const box=findBox(el);
-      if(box){const b=document.createElement('div');b.className='mg-bench';el.parentNode.insertBefore(b,el);const mw=parseFloat(getComputedStyle(box).maxWidth);
-        b.appendChild(el);b.appendChild(box);box.classList.add('mg-box');b.dataset.boxW=isFinite(mw)&&mw>0?Math.max(mw,560):900;}}
+    {const box=findBox(el);if(box&&(box.compareDocumentPosition(el)&Node.DOCUMENT_POSITION_FOLLOWING))box.parentNode.insertBefore(el,box);}   /* bar always above the form */
   }
   layoutTiles();
 }
