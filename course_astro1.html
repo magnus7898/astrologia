@@ -179,7 +179,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <ul>
      <li><b>ტროპიკული ზოდიაქო</b> — 12 თანაბარი ნიშანი, რომლის დასაწყისი გაზაფხულის ბუნიობაა. ასე მუშაობს დასავლური ასტროლოგია და MAGNUS-ის ნატალური რუკა.</li>
      <li><b>სიდერული ზოდიაქო</b> — იგივე 12 თანაბარი ნიშანი, ოღონდ ვარსკვლავებზე მიბმული: ტროპიკულ გრძედს აიანამშა აკლდება (ლაჰირი). ასე მუშაობს ვედური ასტროლოგია.</li>
-     <li><b>ჭეშმარიტი სიდერული</b> — ნამდვილი, ასტრონომიული თანავარსკვლავედები IAU-ს საზღვრებით. ისინი თანაბარი არ არის: ეკლიპტიკაზე მორიელი მხოლოდ ~6,6°-ია, ქალწული ~44°, და მათ შორის მე-13 თანავარსკვლავედიც გვხვდება — გველისმჭერი (⛎).</li>
+     <li><b>ჭეშმარიტი სიდერული</b> — ნამდვილი, ასტრონომიული თანავარსკვლავედები IAU-ს საზღვრებით. ისინი თანაბარი არ არის: ეკლიპტიკაზე მორიელი მხოლოდ ~6,6°-ია, ქალწული ~44°, და მათ შორის მე-13 თანავარსკვლავედიც გვხვდება — გველისმჭერი (⛎︎).</li>
     </ul>
     <p>ასტროლოგიური „ეპოქებიც“ ამ მოძრაობიდან მოდის. ახლა გაზაფხულის წერტილი თევზების თანავარსკვლავედშია და IAU-ს საზღვრებით მერწყულში დაახლოებით 2600 წელს გადავა — ეს არის „მერწყულის ეპოქა“. სხვა ავტორები მის დაწყებას სხვა თარიღს უკავშირებენ, რადგან თანავარსკვლავედების საზღვრები პირობითია. გადაწიე წლები და ნახე, როგორ ტრიალებს გარე რგოლები შიგა, სეზონურ რგოლთან შედარებით.</p>
    </div><div class="stage">
@@ -244,7 +244,7 @@ const PREC=y=>(y-2000)*50.29/3600,AYAN=y=>23.857+PREC(y);
 /* IAU constellation boundaries on the ecliptic, J2000 (from the Roman 1987 table, as in constellations.js) */
 const IAU=[[0,'Psc'],[28.69,'Ari'],[53.42,'Tau'],[90.14,'Gem'],[117.99,'Cnc'],[138.04,'Leo'],[173.86,'Vir'],[217.82,'Lib'],[241.05,'Sco'],[247.64,'Oph'],[266.24,'Sgr'],[299.66,'Cap'],[327.49,'Aqr'],[351.66,'Psc']];
 const CN={Ari:0,Tau:1,Gem:2,Cnc:3,Leo:4,Vir:5,Lib:6,Sco:7,Sgr:8,Cap:9,Aqr:10,Psc:11};
-const cname=a=>a==='Oph'?'გველისმჭერი':SG[CN[a]][1],cglyph=a=>a==='Oph'?'⛎':SG[CN[a]][0],ccol=a=>a==='Oph'?'#b07840':EC[CN[a]%4];
+const cname=a=>a==='Oph'?'გველისმჭერი':SG[CN[a]][1],cglyph=a=>a==='Oph'?'⛎︎':SG[CN[a]][0],ccol=a=>a==='Oph'?'#b07840':EC[CN[a]%4];
 const SEG=IAU.slice(1).map((b,i,a)=>({a:b[0],b:i+1<a.length?a[i+1][0]:IAU[1][0]+360,k:b[1]}));
 function iauAt(l){l=norm(l);let r='Psc';for(const b of IAU)if(l>=b[0])r=b[1];return r;}
 const dm=x=>{let d=Math.floor(x),m=Math.round((x-d)*60);if(m===60){d++;m=0;}return d+'°'+String(m).padStart(2,'0')+'′';};
@@ -388,7 +388,7 @@ function buildTable(){$('tY').textContent=Y0;
   let html='';
   for(let k=0;k<12;k++){const a=ORD.filter(x=>x!=='Oph')[k];
     html+=`<tr><td class="gl" style="color:${EC[k%4]}">${SG[k][0]}${VS}</td><td><b style="color:#F3DDA4;font-weight:600">${SG[k][1]}</b><br><small>${30*k}°–${30*k+30}°</small></td><td class="dt">${trop[k]&&trop[(k+1)%12]?f(trop[k])+' – '+fe(trop[(k+1)%12]):'—'}</td><td class="dt">${iauRange(a)}</td><td>${PH[k]}</td><td>${ES[k]}</td><td><a href="course_tarot6.html#${TR[k][0]}">${TR[k][1]}</a></td></tr>`;
-    if(k===7)html+=`<tr class="oph"><td class="gl" style="color:#b07840">⛎</td><td>გველისმჭერი<br><small>ნიშანი არ არის</small></td><td class="dt">—</td><td class="dt">${iauRange('Oph')}</td><td colspan="3">მე-13 თანავარსკვლავედი, რომელსაც ეკლიპტიკა კვეთს. ტროპიკულ და სიდერულ ზოდიაქოში ის არ ითვლება; მას მხოლოდ ჭეშმარიტი სიდერული იყენებს.</td></tr>`;}
+    if(k===7)html+=`<tr class="oph"><td class="gl" style="color:#b07840">⛎︎</td><td>გველისმჭერი<br><small>ნიშანი არ არის</small></td><td class="dt">—</td><td class="dt">${iauRange('Oph')}</td><td colspan="3">მე-13 თანავარსკვლავედი, რომელსაც ეკლიპტიკა კვეთს. ტროპიკულ და სიდერულ ზოდიაქოში ის არ ითვლება; მას მხოლოდ ჭეშმარიტი სიდერული იყენებს.</td></tr>`;}
   $('zt').innerHTML=html;}
 
 /* ── quiz ── */

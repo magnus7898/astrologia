@@ -100,7 +100,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
   </svg>
   <div class="hero-eyebrow">ასტრონომიული · IAU კონსტელაციები · ოფიუქუსი</div>
   <h1 class="hero-title">ნამდვილი სიდერული ასტროლოგია</h1>
-  <p class="hero-sub">True Sidereal · 13 Constellations · IAU Boundaries · Ophiuchus ⛎</p>
+  <p class="hero-sub">True Sidereal · 13 Constellations · IAU Boundaries · Ophiuchus ⛎︎</p>
   <div class="hero-divider"><div class="hero-line"></div><div class="hero-gem"></div><div class="hero-line"></div></div>
 </div>
 
@@ -306,7 +306,7 @@ async function generateChart(){
     try{data=JSON.parse(raw);}catch(e){throw new Error('Backend error ('+r.status+'): '+raw.slice(0,200));}
     if(data.error) throw new Error(data.error+(data.trace?'\n'+data.trace.slice(0,300):''));
     data._timeUnknown=timeUnknown;
-    CONS=data.constellations;
+    CONS=data.constellations.map(c=>c.name==='Ophiuchus'?Object.assign({},c,{sym:'⛎\ufe0e'}):c);   /* text-style Ophiuchus glyph */
     // Moon path for time-unknown
     if(timeUnknown){
       try{
@@ -366,7 +366,7 @@ function conOf(d){d=((d%360)+360)%360;for(const con of CONS){const ss=con.start%
 function drawWheel(data){
   const svg=document.getElementById('wheel');
   const aries=CONS.find(c=>c.name==='Aries');
-  const signs=CONS.map(con=>({start:con.start%360,end:(con.start+con.span)%360,sym:con.sym+'\ufe0e',color:CON_COLORS[con.name]||'#8888aa',fill:CON_FILLS[con.name]||'#1e2b2c'}));
+  const signs=CONS.map(con=>({start:con.start%360,end:(con.start+con.span)%360,sym:con.sym.replace(/\ufe0e/g,'')+'\ufe0e',color:CON_COLORS[con.name]||'#8888aa',fill:CON_FILLS[con.name]||'#1e2b2c'}));
   const planets={};
   for(const n of PORDER){const p=data.planets[n];if(!p)continue;const info=PI[n]||{sym:'?',color:'#fff'};
     planets[n]={deg:p.tropical,sym:info.sym,color:info.color,retro:!!p.retrograde,
@@ -376,7 +376,7 @@ function drawWheel(data){
     houses:data.houses,planets,signs,
     aspects:(data.aspects||[]).filter(x=>data.planets[x.p1]&&data.planets[x.p2]).map(x=>({p1:x.p1,p2:x.p2,color:x.color})),
     degLabel:n=>dIn(data.planets[n].tropical),
-    signOf:d=>{const c=conOf(d);return {sym:c.sym+'\ufe0e',color:CON_COLORS[c.name]||'#8888aa'};}});
+    signOf:d=>{const c=conOf(d);return {sym:c.sym.replace(/\ufe0e/g,'')+'\ufe0e',color:CON_COLORS[c.name]||'#8888aa'};}});
 }
 
 // ── PLANET TABLE ──
