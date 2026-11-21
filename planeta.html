@@ -573,7 +573,7 @@ function drawWheel(P,asc,mc,houses,asps,bands,MO,POS){
     planets[n]={deg:P[n].lon,sym:info.sym,color:info.color,retro:!!P[n].retro,heavy:n==='მზე'||n==='მთვარე'?60:40};});
   (MO||[]).forEach(m=>{const info=MOON_I[m.key]||{sym:'?',color:'#cfd8e8'};
     planets['☾'+m.key]={deg:m.lon,sym:info.sym,color:info.color,retro:false,heavy:m.key==='moon'?20:3};});
-  MGWheel.draw(svg,{asc,mc,dir:WDIR,houses,planets,
+  MGWheel.draw(svg,{asc,mc,dir:WDIR,houses,planets,houseNums:false,
     signs:bands.map(b=>({start:N360(b.s),end:N360(b.e),sym:b.sym,color:b.col,fill:hex2rgba(b.col,.12)})),
     aspects:(asps||[]).filter(a=>planets[a.p1]&&planets[a.p2]).map(a=>({p1:a.p1,p2:a.p2,color:a.color})),
     degLabel:n=>{const L=planets[n].deg,b=bandOf(L);const x=N360(L-b.s),g=Math.floor(x),mm=Math.floor((x-g)*60);return g+'°'+String(mm).padStart(2,'0')+"'";},
@@ -913,7 +913,7 @@ $('btn-gen').addEventListener('click',function(){gen();});
 $('btn-now').addEventListener('click',function(){setNow();gen();});
 setNow();
 </script>
-<script src="mg_wheel.js?v=6"></script>
+<script src="mg_wheel.js?v=7"></script>
 <script src="astro_switch.js?v=10"></script>
 <script src="site.js?v=20261121a"></script>
 <script src="account.js"></script>

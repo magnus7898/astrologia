@@ -73,7 +73,7 @@ function draw(svg,D){
   if(H)for(let i=0;i<12;i++){const a=e2s(H[i]),ang=[0,3,6,9].includes(i);
     if(!CL||ang)el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,x2:CX+Math.cos(a)*R3,y2:CY+Math.sin(a)*R3,stroke:ang?'#e8c06e':'rgba(123,147,189,.6)','stroke-width':ang?2:.8},svg);
     const mid=H[i]+N360(H[(i+1)%12]-H[i])/2,q=pxy(e2s(mid),(R2+R3)/2);
-    txt(svg,String(i+1),q.x,q.y,{fill:'rgba(227,190,132,0.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}
+    if(D.houseNums!==false)txt(svg,String(i+1),q.x,q.y,{fill:'rgba(227,190,132,0.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}
   /* aspect lines */
   const pl=D.planets||{};
   const degOf=n=>pl[n]?pl[n].deg:n==='AC'&&!D.timeUnknown?D.asc:n==='MC'&&!D.timeUnknown&&D.mc!=null?D.mc:null;
@@ -171,7 +171,9 @@ function drawClassic(svg,D){
   el('circle',{cx:CX,cy:CY,r:RHo,fill:'rgba(14,20,38,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
   el('circle',{cx:CX,cy:CY,r:RHi,fill:'rgba(8,12,24,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
   const H=!unk&&Array.isArray(D.houses)&&D.houses.length>=12?D.houses:null;
-  /* classic: no house numbers */
+  /* house numbers (planetary astrology turns them off with houseNums:false) */
+  if(H&&D.houseNums!==false)for(let i=0;i<12;i++){const h=H[i],mid=h+N360(H[(i+1)%12]-h)/2,q=xy(e2s(mid),(RHo+RHi)/2);
+    txt(svg,String(i+1),q.x,q.y,{fill:GOLD+'.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}
   const pl=D.planets||{};
   const degOf=n=>pl[n]?pl[n].deg:n==='AC'&&!unk?D.asc:n==='MC'&&!unk&&D.mc!=null?D.mc:null;
   for(const asp of (D.aspects||[])){const d1=degOf(asp.p1),d2=degOf(asp.p2);if(d1==null||d2==null)continue;
