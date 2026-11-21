@@ -2075,28 +2075,29 @@ function renderDominants(data){
     <div style="height:100%;width:${mx?pct/mx*100:0}%;border-radius:5px;background:linear-gradient(90deg,#B8894A,#E3BE84)"></div></div>
    <span style="width:44px;text-align:right;font-size:11px;color:${hl?'#E3BE84':'#BCC0CA'}">${pct.toFixed(1)}%</span></div>`;
   const mp=r.planets[0]?.pct||1,ms=r.signs[0]?.pct||1;
+  /* show in natural order (Sun → MC, Aries → Pisces, house 1 → 12); the strongest stays highlighted */
+  const PO=['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto','chiron','node','lilith','asc','mc'];
+  const top={p:r.planets[0]?.key,s:r.signs[0]?.sign,h:r.houses[0]?.house,e:r.elements[0]?.key,m:r.modalities[0]?.key};
+  const pO=[...r.planets].sort((a,b)=>PO.indexOf(a.key)-PO.indexOf(b.key));
+  const sO=[...r.signs].sort((a,b)=>a.sign-b.sign),hO=[...r.houses].sort((a,b)=>a.house-b.house);
+  const eO=['fire','earth','air','water'].map(k=>r.elements.find(e=>e.key===k)).filter(Boolean);
+  const mO=['cardinal','fixed','mutable'].map(k=>r.modalities.find(e=>e.key===k)).filter(Boolean);
+  const head=t=>`<div style="font-size:10px;color:#BCC0CA;letter-spacing:2px;margin:0 0 6px">${t}</div>`;
   body.innerHTML=`
    <div style="font-size:12px;color:#EDE6D8;margin-bottom:10px">👑 დომინანტი პლანეტა: <b style="color:#E3BE84">${DOMX_KA[r.planets[0].key]}</b>
     &nbsp;·&nbsp; ნიშანი: <b style="color:#E3BE84">${SK[r.signs[0].sign-1]}</b>
     &nbsp;·&nbsp; <b style="color:#E3BE84">${DOMX_ELKA[r.elements[0].key]}</b>
     &nbsp;·&nbsp; <b style="color:#E3BE84">${DOMX_MOKA[r.modalities[0].key]}</b></div>
-   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" class="domx-grid">
-    <div>${r.planets.map((p,i)=>bar(DOMX_KA[p.key]+(p.rx?' ℞':'')+(p.crit?' •':'')+(p.nasp?` <span style="opacity:.5;font-size:9px">${p.nasp}asp</span>`:''),p.pct,mp,i===0)).join('')}</div>
-    <div>${r.signs.map((s,i)=>bar(SK[s.sign-1],s.pct,ms,i===0)).join('')}</div>
-    <div>
-     <div style="font-size:10px;color:#BCC0CA;letter-spacing:2px;margin:6px 0 4px">ელემენტები</div>
-     ${r.elements.map((e,i)=>bar(DOMX_ELKA[e.key],e.pct,r.elements[0].pct||1,i===0)).join('')}
-     <div style="font-size:10px;color:#BCC0CA;letter-spacing:2px;margin:10px 0 4px">მოდალობა</div>
-     ${r.modalities.map((m,i)=>bar(DOMX_MOKA[m.key],m.pct,r.modalities[0].pct||1,i===0)).join('')}
-    </div>
-    <div>
-     <div style="font-size:10px;color:#BCC0CA;letter-spacing:2px;margin:6px 0 4px">სახლები</div>
-     ${r.houses.map((x,i)=>bar(x.house+' სახლი',x.pct,r.houses[0].pct||1,i===0)).join('')}
-    </div>
+   <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px" class="domx-grid">
+    <div>${head('პლანეტები')}${pO.map(p=>bar(DOMX_KA[p.key]+(p.rx?' ℞':'')+(p.crit?' •':'')+(p.nasp?` <span style="opacity:.5;font-size:9px">${p.nasp}asp</span>`:''),p.pct,mp,p.key===top.p)).join('')}</div>
+    <div>${head('ნიშნები')}${sO.map(s=>bar(SK[s.sign-1],s.pct,ms,s.sign===top.s)).join('')}</div>
+    <div>${head('სახლები')}${hO.map(x=>bar(x.house+' სახლი',x.pct,r.houses[0].pct||1,x.house===top.h)).join('')}</div>
+    <div>${head('ელემენტები')}${eO.map(e=>bar(DOMX_ELKA[e.key],e.pct,r.elements[0].pct||1,e.key===top.e)).join('')}
+     <div style="height:14px"></div>${head('მოდალობა')}${mO.map(m=>bar(DOMX_MOKA[m.key],m.pct,r.modalities[0].pct||1,m.key===top.m)).join('')}</div>
    </div>
    <div style="font-size:9px;color:rgba(188,192,202,.45);margin-top:8px;letter-spacing:1px">Astrolog −j (W. Pullen, ორიგინალი) · ℞ რეტროგრადი · • კრიტიკული გრადუსი (0°/29°) · Nasp ასპექტების რაოდენობა</div>`;
   if(window.matchMedia&&matchMedia('(max-width:600px)').matches)
-   body.querySelector('.domx-grid').style.gridTemplateColumns='1fr';
+   body.querySelectorAll('.domx-grid').forEach(g=>g.style.gridTemplateColumns='1fr');
   card.style.display='block';
  }catch(e){card.style.display='none';}
 }
@@ -3309,7 +3310,7 @@ setToday('pd');
   <script src="livewhere.js"></script>
   <script src="astro_links.js"></script>
   <script src="pointvariants.js"></script>
-  <script src="chartui.js"></script>
+  <script src="chartui.js?v=2"></script>
   <script src="formulas.js"></script>
   <script src="compat_core.js"></script>
   <script src="synastry_text.js"></script>

@@ -48,7 +48,9 @@ function shrink(){
   const full=vis.map(c=>c.scrollHeight);
   vis.forEach(c=>c.classList.remove('mg-measure'));
   const H=Math.max(FOLD_H,...full);
-  all.forEach((c,i)=>{c.style.setProperty('--mg-open',H+'px');c.classList.toggle('open',OPEN);});
+  /* a box alone in its row (e.g. Pullen dominants, full width) opens to its own height — no empty space */
+  const OWN=new Set(['dominants-card']);
+  all.forEach((c,i)=>{const k=vis.indexOf(c);c.style.setProperty('--mg-open',(OWN.has(c.id)&&k>=0?Math.max(FOLD_H,full[k]):H)+'px');c.classList.toggle('open',OPEN);});
   vis.forEach((c,i)=>c.classList.toggle('mg-tall',full[i]>FOLD_H+4));
 }
 function tag(){
