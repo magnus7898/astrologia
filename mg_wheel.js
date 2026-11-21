@@ -25,7 +25,8 @@ function fmtDeg(x){const s=N360(x)%30,d=Math.floor(s),m=Math.floor((s-d)*60);ret
 const EQUAL=ZSYM.map((s,i)=>({start:i*30,end:(i+1)*30,sym:s,color:ZCOL[i],fill:EFILL[i]}));
 
 function draw(svg,D){
-  svg.innerHTML='';
+  svg.innerHTML='';LAST.set(svg,D);
+  const CL=style()==='classic';   /* classic: equal degree lines, only 1·4·7·10 cusp lines */
   const asc=D.timeUnknown?(D.signs?D.signs[0].start:0):D.asc;
   const dir=D.dir===-1?-1:1,sw=dir>0?0:1,sb=1-sw;     /* dir −1: zodiac runs clockwise */
   const e2s=d=>toRad(-dir*(d-asc))+Math.PI;
@@ -58,9 +59,9 @@ function draw(svg,D){
   /* degree ticks: 1° · 5° · 10° · sign start, counted from each sign's own start */
   for(const s of signs){const span=Math.round(N360(s.end-s.start)||360);
     for(let k=0;k<span;k++){const a=e2s(s.start+k),c=Math.cos(a),si=Math.sin(a);
-      const is30=k===0,is10=k%10===0,is5=k%5===0,len=is30?20:is10?13:is5?8:5;
+      const is30=k===0,is10=!CL&&k%10===0,is5=!CL&&k%5===0,len=is30?(CL?12:20):is10?13:is5?8:6;
       el('line',{x1:CX+c*R1,y1:CY+si*R1,x2:CX+c*(R1-len),y2:CY+si*(R1-len),stroke:is30?'rgba(243,221,164,.95)':is10?'rgba(227,190,132,.75)':is5?'rgba(227,190,132,.5)':'rgba(227,190,132,.28)','stroke-width':is30?2:is10?1.4:is5?.9:.5},svg);
-      if(is10&&!is30&&span-k>3&&Math.abs(k-span/2)>4){const q=pxy(a,R1-33);txt(svg,String(k),q.x,q.y,{fill:'rgba(227,190,132,.75)','font-size':7.5,'font-family':'serif'});}}}
+      if(!CL&&is10&&!is30&&span-k>3&&Math.abs(k-span/2)>4){const q=pxy(a,R1-33);txt(svg,String(k),q.x,q.y,{fill:'rgba(227,190,132,.75)','font-size':7.5,'font-family':'serif'});}}}
   el('circle',{cx:CX,cy:CY,r:R1,fill:'none',stroke:'rgba(227,190,132,.6)','stroke-width':1.6},svg);
   el('circle',{cx:CX,cy:CY,r:R2,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.3},svg);
   el('circle',{cx:CX,cy:CY,r:R3,fill:'none',stroke:'rgba(227,190,132,.3)','stroke-width':1.1},svg);
@@ -69,7 +70,7 @@ function draw(svg,D){
     txt(svg,s.sym,q.x,q.y,{fill:s.color,'font-size':span<20?15:20,'font-family':'serif','font-weight':'bold'});}
   /* house lines + numbers */
   if(H)for(let i=0;i<12;i++){const a=e2s(H[i]),ang=[0,3,6,9].includes(i);
-    el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,x2:CX+Math.cos(a)*R3,y2:CY+Math.sin(a)*R3,stroke:ang?'#e8c06e':'rgba(123,147,189,.6)','stroke-width':ang?2:.8},svg);
+    if(!CL||ang)el('line',{x1:CX+Math.cos(a)*R2,y1:CY+Math.sin(a)*R2,x2:CX+Math.cos(a)*R3,y2:CY+Math.sin(a)*R3,stroke:ang?'#e8c06e':'rgba(123,147,189,.6)','stroke-width':ang?2:.8},svg);
     const mid=H[i]+N360(H[(i+1)%12]-H[i])/2,q=pxy(e2s(mid),(R2+R3)/2);
     txt(svg,String(i+1),q.x,q.y,{fill:'rgba(227,190,132,0.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}
   /* aspect lines */
@@ -143,5 +144,19 @@ function draw(svg,D){
 function hl(svg,n,D){svg.querySelectorAll('.asp-line').forEach(l=>{const on=l.dataset.p1===n||l.dataset.p2===n;l.style.opacity=on?'0.95':'0.04';l.style.strokeWidth=on?'2.2':'0.5';});
   if(D.onHover)D.onHover(n);}
 function clr(svg,D){svg.querySelectorAll('.asp-line').forEach(l=>{l.style.opacity='';l.style.strokeWidth='';});if(D.onHover)D.onHover(null);}
-window.MGWheel={draw,fmtDeg,ZSYM,ZCOL,EFILL};
+/* modern / classic switch, shared with the western page (same saved choice) */
+const KEY='magnus_wheel_style',LAST=new Map();
+function style(){try{return localStorage.getItem(KEY)||'modern';}catch(e){return 'modern';}}
+function ui(svg){
+  const host=svg.parentElement;if(!host||host.querySelector(':scope > .mgw-style'))return;
+  const d=document.createElement('div');d.className='mgw-style';
+  d.style.cssText='display:flex;justify-content:center;gap:6px;margin:0 0 8px';
+  const paint=()=>d.querySelectorAll('button').forEach(b=>{const on=b.dataset.ws===style();b.style.background=on?'#C9A24C':'#0e1424';b.style.color=on?'#0b1020':'#E3BE84';});
+  d.innerHTML=['modern','classic'].map(k=>`<button type="button" data-ws="${k}" style="border:1px solid rgba(201,162,76,.6);border-radius:999px;padding:5px 14px;font:13px 'Noto Serif Georgian',serif;cursor:pointer">${k==='modern'?'თანამედროვე რკალი':'კლასიკური რკალი'}</button>`).join('');
+  host.insertBefore(d,svg);paint();
+  d.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;try{localStorage.setItem(KEY,b.dataset.ws);}catch(_){}
+    paint();LAST.forEach((D,s)=>{if(s.isConnected)draw(s,D);});});
+}
+const draw0=draw;
+window.MGWheel={draw:(svg,D)=>{draw0(svg,D);ui(svg);},fmtDeg,ZSYM,ZCOL,EFILL};
 })();
