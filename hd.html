@@ -114,12 +114,12 @@ header::after{content:"";display:block;width:280px;height:1px;
 /* ── CHART AREA ── */
 .chart-area{flex:1;display:grid;grid-template-columns:110px minmax(0,600px) 110px;justify-content:center;column-gap:22px;
   background:var(--surface);border:1px solid var(--border);border-radius:6px;
-  padding:16px;align-items:center;position:relative;overflow:hidden;}
+  padding:16px;align-items:start;position:relative;overflow:hidden;}
 .chart-area::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--gold-dim) 30%,var(--gold) 50%,var(--gold-dim) 70%,transparent);}
 
 /* ── PLANET COLS ── */
-.planet-col{padding:4px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;}
+.planet-col{align-self:start;padding:4px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;}
 .planet-col h3{font-family:'Cinzel',serif;font-size:.5rem;font-weight:500;letter-spacing:.18em;
   text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;
   border-bottom:1px solid var(--border);text-align:center;}
