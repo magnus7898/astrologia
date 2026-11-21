@@ -132,7 +132,7 @@ td.dd{color:#a9aeb7}
           <label><input type="checkbox" id="lines"> არხის ხაზები</label>
           <label><input type="checkbox" id="asp"> ასპექტები</label>
           <label><input type="checkbox" id="hexi" checked> ჰექსაგრამები</label>
-          <label>ზოდიაქო <select id="zmode"><option value="trop">ტროპიკული</option><option value="vedic">ვედური — ნაკშატრები და პადები</option></select></label>
+          <label>ზოდიაქო <select id="zmode"><option value="trop">ტროპიკული</option><option value="vedic">ვედური — ნაკშატრები და პადები</option><option value="iau">ნამდვილი სიდერეული — 13 თანავარსკვლავედი</option></select></label>
         </div>
         <div class="legend">
           <span><b style="color:var(--gold-l)">ფერადი</b> — პიროვნება (დაბადების მომენტი)</span>
@@ -249,10 +249,19 @@ const isVed=()=>$('zmode')&&$('zmode').value==='vedic';
 const AYA=()=>isVed()&&CH?lahiri(CH._jd):0;
 function vedInfo(lon){const sid=((lon-AYA())%360+360)%360,n=Math.floor(sid/(40/3)),p=Math.floor((sid%(40/3))/(10/3))+1;
   return `${NAK_KA[n]} · პადა ${p} · მმართველი ${NAK_LORD[n%9]}`;}
+/* ── True sidereal: IAU constellations on the ecliptic (J2000, moved to the date by precession) ── */
+const IAU_CONS=[['Aries','ვერძი','♈',28.69,53.42],['Taurus','კურო','♉',53.42,90.14],['Gemini','ტყუპები','♊',90.14,117.99],['Cancer','კირჩხიბი','♋',117.99,138.04],
+ ['Leo','ლომი','♌',138.04,173.85],['Virgo','ქალწული','♍',173.85,217.81],['Libra','სასწორი','♎',217.81,241.05],['Scorpius','მორიელი','♏',241.05,247.64],
+ ['Ophiuchus','გველმჭერი','⛎',247.64,266.24],['Sagittarius','მშვილდოსანი','♐',266.24,299.66],['Capricornus','თხის რქა','♑',299.66,327.49],
+ ['Aquarius','მერწყული','♒',327.49,351.65],['Pisces','თევზები','♓',351.65,388.69]];
+const IAU_COL={Aries:'#e8875a',Taurus:'#8fc46a',Gemini:'#c9d3e6',Cancer:'#5aa8e8',Leo:'#e8875a',Virgo:'#8fc46a',Libra:'#c9d3e6',Scorpius:'#5aa8e8',Ophiuchus:'#b07840',Sagittarius:'#e8875a',Capricornus:'#8fc46a',Aquarius:'#c9d3e6',Pisces:'#5aa8e8'};
+const isIau=()=>$('zmode')&&$('zmode').value==='iau';
+const precShift=jd=>((jd||2451545)-2451545)/365.25*50.2879/3600;
+function iauInfo(lon){const sh=precShift(CH._jd);for(const c of IAU_CONS){const s=c[3]+sh,e=c[4]+sh,x=((lon-s)%360+360)%360;if(x<e-s){const d=Math.floor(x),m=Math.floor((x-d)*60);return `${c[1]} ${d}°${String(m).padStart(2,'0')}′ (IAU)`;}}return '';}
 function draw(){
   const c=CH,svg=$('wheel'),op=+$('op').value/100;
   const HXI=$('hexi')&&$('hexi').checked;R.zi=HXI?466:442;R.hx=458;   /* hexagram ring between gate ring and zodiac */
-  const VED=isVed(),A0=AYA();svg.setAttribute('viewBox',VED?'-66 -66 1132 1132':'-30 -30 1060 1060');
+  const VED=isVed(),A0=isIau()?(28.69+precShift(CH._jd))%30:AYA();svg.setAttribute('viewBox',VED?'-66 -66 1132 1132':'-30 -30 1060 1060');
   const H=c.houses;ROT=H?H.asc:0;
   let s=`<defs><radialGradient id="bgG"><stop offset="0" stop-color="#0d0a1f"/><stop offset="1" stop-color="#05040c"/></radialGradient></defs>`;
   s+=`<circle cx="500" cy="500" r="${R.zo}" fill="url(#bgG)" stroke="${'#c9a84c'}" stroke-opacity=".55" stroke-width="1.4"/>`;
@@ -271,7 +280,12 @@ function draw(){
   s+='</g>';
 
   /* zodiac ring */
-  for(let i=0;i<12;i++){
+  const IAU=isIau();
+  if(IAU){const sh=precShift(CH._jd);
+    for(const c of IAU_CONS){const a=c[3]+sh,b=c[4]+sh,col=IAU_COL[c[0]];
+      s+=`<path d="${wedge(R.zi,R.zo,a,b)}" fill="${col}" fill-opacity=".14" stroke="#E3BE84" stroke-opacity=".35" stroke-width=".8"/>`;
+      s+=txt((R.zo+R.zi)/2,(a+b)/2,c[2]+'\ufe0e',`fill="${col}" font-size="${(b-a)<10?(HXI?14:18):(HXI?19:26)}" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`);}}
+  for(let i=0;i<12&&!IAU;i++){
     const a=i*30+A0,col=ELEM_COL[i%4];
     s+=`<path d="${wedge(R.zi,R.zo,a,a+30)}" fill="${col}" fill-opacity=".14" stroke="#E3BE84" stroke-opacity=".35" stroke-width=".8"/>`;
     s+=txt((R.zo+R.zi)/2,a+15,SIGN_G[i],`fill="${col}" font-size="${HXI?19:26}" font-family="'Segoe UI Symbol','Noto Sans Symbols 2','DejaVu Sans',sans-serif"`);
@@ -395,7 +409,7 @@ function bindWheel(){
   });
   document.querySelectorAll('#wheel .pl').forEach(el=>{
     el.addEventListener('mousemove',e=>{const side=el.dataset.side,b=el.dataset.b,a=CH[side][b],f=fmtDeg(a.lon);
-      show(e,`<b style="color:${side==='pers'?PCOL[b]:DCOL}">${PG[b]}${VS} ${PKA[b]}</b> · ${side==='pers'?'პიროვნება':'დიზაინი'}<br>${f.txt} ${SIGN_KA[f.s]}${a.house?` · ${a.house} სახლი`:''}<br>კარიბჭე ${a.gate}.${a.line} · ფერი ${a.color} · ტონი ${a.tone}${a.retro&&!/Node/.test(b)?' · ℞':''}${isVed()?'<br>'+vedInfo(a.lon):''}`);});
+      show(e,`<b style="color:${side==='pers'?PCOL[b]:DCOL}">${PG[b]}${VS} ${PKA[b]}</b> · ${side==='pers'?'პიროვნება':'დიზაინი'}<br>${f.txt} ${SIGN_KA[f.s]}${a.house?` · ${a.house} სახლი`:''}<br>კარიბჭე ${a.gate}.${a.line} · ფერი ${a.color} · ტონი ${a.tone}${a.retro&&!/Node/.test(b)?' · ℞':''}${isVed()?'<br>'+vedInfo(a.lon):''}${isIau()?'<br>'+iauInfo(a.lon):''}`);});
     el.addEventListener('mouseleave',hide);
   });
   document.querySelectorAll('#wheel .gt').forEach(el=>{
