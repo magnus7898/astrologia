@@ -27,6 +27,7 @@ const EQUAL=ZSYM.map((s,i)=>({start:i*30,end:(i+1)*30,sym:s,color:ZCOL[i],fill:E
 function draw(svg,D){
   svg.innerHTML='';LAST.set(svg,D);
   const CL=style()==='classic';   /* classic: equal degree lines, only 1·4·7·10 cusp lines */
+  if(CL){drawClassic(svg,D);return;}
   const asc=D.timeUnknown?(D.signs?D.signs[0].start:0):D.asc;
   const dir=D.dir===-1?-1:1,sw=dir>0?0:1,sb=1-sw;     /* dir −1: zodiac runs clockwise */
   const e2s=d=>toRad(-dir*(d-asc))+Math.PI;
@@ -92,21 +93,7 @@ function draw(svg,D){
   const ext=(b,a)=>{const c=Math.abs(Math.cos(a)),s=Math.abs(Math.sin(a));return {rad:c*b[0]+s*b[1],tan:s*b[0]+c*b[1]};};
   const items=present.map(n=>{const ex=boxes(n).map(b=>ext(b,trueA[n]));return {n,t:trueA[n],w:(Math.max(...ex.map(e=>e.tan))+1)/Rg,wt:pl[n].heavy==null?40:pl[n].heavy};});
   if(!D.timeUnknown){items.push({n:'#AC',t:e2s(D.asc),w:34/Rg,wt:1e6});if(D.mc!=null)items.push({n:'#MC',t:e2s(D.mc),w:42/Rg,wt:1e6});}
-  (function spread(L0){const n=L0.length;if(!n)return;L0.forEach(i=>{i.a=i.t;});if(n<2)return;
-    const S=[...L0].sort((x,y)=>x.t-y.t);let gi=0,gm=-1;
-    for(let i=0;i<n;i++){const nx=i===n-1?S[0].t+2*Math.PI:S[i+1].t,g=nx-S[i].t;if(g>gm){gm=g;gi=i;}}
-    const L=[];for(let k=1;k<=n;k++)L.push(S[(gi+k)%n]);
-    let prev=-Infinity;for(const it of L){let u=it.t;while(u<prev)u+=2*Math.PI;it.u=u;prev=u;}
-    const place=c=>{let off=0,sw=0,sx=0;const offs=c.map((it,k)=>{if(k)off+=(c[k-1].w+it.w)/2;return off;});
-      c.forEach((it,k)=>{sw+=it.wt;sx+=it.wt*(it.u-offs[k]);});const a0=sx/sw;c.forEach((it,k)=>{it.a=a0+offs[k];});};
-    let C=L.map(it=>[it]);C.forEach(place);
-    for(let g=0;g<400;g++){let m=false;
-      for(let k=0;k+1<C.length;k++){const x=C[k][C[k].length-1],y=C[k+1][0];
-        if(y.a-x.a<(x.w+y.w)/2-1e-9){C.splice(k,2,[...C[k],...C[k+1]]);place(C[k]);m=true;break;}}
-      if(m)continue;
-      if(C.length>1){const A=C[C.length-1],B=C[0],x=A[A.length-1],y=B[0];
-        if(y.a+2*Math.PI-x.a<(x.w+y.w)/2-1e-9){B.forEach(it=>{it.u+=2*Math.PI;});C.shift();C[C.length-1]=[...C[C.length-1],...B];place(C[C.length-1]);continue;}}
-      break;}})(items);
+  spreadItems(items);
   const dispA={};for(const it of items)if(it.n[0]!=='#')dispA[it.n]=it.a;
   for(const n of present){
     const info=pl[n],tA=trueA[n],a=dispA[n],col=info.color||'#fff';
@@ -141,6 +128,88 @@ function draw(svg,D){
       el('circle',{cx:mx,cy:my,r:mr,fill:'rgba(10,8,20,.95)',stroke:col,'stroke-width':2},svg);
       txt(svg,'MC',mx,my,{fill:col,'font-size':11,'font-weight':'bold','font-family':'Cinzel,serif'});}}
 }
+function spreadItems(L0){const n=L0.length;if(!n)return;L0.forEach(i=>{i.a=i.t;});if(n<2)return;
+    const S=[...L0].sort((x,y)=>x.t-y.t);let gi=0,gm=-1;
+    for(let i=0;i<n;i++){const nx=i===n-1?S[0].t+2*Math.PI:S[i+1].t,g=nx-S[i].t;if(g>gm){gm=g;gi=i;}}
+    const L=[];for(let k=1;k<=n;k++)L.push(S[(gi+k)%n]);
+    let prev=-Infinity;for(const it of L){let u=it.t;while(u<prev)u+=2*Math.PI;it.u=u;prev=u;}
+    const place=c=>{let off=0,sw=0,sx=0;const offs=c.map((it,k)=>{if(k)off+=(c[k-1].w+it.w)/2;return off;});
+      c.forEach((it,k)=>{sw+=it.wt;sx+=it.wt*(it.u-offs[k]);});const a0=sx/sw;c.forEach((it,k)=>{it.a=a0+offs[k];});};
+    let C=L.map(it=>[it]);C.forEach(place);
+    for(let g=0;g<400;g++){let m=false;
+      for(let k=0;k+1<C.length;k++){const x=C[k][C[k].length-1],y=C[k+1][0];
+        if(y.a-x.a<(x.w+y.w)/2-1e-9){C.splice(k,2,[...C[k],...C[k+1]]);place(C[k]);m=true;break;}}
+      if(m)continue;
+      if(C.length>1){const A=C[C.length-1],B=C[0],x=A[A.length-1],y=B[0];
+        if(y.a+2*Math.PI-x.a<(x.w+y.w)/2-1e-9){B.forEach(it=>{it.u+=2*Math.PI;});C.shift();C[C.length-1]=[...C[C.length-1],...B];place(C[C.length-1]);continue;}}
+      break;}}
+
+/* ── the classic wheel, as on the western page: zodiac outside, planets inside it as radial columns
+      (glyph · degree · sign · minutes), house ring, axes ASC/DSC/MC/IC with degrees outside, aspects in the centre.
+      Equal degree lines, only the 1·4·7·10 cusps. ── */
+function drawClassic(svg,D){
+  const RZo=298,RZi=264,RG=237,RHo=156,RHi=134,RA=134,GOLD='rgba(227,190,132,',AX='#e8c06e';
+  const unk=!!D.timeUnknown,asc=unk?(D.signs?D.signs[0].start:0):D.asc;
+  const dir=D.dir===-1?-1:1,sw=dir>0?0:1,sb=1-sw;
+  const e2s=d=>toRad(-dir*(d-asc))+Math.PI,xy=(a,r)=>({x:CX+Math.cos(a)*r,y:CY+Math.sin(a)*r});
+  const line=(a1,r1,a2,r2,at)=>{const p=xy(a1,r1),q=xy(a2,r2);return el('line',Object.assign({x1:p.x,y1:p.y,x2:q.x,y2:q.y},at),svg);};
+  const signs=D.signs||EQUAL;
+  const sOf=d=>{d=N360(d);for(const s of signs){const a=N360(s.start),b=N360(s.end);if(a<b?(d>=a&&d<b):(d>=a||d<b))return s;}return signs[0];};
+  const id='c'+Math.random().toString(36).slice(2,7);
+  const defs=el('defs',{},svg);const sf=el('filter',{id:id+'s',x:'-60%',y:'-60%',width:'220%',height:'220%'},defs);
+  el('feGaussianBlur',{stdDeviation:'2.5',result:'blur'},sf);const fm=el('feMerge',{},sf);el('feMergeNode',{in:'blur'},fm);el('feMergeNode',{in:'SourceGraphic'},fm);
+  el('circle',{cx:CX,cy:CY,r:RZo,fill:'rgba(10,15,30,.92)'},svg);
+  const P2=(a,r)=>{const q=xy(a,r);return q.x+','+q.y;};
+  for(const s of signs){const span=N360(s.end-s.start)||360,la=span>180?1:0,a1=e2s(s.start),a2=e2s(s.start+span);
+    el('path',{d:`M${P2(a1,RZo)} A${RZo},${RZo} 0 ${la},${sw} ${P2(a2,RZo)} L${P2(a2,RZi)} A${RZi},${RZi} 0 ${la},${sb} ${P2(a1,RZi)} Z`,fill:s.fill||'#1e2b2c'},svg);
+    line(a1,RZo,a1,RZi,{stroke:GOLD+'.55)','stroke-width':1.2});
+    const m=xy(e2s(s.start+span/2),(RZo+RZi)/2);
+    txt(svg,s.sym,m.x,m.y,{fill:s.color,'font-size':span<20?15:20,'font-family':'serif','font-weight':'bold'});}
+  for(let d=0;d<360;d++){const a=e2s(d);line(a,RZi,a,RZi+5,{stroke:GOLD+'.5)','stroke-width':.7});}
+  el('circle',{cx:CX,cy:CY,r:RZo,fill:'none',stroke:GOLD+'.6)','stroke-width':1.5},svg);
+  el('circle',{cx:CX,cy:CY,r:RZi,fill:'none',stroke:GOLD+'.55)','stroke-width':1.2},svg);
+  el('circle',{cx:CX,cy:CY,r:RHo,fill:'rgba(14,20,38,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
+  el('circle',{cx:CX,cy:CY,r:RHi,fill:'rgba(8,12,24,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
+  const H=!unk&&Array.isArray(D.houses)&&D.houses.length>=12?D.houses:null;
+  if(H)for(let i=0;i<12;i++){const h=H[i],mid=h+N360(H[(i+1)%12]-h)/2,q=xy(e2s(mid),(RHo+RHi)/2);
+    txt(svg,String(i+1),q.x,q.y,{fill:GOLD+'.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}
+  const pl=D.planets||{};
+  const degOf=n=>pl[n]?pl[n].deg:n==='AC'&&!unk?D.asc:n==='MC'&&!unk&&D.mc!=null?D.mc:null;
+  for(const asp of (D.aspects||[])){const d1=degOf(asp.p1),d2=degOf(asp.p2);if(d1==null||d2==null)continue;
+    const ln=line(e2s(d1),RA,e2s(d2),RA,{stroke:asp.color||'#888','stroke-width':1.4,opacity:.95,'stroke-linecap':'round','class':'asp-line'});
+    ln.dataset.p1=asp.p1;ln.dataset.p2=asp.p2;}
+  const dm=deg=>{const s=sOf(deg),x=N360(deg-s.start);let d=Math.floor(x),m=Math.round((x-d)*60);if(m===60){m=0;d+=1;}return [d,m,s];};
+  if(!unk){const ax=[[D.asc,'ASC',true],[N360(D.asc+180),'DSC',false]];
+    if(D.mc!=null)ax.push([D.mc,'MC',true],[N360(D.mc+180),'IC',false]);
+    for(const [deg,lab,main] of ax){const a=e2s(deg);line(a,RHi,a,RZo+(main?14:8),{stroke:AX,'stroke-width':main?3:2});
+      const [d,m]=dm(deg),o=xy(a,RZo+(main?30:24));
+      const t=el('text',{'text-anchor':'middle','dominant-baseline':'central',x:o.x,y:o.y,fill:AX,'font-family':'Cinzel,serif','font-weight':'bold','font-size':main?14:11},svg);
+      t.textContent=d+'°';const ts=el('tspan',{'font-size':main?9:8,dy:-4},t);ts.textContent=String(m).padStart(2,'0')+"'";
+      const li=xy(a,RHi-14);txt(svg,lab,li.x,li.y,{fill:AX,'font-size':9.5,'font-family':'Cinzel,serif','font-weight':'bold'});}}
+  const names=Object.keys(pl);
+  const w0=window.innerWidth||1200,sc=Math.min(1.5,Math.max(1,700/Math.max(320,w0-24)));
+  const gR=10.5*Math.min(sc,1.2),fs=8.5*Math.min(sc,1.35);
+  const gw=n=>{const s=pl[n].sym||'?';return (s.length>1&&s!=='sun'&&s!=='SEL')?gR*2*(0.62+0.5*(s.length-1)):gR*2;};
+  const R_DEG=RG-gR-fs*0.85,R_SIG=R_DEG-fs*1.25,R_MIN=R_SIG-fs*1.25;
+  const items=names.map(n=>({n,t:e2s(pl[n].deg),w:Math.max((gw(n)+1.5)/RG,(fs*2+1.5)/R_MIN),wt:pl[n].heavy==null?40:pl[n].heavy}));
+  spreadItems(items);
+  for(const it of items){const n=it.n,info=pl[n],col=info.color||'#fff',tA=it.t,dA=it.a;
+    line(tA,RZi,tA,RZi-7,{stroke:col,'stroke-width':1.6});
+    const dot=xy(tA,RA);el('circle',{cx:dot.x,cy:dot.y,r:2,fill:col},svg);
+    let diff=dA-tA;while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
+    if(Math.abs(diff)*RG>3.5)line(tA,RZi-7,dA,RG+gR+1,{stroke:col,'stroke-width':.9,opacity:.75});
+    const g=xy(dA,RG);
+    if(info.sym==='sun'){el('circle',{cx:g.x,cy:g.y,r:gR*.78,fill:'none',stroke:'#f9c646','stroke-width':2,filter:'url(#'+id+'s)'},svg);el('circle',{cx:g.x,cy:g.y,r:1.8,fill:'#f9c646'},svg);}
+    else if(info.sym==='SEL'){const rr=gR*.6;el('circle',{cx:g.x,cy:g.y,r:rr,fill:'none',stroke:col,'stroke-width':1.4},svg);el('path',{d:`M ${g.x-rr} ${g.y} a ${rr} ${rr} 0 0 1 ${rr*2} 0`,fill:col,opacity:.9},svg);}
+    else txt(svg,info.sym,g.x,g.y,{fill:col,'font-size':gR*1.75,'font-family':'serif'});
+    const [d,m,s]=dm(info.deg),p1=xy(dA,R_DEG),p2=xy(dA,R_SIG),p3=xy(dA,R_MIN);
+    txt(svg,d+'°',p1.x,p1.y,{fill:'#EDE6D8','font-size':fs,'font-family':'Cinzel,serif','font-weight':'bold'});
+    txt(svg,s.sym,p2.x,p2.y,{fill:s.color,'font-size':fs*1.15,'font-family':'serif'});
+    txt(svg,String(m).padStart(2,'0')+"'"+(info.retro?'℞':''),p3.x,p3.y,{fill:info.retro?'#f87171':'#cfd5e2','font-size':fs*.92,'font-family':'Cinzel,serif'});
+    const hit=el('circle',{cx:g.x,cy:g.y,r:gR+3,fill:'transparent'},svg);hit.style.cursor='crosshair';hit.style.pointerEvents='all';
+    hit.addEventListener('mouseenter',()=>hl(svg,n,D));hit.addEventListener('mouseleave',()=>clr(svg,D));}
+}
+
 function hl(svg,n,D){svg.querySelectorAll('.asp-line').forEach(l=>{const on=l.dataset.p1===n||l.dataset.p2===n;l.style.opacity=on?'0.95':'0.04';l.style.strokeWidth=on?'2.2':'0.5';});
   if(D.onHover)D.onHover(n);}
 function clr(svg,D){svg.querySelectorAll('.asp-line').forEach(l=>{l.style.opacity='';l.style.strokeWidth='';});if(D.onHover)D.onHover(null);}
