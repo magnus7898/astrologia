@@ -31,11 +31,19 @@ function defsFor(svg){
   /* glow shape only — colour comes from the flowing chakra gradient (chakraFlow) */
   mk('feFlood',{'flood-color':'#ffffff','flood-opacity':'1',result:'c'},f);   /* white glow → used as a mask */
   mk('feComposite',{in:'c',in2:'SourceAlpha',operator:'out',result:'outside'},f);
-  mk('feGaussianBlur',{in:'outside',stdDeviation:'16',result:'b'},f);
+  mk('feGaussianBlur',{in:'outside',stdDeviation:'20',result:'b'},f);
   mk('feComposite',{in:'b',in2:'SourceAlpha',operator:'in',result:'inner'},f);
   mk('feFlood',{'flood-color':'#ffffff','flood-opacity':'.08',result:'t'},f);
   mk('feComposite',{in:'t',in2:'SourceAlpha',operator:'in',result:'tint'},f);
-  const m=mk('feMerge',{},f);mk('feMergeNode',{in:'tint'},m);mk('feMergeNode',{in:'inner'},m);
+  const m=mk('feMerge',{result:'all'},f);mk('feMergeNode',{in:'tint'},m);mk('feMergeNode',{in:'inner'},m);
+  /* feather: the body fades out softly towards its edges instead of ending in a hard line */
+  mk('feMorphology',{in:'SourceAlpha',operator:'erode',radius:'1',result:'er'},f);
+  mk('feGaussianBlur',{in:'er',stdDeviation:'4',result:'fe'},f);
+  mk('feComposite',{in:'all',in2:'fe',operator:'in'},f);
+  /* same feather as a mask for the stars / nebula inside the body */
+  const ff=mk('filter',{id:'hdSilFeather',x:'-5%',y:'-5%',width:'110%',height:'110%'},d);
+  mk('feMorphology',{in:'SourceGraphic',operator:'erode',radius:'4',result:'er'},ff);
+  mk('feGaussianBlur',{in:'er',stdDeviation:'8'},ff);
   /* outline gradient: lilac at the head → violet → deep violet at the base */
   const g=mk('linearGradient',{id:'hdSilGrad',x1:'0',y1:'0',x2:'0.35',y2:'1'},d);
   mk('stop',{offset:'0%','stop-color':'#f5d0fe'},g);
@@ -48,13 +56,13 @@ function stars(p){
   const svg=p.ownerSVGElement;let bb;try{bb=p.getBBox();}catch(_){return;}
   if(!bb.width){requestAnimationFrame(()=>stars(p));return;}
   const d=svg.querySelector('defs')||mk('defs',{},svg);
-  const cp=mk('clipPath',{id:'hdSilClip'},d);const cc=p.cloneNode(false);
-  ['class','style','data-hdc'].forEach(a=>cc.removeAttribute(a));cp.appendChild(cc);
+  const cp=mk('mask',{id:'hdSilClip',maskUnits:'userSpaceOnUse',x:bb.x-30,y:bb.y-30,width:bb.width+60,height:bb.height+60},d);const cc=p.cloneNode(false);
+  ['class','style','data-hdc'].forEach(a=>cc.removeAttribute(a));cc.setAttribute('fill','#fff');cc.setAttribute('filter','url(#hdSilFeather)');cp.appendChild(cc);
   /* nebula colours: violet, rose, teal-blue, gold */
   const NEB=[['nbV','#a855f7',.45],['nbR','#ec4899',.38],['nbB','#22d3ee',.32],['nbG','#f59e0b',.24]];
   NEB.forEach(([id,c,o])=>{const ng=mk('radialGradient',{id,cx:'50%',cy:'50%',r:'50%'},d);
     mk('stop',{offset:'0%','stop-color':c,'stop-opacity':o},ng);mk('stop',{offset:'55%','stop-color':c,'stop-opacity':o*.45},ng);mk('stop',{offset:'100%','stop-color':c,'stop-opacity':'0'},ng);});
-  const g=mk('g',{'clip-path':'url(#hdSilClip)','class':'hd-cosmos','pointer-events':'none'});p.after(g);
+  const g=mk('g',{mask:'url(#hdSilClip)','class':'hd-cosmos','pointer-events':'none'});p.after(g);
   let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
   const X=()=>bb.x+rnd()*bb.width,Y=()=>bb.y+rnd()*bb.height,u=bb.width/400;
   const RND=(a,b)=>a+rnd()*(b-a),T=(e,o)=>{for(const k in o)e.style.setProperty(k,o[k]);};
