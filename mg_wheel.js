@@ -165,12 +165,15 @@ function drawClassic(svg,D){
     line(a1,RZo,a1,RZi,{stroke:GOLD+'.55)','stroke-width':1.2});
     const m=xy(e2s(s.start+span/2),(RZo+RZi)/2);
     txt(svg,s.sym,m.x,m.y,{fill:s.color,'font-size':span<20?15:20,'font-family':'serif','font-weight':'bold'});}
-  for(let d=0;d<360;d++){const a=e2s(d);line(a,RZi,a,RZi+5,{stroke:GOLD+'.5)','stroke-width':.7});}
+  for(let d=0;d<360;d++){const a=e2s(d),L=d%10===0?9:d%5===0?6:3;
+    line(a,RZi,a,RZi+L,{stroke:GOLD+(d%5===0?'.7)':'.35)'),'stroke-width':d%10===0?1.1:.6});}
   el('circle',{cx:CX,cy:CY,r:RZo,fill:'none',stroke:GOLD+'.6)','stroke-width':1.5},svg);
   el('circle',{cx:CX,cy:CY,r:RZi,fill:'none',stroke:GOLD+'.55)','stroke-width':1.2},svg);
   el('circle',{cx:CX,cy:CY,r:RHo,fill:'rgba(14,20,38,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
   el('circle',{cx:CX,cy:CY,r:RHi,fill:'rgba(8,12,24,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
   const H=!unk&&Array.isArray(D.houses)&&D.houses.length>=12?D.houses:null;
+  /* cusp lines (the axes are drawn below) */
+  if(H)for(let i=0;i<12;i++){if([0,3,6,9].includes(i))continue;const a=e2s(H[i]);line(a,RHi,a,RZi,{stroke:'rgba(123,147,189,.55)','stroke-width':.9});}
   /* house numbers (planetary astrology turns them off with houseNums:false) */
   if(H&&D.houseNums!==false)for(let i=0;i<12;i++){const h=H[i],mid=h+N360(H[(i+1)%12]-h)/2,q=xy(e2s(mid),(RHo+RHi)/2);
     txt(svg,String(i+1),q.x,q.y,{fill:GOLD+'.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}

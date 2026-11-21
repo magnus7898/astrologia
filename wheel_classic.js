@@ -83,8 +83,8 @@ window.drawWheelClassic=function(data1,dualAsp){
     const m=xy(e2s(i*30+15,asc),(RZo+RZi)/2);
     txt(svg,ZSYM[i],m.x,m.y,{fill:ZCOL[i],'font-size':20,'font-family':'serif','font-weight':'bold'});
   }
-  /* classic: every degree line the same */
-  for(let d=0;d<360;d++){const a=e2s(d,asc);line(svg,a,RZi,a,RZi+5,{stroke:GOLD+'.5)','stroke-width':.7});}
+  for(let d=0;d<360;d++){const a=e2s(d,asc),L=d%10===0?9:d%5===0?6:3;
+    line(svg,a,RZi,a,RZi+L,{stroke:GOLD+(d%5===0?'.7)':'.35)'),'stroke-width':d%10===0?1.1:.6});}
   el('circle',{cx:CX,cy:CY,r:RZo,fill:'none',stroke:GOLD+'.6)','stroke-width':1.5},svg);
   el('circle',{cx:CX,cy:CY,r:RZi,fill:'none',stroke:GOLD+'.55)','stroke-width':1.2},svg);
 
@@ -94,7 +94,7 @@ window.drawWheelClassic=function(data1,dualAsp){
   if(!unk&&data1.houses){
     for(let i=0;i<12;i++){
       const h=data1.houses[i],a=e2s(h,asc),ang=[0,3,6,9].includes(i);
-      /* classic: only the 1 · 4 · 7 · 10 cusps (the axes) are drawn as lines */
+      if(!ang)line(svg,a,RHi,a,RZi,{stroke:'rgba(123,147,189,.55)','stroke-width':.9});
       const nx=data1.houses[(i+1)%12];let mid=h+((nx-h+360)%360)/2;
       const q=xy(e2s(mid%360,asc),(RHo+RHi)/2);
       txt(svg,String(i+1),q.x,q.y,{fill:GOLD+'.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});
