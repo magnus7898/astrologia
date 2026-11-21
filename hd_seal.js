@@ -6,7 +6,7 @@
 const OK=new Set(['rgb(255, 255, 255)','rgb(231, 90, 124)','rgb(44, 54, 63)','rgb(195, 153, 108)','rgb(196, 154, 108)']);
 const SKIP=new Set(['10','20','34','57']);
 /* trial: these gates get a thicker filler copy UNDER the original pieces instead of a stroke on top */
-const UNDER=new Set(['64']);
+const UNDER=new Set([]);   /* none — the thin stroke on top now covers rect pieces too */
 function under(e,f){
   let u=e._under;
   if(!u){u=e.cloneNode(false);u.dataset.under='1';u.removeAttribute('id');u.style.pointerEvents='none';u.style.strokeLinejoin='round';u.style.strokeWidth='4';
@@ -14,7 +14,7 @@ function under(e,f){
   if(u.style.stroke!==f){u.style.stroke=f;u.style.fill=f;}
 }
 function run(svg){
-  svg.querySelectorAll('path').forEach(e=>{
+  svg.querySelectorAll('path,rect,polygon').forEach(e=>{
     if(e.dataset.under||e.classList.contains('st0')||e.classList.contains('chakra')||e.closest('.hd-arrows,.hd-cosmos,mask,clipPath,defs,.detail-part'))return;
     if(SKIP.has(e.getAttribute('data-gate')||''))return;
     const cs=getComputedStyle(e),f=cs.fill;
