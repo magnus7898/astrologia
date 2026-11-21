@@ -112,7 +112,7 @@ header::after{content:"";display:block;width:280px;height:1px;
 .syn-layout{display:grid;grid-template-columns:140px 140px 1fr;gap:10px;margin-bottom:20px;align-items:start;}
 
 /* ── CHART AREA ── */
-.chart-area{flex:1;display:grid;grid-template-columns:110px 1fr 110px;
+.chart-area{flex:1;display:grid;grid-template-columns:110px minmax(0,600px) 110px;justify-content:center;column-gap:22px;
   background:var(--surface);border:1px solid var(--border);border-radius:6px;
   padding:16px;align-items:center;position:relative;overflow:hidden;}
 .chart-area::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
@@ -234,8 +234,8 @@ header::after{content:"";display:block;width:280px;height:1px;
 @media(max-width:1000px){
   .main-layout,.syn-layout{grid-template-columns:1fr;}
   .summary{grid-template-columns:repeat(3,1fr);}
-  .chart-area{grid-template-columns:1fr;}
-  .planet-col{order:2;}#bodygraph,#bodygraph-syn{order:1;}
+  .chart-area{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:18px;}
+  .planet-col{order:2;}#bodygraph,#bodygraph-syn{order:1;grid-column:1/-1;}
   .page{padding:28px 16px 60px;}}
 @media(max-width:700px){.summary{grid-template-columns:repeat(2,1fr);}.brand{font-size:1.5rem;}}
 
@@ -1126,7 +1126,7 @@ loadSVG('bodygraph','natal').catch(e=>{
 });
 </script>
 <script src="hd_transit.js"></script>
-<script src="hd_silhouette.js?v=10"></script>
+<script src="hd_silhouette.js?v=11"></script>
 <script src="hd_find.js"></script>
 <script src="hd_stats.js"></script>
 <script src="people_core.js"></script>

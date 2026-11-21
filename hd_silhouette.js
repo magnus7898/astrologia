@@ -18,7 +18,7 @@ svg path.st0.hd-c{fill:none!important;filter:none;stroke-linecap:round;pointer-e
   animation:hdComet ${DUR}s linear infinite}
 @keyframes hdEdge{0%,100%{stroke:#5b21b6;filter:drop-shadow(0 0 1px #5b21b6)}33%{stroke:#7e22ce;filter:drop-shadow(0 0 5px #9333ea)}66%{stroke:#6d28d9;filter:drop-shadow(0 0 3px #7c3aed)}}
 @keyframes hdComet{to{stroke-dashoffset:var(--o1)}}
-svg .hd-star{animation:hdTw 4s ease-in-out infinite;opacity:.5}\nsvg .hd-spark{animation:hdSp 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center;filter:drop-shadow(0 0 2px currentColor)}\nsvg .hd-neb{animation:hdNeb 18s ease-in-out infinite;mix-blend-mode:screen}\n@keyframes hdNeb{0%,100%{opacity:.75}50%{opacity:1}}\n@keyframes hdTw{0%,100%{opacity:.15}50%{opacity:.9}}\n@keyframes hdSp{0%,100%{opacity:.2;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}}\n@media (prefers-reduced-motion:reduce){svg .hd-star,svg .hd-spark{animation:none}}\n@media (prefers-reduced-motion:reduce){svg path.st0.hd-edge,svg path.st0.hd-c{animation:none}}`;
+svg .hd-star{animation:hdTw 4s ease-in-out infinite;opacity:.5}\nsvg .hd-star.big{animation-name:hdTwB;transform-box:fill-box;transform-origin:center}\nsvg .hd-spark{animation:hdSp 6s ease-in-out infinite;transform-box:fill-box;transform-origin:center;filter:drop-shadow(0 0 2px currentColor)}\nsvg .hd-neb{animation:hdNeb 22s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center;mix-blend-mode:screen}\nsvg .hd-dust{animation:hdDust 12s linear infinite;opacity:0}\nsvg .hd-shoot{animation:hdShoot 10s ease-in infinite;opacity:0}\n@keyframes hdTw{0%,100%{opacity:.15}50%{opacity:.9}}\n@keyframes hdTwB{0%,100%{opacity:.2;transform:scale(.5)}45%{opacity:1;transform:scale(1.5)}60%{opacity:.7;transform:scale(1)}}\n@keyframes hdSp{0%,100%{opacity:0;transform:scale(.3) rotate(0deg)}40%{opacity:1;transform:scale(1.2) rotate(45deg)}60%{opacity:.8;transform:scale(.9) rotate(70deg)}}\n@keyframes hdNeb{0%{opacity:.6;transform:translate(0,0) scale(1) rotate(0deg)}50%{opacity:1;transform:translate(var(--dx),var(--dy)) scale(var(--sc)) rotate(var(--rot))}100%{opacity:.75;transform:translate(calc(var(--dx)*-.6),calc(var(--dy)*.8)) scale(.92) rotate(calc(var(--rot)*-1))}}\n@keyframes hdDust{0%{opacity:0;transform:translate(0,0)}15%{opacity:.85}50%{transform:translate(var(--sway),calc(var(--rise)*.5))}85%{opacity:.6}100%{opacity:0;transform:translate(calc(var(--sway)*-1),var(--rise))}}\n@keyframes hdShoot{0%,86%{opacity:0;transform:translate(0,0)}88%{opacity:1}97%{opacity:.8}100%{opacity:0;transform:translate(var(--tx),var(--ty))}}\n@media (prefers-reduced-motion:reduce){svg .hd-star,svg .hd-spark,svg .hd-neb,svg .hd-dust,svg .hd-shoot{animation:none}}\n@media (prefers-reduced-motion:reduce){svg path.st0.hd-edge,svg path.st0.hd-c{animation:none}}`;
 LAYERS.forEach(([L,w,c,o],i)=>{t+=`svg path.st0.hd-c.l${i}{stroke:${c}!important;stroke-width:${w}px!important;opacity:${o};stroke-dasharray:${L} ${100-L};${i===LAYERS.length-1?'filter:drop-shadow(0 0 3px #e9d5ff)':''}}`;});
 css.textContent=t;document.head.appendChild(css);
 
@@ -56,18 +56,34 @@ function stars(p){
   const g=mk('g',{'clip-path':'url(#hdSilClip)','class':'hd-cosmos','pointer-events':'none'});p.after(g);
   let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
   const X=()=>bb.x+rnd()*bb.width,Y=()=>bb.y+rnd()*bb.height,u=bb.width/400;
-  /* two faint nebula clouds */
-  /* soft nebula clouds in several colours, slowly drifting */
+  const RND=(a,b)=>a+rnd()*(b-a),T=(e,o)=>{for(const k in o)e.style.setProperty(k,o[k]);};
+  /* nebula clouds in several colours — each drifts, swells and turns on its own slow path */
   [[.48,.40,.22,'nbV'],[.62,.30,.13,'nbR'],[.36,.62,.16,'nbB'],[.60,.74,.17,'nbR'],[.44,.86,.15,'nbV'],[.52,.16,.10,'nbB'],[.30,.40,.10,'nbG'],[.70,.55,.10,'nbG']]
-    .forEach(([fx,fy,fr,id],k)=>{const e=mk('ellipse',{cx:bb.x+fx*bb.width,cy:bb.y+fy*bb.height,rx:fr*bb.width,ry:fr*bb.width*(.55+rnd()*.35),fill:'url(#'+id+')','class':'hd-neb',
-      transform:'rotate('+Math.round(rnd()*180)+' '+(bb.x+fx*bb.width)+' '+(bb.y+fy*bb.height)+')'},g);e.style.animationDelay=(-k*3.1)+'s';});
+    .forEach(([fx,fy,fr,id],k)=>{const cx=bb.x+fx*bb.width,cy=bb.y+fy*bb.height;
+      const w=mk('g',{'class':'hd-neb'},g);
+      mk('ellipse',{cx,cy,rx:fr*bb.width,ry:fr*bb.width*RND(.55,.9),fill:'url(#'+id+')',transform:'rotate('+Math.round(rnd()*180)+' '+cx+' '+cy+')'},w);
+      T(w,{'--dx':RND(-.09,.09)*bb.width+'px','--dy':RND(-.06,.06)*bb.width+'px','--rot':RND(-25,25)+'deg','--sc':RND(1.12,1.35),
+        'animation-duration':RND(16,30).toFixed(1)+'s','animation-delay':(-RND(0,30)).toFixed(1)+'s'});});
   const STARC=['#ffffff','#ffffff','#ffffff','#e9d5ff','#c4b5fd','#a5f3fc','#67e8f9','#f9a8d4','#fde68a','#93c5fd'];
+  /* twinkling stars — some only twinkle, some also pulse in size */
   for(let i=0;i<52;i++){const r=(.35+rnd()*rnd()*1.3)*u*1.6;
-    const c=mk('circle',{cx:X(),cy:Y(),r,fill:STARC[Math.floor(rnd()*STARC.length)],'class':'hd-star'},g);
-    c.style.animationDelay=(-rnd()*5).toFixed(2)+'s';c.style.animationDuration=(2.5+rnd()*3.5).toFixed(2)+'s';}
+    const c=mk('circle',{cx:X(),cy:Y(),r,fill:STARC[Math.floor(rnd()*STARC.length)],'class':rnd()<.4?'hd-star big':'hd-star'},g);
+    T(c,{'animation-delay':(-rnd()*5).toFixed(2)+'s','animation-duration':RND(2.2,6).toFixed(2)+'s'});}
+  /* cosmic dust rising slowly through the body */
+  for(let i=0;i<16;i++){const c=mk('circle',{cx:X(),cy:bb.y+RND(.35,1)*bb.height,r:RND(.4,.9)*u*1.4,fill:STARC[Math.floor(rnd()*STARC.length)],'class':'hd-dust'},g);
+    T(c,{'--rise':-RND(.12,.3)*bb.height+'px','--sway':RND(-.03,.03)*bb.width+'px','animation-duration':RND(9,18).toFixed(1)+'s','animation-delay':(-RND(0,18)).toFixed(1)+'s'});}
+  /* sparkles: grow, turn and fade */
   for(let i=0;i<6;i++){const x=X(),y=Y(),a=(1.6+rnd()*1.6)*u*2,b=a*.18;
-    const s=mk('path',{d:`M${x} ${y-a}Q${x+b} ${y-b} ${x+a} ${y}Q${x+b} ${y+b} ${x} ${y+a}Q${x-b} ${y+b} ${x-a} ${y}Q${x-b} ${y-b} ${x} ${y-a}Z`,fill:['#f5f3ff','#a5f3fc','#f9a8d4','#fde68a','#c4b5fd','#ffffff'][i],'class':'hd-spark'},g);
-    s.style.transformOrigin=x+'px '+y+'px';s.style.animationDelay=(-rnd()*6).toFixed(2)+'s';}
+    const sp=mk('path',{d:`M${x} ${y-a}Q${x+b} ${y-b} ${x+a} ${y}Q${x+b} ${y+b} ${x} ${y+a}Q${x-b} ${y+b} ${x-a} ${y}Q${x-b} ${y-b} ${x} ${y-a}Z`,fill:['#f5f3ff','#a5f3fc','#f9a8d4','#fde68a','#c4b5fd','#ffffff'][i],'class':'hd-spark'},g);
+    T(sp,{'animation-delay':(-rnd()*7).toFixed(2)+'s','animation-duration':RND(5,8).toFixed(1)+'s'});}
+  /* shooting stars crossing the body now and then */
+  const sg=mk('linearGradient',{id:'hdShoot',x1:'0',y1:'0',x2:'1',y2:'0'},d);
+  mk('stop',{offset:'0%','stop-color':'#fff','stop-opacity':'0'},sg);mk('stop',{offset:'80%','stop-color':'#e9d5ff','stop-opacity':'.7'},sg);mk('stop',{offset:'100%','stop-color':'#fff','stop-opacity':'1'},sg);
+  [[.15,.25,9,0],[.25,.55,13,-5],[.1,.75,17,-11]].forEach(([fx,fy,dur,del])=>{
+    const L=bb.width*.16,x=bb.x+fx*bb.width,y=bb.y+fy*bb.height;
+    const w=mk('g',{'class':'hd-shoot'},g);
+    mk('rect',{x:x-L,y:y-.6*u,width:L,height:1.2*u*1.4,rx:.6*u,fill:'url(#hdShoot)',transform:'rotate(18 '+x+' '+y+')'},w);
+    T(w,{'--tx':bb.width*.75+'px','--ty':bb.width*.75*Math.tan(18*Math.PI/180)+'px','animation-duration':dur+'s','animation-delay':del+'s'});});
 }
 
 /* the silhouette is not in the middle of the SVG's viewBox — shift the viewBox so the body is centred in its box */
