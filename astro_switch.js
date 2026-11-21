@@ -21,7 +21,7 @@ const MONTHS=['იანვარი','თებერვალი','მარ�
 /* ── the page's own fields ── */
 const P=$('n-day')?'n-':$('i-day')?'i-':'';
 const N={name:$(P+'name')||$('bname'),day:$(P+'day'),month:$(P+'month'),year:$(P+'year'),hour:$(P+'hour'),minute:$(P+'minute')||$(P+'min'),
-  second:$(P+'second'),tu:$(P+'time-unknown'),city:$(P+'city')||$('bcity'),lat:$(P+'lat')||$('lat')||$('i-elat'),lon:$(P+'lon')||$('lon')||$('i-elon'),
+  second:$(P+'second'),tu:$(P+'time-unknown')||(PAGE==='hdastro.html'?$('tunk'):null),city:$(P+'city')||$('bcity'),lat:$(P+'lat')||$('lat')||$('i-elat'),lon:$(P+'lon')||$('lon')||$('i-elon'),
   tz:$(P+'tz')||$('tz_name')||(PAGE==='hdastro.html'?$('tz'):null)||$('i-tz'),date:$('bdate'),time:$('btime'),dmy:$('d1'),hm:$('t1'),
   off:$('tz1'),lon1:$('lon1'),d0:$('d0')};
 const anchor=N.day||N.date||N.dmy||N.d0;
