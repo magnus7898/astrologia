@@ -171,8 +171,7 @@ function drawClassic(svg,D){
   el('circle',{cx:CX,cy:CY,r:RHo,fill:'rgba(14,20,38,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
   el('circle',{cx:CX,cy:CY,r:RHi,fill:'rgba(8,12,24,1)',stroke:GOLD+'.45)','stroke-width':1.1},svg);
   const H=!unk&&Array.isArray(D.houses)&&D.houses.length>=12?D.houses:null;
-  if(H)for(let i=0;i<12;i++){const h=H[i],mid=h+N360(H[(i+1)%12]-h)/2,q=xy(e2s(mid),(RHo+RHi)/2);
-    txt(svg,String(i+1),q.x,q.y,{fill:GOLD+'.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});}
+  /* classic: no house numbers */
   const pl=D.planets||{};
   const degOf=n=>pl[n]?pl[n].deg:n==='AC'&&!unk?D.asc:n==='MC'&&!unk&&D.mc!=null?D.mc:null;
   for(const asp of (D.aspects||[])){const d1=degOf(asp.p1),d2=degOf(asp.p2);if(d1==null||d2==null)continue;

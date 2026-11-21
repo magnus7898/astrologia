@@ -95,9 +95,7 @@ window.drawWheelClassic=function(data1,dualAsp){
     for(let i=0;i<12;i++){
       const h=data1.houses[i],a=e2s(h,asc),ang=[0,3,6,9].includes(i);
       /* classic: only the 1 · 4 · 7 · 10 cusps (the axes) are drawn as lines */
-      const nx=data1.houses[(i+1)%12];let mid=h+((nx-h+360)%360)/2;
-      const q=xy(e2s(mid%360,asc),(RHo+RHi)/2);
-      txt(svg,String(i+1),q.x,q.y,{fill:GOLD+'.85)','font-size':11,'font-family':'Cinzel,serif','font-weight':'bold'});
+      /* classic: no house numbers */
     }
   }
 
