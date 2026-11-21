@@ -1144,6 +1144,8 @@
       if(tiles.length===1&&G.members!=='*'&&!G.always){           /* single member: the tile is the box */
         const t=tiles[0];t.classList.add('main');
         const tt=t.querySelector('.card-title');if(tt)tt.textContent=G.title;
+        if(G.sym){const sy=t.querySelector('.sym');if(sy)sy.innerHTML=G.sym;}   /* keep the group's own icon */
+        if(G.sub){const cs=t.querySelector('.card-sub');if(cs)cs.textContent=G.sub;}
         boxes.push(t);continue;
       }
       boxes.push(makeBox(G,tiles));
