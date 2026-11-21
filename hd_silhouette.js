@@ -113,12 +113,27 @@ function chakraFlow(p){
   const r=mk('rect',{x:bb.x-20,y:bb.y-20,width:bb.width+40,height:bb.height+40,fill:'url(#hdChakra)',mask:'url(#hdSilMask)','class':'hd-chakra','pointer-events':'none'});
   p.after(r);
 }
+
+/* channel segments are drawn as separate halves/pieces, which leaves hairline gaps between pieces of the same
+   colour — give every piece a thin stroke in its own current fill colour (white when off, red/black when on) */
+function seal(svg){
+  const OK=new Set(['rgb(255, 255, 255)','rgb(231, 90, 124)','rgb(44, 54, 63)','rgb(195, 153, 108)','rgb(196, 154, 108)']);
+  const run=()=>{svg.querySelectorAll('path').forEach(e=>{
+    if(e.classList.contains('st0')||e.classList.contains('chakra')||e.closest('.hd-arrows,.hd-cosmos,mask,clipPath,defs'))return;
+    const cs=getComputedStyle(e),f=cs.fill;
+    if(e.classList.contains('gate-line')||(OK.has(f)&&(cs.stroke==='none'||e.dataset.sealed))){
+      if(f&&f!=='none'&&e.style.stroke!==f){e.style.stroke=f;e.style.strokeWidth='0.9';e.style.strokeLinejoin='round';e.dataset.sealed='1';}}});};
+  run();
+  if(!svg._sealObs){svg._sealObs=new MutationObserver(()=>requestAnimationFrame(run));
+    svg._sealObs.observe(svg,{attributes:true,attributeFilter:['class']});}
+}
 function build(){
   document.querySelectorAll('svg path.st0:not(.hd-c):not(.hd-edge)').forEach(p=>{
     if(p.dataset.hdc)return;p.dataset.hdc='1';
     defsFor(p.ownerSVGElement);
     let last=p;   /* no outline — only the inner shadow */
     chakraFlow(p);
+    seal(p.ownerSVGElement);
     stars(p);
     centre(p);
     [0,50].forEach(phase=>{LAYERS.forEach(([L],i)=>{
