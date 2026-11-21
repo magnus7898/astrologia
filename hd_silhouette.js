@@ -60,8 +60,12 @@ function stars(p){
   ['class','style','data-hdc'].forEach(a=>cc.removeAttribute(a));cc.setAttribute('fill','#fff');cc.setAttribute('filter','url(#hdSilFeather)');cp.appendChild(cc);
   /* nebula colours: violet, rose, teal-blue, gold */
   const NEB=[['nbV','#a855f7',.45],['nbR','#ec4899',.38],['nbB','#22d3ee',.32],['nbG','#f59e0b',.24]];
-  NEB.forEach(([id,c,o])=>{const ng=mk('radialGradient',{id,cx:'50%',cy:'50%',r:'50%'},d);
-    mk('stop',{offset:'0%','stop-color':c,'stop-opacity':o},ng);mk('stop',{offset:'55%','stop-color':c,'stop-opacity':o*.45},ng);mk('stop',{offset:'100%','stop-color':c,'stop-opacity':'0'},ng);});
+  /* every cloud keeps changing colour, each one a different step along the same colour wheel */
+  const WHEEL=['#a855f7','#2563eb','#0d9488','#059669','#ec4899','#7c3aed','#0ea5e9','#a855f7'];
+  NEB.forEach(([id,c,o],k)=>{const ng=mk('radialGradient',{id,cx:'50%',cy:'50%',r:'50%'},d);
+    const vals=WHEEL.slice(0,-1).map((_,i)=>WHEEL[(i+k*2)%7]);vals.push(vals[0]);
+    [['0%',o],['55%',o*.45],['100%',0]].forEach(([off,op])=>{const st=mk('stop',{offset:off,'stop-color':c,'stop-opacity':op},ng);
+      mk('animate',{attributeName:'stop-color',values:vals.join(';'),dur:(20+k*4)+'s',repeatCount:'indefinite'},st);});});
   const g=mk('g',{mask:'url(#hdSilClip)','class':'hd-cosmos','pointer-events':'none'});p.after(g);
   let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
   const X=()=>bb.x+rnd()*bb.width,Y=()=>bb.y+rnd()*bb.height,u=bb.width/400;
