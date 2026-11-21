@@ -29,6 +29,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero-sub{font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--dim);margin-top:7px}
 .panel{position:relative;z-index:1;width:100%;max-width:880px;padding:0 16px;margin-top:16px}
+html body div.panel{border:none!important;box-shadow:none!important;background:transparent!important}
 .card{background:rgba(10,12,26,.78);border:1px solid rgba(124,154,208,.22);border-radius:14px;padding:18px;margin-bottom:14px}
 .card-title{font-family:'Cinzel',serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;
   color:var(--acc-l);opacity:.85;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid rgba(124,154,208,.15)}
@@ -558,111 +559,25 @@ const e2s=function(ec,asc){return(-WDIR*(ec-asc))*D2R+Math.PI;};
 const fmt2=function(d){const x=Math.floor(d);
   return x+'°'+String(Math.floor((d-x)*60)).padStart(2,'0')+"'";};
 
+/* the same wheel as the western chart (mg_wheel.js): this planet's zodiac / IAU sectors on the band,
+   equal houses, planets and the observer planet's moons with degree + sector */
+function hex2rgba(c,a){const m=/^#?([0-9a-f]{6})$/i.exec(c||'');if(!m)return 'rgba(30,40,60,1)';const n=parseInt(m[1],16);
+  /* dark tint of the band colour, like the element fills of the western wheel */
+  const r=(n>>16)&255,g=(n>>8)&255,b=n&255,k=a;return 'rgb('+Math.round(14+r*k)+','+Math.round(16+g*k)+','+Math.round(30+b*k)+')';}
 function drawWheel(P,asc,mc,houses,asps,bands,MO,POS){
-  const svg=$('wheel');svg.innerHTML='';
-  const RO=272;                 /* the big outer circle              */
-  const RSi=196;                /* inner edge of the sign band       */
-  const RPl=302;                /* planet glyph ring, outside        */
-  const defs=el('defs',{},svg);
-  const g=el('radialGradient',{id:'bg',cx:'50%',cy:'50%',r:'50%'},defs);
-  el('stop',{offset:'0%','stop-color':'#141830'},g);
-  el('stop',{offset:'100%','stop-color':'#05040c'},g);
-  el('rect',{width:700,height:700,fill:'url(#bg)'},svg);
-
-  /* ── sign / constellation band, filling the big circle ── */
-  bands.forEach(function(b){
-    const p=function(d,r){const a=e2s(d,asc);
-      return(CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
-    const span=b.e-b.s,la=span>180?1:0;
-    const s1=WDIR>0?0:1,s2=1-s1;
-    el('path',{d:'M'+p(b.s,RO)+' A'+RO+','+RO+' 0 '+la+','+s1+' '+p(b.e,RO)+
-                 ' L'+p(b.e,RSi)+' A'+RSi+','+RSi+' 0 '+la+','+s2+' '+p(b.s,RSi)+' Z',
-      fill:b.col,'fill-opacity':.14,stroke:'rgba(227,190,132,.45)','stroke-width':.8},svg);
-    if(span>2.2){
-      const a=e2s(b.s+span/2,asc);
-      txt(svg,b.sym,CX+Math.cos(a)*(RSi+24),CY+Math.sin(a)*(RSi+24),
-        {fill:b.col,'font-size':span<11?13:19,'font-family':'serif'});
-    }
-  });
-
-  /* ── the degree scale: little lines INSIDE the big circle ── */
-  for(let d=0;d<360;d++){
-    const a=e2s(d,asc),co=Math.cos(a),si=Math.sin(a);
-    el('line',{x1:CX+co*RO,y1:CY+si*RO,x2:CX+co*(RO-7),y2:CY+si*(RO-7),
-      stroke:'rgba(227,190,132,.35)','stroke-width':.7},svg);
-  }
-  /* ── circles, angles, aspect web ── */
-  el('circle',{cx:CX,cy:CY,r:RO,fill:'none',stroke:'rgba(227,190,132,.6)','stroke-width':1.6},svg);
-  el('circle',{cx:CX,cy:CY,r:RSi,fill:'none',stroke:'rgba(227,190,132,.45)','stroke-width':1.2},svg);
-  [0,3,6,9].forEach(function(i){
-    const a=e2s(houses[i],asc);
-    el('line',{x1:CX+Math.cos(a)*R4,y1:CY+Math.sin(a)*R4,
-      x2:CX+Math.cos(a)*RSi,y2:CY+Math.sin(a)*RSi,
-      stroke:'rgba(168,196,234,.5)','stroke-width':1.1},svg);
-  });
-  el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(6,8,18,.95)',stroke:'rgba(60,80,130,.6)','stroke-width':1},svg);
-  asps.forEach(function(a){
-    const a1=e2s(POS[a.p1],asc),a2=e2s(POS[a.p2],asc);
-    el('line',{x1:CX+Math.cos(a1)*R4,y1:CY+Math.sin(a1)*R4,
-      x2:CX+Math.cos(a2)*R4,y2:CY+Math.sin(a2)*R4,
-      stroke:a.color,'stroke-width':1,opacity:.45},svg);
-  });
-
-  /* ── planets and the observer planet's moons, one ring outside ── */
-  const items=[];
-  Object.keys(P).forEach(function(n){
-    const info=PI_[n]||{sym:'?',color:'#fff'};
-    items.push({id:'p:'+n,lon:P[n].lon,sym:info.sym,color:info.color,
-                size:17,retro:P[n].retro,moon:false});
-  });
-  if(MO&&MO.length)MO.forEach(function(m){
-    const info=MOON_I[m.key]||{sym:'?',color:'#cfd8e8'};
-    items.push({id:'m:'+m.key,lon:m.lon,sym:info.sym,color:info.color,
-                size:m.key==='moon'?15:10,retro:false,moon:true});
-  });
-  const disp={};
-  items.forEach(function(it){disp[it.id]=e2s(it.lon,asc);});
-  const GAP=20/RPl;
-  for(let it=0;it<400;it++){
-    let mv=false;
-    for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){
-      let d=disp[items[j].id]-disp[items[i].id];
-      while(d>Math.PI)d-=2*Math.PI;
-      while(d<-Math.PI)d+=2*Math.PI;
-      if(Math.abs(d)<GAP&&Math.abs(d)>1e-4){
-        const p=(GAP-Math.abs(d))/2,s=d>0?1:-1;
-        disp[items[i].id]-=p*s;disp[items[j].id]+=p*s;mv=true;
-      }
-    }
-    if(!mv)break;
-  }
-  items.forEach(function(it){
-    const tA=e2s(it.lon,asc);
-    el('line',{x1:CX+Math.cos(tA)*(RO+1),y1:CY+Math.sin(tA)*(RO+1),
-      x2:CX+Math.cos(tA)*(RO+(it.moon?6:9)),y2:CY+Math.sin(tA)*(RO+(it.moon?6:9)),
-      stroke:it.color,'stroke-width':it.moon?1:1.5,opacity:it.moon?.75:1},svg);
-    el('circle',{cx:CX+Math.cos(tA)*(RO+1),cy:CY+Math.sin(tA)*(RO+1),
-      r:it.moon?1.2:1.7,fill:it.color},svg);
-    const gx=CX+Math.cos(disp[it.id])*RPl,gy=CY+Math.sin(disp[it.id])*RPl;
-    let df=disp[it.id]-tA;
-    while(df>Math.PI)df-=2*Math.PI;
-    while(df<-Math.PI)df+=2*Math.PI;
-    if(Math.abs(df)>0.012)
-      el('line',{x1:CX+Math.cos(tA)*(RO+9),y1:CY+Math.sin(tA)*(RO+9),x2:gx,y2:gy,
-        stroke:it.color,'stroke-width':.5,opacity:.4,'stroke-dasharray':'2 2'},svg);
-    txt(svg,it.sym,gx,gy,{fill:it.color,'font-size':it.size,
-      'font-family':it.moon?'Cinzel,serif':'serif',
-      'font-weight':it.moon?'600':'normal'});
-    if(it.retro)txt(svg,'℞',gx+10,gy-8,{fill:'#f87171','font-size':7,'font-family':'serif'});
-  });
-
-  [['AC',asc],['MC',mc]].forEach(function(pair){
-    const a=e2s(pair[1],asc);
-    el('line',{x1:CX+Math.cos(a)*RO,y1:CY+Math.sin(a)*RO,
-      x2:CX+Math.cos(a)*(RO+16),y2:CY+Math.sin(a)*(RO+16),stroke:'#a8c4ea','stroke-width':2.4},svg);
-    txt(svg,pair[0],CX+Math.cos(a)*(RO+34),CY+Math.sin(a)*(RO+34),
-      {fill:'#a8c4ea','font-size':12,'font-weight':'bold','font-family':'Cinzel,serif'});
-  });
+  const svg=$('wheel');
+  const N360=x=>((x%360)+360)%360;
+  const bandOf=L=>{L=N360(L);for(const b of bands){const s=N360(b.s),e=N360(b.e);if(s<e?(L>=s&&L<e):(L>=s||L<e))return b;}return bands[0];};
+  const planets={};
+  Object.keys(P).forEach(n=>{const info=PI_[n]||{sym:'?',color:'#fff'};
+    planets[n]={deg:P[n].lon,sym:info.sym,color:info.color,retro:!!P[n].retro,heavy:n==='მზე'||n==='მთვარე'?60:40};});
+  (MO||[]).forEach(m=>{const info=MOON_I[m.key]||{sym:'?',color:'#cfd8e8'};
+    planets['☾'+m.key]={deg:m.lon,sym:info.sym,color:info.color,retro:false,heavy:m.key==='moon'?20:3};});
+  MGWheel.draw(svg,{asc,mc,dir:WDIR,houses,planets,
+    signs:bands.map(b=>({start:N360(b.s),end:N360(b.e),sym:b.sym,color:b.col,fill:hex2rgba(b.col,.12)})),
+    aspects:(asps||[]).filter(a=>planets[a.p1]&&planets[a.p2]).map(a=>({p1:a.p1,p2:a.p2,color:a.color})),
+    degLabel:n=>{const L=planets[n].deg,b=bandOf(L);const x=N360(L-b.s),g=Math.floor(x),mm=Math.floor((x-g)*60);return g+'°'+String(mm).padStart(2,'0')+"'";},
+    signOf:L=>{const b=bandOf(L);return {sym:b.sym,color:b.col};}});
 }
 
 /* ═══ GENERATE ═══ */
@@ -998,6 +913,7 @@ $('btn-gen').addEventListener('click',function(){gen();});
 $('btn-now').addEventListener('click',function(){setNow();gen();});
 setNow();
 </script>
+<script src="mg_wheel.js?v=3"></script>
 <script src="astro_switch.js?v=9"></script>
 <script src="site.js?v=20261121a"></script>
 <script src="account.js"></script>

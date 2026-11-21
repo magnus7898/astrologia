@@ -27,7 +27,8 @@ const EQUAL=ZSYM.map((s,i)=>({start:i*30,end:(i+1)*30,sym:s,color:ZCOL[i],fill:E
 function draw(svg,D){
   svg.innerHTML='';
   const asc=D.timeUnknown?(D.signs?D.signs[0].start:0):D.asc;
-  const e2s=d=>toRad(-(d-asc))+Math.PI;
+  const dir=D.dir===-1?-1:1,sw=dir>0?0:1,sb=1-sw;     /* dir −1: zodiac runs clockwise */
+  const e2s=d=>toRad(-dir*(d-asc))+Math.PI;
   const pxy=(a,r)=>({x:CX+Math.cos(a)*r,y:CY+Math.sin(a)*r});
   const P=(d,r)=>{const a=e2s(d);return (CX+Math.cos(a)*r)+','+(CY+Math.sin(a)*r);};
   const signs=D.signs||EQUAL;
@@ -47,12 +48,12 @@ function draw(svg,D){
 
   /* zodiac band */
   for(const s of signs){const span=N360(s.end-s.start)||360,la=span>180?1:0;
-    el('path',{d:`M${P(s.start,R1)} A${R1},${R1} 0 ${la},0 ${P(s.start+span,R1)} L${P(s.start+span,R2)} A${R2},${R2} 0 ${la},1 ${P(s.start,R2)} Z`,fill:s.fill||'#1e2b2c'},svg);
+    el('path',{d:`M${P(s.start,R1)} A${R1},${R1} 0 ${la},${sw} ${P(s.start+span,R1)} L${P(s.start+span,R2)} A${R2},${R2} 0 ${la},${sb} ${P(s.start,R2)} Z`,fill:s.fill||'#1e2b2c'},svg);
     el('line',Object.assign((()=>{const a=e2s(s.start);return{x1:CX+Math.cos(a)*R1,y1:CY+Math.sin(a)*R1,x2:CX+Math.cos(a)*R2,y2:CY+Math.sin(a)*R2};})(),{stroke:'rgba(227,190,132,.45)','stroke-width':1.2}),svg);}
   /* house band */
   const H=!D.timeUnknown&&Array.isArray(D.houses)&&D.houses.length>=12?D.houses:null;
   if(H)for(let i=0;i<12;i++){const h1=H[i],h2=H[(i+1)%12],span=N360(h2-h1),la=span>180?1:0;
-    el('path',{d:`M${P(h1,R2)} A${R2},${R2} 0 ${la},0 ${P(h2,R2)} L${P(h2,R3)} A${R3},${R3} 0 ${la},1 ${P(h1,R3)} Z`,fill:i%2?'rgba(12,18,34,1)':'rgba(16,23,42,1)'},svg);}
+    el('path',{d:`M${P(h1,R2)} A${R2},${R2} 0 ${la},${sw} ${P(h2,R2)} L${P(h2,R3)} A${R3},${R3} 0 ${la},${sb} ${P(h1,R3)} Z`,fill:i%2?'rgba(12,18,34,1)':'rgba(16,23,42,1)'},svg);}
   el('circle',{cx:CX,cy:CY,r:R4,fill:'rgba(8,12,24,1)'},svg);
   /* degree ticks: 1° · 5° · 10° · sign start, counted from each sign's own start */
   for(const s of signs){const span=Math.round(N360(s.end-s.start)||360);
