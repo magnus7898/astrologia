@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ასტროლოგია — გაკვეთილი 44 · მუნდანური ასტროლოგია</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.tl{position:relative;margin:14px 0 4px;padding-left:22px;border-left:2px solid rgba(227,190,132,.35)}
+.tl .ev{position:relative;margin:0 0 14px}
+.tl .ev::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:#0e1424;border:2px solid #E3BE84}
+.tl .when{font-family:'Cinzel',serif;font-size:12px;color:#E3BE84;letter-spacing:.06em}
+.tl .what{font-size:14px;line-height:1.8;color:#e2e5ec;margin-top:2px}
+.tl .what b{color:#F3DDA4}
+.era{margin-top:16px;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:16px;color:#C9A24C}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+.pick input,.pick select{background:rgba(12,18,34,.85);color:#F3E6C8;border:1px solid rgba(201,162,76,.45);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;color-scheme:dark}
+</style>
+<script>try{var d=document.documentElement;d.classList.add("mg-pre");var s=document.createElement("style");s.id="mg-boot";s.textContent="html.mg-pre body{opacity:0!important}html.mg-pre *{transition:none!important;animation-play-state:paused!important}html body{transition:opacity .18s ease}html{background:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .86 0 0 0 0 .78 0 0 0 0 .6 0 0 0 .075 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\"),url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><g fill='%23E3BE84'><circle cx='23' cy='41' r='.9' opacity='.55'/><circle cx='131' cy='17' r='.6' opacity='.4'/><circle cx='287' cy='66' r='1.1' opacity='.5'/><circle cx='371' cy='133' r='.7' opacity='.45'/><circle cx='59' cy='207' r='.8' opacity='.35'/><circle cx='199' cy='171' r='.5' opacity='.5'/><circle cx='333' cy='251' r='.9' opacity='.4'/><circle cx='97' cy='313' r='.6' opacity='.5'/><circle cx='241' cy='349' r='1' opacity='.35'/><circle cx='397' cy='389' r='.6' opacity='.45'/><circle cx='163' cy='403' r='.7' opacity='.3'/><circle cx='11' cy='377' r='.5' opacity='.4'/></g><g fill='%23ffffff'><circle cx='211' cy='97' r='.5' opacity='.35'/><circle cx='77' cy='121' r='.4' opacity='.3'/><circle cx='309' cy='191' r='.5' opacity='.3'/><circle cx='143' cy='271' r='.4' opacity='.35'/><circle cx='381' cy='311' r='.5' opacity='.25'/></g></svg>\"),radial-gradient(ellipse 70% 55% at 12% 8%,rgba(112,84,196,.22),transparent 60%),radial-gradient(ellipse 60% 50% at 88% 92%,rgba(28,124,132,.17),transparent 60%),radial-gradient(ellipse 50% 40% at 50% 45%,rgba(201,162,76,.07),transparent 70%),linear-gradient(160deg,#0b1024 0%,#0e0b22 45%,#081619 100%)!important;background-color:#0b1024!important;background-attachment:fixed!important;background-size:240px 240px,420px 420px,100% 100%,100% 100%,100% 100%,100% 100%!important}";document.head.appendChild(s);setTimeout(function(){d.classList.remove("mg-pre")},2500);var c=localStorage.getItem("mg_tex:"+location.pathname);if(c){var t=document.createElement("style");t.id="mg-tex-boot";t.textContent=c;document.head.appendChild(t);}}catch(e){}</script>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ასტროლოგიის კურსი · მოდული 9 · სპეციალური მეთოდები</div>
+  <h1>გაკვეთილი 44 — მუნდანური ასტროლოგია</h1>
+  <div class="sub">ქვეყნების, ხალხებისა და ეპოქების ასტროლოგია: სახლები სახელმწიფოსთვის, ეროვნული რუკები, ინგრესიები, დაბნელებები, დიდი შეერთებები და გარე პლანეტების ციკლები</div>
+
+  <div class="intro"><b>მუნდანური ასტროლოგია</b> (ლათ. <i>mundus</i> — „სამყარო“) ყველაზე ძველი დარგია: სანამ ვინმე პირად ჰოროსკოპს შეადგენდა, ბაბილონელი მღვდლები ცას მეფისა და ქვეყნის ბედისთვის კითხულობდნენ. აქ „კლიენტი“ ადამიანი კი არა, <b>ქალაქი, ქვეყანა, ხალხი, ორგანიზაცია ან მთელი ეპოქაა</b>. ამ გაკვეთილში ვნახავთ, რით განსხვავდება მუნდანური რუკის წაკითხვა ნატალურისგან, რომელ რუკებს იყენებს მუნდანური ასტროლოგი და როგორ ითვლება დიდი ისტორიული ციკლები.</div>
+
+  <div class="sec"><h2>1 · მოკლე ისტორია</h2>
+    <div class="tl">
+     <div class="ev"><div class="when">ძვ. წ. II ათასწლეული</div><div class="what">ბაბილონური კრებული <b>„ენუმა ანუ ენლილი“</b> მთლიანად მუნდანურია: დაბნელებები, მთვარის ჰალო, პლანეტების გამოჩენა — ყველაფერი მეფის, მოსავლის, ომისა და ეპიდემიის ნიშანია. დაბნელება ხშირად მეფისთვის საფრთხედ ითვლებოდა და მის ადგილას დროებით „შემცვლელ მეფესაც“ კი სვამდნენ.</div></div>
+     <div class="ev"><div class="when">≈ 150 წ.</div><div class="what"><b>პტოლემაიოსი</b> „ტეტრაბიბლოსის“ მეორე წიგნს მთლიანად ქვეყნებსა და ხალხებს უძღვნის: რომელი ნიშანი რომელ რეგიონს მართავს, როგორ წავიკითხოთ დაბნელება — სად ჩანს, რამდენ ხანს გრძელდება და რომელ ნიშანში ხდება.</div></div>
+     <div class="ev"><div class="when">IX ს.</div><div class="what"><b>აბუ მაშარი</b> (ალბუმასარი) ბაღდადში წერს წიგნს <b>დიდ შეერთებებზე</b> — იუპიტერისა და სატურნის 20-წლიან ციკლზე, როგორც რელიგიების, დინასტიებისა და ეპოქების საათზე. ეს სისტემა შუა საუკუნეების ევროპაში საუკუნეების განმავლობაში ძირითადი იყო.</div></div>
+     <div class="ev"><div class="when">1603 – 1606</div><div class="what"><b>იოჰანეს კეპლერი</b> აკვირდება იუპიტერისა და სატურნის შეერთებას ცეცხლოვან ნიშანში და 1604 წლის ახალ ვარსკვლავს; ის ვარაუდობს, რომ ბეთლემის ვარსკვლავიც მსგავს შეერთებას შეიძლება უკავშირდებოდეს.</div></div>
+     <div class="ev"><div class="when">XX ს.</div><div class="what">ჩნდება <b>ეროვნული რუკების</b> კრებულები (განსაკუთრებით ნიკოლას კემპიონის „მსოფლიოს ჰოროსკოპების წიგნი“, 1988) და სახელმძღვანელოები, რომლებიც ტრადიციულ მეთოდებს გარე პლანეტების ციკლებს უერთებენ.</div></div>
+    </div>
+  </div>
+
+  <div class="sec"><h2>2 · სახლები სახელმწიფოსთვის</h2>
+    <p>მუნდანურ რუკაში 12 სახლი ქვეყნის ცხოვრების 12 სფეროა. ლოგიკა იგივეა, რაც ნატალურში — პირველი სახლი „თავად“ არის, მეშვიდე „სხვა“, მეათე „ხელისუფლება“ — მაგრამ ყველაფერი კოლექტიურ მასშტაბზეა გადატანილი.</p>
+    <div class="tw"><table class="zt">
+     <tr><th>სახლი</th><th>ქვეყანაში</th></tr>
+     <tr><td class="gl">1</td><td><b>ქვეყანა და ხალხი მთლიანად</b> — ეროვნული ხასიათი, სახელმწიფოს იმიჯი, საზოგადოების განწყობა</td></tr>
+     <tr><td class="gl">2</td><td><b>ეკონომიკა</b> — ეროვნული სიმდიდრე, ბიუჯეტი, ვალუტა, ბანკები, ბირჟა</td></tr>
+     <tr><td class="gl">3</td><td><b>კომუნიკაცია</b> — ტრანსპორტი, გზები, ფოსტა, მედია, განათლების საწყისი საფეხურები, მეზობელი ქვეყნები</td></tr>
+     <tr><td class="gl">4</td><td><b>მიწა და ფესვები</b> — ტერიტორია, სოფლის მეურნეობა, უძრავი ქონება, ტრადიციები, ოპოზიცია (როგორც მე-10-ის საპირისპირო)</td></tr>
+     <tr><td class="gl">5</td><td><b>სიამოვნება და შობადობა</b> — ბავშვები, შობადობა, თეატრი, სპორტი, გართობა, სპეკულაცია</td></tr>
+     <tr><td class="gl">6</td><td><b>მუშაობა და ჯანმრთელობა</b> — მშრომელები, საჯარო სამსახური, ჯანდაცვა, ეპიდემიები, შეიარაღებული ძალები (როგორც მსახურები)</td></tr>
+     <tr><td class="gl">7</td><td><b>სხვები</b> — საგარეო ურთიერთობები, ხელშეკრულებები, ალიანსები და ღია მტრები, ომი</td></tr>
+     <tr><td class="gl">8</td><td><b>გაზიარებული რესურსი</b> — სახელმწიფო ვალი, უცხოური ინვესტიცია, გადასახადები, სიკვდილიანობა</td></tr>
+     <tr><td class="gl">9</td><td><b>შორეული ჰორიზონტი</b> — რელიგია, სასამართლო, უნივერსიტეტები, საზღვარგარეთი, საერთაშორისო ვაჭრობა</td></tr>
+     <tr><td class="gl">10</td><td><b>ხელისუფლება</b> — მთავრობა, სახელმწიფოს მეთაური, ქვეყნის ავტორიტეტი მსოფლიოში</td></tr>
+     <tr><td class="gl">11</td><td><b>კანონმდებლობა</b> — პარლამენტი, ადგილობრივი თვითმმართველობა, მეგობარი ქვეყნები, საზოგადოებრივი მოძრაობები</td></tr>
+     <tr><td class="gl">12</td><td><b>ფარული სფერო</b> — საიდუმლო სამსახურები, ციხეები, საავადმყოფოები, ფარული მტრები, ქველმოქმედება</td></tr>
+    </table></div>
+    <div class="calc">მთავარი წესი: მუნდანურ რუკაში <b>არ არსებობს „ჩემი“</b> — მეორე სახლი ქვეყნის ფულია, მეშვიდე — სხვა ქვეყანა, მეათე — ვინც მართავს და არა კარიერა.</div>
+  </div>
+
+  <div class="sec"><h2>3 · პლანეტები მსოფლიოს სცენაზე</h2>
+    <div class="tw"><table class="zt">
+     <tr><th></th><th>პლანეტა</th><th>მუნდანური მნიშვნელობა</th></tr>
+     <tr><td class="gl" style="color:#f9c646">☉︎</td><td>მზე</td><td>სახელმწიფოს მეთაური, მმართველი, ეროვნული სიამაყე და პრესტიჟი</td></tr>
+     <tr><td class="gl" style="color:#c8d8f0">☽︎</td><td>მთვარე</td><td>ხალხი, მასები, საზოგადოებრივი აზრი, ქალები, ოჯახი, ყოველდღიური საჭიროებები, საკვები</td></tr>
+     <tr><td class="gl" style="color:#50d890">☿︎</td><td>მერკური</td><td>ვაჭრობა, მედია, ტრანსპორტი, ხელშეკრულებები, განათლება, ახალგაზრდობა</td></tr>
+     <tr><td class="gl" style="color:#e878a8">♀︎</td><td>ვენერა</td><td>მშვიდობა, დიპლომატია, ხელოვნება, მოდა, ფუფუნება, ქალების მდგომარეობა</td></tr>
+     <tr><td class="gl" style="color:#e84040">♂︎</td><td>მარსი</td><td>არმია, ომი, კონფლიქტი, ხანძარი, მრეწველობა, ქირურგია</td></tr>
+     <tr><td class="gl" style="color:#e89040">♃︎</td><td>იუპიტერი</td><td>ზრდა და კეთილდღეობა, კანონი, რელიგია, ფინანსური ბუმი, გაფართოება</td></tr>
+     <tr><td class="gl" style="color:#90a8c8">♄︎</td><td>სატურნი</td><td>ძველი წესრიგი, შეზღუდვა, კრიზისი, დეფიციტი, ბიუროკრატია, საზღვრები</td></tr>
+     <tr><td class="gl" style="color:#5ad0e0">♅︎</td><td>ურანი</td><td>რევოლუცია, ტექნოლოგია, აჯანყება, მიწისძვრა, მოულოდნელი გარდატეხა</td></tr>
+     <tr><td class="gl" style="color:#7090ff">♆︎</td><td>ნეპტუნი</td><td>იდეალები და ილუზიები, რელიგიური მოძრაობები, პროპაგანდა, ნავთობი და გაზი, ეპიდემიები, წყალდიდობა</td></tr>
+     <tr><td class="gl" style="color:#c050a0">⯓︎</td><td>პლუტონი</td><td>მასობრივი ძალაუფლება, ბირთვული ენერგია, ორგანიზებული დანაშაული, ფარული კაპიტალი, ღრმა ტრანსფორმაცია</td></tr>
+    </table></div>
+    <p>შიდა პლანეტები მუნდანურ რუკაში ძირითადად <b>მოკლე დროს</b> აღნიშნავენ (თვე, სეზონი). ისტორიულ პროცესებს გარე პლანეტების ნელი ციკლები ქმნიან — ისინი ათწლეულებისა და საუკუნეების რიტმია.</p>
+  </div>
+
+  <div class="sec"><h2>4 · რომელ რუკებს კითხულობს მუნდანური ასტროლოგი</h2>
+    <p><b>1. ეროვნული (დამფუძნებელი) რუკა.</b> რუკა იმ მომენტისთვის, როცა სახელმწიფო, ქალაქი ან ორგანიზაცია „დაიბადა“ — დამოუკიდებლობის გამოცხადება, კონსტიტუციის ძალაში შესვლა, ხელშეკრულების ხელმოწერა. პრობლემა ისაა, რომ ერთ ქვეყანას ხშირად რამდენიმე „დაბადება“ აქვს. საქართველოსთვის ორი მთავარი თარიღია: <b>1918 წლის 26 მაისი</b> (დემოკრატიული რესპუბლიკის დამოუკიდებლობის აქტი) და <b>1991 წლის 9 აპრილი</b> (დამოუკიდებლობის აღდგენის აქტი). ზუსტი წუთი ხშირად სადავოა, ამიტომ ასტროლოგი რამდენიმე ვერსიას ამოწმებს და იმას ირჩევს, რომელიც ისტორიულ მოვლენებზე უკეთ „რეაგირებს“. ამ რუკას ისევე კითხულობენ, როგორც ადამიანისას: ტრანზიტებით, პროგრესიებით, დირექციებით.</p>
+    <p><b>2. ინგრესიის რუკა.</b> რუკა იმ წამისთვის, როცა მზე 0° ვერძში შედის (გაზაფხულის ბუნიობა), აგებული ქვეყნის <b>დედაქალაქისთვის</b>. ის მთელ წელს ახასიათებს. ტრადიციულად თუ ვერძის ინგრესიისას ASC ფიქსირებულ ნიშანშია, რუკა მთელ წელს მოქმედებს; თუ კარდინალურშია, მხოლოდ სამ თვეს და შემდეგ კირჩხიბის, სასწორისა და თხის რქის ინგრესიებსაც უყურებენ; ორმაგ (მუტაბელურ) ნიშანზე — ნახევარ წელს. აქ განსაკუთრებით მნიშვნელოვანია, რომელი პლანეტა ზის კუთხეებზე (1, 4, 7, 10 სახლი) — ის წლის „ხმაა“.</p>
+    <p><b>3. ლუნაციები და დაბნელებები.</b> ახალმთვარისა და სავსემთვარის რუკები თვის ფონს აჩვენებს. დაბნელებები უფრო ძლიერია: პტოლემაიოსის წესით, მზის დაბნელება <b>იმდენ წელს</b> მოქმედებს, რამდენ საათსაც გრძელდება, მთვარისა კი — იმდენ თვეს. ყველაზე ძლიერად ის ტერიტორიები განიცდიან, სადაც დაბნელება <b>ჩანს</b>, და ის ქვეყნები, რომელთა ეროვნული რუკის კუთხეებს ან მნათობებს დაბნელების გრადუსი ეხება.</p>
+    <p><b>4. დიდი ციკლები.</b> ორი ნელი პლანეტის შეერთება ახალი ციკლის „დასაწყისია“, ოპოზიცია — მწვერვალი, კვადრატები — კრიზისები. შეერთების რუკა დედაქალაქისთვის მთელ ციკლს ახასიათებს. ამ ციკლებს ქვემოთ ცალკე ვნახავთ.</p>
+    <p><b>5. ასტროკარტოგრაფია.</b> პლანეტის ხაზები მსოფლიო რუკაზე (იხ. <a href="course_astro34.html">გაკვეთილი 34</a>) აჩვენებს, რომელ რეგიონებზე „ეცემა“ დაბნელება ან შეერთება კუთხოვან მდგომარეობაში.</p>
+  </div>
+
+  <div class="sec"><h2>5 · დიდი შეერთებები — იუპიტერი და სატურნი</h2>
+   <div class="duo"><div>
+    <p>იუპიტერი და სატურნი დაახლოებით ყოველ <b>19,86 წელიწადში</b> ერთხელ ერთდებიან. ყოველი შემდეგი შეერთება წინაზე დაახლოებით <b>243°-ით</b> (ანუ 117°-ით უკან) ხდება — ამიტომ შეერთებები სამკუთხედს ხაზავენ და დაახლოებით 200 წლის განმავლობაში ერთი ელემენტის ნიშნებში რჩებიან. ამას <b>ტრიგონს</b> ეძახიან.</p>
+    <p>როცა სამკუთხედი ნელა ტრიალებს და შეერთებები ახალ ელემენტში გადადიან, ეს <b>მუტაციაა</b> — ტრადიციის მიხედვით ეპოქის ცვლა. 1842 წლიდან შეერთებები ძირითადად <b>მიწის</b> ნიშნებში ხდებოდა (ინდუსტრია, მატერიალური სიმდიდრე); 1980–81 წლების შეერთება სასწორში ჰაერის „წინასწარი შეხება“ იყო, ხოლო <b>2020 წლის 21 დეკემბერს</b>, 0°29′ მერწყულში, დაიწყო <b>ჰაერის</b> ეპოქა — ინფორმაცია, ქსელები, იდეები. ის დაახლოებით 200 წელს გაგრძელდება.</p>
+    <p>მოძრაობისთვის გამოიყენე სლაიდერი: წრეზე ჩანს შეერთებების წერტილები, ფერი კი ელემენტს აჩვენებს. გამოთვლა ჰელიოცენტრულია და გამარტივებული, ამიტომ ცალკეული თარიღი და გრადუსი რამდენიმე თვითა და გრადუსით შეიძლება განსხვავდებოდეს ზუსტი გეოცენტრული შეერთებისგან.</p>
+   </div><div class="stage">
+    <canvas id="cvG" aria-label="იუპიტერისა და სატურნის დიდი შეერთებები ზოდიაქოზე"></canvas>
+    <div class="ctl"><input type="range" id="gSl" min="1800" max="2220" step="1" value="2020" aria-label="წელი"></div>
+    <div class="ro" id="gRo"></div>
+   </div></div>
+  </div>
+
+  <div class="sec"><h2>6 · გარე პლანეტების ციკლები</h2>
+    <p>რაც უფრო ნელია პლანეტები, მით უფრო გრძელია მათი ციკლი და მით უფრო ფართოა მისი გავლენა. მუნდანური ასტროლოგია ყველაზე მეტად შემდეგ წყვილებს აკვირდება:</p>
+    <div class="tw"><table class="zt">
+     <tr><th>ციკლი</th><th>ხანგრძლივობა</th><th>თემა და მაგალითები</th></tr>
+     <tr><td><b>სატურნი – პლუტონი</b></td><td>≈ 33–38 წ.</td><td>ძალაუფლების მკაცრი გადანაწილება, კრიზისი და შეზღუდვა. შეერთებები: 1914 (პირველი მსოფლიო ომი), 1947 (ცივი ომის დასაწყისი), 1982, 2020 იანვარი (22° თხის რქა — პანდემიის წელი).</td></tr>
+     <tr><td><b>სატურნი – ნეპტუნი</b></td><td>≈ 36 წ.</td><td>იდეოლოგიები და მათი დაშლა, ოცნების „რეალობასთან შეჯახება“. 1989 წლის შეერთება თხის რქაში ბერლინის კედლისა და საბჭოთა ბლოკის დაშლას დაემთხვა; შემდეგი შეერთება 2026 წლის თებერვალში, ვერძის 0°-თან მოხდა — ახალი იდეოლოგიური ციკლის სტარტი.</td></tr>
+     <tr><td><b>ურანი – პლუტონი</b></td><td>≈ 110–140 წ.</td><td>რევოლუციური ტალღები. შეერთება 1965–66 (სამოქალაქო უფლებები, სტუდენტური მოძრაობები), კვადრატების სერია 2012–2015.</td></tr>
+     <tr><td><b>ნეპტუნი – პლუტონი</b></td><td>≈ 492 წ.</td><td>ცივილიზაციის მასშტაბის ციკლი. ბოლო შეერთება 1891–92 წლებში — თანამედროვე ეპოქის დასაწყისი.</td></tr>
+     <tr><td><b>იუპიტერი – სატურნი</b></td><td>≈ 20 წ.</td><td>სოციალური და ეკონომიკური წესრიგის ციკლი, მმართველობის ცვლა (იხ. ზემოთ).</td></tr>
+    </table></div>
+    <div class="calc">ციკლის ფაზები ისევე იკითხება, როგორც მთვარის ფაზები: <b>შეერთება</b> — თესლი, <b>პირველი კვადრატი</b> — ბრძოლა ფორმისთვის, <b>ოპოზიცია</b> — კულმინაცია და ხილვადობა, <b>ბოლო კვადრატი</b> — დაშლა და ახლის მომზადება.</div>
+  </div>
+
+  <div class="sec"><h2>7 · ქვეყნის წლის ანალიზი — ნაბიჯ-ნაბიჯ</h2>
+    <ul>
+     <li><b>აირჩიე ეროვნული რუკა</b> და შეამოწმე, როგორ „რეაგირებს“ ის ცნობილ მოვლენებზე (ომები, რევოლუციები, კრიზისები).</li>
+     <li><b>ააგე ვერძის ინგრესია დედაქალაქისთვის.</b> ნახე ASC და მისი მმართველი (ხალხის მდგომარეობა), მე-10 სახლი (მთავრობა), კუთხეებზე მდგომი პლანეტები.</li>
+     <li><b>ნახე წლის დაბნელებები:</b> სად ჩანს, რამდენ ხანს გრძელდება და ეხება თუ არა ეროვნული რუკის მზეს, მთვარეს, ASC-ს ან MC-ს.</li>
+     <li><b>გაიარე გარე პლანეტების ტრანზიტები</b> ეროვნულ რუკაზე, განსაკუთრებით კუთხეებზე და მნათობებზე.</li>
+     <li><b>ჩასვი ფართო კონტექსტში:</b> რომელ ფაზაშია იუპიტერ–სატურნის, სატურნ–პლუტონისა და სხვა ციკლები.</li>
+     <li><b>შეადარე მეზობლებს:</b> მე-7 სახლი და ორი ქვეყნის რუკის სინასტრია აჩვენებს ურთიერთობის ხასიათს.</li>
+    </ul>
+  </div>
+
+  <div class="sec"><h2>8 · პასუხისმგებლობა</h2>
+    <p>მუნდანური ასტროლოგია <b>ტენდენციებსა და ციკლებს</b> აჩვენებს და არა გარდაუვალ მოვლენებს. ისტორიაში ცნობილია ბევრი „ზუსტი“ წინასწარმეტყველება, რომელიც არ ახდა, და მოვლენები, რომლებიც მხოლოდ შემდეგ აიხსნა. კარგი მუნდანური ასტროლოგი შიშს არ ავრცელებს: ის აღწერს, რა ხარისხის დროა, და ტოვებს ადგილს ადამიანების არჩევანისთვის.</p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro43.html">← პროზერპინა</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro45.html">ჰორარული ასტროლოგია →</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),D=Math.PI/180;
+const SG=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'],SN=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const EC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'],EN=['ცეცხლი','მიწა','ჰაერი','წყალი'];
+const SYM='"Noto Sans Symbols 2","Segoe UI Symbol","Apple Symbols","DejaVu Sans",sans-serif';
+/* heliocentric Jupiter–Saturn conjunctions from mean orbital elements (equation of centre) — within a few degrees / months of the real ones */
+const nn=x=>((x%360)+360)%360;
+function hl(t,L0,L1,w0,w1,e){const L=L0+L1*t,w=w0+w1*t,M=(L-w)*D;return nn(w+(M+2*e*Math.sin(M)+1.25*e*e*Math.sin(2*M))/D);}
+const JL=t=>hl(t,34.40438,3034.74612775,14.72847,0.21252668,0.04838624),SL=t=>hl(t,49.94432,1222.49362201,92.59887,-0.41897216,0.05386179);
+const GC=[];{let pd=null;for(let y=1600;y<2300;y+=0.01){const t=(y-2000)/100,d=nn(JL(t)-SL(t)+180)-180;if(pd!==null&&pd<0&&d>=0)GC.push({y,L:JL(t)});pd=d;}}
+const cv=$('cvG'),cx=cv.getContext('2d');
+function size(){const w=Math.min(420,cv.parentElement.clientWidth||420),r=devicePixelRatio||1;cv.width=w*r;cv.height=w*r;cv.style.width=w+'px';cv.style.height=w+'px';cx.setTransform(r,0,0,r,0,0);draw();}
+function draw(){const w=cv.clientWidth,c=w/2,R=w*.44,Ri=R*.8,yr=+$('gSl').value;cx.clearRect(0,0,w,w);
+  const xy=(L,r)=>[c+Math.cos(Math.PI-L*D)*r,c+Math.sin(Math.PI-L*D)*r];   /* 0° Aries on the left, counter-clockwise */
+  for(let i=0;i<12;i++){cx.beginPath();cx.arc(c,c,R,Math.PI-(i+1)*30*D,Math.PI-i*30*D);cx.arc(c,c,Ri,Math.PI-i*30*D,Math.PI-(i+1)*30*D,true);cx.closePath();
+    cx.fillStyle=EC[i%4]+'22';cx.fill();cx.strokeStyle='rgba(227,190,132,.35)';cx.stroke();
+    const [x,y]=xy(i*30+15,(R+Ri)/2);cx.fillStyle=EC[i%4];cx.font=`${w*.045}px ${SYM}`;cx.textAlign='center';cx.textBaseline='middle';cx.fillText(SG[i]+'︎',x,y);}
+  let iNow=-1;GC.forEach((q,i)=>{if(q.y<=yr+0.999)iNow=i;});let last=GC[iNow];
+  for(let k=-9;k<=0;k++){const q=GC[iNow+k];if(!q)continue;const [x,y]=xy(q.L,Ri-10),el=Math.floor(q.L/30)%4,a=(k+10)/10,pq=GC[iNow+k-1];
+    if(pq&&k>-9){const [x2,y2]=xy(pq.L,Ri-10);cx.beginPath();cx.moveTo(x2,y2);cx.lineTo(x,y);cx.strokeStyle=`rgba(227,190,132,${.12+.35*a})`;cx.lineWidth=1.2;cx.stroke();}
+    cx.beginPath();cx.arc(x,y,k===0?7:3.5,0,2*Math.PI);cx.fillStyle=EC[el];cx.globalAlpha=.25+.75*a;cx.fill();cx.globalAlpha=1;}
+  cx.fillStyle='#F3DDA4';cx.font=`600 ${w*.05}px Cinzel,serif`;cx.textAlign='center';cx.fillText(Math.floor(last.y),c,c-8);
+  const el=Math.floor(last.L/30)%4,s=Math.floor(last.L/30),d=Math.floor(last.L%30);
+  cx.fillStyle=EC[el];cx.font=`${w*.036}px "Noto Serif Georgian",serif`;cx.fillText(EN[el],c,c+16);
+  $('gRo').innerHTML=`ბოლო შეერთება ${yr} წლამდე: <b>≈ ${Math.floor(last.y)}</b>, ${d}° ${SN[s]} — <b style="color:${EC[el]}">${EN[el]}</b>. შემდეგი: ≈ ${Math.floor(GC[iNow+1].y)}, ${SN[Math.floor(GC[iNow+1].L/30)]}.`;}
+$('gSl').addEventListener('input',draw);addEventListener('resize',size);size();
+
+const Q=[['რას ეხება მუნდანური ასტროლოგია?',['მხოლოდ ამინდს','ქვეყნებს, ხალხებს, ორგანიზაციებსა და ეპოქებს','მხოლოდ პირად ურთიერთობებს','დაკარგული ნივთების პოვნას'],1,'მუნდანური ასტროლოგია კოლექტიურ ერთეულებს კითხულობს: სახელმწიფოს, ქალაქს, ხალხს, ორგანიზაციას, მთელ ეპოქას.'],
+ ['ქვეყნის რუკის რომელი სახლია მთავრობა და სახელმწიფოს მეთაური?',['1','4','7','10'],3,'მე-10 სახლი ხელისუფლებაა. მე-4 მისი საპირისპიროა — მიწა, ხალხის ფესვები, ხშირად ოპოზიცია.'],
+ ['რომელ წერტილს ეფუძნება წლიური ინგრესიის რუკა?',['მზის შესვლას 0° ვერძში','ახალ წელს, 1 იანვარს','სრულ მთვარეს','ქვეყნის დამოუკიდებლობის დღეს'],0,'ვერძის ინგრესია — მზის შესვლა 0° ვერძში — დედაქალაქისთვის აგებული წლის რუკაა.'],
+ ['პტოლემაიოსის წესით, რამდენ ხანს მოქმედებს მზის დაბნელება?',['იმდენ დღეს, რამდენ წუთსაც გრძელდება','იმდენ წელს, რამდენ საათსაც გრძელდება','ზუსტად ერთ წელს','მხოლოდ დაბნელების დღეს'],1,'მზის დაბნელება იმდენ წელს მოქმედებს, რამდენ საათსაც გრძელდება; მთვარისა — იმდენ თვეს.'],
+ ['რამდენ წელიწადში ერთხელ ხდება იუპიტერისა და სატურნის შეერთება?',['≈ 12','≈ 20','≈ 29','≈ 84'],1,'≈ 19,86 წელიწადში. დაახლოებით 200 წელიწადში შეერთებები ერთი ელემენტის ნიშნებში რჩება.'],
+ ['რომელ ელემენტში დაიწყო ახალი ეპოქა 2020 წლის დიდი შეერთებით?',['ცეცხლი','მიწა','ჰაერი','წყალი'],2,'2020 წლის 21 დეკემბერს შეერთება 0°29′ მერწყულში მოხდა — ჰაერის ტრიგონის ეპოქა.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js?v=20261121f"></script>
+<script src="account.js"></script>
+</body>
+</html>

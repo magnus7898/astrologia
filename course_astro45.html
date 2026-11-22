@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ასტროლოგია — გაკვეთილი 45 · ჰორარული ასტროლოგია</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.tl{position:relative;margin:14px 0 4px;padding-left:22px;border-left:2px solid rgba(227,190,132,.35)}
+.tl .ev{position:relative;margin:0 0 14px}
+.tl .ev::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:#0e1424;border:2px solid #E3BE84}
+.tl .when{font-family:'Cinzel',serif;font-size:12px;color:#E3BE84;letter-spacing:.06em}
+.tl .what{font-size:14px;line-height:1.8;color:#e2e5ec;margin-top:2px}
+.tl .what b{color:#F3DDA4}
+.era{margin-top:16px;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:16px;color:#C9A24C}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+.pick input,.pick select{background:rgba(12,18,34,.85);color:#F3E6C8;border:1px solid rgba(201,162,76,.45);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;color-scheme:dark}
+</style>
+<script>try{var d=document.documentElement;d.classList.add("mg-pre");var s=document.createElement("style");s.id="mg-boot";s.textContent="html.mg-pre body{opacity:0!important}html.mg-pre *{transition:none!important;animation-play-state:paused!important}html body{transition:opacity .18s ease}html{background:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .86 0 0 0 0 .78 0 0 0 0 .6 0 0 0 .075 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\"),url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><g fill='%23E3BE84'><circle cx='23' cy='41' r='.9' opacity='.55'/><circle cx='131' cy='17' r='.6' opacity='.4'/><circle cx='287' cy='66' r='1.1' opacity='.5'/><circle cx='371' cy='133' r='.7' opacity='.45'/><circle cx='59' cy='207' r='.8' opacity='.35'/><circle cx='199' cy='171' r='.5' opacity='.5'/><circle cx='333' cy='251' r='.9' opacity='.4'/><circle cx='97' cy='313' r='.6' opacity='.5'/><circle cx='241' cy='349' r='1' opacity='.35'/><circle cx='397' cy='389' r='.6' opacity='.45'/><circle cx='163' cy='403' r='.7' opacity='.3'/><circle cx='11' cy='377' r='.5' opacity='.4'/></g><g fill='%23ffffff'><circle cx='211' cy='97' r='.5' opacity='.35'/><circle cx='77' cy='121' r='.4' opacity='.3'/><circle cx='309' cy='191' r='.5' opacity='.3'/><circle cx='143' cy='271' r='.4' opacity='.35'/><circle cx='381' cy='311' r='.5' opacity='.25'/></g></svg>\"),radial-gradient(ellipse 70% 55% at 12% 8%,rgba(112,84,196,.22),transparent 60%),radial-gradient(ellipse 60% 50% at 88% 92%,rgba(28,124,132,.17),transparent 60%),radial-gradient(ellipse 50% 40% at 50% 45%,rgba(201,162,76,.07),transparent 70%),linear-gradient(160deg,#0b1024 0%,#0e0b22 45%,#081619 100%)!important;background-color:#0b1024!important;background-attachment:fixed!important;background-size:240px 240px,420px 420px,100% 100%,100% 100%,100% 100%,100% 100%!important}";document.head.appendChild(s);setTimeout(function(){d.classList.remove("mg-pre")},2500);var c=localStorage.getItem("mg_tex:"+location.pathname);if(c){var t=document.createElement("style");t.id="mg-tex-boot";t.textContent=c;document.head.appendChild(t);}}catch(e){}</script>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ასტროლოგიის კურსი · მოდული 9 · სპეციალური მეთოდები</div>
+  <h1>გაკვეთილი 45 — ჰორარული ასტროლოგია</h1>
+  <div class="sub">რუკა კითხვისთვის: როდის და სად იგება, შეზღუდვები, სიგნიფიკატორები და გადატრიალებული სახლები, ღირსებები, სრულყოფა და მისი დაბრკოლებები, დროის გამოთვლა</div>
+
+  <div class="intro"><b>ჰორარული ასტროლოგია</b> (ლათ. <i>hora</i> — „საათი“) პასუხობს <b>კონკრეტულ კითხვას</b> რუკით, რომელიც იმ მომენტისთვის იგება, როცა კითხვა დაისვა. აქ არ გვჭირდება დაბადების დრო: კითხვას თავისი „დაბადება“ აქვს. „მივიღებ სამსახურს?“, „სად არის დაკარგული ბეჭედი?“, „დაბრუნდება?“, „ღირს ამ ბინის ყიდვა?“ — ჰორარული რუკა ასეთ კითხვებზე „კი“, „არა“ ან „როდის“ პასუხს ეძებს. ეს მკაცრი წესების ხელოვნებაა და ტრადიციული ასტროლოგიის ენაზე ლაპარაკობს: შვიდი ხილული პლანეტა, ტრადიციული მმართველობები, ღირსებები.</div>
+
+  <div class="sec"><h2>1 · მოკლე ისტორია</h2>
+    <div class="tl">
+     <div class="ev"><div class="when">ელინისტური ეპოქა</div><div class="what"><b>კატარქული</b> ასტროლოგია — „დასაწყისის“ რუკები: როდის დავიწყოთ მოგზაურობა, ქორწილი, მშენებლობა. აქედან იზრდება იდეა, რომ ნებისმიერ მომენტს თავისი რუკა აქვს.</div></div>
+     <div class="ev"><div class="when">VIII – IX ს.</div><div class="what">არაბულ სამყაროში ჰორარული ასტროლოგია ცალკე დარგად ყალიბდება: <b>მაშა-ალაჰი</b>, <b>საჰლ იბნ ბიშრი</b> და <b>ალ-კინდი</b> („ორმოცი თავი“) აღწერენ სიგნიფიკატორებს, სრულყოფას, სინათლის გადაცემასა და შეგროვებას.</div></div>
+     <div class="ev"><div class="when">XIII ს.</div><div class="what"><b>გვიდო ბონატი</b> იტალიაში ამ ცოდნას ლათინურად ავრცელებს — მისი „146 მოსაზრება“ ჰორარული მსჯელობის კლასიკური ჩამონათვალია.</div></div>
+     <div class="ev"><div class="when">1647</div><div class="what"><b>უილიამ ლილი</b> აქვეყნებს „ქრისტიანულ ასტროლოგიას“ — ინგლისურ ენაზე დაწერილ ყველაზე ცნობილ ჰორარულ სახელმძღვანელოს, ასობით მაგალითით: დაკარგული ნივთები, ქურდები, ავადმყოფობა, ქორწინება, ომი.</div></div>
+     <div class="ev"><div class="when">XX ს. ბოლო – დღემდე</div><div class="what">ჰორარი თითქმის დავიწყებული იყო, სანამ <b>ოლივია ბარკლეიმ</b> (1980-იანები) ლილის წიგნი ხელახლა არ გამოსცა და ასწავლა. დღეს ცნობილი ავტორები არიან <b>ჯონ ფროლი</b>, <b>დებორა ჰოულდინგი</b> და სხვები.</div></div>
+    </div>
+  </div>
+
+  <div class="sec"><h2>2 · როდის და სად იგება რუკა</h2>
+    <ul>
+     <li><b>დრო</b> — ის მომენტი, როცა ასტროლოგი კითხვას <b>მიიღებს და გაიგებს</b>. თუ კითხვა წერილით მოვიდა, მისი წაკითხვის დრო. თუ საკუთარ თავს ეკითხები — როცა კითხვა საბოლოოდ ჩამოყალიბდა და დაწერე.</li>
+     <li><b>ადგილი</b> — სადაც ასტროლოგი იმყოფება კითხვის მიღებისას (და არა კითხვის დამსმელი).</li>
+     <li><b>გულწრფელობა</b> — კითხვა რეალური უნდა იყოს: ადამიანს ნამდვილად აინტერესებს პასუხი და ახლა არის აქტუალური. „ცნობისმოყვარეობით“ ან „ტესტისთვის“ დასმული კითხვის რუკა ხშირად „არარადიკალურია“.</li>
+     <li><b>ერთი კითხვა — ერთი რუკა.</b> იგივე კითხვას ხელახლა ვერ დასვამ, სანამ ვითარება არ შეიცვლება — პირველი რუკა უკვე პასუხობს.</li>
+     <li><b>კონკრეტულობა</b> — „დამიკავშირდება ერთ კვირაში?“ უკეთესია, ვიდრე „რა მელის სიყვარულში?“.</li>
+    </ul>
+    <div class="calc">ჰორარში ტრადიციულად იყენებენ <b>რეგიომონტანუსის</b> სახლებს (ლილის სისტემა); ბევრი თანამედროვე ავტორი პლაციდუსს ან მთელი ნიშნის სახლებს. მთავარია, ერთ სისტემას მიჰყვე.</div>
+  </div>
+
+  <div class="sec"><h2>3 · გაფრთხილებები განსჯამდე</h2>
+    <p>სანამ რუკას წაიკითხავს, ასტროლოგი ამოწმებს, „მზადაა“ თუ არა ის განსჯისთვის. ტრადიციული გაფრთხილებები (strictures):</p>
+    <ul>
+     <li><b>ძალიან ადრეული ASC</b> (0°–3° ნიშანში) — ჯერ ნაადრევია, ვითარება ჯერ არ ჩამოყალიბებულა, ან ადამიანმა ჯერ ყველაფერი არ თქვა.</li>
+     <li><b>ძალიან გვიანი ASC</b> (27°–30°) — უკვე გვიანია, საქმე გადაწყვეტილია ან ადამიანმა პასუხი უკვე იცის.</li>
+     <li><b>მთვარე „კურსის გარეშე“</b> (void of course) — ნიშნიდან გასვლამდე ზუსტ ასპექტს აღარ ქმნის. ლილი: „არაფერი გამოვა“; გამონაკლისად ითვლება, როცა მთვარე კუროში, კირჩხიბში, მშვილდოსანსა ან თევზებშია.</li>
+     <li><b>მთვარე „დამწვარ გზაზე“</b> (via combusta, 15° სასწორი – 15° მორიელი) — არასტაბილური, ქაოტური ვითარება.</li>
+     <li><b>სატურნი 1-ელ ან მე-7 სახლში</b> — კითხვა მძიმეა, ან ასტროლოგის განსჯა შეიძლება შეცდეს.</li>
+     <li><b>რადიკალურობა</b> — კარგი ნიშანია, როცა <b>საათის მმართველი</b> (პლანეტარული საათი) და ASC-ის მმართველი ერთი ბუნებისაა (ერთი პლანეტა ან ერთი ტრიპლიციტეტი).</li>
+    </ul>
+    <p>თანამედროვე პრაქტიკოსები ამ გაფრთხილებებს ხშირად <b>ინფორმაციად</b> კითხულობენ და არა აკრძალვად: გვიანი ASC შეიძლება უბრალოდ ნიშნავდეს „საქმე უკვე დასრულებულია“.</p>
+  </div>
+
+  <div class="sec"><h2>4 · სიგნიფიკატორები — ვინ ვინ არის რუკაში</h2>
+    <p><b>კითხვის დამსმელი</b> (querent) არის <b>1-ლი სახლი</b>: ASC-ის მმართველი პლანეტა მისი მთავარი სიგნიფიკატორია, <b>მთვარე</b> კი — თანასიგნიფიკატორი (მისი ემოციები და მოვლენების დინება). <b>საკითხი</b> (quesited) იმ სახლის მმართველია, რომელსაც კითხვა ეკუთვნის.</p>
+    <div class="tw"><table class="zt">
+     <tr><th>კითხვა</th><th>სახლი</th><th>შენიშვნა</th></tr>
+     <tr><td>დაკარგული ნივთი, ფული</td><td>2</td><td>მოძრავი ქონება; მთვარეც ხშირად ნივთის თანასიგნიფიკატორია</td></tr>
+     <tr><td>წერილი, დოკუმენტი, მოკლე მგზავრობა, და-ძმა</td><td>3</td><td></td></tr>
+     <tr><td>სახლი, ბინა, მშობელი (მამა ტრადიციით), მიწა</td><td>4</td><td>ყიდვა-გაყიდვაში მყიდველი/გამყიდველი მე-7-ია</td></tr>
+     <tr><td>შვილი, ორსულობა, სიყვარული (არა ქორწინება)</td><td>5</td><td></td></tr>
+     <tr><td>ავადმყოფობა, თანამშრომელი, პატარა შინაური ცხოველი</td><td>6</td><td>ჯანმრთელობის საკითხებში ექიმი აუცილებელია — ჰორარი მას არ ცვლის</td></tr>
+     <tr><td>პარტნიორი, მეუღლე, მოწინააღმდეგე, „ნებისმიერი სხვა ადამიანი“</td><td>7</td><td>ქურდიც მე-7 სახლია</td></tr>
+     <tr><td>სხვისი ფული, სესხი, მემკვიდრეობა</td><td>8</td><td>პარტნიორის ფული = მე-7-დან მე-2</td></tr>
+     <tr><td>გრძელი მოგზაურობა, სწავლა, სასამართლო, რელიგია</td><td>9</td><td></td></tr>
+     <tr><td>სამსახური, კარიერა, უფროსი, ხელისუფლება, დედა (ტრადიციით)</td><td>10</td><td></td></tr>
+     <tr><td>მეგობარი, იმედი, ხელფასი სამსახურიდან</td><td>11</td><td>მე-10-დან მე-2</td></tr>
+     <tr><td>ფარული მტერი, ციხე, საავადმყოფო, დიდი ცხოველი</td><td>12</td><td></td></tr>
+    </table></div>
+    <p><b>გადატრიალებული სახლები</b>: თუ კითხვა სხვა ადამიანს ეხება, მის სახლს 1-ლად ვთვლით და იქიდან ვითვლით. მაგ.: „მიიღებს თუ არა ჩემი ძმა სამსახურს?“ — ძმა მე-3 სახლია, მისი სამსახური მე-3-დან მე-10 = რუკის მე-12 სახლი.</p>
+  </div>
+
+  <div class="sec"><h2>5 · ძალა — ესენციური და აქციდენტური ღირსებები</h2>
+   <div class="duo"><div>
+    <p><b>ესენციური ღირსება</b> აჩვენებს, რამდენად „კარგ მდგომარეობაშია“ პლანეტა თავისი ნიშნისა და გრადუსის მიხედვით — რამდენად შეუძლია კარგად იმოქმედოს. ტრადიციული ქულები:</p>
+    <ul>
+     <li><b>საკუთარი სახლი</b> (domicile) +5 · <b>ამაღლება</b> +4 · <b>ტრიპლიციტეტი</b> +3 · <b>ტერმა</b> (საზღვარი) +2 · <b>სახე</b> (დეკანი) +1</li>
+     <li><b>დევნილობა</b> (detriment) −5 · <b>დაცემა</b> (fall) −4 · <b>პერეგრინი</b> — არცერთი ღირსება</li>
+    </ul>
+    <p><b>აქციდენტური ღირსება</b> აჩვენებს, რამდენად შეუძლია პლანეტას <b>მოქმედება</b> ახლა: კუთხოვან სახლში (1, 4, 7, 10) ძლიერია, კადენტურში (3, 6, 9, 12) სუსტი; პირდაპირი და სწრაფი უკეთესია, ვიდრე რეტროგრადული და ნელი. მზესთან ახლოს: <b>კაზიმი</b> (მზის გულში, ≤ 17′) — უძლიერესი; <b>დამწვარი</b> (≤ 8°30′) — ძალიან სუსტი; <b>სხივების ქვეშ</b> (≤ 17°) — დასუსტებული.</p>
+    <p>სცადე კალკულატორი: აირჩიე პლანეტა, ნიშანი და გრადუსი.</p>
+   </div><div class="stage" style="padding:14px">
+    <div class="pick" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+     <select id="dP" aria-label="პლანეტა"></select>
+     <select id="dS" aria-label="ნიშანი"></select>
+     <input id="dD" type="number" min="0" max="29.99" step="0.5" value="12" style="width:80px" aria-label="გრადუსი ნიშანში">
+     <label style="display:flex;gap:6px;align-items:center;font-size:13px"><input type="checkbox" id="dN"> ღამის რუკა</label>
+    </div>
+    <div class="ro" id="dRo" style="margin-top:12px;line-height:1.9"></div>
+   </div></div>
+  </div>
+
+  <div class="sec"><h2>6 · სრულყოფა — როგორ „ხდება“ მოვლენა</h2>
+    <p>კითხვაზე პასუხი „კი“ ძირითადად მაშინ არის, როცა კითხვის დამსმელისა და საკითხის სიგნიფიკატორები <b>ერთმანეთს ხვდებიან</b> — ასპექტი სრულდება, სანამ რომელიმე ნიშანს შეიცვლის. ეს <b>სრულყოფაა</b> (perfection). გზები:</p>
+    <ul>
+     <li><b>პირდაპირი მიახლოება</b> — უფრო სწრაფი პლანეტა უახლოვდება ნელს და ზუსტ შეერთებას ან ასპექტს ქმნის. შეერთება, ტრიგონი და სექსტილი ადვილად სრულდება; კვადრატი — სიძნელით; ოპოზიცია — სინანულით ან ბრძოლით.</li>
+     <li><b>სინათლის გადაცემა</b> (translation) — მესამე, სწრაფი პლანეტა (ხშირად მთვარე) შორდება ერთ სიგნიფიკატორს და უახლოვდება მეორეს — „შუამავალი“ აკავშირებს მათ.</li>
+     <li><b>სინათლის შეგროვება</b> (collection) — ორივე სიგნიფიკატორი ერთ, უფრო ნელ პლანეტას უახლოვდება, ის კი ორივეს „აგროვებს“ — მესამე პირი ან ინსტიტუცია ასრულებს საქმეს.</li>
+     <li><b>ურთიერთრეცეფცია</b> — ორი პლანეტა ერთმანეთის ნიშანშია (მაგ. მარსი თევზებში, იუპიტერი ვერძში). ეს აჩვენებს სურვილსა და მზადყოფნას და ზოგჯერ ასპექტის გარეშეც აკავშირებს მათ.</li>
+    </ul>
+    <p><b>დაბრკოლებები:</b></p>
+    <ul>
+     <li><b>აკრძალვა</b> (prohibition) — სანამ ასპექტი სრულდება, მესამე პლანეტა ერთ-ერთს ხვდება და „ართმევს“ მას.</li>
+     <li><b>რეფრანაცია</b> — სიგნიფიკატორი რეტროგრადული ხდება და ასპექტის შესრულებამდე უკან ბრუნდება: ადამიანი „იცვლის აზრს“.</li>
+     <li><b>იმედგაცრუება</b> (frustration) — უფრო ნელი პლანეტა სხვას ხვდება მანამდე, სანამ სწრაფი მას მიაღწევს.</li>
+     <li><b>ალყა</b> (besiegement) — პლანეტა ორ მავნებელს (მარსსა და სატურნს) შორის მოქცეული.</li>
+     <li><b>ნიშნის შეცვლა</b> — თუ ასპექტი სრულდება მხოლოდ მას შემდეგ, რაც რომელიმე პლანეტა ნიშანს შეიცვლის, ტრადიციულად სრულყოფა არ ითვლება.</li>
+    </ul>
+  </div>
+
+  <div class="sec"><h2>7 · როდის? — დროის გამოთვლა</h2>
+   <div>
+    <p>თუ სრულყოფა არსებობს, ითვლიან, <b>რამდენი გრადუსი</b> აკლია ასპექტს. თითო გრადუსი ერთ „ერთეულს“ უდრის, ერთეულის ზომას კი სწრაფი სიგნიფიკატორის ნიშანი და სახლი განსაზღვრავს:</p>
+    <div class="tw"><table class="zt">
+     <tr><th></th><th>კარდინალური ნიშანი</th><th>ფიქსირებული</th><th>ორმაგი (მუტაბელური)</th></tr>
+     <tr><td><b>კუთხოვანი სახლი</b></td><td>დღეები</td><td>თვეები</td><td>კვირები</td></tr>
+     <tr><td><b>მომდევნო</b> (2, 5, 8, 11)</td><td>კვირები</td><td>წლები</td><td>თვეები</td></tr>
+     <tr><td><b>კადენტური</b> (3, 6, 9, 12)</td><td>თვეები</td><td>უცნობი / ძალიან გრძელი</td><td>წლები</td></tr>
+    </table></div>
+    <p>ეს სახელმძღვანელო ცხრილია და არა ფორმულა: ასტროლოგი ყოველთვის კითხვის ბუნებასაც ითვალისწინებს (ქორწილი წლებში ხდება, წერილი — დღეებში).</p>
+   <div class="stage" style="padding:14px;margin-top:12px">
+    <div class="pick" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+     <label style="font-size:13px">გრადუსი <input id="tD" type="number" min="0" max="30" step="0.5" value="4" style="width:70px"></label>
+     <select id="tM" aria-label="ნიშნის ტიპი"><option value="0">კარდინალური</option><option value="1">ფიქსირებული</option><option value="2">ორმაგი</option></select>
+     <select id="tH" aria-label="სახლის ტიპი"><option value="0">კუთხოვანი</option><option value="1">მომდევნო</option><option value="2">კადენტური</option></select>
+    </div>
+    <div class="ro" id="tRo" style="margin-top:12px"></div>
+   </div></div>
+  </div>
+
+  <div class="sec"><h2>8 · მაგალითი ნაბიჯ-ნაბიჯ (სასწავლო)</h2>
+    <p>კითხვა: <b>„მივიღებ თუ არა ამ სამსახურს?“</b> ასეთი სავარჯიშო რუკა: ASC 12° ტყუპები, MC 20° მერწყული, მთვარე 5° ლომში.</p>
+    <ul>
+     <li><b>გაფრთხილებები:</b> ASC 12°-ზეა — არც ადრეა, არც გვიან. მთვარე ლომში კურსის გარეშე არ არის — რუკა განსჯად მიიჩნევა.</li>
+     <li><b>კითხვის დამსმელი:</b> ტყუპების მმართველი <b>მერკური</b>, ის 10° სასწორშია (მე-5 სახლი, კარდინალური ნიშანი).</li>
+     <li><b>სამსახური:</b> MC მერწყულშია, ტრადიციული მმართველი <b>სატურნი</b> — 14° მერწყულში, თავის საკუთარ სახლში (+5): სამსახური „სტაბილური და სერიოზულია“.</li>
+     <li><b>სრულყოფა:</b> მერკური (სწრაფი) 10° სასწორიდან უახლოვდება სატურნს 14° მერწყულში <b>ტრიგონით</b> — 4 გრადუსი აკლია, ორივე ნიშანს არ იცვლის, შუაში არცერთი პლანეტა არ ერევა. ეს არის „კი“.</li>
+     <li><b>მთვარე</b> 5° ლომიდან ჯერ სექსტილს ქმნის მერკურისთან (10°-ზე), შემდეგ ოპოზიციას სატურნთან (14°-ზე) — ის <b>სინათლეს გადასცემს</b> კითხვის დამსმელიდან სამსახურზე: დამატებითი „კი“, თუმცა ოპოზიცია დაძაბულ მოლაპარაკებაზე მიუთითებს.</li>
+     <li><b>დრო:</b> 4 გრადუსი, კარდინალური ნიშანი, მომდევნო სახლი → <b>≈ 4 კვირა</b>.</li>
+    </ul>
+    <div class="calc">პასუხი: <b>კი, დაახლოებით ერთ თვეში</b>, მოლაპარაკების შემდეგ. ეს სასწავლო მაგალითია, რომელიც მეთოდს აჩვენებს — რეალური რუკა ყოველთვის კონკრეტულ მომენტზე აიგება.</div>
+  </div>
+
+  <div class="sec"><h2>9 · ჰორარის საზღვრები</h2>
+    <p>ჰორარი კარგ კითხვაზე კარგ პასუხს იძლევა, მაგრამ ის <b>არ ცვლის</b> ექიმს, იურისტს ან ფინანსურ კონსულტანტს. ჯანმრთელობის, სამართლის ან ფულის სერიოზულ საკითხებში რუკა შეიძლება დაგეხმაროს აზროვნებაში, გადაწყვეტილება კი პროფესიონალთან ერთად მიიღე. ასევე არ არის ეთიკური სხვა ადამიანის შესახებ მის გარეშე „ჯაშუშური“ კითხვების დასმა.</p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro44.html">← მუნდანური ასტროლოგია</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro42.html">სრული ანალიზი →</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const SN=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const PK=['sun','moon','mercury','venus','mars','jupiter','saturn'];
+const PN={sun:'მზე',moon:'მთვარე',mercury:'მერკური',venus:'ვენერა',mars:'მარსი',jupiter:'იუპიტერი',saturn:'სატურნი'};
+/* traditional rulers, exaltations, Dorothean triplicities (day, night), Egyptian terms, Chaldean faces */
+const RUL=['mars','venus','mercury','moon','sun','mercury','venus','mars','jupiter','saturn','saturn','jupiter'];
+const EXA={sun:0,moon:1,mercury:5,venus:11,mars:9,jupiter:3,saturn:6};
+const TRI=[['sun','jupiter'],['venus','moon'],['saturn','mercury'],['venus','mars']];
+const TERM=[[['jupiter',6],['venus',12],['mercury',20],['mars',25],['saturn',30]],[['venus',8],['mercury',14],['jupiter',22],['saturn',27],['mars',30]],
+ [['mercury',6],['jupiter',12],['venus',17],['mars',24],['saturn',30]],[['mars',7],['venus',13],['mercury',19],['jupiter',26],['saturn',30]],
+ [['jupiter',6],['venus',11],['saturn',18],['mercury',24],['mars',30]],[['mercury',7],['venus',17],['jupiter',21],['mars',28],['saturn',30]],
+ [['saturn',6],['mercury',14],['jupiter',21],['venus',28],['mars',30]],[['mars',7],['venus',11],['mercury',19],['jupiter',24],['saturn',30]],
+ [['jupiter',12],['venus',17],['mercury',21],['saturn',26],['mars',30]],[['mercury',7],['jupiter',14],['venus',22],['saturn',26],['mars',30]],
+ [['mercury',7],['venus',13],['jupiter',20],['mars',25],['saturn',30]],[['venus',12],['jupiter',16],['mercury',19],['mars',28],['saturn',30]]];
+const CHAL=['mars','sun','venus','mercury','moon','saturn','jupiter'];
+$('dP').innerHTML=PK.map(k=>`<option value="${k}">${PN[k]}</option>`).join('');
+$('dS').innerHTML=SN.map((n,i)=>`<option value="${i}">${n}</option>`).join('');
+function dig(){const p=$('dP').value,s=+$('dS').value,d=Math.min(29.99,Math.max(0,+$('dD').value||0)),night=$('dN').checked;
+  const rows=[];let sc=0;
+  if(RUL[s]===p){rows.push(['საკუთარი სახლი',5]);}
+  if(RUL[(s+6)%12]===p){rows.push(['დევნილობა',-5]);}
+  if(EXA[p]===s){rows.push(['ამაღლება',4]);}
+  if(EXA[p]===(s+6)%12){rows.push(['დაცემა',-4]);}
+  if(TRI[s%4][night?1:0]===p){rows.push(['ტრიპლიციტეტი ('+(night?'ღამის':'დღის')+')',3]);}
+  const tm=TERM[s].find(t=>d<t[1]);if(tm&&tm[0]===p)rows.push(['ტერმა',2]);
+  const fc=CHAL[(s*3+Math.floor(d/10))%7];if(fc===p)rows.push(['სახე (დეკანი)',1]);
+  rows.forEach(r=>sc+=r[1]);
+  const pos=rows.some(r=>r[1]>0);
+  const info=`<small style="color:#9aa3b6">ნიშნის მმართველი: ${PN[RUL[s]]} · ტერმა: ${PN[tm[0]]} · სახე: ${PN[fc]} · ტრიპლიციტეტი: ${PN[TRI[s%4][0]]} (დღე) / ${PN[TRI[s%4][1]]} (ღამე)</small>`;
+  $('dRo').innerHTML=(rows.length?rows.map(r=>`${r[0]}: <b style="color:${r[1]>0?'#8fd19a':'#ff9a8a'}">${r[1]>0?'+':''}${r[1]}</b>`).join('<br>'):'ღირსება არ აქვს')
+    +(pos?'':`<br><b style="color:#ff9a8a">პერეგრინი</b> — ნიშანში „სტუმარია“, საკუთარი ძალა არ აქვს`)
+    +`<br>ჯამი: <b style="color:#F3DDA4">${sc>0?'+':''}${sc}</b><br>${info}`;}
+['dP','dS','dD','dN'].forEach(i=>$(i).addEventListener('input',dig));dig();
+const U=[['დღე','კვირა','თვე'],['თვე','წელი','უცნობი'],['კვირა','თვე','წელი']];
+const PL={'დღე':'დღე','კვირა':'კვირა','თვე':'თვე','წელი':'წელი','უცნობი':'ერთეული — დრო ძნელად განისაზღვრება'};
+function tim(){const d=Math.max(0,+$('tD').value||0),m=+$('tM').value,h=+$('tH').value,u=U[m][h];
+  $('tRo').innerHTML=`≈ <b style="color:#F3DDA4;font-size:18px">${d%1?d.toFixed(1):d} ${PL[u]}</b><br><small style="color:#9aa3b6">${d} გრადუსი × ერთეული „${u}“ (${['კარდინალური','ფიქსირებული','ორმაგი'][m]} ნიშანი, ${['კუთხოვანი','მომდევნო','კადენტური'][h]} სახლი)</small>`;}
+['tD','tM','tH'].forEach(i=>$(i).addEventListener('input',tim));tim();
+
+const Q=[['რომელ მომენტზე იგება ჰორარული რუკა?',['კითხვის დამსმელის დაბადების დროზე','როცა ასტროლოგი კითხვას მიიღებს და გაიგებს','შუადღეზე','როცა კითხვის დამსმელს პასუხი სჭირდება'],1,'რუკა იგება იმ მომენტისთვის და იმ ადგილისთვის, სადაც ასტროლოგი კითხვას მიიღებს და გაიგებს.'],
+ ['ვინ არის კითხვის დამსმელი რუკაში?',['მე-7 სახლის მმართველი','ASC-ის მმართველი და მთვარე','მზე','MC'],1,'კითხვის დამსმელი 1-ლი სახლია: ASC-ის მმართველი და მთვარე, როგორც თანასიგნიფიკატორი.'],
+ ['რას ნიშნავს მთვარე „კურსის გარეშე“?',['მთვარე რეტროგრადულია','ნიშნიდან გასვლამდე ზუსტ ასპექტს აღარ ქმნის','მთვარე დაბნელებულია','მთვარე მზესთან შეერთებაშია'],1,'კურსის გარეშე მთვარე ნიშნის ბოლომდე ზუსტ ასპექტს აღარ ქმნის — ტრადიციით „არაფერი გამოვა“.'],
+ ['რომელი სახლია დაკარგული ნივთი?',['2','5','8','12'],0,'მოძრავი ქონება და ფული მე-2 სახლია.'],
+ ['რას ჰქვია სინათლის გადაცემა?',['ორივე სიგნიფიკატორი უახლოვდება მესამე, ნელ პლანეტას','სწრაფი მესამე პლანეტა შორდება ერთს და უახლოვდება მეორეს','პლანეტა რეტროგრადული ხდება','ორი პლანეტა ერთმანეთის ნიშანშია'],1,'გადაცემისას სწრაფი პლანეტა (ხშირად მთვარე) „მიაქვს სინათლე“ ერთი სიგნიფიკატორიდან მეორეზე.'],
+ ['რამდენ ქულას იღებს პლანეტა ამაღლებაში?',['+5','+4','+3','+1'],1,'საკუთარი სახლი +5, ამაღლება +4, ტრიპლიციტეტი +3, ტერმა +2, სახე +1.'],
+ ['მერკური 4 გრადუსით უახლოვდება ასპექტს, კარდინალურ ნიშანში და კუთხოვან სახლში. დაახლოებით როდის?',['4 დღეში','4 თვეში','4 წელიწადში','არასოდეს'],0,'კარდინალური ნიშანი და კუთხოვანი სახლი ყველაზე სწრაფი კომბინაციაა — დღეები.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+})();
+</script>
+<script src="site.js?v=20261121f"></script>
+<script src="account.js"></script>
+</body>
+</html>
