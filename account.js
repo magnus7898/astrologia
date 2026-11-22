@@ -229,7 +229,7 @@ function scanForms(){
   document.querySelectorAll('input[id$="-day"]').forEach(d=>{const P=d.id.slice(0,-4);if(seen.has(P)||!$(P+'-month')||!$(P+'-year'))return;seen.add(P);
     const grid=d.closest('.form-grid,.field-row,.grid,.row')||d.closest('.field')||d;
     personBar(p=>fillPrefix(P,p),()=>readPrefix(P),grid);});
-  document.querySelectorAll('input[type=date]').forEach(inp=>{if(inp.closest('.mg-ov'))return;const f=inp.closest('.field')||inp;
+  document.querySelectorAll('input[type=date]').forEach(inp=>{if(inp.closest('.mg-ov,[data-noppl]'))return;const f=inp.closest('.field')||inp;
     personBar(p=>fillDate(inp,p),()=>readDate(inp),f);});
 }
 

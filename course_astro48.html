@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ასტროლოგია — გაკვეთილი 48 · ნიშნები, პლანეტები და სახლები სხეულში</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.tl{position:relative;margin:14px 0 4px;padding-left:22px;border-left:2px solid rgba(227,190,132,.35)}
+.tl .ev{position:relative;margin:0 0 14px}
+.tl .ev::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:#0e1424;border:2px solid #E3BE84}
+.tl .when{font-family:'Cinzel',serif;font-size:12px;color:#E3BE84;letter-spacing:.06em}
+.tl .what{font-size:14px;line-height:1.8;color:#e2e5ec;margin-top:2px}
+.tl .what b{color:#F3DDA4}
+.era{margin-top:16px;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:16px;color:#C9A24C}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+.pick input,.pick select{background:rgba(12,18,34,.85);color:#F3E6C8;border:1px solid rgba(201,162,76,.45);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;color-scheme:dark}
+</style>
+<script>try{var d=document.documentElement;d.classList.add("mg-pre");var s=document.createElement("style");s.id="mg-boot";s.textContent="html.mg-pre body{opacity:0!important}html.mg-pre *{transition:none!important;animation-play-state:paused!important}html body{transition:opacity .18s ease}html{background:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .86 0 0 0 0 .78 0 0 0 0 .6 0 0 0 .075 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\"),url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><g fill='%23E3BE84'><circle cx='23' cy='41' r='.9' opacity='.55'/><circle cx='131' cy='17' r='.6' opacity='.4'/><circle cx='287' cy='66' r='1.1' opacity='.5'/><circle cx='371' cy='133' r='.7' opacity='.45'/><circle cx='59' cy='207' r='.8' opacity='.35'/><circle cx='199' cy='171' r='.5' opacity='.5'/><circle cx='333' cy='251' r='.9' opacity='.4'/><circle cx='97' cy='313' r='.6' opacity='.5'/><circle cx='241' cy='349' r='1' opacity='.35'/><circle cx='397' cy='389' r='.6' opacity='.45'/><circle cx='163' cy='403' r='.7' opacity='.3'/><circle cx='11' cy='377' r='.5' opacity='.4'/></g><g fill='%23ffffff'><circle cx='211' cy='97' r='.5' opacity='.35'/><circle cx='77' cy='121' r='.4' opacity='.3'/><circle cx='309' cy='191' r='.5' opacity='.3'/><circle cx='143' cy='271' r='.4' opacity='.35'/><circle cx='381' cy='311' r='.5' opacity='.25'/></g></svg>\"),radial-gradient(ellipse 70% 55% at 12% 8%,rgba(112,84,196,.22),transparent 60%),radial-gradient(ellipse 60% 50% at 88% 92%,rgba(28,124,132,.17),transparent 60%),radial-gradient(ellipse 50% 40% at 50% 45%,rgba(201,162,76,.07),transparent 70%),linear-gradient(160deg,#0b1024 0%,#0e0b22 45%,#081619 100%)!important;background-color:#0b1024!important;background-attachment:fixed!important;background-size:240px 240px,420px 420px,100% 100%,100% 100%,100% 100%,100% 100%!important}";document.head.appendChild(s);setTimeout(function(){d.classList.remove("mg-pre")},2500);var c=localStorage.getItem("mg_tex:"+location.pathname);if(c){var t=document.createElement("style");t.id="mg-tex-boot";t.textContent=c;document.head.appendChild(t);}}catch(e){}</script>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ასტროლოგიის კურსი · მოდული 11 · სამედიცინო ასტროლოგია</div>
+  <h1>გაკვეთილი 48 — ნიშნები, პლანეტები და სახლები სხეულში</h1>
+  <div class="sub">12 ნიშანი დეტალურად, საპირისპირო ნიშნების ღერძები და ჯვრები, პლანეტების ტრადიციული „ავადმყოფობის ბუნება“, მე-1, მე-6, მე-8 და მე-12 სახლები, ჰილეგი, ინდური დოშები</div>
+
+  <div class="intro">წინა გაკვეთილებში ვნახეთ ზოდიაქოს ადამიანი და ტემპერამენტი. აქ ყველაფერს დეტალურად გავივლით: რას „მართავს“ თითო ნიშანი, როგორ უკავშირდება ერთმანეთს საპირისპირო და ერთი ჯვრის ნიშნები, რა ბუნებას მიაწერდა ტრადიცია თითო პლანეტას და რომელ სახლებს უყურებდნენ. ეს ისტორიული ენაა — <b>არა დიაგნოსტიკის საშუალება</b>.</div>
+
+  <div class="sec"><h2>1 · 12 ნიშანი — ღერძები და ჯვრები</h2>
+   <div class="duo"><div>
+    <p>ტრადიცია (და განსაკუთრებით XX საუკუნის სამედიცინო ასტროლოგები) ამჩნევდა, რომ ნიშნები <b>წყვილებად</b> მუშაობენ: საპირისპირო ნიშანი ხშირად „რეფლექსურ“ წერტილს აღნიშნავს — ვერძი (თავი) და სასწორი (თირკმელები), კირჩხიბი (კუჭი) და თხის რქა (ძვლები, მუხლები). ერთი <b>მოდალობის</b> ოთხი ნიშანი კი „ჯვარს“ ქმნის: კარდინალური, ფიქსირებული, მუტაბელური.</p>
+    <p>აირჩიე ნიშანი — ნახავ მის სხეულის ნაწილებს, საპირისპირო ნიშანსა და ჯვარს.</p>
+    <div id="sgB" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px"></div>
+   </div><div class="stage" style="padding:14px">
+    <div id="sgX" style="line-height:1.9;font-size:14px"></div>
+   </div></div>
+  </div>
+
+  <div class="sec"><h2>2 · ნიშნები დეტალურად</h2>
+    <div class="tw"><table class="zt" id="sgT">
+     <tr><th></th><th>ნიშანი</th><th>სხეულის ნაწილები (ტრადიცია)</th><th>ტრადიციულად მიწერილი მიდრეკილებები</th></tr>
+    </table></div>
+    <p style="font-size:13px;color:#aab2c4">„მიდრეკილება“ აქ ისტორიული წყაროების ენაა: მაგ., შუა საუკუნეების ტექსტები ვერძს თავის ტკივილსა და ციებ-ცხელებას უკავშირებდნენ. ეს არ ნიშნავს, რომ ვერძის ადამიანს ეს აუცილებლად ექნება.</p>
+  </div>
+
+  <div class="sec"><h2>3 · პლანეტების „ავადმყოფობის ბუნება“</h2>
+    <p>ტრადიციაში ყოველ პლანეტას თავისი ტიპის პროცესი ეკუთვნოდა — მისი თვისებების (ცხელი, ცივი, მშრალი, ნოტიო) შესაბამისად:</p>
+    <div class="tw"><table class="zt">
+     <tr><th>პლანეტა</th><th>პროცესის ტიპი</th><th>ტრადიციული მაგალითები</th></tr>
+     <tr><td>მზე</td><td>სასიცოცხლო ძალა, სიცხე</td><td>გულის, თვალის, „ძალის დაქვეითების“ თემები</td></tr>
+     <tr><td>მთვარე</td><td>სითხეები, რიტმები, ციკლები</td><td>ცვალებადი, განმეორებადი, ფაზური მდგომარეობები</td></tr>
+     <tr><td>მერკური</td><td>ნერვები, კავშირი, კოორდინაცია</td><td>ნერვული დაძაბულობა, მეტყველება, სუნთქვის რიტმი</td></tr>
+     <tr><td>ვენერა</td><td>ბალანსი, ფილტრაცია, სიამოვნება</td><td>სიჭარბით გამოწვეული პრობლემები, კანი, ყელი</td></tr>
+     <tr><td>მარსი</td><td>ანთება, სიცხე, მწვავე პროცესი</td><td>ციებ-ცხელება, ჭრილობა, დამწვრობა, უეცარი და სწრაფი მდგომარეობები</td></tr>
+     <tr><td>იუპიტერი</td><td>ზრდა, სიჭარბე</td><td>„ზედმეტი“ — სისავსე, ღვიძლი, სისხლის სიჭარბე</td></tr>
+     <tr><td>სატურნი</td><td>შეკუმშვა, სიცივე, შენელება</td><td>ქრონიკული, ხანგრძლივი, „ცივი“ პროცესები, სახსრები, კბილები</td></tr>
+    </table></div>
+    <div class="calc">ზოგადი წესი: <b>მარსი — მწვავე და სწრაფი</b>, <b>სატურნი — ქრონიკული და ნელი</b>. ამიტომ დეკუმბიტურაში (გაკვეთილი 49) მწვავე მდგომარეობას მთვარით ზომავდნენ, ქრონიკულს — მზით.</div>
+  </div>
+
+  <div class="sec"><h2>4 · სახლები</h2>
+    <ul>
+     <li><b>1-ლი სახლი</b> — სხეული და სიცოცხლისუნარიანობა. ASC და მისი მმართველი კონსტიტუციის მთავარი მაჩვენებლებია.</li>
+     <li><b>მე-6 სახლი</b> — ტრადიციულად „ავადმყოფობის სახლი“ (ის 1-ელ სახლთან ასპექტს არ ქმნის, „ბნელი“ სახლია). თანამედროვე ასტროლოგია მას <b>ყოველდღიურ რეჟიმად, ჩვევებად და მოვლად</b> კითხულობს.</li>
+     <li><b>მე-8 სახლი</b> — კრიზისები, ქირურგია, სხვისი რესურსი (მაგ. დონორობა), გარდაქმნა.</li>
+     <li><b>მე-12 სახლი</b> — საავადმყოფოები, ხანგრძლივი იზოლაცია, „ფარული“ პროცესები.</li>
+     <li><b>მე-6-ის მმართველი</b> — მისი ნიშანი, სახლი და ასპექტები აჩვენებს, რა სფეროსთან უკავშირდება ჯანმრთელობის თემა (მაგ. მე-10 სახლში — სამსახურის სტრესი).</li>
+    </ul>
+  </div>
+
+  <div class="sec"><h2>5 · ჰილეგი — „სიცოცხლის მიმცემი“ (ისტორიული)</h2>
+    <p>ელინისტურ და შუა საუკუნეების ასტროლოგიაში ცალკე ტექნიკა არსებობდა: <b>ჰილეგი</b> (სპარს.) ან <b>აფეტა</b> (ბერძნ.) — წერტილი, რომელიც „სიცოცხლის ძალას“ ატარებს (დღის რუკაში ხშირად მზე, ღამისაში მთვარე, ზოგჯერ ASC ან ბედის წერტილი), და <b>ალკოკოდენი</b> — მისი „მბრძანებელი“, რომლისგანაც ცხოვრების ხანგრძლივობას ითვლიდნენ.</p>
+    <p>ამ ტექნიკას ისტორიული ცოდნისთვის ვახსენებთ. თანამედროვე ეთიკური ასტროლოგია <b>სიცოცხლის ხანგრძლივობას არ წინასწარმეტყველებს</b> — ეს არც სანდოა და შეიძლება სერიოზულ ზიანს აყენებდეს ადამიანს.</p>
+  </div>
+
+  <div class="sec"><h2>6 · ჯიოტიში და აიურვედა — დოშები და პლანეტები</h2>
+    <p>ინდურ ტრადიციაში ასტროლოგია (ჯიოტიში) და მედიცინა (აიურვედა) ერთ ენაზე ლაპარაკობენ. აიურვედა სამ <b>დოშას</b> განასხვავებს — სხეულის სამ ფუნქციურ პრინციპს — და „ბრიჰატ პარაშარა ჰორა შასტრა“ თითოეულს პლანეტებს უკავშირებს:</p>
+    <div class="tw"><table class="zt">
+     <tr><th>დოშა</th><th>ელემენტები</th><th>პრინციპი</th><th>პლანეტები</th></tr>
+     <tr><td><b>ვატა</b></td><td>ჰაერი + ეთერი</td><td>მოძრაობა, ნერვები, სუნთქვა, სიმშრალე, სიცივე</td><td>სატურნი, რაჰუ; ნაწილობრივ მერკური და მთვარე</td></tr>
+     <tr><td><b>პიტა</b></td><td>ცეცხლი + წყალი</td><td>მეტაბოლიზმი, მონელება, სიცხე, ინტელექტის სიმკვეთრე</td><td>მზე, მარსი, კეტუ</td></tr>
+     <tr><td><b>კაფა</b></td><td>წყალი + მიწა</td><td>სტრუქტურა, სტაბილურობა, სინოტივე, იმუნიტეტი</td><td>მთვარე, ვენერა, იუპიტერი</td></tr>
+    </table></div>
+    <p>მერკური ითვლება „სამივე დოშის“ პლანეტად — ის იღებს იმ პლანეტის ხასიათს, რომელთანაც კავშირშია (როგორც დასავლურ ტრადიციაშიც). ჯიოტიშში ჯანმრთელობისთვის ლაგნა (ASC), მე-6 და მე-8 სახლები და დაშის პერიოდები განიხილება.</p>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro47.html">← ტემპერამენტი</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro49.html">დეკუმბიტურა →</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const SG=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'],SN=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const EC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
+const BP=['თავი, სახე, ტვინი, თვალები, ზედა ყბა','კისერი, ყელი, ხორხი, ხმა, ქვედა ყბა, ფარისებრი ჯირკვლის მიდამო','მხრები, ხელები, მაჯები, ფილტვები, ნერვული კავშირები','მკერდი, სარძევე ჯირკვლები, კუჭი, დიაფრაგმა','გული, ზურგი, ხერხემალი, სისხლის მიმოქცევის „ცენტრი“','მუცელი, ნაწლავები, საჭმლის მონელება, პანკრეასი','წელი, თირკმელები, ბალანსი','სასქესო და გამომყოფი ორგანოები, მცირე მენჯი','თეძოები, ბარძაყები, ღვიძლი (ტრადიციით იუპიტერის გამო)','მუხლები, ძვლები, კანი, სახსრები, კბილები','წვივები, კოჭები, სისხლის მიმოქცევა, ნერვული იმპულსები','ტერფები, ლიმფა, იმუნიტეტი (თანამედროვე)'];
+const TD=['თავის ტკივილი, ციებ-ცხელება, მწვავე და სწრაფი მდგომარეობები','ყელის, ხმის, კისრის თემები','სუნთქვა, ნერვული დაძაბულობა, ხელები','მონელება, კუჭი, ემოციური „მონელება“','გული, ზურგის ძალა, სიცხე','მონელება, ნერვული კუჭი, „ზედმეტი შფოთვა ჯანმრთელობაზე“','ბალანსი, თირკმელები, წელი','ფარული, ღრმა პროცესები, რეგენერაცია','თეძოები, სიჭარბე, მოძრაობის სიყვარული','მუხლები, სახსრები, სიხისტე, ქრონიკული პროცესები','კოჭები, ცირკულაცია, სპაზმები','ტერფები, მგრძნობელობა, ზოგადი სისუსტე'];
+const MOD=['კარდინალური','ფიქსირებული','მუტაბელური'];
+$('sgT').insertAdjacentHTML('beforeend',SN.map((n,i)=>`<tr><td class="gl" style="color:${EC[i%4]}">${SG[i]}&#xFE0E;</td><td><b>${n}</b><br><small>${MOD[i%3]}</small></td><td>${BP[i]}</td><td>${TD[i]}</td></tr>`).join(''));
+$('sgB').innerHTML=SN.map((n,i)=>`<button type="button" data-i="${i}" style="background:none;border:1px solid ${EC[i%4]}88;color:${EC[i%4]};border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:13px">${SG[i]}&#xFE0E; ${n}</button>`).join('');
+function show(i){const o=(i+6)%12,cross=[0,1,2,3].map(k=>(i%3)+k*3);
+  $('sgB').querySelectorAll('button').forEach(b=>b.style.background=+b.dataset.i===i?'rgba(227,190,132,.12)':'none');
+  $('sgX').innerHTML=`<div style="font-size:18px;color:${EC[i%4]}">${SG[i]}&#xFE0E; <b>${SN[i]}</b></div>${BP[i]}
+   <div style="margin-top:10px"><b style="color:#F3DDA4">საპირისპირო ღერძი:</b> ${SG[o]}&#xFE0E; ${SN[o]} — ${BP[o]}</div>
+   <div style="margin-top:10px"><b style="color:#F3DDA4">${MOD[i%3]} ჯვარი:</b><br>${cross.map(k=>`<span style="color:${EC[k%4]}">${SG[k]}&#xFE0E; ${SN[k]}</span> — ${BP[k].split(',')[0]}`).join('<br>')}</div>`;}
+$('sgB').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(+b.dataset.i);});show(0);
+
+const Q=[['რომელი ნიშანია ვერძის საპირისპირო და რომელ ორგანოს უკავშირდება?',['კურო — ყელი','სასწორი — თირკმელები','ლომი — გული','თევზები — ტერფები'],1,'ვერძი–სასწორის ღერძი: თავი და თირკმელები.'],
+ ['რომელი ნიშნები ქმნიან ფიქსირებულ ჯვარს?',['ვერძი, კირჩხიბი, სასწორი, თხის რქა','კურო, ლომი, მორიელი, მერწყული','ტყუპები, ქალწული, მშვილდოსანი, თევზები','ცეცხლის ნიშნები'],1,'ფიქსირებული ნიშნებია კურო, ლომი, მორიელი და მერწყული.'],
+ ['რომელი პლანეტაა ტრადიციულად „მწვავე და სწრაფი“ პროცესების მაჩვენებელი?',['სატურნი','ვენერა','მარსი','იუპიტერი'],2,'მარსი ცხელი და მშრალია — ანთება, სიცხე, სწრაფი მდგომარეობა.'],
+ ['რატომ ერქვა მე-6 სახლს „ავადმყოფობის სახლი“?',['ის კუთხოვანია','ის ASC-სთან ასპექტს არ ქმნის და „ბნელ“ სახლად ითვლებოდა','მასში მზე ცხოვრობს','ის მზის სახლია'],1,'მე-6 სახლი 1-ელთან ასპექტს არ ქმნის — ტრადიციით „ბნელი“, სუსტი სახლი.'],
+ ['რომელ დოშას უკავშირებს ჯიოტიში მზესა და მარსს?',['ვატა','პიტა','კაფა','არცერთს'],1,'პიტა — ცეცხლი, მეტაბოლიზმი, სიცხე — მზე, მარსი, კეტუ.'],
+ ['რატომ არ იყენებს თანამედროვე ეთიკური ასტროლოგია ჰილეგსა და ალკოკოდენს სიცოცხლის ხანგრძლივობისთვის?',['ეს ძალიან რთულია','ეს არც სანდოა და შეიძლება ზიანი მიაყენოს ადამიანს','ეს მხოლოდ ინდური ტექნიკაა','ეს მხოლოდ მუნდანურ ასტროლოგიაშია'],1,'სიცოცხლის ხანგრძლივობის „წინასწარმეტყველება“ არასანდოა და საზიანოა.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+
+})();
+</script>
+
+<script src="site.js?v=20261121f"></script>
+<script src="account.js?v=2"></script>
+</body>
+</html>

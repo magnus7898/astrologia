@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ასტროლოგია — გაკვეთილი 49 · დეკუმბიტურა და კრიზისები</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.tl{position:relative;margin:14px 0 4px;padding-left:22px;border-left:2px solid rgba(227,190,132,.35)}
+.tl .ev{position:relative;margin:0 0 14px}
+.tl .ev::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:#0e1424;border:2px solid #E3BE84}
+.tl .when{font-family:'Cinzel',serif;font-size:12px;color:#E3BE84;letter-spacing:.06em}
+.tl .what{font-size:14px;line-height:1.8;color:#e2e5ec;margin-top:2px}
+.tl .what b{color:#F3DDA4}
+.era{margin-top:16px;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:16px;color:#C9A24C}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+.pick input,.pick select{background:rgba(12,18,34,.85);color:#F3E6C8;border:1px solid rgba(201,162,76,.45);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;color-scheme:dark}
+</style>
+<script>try{var d=document.documentElement;d.classList.add("mg-pre");var s=document.createElement("style");s.id="mg-boot";s.textContent="html.mg-pre body{opacity:0!important}html.mg-pre *{transition:none!important;animation-play-state:paused!important}html body{transition:opacity .18s ease}html{background:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .86 0 0 0 0 .78 0 0 0 0 .6 0 0 0 .075 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\"),url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><g fill='%23E3BE84'><circle cx='23' cy='41' r='.9' opacity='.55'/><circle cx='131' cy='17' r='.6' opacity='.4'/><circle cx='287' cy='66' r='1.1' opacity='.5'/><circle cx='371' cy='133' r='.7' opacity='.45'/><circle cx='59' cy='207' r='.8' opacity='.35'/><circle cx='199' cy='171' r='.5' opacity='.5'/><circle cx='333' cy='251' r='.9' opacity='.4'/><circle cx='97' cy='313' r='.6' opacity='.5'/><circle cx='241' cy='349' r='1' opacity='.35'/><circle cx='397' cy='389' r='.6' opacity='.45'/><circle cx='163' cy='403' r='.7' opacity='.3'/><circle cx='11' cy='377' r='.5' opacity='.4'/></g><g fill='%23ffffff'><circle cx='211' cy='97' r='.5' opacity='.35'/><circle cx='77' cy='121' r='.4' opacity='.3'/><circle cx='309' cy='191' r='.5' opacity='.3'/><circle cx='143' cy='271' r='.4' opacity='.35'/><circle cx='381' cy='311' r='.5' opacity='.25'/></g></svg>\"),radial-gradient(ellipse 70% 55% at 12% 8%,rgba(112,84,196,.22),transparent 60%),radial-gradient(ellipse 60% 50% at 88% 92%,rgba(28,124,132,.17),transparent 60%),radial-gradient(ellipse 50% 40% at 50% 45%,rgba(201,162,76,.07),transparent 70%),linear-gradient(160deg,#0b1024 0%,#0e0b22 45%,#081619 100%)!important;background-color:#0b1024!important;background-attachment:fixed!important;background-size:240px 240px,420px 420px,100% 100%,100% 100%,100% 100%,100% 100%!important}";document.head.appendChild(s);setTimeout(function(){d.classList.remove("mg-pre")},2500);var c=localStorage.getItem("mg_tex:"+location.pathname);if(c){var t=document.createElement("style");t.id="mg-tex-boot";t.textContent=c;document.head.appendChild(t);}}catch(e){}</script>
+</head>
+<body>
+<div class="page">
+  <div class="kicker">ასტროლოგიის კურსი · მოდული 11 · სამედიცინო ასტროლოგია</div>
+  <h1>გაკვეთილი 49 — დეკუმბიტურა, კრიზისები და მსჯელობის დღეები</h1>
+  <div class="sub">ავადმყოფობის დასაწყისის რუკა: რომელ მომენტზე იგება, სახლები (პაციენტი, ავადმყოფობა, ექიმი, მკურნალობა, შედეგი), მწვავე და ქრონიკული, მთვარის 8 კრიზისული წერტილი, მზის დღეები, ისტორიული მაგალითი-სავარჯიშო</div>
+
+  <div class="intro"><b>დეკუმბიტურა</b> იყო ის, რისთვისაც შუა საუკუნეების და XVII საუკუნის ექიმი-ასტროლოგი ყველაზე ხშირად იყენებდა რუკას. ექიმი ხშირად ავადმყოფს ვერ ნახულობდა — მას შარდის ნიმუშს მოუტანდნენ — და რუკა მომენტისთვის, როცა ავადმყოფი „ჩაწვა“ ან როცა ექიმმა საქმე მიიღო, ავადმყოფობის მსვლელობის „რუკად“ ითვლებოდა. ეს გაკვეთილი ამ მეთოდს <b>ისტორიულად</b> აღწერს: როგორ ფიქრობდა ექიმი-ასტროლოგი. დღეს ავადმყოფობის მსვლელობას ექიმი და გამოკვლევები აფასებენ.</div>
+
+  <div class="sec"><h2>1 · რომელ მომენტზე იგება</h2>
+    <ul>
+     <li><b>ჩაწოლის მომენტი</b> — როცა ადამიანმა ავადმყოფობის გამო პირველად დაწვა ან ვეღარ განაგრძო ჩვეული საქმე.</li>
+     <li><b>თუ ეს უცნობია</b> — როცა ექიმმა პირველად ნახა ავადმყოფი ან მიიღო მისი ნიმუში/ცნობა.</li>
+     <li>კალპეპერი გვირჩევს: ყველაზე სანდოა პირველი გარკვეული მომენტი, როცა ავადმყოფობა „თავს იჩენს“.</li>
+    </ul>
+  </div>
+
+  <div class="sec"><h2>2 · სახლები დეკუმბიტურაში</h2>
+    <div class="tw"><table class="zt">
+     <tr><th>სახლი</th><th>რას ნიშნავს</th></tr>
+     <tr><td class="gl">1</td><td><b>პაციენტი</b> — მისი სასიცოცხლო ძალა, წინააღმდეგობის უნარი</td></tr>
+     <tr><td class="gl">6</td><td><b>ავადმყოფობა</b> — მისი ბუნება (ნიშნის ელემენტი, მმართველი პლანეტა)</td></tr>
+     <tr><td class="gl">7</td><td><b>ექიმი</b> (ან „ის, ვინც მკურნალობს“)</td></tr>
+     <tr><td class="gl">10</td><td><b>მკურნალობა, წამალი</b> (როგორც მე-7-დან მე-4 — ექიმის „საშუალება“)</td></tr>
+     <tr><td class="gl">4</td><td><b>შედეგი, დასასრული</b></td></tr>
+    </table></div>
+    <p>ტრადიციული მსჯელობა: თუ 1-ლი სახლის მმართველი ძლიერია (ღირსებებით, კუთხოვან სახლში), პაციენტის ძალა დიდია. თუ მე-6-ის მმართველი სუსტია — ავადმყოფობა „სუსტია“. მე-7-ისა და 1-ლის მმართველების კარგი ურთიერთობა ექიმისა და პაციენტის კარგ თანამშრომლობას ნიშნავდა; მე-10-ის მმართველის მდგომარეობა — მკურნალობის ვარგისიანობას.</p>
+  </div>
+
+  <div class="sec"><h2>3 · მწვავე და ქრონიკული</h2>
+    <p>ტრადიცია ავადმყოფობას ორ ტიპად ყოფდა:</p>
+    <ul>
+     <li><b>მწვავე</b> (acute) — სწრაფი, მკვეთრი, „ცხელი“; მის მსვლელობას <b>მთვარე</b> ზომავს — ის თვეში სრულ წრეს აკეთებს და კრიზისის დღეები რამდენიმე დღეში ერთხელ მოდის.</li>
+     <li><b>ქრონიკული</b> (chronic) — ნელი, ხანგრძლივი, „ცივი“ (სატურნისეული); მის ეტაპებს <b>მზე</b> ზომავს — იმავე 45°-იანი ნაბიჯებით, მაგრამ ერთი ნაბიჯი დაახლოებით 45–46 დღეა.</li>
+    </ul>
+  </div>
+
+  <div class="sec"><h2>4 · მთვარის რვა წერტილი — კრიზისის და მსჯელობის დღეები</h2>
+   <div class="duo"><div>
+    <p>გალენის ტრადიციით მთვარის წრე <b>რვა ნაწილად</b> იყოფა — 45°-ით. ეს წერტილები ხშირად „სამედიცინო ციფერბლატის“ სახით იხატება (რვაკუთხედი წრეში).</p>
+    <ul>
+     <li><b>90°, 180°, 270°</b> — <b>კრიზისის დღეები</b>: გარდამტეხი მომენტი, როცა ავადმყოფობა ან მწვავდება, ან უკან იხევს.</li>
+     <li><b>45°, 135°, 225°, 315°</b> — <b>მსჯელობის</b> (ინდიკატორის) დღეები: მომდევნო კრიზისის „წინასწარი სიგნალი“.</li>
+     <li><b>360°</b> — ციკლის დასრულება: ტრადიციით, თუ ავადმყოფობა მთვარის სრულ წრეს „გადაიტანდა“, ის ქრონიკულად ითვლებოდა და მზეზე გადადიოდნენ.</li>
+    </ul>
+    <p>კრიზისის მომენტში ექიმი უყურებდა, <b>რა ასპექტს ქმნის მთვარე</b>: ვენერასთან ან იუპიტერთან — კარგი ნიშანი, მარსთან ან სატურნთან — რთული; ასევე იმას, თუ რა მდგომარეობაშია ის საწყისი რუკის 1-ლი და მე-6 სახლების მმართველებთან.</p>
+   </div><div class="stage" style="padding:12px">
+    <canvas id="cvK" aria-label="მთვარის რვა კრიზისული წერტილი"></canvas>
+    <div class="pick" data-noppl style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px">
+     <label style="font-size:13px">მთვარე <input id="kD" type="number" min="0" max="29.9" step="0.5" value="10" style="width:64px"></label><select id="kS"></select>
+     <label style="font-size:13px">მზე <input id="sD" type="number" min="0" max="29.9" step="0.5" value="23" style="width:64px"></label><select id="sS"></select>
+     <label style="font-size:13px">დასაწყისი <input id="kT" type="date"></label>
+    </div>
+   </div></div>
+   <div class="tw" style="margin-top:12px"><table class="zt" id="kTb"></table></div>
+  </div>
+
+  <div class="sec"><h2>5 · სავარჯიშო მაგალითი (ისტორიული სტილით)</h2>
+    <p>წარმოიდგინე, ექიმ-ასტროლოგს XVII საუკუნეში მოუყვანეს პაციენტი, რომელიც „ცხელებით ჩაწვა“. დეკუმბიტურის რუკაში:</p>
+    <ul>
+     <li><b>ASC</b> ლომში, მისი მმართველი <b>მზე</b> ვერძში (ამაღლება) — პაციენტის ძალა დიდია.</li>
+     <li><b>მე-6 სახლი</b> თხის რქაში, მმართველი <b>სატურნი</b> კირჩხიბში (დევნილობა) — ავადმყოფობა „სუსტია“, თუმცა სატურნი მიუთითებს, რომ შეიძლება გაგრძელდეს.</li>
+     <li><b>მთვარე</b> 10° ტყუპებში, უახლოვდება <b>იუპიტერს</b> ტრიგონით — კეთილი ნიშანი პირველი დღეებისთვის.</li>
+     <li><b>პირველი კრიზისი</b> (მთვარე +90° — 10° ქალწულში, ≈ 7 დღე): ექიმი ამოწმებს, რა ასპექტს ქმნის მაშინ მთვარე; თუ ბენეფიკთან — „გამოჯანმრთელების გზა“.</li>
+     <li><b>შედეგი</b> (მე-4 სახლი, მორიელი, მმართველი მარსი): მარსის მდგომარეობას ახლოს აკვირდებოდნენ — თუ მარსი დაზიანებულია, სიფრთხილე.</li>
+    </ul>
+    <div class="calc">ეს მაგალითი აჩვენებს, <b>როგორ ფიქრობდნენ</b> ისტორიულად, და არა იმას, როგორ უნდა შეფასდეს რეალური ავადმყოფობა. რეალური სიმპტომების დროს — ექიმი, გამოკვლევა, მკურნალობა.</div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2>
+    <div class="quiz" id="qz"></div><div id="qs"></div>
+  </div>
+
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro48.html">← ნიშნები, პლანეტები, სახლები</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro50.html">მცენარეები, საათები, ელექცია →</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),D=Math.PI/180;
+const SG=['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'],SN=['ვერძი','კურო','ტყუპები','კირჩხიბი','ლომი','ქალწული','სასწორი','მორიელი','მშვილდოსანი','თხის რქა','მერწყული','თევზები'];
+const EC=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8'],SYM='"Noto Sans Symbols 2","Segoe UI Symbol",sans-serif';
+['kS','sS'].forEach((id,k)=>$(id).innerHTML=SN.map((n,i)=>`<option value="${i}"${i===(k?4:2)?' selected':''}>${n}</option>`).join(''));
+$('kT').value=new Date().toISOString().slice(0,10);
+const cv=$('cvK'),cx=cv.getContext('2d');
+const L=(d,s)=>(+$(s).value)*30+Math.min(29.9,Math.max(0,+$(d).value||0));
+function draw(){const w=Math.min(380,cv.parentElement.clientWidth-24||380),r=devicePixelRatio||1;cv.width=w*r;cv.height=w*r;cv.style.width=w+'px';cv.style.height=w+'px';cx.setTransform(r,0,0,r,0,0);
+  const c=w/2,R=w*.43,Ri=R*.82,m0=L('kD','kS');const xy=(l,rr)=>[c+Math.cos(Math.PI-(l-m0+180)*D)*rr,c+Math.sin(Math.PI-(l-m0+180)*D)*rr];
+  for(let i=0;i<12;i++){const a1=Math.PI-(i*30-m0+180)*D,a2=Math.PI-((i+1)*30-m0+180)*D;cx.beginPath();cx.arc(c,c,R,a2,a1);cx.arc(c,c,Ri,a1,a2,true);cx.closePath();cx.fillStyle=EC[i%4]+'22';cx.fill();cx.strokeStyle='rgba(227,190,132,.3)';cx.stroke();
+    const [x,y]=xy(i*30+15,(R+Ri)/2);cx.fillStyle=EC[i%4];cx.font=`${w*.04}px ${SYM}`;cx.textAlign='center';cx.textBaseline='middle';cx.fillText(SG[i]+'︎',x,y);}
+  const P=[...Array(8)].map((_,k)=>xy(m0+k*45,Ri-6));
+  cx.beginPath();P.forEach((p,k)=>k?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1]));cx.closePath();cx.strokeStyle='rgba(227,190,132,.55)';cx.lineWidth=1.2;cx.stroke();
+  [[0,4],[2,6]].forEach(([a,b])=>{cx.beginPath();cx.moveTo(P[a][0],P[a][1]);cx.lineTo(P[b][0],P[b][1]);cx.strokeStyle='rgba(255,154,138,.45)';cx.stroke();});
+  P.forEach((p,k)=>{cx.beginPath();cx.arc(p[0],p[1],k===0?7:k%2?3.5:5.5,0,2*Math.PI);cx.fillStyle=k===0?'#c8d8f0':k%2?'#E3BE84':'#ff9a8a';cx.fill();
+    const [x,y]=xy(m0+k*45,Ri-24);cx.fillStyle='#cfd5e2';cx.font=`${w*.032}px Cinzel,serif`;cx.fillText(k?'+'+k*45+'°':'☽',x,y);});}
+function table(){const m0=L('kD','kS'),s0=L('sD','sS'),t0=new Date($('kT').value+'T12:00:00');
+  const fmt=(d)=>isNaN(d)?'—':d.toLocaleDateString('ka-GE'),pos=l=>{l=(l%360+360)%360;return `<span style="color:${EC[Math.floor(l/30)%4]}">${SG[Math.floor(l/30)]}&#xFE0E; ${Math.floor(l%30)}°</span>`;};
+  let h='<tr><th>ნაბიჯი</th><th>ტიპი</th><th>მთვარე (მწვავე)</th><th>≈ თარიღი</th><th>მზე (ქრონიკული)</th><th>≈ თარიღი</th></tr>';
+  for(let k=1;k<=8;k++){const a=k*45,ty=a%90===0?(a===360?'ციკლის დასრულება':'<b style="color:#ff9a8a">კრიზისი</b>'):'მსჯელობის დღე';
+    h+=`<tr><td>+${a}°</td><td>${ty}</td><td>${pos(m0+a)}</td><td>${fmt(new Date(t0.getTime()+a/13.176*864e5))} <small>(${(a/13.176).toFixed(1)} დ.)</small></td><td>${pos(s0+a)}</td><td>${fmt(new Date(t0.getTime()+a/0.9856*864e5))} <small>(${Math.round(a/0.9856)} დ.)</small></td></tr>`;}
+  $('kTb').innerHTML=h;}
+function all(){draw();table();}
+['kD','kS','sD','sS','kT'].forEach(i=>$(i).addEventListener('input',all));addEventListener('resize',draw);all();
+
+const Q=[['რომელი სახლია ექიმი დეკუმბიტურაში?',['1','6','7','10'],2,'1 — პაციენტი, 6 — ავადმყოფობა, 7 — ექიმი, 10 — მკურნალობა, 4 — შედეგი.'],
+ ['რომელი სახლია მკურნალობა, წამალი?',['4','8','10','12'],2,'მე-10 სახლი — როგორც მე-7-დან (ექიმიდან) მე-4.'],
+ ['რომელი მნათობი ზომავს მწვავე ავადმყოფობის მსვლელობას?',['მზე','მთვარე','სატურნი','მარსი'],1,'მწვავეს — მთვარე (დღეები), ქრონიკულს — მზე (კვირები და თვეები).'],
+ ['მთვარის საწყისიდან რომელ მანძილებზეა კრიზისის დღეები?',['45° და 135°','90°, 180°, 270°','30° და 60°','მხოლოდ 360°'],1,'90°, 180° და 270° — კრიზისი; 45°, 135°, 225°, 315° — მსჯელობის დღეები.'],
+ ['დაახლოებით რამდენ დღეში გაივლის მზე 45°-ს?',['≈ 3,4','≈ 14','≈ 46','≈ 90'],2,'მზე დღეში ≈ 0,99°-ს გადის, ამიტომ 45° ≈ 46 დღეა.'],
+ ['რისთვის გამოიყენება დეკუმბიტურა დღეს?',['დიაგნოზისთვის','ისტორიული მეთოდის შესწავლისთვის','მკურნალობის შესაცვლელად','ოპერაციის დასაგეგმად'],1,'დღეს ეს ისტორიული ცოდნაა; რეალურ ავადმყოფობას ექიმი აფასებს.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+
+})();
+</script>
+
+<script src="site.js?v=20261121f"></script>
+<script src="account.js?v=2"></script>
+</body>
+</html>
