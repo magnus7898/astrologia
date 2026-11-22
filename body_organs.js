@@ -81,12 +81,13 @@ function build(host){
   const st=document.createElement('style');st.textContent=`.org{cursor:pointer;transition:opacity .25s}.org>*{fill:rgba(227,190,132,.13);stroke:rgba(227,190,132,.45);stroke-width:1;transition:fill .3s,stroke .3s}.org .d{fill:none}.org .ghost{opacity:0}.org.on .ghost{opacity:1}.org[data-o=arteries]>*,.org[data-o=veins]>*,.org[data-o=nerves]>*,.org[data-o=bones]>*{opacity:.35}.org.on[data-o=arteries]>*,.org.on[data-o=veins]>*,.org.on[data-o=nerves]>*,.org.on[data-o=bones]>*{opacity:1}.org path[fill="none"],.org .d{fill:none!important}.org:hover>*{stroke:#FFE7A0}.org.on>*{filter:url(#glw);stroke-width:1.6}.org.mod>*{stroke-dasharray:3 2}.org.on.pulse>*{animation:orgP 2.4s ease-in-out infinite}@keyframes orgP{50%{opacity:.6}}@media (prefers-reduced-motion:reduce){.org.on.pulse>*{animation:none}}`;
   document.head.appendChild(st);
 }
-function paint(host,pi,col,focus){const svg=host.querySelector('svg');if(!svg)return;const [tr,md]=PO[pi]||[[],[]],lab=svg.querySelector('#blab');let L='';
+function paint(host,pi,col,focus){const [tr,md]=PO[pi]||[[],[]];paintSet(host,tr,md,col,focus);}
+function paintSet(host,tr,md,col,focus){const svg=host.querySelector('svg');if(!svg)return;const lab=svg.querySelector('#blab');let L='';
   svg.querySelectorAll('.org').forEach(g=>{const k=g.dataset.o,t=tr.includes(k),m=!t&&md.includes(k),on=t||m||k===focus;g.classList.toggle('on',on);g.classList.toggle('mod',m);g.classList.toggle('pulse',on);
     g.querySelectorAll('*').forEach(e=>{if(e.classList.contains('d')||e.getAttribute('fill')==='none'){e.style.fill='none';e.style.stroke=on?col:'';}else{e.style.fill=on?col+(m?'40':'88'):'';e.style.stroke=on?col:'';}});});
   const skinOn=tr.includes('skin')||md.includes('skin');const sil=svg.querySelector('#bsil');sil.setAttribute('stroke',skinOn?col:'rgba(227,190,132,.55)');sil.setAttribute('stroke-width',skinOn?'2.6':'1.2');
   [...new Set([...tr,...md,...(focus?[focus]:[])])].forEach(k=>{const a=ANCH[k],p=LABEL[k];if(!a||!p)return;const m=!tr.includes(k)&&md.includes(k)&&k!==focus,right=p[0]>160;
     L+=`<path d="M${a[0]} ${a[1]}L${p[0]+(right?-4:4)} ${p[1]}" stroke="${col}" stroke-width=".8" fill="none" opacity=".8"${m?' stroke-dasharray="2 2"':''}/><circle cx="${a[0]}" cy="${a[1]}" r="1.8" fill="${col}"/><text x="${p[0]}" y="${p[1]+3}" font-size="11.5" fill="${m?'#cfd5e2':'#F3E6C8'}" text-anchor="${right?'start':'end'}"${m?' font-style="italic"':''}>${O[k][0]}</text>`;});
   lab.innerHTML=L;}
-window.MGBODY={fit,build,paint,O,PO};
+window.MGBODY={fit,build,paint,paintSet,ANCH,O,PO};
 })();
