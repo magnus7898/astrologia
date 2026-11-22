@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGNUS · ნუმეროლოგია — გაკვეთილი 4 · ოსტატი და კარმული რიცხვები</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:#0C1222;color:#EDE6D8;font-family:'Noto Serif Georgian',Georgia,serif;font-weight:300}
+.page{width:100%;max-width:1080px;margin:0 auto;padding:48px 16px 80px}
+.kicker{text-align:center;font-family:'Marcellus SC',serif;letter-spacing:.32em;font-size:11px;color:#B8894A}
+h1{text-align:center;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:clamp(22px,3.6vw,34px);letter-spacing:.08em;color:#E3BE84;margin-top:8px}
+.sub{text-align:center;margin-top:8px;color:#9aa3b6;font-size:13.5px;line-height:1.6}
+.intro{max-width:780px;margin:24px auto 0;font-size:14.5px;line-height:1.85;color:#d8dbe2}
+.intro b{color:#F3DDA4;font-weight:600}.intro a{color:#E3BE84}
+.panel{margin-top:22px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:14px 16px}
+.date{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:center}
+.date label{display:block;font-size:11px;letter-spacing:.12em;color:#B8894A;margin-bottom:4px}
+.date input{width:74px;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:15px;font-family:inherit;text-align:center}
+.date input.y{width:92px}
+#cl-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px}
+#cl-tabs button{background:none;border:1px solid var(--c);color:#EDE6D8;border-radius:999px;padding:7px 16px;font-size:13.5px;cursor:pointer;font-family:inherit}
+#cl-tabs button.on{background:var(--c);color:#fff}
+#cl-about{margin-top:18px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+#cl-about h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:20px;letter-spacing:.04em}
+#cl-about p{font-size:14px;line-height:1.85;color:#e2e5ec;margin-top:8px}
+#cl-about p b{color:#F3DDA4}#cl-about a{color:#FFD36A}
+.cl-pos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+@media(max-width:700px){.cl-pos{grid-template-columns:1fr}}
+.cl-pos div{display:flex;align-items:center;gap:8px;font-size:13px;color:#d6cbb2}
+.cl-pos b{flex:0 0 auto;border:1.5px solid;border-radius:999px;padding:2px 8px;font:600 12px Cinzel,serif;color:#fff}
+.cl-n{font-size:13px!important;color:#aab2c4!important}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+#cl-f{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+#cl-f button{background:none;border:1px solid rgba(184,137,74,.4);color:#d6cbb2;border-radius:999px;padding:3px 9px;font-size:12px;cursor:pointer;font-family:inherit}
+#cl-f button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+#cl-q{background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:999px;color:#fff;padding:7px 14px;font-size:13px;font-family:inherit;min-width:200px}
+#cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px;max-height:520px;overflow:auto;padding:2px}
+.cl-c{border:1px solid rgba(184,137,74,.35);border-radius:12px;padding:10px 6px 8px;text-align:center;cursor:pointer;background:none;color:inherit;font-family:inherit;transition:border-color .15s}
+.cl-c:hover{border-color:#E3BE84}.cl-c.on{border-color:#FFD36A;box-shadow:0 0 0 2px rgba(255,211,106,.3)}.cl-c.my{background:rgba(255,211,106,.1)}
+.cl-c .no{display:flex;justify-content:center;gap:4px}
+.cl-c .no i{font-style:normal;font:600 13px Cinzel,serif;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(184,137,74,.55)}
+.cl-c .nm{font-size:12px;margin-top:6px;line-height:1.3;color:#EDE6D8}
+.cl-c .fr{font-size:10px;color:#7f889b;margin-top:3px}
+.cl-none{color:#9aa3b6;font-size:13px}
+#cl-det{margin-top:18px;border:1px solid rgba(184,137,74,.45);border-radius:16px;padding:20px;scroll-margin-top:12px}
+#cl-det .hd{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+#cl-det .code{font-family:Cinzel,serif;font-size:28px;letter-spacing:.08em}
+#cl-det h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:22px;color:#E3BE84}
+#cl-det .sub2{font-size:12.5px;color:#9aa3b6}
+.cl-three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+@media(max-width:760px){.cl-three{grid-template-columns:1fr}}
+.cl-three a{display:block;border:1px solid;border-radius:12px;padding:10px 12px;text-decoration:none;color:inherit}
+.cl-three .t{display:flex;align-items:center;gap:8px;font-size:12px;color:#B8894A}
+.cl-three .t span{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px Cinzel,serif;flex:0 0 auto}
+.cl-three .n{font-size:15px;color:#F3DDA4;margin-top:6px}.cl-three .k{font-size:12.5px;color:#aab2c4;margin-top:3px;line-height:1.6}
+.cl-three .r{font-size:13px;color:#e2e5ec;margin-top:6px;line-height:1.7}
+.cl-art{margin-top:14px;border-top:1px solid rgba(184,137,74,.25);padding-top:12px}
+.cl-art h3{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:15px;color:#E3BE84;margin-bottom:6px}
+.cl-art div{font-size:14px;line-height:1.85;color:#e2e5ec}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nav button,.nav a{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit;text-decoration:none}
+.tl{position:relative;margin:14px 0 4px;padding-left:22px;border-left:2px solid rgba(227,190,132,.35)}
+.tl .ev{position:relative;margin:0 0 14px}
+.tl .ev::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:#0e1424;border:2px solid #E3BE84}
+.tl .when{font-family:'Cinzel',serif;font-size:12px;color:#E3BE84;letter-spacing:.06em}
+.tl .what{font-size:14px;line-height:1.8;color:#e2e5ec;margin-top:2px}
+.tl .what b{color:#F3DDA4}
+.era{margin-top:16px;font-family:'Marcellus SC','Noto Serif Georgian',serif;font-size:16px;color:#C9A24C}
+.sec{margin-top:20px;border:1px solid rgba(184,137,74,.35);border-radius:14px;padding:16px 18px}
+.sec h2{font-family:'Marcellus SC','Noto Serif Georgian',serif;font-weight:400;font-size:19px;color:#E3BE84;letter-spacing:.04em}
+.sec p,.sec li{font-size:14px;line-height:1.85;color:#e2e5ec}.sec p{margin-top:8px}.sec ul{padding-left:20px;margin-top:6px}
+.sec b{color:#F3DDA4;font-weight:600}.sec a{color:#E3BE84}
+.calc{margin:10px 0;border-left:2px solid #C9A24C;padding:8px 12px;background:rgba(201,162,76,.07);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;color:#fff}
+.calc .r{color:#FFE7A0;font-weight:600}.calc small{color:#aab2c4}
+.lvls{display:grid;gap:8px;margin-top:12px}
+.lv{display:grid;grid-template-columns:120px 1fr;gap:12px;border:1px solid rgba(184,137,74,.25);border-radius:12px;padding:10px 12px;align-items:center}
+.lv.my{border-color:#FFD36A;background:rgba(255,211,106,.07)}
+.lv .d{font:600 18px Cinzel,serif;text-align:center;word-break:break-all;line-height:1.2}
+.lv .d small{display:block;font:400 11px 'Noto Serif Georgian',serif;color:#9aa3b6;margin-top:3px}
+.lv p{font-size:13.8px;line-height:1.75;color:#e2e5ec}
+.lv .st{font-size:12px;color:#7f889b;margin-top:4px}
+@media(max-width:600px){.lv{grid-template-columns:1fr}}
+.tabs3{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.tabs3 button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.tabs3 button.on{background:rgba(201,162,76,.25);border-color:#FFD36A;color:#FFF0C8}
+.mine{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:10px}.mine b{color:#FFE7A0}
+
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;margin-top:6px}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.stage{min-width:0}
+.stage canvas{display:block;width:100%;max-width:560px;margin:0 auto;touch-action:pan-y}
+.stage canvas.wide{max-width:none}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.ctl button{background:rgba(201,162,76,.12);border:1px solid rgba(201,162,76,.55);color:#F3DDA4;border-radius:999px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+.ctl button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ctl button:focus-visible,.quiz button:focus-visible,.ctl input:focus-visible{outline:2px solid #FFD36A;outline-offset:2px}
+.ctl input[type=range]{flex:1 1 220px;max-width:420px;accent-color:#C9A24C}
+.ro{text-align:center;font-size:13.5px;color:#cfd5e2;margin-top:8px;line-height:1.7;min-height:2.6em}
+.ro b{color:#FFE7A0;font-weight:600}.ro .ev{color:#ffb38a}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;margin-top:8px;font-size:12.5px;color:#aab2c4}
+.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.zc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media(max-width:640px){.zc3{grid-template-columns:1fr}}
+.zc{border:1px solid rgba(184,137,74,.4);border-radius:12px;padding:12px;text-align:center}
+.zc .h{font-size:12px;letter-spacing:.06em;color:#B8894A}.zc .g{font-size:40px;line-height:1.2;margin-top:4px}
+.zc .n{font-size:16px;color:#F3DDA4}.zc .s{font-size:12px;color:#9aa3b6;margin-top:4px;line-height:1.5}
+.tw{overflow-x:auto;margin-top:12px}
+table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+.zt th{font-weight:600;color:#B8894A;text-align:left;font-size:12px;letter-spacing:.04em;padding:8px;border-bottom:1px solid rgba(184,137,74,.45)}
+.zt td{padding:8px;border-bottom:1px solid rgba(255,255,255,.07);vertical-align:top;color:#e2e5ec;line-height:1.55}
+.zt td.gl{font-size:22px;width:34px;text-align:center}.zt td.dt{white-space:nowrap;font-variant-numeric:tabular-nums}
+.zt tr.oph td{color:#c9a27a;font-style:italic}.zt a{color:#E3BE84}
+.zt small{color:#9aa3b6}
+.quiz{display:grid;gap:12px;margin-top:12px}
+.qq{border:1px solid rgba(184,137,74,.3);border-radius:12px;padding:12px 14px}
+.qq p{margin-top:0!important;color:#F3DDA4!important}
+.qq .op{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.qq button{background:none;border:1px solid rgba(184,137,74,.45);color:#e2e5ec;border-radius:10px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;text-align:left}
+.qq button.ok{border-color:#8fd19a;background:rgba(143,209,154,.15);color:#d9f5de}
+.qq button.no{border-color:#ff9a8a;background:rgba(255,154,138,.12);color:#ffd9d2}
+.qq .ex{font-size:13px;color:#aab2c4;margin-top:8px;line-height:1.7}
+#qs{text-align:center;font-size:14px;color:#FFE7A0;margin-top:10px;min-height:1.4em}
+.nav a.off{opacity:.45;pointer-events:none}
+@media (prefers-reduced-motion: reduce){.ctl button{transition:none}}
+
+.inp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 14px;align-items:end}
+.inp label{display:block;font-size:11px;letter-spacing:.1em;color:#B8894A;margin-bottom:4px}
+.inp input,.inp select{width:100%;background:#0e1424;border:1px solid rgba(184,137,74,.45);border-radius:8px;color:#fff;padding:8px 10px;font-size:14.5px;font-family:inherit}
+.inp .two{display:flex;gap:6px}.inp .two input{text-align:center;flex:1 1 0;min-width:0;padding-left:4px;padding-right:4px}
+@media(min-width:560px){.inp>div:first-child{grid-column:span 2}}
+.inp .ck{display:flex;gap:8px;align-items:center;font-size:12.5px;color:#cfd5e2;padding-bottom:9px}
+.inp .ck input{width:auto;accent-color:#C9A24C}.inp .ck label{margin:0;letter-spacing:0;font-size:12.5px;color:#cfd5e2}
+.sum{margin-top:12px;font-size:13px;color:#cfd5e2;line-height:1.8;text-align:center}.sum b{color:#FFE7A0;font-weight:600}
+
+.seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.seg button{background:none;border:1px solid rgba(184,137,74,.45);color:#d6cbb2;border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.seg button.on{background:#C9A24C;color:#0C1222;font-weight:600}
+.ztx,.ptx{border:1px solid rgba(184,137,74,.38);border-radius:12px;padding:12px 15px;margin-top:10px;font-size:14px;line-height:1.85;color:#e9ecf2}
+.ztx b,.ptx b{color:#F3DDA4;font-weight:600}.ztx small,.ptx small{color:#9aa3b6;font-size:12.5px}
+.fi{animation:fi .5s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.duo>div{min-width:0}
+.warn{margin-top:10px;font-size:13px;color:#ffcf9a;line-height:1.7;text-align:center}
+.pick input,.pick select{background:rgba(12,18,34,.85);color:#F3E6C8;border:1px solid rgba(201,162,76,.45);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;color-scheme:dark}
+.big{font-size:40px;font-family:"Marcellus SC",serif;color:#FFE7A0;line-height:1}
+</style>
+<script>try{var d=document.documentElement;d.classList.add("mg-pre");var s=document.createElement("style");s.id="mg-boot";s.textContent="html.mg-pre body{opacity:0!important}html.mg-pre *{transition:none!important;animation-play-state:paused!important}html body{transition:opacity .18s ease}html{background:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .86 0 0 0 0 .78 0 0 0 0 .6 0 0 0 .075 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\"),url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420'><g fill='%23E3BE84'><circle cx='23' cy='41' r='.9' opacity='.55'/><circle cx='131' cy='17' r='.6' opacity='.4'/><circle cx='287' cy='66' r='1.1' opacity='.5'/><circle cx='371' cy='133' r='.7' opacity='.45'/><circle cx='59' cy='207' r='.8' opacity='.35'/><circle cx='199' cy='171' r='.5' opacity='.5'/><circle cx='333' cy='251' r='.9' opacity='.4'/><circle cx='97' cy='313' r='.6' opacity='.5'/><circle cx='241' cy='349' r='1' opacity='.35'/><circle cx='397' cy='389' r='.6' opacity='.45'/><circle cx='163' cy='403' r='.7' opacity='.3'/><circle cx='11' cy='377' r='.5' opacity='.4'/></g><g fill='%23ffffff'><circle cx='211' cy='97' r='.5' opacity='.35'/><circle cx='77' cy='121' r='.4' opacity='.3'/><circle cx='309' cy='191' r='.5' opacity='.3'/><circle cx='143' cy='271' r='.4' opacity='.35'/><circle cx='381' cy='311' r='.5' opacity='.25'/></g></svg>\"),radial-gradient(ellipse 70% 55% at 12% 8%,rgba(112,84,196,.22),transparent 60%),radial-gradient(ellipse 60% 50% at 88% 92%,rgba(28,124,132,.17),transparent 60%),radial-gradient(ellipse 50% 40% at 50% 45%,rgba(201,162,76,.07),transparent 70%),linear-gradient(160deg,#0b1024 0%,#0e0b22 45%,#081619 100%)!important;background-color:#0b1024!important;background-attachment:fixed!important;background-size:240px 240px,420px 420px,100% 100%,100% 100%,100% 100%,100% 100%!important}";document.head.appendChild(s);setTimeout(function(){d.classList.remove("mg-pre")},2500);var c=localStorage.getItem("mg_tex:"+location.pathname);if(c){var t=document.createElement("style");t.id="mg-tex-boot";t.textContent=c;document.head.appendChild(t);}}catch(e){}</script>
+</head>
+<body><div class="page">
+  <div class="kicker">ნუმეროლოგიის კურსი · დასავლური ნუმეროლოგია</div>
+  <h1>გაკვეთილი 4 — ოსტატი და კარმული რიცხვები</h1>
+  <div class="sub">11, 22, 33 (და სადავო 44): მაღალი პოტენციალი და მაღალი ძაბვა; კარმული ვალები 13, 14, 16, 19; კარმული გაკვეთილები და განმეორებადი რიცხვები — შემოწმება შენს ყველა რიცხვში</div>
+
+  <div class="intro">ორი განსაკუთრებული ჯგუფი: <b>ოსტატი რიცხვები</b> არ დაიყვანება და „ორმაგ“ ენერგიას ატარებს, <b>კარმული ვალები</b> კი შედგენილი რიცხვებია, რომლებიც დაყვანამდე ჩნდება და ტრადიციით „წარსულიდან“ მოტანილ, დაუმთავრებელ თემას აღნიშნავს. ორივე დამატებითი შრეა: ის ძირითად რიცხვს (ფუძეს) არ ცვლის, მაგრამ ართულებს და აღრმავებს.</div>
+
+  <div class="sec"><h2>1 · ოსტატი რიცხვები</h2>
+    <div class="tw"><table class="zt">
+     <tr><th>რიცხვი</th><th>ფუძე</th><th>პოტენციალი</th><th>რისკი</th></tr>
+     <tr><td class="big" style="font-size:28px">11</td><td>2</td><td><b>შთაგონებული</b>: ინტუიცია, ხედვა, სულიერი მოძღვრება, ხელოვნება; „გამტარი“ სხვა სამყაროსთვის</td><td>ნერვული დაძაბულობა, შფოთვა, თვითეჭვი; თუ პოტენციალი არ ვლინდება, ადამიანი 2-ად „ცხოვრობს“</td></tr>
+     <tr><td class="big" style="font-size:28px">22</td><td>4</td><td><b>ოსტატი-მშენებელი</b>: დიდი ხედვის მატერიალიზაცია, ინსტიტუტები, პროექტები მრავალი ადამიანისთვის</td><td>უზარმაზარი ზეწოლა, „ყველაფერი ან არაფერი“, მუშაობა გადაწვამდე</td></tr>
+     <tr><td class="big" style="font-size:28px">33</td><td>6</td><td><b>ოსტატი-მასწავლებელი</b>: უპირობო სიყვარული, განკურნება, მსახურება</td><td>თავგანწირვა საკუთარი თავის ხარჯზე, მოწამის როლი</td></tr>
+     <tr><td class="big" style="font-size:28px">44</td><td>8</td><td>ზოგი სკოლა ცნობს: დისციპლინირებული ძალა, მატერიალური ოსტატობა</td><td>უმეტესობა 44-ს ოსტატ რიცხვად არ თვლის</td></tr>
+    </table></div>
+    <p>ოსტატი რიცხვის „მოპოვება“ ხშირად ასაკთან ერთად ხდება: ახალგაზრდობაში ადამიანი ფუძე რიცხვით ცხოვრობს, ოსტატი ენერგია კი შემდეგ იწყებს გამოვლენას. ზოგი ნუმეროლოგი ოსტატ რიცხვებს მხოლოდ <b>ცხოვრების გზაში</b> და <b>ექსპრესიაში</b> ცნობს.</p>
+  </div>
+
+  <div class="sec"><h2>2 · კარმული ვალები</h2>
+    <p>კარმული ვალი ჩნდება, როცა ძირითადი რიცხვის <b>შედგენილი ფორმა</b> (დაყვანამდე) არის <b>13, 14, 16 ან 19</b>. ის ცხოვრების გზაში, დაბადების დღეში, ექსპრესიაში, სულის სურვილსა და პიროვნებაში მოწმდება.</p>
+    <div class="tw"><table class="zt">
+     <tr><th>ვალი</th><th>ტრადიციული „ისტორია“</th><th>რას ითხოვს ახლა</th></tr>
+     <tr><td><b>13/4</b></td><td>სიზარმაცე, სხვების შრომით ცხოვრება</td><td>შრომა, მოთმინება, დისციპლინა; მალსახმობები არ მუშაობს</td></tr>
+     <tr><td><b>14/5</b></td><td>თავისუფლების ბოროტად გამოყენება, ზედმეტობა</td><td>ზომიერება, ერთგულება, ადაპტაცია სიმყარის დაკარგვის გარეშე</td></tr>
+     <tr><td><b>16/7</b></td><td>ეგო, ამპარტავნება, ურთიერთობებში ღალატი</td><td>ეგოს „ციხე-კოშკის“ დაცემა (ტაროს „კოშკი“ XVI) და სულიერი აღდგენა</td></tr>
+     <tr><td><b>19/1</b></td><td>ძალაუფლების ბოროტად გამოყენება, ეგოცენტრიზმი</td><td>დამოუკიდებლობა, რომელიც სხვებს პატივს სცემს; დახმარების თხოვნის სწავლა</td></tr>
+    </table></div>
+    <div class="calc">„კარმული ვალი“ სიმბოლური ენაა: მისი წაკითხვა შეიძლება როგორც რეინკარნაციის ენაზე, ისე ფსიქოლოგიურად — როგორც <b>განმეორებადი სცენარი</b>, რომელსაც ცნობიერი შრომა სჭირდება.</div>
+  </div>
+
+  <div class="sec"><h2>3 · შემოწმება შენს რიცხვებში</h2>
+    <div class="panel"><div class="inp" data-noppl>
+      <div><label for="nF">სრული სახელი და გვარი (როგორც დაბადებისას)</label><input id="nF" type="text" value="ნინო ბერიძე" autocomplete="off"></div>
+      <div><label for="nS">ყოველდღიური სახელი (არასავალდებულო)</label><input id="nS" type="text" value="" autocomplete="off"></div>
+      <div><label for="nD">დაბადების თარიღი (დღე · თვე · წელი)</label><div class="two"><input id="nD" type="number" min="1" max="31" value="15"><input id="nM" type="number" min="1" max="12" value="5"><input id="nY" type="number" min="1800" max="2100" value="1990" style="flex:1.4"></div></div>
+    </div><div class="sum" id="nSum"></div></div>
+
+    <div class="tw" style="margin-top:10px"><table class="zt" id="cT"></table></div>
+    <div class="ztx" id="cRo"></div>
+  </div>
+
+  <div class="sec"><h2>შეამოწმე თავი</h2><div class="quiz" id="qz"></div><div id="qs"></div></div>
+  <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_numer3.html">← სახელის რიცხვები</a><a href="course_num.html">გაკვეთილების სია</a><a href="course_numer5.html">პირადი ციკლები →</a></div>
+</div>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id),p2=n=>String(n).padStart(2,'0');
+const KA='აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ',KAV='აეიოუ',LAV='AEIOU';
+const MASTER=[11,22,33];
+const dsum=n=>String(Math.abs(n)).split('').reduce((a,b)=>a+ +b,0);
+function red(n,keep){keep=keep!==false;while(n>9&&!(keep&&MASTER.includes(n)))n=dsum(n);return n;}
+const red1=n=>{while(n>9)n=dsum(n);return n;};
+function lval(ch){const c=ch.toUpperCase();let i=KA.indexOf(ch);if(i>=0)return (i%9)+1;i=c.charCodeAt(0)-65;if(i>=0&&i<26)return (i%9)+1;return 0;}
+const isV=ch=>KAV.includes(ch)||LAV.includes(ch.toUpperCase());
+const letters=s=>[...String(s||'')].filter(ch=>lval(ch)>0);
+function nameNums(s){const L=letters(s);const all=L.reduce((a,c)=>a+lval(c),0),v=L.filter(isV).reduce((a,c)=>a+lval(c),0),c=L.filter(ch=>!isV(ch)).reduce((a,ch)=>a+lval(ch),0);
+  const cnt=Array(10).fill(0);L.forEach(ch=>cnt[lval(ch)]++);return {L,all,v,c,cnt,ex:red(all),su:red(v),pe:red(c)};}
+function lifePath(d,m,y){const a=red(m),b=red(d),c=red(dsum(y));const raw=a+b+c;return {lp:red(raw),raw,parts:[a,b,c]};}
+const NM={1:['ლიდერი','დამოუკიდებლობა, ინიციატივა, ნება, სიახლე','ეგოიზმი, სიჯიუტე, მარტოობა'],
+2:['დიპლომატი','თანამშრომლობა, მგრძნობელობა, ბალანსი, პარტნიორობა','გადაჭარბებული დამოკიდებულება, გაუბედაობა'],
+3:['შემოქმედი','თვითგამოხატვა, სიტყვა, ხელოვნება, ოპტიმიზმი','გაფანტულობა, ზედაპირულობა'],
+4:['მშენებელი','შრომა, წესრიგი, სტაბილურობა, სანდოობა','სიხისტე, ზედმეტი სიფრთხილე'],
+5:['მოგზაური','თავისუფლება, ცვლილება, ცნობისმოყვარეობა, გამოცდილება','მოუსვენრობა, ზომიერების ნაკლებობა'],
+6:['მზრუნველი','პასუხისმგებლობა, ოჯახი, სილამაზე, სამსახური სხვებისთვის','ზედმეტი კონტროლი, თავგანწირვა'],
+7:['მკვლევარი','ანალიზი, სიბრძნე, სულიერება, სიღრმე','ჩაკეტილობა, სკეპტიციზმი'],
+8:['ორგანიზატორი','ძალაუფლება, ბიზნესი, მატერიალური მიღწევა, ავტორიტეტი','მატერიალიზმი, ძალაუფლების ბოროტად გამოყენება'],
+9:['ჰუმანისტი','თანაგრძნობა, უნივერსალურობა, დასრულება, სიბრძნე','გაუცხოება, წარსულზე მიჯაჭვულობა'],
+11:['შთაგონებული (11 · ოსტატი)','ინტუიცია, შთაგონება, სულიერი მოძღვრობა','ნერვული დაძაბულობა, თვითეჭვი'],
+22:['ოსტატი-მშენებელი (22)','დიდი ხედვის მატერიალიზაცია, მასშტაბური პროექტები','ზეწოლა, პოტენციალის შიში'],
+33:['ოსტატი-მასწავლებელი (33)','უპირობო სიყვარული, განკურნება, მსახურება','თავგანწირვა საკუთარი თავის ხარჯზე']};
+const nmS=n=>`<b style="color:#FFE7A0">${n}</b> — ${NM[n][0]}`;
+const PKEY='magnus_num_profile';
+function readP(){const g=id=>$(id)?$(id).value:'';const d=+g('nD')||1,m=+g('nM')||1,y=+g('nY')||2000;try{localStorage.setItem(PKEY,JSON.stringify({f:g('nF'),s:g('nS'),d,m,y}));}catch(e){}
+  if($('nSum'))$('nSum').innerHTML=`${g('nF')||'—'} · ${p2(d)}.${p2(m)}.${y}`;return {full:g('nF'),short:g('nS'),d,m,y};}
+function initP(cb){try{const o=JSON.parse(localStorage.getItem(PKEY)||'null');if(o){$('nF').value=o.f||'';$('nS').value=o.s||'';$('nD').value=o.d;$('nM').value=o.m;$('nY').value=o.y;}}catch(e){}
+  ['nF','nS','nD','nM','nY'].forEach(id=>$(id).addEventListener('input',cb));}
+const chain=(raw)=>{const s=[raw];let n=raw;while(n>9&&!MASTER.includes(n)){n=dsum(n);s.push(n);}return s.join(' → ');};
+const KD={13:'13/4 — სიზარმაცე წარსულში: ახლა შრომითა და დისციპლინით',14:'14/5 — თავისუფლების ბოროტად გამოყენება: ახლა ზომიერება და ერთგულება',16:'16/7 — ეგოს დაცემა: სიამაყის დანგრევა და სულიერი აღდგენა',19:'19/1 — ძალაუფლების ბოროტად გამოყენება: ახლა დამოუკიდებლობა სხვების პატივისცემით'};
+function kdebt(raw){let n=raw;const seen=[];while(n>9){if(KD[n])seen.push(n);n=dsum(n);}return seen;}
+const D=Math.PI/180,GEO='"Noto Sans Georgian","Noto Serif Georgian",sans-serif',SYM='"Noto Sans Symbols 2","Segoe UI Symbol","DejaVu Sans",sans-serif';
+function fit(cv,ratio){const dpr=Math.min(2,window.devicePixelRatio||1),w=Math.max(260,cv.clientWidth||300),h=Math.round(w*ratio);cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h};}
+function txt(c,t,x,y,size,col,font,al){c.font=size+'px '+(font||GEO);c.fillStyle=col;c.textAlign=al||'center';c.textBaseline='middle';c.fillText(t,x,y);}
+function line(c,a,b,col,lw){c.strokeStyle=col;c.lineWidth=lw||1;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}
+
+function upd(){const P=readP(),A=lifePath(P.d,P.m,P.y),N=nameNums(P.full),all=dsum(P.d)+dsum(P.m)+dsum(P.y);
+  const rows=[['ცხოვრების გზა (კომპ.)',A.raw],['ცხოვრების გზა (ციფრები)',all],['დაბადების დღე',P.d]];if(N.L.length)rows.push(['ექსპრესია',N.all],['სულის სურვილი',N.v],['პიროვნება',N.c]);
+  let ms=0,ks=new Set();
+  $('cT').innerHTML='<tr><th>რიცხვი</th><th>შედგენილი → დაყვანა</th><th>ოსტატი</th><th>კარმული ვალი</th></tr>'+rows.map(([n,x])=>{const ch=chain(x),steps=[x];let t=x;while(t>9){t=dsum(t);steps.push(t);}const m=steps.filter(s=>MASTER.includes(s)),k=kdebt(x);if(m.length)ms++;k.forEach(z=>ks.add(z));
+    return `<tr><td>${n}</td><td>${ch}</td><td>${m.length?'<b style="color:#FFE7A0">'+m.join(', ')+'</b>':'—'}</td><td>${k.length?'<b style="color:#ffc58a">'+k.join(', ')+'</b>':'—'}</td></tr>`;}).join('');
+  $('cRo').innerHTML=(ms?`<b style="color:#FFE7A0">ოსტატი რიცხვი გვხვდება ${ms} პოზიციაზე</b> — მაღალი პოტენციალი და მაღალი მგრძნობელობა. `:'ოსტატი რიცხვი ძირითად პოზიციებში არ გვხვდება. ')+(ks.size?`<br><b style="color:#ffc58a">კარმული ვალი:</b> ${[...ks].map(k=>KD[k]).join('<br>')}`:'<br>კარმული ვალი არ არის.')+'<br><small>„ოსტატი“ აქ ნიშნავს, რომ დაყვანის ჯაჭვში 11, 22 ან 33 გამოჩნდა.</small>';}
+initP(upd);upd();
+const Q=[['რომელია ოსტატი რიცხვები?',['10, 20, 30','11, 22, 33','12, 24, 36','13, 14, 16'],1,'44-ს მხოლოდ ზოგი სკოლა ცნობს.'],
+ ['11-ის ფუძე რიცხვია:',['1','2','11','9'],1,'1 + 1 = 2.'],
+ ['რომელია კარმული ვალები?',['11, 22, 33','13, 14, 16, 19','7, 8, 9','10, 20, 30'],1,'შედგენილი რიცხვები დაყვანამდე.'],
+ ['რას ითხოვს 16/7?',['ფულს','ეგოს „დაცემასა“ და სულიერ აღდგენას','მოგზაურობას','ოჯახს'],1,'ტაროს „კოშკი“ XVI.'],
+ ['13/4 კარმული ვალის გაკვეთილია:',['თავისუფლება','შრომა და დისციპლინა','ლიდერობა','ინტუიცია'],1,'მალსახმობები არ მუშაობს.'],
+ ['როდის „იღვიძებს“ ოსტატი რიცხვი ტრადიციულად?',['დაბადებისთანავე','ხშირად ასაკთან ერთად; მანამდე ადამიანი ფუძით ცხოვრობს','არასდროს','მხოლოდ კვირაობით'],1,'პოტენციალი შრომით ვლინდება.']];
+const QA=[];
+$('qz').innerHTML=Q.map((q,i)=>`<div class="qq" data-q="${i}"><p>${i+1}. ${q[0]}</p><div class="op">${q[1].map((o,j)=>`<button type="button" data-o="${j}">${o}</button>`).join('')}</div><div class="ex" hidden></div></div>`).join('');
+$('qz').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q;if(QA[i]!=null)return;const j=+b.dataset.o;QA[i]=j===Q[i][2];
+  box.querySelectorAll('button').forEach((x,k)=>{if(k===Q[i][2])x.classList.add('ok');else if(k===j)x.classList.add('no');});
+  const ex=box.querySelector('.ex');ex.hidden=false;ex.textContent=(QA[i]?'სწორია. ':'არასწორია. ')+Q[i][3];
+  if(QA.filter(x=>x!=null).length===Q.length)$('qs').textContent=`შედეგი: ${QA.filter(Boolean).length} / ${Q.length}`;});
+
+})();
+</script>
+
+<script src="site.js?v=20261121f"></script>
+<script src="account.js?v=2"></script>
+</body>
+</html>
