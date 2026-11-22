@@ -157,9 +157,11 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
     <p>აირჩიე პლანეტა ან ორგანო:</p>
     <div id="orP" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
     <div class="duo" style="margin-top:12px"><div>
-     <div id="orX" style="line-height:1.85;font-size:14px"></div>
+     <div id="orB" class="stage" style="padding:6px"></div>
+     <div style="font-size:12px;color:#9aa3b6;text-align:center;margin-top:4px">სავსე ნათება — ტრადიციული მმართველობა · წყვეტილი — თანამედროვე დამატება · დააჭირე ორგანოს</div>
     </div><div>
-     <div style="font-size:12px;color:#B8894A;letter-spacing:.04em;margin-bottom:6px">ორგანო → პლანეტა</div>
+     <div id="orX" style="line-height:1.85;font-size:14px"></div>
+     <div style="font-size:12px;color:#B8894A;letter-spacing:.04em;margin:12px 0 6px">ორგანო → პლანეტა</div>
      <div id="orO" style="display:flex;flex-wrap:wrap;gap:5px"></div>
     </div></div>
     <div class="tw" style="margin-top:14px"><table class="zt" id="orT"><tr><th></th><th>პლანეტა</th><th>ტრადიციული ორგანოები</th><th>სითხე / თვისება</th><th>თანამედროვე დამატებები</th></tr></table></div>
@@ -213,6 +215,7 @@ table.zt{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
 
   <div class="nav" style="justify-content:center;margin-top:22px"><a href="course_astro47.html">← ტემპერამენტი და კონსტიტუცია</a><a href="course_astro.html">გაკვეთილების სია</a><a href="course_astro49.html">დეკუმბიტურა და კრიზისები →</a></div>
 </div>
+<script src="body_organs.js?v=2"></script>
 <script>
 (function(){
 'use strict';
@@ -245,12 +248,16 @@ const orgMap={};PL.forEach((p,i)=>p[3].forEach(o=>{if(o==='—')return;const k=o
 $('orP').innerHTML=PL.map((p,i)=>`<button type="button" data-p="${i}" style="background:none;border:1px solid ${p[2]}88;color:${p[2]};border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:13px">${p[0]} ${p[1]}</button>`).join('');
 $('orO').innerHTML=Object.keys(orgMap).sort((a,b)=>a.localeCompare(b,'ka')).map(k=>`<button type="button" data-o="${k}" style="background:none;border:1px solid rgba(184,137,74,.35);color:#cfd5e2;border-radius:8px;padding:3px 9px;cursor:pointer;font:inherit;font-size:12px">${k}</button>`).join('');
 $('orT').insertAdjacentHTML('beforeend',PL.map(p=>`<tr><td class="gl" style="color:${p[2]}">${p[0]}</td><td><b>${p[1]}</b></td><td>${p[3].join(', ')}</td><td>${p[4]}</td><td>${p[5]}</td></tr>`).join(''));
-function pShow(i){const p=PL[i];$('orP').querySelectorAll('button').forEach(b=>b.style.background=+b.dataset.p===i?'rgba(227,190,132,.12)':'none');
+MGBODY.build($('orB'));
+function pShow(i,f){const p=PL[i];MGBODY.paint($('orB'),i,p[2],f);$('orP').querySelectorAll('button').forEach(b=>b.style.background=+b.dataset.p===i?'rgba(227,190,132,.12)':'none');
   $('orO').querySelectorAll('button').forEach(b=>{const on=(orgMap[b.dataset.o]||[]).includes(i);b.style.borderColor=on?p[2]:'rgba(184,137,74,.35)';b.style.color=on?p[2]:'#cfd5e2';});
   $('orX').innerHTML=`<div style="font-size:20px;color:${p[2]}">${p[0]} <b>${p[1]}</b></div>`+(p[3][0]!=='—'?`<b style="color:#F3DDA4">ტრადიციულად:</b><ul style="margin-top:4px">${p[3].map(o=>`<li>${o}</li>`).join('')}</ul><b style="color:#F3DDA4">სითხე / თვისება:</b> ${p[4]}<br>`:'<i style="color:#9aa3b6">ტრადიციულ სისტემაში არ არის — პლანეტა 1781 წლის შემდეგ აღმოაჩინეს.</i><br>')+`<b style="color:#F3DDA4">თანამედროვე ავტორები:</b> ${p[5]}`;}
 $('orP').addEventListener('click',e=>{const b=e.target.closest('button');if(b)pShow(+b.dataset.p);});
 $('orO').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const ps=orgMap[b.dataset.o]||[];if(ps.length)pShow(ps[0]);
   $('orX').insertAdjacentHTML('afterbegin',`<div style="font-size:13px;color:#9aa3b6;margin-bottom:6px">„${b.dataset.o}“ — ${ps.map(i=>`<span style="color:${PL[i][2]}">${PL[i][0]} ${PL[i][1]}</span>`).join(', ')}</div>`);});
+$('orB').addEventListener('click',e=>{const g=e.target.closest('.org');if(!g)return;const k=g.dataset.o,ps=MGBODY.PO.map((x,i)=>[i,x[0].includes(k)?'t':x[1].includes(k)?'m':null]).filter(x=>x[1]);
+  pShow(ps.length?ps[0][0]:4,k);$('orX').insertAdjacentHTML('afterbegin',`<div style="font-size:14px;margin-bottom:8px;padding:8px 10px;border:1px solid rgba(227,190,132,.3);border-radius:10px"><b style="color:#FFE7A0">${MGBODY.O[k][0]}</b> — ${ps.length?ps.map(([i,t])=>`<span style="color:${PL[i][2]}">${PL[i][0]} ${PL[i][1]}</span>${t==='m'?' <small>(თანამედროვე)</small>':''}`).join(', '):'—'}</div>`);});
+$('orB').addEventListener('keydown',e=>{if(e.key==='Enter'){const g=e.target.closest('.org');if(g)g.dispatchEvent(new MouseEvent('click',{bubbles:true}));}});
 pShow(4);
 
 
