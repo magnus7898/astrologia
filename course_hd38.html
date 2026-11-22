@@ -726,7 +726,7 @@ function integ(sv,pg,dg){const st=g=>pg.includes(g)&&dg.includes(g)?3:pg.include
 let SVGP=null;
 const svgText=()=>SVGP||(SVGP=fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();}));
 function mountSV(t,wrap){const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
-  const w=$(wrap);w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
+  const w=$(wrap);w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','445 40 580 780');
   const ss=sv.querySelector('#hd-activation');if(ss){if(!document.getElementById('hd-act-bg2')){const d=document.createElement('style');d.id='hd-act-bg2';d.textContent=ss.textContent;document.head.appendChild(d);}ss.remove();}
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));return sv;}
 /* activation classes: personality / design / both, defined centres, integration complex */

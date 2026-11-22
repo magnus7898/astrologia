@@ -123,7 +123,7 @@ function hdTransit(acts){
 async function hdSvg(){
   if(!S.svg){const t=await fetch(API+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw new Error('svg');return r.text();});S.svg=t;}
   const sv=document.importNode(new DOMParser().parseFromString(S.svg,'image/svg+xml').documentElement,true);
-  sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
+  sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','445 40 580 780');
   const ss=sv.querySelector('#hd-activation');if(ss){if(!$('#hd-act-nw')){const st=document.createElement('style');st.id='hd-act-nw';st.textContent=ss.textContent;document.head.appendChild(st);}ss.remove();}
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));
   return sv;}

@@ -715,7 +715,7 @@ function integ(sv,pg,dg){const st=g=>pg.includes(g)&&dg.includes(g)?3:pg.include
 let SVGP=null;
 const svgText=()=>SVGP||(SVGP=fetch(API_BASE+'/static/human_prepared.svg').then(r=>{if(!r.ok)throw 0;return r.text();}));
 function mountSV(t,wrap){const doc=new DOMParser().parseFromString(t,'image/svg+xml'),sv=document.importNode(doc.documentElement,true);if(sv.nodeName.toLowerCase()!=='svg')throw 0;
-  const w=$(wrap);w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','420 40 580 780');
+  const w=$(wrap);w.innerHTML='';w.appendChild(sv);sv.setAttribute('preserveAspectRatio','xMidYMid meet');sv.removeAttribute('width');sv.removeAttribute('height');sv.setAttribute('viewBox','445 40 580 780');
   const ss=sv.querySelector('#hd-activation');if(ss){if(!document.getElementById('hd-act-bg2')){const d=document.createElement('style');d.id='hd-act-bg2';d.textContent=ss.textContent;document.head.appendChild(d);}ss.remove();}
   sv.querySelectorAll('.detail-part').forEach(e=>e.style.setProperty('display','none','important'));return sv;}
 /* activation classes: personality / design / both, defined centres, integration complex */
@@ -777,7 +777,7 @@ function arrowsOnSV(){const sv=S.sv;if(!sv||!PT)return;sv.querySelectorAll('.hd-
     const t=document.createElementNS(SVGNS,'text');t.setAttribute('x',left?x0-8:x0+L+8);t.setAttribute('y',y+5);t.setAttribute('text-anchor',left?'end':'start');t.setAttribute('font-size','17');t.setAttribute('fill',col);t.setAttribute('font-family','Noto Serif Georgian,serif');t.textContent=POS[i][1];g.appendChild(t);});
   sv.appendChild(g);}
 function paintV(){const sv=S.sv;if(!PT)return;if(!sv){const sp=S.pg,sd=S.dg;drawB();return;}unpaint(sv);setAct(sv,S.pg,S.dg);arrowsOnSV();}
-async function loadSVs(){try{const t=await svgText();S.sv=mountSV(t,'bgW');S.sv.setAttribute('viewBox','360 40 700 780');$('bgW').style.display='';$('cvB').style.display='none';paintV();}catch(e){S.sv=null;}}
+async function loadSVs(){try{const t=await svgText();S.sv=mountSV(t,'bgW');S.sv.setAttribute('viewBox','385 40 700 780');$('bgW').style.display='';$('cvB').style.display='none';paintV();}catch(e){S.sv=null;}}
 
 function codeL(){return PT.map(d=>side(d.tone)?'R':'L').join('');}
 function mTxt(){$('src').innerHTML=EXACT?'<span style="color:#8fd19a">● ზუსტი მნიშვნელობები — სერვერი (Swiss Ephemeris)</span>':'<span style="color:#FFD36A">● მიახლოებითი (ბრაუზერის ეფემერიდა) — ზუსტი მონაცემები იტვირთება…</span>';

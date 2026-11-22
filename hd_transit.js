@@ -268,7 +268,7 @@ async function loadSvg(){
   const sv=wrap.querySelector('svg');
   sv.setAttribute('preserveAspectRatio','xMidYMid meet');
   sv.removeAttribute('width');sv.removeAttribute('height');
-  sv.setAttribute('viewBox','420 40 580 780');
+  sv.setAttribute('viewBox','445 40 580 780');
   const ss=sv.querySelector('#hd-activation');
   if(ss){
     if(!document.querySelector('style[id^="hd-act-"]')){

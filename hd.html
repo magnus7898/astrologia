@@ -654,7 +654,7 @@ async function loadSVG(containerId,which){
   if(!sv)throw new Error('SVG not found');
   sv.setAttribute('preserveAspectRatio','xMidYMid meet');
   sv.removeAttribute('width');sv.removeAttribute('height');
-  sv.setAttribute('viewBox','420 40 580 780');
+  sv.setAttribute('viewBox','445 40 580 780');
   const ss=sv.querySelector('#hd-activation');
   if(ss){
     const sid='hd-act-'+which;
@@ -1172,7 +1172,7 @@ loadSVG('bodygraph','natal').catch(e=>{
   document.getElementById('bodygraph').innerHTML=`<div class="loading" style="color:#e06060">ვერ ჩაიტვირთა: ${e.message}</div>`;
 });
 </script>
-<script src="hd_transit.js"></script>
+<script src="hd_transit.js?v=2"></script>
 <script src="hd_silhouette.js?v=22"></script>
 <script src="hd_find.js"></script>
 <script src="hd_stats.js"></script>
