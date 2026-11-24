@@ -183,27 +183,35 @@ const CX=350,CY=350,R1=270,R2=202,R3=135,R4=105;
 
 // Planet info matching astro.html
 const PI={
-  'Sun':    {sym:'sun',  color:'#f9c646'},
-  'Moon':   {sym:'\u263d',color:'#c8d8f0'},
-  'Mercury':{sym:'\u263f',color:'#a0c8d0'},
-  'Venus':  {sym:'\u2640',color:'#e87878'},
-  'Mars':   {sym:'\u2642',color:'#e84040'},
-  'Jupiter':{sym:'\u2643',color:'#e89040'},
-  'Saturn': {sym:'\u2644',color:'#c8c840'},
-  'Uranus': {sym:'\u2645',color:'#50c8d8'},
-  'Neptune':{sym:'\u2646',color:'#6070d8'},
-  'Pluto':  {sym:'\u2bd3',color:'#c050a0'},
+  'Sun':    {sym:'sun',  color:'#e04848'},
+  'Moon':   {sym:'\u263d',color:'#3d7be0'},
+  'Mercury':{sym:'\u263f',color:'#efe8d8'},
+  'Venus':  {sym:'\u2640',color:'#34a853'},
+  'Mars':   {sym:'\u2642',color:'#e04848'},
+  'Jupiter':{sym:'\u2643',color:'#e04848'},
+  'Saturn': {sym:'\u2644',color:'#34a853'},
+  'Uranus': {sym:'\u2645',color:'#efe8d8'},
+  'Neptune':{sym:'\u2646',color:'#3d7be0'},
+  'Pluto':  {sym:'\u2bd3',color:'#3d7be0'},
   'Chiron': {sym:'\u26b7',color:'#d08040'},
   'Lilith': {sym:'\u26b8',color:'#904060'},
   'Selena': {sym:'\u2bdd\ufe0e',color:'#d0e8f8'},
-  'Juno':   {sym:'\u26b5',color:'#c890d0'},
+  'Juno':   {sym:'\u26b5',color:'#9a9a9a'},
+  'Ceres':  {sym:'\u26b3',color:'#9a9a9a'},
+  'Pallas': {sym:'\u26b4',color:'#9a9a9a'},
+  'Vesta':  {sym:'\u26b6',color:'#9a9a9a'},
   'North Node':{sym:'\u260a',color:'#60c060'},
   'South Node':{sym:'\u260b',color:'#c06060'},
   'Vertex': {sym:'Vx',  color:'#8090d0'},
   'Fortune':{sym:'\u2295',color:'#f0c060'},
 };
+
+(function(){let l=false;try{l=localStorage.getItem('mg_theme')==='light';}catch(e){}if(!l)return;
+const L={'#e04848':'#ff9090','#34a853':'#41b060','#3d7be0':'#6babff','#efe8d8':'#eeeeee','#9a9a9a':'#7f7f7f'};
+for(const k in PI){const c=(PI[k].color||'').toLowerCase();if(L[c])PI[k].color=L[c];}})();
+window.addEventListener('mg-theme',()=>location.reload());
 const PORDER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn',
-  'Uranus','Neptune','Pluto','Chiron','Lilith','Selena','Juno',
+  'Uranus','Neptune','Pluto','Chiron','Lilith','Selena','Juno','Ceres','Pallas','Vesta',
   'North Node','South Node','Vertex','Fortune'];
 
 // Element colors by constellation
@@ -475,9 +483,9 @@ function drawConTable(data){
   }
 }
 </script>
-<script src="mg_wheel.js?v=11"></script>
+<script src="mg_wheel.js?v=12"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261124t"></script>
+<script src="site.js?v=20261125a"></script>
 <script src="account.js"></script>
 </body>
 </html>

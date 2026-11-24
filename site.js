@@ -107,7 +107,7 @@ select{color-scheme:dark}
 function themeButton(){
   if(document.getElementById('mg-theme'))return;
   const b=document.createElement('button');b.id='mg-theme';b.type='button';
-  b.onclick=()=>{const t=themeGet()==='light'?'dark':'light';try{localStorage.setItem(THEME_KEY,t);}catch(e){}themeApply(t);};
+  b.onclick=()=>{const t=themeGet()==='light'?'dark':'light';try{localStorage.setItem(THEME_KEY,t);}catch(e){}themeApply(t);try{window.dispatchEvent(new Event('mg-theme'));}catch(e){}};
   const h=document.getElementById('mg-head');
   if(h){const bg=h.querySelector('.burger');h.insertBefore(b,bg||null);}
   else{b.style.cssText='position:fixed;top:12px;right:12px;z-index:9990;background:rgba(12,18,34,.75)';document.body.appendChild(b);}

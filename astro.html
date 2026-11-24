@@ -178,7 +178,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
 .retro{color:#f87171;font-size:9px;margin-left:2px}
 .house-badge{display:inline-block;background:rgba(26,21,69,.8);border:1px solid rgba(184,137,74,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
 .deg-val{font-family:'Cinzel',serif;font-size:11px;color:#c8d8f0;white-space:nowrap}
-.moon-sym{color:#b8d8ff;text-shadow:0 0 8px rgba(100,160,255,0.9);font-size:20px;font-family:serif}
+.moon-sym{color:#3d7be0;text-shadow:0 0 6px rgba(61,123,224,.6);font-size:20px;font-family:serif}
 .p-sym{font-family:serif;font-size:18px;line-height:1;display:inline-block}
 .asp-sym{font-size:16px;font-family:serif}
 .sign-fire{color:#e8875a}.sign-earth{color:#8fc46a}.sign-air{color:#c9d3e6}.sign-water{color:#5aa8e8}
@@ -669,7 +669,7 @@ td{border-bottom-color:rgba(184,137,74,.12)}
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
         <input type="checkbox" id="f-asteroid" style="accent-color:#B8894A;width:14px;height:14px;cursor:pointer">
         <span style="font-size:11px;color:rgba(237,230,216,.9)">ასტეროიდები</span>
-        <span style="font-size:10px;color:rgba(188,192,202,.5)">ქირონი · იუნო</span>
+        <span style="font-size:10px;color:rgba(188,192,202,.5)">ქირონი · იუნო · ცერერა · პალადა · ვესტა</span>
       </label>
     </div>
   </div>
@@ -791,20 +791,27 @@ const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏�
 /* zodiac palette shared with the course wheels: fire · earth · air · water */
 const ZCOL=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
 const ZELEMENT=['F','E','A','W','F','E','A','W','F','E','A','W'];
+const MG_PC_DARK={R:'#e04848',G:'#34a853',B:'#3d7be0',K:'#efe8d8',GR:'#9a9a9a'},MG_PC_LIGHT={R:'#ff9090',G:'#41b060',B:'#6babff',K:'#eeeeee',GR:'#7f7f7f'};
+/* light theme inverts the page, so light-mode colours are stored pre-inverted: on screen they read as red / green / blue / black / grey */
+function mgPC(){let l=false;try{l=localStorage.getItem('mg_theme')==='light';}catch(e){}return l?MG_PC_LIGHT:MG_PC_DARK;}
+const MG_PLANET_EL={'მზე':'R','მარსი':'R','იუპიტერი':'R','ვენერა':'G','სატურნი':'G','მერკური':'K','ურანი':'K','მთვარე':'B','ნეპტუნი':'B','პლუტონი':'B','იუნო':'GR','ცერერა':'GR','პალადა':'GR','ვესტა':'GR'};
+function mgRecolor(){const pc=mgPC();for(const k in MG_PLANET_EL)if(PI[k])PI[k].color=pc[MG_PLANET_EL[k]];}
 const PI={
-  'მზე':{sym:'sun',color:'#f9c646'},'მთვარე':{sym:'☽',color:'#c8d8f0'},
-  'მერკური':{sym:'☿',color:'#a0c8d0'},'ვენერა':{sym:'♀',color:'#e87878'},
-  'მარსი':{sym:'♂',color:'#e84040'},'იუპიტერი':{sym:'♃',color:'#e89040'},
-  'სატურნი':{sym:'♄',color:'#c8c840'},'ურანი':{sym:'♅',color:'#50c8d8'},
-  'ნეპტუნი':{sym:'♆',color:'#6070d8'},'პლუტონი':{sym:'⯓',color:'#c050a0'},
+  'მზე':{sym:'sun',color:'#e04848'},'მთვარე':{sym:'☽',color:'#3d7be0'},
+  'მერკური':{sym:'☿',color:'#efe8d8'},'ვენერა':{sym:'♀',color:'#34a853'},
+  'მარსი':{sym:'♂',color:'#e04848'},'იუპიტერი':{sym:'♃',color:'#e04848'},
+  'სატურნი':{sym:'♄',color:'#34a853'},'ურანი':{sym:'♅',color:'#efe8d8'},
+  'ნეპტუნი':{sym:'♆',color:'#3d7be0'},'პლუტონი':{sym:'⯓',color:'#3d7be0'},
   'ქირონი':{sym:'⚷',color:'#d08040'},'ლილიტი':{sym:'⚸',color:'#904060'},
   'ჩრდ. კვანძი':{sym:'☊',color:'#60c060'},'სამხ. კვანძი':{sym:'☋',color:'#c06060'},
   'ვერტექსი':{sym:'Vx',color:'#8090d0'},
   'AC':{sym:'AC',color:'#e8c06e'},
   'MC':{sym:'MC',color:'#e8c06e'},'თეთრი მთვარე':{sym:'SEL',color:'#d0e8f8'},
-  'ბედის ვარსკვლავი':{sym:'⊕',color:'#f0c060'},'იუნო':{sym:'⚵',color:'#c890d0'},
+  'ბედის ვარსკვლავი':{sym:'⊕',color:'#f0c060'},'იუნო':{sym:'⚵',color:'#9a9a9a'},'ცერერა':{sym:'⚳',color:'#9a9a9a'},'პალადა':{sym:'⚴',color:'#9a9a9a'},'ვესტა':{sym:'⚶',color:'#9a9a9a'},
 };
-const PORDER=['მზე','მთვარე','მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი','ჩრდ. კვანძი','სამხ. კვანძი','ქირონი','იუნო','ლილიტი','თეთრი მთვარე','ბედის ვარსკვლავი','ვერტექსი','AC','MC'];
+mgRecolor();
+window.addEventListener('mg-theme',()=>{mgRecolor();try{if(document.querySelector('#chart-area svg')&&typeof generate==='function')generate();}catch(e){}});
+const PORDER=['მზე','მთვარე','მერკური','ვენერა','მარსი','იუპიტერი','სატურნი','ურანი','ნეპტუნი','პლუტონი','ჩრდ. კვანძი','სამხ. კვანძი','ქირონი','იუნო','ცერერა','პალადა','ვესტა','ლილიტი','თეთრი მთვარე','ბედის ვარსკვლავი','ვერტექსი','AC','MC'];
 
 // ── UTILS ──
 function fmtDeg(deg){
@@ -827,8 +834,8 @@ function txt(parent,s,x,y,attrs={}){
 function signClass(si){const e=ZELEMENT[si];return e==='F'?'sign-fire':e==='E'?'sign-earth':e==='A'?'sign-air':'sign-water';}
 function sunSVG(sz=20){
   return `<svg width="${sz}" height="${sz}" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;display:inline-block">
-    <circle cx="11" cy="11" r="8" fill="none" stroke="#f9c646" stroke-width="2"/>
-    <circle cx="11" cy="11" r="2" fill="#f9c646"/></svg>`;
+    <circle cx="11" cy="11" r="8" fill="none" stroke="${PI['მზე'].color}" stroke-width="2"/>
+    <circle cx="11" cy="11" r="2" fill="${PI['მზე'].color}"/></svg>`;
 }
 
 // ── MIDPOINT (handles 0/360 wrap) ──
@@ -959,7 +966,7 @@ const ORB_TIER={
   'ურანი':'outer','ნეპტუნი':'outer','პლუტონი':'outer',
   'ჩრდ. კვანძი':'virtual','სამხ. კვანძი':'virtual','ქირონი':'virtual',
   'ლილიტი':'virtual','თეთრი მთვარე':'virtual','ბედის ვარსკვლავი':'virtual',
-  'ვერტექსი':'virtual','იუნო':'virtual'
+  'ვერტექსი':'virtual','იუნო':'virtual','ცერერა':'virtual','პალადა':'virtual','ვესტა':'virtual'
 };
 /* keys are alphabetically sorted, matching [t1,t2].sort().join('|') */
 const ORB_PAIR={
@@ -1089,7 +1096,7 @@ function renderSynastryScore(label,cross){
 
 // Aspect filter categories
 const VIRTUAL_PLANETS=new Set(['ლილიტი','თეთრი მთვარე','ბედის ვარსკვლავი','ჩრდ. კვანძი','სამხ. კვანძი','ვერტექსი','AC','MC']);
-const ASTEROID_PLANETS=new Set(['ქირონი','იუნო']);
+const ASTEROID_PLANETS=new Set(['ქირონი','იუნო','ცერერა','პალადა','ვესტა']);
 
 function isAspectVisible(asp){
   const fVirtual=document.getElementById('f-virtual')?.checked;
@@ -3086,16 +3093,16 @@ function drawWheel(data1,data2,dualAsp){
       const fsz=isInner?12:18;
       if(name==='მზე'&&!isInner){
         const sg2=el('g',{},svg);
-        el('circle',{cx:gxy.x,cy:gxy.y,r:10,fill:'rgba(249,198,70,0.12)'},sg2);
-        el('circle',{cx:gxy.x,cy:gxy.y,r:8,fill:'none',stroke:'#f9c646','stroke-width':'2',filter:'url(#sunF)'},sg2);
-        el('circle',{cx:gxy.x,cy:gxy.y,r:2,fill:'#f9c646'},sg2);
+        el('circle',{cx:gxy.x,cy:gxy.y,r:10,fill:color,opacity:.12},sg2);
+        el('circle',{cx:gxy.x,cy:gxy.y,r:8,fill:'none',stroke:color,'stroke-width':'2',filter:'url(#sunF)'},sg2);
+        el('circle',{cx:gxy.x,cy:gxy.y,r:2,fill:color},sg2);
       }else if(name==='მზე'&&isInner){
         // small sun ☉ for inner person
-        el('circle',{cx:gxy.x,cy:gxy.y,r:6,fill:'none',stroke:'#f9c646','stroke-width':'1.5'},svg);
-        el('circle',{cx:gxy.x,cy:gxy.y,r:1.5,fill:'#f9c646'},svg);
+        el('circle',{cx:gxy.x,cy:gxy.y,r:6,fill:'none',stroke:color,'stroke-width':'1.5'},svg);
+        el('circle',{cx:gxy.x,cy:gxy.y,r:1.5,fill:color},svg);
       }else if(name==='მთვარე'&&!isInner){
         const mg=el('g',{filter:'url(#moonF)'},svg);
-        txt(mg,'☽',gxy.x,gxy.y,{fill:'#b8d8ff','font-size':20,'font-family':'serif'});
+        txt(mg,'☽',gxy.x,gxy.y,{fill:color,'font-size':20,'font-family':'serif'});
       }else if(info.sym==='SEL'){
         /* Selena (White Moon): U+2BDD is missing from most mobile fonts and
            renders as an empty box, so draw the symbol instead of typing it */
@@ -3351,7 +3358,7 @@ setToday('pd');
 </script>
 <script src="tabmenu.js"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261124t"></script>
+<script src="site.js?v=20261125a"></script>
 <script src="account.js"></script>
 <script src="wheel_classic.js?v=6"></script>
 <script src="now_fill.js"></script>

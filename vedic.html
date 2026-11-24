@@ -229,12 +229,17 @@ const RCOL=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6
 const EFILL=['#2b222a','#1e2b2c','#262d3d','#17273e','#2b222a','#1e2b2c','#262d3d','#17273e','#2b222a','#1e2b2c','#262d3d','#17273e'];
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 const PI={
-  'Sun':{sym:'sun',color:'#f9c646'},'Moon':{sym:'☽',color:'#c8d8f0'},
-  'Mars':{sym:'♂',color:'#e84040'},'Mercury':{sym:'☿',color:'#50d890'},
-  'Jupiter':{sym:'♃',color:'#e89040'},'Venus':{sym:'♀',color:'#e878a8'},
-  'Saturn':{sym:'♄',color:'#90a8c8'},'Uranus':{sym:'♅',color:'#7ec8c8'},
-  'Neptune':{sym:'♆',color:'#6080e0'},'Rahu':{sym:'☊',color:'#9060d0'},'Ketu':{sym:'☋',color:'#c06060'}
+  'Sun':{sym:'sun',color:'#e04848'},'Moon':{sym:'☽',color:'#3d7be0'},
+  'Mars':{sym:'♂',color:'#e04848'},'Mercury':{sym:'☿',color:'#efe8d8'},
+  'Jupiter':{sym:'♃',color:'#e04848'},'Venus':{sym:'♀',color:'#34a853'},
+  'Saturn':{sym:'♄',color:'#34a853'},'Uranus':{sym:'♅',color:'#efe8d8'},
+  'Neptune':{sym:'♆',color:'#3d7be0'},'Rahu':{sym:'☊',color:'#9060d0'},'Ketu':{sym:'☋',color:'#c06060'}
 };
+
+(function(){let l=false;try{l=localStorage.getItem('mg_theme')==='light';}catch(e){}if(!l)return;
+const L={'#e04848':'#ff9090','#34a853':'#41b060','#3d7be0':'#6babff','#efe8d8':'#eeeeee','#9a9a9a':'#7f7f7f'};
+for(const k in PI){const c=(PI[k].color||'').toLowerCase();if(L[c])PI[k].color=L[c];}})();
+window.addEventListener('mg-theme',()=>location.reload());
 const PORDER=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu','Uranus','Neptune'];
 
 // ── 60 VARGAS ──
@@ -803,9 +808,9 @@ function siChartSVG(vd){
 <script src="ancient.js"></script>
 <script src="search.js"></script>
 <script src="vedic_plus.js"></script>
-<script src="mg_wheel.js?v=11"></script>
+<script src="mg_wheel.js?v=12"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261124t"></script>
+<script src="site.js?v=20261125a"></script>
 <script src="account.js"></script>
 </body>
 </html>
