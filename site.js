@@ -50,7 +50,19 @@ const qs=new URLSearchParams(location.search);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1');let t=(h&&h.textContent.trim())||document.title.replace(/^MAGNUS\s*[·|—-]\s*/,'').replace(/\s*[·|—-]\s*MAGNUS$/,'');return t.replace(/[✦✧★☆⟡◆◇•·]/g,' ').replace(/\s+/g,' ').trim().slice(0,60);};
 
+/* ---- light theme (☀/☾ toggle in header). Whole page is colour-inverted with hue kept, so every
+   hand-made page, chart wheel and canvas becomes light with dark text; photos are inverted back. */
+const THEME_KEY='mg_theme';
+function themeGet(){try{return localStorage.getItem(THEME_KEY)==='light'?'light':'dark';}catch(e){return 'dark';}}
+function themeApply(t){document.documentElement.classList.toggle('mg-light',t==='light');const b=document.getElementById('mg-theme');if(b){b.textContent=t==='light'?'☾':'☀';b.title=t==='light'?'მუქი ფონი':'თეთრი ფონი';b.setAttribute('aria-label',b.title);}}
+themeApply(themeGet());
 const CSS=`
+/* light theme */
+html.mg-light{filter:invert(1) hue-rotate(180deg)}html.mg-light,html.mg-light body{background:#000!important;background-image:none!important}html.mg-light body::before,html.mg-light body::after,html.mg-light .stars,html.mg-light .vignette,html.mg-light #stars,html.mg-light .bg-stars,html.mg-light .nebula{display:none!important}
+html.mg-light #mg-head{background:#000!important}html.mg-light input[type=checkbox],html.mg-light input[type=radio],html.mg-light img,html.mg-light video,html.mg-light picture,html.mg-light iframe,html.mg-light .mg-noinv{filter:invert(1) hue-rotate(180deg)}
+html.mg-light select option,html.mg-light select optgroup{background:#0e1424!important}
+#mg-theme{background:none;border:1px solid rgba(201,162,76,.45);color:#E3BE84;border-radius:50%;width:32px;height:32px;min-width:32px;padding:0;font-size:16px;line-height:1;cursor:pointer;margin-left:8px;display:inline-flex;align-items:center;justify-content:center}
+#mg-theme:hover{background:rgba(201,162,76,.14)}
 /* dropdown lists: readable on every page (dark list, light text) */
 select option,select optgroup{background:#0e1424!important;color:#F3E6C8!important}
 select optgroup{color:#C9A24C!important;font-style:normal}
@@ -92,6 +104,15 @@ select{color-scheme:dark}
 #mg-consent button.pri{background:#B8894A;color:#0C1222;border-color:#B8894A;font-weight:600}
 #mg-consent button:focus-visible{outline:2px solid #E3BE84;outline-offset:2px}`;
 
+function themeButton(){
+  if(document.getElementById('mg-theme'))return;
+  const b=document.createElement('button');b.id='mg-theme';b.type='button';
+  b.onclick=()=>{const t=themeGet()==='light'?'dark':'light';try{localStorage.setItem(THEME_KEY,t);}catch(e){}themeApply(t);};
+  const h=document.getElementById('mg-head');
+  if(h){const bg=h.querySelector('.burger');h.insertBefore(b,bg||null);}
+  else{b.style.cssText='position:fixed;top:12px;right:12px;z-index:9990;background:rgba(12,18,34,.75)';document.body.appendChild(b);}
+  themeApply(themeGet());
+}
 function header(){
   if(P==='index.html'&&!qs.get('g'))return;                 /* the main menu is the home page itself */
   const sec=sectionOf(P);
@@ -320,7 +341,7 @@ function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
   if(!BG_SKIP.has(P)){const sb=document.createElement('style');sb.textContent=BG_CSS;document.head.appendChild(sb);}
-  header();footer();consent(false);tabs();
+  header();footer();consent(false);tabs();themeButton();
   if(!NO_TABS.has(P)){const st2=document.createElement('style');st2.textContent=TILE_CSS;document.head.appendChild(st2);
     [0,500,1500,3500].forEach(t=>setTimeout(sideNav,t));
     document.addEventListener("click",()=>{if(!sideEl)[300,1200].forEach(t=>setTimeout(sideNav,t));},true);
