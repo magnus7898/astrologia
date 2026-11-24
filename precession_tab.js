@@ -232,7 +232,7 @@ function frame(ts){
   const dt=T.last?Math.min(0.1,(ts-T.last)/1000):0;T.last=ts;
   if(T.play){T.y+=dt*T.speed;if(T.y>13000)T.y=-13000;if(T.y<-13000)T.y=13000;}
   const sl=$('pr-slider');if(sl&&document.activeElement!==sl)sl.value=Math.round(T.y);
-  $('pr-year').textContent=fy(T.y);
+  $("prc-year").textContent=fy(T.y);
   for(const [id,f] of [['pr-c1',drawTop],['pr-c2',drawPole],['pr-c3',drawBand],['pr-c4',drawMoonPanel]]){const c=$(id),r=c.getBoundingClientRect();if(!r.width)continue;const dpr=Math.min(2,devicePixelRatio||1);
     if(c.width!==Math.round(r.width*dpr)||c.height!==Math.round(r.height*dpr)){c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr);}
     const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);f(g,r.width,r.height,dt);}
@@ -247,7 +247,7 @@ const CSS=`
 #form-precession select{width:auto!important;background:#0e0b1e;border:1px solid rgba(201,162,76,.5);color:#F3ECDC;border-radius:10px;padding:7px 9px;font-size:13px;font-family:inherit}
 #form-precession input[type=number]{width:96px!important;text-align:center;background:#0e0b1e;border:1px solid rgba(201,162,76,.5);color:#F3ECDC;border-radius:10px;padding:7px 6px;font-size:13px}
 #pr-slider{flex:1 1 260px;accent-color:#C9A24C}
-#pr-year{font-family:Cinzel,serif;font-size:20px;color:#F7DE9A;min-width:120px}
+#prc-year{font-family:Cinzel,serif;font-size:20px;color:#F7DE9A;min-width:120px}
 #pr-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px}
 @media(max-width:900px){#pr-grid{grid-template-columns:1fr}}
 .pr-pane{position:relative;border:1px solid rgba(201,162,76,.22);border-radius:14px;overflow:hidden;background:#04030b}
@@ -291,7 +291,7 @@ function inject(){
      <select id="pr-speed"><option value="100">100 წელი/წმ</option><option value="500" selected>500 წელი/წმ</option><option value="1000">1000 წელი/წმ</option><option value="3000">3000 წელი/წმ</option></select>
      <button type="button" class="ob-btn" id="pr-now">● ახლა</button><input type="number" id="pr-yin" value="${T.y}" title="ძვ.წ. — მინუსით (0 = ძვ.წ. 1)"><button type="button" class="ob-btn" id="pr-go">↪ წელი</button>
      <select id="pr-ay" title="აიანამშა — ტროპიკულ და სიდერიულ ზოდიაქოს შორის სხვაობა">${Object.entries(AYAN).map(([k,v])=>`<option value="${k}"${k==='lahiri'?' selected':''}>${v[0]}</option>`).join('')}</select>
-     <span id="pr-year"></span><input type="range" id="pr-slider" min="-13000" max="13000" step="1" value="${T.y}"></div>
+     <span id="prc-year"></span><input type="range" id="pr-slider" min="-13000" max="13000" step="1" value="${T.y}"></div>
    <div id="pr-grid"><div class="pr-pane"><canvas id="pr-c1"></canvas><div class="pr-h" id="pr-h1"></div></div>
      <div class="pr-pane"><canvas id="pr-c2"></canvas><div class="pr-h" id="pr-h2"></div></div></div>
    <div class="ob-bar" style="margin:8px 0 0"><span class="ob-lab" style="font-size:13px;color:#E8D6AE">ჩვენება:</span>

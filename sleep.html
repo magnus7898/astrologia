@@ -73,7 +73,7 @@ function render(){
     <div class="tip"><i>☀</i>დილის შუქი — <b>&nbsp;${H.hm(wake)}–${H.hm(addMin(wake,60))}</b>.</div>`;
   H.set('sleep',{mode,t:H.$('t').value,fall});
 }
-const s=H.get('sleep',null);if(s){mode=s.mode||'wake';H.$('t').value=s.t||'07:00';H.$('fall').value=s.fall??15;}
+{const sv=H.get("sleep",null);if(sv){mode=sv.mode||"wake";H.$("t").value=sv.t||"07:00";H.$("fall").value=sv.fall??15;}}
 document.querySelectorAll('#mode button').forEach(b=>{b.classList.toggle('on',b.dataset.m===mode);b.onclick=()=>{mode=b.dataset.m;
   document.querySelectorAll('#mode button').forEach(x=>x.classList.toggle('on',x===b));
   if(mode==='bed'&&H.$('t').value==='07:00')H.$('t').value='23:00';if(mode==='wake'&&H.$('t').value==='23:00')H.$('t').value='07:00';render();};});
