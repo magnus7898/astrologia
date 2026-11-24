@@ -54,12 +54,42 @@ const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1'
    hand-made page, chart wheel and canvas becomes light with dark text; photos are inverted back. */
 const THEME_KEY='mg_theme';
 function themeGet(){try{return localStorage.getItem(THEME_KEY)==='light'?'light':'dark';}catch(e){return 'dark';}}
-function themeApply(t){document.documentElement.classList.toggle('mg-light',t==='light');const b=document.getElementById('mg-theme');if(b){b.textContent=t==='light'?'☾':'☀';b.title=t==='light'?'მუქი ფონი':'თეთრი ფონი';b.setAttribute('aria-label',b.title);}}
+function themeApply(t){document.documentElement.classList.toggle('mg-light',t==='light');if(typeof keepSoon==='function'){if(t==='light')keepSoon();else document.querySelectorAll('.mg-keep').forEach(e=>e.classList.remove('mg-keep'));}const b=document.getElementById('mg-theme');if(b){b.textContent=t==='light'?'☾':'☀';b.title=t==='light'?'მუქი ფონი':'თეთრი ფონი';b.setAttribute('aria-label',b.title);}}
 themeApply(themeGet());
+/* light theme keeps strong colours as they are: a saturated fill (matrix numbers, chakra rows, coloured
+   buttons/badges) is inverted back, and white text drawn on such a shape stays white */
+var KEEP='mg-keep';
+function parseC(c){const m=/rgba?\(([^)]+)\)/.exec(c||'');if(!m)return null;const v=m[1].split(/[ ,\/]+/).filter(Boolean).map(Number);return{r:v[0]/255,g:v[1]/255,b:v[2]/255,a:v.length>3?v[3]:1};}
+function vivid(c){if(!c||c.a<.6)return false;const mx=Math.max(c.r,c.g,c.b),mn=Math.min(c.r,c.g,c.b),l=(mx+mn)/2,d=mx-mn;if(d<.18)return false;const sat=d/(1-Math.abs(2*l-1)||1);return sat>.35&&l>.18&&l<.88;}
+function lightTxt(c){return c&&c.a>.5&&(.2126*c.r+.7152*c.g+.0722*c.b)>.72;}
+function keepPass(){
+  if(!document.documentElement.classList.contains('mg-light'))return;
+  const kept=new Set();
+  document.querySelectorAll('body *').forEach(e=>{
+    if(e.closest('#mg-head,#mg-foot,#mg-consent,#mg-theme'))return;
+    const tag=e.tagName.toLowerCase();
+    if(tag==='svg'||tag==='g'||tag==='defs'||tag==='text'||tag==='tspan'||tag==='img'||tag==='canvas'||tag==='option')return;
+    const cs=getComputedStyle(e);let hit=false;
+    if(e instanceof SVGElement){if(/^(circle|rect|path|polygon|ellipse)$/.test(tag))hit=vivid(parseC(cs.fill));}
+    else hit=vivid(parseC(cs.backgroundColor));
+    if(hit)kept.add(e);
+  });
+  /* white text drawn on top of a kept SVG shape */
+  document.querySelectorAll('svg text').forEach(t=>{
+    if(!lightTxt(parseC(getComputedStyle(t).fill)))return;
+    const r=t.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+    for(const k of kept){if(!(k instanceof SVGElement)||k.ownerSVGElement!==t.ownerSVGElement)continue;const q=k.getBoundingClientRect();
+      if(cx>q.left&&cx<q.right&&cy>q.top&&cy<q.bottom){kept.add(t);break;}}
+  });
+  document.querySelectorAll('.'+KEEP).forEach(e=>{if(!kept.has(e))e.classList.remove(KEEP);});
+  kept.forEach(e=>{let p=e.parentElement,nested=false;while(p){if(kept.has(p)){nested=true;break;}p=p.parentElement;}
+    e.classList.toggle(KEEP,!nested);});
+}
+var keepT=0;function keepSoon(){clearTimeout(keepT);keepT=setTimeout(keepPass,120);}
 const CSS=`
 /* light theme */
 html.mg-light{filter:invert(1) hue-rotate(180deg)}html.mg-light,html.mg-light body{background:#000!important;background-image:none!important}html.mg-light body::before,html.mg-light body::after,html.mg-light .stars,html.mg-light .vignette,html.mg-light #stars,html.mg-light .bg-stars,html.mg-light .nebula{display:none!important}
-html.mg-light #mg-head{background:#000!important}html.mg-light input[type=checkbox],html.mg-light input[type=radio],html.mg-light img,html.mg-light video,html.mg-light picture,html.mg-light iframe,html.mg-light .mg-noinv{filter:invert(1) hue-rotate(180deg)}
+html.mg-light #mg-head{background:#000!important}html.mg-light input[type=checkbox],html.mg-light input[type=radio],html.mg-light img,html.mg-light video,html.mg-light picture,html.mg-light iframe,html.mg-light .mg-noinv,html.mg-light .mg-keep{filter:invert(1) hue-rotate(180deg)}
 html.mg-light select option,html.mg-light select optgroup{background:#0e1424!important}
 #mg-theme{background:none;border:1px solid rgba(201,162,76,.45);color:#E3BE84;border-radius:50%;width:32px;height:32px;min-width:32px;padding:0;font-size:16px;line-height:1;cursor:pointer;margin-left:8px;display:inline-flex;align-items:center;justify-content:center}
 #mg-theme:hover{background:rgba(201,162,76,.14)}
@@ -112,6 +142,7 @@ function themeButton(){
   if(h){const bg=h.querySelector('.burger');h.insertBefore(b,bg||null);}
   else{b.style.cssText='position:fixed;top:12px;right:12px;z-index:9990;background:rgba(12,18,34,.75)';document.body.appendChild(b);}
   themeApply(themeGet());
+  try{new MutationObserver(ms=>{if(!document.documentElement.classList.contains('mg-light'))return;for(const m of ms){if(m.type==='childList'?m.addedNodes.length:true){keepSoon();return;}}}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['fill','style']});}catch(e){}
 }
 function header(){
   if(P==='index.html'&&!qs.get('g'))return;                 /* the main menu is the home page itself */
