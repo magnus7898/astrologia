@@ -238,10 +238,6 @@ const PI={
   'Neptune':{sym:'♆',color:'#3d7be0'},'Rahu':{sym:'☊',color:'#9060d0'},'Ketu':{sym:'☋',color:'#c06060'}
 };
 
-(function(){let l=false;try{l=localStorage.getItem('mg_theme')==='light';}catch(e){}if(!l)return;
-const L={'#e04848':'#ff9090','#34a853':'#41b060','#3d7be0':'#6babff','#efe8d8':'#eeeeee','#9a9a9a':'#7f7f7f'};
-for(const k in PI){const c=(PI[k].color||'').toLowerCase();if(L[c])PI[k].color=L[c];}})();
-window.addEventListener('mg-theme',()=>location.reload());
 const PORDER=['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn','Rahu','Ketu','Uranus','Neptune'];
 
 // ── 60 VARGAS ──
@@ -840,7 +836,7 @@ function siChartSVG(vd){
 <script src="search.js"></script>
 <script src="mg_wheel.js?v=12"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261125b"></script>
+<script src="site.js?v=20261125c"></script>
 <script src="account.js"></script>
 </body>
 </html>

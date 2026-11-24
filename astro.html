@@ -791,8 +791,8 @@ const ZSYM=['♈︎','♉︎','♊︎','♋︎','♌︎','♍︎','♎︎','♏�
 /* zodiac palette shared with the course wheels: fire · earth · air · water */
 const ZCOL=['#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8','#e8875a','#8fc46a','#c9d3e6','#5aa8e8'];
 const ZELEMENT=['F','E','A','W','F','E','A','W','F','E','A','W'];
-const MG_PC_DARK={R:'#e04848',G:'#34a853',B:'#3d7be0',K:'#efe8d8',GR:'#9a9a9a'},MG_PC_LIGHT={R:'#ff9090',G:'#41b060',B:'#6babff',K:'#eeeeee',GR:'#7f7f7f'};
-/* light theme inverts the page, so light-mode colours are stored pre-inverted: on screen they read as red / green / blue / black / grey */
+const MG_PC_DARK={R:'#e04848',G:'#34a853',B:'#3d7be0',K:'#efe8d8',GR:'#9a9a9a'},MG_PC_LIGHT={R:'#e04848',G:'#34a853',B:'#3d7be0',K:'#efe8d8',GR:'#9a9a9a'};
+/* same palette in both themes: the light theme keeps vivid colours and turns the ivory (air) glyphs black */
 function mgPC(){let l=false;try{l=localStorage.getItem('mg_theme')==='light';}catch(e){}return l?MG_PC_LIGHT:MG_PC_DARK;}
 const MG_PLANET_EL={'მზე':'R','მარსი':'R','იუპიტერი':'R','ვენერა':'G','სატურნი':'G','მერკური':'K','ურანი':'K','მთვარე':'B','ნეპტუნი':'B','პლუტონი':'B','იუნო':'GR','ცერერა':'GR','პალადა':'GR','ვესტა':'GR'};
 function mgRecolor(){const pc=mgPC();for(const k in MG_PLANET_EL)if(PI[k])PI[k].color=pc[MG_PLANET_EL[k]];}
@@ -3358,7 +3358,7 @@ setToday('pd');
 </script>
 <script src="tabmenu.js"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261125b"></script>
+<script src="site.js?v=20261125c"></script>
 <script src="account.js"></script>
 <script src="wheel_classic.js?v=6"></script>
 <script src="now_fill.js"></script>

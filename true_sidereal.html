@@ -206,10 +206,6 @@ const PI={
   'Fortune':{sym:'\u2295',color:'#f0c060'},
 };
 
-(function(){let l=false;try{l=localStorage.getItem('mg_theme')==='light';}catch(e){}if(!l)return;
-const L={'#e04848':'#ff9090','#34a853':'#41b060','#3d7be0':'#6babff','#efe8d8':'#eeeeee','#9a9a9a':'#7f7f7f'};
-for(const k in PI){const c=(PI[k].color||'').toLowerCase();if(L[c])PI[k].color=L[c];}})();
-window.addEventListener('mg-theme',()=>location.reload());
 const PORDER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn',
   'Uranus','Neptune','Pluto','Chiron','Lilith','Selena','Juno','Ceres','Pallas','Vesta',
   'North Node','South Node','Vertex','Fortune'];
@@ -485,7 +481,7 @@ function drawConTable(data){
 </script>
 <script src="mg_wheel.js?v=12"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261125b"></script>
+<script src="site.js?v=20261125c"></script>
 <script src="account.js"></script>
 </body>
 </html>

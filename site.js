@@ -50,47 +50,112 @@ const qs=new URLSearchParams(location.search);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pageTitle=()=>{if(OWN[P])return OWN[P];const h=document.querySelector('h1');let t=(h&&h.textContent.trim())||document.title.replace(/^MAGNUS\s*[·|—-]\s*/,'').replace(/\s*[·|—-]\s*MAGNUS$/,'');return t.replace(/[✦✧★☆⟡◆◇•·]/g,' ').replace(/\s+/g,' ').trim().slice(0,60);};
 
-/* ---- light theme (☀/☾ toggle in header). Whole page is colour-inverted with hue kept, so every
-   hand-made page, chart wheel and canvas becomes light with dark text; photos are inverted back. */
+/* ---- MAGNUS light theme (☀/☾ toggle in header) --------------------------------------------------
+   A real recolouring, not a filter: every colour in the page's stylesheets, inline styles and SVG
+   attributes is re-mapped in OKLab —
+     · dark backgrounds → white / light tints (same hue)
+     · light text, lines and borders → dark (same hue; gold → deep gold)
+     · strong, saturated fills (matrix numbers, chakra rows, HD centres, buttons) stay exactly as they are,
+       and light text drawn on them stays light
+   Everything is stored and restored when switching back to dark.                                     */
 const THEME_KEY='mg_theme';
 function themeGet(){try{return localStorage.getItem(THEME_KEY)==='light'?'light':'dark';}catch(e){return 'dark';}}
-function themeApply(t){document.documentElement.classList.toggle('mg-light',t==='light');if(typeof keepSoon==='function'){if(t==='light')keepSoon();else document.querySelectorAll('.mg-keep').forEach(e=>e.classList.remove('mg-keep'));}const b=document.getElementById('mg-theme');if(b){b.textContent=t==='light'?'☾':'☀';b.title=t==='light'?'მუქი ფონი':'თეთრი ფონი';b.setAttribute('aria-label',b.title);}}
-themeApply(themeGet());
-/* light theme keeps strong colours as they are: a saturated fill (matrix numbers, chakra rows, coloured
-   buttons/badges) is inverted back, and white text drawn on such a shape stays white */
-var KEEP='mg-keep';
-function parseC(c){const m=/rgba?\(([^)]+)\)/.exec(c||'');if(!m)return null;const v=m[1].split(/[ ,\/]+/).filter(Boolean).map(Number);return{r:v[0]/255,g:v[1]/255,b:v[2]/255,a:v.length>3?v[3]:1};}
-function vivid(c){if(!c||c.a<.6)return false;const mx=Math.max(c.r,c.g,c.b),mn=Math.min(c.r,c.g,c.b),l=(mx+mn)/2,d=mx-mn;if(d<.18)return false;const sat=d/(1-Math.abs(2*l-1)||1);return sat>.35&&l>.18&&l<.88;}
-function lightTxt(c){return c&&c.a>.5&&(.2126*c.r+.7152*c.g+.0722*c.b)>.72;}
-function keepPass(){
-  if(!document.documentElement.classList.contains('mg-light'))return;
-  const kept=new Set();
-  document.querySelectorAll('body *').forEach(e=>{
-    if(e.closest('#mg-head,#mg-foot,#mg-consent,#mg-theme'))return;
-    const tag=e.tagName.toLowerCase();
-    if(tag==='svg'||tag==='g'||tag==='defs'||tag==='text'||tag==='tspan'||tag==='img'||tag==='canvas'||tag==='option')return;
-    const cs=getComputedStyle(e);let hit=false;
-    if(e instanceof SVGElement){if(/^(circle|rect|path|polygon|ellipse)$/.test(tag))hit=vivid(parseC(cs.fill));}
-    else hit=vivid(parseC(cs.backgroundColor));
-    if(hit)kept.add(e);
-  });
-  /* white text drawn on top of a kept SVG shape */
-  document.querySelectorAll('svg text').forEach(t=>{
-    if(!lightTxt(parseC(getComputedStyle(t).fill)))return;
-    const r=t.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
-    for(const k of kept){if(!(k instanceof SVGElement)||k.ownerSVGElement!==t.ownerSVGElement)continue;const q=k.getBoundingClientRect();
-      if(cx>q.left&&cx<q.right&&cy>q.top&&cy<q.bottom){kept.add(t);break;}}
-  });
-  document.querySelectorAll('.'+KEEP).forEach(e=>{if(!kept.has(e))e.classList.remove(KEEP);});
-  kept.forEach(e=>{let p=e.parentElement,nested=false;while(p){if(kept.has(p)){nested=true;break;}p=p.parentElement;}
-    e.classList.toggle(KEEP,!nested);});
-}
-var keepT=0;function keepSoon(){clearTimeout(keepT);keepT=setTimeout(keepPass,120);}
+const MGT=(()=>{
+  const COLRX=/#[0-9a-fA-F]{3,8}\b|rgba?\([^()]*\)|hsla?\([^()]*\)|\b(?:white|black|silver|gray|grey|gold|ivory)\b/g;
+  const ctx=document.createElement('canvas').getContext('2d');
+  const cache=new Map();
+  function parse(str){
+    if(cache.has(str))return cache.get(str);let out=null;
+    try{ctx.fillStyle='#010203';ctx.fillStyle=str;const v=ctx.fillStyle;
+      if(v[0]==='#'){out=[parseInt(v.slice(1,3),16),parseInt(v.slice(3,5),16),parseInt(v.slice(5,7),16),1];}
+      else{const m=/rgba?\(([^)]+)\)/.exec(v);if(m){const a=m[1].split(/[ ,\/]+/).filter(Boolean).map(Number);out=[a[0],a[1],a[2],a.length>3?a[3]:1];}}
+      if(out&&str.trim().toLowerCase()!=='#010203'&&v==='#010203')out=null;}catch(e){}
+    cache.set(str,out);return out;}
+  const s2l=c=>{c/=255;return c<=.04045?c/12.92:Math.pow((c+.055)/1.055,2.4);};
+  const l2s=c=>{c=c<=.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-.055;return Math.round(Math.max(0,Math.min(1,c))*255);};
+  function toLab([r,g,b]){r=s2l(r);g=s2l(g);b=s2l(b);
+    const l=Math.cbrt(.4122214708*r+.5363325363*g+.0514459929*b),m=Math.cbrt(.2119034982*r+.6806995451*g+.1073969566*b),s=Math.cbrt(.0883024619*r+.2817188376*g+.6299787005*b);
+    return[.2104542553*l+.793617785*m-.0040720468*s,1.9779984951*l-2.428592205*m+.4505937099*s,.0259040371*l+.7827717662*m-.808675766*s];}
+  function fromLab([L,a,b]){const l=Math.pow(L+.3963377774*a+.2158037573*b,3),m=Math.pow(L-.1055613458*a-.0638541728*b,3),s=Math.pow(L-.0894841775*a-1.291485548*b,3);
+    return[l2s(4.0767416621*l-3.3077115913*m+.2309699292*s),l2s(-1.2684380046*l+2.6097574011*m-.3413193965*s),l2s(-.0041960863*l-.7034186147*m+1.707614701*s)];}
+  const fmt=(c,a)=>a>=1?`rgb(${c[0]}, ${c[1]}, ${c[2]})`:`rgba(${c[0]}, ${c[1]}, ${c[2]}, ${+a.toFixed(3)})`;
+  /* a "strong" colour = keep as is (vivid, mid-light fills such as matrix numbers, chakra rows, HD centres) */
+  function strong(lab){const C=Math.hypot(lab[1],lab[2]);return (C>.09&&lab[0]>.38&&lab[0]<.74)||(C>.13&&lab[0]>.38&&lab[0]<.95);}
+  /* every other colour flips its lightness (dark surfaces → near white, light text/lines → dark), hue kept */
+  function mapOne(str,role){
+    const c=parse(str);if(!c)return str;let a=c[3];if(a===0)return str;
+    const lab=toLab(c);const [L,A,B]=lab;
+    if(strong(lab)&&a>=.45&&!(role==='fg'&&L>.74))return str;   // bright yellow etc. as text would vanish on white
+    let nL,k;
+    if(L<.5){nL=1-L*.22;k=.3;}                 // dark → very light, softened hue
+    else{nL=.18+(1-L)*.9;k=1.2;if(a<.3)a*=.55;}  // light → dark (gold → deep gold); faint light glows get fainter
+    const rgb=fromLab([Math.max(0,Math.min(1,nL)),A*k,B*k]);return fmt(rgb,a);}
+  function mapStr(val,role){if(!val||val.indexOf('var(')>=0&&!COLRX.test(val))return val;COLRX.lastIndex=0;
+    return val.replace(COLRX,m=>mapOne(m,role));}
+  const BGP=new Set(['background','background-color','background-image','box-shadow']);
+  const FGP=new Set(['color','border','border-color','border-top','border-right','border-bottom','border-left','border-top-color','border-right-color','border-bottom-color','border-left-color','outline','outline-color','fill','stroke','text-shadow','caret-color','text-decoration-color','column-rule-color','stop-color','-webkit-text-fill-color','-webkit-text-stroke-color','accent-color']);
+  const isBgVar=n=>/bg|back|surf|panel|card|dark|night|base|deep|ink-bg|shade/i.test(n);
+  /* map a CSSStyleDeclaration in place; keeps text light when the same rule paints a strong background */
+  function mapDecl(st){
+    let keepFg=false;const bgc=st.getPropertyValue('background-color')||st.getPropertyValue('background');
+    if(bgc){COLRX.lastIndex=0;const m=bgc.match(COLRX);if(m){const c=parse(m[0]);if(c&&c[3]>=.5&&strong(toLab(c)))keepFg=true;}}
+    for(let i=0;i<st.length;i++){const p=st[i];const v=st.getPropertyValue(p);if(!v)continue;COLRX.lastIndex=0;if(!COLRX.test(v))continue;
+      let role=null;if(p.startsWith('--'))role='var';else if(BGP.has(p)||p.startsWith('background'))role='bg';else if(FGP.has(p)||/color$/.test(p)||p.startsWith('border'))role='fg';
+      if(!role)continue;if(keepFg&&role==='fg'&&(p==='color'||p==='fill'))continue;
+      const nv=mapStr(v,role||'fg');if(nv!==v)st.setProperty(p,nv,st.getPropertyPriority(p));}}
+  /* --- state for restoring --- */
+  let ON=false;const RULES=[],INL=new Map(),ATT=new Map(),SKIP='#mg-theme';
+  function walkRules(list){for(const r of list){if(r.selectorText&&r.selectorText.indexOf('mg-light')>=0)continue;if(r.style){RULES.push([r,r.style.cssText]);mapDecl(r.style);}if(r.cssRules)walkRules(r.cssRules);}}
+  function sheets(){for(const sh of document.styleSheets){if(sh.ownerNode&&sh.ownerNode.id==='mg-light-base')continue;let rl;try{rl=sh.cssRules;}catch(e){continue;}if(sh.__mgt)continue;sh.__mgt=1;try{walkRules(rl);}catch(e){console.warn('mgt sheet',e);}}}
+  const SVG_SHAPES=/^(circle|rect|path|polygon|ellipse|line|polyline)$/;
+  function strongAt(el){/* is el drawn over a strong fill (an earlier SVG shape under it, or an HTML background up the tree)? */
+    if(el instanceof SVGElement){const svg=el.ownerSVGElement;if(!svg)return false;const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+      for(const u of svg.querySelectorAll('circle,rect,path,polygon,ellipse')){
+        if(u.compareDocumentPosition(el)&Node.DOCUMENT_POSITION_PRECEDING)break;
+        const q=u.getBoundingClientRect();if(!(cx>q.left&&cx<q.right&&cy>q.top&&cy<q.bottom))continue;
+        const c=parse(getComputedStyle(u).fill);if(c&&c[3]>=.5&&strong(toLab(c)))return true;}
+      return false;}
+    for(let p=el;p&&p!==document.body;p=p.parentElement){const c=parse(getComputedStyle(p).backgroundColor);if(c&&c[3]>=.5)return strong(toLab(c));}
+    return false;}
+  function doEl(e){
+    if(e.nodeType!==1||e.closest(SKIP))return;
+    if(e.hasAttribute('style')&&!e.__mgtS){const o=e.getAttribute('style');if(!INL.has(e))INL.set(e,o);e.__mgtS=1;mapDecl(e.style);e.__mgtW=e.getAttribute('style');}
+    if(e instanceof SVGElement&&!e.__mgtA){e.__mgtA=1;const tag=e.tagName.toLowerCase();
+      for(const at of ['fill','stroke','stop-color','flood-color','lighting-color']){const v=e.getAttribute(at);if(!v||v==='none'||v.startsWith('url'))continue;
+        let role=at==='fill'&&SVG_SHAPES.test(tag)&&tag!=='line'&&tag!=='polyline'?'bg':'fg';if(at==='stop-color'||at==='flood-color')role='bg';
+        if(!ATT.has(e))ATT.set(e,{});if(!(at in ATT.get(e)))ATT.get(e)[at]=v;const nv=mapStr(v,role);e.setAttribute(at,nv);(e.__mgtAW||(e.__mgtAW={}))[at]=nv;}}
+  }
+  function fixText(root){/* light text sitting on strong fills keeps its original colour */
+    (root.querySelectorAll?root:document).querySelectorAll('svg text, svg tspan').forEach(t=>{
+      const o=(ATT.get(t)||{}).fill;if(t.__mgtKeep)return;const oc=o&&parse(o);if(!oc||toLab(oc)[0]<.75)return;if(strongAt(t)){t.setAttribute('fill',o);(t.__mgtAW||(t.__mgtAW={})).fill=o;t.__mgtKeep=1;}});}
+  function sweep(root){root=root||document.body;if(!root)return;doEl(root);const all=root.getElementsByTagName('*');for(let i=0;i<all.length;i++)doEl(all[i]);}
+  let obs=null,tmr=0,pend=new Set();
+  function flush(){const p=[...pend];pend.clear();try{sheets();p.forEach(n=>{if(n.isConnected)sweep(n);});if(p.some(n=>n instanceof SVGElement||(n.querySelector&&n.querySelector('svg'))))fixText(document);}catch(e){console.warn('mgt flush',e);}}
+  function onMut(ms){let any=false;for(const m of ms){if(m.type==='childList'){any=true;m.addedNodes.forEach(n=>{if(n.nodeType===1)pend.add(n);});}
+      else if(m.type==='attributes'){const t=m.target,an=m.attributeName,cur=t.getAttribute(an);
+        if(an==='style'){if(t.__mgtBusy||cur===t.__mgtW)continue;t.__mgtS=0;INL.set(t,cur);}
+        else{if(t.__mgtAW&&cur===t.__mgtAW[an])continue;if(ATT.has(t))delete ATT.get(t)[an];t.__mgtA=0;}pend.add(t);}}
+    if(!tmr)tmr=setTimeout(()=>{tmr=0;flush();},40);}
+  function on(){if(ON)return;ON=true;document.documentElement.classList.add('mg-light');sheets();sweep(document.body);fixText(document);
+    obs=new MutationObserver(onMut);obs.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style','fill','stroke'],attributeOldValue:true});}
+  function off(){if(!ON)return;ON=false;if(obs)obs.disconnect();obs=null;document.documentElement.classList.remove('mg-light');
+    RULES.forEach(([r,t])=>{r.style.cssText=t;});RULES.length=0;for(const sh of document.styleSheets)sh.__mgt=0;
+    INL.forEach((o,e)=>{e.__mgtBusy=1;if(o==null)e.removeAttribute('style');else e.setAttribute('style',o);e.__mgtBusy=0;e.__mgtS=0;});INL.clear();
+    ATT.forEach((o,e)=>{for(const a in o)e.setAttribute(a,o[a]);e.__mgtA=0;});ATT.clear();
+    document.querySelectorAll('*').forEach(e=>{e.__mgtS=0;e.__mgtA=0;});}
+  return{on,off,mapStr,sweep,fixText,_att:ATT,_strongAt:strongAt};
+})();
+window.MGT=MGT;
+function themeApply(t){
+  const b=document.getElementById('mg-theme');if(b){b.textContent=t==='light'?'☾':'☀';b.title=t==='light'?'მუქი ფონი':'თეთრი ფონი';b.setAttribute('aria-label',b.title);}
+  if(t==='light'){if(document.body)MGT.on();else document.addEventListener('DOMContentLoaded',()=>MGT.on(),{once:true});}else MGT.off();}
 const CSS=`
-/* light theme */
-html.mg-light{filter:invert(1) hue-rotate(180deg)}html.mg-light,html.mg-light body{background:#000!important;background-image:none!important}html.mg-light body::before,html.mg-light body::after,html.mg-light .stars,html.mg-light .vignette,html.mg-light #stars,html.mg-light .bg-stars,html.mg-light .nebula{display:none!important}
-html.mg-light #mg-head{background:#000!important}html.mg-light input[type=checkbox],html.mg-light input[type=radio],html.mg-light img,html.mg-light video,html.mg-light picture,html.mg-light iframe,html.mg-light .mg-noinv,html.mg-light .mg-keep{filter:invert(1) hue-rotate(180deg)}
-html.mg-light select option,html.mg-light select optgroup{background:#0e1424!important}
+/* light theme base (colours themselves are re-mapped by MGT) */
+html.mg-light,html.mg-light *{color-scheme:light!important}
+html.mg-light,html.mg-light body{background-color:#fff!important}
+html.mg-light canvas{filter:invert(1) hue-rotate(180deg)}
+html.mg-light #mg-theme{background:#fff!important;color:#7a5520!important;border-color:rgba(122,85,32,.45)!important}
+html.mg-light canvas.mg-stars,html.mg-light #stars,html.mg-light .stars,html.mg-light #starfield,html.mg-light canvas[data-stars]{display:none!important}
 #mg-theme{background:none;border:1px solid rgba(201,162,76,.45);color:#E3BE84;border-radius:50%;width:32px;height:32px;min-width:32px;padding:0;font-size:16px;line-height:1;cursor:pointer;margin-left:8px;display:inline-flex;align-items:center;justify-content:center}
 #mg-theme:hover{background:rgba(201,162,76,.14)}
 /* dropdown lists: readable on every page (dark list, light text) */
@@ -142,7 +207,6 @@ function themeButton(){
   if(h){const bg=h.querySelector('.burger');h.insertBefore(b,bg||null);}
   else{b.style.cssText='position:fixed;top:12px;right:12px;z-index:9990;background:rgba(12,18,34,.75)';document.body.appendChild(b);}
   themeApply(themeGet());
-  try{new MutationObserver(ms=>{if(!document.documentElement.classList.contains('mg-light'))return;for(const m of ms){if(m.type==='childList'?m.addedNodes.length:true){keepSoon();return;}}}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['fill','style']});}catch(e){}
 }
 function header(){
   if(P==='index.html'&&!qs.get('g'))return;                 /* the main menu is the home page itself */
