@@ -178,7 +178,7 @@ tr:hover td{background:rgba(19,16,58,.6)}
 .retro{color:#f87171;font-size:9px;margin-left:2px}
 .house-badge{display:inline-block;background:rgba(26,21,69,.8);border:1px solid rgba(184,137,74,.6);border-radius:4px;padding:1px 6px;font-size:10px;color:var(--purple);font-family:'Cinzel',serif}
 .deg-val{font-family:'Cinzel',serif;font-size:11px;color:#c8d8f0;white-space:nowrap}
-.moon-sym{color:#3d7be0;text-shadow:0 0 6px rgba(61,123,224,.6);font-size:20px;font-family:serif}
+.moon-sym{color:#3d7be0;text-shadow:none;font-size:20px;font-family:serif}
 .p-sym{font-family:serif;font-size:18px;line-height:1;display:inline-block}
 .asp-sym{font-size:16px;font-family:serif}
 .sign-fire{color:#e8875a}.sign-earth{color:#8fc46a}.sign-air{color:#c9d3e6}.sign-water{color:#5aa8e8}
@@ -3093,15 +3093,15 @@ function drawWheel(data1,data2,dualAsp){
       const fsz=isInner?12:18;
       if(name==='მზე'&&!isInner){
         const sg2=el('g',{},svg);
-        el('circle',{cx:gxy.x,cy:gxy.y,r:10,fill:color,opacity:.12},sg2);
-        el('circle',{cx:gxy.x,cy:gxy.y,r:8,fill:'none',stroke:color,'stroke-width':'2',filter:'url(#sunF)'},sg2);
+        const LT=(document.documentElement.classList.contains('mg-light'));if(!LT)el('circle',{cx:gxy.x,cy:gxy.y,r:10,fill:color,opacity:.12},sg2);
+        el('circle',LT?{cx:gxy.x,cy:gxy.y,r:8,fill:'none',stroke:color,'stroke-width':'2'}:{cx:gxy.x,cy:gxy.y,r:8,fill:'none',stroke:color,'stroke-width':'2',filter:'url(#sunF)'},sg2);
         el('circle',{cx:gxy.x,cy:gxy.y,r:2,fill:color},sg2);
       }else if(name==='მზე'&&isInner){
         // small sun ☉ for inner person
         el('circle',{cx:gxy.x,cy:gxy.y,r:6,fill:'none',stroke:color,'stroke-width':'1.5'},svg);
         el('circle',{cx:gxy.x,cy:gxy.y,r:1.5,fill:color},svg);
       }else if(name==='მთვარე'&&!isInner){
-        const mg=el('g',{filter:'url(#moonF)'},svg);
+        const mg=el('g',{},svg);
         txt(mg,'☽',gxy.x,gxy.y,{fill:color,'font-size':20,'font-family':'serif'});
       }else if(info.sym==='SEL'){
         /* Selena (White Moon): U+2BDD is missing from most mobile fonts and
@@ -3358,7 +3358,7 @@ setToday('pd');
 </script>
 <script src="tabmenu.js"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261125c"></script>
+<script src="site.js?v=20261125d"></script>
 <script src="account.js"></script>
 <script src="wheel_classic.js?v=6"></script>
 <script src="now_fill.js"></script>

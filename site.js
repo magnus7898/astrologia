@@ -88,7 +88,10 @@ const MGT=(()=>{
     if(strong(lab)&&a>=.45&&!(role==='fg'&&L>.74))return str;   // bright yellow etc. as text would vanish on white
     let nL,k;
     if(L<.5){nL=1-L*.22;k=.3;}                 // dark → very light, softened hue
-    else{nL=.18+(1-L)*.9;k=1.2;if(a<.3)a*=.55;}  // light → dark (gold → deep gold); faint light glows get fainter
+    else{const C=Math.hypot(A,B);
+      if(role==='fg'&&C<.07){nL=L>.82?.16:L>.7?.32:.5;k=.25;}   // white text → black, muted → dark grey, grey stays grey
+      else{nL=Math.min(.42,.18+(1-L)*.9);k=1.2;}        // gold / coloured text → deep, readable tone
+      if(a<.3)a*=.55;}                                   // faint light glows get fainter
     const rgb=fromLab([Math.max(0,Math.min(1,nL)),A*k,B*k]);return fmt(rgb,a);}
   function mapStr(val,role){if(!val||val.indexOf('var(')>=0&&!COLRX.test(val))return val;COLRX.lastIndex=0;
     return val.replace(COLRX,m=>mapOne(m,role));}
@@ -96,16 +99,17 @@ const MGT=(()=>{
   const FGP=new Set(['color','border','border-color','border-top','border-right','border-bottom','border-left','border-top-color','border-right-color','border-bottom-color','border-left-color','outline','outline-color','fill','stroke','text-shadow','caret-color','text-decoration-color','column-rule-color','stop-color','-webkit-text-fill-color','-webkit-text-stroke-color','accent-color']);
   const isBgVar=n=>/bg|back|surf|panel|card|dark|night|base|deep|ink-bg|shade/i.test(n);
   /* map a CSSStyleDeclaration in place; keeps text light when the same rule paints a strong background */
-  function mapDecl(st){
+  function mapDecl(st,shape,sel){
     let keepFg=false;const bgc=st.getPropertyValue('background-color')||st.getPropertyValue('background');
     if(bgc){COLRX.lastIndex=0;const m=bgc.match(COLRX);if(m){const c=parse(m[0]);if(c&&c[3]>=.5&&strong(toLab(c)))keepFg=true;}}
     for(let i=0;i<st.length;i++){const p=st[i];const v=st.getPropertyValue(p);if(!v)continue;COLRX.lastIndex=0;if(!COLRX.test(v))continue;
       let role=null;if(p.startsWith('--'))role='var';else if(BGP.has(p)||p.startsWith('background'))role='bg';else if(FGP.has(p)||/color$/.test(p)||p.startsWith('border'))role='fg';
-      if(!role)continue;if(keepFg&&role==='fg'&&(p==='color'||p==='fill'))continue;
+      if(!role)continue;if(p==='fill'&&(shape||(sel&&!/text|tspan|label|lbl|num|glyph/i.test(sel))))role='bg';if(keepFg&&role==='fg'&&(p==='color'||p==='fill'))continue;
       const nv=mapStr(v,role||'fg');if(nv!==v)st.setProperty(p,nv,st.getPropertyPriority(p));}}
   /* --- state for restoring --- */
-  let ON=false;const RULES=[],INL=new Map(),ATT=new Map(),SKIP='#mg-theme';
-  function walkRules(list){for(const r of list){if(r.selectorText&&r.selectorText.indexOf('mg-light')>=0)continue;if(r.style){RULES.push([r,r.style.cssText]);mapDecl(r.style);}if(r.cssRules)walkRules(r.cssRules);}}
+  let ON=false;const RULES=[],INL=new Map(),ATT=new Map(),SKIP='#mg-theme,.at-vp,.at-dot,.at-ring,.at-ch i,.at-keys i,[data-mg-keep]';
+  const KEEPSEL=/at-vp|at-dot|at-ring|at-ch\s+i|at-keys\s+(span\s+)?i|mg-keep/;
+  function walkRules(list){for(const r of list){if(r.selectorText&&r.selectorText.indexOf('mg-light')>=0)continue;if(r.style){if(r.selectorText&&KEEPSEL.test(r.selectorText))continue;RULES.push([r,r.style.cssText]);mapDecl(r.style,false,r.selectorText||'');}if(r.cssRules)walkRules(r.cssRules);}}
   function sheets(){for(const sh of document.styleSheets){if(sh.ownerNode&&sh.ownerNode.id==='mg-light-base')continue;let rl;try{rl=sh.cssRules;}catch(e){continue;}if(sh.__mgt)continue;sh.__mgt=1;try{walkRules(rl);}catch(e){console.warn('mgt sheet',e);}}}
   const SVG_SHAPES=/^(circle|rect|path|polygon|ellipse|line|polyline)$/;
   function strongAt(el){/* is el drawn over a strong fill (an earlier SVG shape under it, or an HTML background up the tree)? */
@@ -119,21 +123,25 @@ const MGT=(()=>{
     return false;}
   function doEl(e){
     if(e.nodeType!==1||e.closest(SKIP))return;
-    if(e.hasAttribute('style')&&!e.__mgtS){const o=e.getAttribute('style');if(!INL.has(e))INL.set(e,o);e.__mgtS=1;mapDecl(e.style);e.__mgtW=e.getAttribute('style');}
+    if(e.hasAttribute('style')&&!e.__mgtS){const o=e.getAttribute('style');if(!INL.has(e))INL.set(e,o);e.__mgtS=1;mapDecl(e.style,e instanceof SVGElement&&SVG_SHAPES.test(e.tagName)&&e.tagName!=='line'&&e.tagName!=='polyline');e.__mgtW=e.getAttribute('style');}
     if(e instanceof SVGElement&&!e.__mgtA){e.__mgtA=1;const tag=e.tagName.toLowerCase();
       for(const at of ['fill','stroke','stop-color','flood-color','lighting-color']){const v=e.getAttribute(at);if(!v||v==='none'||v.startsWith('url'))continue;
         let role=at==='fill'&&SVG_SHAPES.test(tag)&&tag!=='line'&&tag!=='polyline'?'bg':'fg';if(at==='stop-color'||at==='flood-color')role='bg';
         if(!ATT.has(e))ATT.set(e,{});if(!(at in ATT.get(e)))ATT.get(e)[at]=v;const nv=mapStr(v,role);e.setAttribute(at,nv);(e.__mgtAW||(e.__mgtAW={}))[at]=nv;}}
   }
-  function fixText(root){/* light text sitting on strong fills keeps its original colour */
-    (root.querySelectorAll?root:document).querySelectorAll('svg text, svg tspan').forEach(t=>{
-      const o=(ATT.get(t)||{}).fill;if(t.__mgtKeep)return;const oc=o&&parse(o);if(!oc||toLab(oc)[0]<.75)return;if(strongAt(t)){t.setAttribute('fill',o);(t.__mgtAW||(t.__mgtAW={})).fill=o;t.__mgtKeep=1;}});}
+  function fixText(root){/* light text sitting on strong fills keeps its original colour (shapes measured once per svg) */
+    const cand=[];document.querySelectorAll('svg text').forEach(t=>{if(t.__mgtKeep)return;const o=(ATT.get(t)||{}).fill;const oc=o&&parse(o);if(oc&&toLab(oc)[0]>=.75)cand.push([t,o]);});
+    if(!cand.length)return;const per=new Map();
+    for(const [t,o] of cand){const svg=t.ownerSVGElement;if(!svg)continue;
+      if(!per.has(svg)){const L=[];svg.querySelectorAll('circle,rect,path,polygon,ellipse').forEach(u=>{const c=parse(getComputedStyle(u).fill);if(c&&c[3]>=.5&&strong(toLab(c)))L.push(u.getBoundingClientRect());});per.set(svg,L);}
+      const L=per.get(svg);if(!L.length)continue;const r=t.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+      if(L.some(q=>cx>q.left&&cx<q.right&&cy>q.top&&cy<q.bottom)){t.setAttribute('fill',o);(t.__mgtAW||(t.__mgtAW={})).fill=o;t.__mgtKeep=1;}}}
   function sweep(root){root=root||document.body;if(!root)return;doEl(root);const all=root.getElementsByTagName('*');for(let i=0;i<all.length;i++)doEl(all[i]);}
   let obs=null,tmr=0,pend=new Set();
   function flush(){const p=[...pend];pend.clear();try{sheets();p.forEach(n=>{if(n.isConnected)sweep(n);});if(p.some(n=>n instanceof SVGElement||(n.querySelector&&n.querySelector('svg'))))fixText(document);}catch(e){console.warn('mgt flush',e);}}
   function onMut(ms){let any=false;for(const m of ms){if(m.type==='childList'){any=true;m.addedNodes.forEach(n=>{if(n.nodeType===1)pend.add(n);});}
       else if(m.type==='attributes'){const t=m.target,an=m.attributeName,cur=t.getAttribute(an);
-        if(an==='style'){if(t.__mgtBusy||cur===t.__mgtW)continue;t.__mgtS=0;INL.set(t,cur);}
+        if(an==='style'){if(t.__mgtBusy||cur===t.__mgtW)continue;COLRX.lastIndex=0;if(!cur||!COLRX.test(cur)){continue;}t.__mgtS=0;INL.set(t,cur);}
         else{if(t.__mgtAW&&cur===t.__mgtAW[an])continue;if(ATT.has(t))delete ATT.get(t)[an];t.__mgtA=0;}pend.add(t);}}
     if(!tmr)tmr=setTimeout(()=>{tmr=0;flush();},40);}
   function on(){if(ON)return;ON=true;document.documentElement.classList.add('mg-light');sheets();sweep(document.body);fixText(document);
@@ -154,6 +162,7 @@ const CSS=`
 html.mg-light,html.mg-light *{color-scheme:light!important}
 html.mg-light,html.mg-light body{background-color:#fff!important}
 html.mg-light canvas{filter:invert(1) hue-rotate(180deg)}
+html.mg-light .bgw{background:#fff!important}html.mg-light .bgw svg .st0{fill:#e4e9f2!important;opacity:1!important}
 html.mg-light #mg-theme{background:#fff!important;color:#7a5520!important;border-color:rgba(122,85,32,.45)!important}
 html.mg-light canvas.mg-stars,html.mg-light #stars,html.mg-light .stars,html.mg-light #starfield,html.mg-light canvas[data-stars]{display:none!important}
 #mg-theme{background:none;border:1px solid rgba(201,162,76,.45);color:#E3BE84;border-radius:50%;width:32px;height:32px;min-width:32px;padding:0;font-size:16px;line-height:1;cursor:pointer;margin-left:8px;display:inline-flex;align-items:center;justify-content:center}
