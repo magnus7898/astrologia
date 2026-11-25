@@ -18,7 +18,7 @@ header{text-align:center;padding:24px 0 22px}
 h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(26px,5vw,40px);letter-spacing:2px;line-height:1.25;
   background:linear-gradient(160deg,#f5e8ba 0%,var(--gold) 35%,#9a7028 60%,var(--gold-l) 80%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .sub{font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--silver);opacity:.65;margin-top:8px}
-.card{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:20px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:20px;margin-bottom:16px;min-width:0;max-width:100%}
 .card h2{font-family:'Cinzel',serif;font-weight:400;font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:12px}
 .card p,.txt{font-size:13.5px;line-height:1.85;color:#d9d2c2}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}

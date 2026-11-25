@@ -40,6 +40,7 @@ function css(){if($('#nw-css'))return;const s=document.createElement('style');s.
 .nw-moon .l3{font-size:11px;color:#9ba8b8;white-space:nowrap}
 .nw-moon .bar{height:3px;border-radius:2px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:3px;width:100%}
 .nw-moon .bar i{display:block;height:100%;background:linear-gradient(90deg,#8a7cff,#FFD36A)}
+@media(max-width:600px){.nw-moon{width:auto;max-width:calc(100vw - 24px);margin-left:12px;margin-right:12px}.nw-moon .l2,.nw-moon .l3{white-space:normal}.nw-moon .l1{letter-spacing:1.5px}}
 @media(max-width:480px){.nw-moon{gap:10px;padding:8px 14px 8px 10px}.nw-moon .l2{font-size:13.5px}.nw-moon .l3{white-space:normal}}
 .nw-moon.side{width:212px;max-width:212px;box-sizing:border-box;margin:0;padding:8px 12px;border-radius:14px;gap:9px;align-items:center;background:transparent}
 .nw-moon.side .em{font-size:24px}.nw-moon.side .no{font-size:21px;min-width:22px}

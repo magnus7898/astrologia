@@ -141,7 +141,8 @@ const MGT=(()=>{
   function flush(){const p=[...pend];pend.clear();try{sheets();p.forEach(n=>{if(n.isConnected)sweep(n);});if(p.some(n=>n instanceof SVGElement||(n.querySelector&&n.querySelector('svg'))))fixText(document);}catch(e){console.warn('mgt flush',e);}}
   function onMut(ms){let any=false;for(const m of ms){if(m.type==='childList'){any=true;m.addedNodes.forEach(n=>{if(n.nodeType===1)pend.add(n);});}
       else if(m.type==='attributes'){const t=m.target,an=m.attributeName,cur=t.getAttribute(an);
-        if(an==='style'){if(t.__mgtBusy||cur===t.__mgtW)continue;COLRX.lastIndex=0;if(!cur||!COLRX.test(cur)){continue;}t.__mgtS=0;INL.set(t,cur);}
+        if(an==='style'){if(t.__mgtBusy||cur===t.__mgtW)continue;COLRX.lastIndex=0;if(!cur||!COLRX.test(cur)){continue;}
+          const cols=x=>(x||'').match(COLRX)||[];if(t.__mgtS&&cols(cur).join('|')===cols(t.__mgtW).join('|')){t.__mgtW=cur;continue;}t.__mgtS=0;INL.set(t,cur);}
         else{if(t.__mgtAW&&cur===t.__mgtAW[an])continue;if(ATT.has(t))delete ATT.get(t)[an];t.__mgtA=0;}pend.add(t);}}
     if(!tmr)tmr=setTimeout(()=>{tmr=0;flush();},40);}
   function on(){if(ON)return;ON=true;document.documentElement.classList.add('mg-light');sheets();sweep(document.body);fixText(document);
@@ -156,7 +157,7 @@ const MGT=(()=>{
 window.MGT=MGT;
 function themeApply(t){
   const b=document.getElementById('mg-theme');if(b){b.textContent=t==='light'?'☾':'☀';b.title=t==='light'?'მუქი ფონი':'თეთრი ფონი';b.setAttribute('aria-label',b.title);}
-  if(t==='light'){if(document.body)MGT.on();else document.addEventListener('DOMContentLoaded',()=>MGT.on(),{once:true});}else MGT.off();}
+  if(t==='light'){if(document.body)MGT.on();else document.addEventListener('DOMContentLoaded',()=>MGT.on(),{once:true});}else{MGT.off();if(window.__mgMob)setTimeout(window.__mgMob,50);}}
 const CSS=`
 /* light theme base (colours themselves are re-mapped by MGT) */
 html.mg-light,html.mg-light *{color-scheme:light!important}
@@ -166,6 +167,9 @@ html.mg-light .bgw{background:#fff!important}html.mg-light .bgw svg .st0{fill:#2
 html.mg-light #mg-theme{background:#fff!important;color:#7a5520!important;border-color:rgba(122,85,32,.45)!important}
 html.mg-light canvas.mg-stars,html.mg-light #stars,html.mg-light .stars,html.mg-light #starfield,html.mg-light canvas[data-stars]{display:none!important}
 a,button,input,select,label,summary,[role=button]{touch-action:manipulation}
+/* mobile: no iOS zoom-on-focus (inputs ≥16px), finger-sized buttons */
+@media (max-width:700px){html,body{overflow-x:clip}}
+@media (hover:none) and (pointer:coarse){input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea{font-size:16px!important}}
 #mg-theme{background:none;border:1px solid rgba(201,162,76,.45);color:#E3BE84;border-radius:50%;width:32px;height:32px;min-width:32px;padding:0;font-size:16px;line-height:1;cursor:pointer;margin-left:8px;display:inline-flex;align-items:center;justify-content:center}
 #mg-theme:hover{background:rgba(201,162,76,.14)}
 /* dropdown lists: readable on every page (dark list, light text) */
@@ -209,6 +213,14 @@ select{color-scheme:dark}
 #mg-consent button.pri{background:#B8894A;color:#0C1222;border-color:#B8894A;font-weight:600}
 #mg-consent button:focus-visible{outline:2px solid #E3BE84;outline-offset:2px}`;
 
+function mobileText(){
+  if(!matchMedia('(max-width:700px)').matches)return;
+  let busy=0;const run=()=>{busy=0;const tw=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;const seen=new Set();
+    while(n=tw.nextNode()){if(n.textContent.trim().length<2)continue;const e=n.parentElement;if(!e||seen.has(e)||e.closest('svg'))continue;seen.add(e);
+      if(parseFloat(getComputedStyle(e).fontSize)<11)e.style.fontSize='11px';}
+    document.querySelectorAll('button,[role=button],select').forEach(x=>{const r=x.getBoundingClientRect();if(r.height>0&&r.height<30&&r.width>44&&!x.closest('svg'))x.style.minHeight='32px';});};
+  window.__mgMob=run;run();try{new MutationObserver(ms=>{if(busy)return;if(ms.some(m=>m.addedNodes.length)){busy=1;setTimeout(run,250);}}).observe(document.body,{childList:true,subtree:true});}catch(e){}
+}
 function themeButton(){
   if(document.getElementById('mg-theme'))return;
   const b=document.createElement('button');b.id='mg-theme';b.type='button';
@@ -446,7 +458,7 @@ function start(){
   if(!document.querySelector('link[href*="Marcellus"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Cinzel:wght@400;600&family=Noto+Serif+Georgian:wght@300;400;600&family=JetBrains+Mono:wght@300;400&display=swap';document.head.appendChild(l);}
   const st=document.createElement('style');st.textContent=CSS;document.head.appendChild(st);
   if(!BG_SKIP.has(P)){const sb=document.createElement('style');sb.textContent=BG_CSS;document.head.appendChild(sb);}
-  header();footer();consent(false);tabs();themeButton();
+  header();footer();consent(false);tabs();themeButton();mobileText();
   if(!NO_TABS.has(P)){const st2=document.createElement('style');st2.textContent=TILE_CSS;document.head.appendChild(st2);
     [0,500,1500,3500].forEach(t=>setTimeout(sideNav,t));
     document.addEventListener("click",()=>{if(!sideEl)[300,1200].forEach(t=>setTimeout(sideNav,t));},true);

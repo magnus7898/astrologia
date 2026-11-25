@@ -240,8 +240,9 @@ header::after{content:"";display:block;width:280px;height:1px;
   .summary{grid-template-columns:repeat(3,1fr);}
   .chart-area{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:18px;}
   .planet-col{order:2;}#bodygraph,#bodygraph-syn{order:1;grid-column:1/-1;}
-  .page{padding:28px 16px 60px;}}
-@media(max-width:700px){.summary{grid-template-columns:repeat(2,1fr);}.brand{font-size:1.5rem;}}
+  .page{padding:28px 16px 60px;}
+  .details-wrap{grid-template-columns:minmax(0,1fr)!important;}.details-wrap>*{min-width:0}.details-wrap .panel{max-width:100%}}
+@media(max-width:700px){.summary{grid-template-columns:repeat(2,minmax(0,1fr));}.brand{font-size:1.5rem;}.chart-area{grid-template-columns:minmax(0,1fr)!important;}.panel{padding:16px 14px}}
 
 /* ── optional activations panel ── */
 .extras-panel{display:none!important;max-width:660px;margin:0 auto 22px;padding:18px 22px 14px;
@@ -1186,7 +1187,7 @@ loadSVG('bodygraph','natal').catch(e=>{
 <script src="hd_articles_panel.js"></script>
 <script src="tabmenu.js"></script>
 <script src="astro_switch.js?v=12"></script>
-<script src="site.js?v=20261125e"></script>
+<script src="site.js?v=20261125i"></script>
 <script src="account.js?v=3"></script>
 <script src="now_fill.js"></script>
 <script src="hd_seal.js?v=8"></script>
