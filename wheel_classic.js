@@ -154,8 +154,9 @@ window.drawWheelClassic=function(data1,dualAsp){
      el('circle',{cx:g.x,cy:g.y,r:gR*1.02,fill:HB},svg);
      pR.forEach(q=>el('circle',{cx:q.x,cy:q.y,r:fs*.78,fill:HB},svg));}
     if(n==='მზე'){
-      el('circle',{cx:g.x,cy:g.y,r:gR*.78,fill:'none',stroke:'#f9c646','stroke-width':2,filter:'url(#sunF)'},svg);
-      el('circle',{cx:g.x,cy:g.y,r:1.8,fill:'#f9c646'},svg);
+      const LT=document.documentElement.classList.contains('mg-light');
+      el('circle',LT?{cx:g.x,cy:g.y,r:gR*.78,fill:'none',stroke:col,'stroke-width':2}:{cx:g.x,cy:g.y,r:gR*.78,fill:'none',stroke:col,'stroke-width':2,filter:'url(#sunF)'},svg);
+      el('circle',{cx:g.x,cy:g.y,r:1.8,fill:col},svg);
     }else if(info.sym==='SEL'){
       const rr=gR*.6;el('circle',{cx:g.x,cy:g.y,r:rr,fill:'none',stroke:col,'stroke-width':1.4},svg);
       el('path',{d:`M ${g.x-rr} ${g.y} a ${rr} ${rr} 0 0 1 ${rr*2} 0`,fill:col,opacity:.9},svg);

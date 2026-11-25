@@ -162,9 +162,10 @@ const CSS=`
 html.mg-light,html.mg-light *{color-scheme:light!important}
 html.mg-light,html.mg-light body{background-color:#fff!important}
 html.mg-light canvas{filter:invert(1) hue-rotate(180deg)}
-html.mg-light .bgw{background:#fff!important}html.mg-light .bgw svg .st0{fill:#e4e9f2!important;opacity:1!important}
+html.mg-light .bgw{background:#fff!important}html.mg-light .bgw svg .st0{fill:#22324F!important;opacity:.45!important}
 html.mg-light #mg-theme{background:#fff!important;color:#7a5520!important;border-color:rgba(122,85,32,.45)!important}
 html.mg-light canvas.mg-stars,html.mg-light #stars,html.mg-light .stars,html.mg-light #starfield,html.mg-light canvas[data-stars]{display:none!important}
+a,button,input,select,label,summary,[role=button]{touch-action:manipulation}
 #mg-theme{background:none;border:1px solid rgba(201,162,76,.45);color:#E3BE84;border-radius:50%;width:32px;height:32px;min-width:32px;padding:0;font-size:16px;line-height:1;cursor:pointer;margin-left:8px;display:inline-flex;align-items:center;justify-content:center}
 #mg-theme:hover{background:rgba(201,162,76,.14)}
 /* dropdown lists: readable on every page (dark list, light text) */

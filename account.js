@@ -48,6 +48,9 @@ const CSS=`
   padding:7px 13px;font:500 12.5px/1.2 'Noto Serif Georgian',system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.45);backdrop-filter:blur(4px)}
 #mg-pill:hover{border-color:#E3BE84}
 #mg-pill .dot{width:7px;height:7px;border-radius:50%;background:#7fd1a8}
+#mg-pill{transition:transform .25s ease,opacity .25s ease}
+#mg-pill.mg-hide{transform:translateY(calc(100% + 24px));opacity:0;pointer-events:none}
+@media(max-width:640px){#mg-pill{padding:7px 10px!important;font-size:12px!important}#mg-pill .lbl{display:none}}
 #mg-pill .pro{font-size:9.5px;letter-spacing:.08em;background:#B8894A;color:#0C1222;border-radius:2px;padding:1px 5px}
 #mg-menu{position:fixed;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(56px + env(safe-area-inset-bottom,0px));z-index:9991;min-width:230px;
   background:#111A2E;border:1px solid rgba(184,137,74,.45);border-radius:2px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.55);font:13px/1.3 'Noto Serif Georgian',system-ui,sans-serif}
@@ -91,7 +94,9 @@ function toast(t,ms=2600){let el=$('mg-toast');if(!el){el=document.createElement
 /* ───────── pill + menu ───────── */
 function drawPill(){
   let p=$('mg-pill');if(!p){p=document.createElement('button');p.type='button';p.id='mg-pill';p.onclick=e=>{e.stopPropagation();toggleMenu();};document.body.appendChild(p);}
-  p.innerHTML=USER?`<span class="dot"></span>${esc(USER.name||USER.email.split('@')[0])}${USER.plan==='pro'?'<span class="pro">PRO</span>':''}`:'👤 შესვლა';
+  if(!drawPill._sc){drawPill._sc=1;let ly=scrollY,tk=0;addEventListener('scroll',()=>{if(tk)return;tk=1;requestAnimationFrame(()=>{tk=0;const y=scrollY,el=$('mg-pill');if(!el)return;
+    const atEnd=innerHeight+y>=document.documentElement.scrollHeight-40;el.classList.toggle('mg-hide',y>ly+4&&y>120&&!atEnd);if(y<ly-4||atEnd)el.classList.remove('mg-hide');ly=y;});},{passive:true});}
+  p.innerHTML=USER?`<span class="dot"></span><span class="lbl">${esc(USER.name||USER.email.split('@')[0])}</span>${USER.plan==='pro'?'<span class="pro">PRO</span>':''}`:'👤<span class="lbl"> შესვლა</span>';
   p.setAttribute('aria-label',USER?'ანგარიში':'შესვლა / რეგისტრაცია');
   closeMenu();
 }
